@@ -1,0 +1,150 @@
+
+    /* Set margins to zero to use the full A4,A5,80mm width and height  */
+
+    /* @page {
+        size: 21cm;
+        margin: 0;
+    } */
+/*
+    @page {
+        size: 14.85cm;
+        margin: 0;
+    } */
+
+    /* @page {
+        size: 80mm;
+        margin: 0;
+    } */
+
+
+    /* Common print styles */
+    @media print {
+        body {
+        margin: 0 !important;
+        padding: 0 !important;
+        }
+    }
+
+
+
+/* Start Invoice Area */
+* {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+
+
+  table th,
+  table td {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Begin:Global A4 Papaer Size */
+        /* #print-invoice{
+          max-width: 21cm;
+          max-height: 29.7cm;
+          padding: 0;
+          margin: 0 auto;
+          margin-top: 80px;
+        }
+
+        .invoice-sales,.invoice-purchases,
+        table th,table td{
+        font-size: 12px;
+      }
+
+      table th,table td{
+          padding: 5px 10px !important;
+        } */
+  /* End:Global A4 Papaer Size */
+
+  /* A4 Paper Size */
+    @media print and (max-width: 21cm) and (max-height: 29.7cm)  {
+
+      .invoice-sales,.invoice-purchases,
+      table th,table td{
+        font-size: 12px;
+      }
+
+      table th,table td{
+        padding: 5px 10px !important;
+      }
+  }
+
+
+
+   /* Begin:Global A5 Papaer Size */
+      /* #print-invoice{
+        max-width: 14.85cm;
+        max-height: 21cm;
+        margin: 0 auto !important;
+        margin-top: 80px !important;
+      }
+
+      .invoice-sales,.invoice-purchases,
+      table th,table td{
+      font-size: 8.5px;
+    }
+
+    table th,table td{
+        padding: 3px 8px !important;
+      } */
+
+/* End:Global A5 Papaer Size */
+
+
+  /* A5 Paper Size */
+  @media print and (max-width: 14.85cm)   and (max-height: 21cm) {
+
+    .invoice-sales,.invoice-purchases,
+      table th,table td{
+      font-size: 6.5px;
+    }
+
+      table th,table td{
+        padding: 3px 8px !important;
+      }
+  }
+
+
+  /* Begin:Global 80mm Papaer Size */
+
+  /* #print-invoice{
+    max-width: 80mm;
+    max-height: 80mm;
+    margin: 0 auto !important;
+    margin-top: 80px !important;
+  }
+
+  .invoice-sales,.invoice-purchases,
+  table th,table td{
+  font-size: 4.5px;
+}
+
+table th,table td  {
+    padding: 2px 5px !important;
+} */
+
+
+/* End:Global 80mm Papaer Size */
+
+
+
+
+
+
+/* Paper Size: 80mm */
+/* @media print and (max-width: 80mm) and (max-height: 80mm) {
+
+    .invoice-sales,.invoice-purchases,
+      table th,table td{
+      font-size: 4.5px;
+    }
+
+    table th, table td {
+        padding: 5px 5px !important;
+    }
+
+} */

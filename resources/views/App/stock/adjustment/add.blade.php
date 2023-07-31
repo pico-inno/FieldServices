@@ -1,0 +1,197 @@
+@extends('App.main.navBar')
+
+@section('styles')
+    {{-- css file for this page --}}
+@endsection
+
+@section('inventory_icon', 'active')
+@section('inventroy_show', 'active show')
+@section('stock_adjustment_here_show', 'here show')
+@section('stock_adjustment_add_active_show', 'active ')
+
+@section('styles')
+    <link href="{{asset("assets/plugins/global/plugins.bundle.css")}}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>
+@endsection
+
+@section('title')
+    <!--begin::Heading-->
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('adjustment.create')}}</h1>
+    <!--end::Heading-->
+    <!--begin::Breadcrumb-->
+    <ul class="breadcrumb fw-semibold fs-base my-1">
+        <li class="breadcrumb-item text-muted">{{__('adjustment.adjustment')}}</li>
+        <li class="breadcrumb-item text-muted">
+            <a href="{{ route('stock-adjustment.index') }}" class="text-muted text-hover-primary">{{__('adjustment.list')}}</a>
+        </li>
+        <li class="breadcrumb-item text-dark">{{__('adjustment.add')}}</li>
+    </ul>
+    <!--end::Breadcrumb-->
+@endsection
+@section('content')
+    <!--begin::Content-->
+    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+        <!--begin::Container-->
+        <div class="container-xxl" id="kt_content_container">
+            <form action="{{route('stock-adjustment.store')}}" method="POST">
+                @csrf
+                <!--begin::Main column-->
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <!--begin::General options-->
+                                        <div class="card card-flush py-4">
+
+                                            <div class="card-body pt-0">
+                                                <div class="row mt-3">
+                                                    <div class="col-md-9">
+                                                        <label class="form-label required" for="business_location">
+                                                            {{__('adjustment.location')}}
+                                                        </label>
+                                                        <div class="input-group flex-nowrap">
+                                                            <div class="input-group-text"><i class="fa-solid fa-location-dot"></i></div>
+                                                            <select name="business_location" id="business_location_id"
+                                                                    class="form-select fw-bold rounded-0 form-select-sm"
+                                                                    data-kt-select2="true" data-hide-search="false"
+                                                                    data-placeholder="{{__('adjustment.placeholder_location')}}" data-allow-clear="true"
+                                                                    data-kt-user-table-filter="role" data-hide-search="true">
+                                                                <option></option>
+                                                                @foreach ($locations as $location)
+                                                                    <option {{$location->id == \Illuminate\Support\Facades\Auth::user()->default_location_id ? 'selected' : ''}} value="{{$location->id}}">{{$location->name}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="input-group-text "  data-bs-toggle="tooltip" data-bs-custom-class="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-primary-emphasis'>{{__('adjustment.location_tip')}}</span>">
+                                                                <i class="fa-solid fa-circle-info text-primary"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-4">
+                                                        <label class="form-label required" for="status">
+                                                           {{__('adjustment.status')}}
+                                                        </label>
+                                                        <div class="input-group flex-nowrap">
+                                                            <select name="status" class="form-select form-select-sm fw-bold "
+                                                                    data-kt-select2="true"
+                                                                    data-hide-search="true" data-placeholder="Status"
+                                                                    data-allow-clear="true" data-kt-user-table-filter="role"
+                                                                    data-hide-search="true">
+                                                                <option></option>
+                                                                <option value="prepared" selected>Prepared</option>
+                                                                <option value="completed">Completed</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Card header-->
+                                        </div>
+                    <!--end::General options-->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center mb-8">
+
+                                <div class="col-12">
+                                    <div class="input-group quick-search-form p-0">
+                                        <div class="input-group-text">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </div>
+                                        <input type="text" class="form-control rounded-end-1" id="searchInput"
+                                               placeholder="{{__('adjustment.search_products')}}">
+                                        <div
+                                            class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
+                                            id="autocomplete" data-allow-clear="true"
+                                            style="max-height: 300px;z-index: 100;"></div>
+                                    </div>
+                                </div>
+                                {{--                                <div class="col-6 col-md-3 btn-light-primary btn add_new_product_modal my-5 my-lg-0"--}}
+                                {{--                                     data-bs-toggle="modal" type="button"--}}
+                                {{--                                     --}}{{--  data-bs-target="#add_new_product_modal" --}}{{-- data-href="{{ url('purchase/add/supplier')}}">--}}
+                                {{--                                    <i class="fa-solid fa-plus me-2 "></i> Add new product--}}
+                                {{--                                </div>--}}
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="adjustment_table">
+                                    <thead>
+                                    <tr class="fw-bold fs-6 text-gray-800">
+                                        <th class="min-w-200px">{{__('adjustment.product')}}</th>
+                                        <td class="w-175px">{{__('adjustment.total_current_qty')}}</td>
+                                        <th class="w-175px">{{__('adjustment.on_ground_qty')}}</th>
+                                        <th class="w-175px">{{__('adjustment.difference_qty')}}</th>
+                                        <th class="min-w-100px">{{__('adjustment.unit')}}</th>
+                                        <th>
+                                            <i class="fas fa-trash fw-bold"></i>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="fw-semibold text-gray-600">
+                                    <tr class="dataTables_empty text-center">
+                                        <td colspan="8 ">{{__('adjustment.no_data_table')}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            {{--                            <div class="separator my-5"></div>--}}
+                            {{--                            <div class="col-4 float-end mt-3">--}}
+                            {{--                                <table class="col-12 ">--}}
+                            {{--                                    <tbody>--}}
+                            {{--                                    <tr>--}}
+                            {{--                                        <th>Total Item:</th>--}}
+                            {{--                                        <td class="rowcount text-left fs-4" id="total_item">0</td>--}}
+                            {{--                                    </tr>--}}
+                            {{--                                    <tr>--}}
+                            {{--                                        <th>Net Total Amount</th>--}}
+                            {{--                                        <td class="rowSum text-left fs-4 net_purchase_total_amount_text" id=''>0</td>--}}
+                            {{--                                    </tr>--}}
+                            {{--                                    </tbody>--}}
+                            {{--                                </table>--}}
+                            {{--                            </div>--}}
+
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center mt-2 mb-5">
+                        <button type="submit" class="btn btn-primary btn-lg save_btn">{{__('adjustment.save')}}</button>
+                    </div>
+                </div>
+                <!--end::Main column-->
+            </form>
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Content-->
+@endsection
+
+@push('scripts')
+    <script>
+        // const date = new Date();
+        //
+        // let day = date.getDate();
+        // let month = date.getMonth() + 1;
+        // let year = date.getFullYear();
+        //
+        // $("#kt_datepicker_2").flatpickr({
+        //     dateFormat: "d-m-Y",
+        //     conjunction: ""
+        // });
+        //
+        // let query = document.querySelector('#kt_datepicker_2');
+        // query.value = `${day}-${month}-${year}`;
+        //
+        //
+        // $(document).ready(function() {
+        //
+        //     var $fromLocationSelect = $('select[name="from_location"]');
+        //     var $toLocationSelect = $('select[name="to_location"]');
+        //
+        //
+        //     $fromLocationSelect.on('change', function() {
+        //         var selectedLocation = $(this).val();
+        //
+        //         $toLocationSelect.find('option').prop('disabled', false);
+        //         $toLocationSelect.find('option[value="' + selectedLocation + '"]').prop('disabled', true);
+        //         $toLocationSelect.trigger('change');
+        //     });
+        // });
+
+
+    </script>
+    @include('App.stock.adjustment.include.quickSearchProducts')
+@endpush

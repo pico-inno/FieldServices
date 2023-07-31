@@ -1,0 +1,16 @@
+.browseLogo input[type=file] {
+  margin-left: -2px !important;
+}
+
+.browseLogo input[type=file]::-webkit-file-upload-button {
+  display: none;
+}
+
+.browseLogo input[type=file]::file-selector-button {
+  display: none;
+}
+
+.browseLogo:hover label {
+  /* background-color: #dde0e3; */
+  cursor: pointer;
+}

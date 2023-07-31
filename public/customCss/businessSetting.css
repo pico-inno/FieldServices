@@ -1,0 +1,11 @@
+    input,select{
+        border-color: #7d7c7c67 !important;
+    }
+    input:focus,select:focus{
+        border-color:  #6e6e6e !important;
+    }
+    .highlighted {
+        background-color: yellow;
+        color: black;
+        transition: background-color 0.5s ease;
+    }

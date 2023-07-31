@@ -1,0 +1,11 @@
+{
+    "name": "HospitalManagement",
+    "alias": "hospitalmanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\HospitalManagement\\Providers\\HospitalManagementServiceProvider"
+    ],
+    "files": []
+}
