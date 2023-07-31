@@ -1,10 +1,1 @@
-{
-    "Service": false,
-    "Restaurant": false,
-    "HospitalManagement": false,
-    "StockInOut": false,
-    "RoomManagement": false,
-    "Reservation": false,
-    "OrderDisplay": false,
-    "ExchangeRate": true
-}
+[]
