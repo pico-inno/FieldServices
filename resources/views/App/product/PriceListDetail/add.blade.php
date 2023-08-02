@@ -2,7 +2,7 @@
 @section('styles')
 <style>
     /* .custom-select2 {
-        width: 135px;
+        width: 135px; 
     }
 
     #delete_room_row {
@@ -93,7 +93,8 @@
                                     <th class="min-w-150px">Type</th>
                                     <th class="min-w-150px">Product</th>
                                     <th class="min-w-100px">Min Quantity</th>
-                                    <th class="min-w-100px">Price</th>
+                                    <th class="min-w-150px">Calculate Type</th>
+                                    <th class="min-w-100px">Value</th>
                                     <th class="min-w-150px">Start Date</th>
                                     <th class="min-w-150px">End Date</th>
                                     <th><i class="fa-solid fa-trash text-danger"></i></th>
@@ -119,10 +120,17 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control form-control-sm rounded-0" name="min_qty[]" value="0">
+                                        <input type="text" class="form-control form-control-sm rounded-0" name="min_qty[]" value="">
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control form-control-sm rounded-0" name="price[]" value="00">
+                                        <select name="cal_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="true" data-placeholder="Please select">
+                                            <option></option>
+                                            <option value="fixed">Fix</option>
+                                            <option value="percentage">Percentage</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm rounded-0" name="cal_val[]" value="">
                                     </td>
                                     <td>
                                         <input type="text" name="start_date[]" class="form-control form-control-sm rounded-0 fs-7 select_date" placeholder="Select date" autocomplete="off" />
@@ -158,7 +166,5 @@
 @endsection
 
 @push('scripts')
-{{-- <script src="{{asset('customJs/roomsale.js')}}"></script> --}}
     @include('App.product.PriceListDetail.js.price_list_detail_js');
-
 @endpush
