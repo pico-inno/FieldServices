@@ -2,7 +2,7 @@
 
 @section('purchases_icon', 'active')
 @section('pruchases_show', 'active show')
-@section('purchases_add_active_show', 'active ')
+@section('purchases_new_add_active_show', 'active ')
 @section('title')
     <!--begin::Heading-->
     <h1 class="text-dark fw-bold my-0 fs-2">Add Purchase</h1>

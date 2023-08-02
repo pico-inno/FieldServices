@@ -83,7 +83,6 @@
                                     // dd($pd->toArray());
                                     $pdCurrency=$pd->currency['symbol'] ?? ' ';
 
-                                    $currencyDp=getSettingValue('currency_decimal_places');
                                     $quantityDp=getSettingValue('quantity_decimal_places');
                                 @endphp
                                 <tr class="text-center">
@@ -108,19 +107,19 @@
                                         {{$pd->toArray()['purchase_uom']['name']}}
                                     </td>
                                     <td>
-                                        {{round($pd->uom_price ?? 0,$currencyDp)}}&nbsp;{{$pdCurrency}}
+                                        {{price($pd->uom_price ?? 0,$pd->currency_id)}}
                                     </td>
                                     <td>
-                                        {{round($pd->per_item_discount ?? 0,$currencyDp)}}&nbsp;{{ $pd->discount_type=='percentage'?'%':$pdCurrency }}
+                                        {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{ $pd->discount_type=='percentage'?'%':$pdCurrency }}
                                     </td>
                                     <td>
-                                        {{round($pd->subtotal_with_discount,$currencyDp)}}&nbsp;{{$pdCurrency}}
+                                        {{price($pd->subtotal_with_discount,$pd->currency_id)}}
                                     </td>
                                     <td>
-                                        {{round($pd->per_item_expense,$currencyDp)}}&nbsp;{{$pdCurrency}}
+                                        {{price($pd->per_item_expense,$pd->currency_id)}}
                                     </td>
                                     <td>
-                                        {{round($pd->subtotal_with_tax,$currencyDp)}}&nbsp;{{$pdCurrency}}
+                                        {{price($pd->subtotal_with_tax,$pd->currency_id)}}
                                     </td>
 
 
@@ -173,7 +172,7 @@
                                         <td class="text-end">
                                         </td>
                                         <td class="text-end">
-                                            {{round($purchase['purchase_amount'] ?? 0,$currencyDp)}}&nbsp;{{$purchaseCurrency}}
+                                            {{price($purchase['purchase_amount'] ?? 0,$pd->currency_id)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -184,7 +183,7 @@
                                             (-)
                                         </td>
                                         <td class="text-end">
-                                            {{round($purchase['extra_discount'] ?? 0,$currencyDp)}} &nbsp;{{ $purchase['extra_discount_type']=='percentage'?'%':$purchaseCurrency}}
+                                            {{round($purchase['extra_discount'] ?? 0,2)}} &nbsp;{{ $purchase['extra_discount_type']=='percentage'?'%':$purchaseCurrency}}
 
                                         </td>
                                     </tr>
@@ -196,7 +195,7 @@
                                             (+)
                                         </td>
                                         <td class="text-end">
-                                            {{round($purchase['purchase_expense'],$currencyDp)}}&nbsp;{{$purchaseCurrency}}
+                                            {{price($purchase['purchase_expense'],$pd->currency_id)}}
                                         </td>
                                     </tr>
                                     {{-- <tr>
@@ -216,7 +215,7 @@
                                             (=)
                                         </td>
                                         <td class="text-end">
-                                        {{round($purchase['total_purchase_amount'],$currencyDp)}}&nbsp;{{$purchaseCurrency}}
+                                        {{price($purchase['total_purchase_amount'],$pd->currency_id)}}
                                         </td>
                                     </tr>
 
