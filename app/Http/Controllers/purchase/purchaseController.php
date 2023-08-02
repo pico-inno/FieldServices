@@ -68,7 +68,17 @@ class purchaseController extends Controller
         return view('App.purchase.addPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
     }
 
-
+    public function purchase__new_add()
+    {
+        $locations=businessLocation::all();
+        $currency=$this->currency;
+        $suppliers=Contact::where('type','Supplier')
+                    ->select('id','company_name','first_name','address_line_1','address_line_2','zip_code','city','state','country')
+                    ->get();
+        $currencies=Currencies::get();
+        $setting=$this->setting;
+        return view('App.purchase.addNewPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
+    }
     public function store(Request $request)
     {
         Validator::make([

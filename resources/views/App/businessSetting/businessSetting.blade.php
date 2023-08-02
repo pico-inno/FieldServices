@@ -573,8 +573,8 @@
                                                     </label>
                                                     <!--end::Label-->
                                                     <select class="form-select  form-select-sm" name="currency_symbol_placement" id="currency_symbol_placement" data-control="select2" data-placeholder="Select Currency">
-                                                        <option value="berfore_amt">Before Amount</option>
-                                                        <option value="after_amt">After Amount</option>
+                                                        <option value="before" @selected($settingData['currency_symbol_placement']='before')>Before Amount</option>
+                                                        <option value="after" @selected($settingData['currency_symbol_placement']='after')>After Amount</option>
                                                     </select>
                                                     <!--end::Input-->
                                                 </div>
