@@ -1,6 +1,6 @@
 <style>
     .box {
-        display: none; 
+        display: none;  
     }
 </style>
 <div class="modal fade"  id="quick_add_product_modal" >

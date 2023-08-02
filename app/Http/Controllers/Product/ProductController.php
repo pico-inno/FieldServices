@@ -411,11 +411,13 @@ class ProductController extends Controller
                 'profit_percent' => $request->single_profit,
                 'default_selling_price' => $request->single_selling,
             ];
+            
             if($isCreating){
                 $productSingle['created_by'] = auth()->id();
-                $$productSingle['created_at'] = now();
+                $productSingle['created_at'] = now();
                 DB::table('product_variations')->insert($productSingle);
             }
+
             if(!$isCreating){
                 $productVariationId = ProductVariation::where('product_id', $nextProductId)->first()->id;
                 $productSingle['updated_by'] = auth()->id();
