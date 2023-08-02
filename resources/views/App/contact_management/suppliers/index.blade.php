@@ -1,6 +1,10 @@
 @extends('App.main.navBar')
 @section('styles')
-
+<style>
+    #kt_datatable_example {
+        min-height: 40vh;
+    }
+</style>
 @endsection
 @section('contact_active','active')
 @section('contact_active_show','active show')
@@ -212,9 +216,6 @@
                     { data: 'custom_field_9'},
                     { data: 'custom_field_10'},
                 ],
-                drawCallback: function(settings) {
-                    adjustRowHeight();
-                }
             });
 
             $(document).on("click", ".delete-btn", function(e) {
@@ -233,20 +234,6 @@
                         }
                     });
             });
-
-            adjustRowHeight();
-        }
-
-        var adjustRowHeight = function() {
-            var numRows = datatable.rows().count();
-            //  console.log(numRows);
-            var tableRows = $('#kt_datatable_example tbody tr');
-
-            if (numRows === 1) {
-                tableRows.css('height', '170px');
-            } else {
-                tableRows.css('height', '50px');
-            }
         }
        
         // Hook export buttons
