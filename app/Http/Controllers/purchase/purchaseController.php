@@ -144,10 +144,7 @@ class purchaseController extends Controller
             })
 
             ->editColumn('date',function($purchase){
-                $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$purchase->created_at);
-                $formattedDate = $dateTime->format("m-d-Y " );
-                $formattedTime = $dateTime->format(" h:i A " );
-                return $formattedDate.'<br>'.'('.$formattedTime.')';
+                return fDate($purchase->created_at,true);
             })
             ->editColumn('purchaseItems',function($purchase){
                 $purchaseDetails=$purchase->purchase_details;
@@ -454,10 +451,12 @@ class purchaseController extends Controller
             }]);
         },'product', 'purchaseUom','currency'])
         ->where('purchases_id',$id)->where('is_delete',0)->get();
+        $setting=$this->setting;
         return view('App.purchase.DetailView.purchaseDetail',compact(
             'purchase',
             'location',
-            'purchase_details'
+            'purchase_details',
+            'setting'
         ));
     }
 

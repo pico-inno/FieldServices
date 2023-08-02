@@ -47,7 +47,7 @@
                                     Voucher No : <span class="text-gray-600 fw-semibold"> {{$purchase['purchase_voucher_no']}}3</span>
                                 </h3>
                                 <h3 class="text-primary-emphasis fw-semibold fs-6 mb-5">
-                                    Date : <span class="text-gray-600 fw-semibold">{{$purchase['purchased_at']}}</span>
+                                    Date : <span class="text-gray-600 fw-semibold">{{fDate($purchase['purchased_at'])}}</span>
                                 </h3>
                                 <h3 class="text-primary-emphasis fw-semibold fs-6 mb-5">
                                     Purchase Status : <span class="text-gray-600 fw-semibold">{{$purchase['status']}}</span>
@@ -66,8 +66,8 @@
                                     <th class="min-w-100px text-center ">Purchase Quantity</th>
                                     <th class="min-w-100px text-center ">UOM</th>
                                     <th class="min-w-100px text-center ">UOM Price</th>
-                                    <th class="min-w-100px text-center ">Per Item Discount</th>
-                                    <th class="min-w-100px text-center ">Subtotal With Discount</th>
+                                    <th class="min-w-100px text-center {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Per Item Discount</th>
+                                    <th class="min-w-100px text-center {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Subtotal With Discount</th>
                                     <th class="min-w-100px text-center ">Per Item Expense</th>
                                     <th class="min-w-100px text-center ">Subtotal </th>
                                 </tr>
@@ -109,10 +109,10 @@
                                     <td>
                                         {{price($pd->uom_price ?? 0,$pd->currency_id)}}
                                     </td>
-                                    <td>
+                                    <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
                                         {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{ $pd->discount_type=='percentage'?'%':$pdCurrency }}
                                     </td>
-                                    <td>
+                                    <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
                                         {{price($pd->subtotal_with_discount,$pd->currency_id)}}
                                     </td>
                                     <td>

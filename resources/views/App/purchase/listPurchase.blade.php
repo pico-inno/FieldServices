@@ -237,7 +237,7 @@
                             </th>
                             <th class="min-w-125px">Actions</th>
                             <th class="min-w-125px">Date</th>
-                            <th>purchaseItems</th>
+                            <th>Purchase at</th>
                             <th class="min-w-125px">Voucher No</th>
                             <th class="min-w-125px">location</th>
                             <th class="min-w-125px">Supplier</th>

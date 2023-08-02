@@ -1248,7 +1248,7 @@ class saleController extends Controller
     public function getPriceList($id){
         $data=PriceListDetails::where('pricelist_id',$id)->first();
         $priceData=[
-            'mainPriceList'=>$data->toArray(),
+            'mainPriceList'=>$data?$data->toArray():'',
             'basePriceList'=>$this->getBasePrice($data)->toArray()
         ];
         // dd($priceData);

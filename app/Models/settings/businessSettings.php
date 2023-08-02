@@ -17,6 +17,7 @@ class businessSettings extends Model
         'default_profit_percent',
         'currency_decimal_places',
         'quantity_decimal_places',
+        'currency_symbol_placement',
         'owner_id',
         'time_zone',
         'fy_start_month',

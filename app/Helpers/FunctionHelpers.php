@@ -60,3 +60,16 @@ function price($price,$currencyId='default'){
         return $formattedPrice;
     }
 }
+
+
+function fDate($date,$br=false)
+{
+    $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$date);
+    $formattedDate = $dateTime->format("m-d-Y " );
+    $formattedTime = $dateTime->format(" h:i A " );
+    if($br){
+        return $formattedDate.'<br>'.'('.$formattedTime.')';
+    }else{
+     return $formattedDate.' '.'('.$formattedTime.')';
+    }
+}

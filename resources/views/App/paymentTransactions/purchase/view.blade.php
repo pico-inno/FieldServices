@@ -27,7 +27,7 @@
                                           <span class="fw-semibold fs-7 text-gray-600">purchase at:</span>
                                         </th>
                                         <td  class="text-end">
-                                          <span class="fw-bold fs-7 text-gray-800">{{$data->purchased_at}}</span>
+                                          <span class="fw-bold fs-7 text-gray-800">{{fDate($data->purchased_at)}}</span>
                                         </td>
                                     </tr>
                                     <tr>

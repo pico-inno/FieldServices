@@ -53,6 +53,7 @@
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
                 uom.select2();
                 let uom_select=uom.val();
+                getPrice(uom);
                 changeQtyOnUom(uom,uom_select);
                 // lineDiscountCalulation(uom);
                 extraDiscCal();
@@ -632,6 +633,7 @@
             changeQtyOnUom($(this),$(this).val());
             getSellingPrice($(this));
             checkStock($(this));
+            getPrice($(this));
             subtotalCalculation($(this));
             sale_amount_cal();
             setTimeout(() => {
@@ -925,16 +927,25 @@
             let mainPriceList=priceList.mainPriceList;
             let basePriceLists=priceList.basePriceList;
             let mainPriceStatus=priceSetting(mainPriceList,parent);
-            console.log(priceList,'click edit');
             if(!mainPriceStatus){
-                let i = 0;
-                while (i < basePriceLists.length) {
-                    let bp = basePriceLists[i];
-                    let priceStatus = priceSetting(bp, parent);
-                    if(priceStatus){
-                        break;
+                if(basePriceLists.length > 0){
+                    let i = 0;
+                    while (i < basePriceLists.length) {
+                        let bp = basePriceLists[i];
+                        let priceStatus = priceSetting(bp, parent);
+                        if(priceStatus){
+                            break;
+                        }
+                        i++;
                     }
-                    i++;
+                }else{
+                    let productId=parent.find('.product_id').val();
+                    let variationId=parent.find('.variation_id').val();
+                    let product=productsOnSelectData.filter(function(p){
+                        return p.product_id==productId && variationId == p.variation_id;
+                    })[0];
+                    let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices);
+                    parent.find('.uom_price').val(isNullOrNan(result.resultPrice));
                 }
             }
         }
@@ -983,25 +994,15 @@
     }
     function priceSettingToUi(priceStage,parentDom,product){
         let quantity=isNullOrNan(parentDom.find('.quantity').val());
-        let inputUomId=parentDom.find('.uom_select').val();
-        let uomIdForSale=product.uom_id;
+        let uomChange=getPriceByUOM(parentDom,product,priceStage.min_qty,priceStage.cal_value);
+        let qtyByPriceStage=uomChange.resultQty;
 
         const uoms=product.uom.unit_category.uom_by_category;
-        const uomForSale =uoms.filter(function ($u) {
-                return $u.id ==uomIdForSale;
-        })[0];
+        let inputUomId=parentDom.find('.uom_select').val();
         const inputUom =uoms.filter(function ($u) {
                 return $u.id ==inputUomId;
         })[0];
-        const refUOM =uoms.filter(function ($u) {
-                return $u.unit_type =="reference";
-        })[0];
-
-        let refQtyForSale=getReferenceUomInfoByCurrentUomQty(priceStage.min_qty,uomForSale,refUOM)['qtyByReferenceUom'];
-        // let qtyByPriceStage=changeQty(parentDom.find('.uom_select'),inputUomId,refQtyForSale,product).roundedResult;
-        // changeQty(e,newUomId,refQty,product)
-        let uomChange=changeQtyOnUom2(uomIdForSale,inputUomId,priceStage.min_qty,uoms,priceStage.cal_value );
-        let qtyByPriceStage=uomChange.resultQty;
+                    console.log(uomChange);
         if(quantity >= qtyByPriceStage){
 
             parentDom.find('.uom_price').val(uomChange.resultPrice);
@@ -1009,13 +1010,35 @@
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
+            // let productId=parentDom.find('.product_id').val();
+            // let variationId=parentDom.find('.variation_id').val();
+            // let product=productsOnSelectData.filter(function(p){
+            //     return p.product_id==productId && variationId == p.variation_id;
+            // })[0];
+            // parentDom.find('.uom_price').val(isNullOrNan(product.defaultSellingPrices));
+            // return true;
+
+
             let refPrice=product.stock[0].ref_uom_price;
             let result=refPrice * isNullOrNan( inputUom.value);
             parentDom.find('.uom_price').val(result);
         }
         return false;
     }
+    function getPriceByUOM(parentDom,product,priceStageQty=1,priceStageCalVal=''){
+        const uoms=product.uom.unit_category.uom_by_category;
+        let inputUomId=parentDom.find('.uom_select').val();
+        let uomIdForSale=product.uom_id;
+        const uomForSale =uoms.filter(function ($u) {
+                return $u.id ==uomIdForSale;
+        })[0];
 
+        const refUOM =uoms.filter(function ($u) {
+                return $u.unit_type =="reference";
+        })[0];
+
+        return changeQtyOnUom2(uomIdForSale,inputUomId,priceStageQty,uoms,priceStageCalVal);
+    }
 
 
     function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='') {
