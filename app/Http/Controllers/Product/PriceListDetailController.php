@@ -23,6 +23,11 @@ use App\Models\Product\PriceListDetails;
 
 class PriceListDetailController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isActive']);
+    }
+    
     public function priceListDetailDatas()
     {
         $priceLists = PriceLists::with('priceListDetails', 'businessSetting', 'currency')->get();
