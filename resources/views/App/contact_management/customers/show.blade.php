@@ -558,7 +558,133 @@
             <!--begin::sales tab-->
             <div class="tab-pane fade" id="salesTab" role="tab-panel">
                 <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <div class="card card-p-4 card-flush">
+                        <div class="card-header py-5 gap-2 gap-md-5 d-flex flex-column">
+                            <div class="card-toolbar d-flex justify-content-between ">
+                                <!--begin::Search-->
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
+                                            <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                    <input type="text" data-kt-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search....." />
+                                </div>
+                                <!--end::Search-->
+                                <!--begin::Export buttons-->
+                                <div id="kt_datatable_example_1_export" class="d-none"></div>
+                                <!--end::Export buttons-->
+                                <!--begin::Export dropdown-->
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-light-primary btn-sm mx-2" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                        Export Report
+                                    </button>
+                                    <!--begin::Menu-->
+                                    <div id="kt_datatable_example_export_menu" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
+                                        <!--begin::Menu item-->
+                                        <div class="menu-item px-3">
+                                            <a href="#" class="menu-link px-3" data-kt-export="copy">
+                                                Copy to clipboard
+                                            </a>
+                                        </div>
+                                        <!--end::Menu item-->
+                                        <!--begin::Menu item-->
+                                        <div class="menu-item px-3">
+                                            <a href="#" class="menu-link px-3" data-kt-export="excel">
+                                                Export as Excel
+                                            </a>
+                                        </div>
+                                        <!--end::Menu item-->
+                                        <!--begin::Menu item-->
+                                        <div class="menu-item px-3">
+                                            <a href="#" class="menu-link px-3" data-kt-export="csv">
+                                                Export as CSV
+                                            </a>
+                                        </div>
+                                        <!--end::Menu item-->
+                                        <!--begin::Menu item-->
+                                        <div class="menu-item px-3">
+                                            <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                                                Export as PDF
+                                            </a>
+                                        </div>
+                                        <!--end::Menu item-->
+                                    </div>
+                                    <!--end::Menu-->
+                                    <!--end::Export dropdown-->
 
+                                    <!--begin::Hide default export buttons-->
+                                    <div id="kt_datatable_example_buttons" class="d-none"></div>
+                                    <!--end::Hide default export buttons-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="table align-middle rounded table-row-dashed fs-6 g-5" id="sales_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase">
+                                        <th class="min-w-125px">Action</th>
+                                        <th class="min-w-125px">Date</th>
+                                        <th class="min-w-125px">Invoice No.</th>
+                                        <th class="min-w-125px">Customer Name</th>
+                                        <th class="min-w-125px">Contact Number</th>
+                                        <th class="min-w-125px">Location</th>
+                                        <th class="min-w-125px">Payment Status</th>
+                                        <th class="min-w-125px">Payment Method</th>
+                                        <th class="min-w-125px">Total Sale Amount</th>
+                                        <th class="min-w-125px">Total Paid</th>
+                                        <th class="min-w-125px">Total Balance</th>
+                                        <th class="min-w-125px">Sold By</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table head-->
+                                <!--begin::Table body-->
+                                <tbody class="fw-semibold text-gray-600">
+                                    <tr>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-primary fw-semibold fs-7 " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Actions
+                                                    <span class="svg-icon fs-3 rotate-180 ms-3 me-0">
+                                                        <i class="fas fa-angle-down"></i>
+                                                    </span>
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                    <li>
+                                                        <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-pen-to-square me-3"></i> Edit</a>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="delete-btn dropdown-item p-2" data-id="' . $row->id . '">
+                                                            <i class="fa-solid fa-trash me-3"></i> Delete
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>4-8-2023</td>
+                                        <td>SVN-000001</td>
+                                        <td>Anna</td>
+                                        <td>09123456789</td>
+                                        <td>Main Branch</td>
+                                        <td>Paid</td>
+                                        <td>Cash</td>
+                                        <td>50000</td>
+                                        <td>50000</td>
+                                        <td>0.0000</td>
+                                        <td>admin</td>
+                                    </tr>
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!--end::sales tab-->
@@ -714,7 +840,8 @@
     </div>
     <!--end::container-->
 
-    @include('reservation::reservation.addDocument&Note')
+    @include('App.contact_management.customers.addDocument&Note')
+    
 
 </div>
 <!--end::Content-->
@@ -745,6 +872,13 @@
     cb(start, end);
 
     $("#document_and_note_table").DataTable({
+        "order": false,
+        "paging": false,
+        "info": false,
+        "dom": "<'table-responsive'tr>"
+    });
+
+    $('#sales_table').DataTable({
         "order": false,
         "paging": false,
         "info": false,
