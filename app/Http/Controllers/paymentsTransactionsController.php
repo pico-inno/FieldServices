@@ -207,7 +207,7 @@ class paymentsTransactionsController extends Controller
             if($expense['expense_amount'] ==  $paid_amount){
                 $payment_status='paid';
             }elseif($expense['expense_amount'] ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -237,7 +237,7 @@ class paymentsTransactionsController extends Controller
             if($purchase->total_purchase_amount==  $paid_amount){
                 $payment_status='paid';
             }elseif($purchase->total_purchase_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -273,7 +273,7 @@ class paymentsTransactionsController extends Controller
             if($sale->total_sale_amount ==  $paid_amount){
                 $payment_status='paid';
             }elseif($sale->total_sale_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -359,7 +359,7 @@ class paymentsTransactionsController extends Controller
             if($oriPaymentAmount == $request->paid_amount){
                 $payment_status='paid';
             }elseif($request->paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -440,7 +440,7 @@ class paymentsTransactionsController extends Controller
             if($paid_amount ==  $expense->expense_amount){
                 $payment_status='paid';
             }elseif($paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -485,7 +485,7 @@ class paymentsTransactionsController extends Controller
             if($paid_amount ==  $purchase->total_purchase_amount){
                 $payment_status='paid';
             }elseif($paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -533,7 +533,7 @@ class paymentsTransactionsController extends Controller
             if($paid_amount ==  $sale->total_sale_amount){
                 $payment_status='paid';
             }elseif($paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }

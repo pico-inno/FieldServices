@@ -134,7 +134,7 @@
                 </div>
                 <div class="card border border-primary-subtle border-top-2 border-left-0 border-right-0 border-bottom-0">
                     <div class="card-body px-5">
-                        <div class="row align-items-center mb-8">
+                        {{-- <div class="row align-items-center mb-8">
                             <div class="col-5 col-12 col-md-2 btn-primary btn add_new_product_modal  my-5 my-lg-0 d-none"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Import Products
                             </div>
@@ -150,15 +150,15 @@
                             <a class="col-6 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0"  target="__blank" href="{{route('product.add')}}">
                                 <i class="fa-solid fa-plus me-2 "></i> Add new product
                             </a>
-                        </div>
+                        </div> --}}
                         <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="purchase_table">
+                            <table class="table align-middle table-row-dashed fs-6 gy-2 mt-10" id="purchase_table">
                                 <!--begin::Table head-->
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
-                                    <tr class="text-start text-primary fw-bold fs-8 text-uppercase gs-0 ">
+                                    <tr class="text-center text-primary fw-bold fs-8 text-uppercase gs-0 ">
                                         {{-- <th class="min-w-50px">#</th> --}}
-                                        <th class="min-w-125px ps-1" style="max-width: 125px">Product Name</th>
+                                        <th class="min-w-200px" >Product Name</th>
                                         <th class="min-w-80px">Qty </th>
                                         <th class="min-w-100px">Unit</th>
                                         <th class="min-w-125px">UOM Price</th>
@@ -172,18 +172,58 @@
                                         @if ( $setting->lot_control=='on')
                                             <th class="min-w-150px">Lot/Serial No</th>
                                         @endif
-                                        <th class="text-center" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+                                        <th class="text-center min-w-80px" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
-                                <tbody class="fw-semibold text-gray-600 data-table-body">
-                                    <tr class="dataTables_empty text-center">
-                                        <td colspan="8 " >There is no data to show</td>
+                                <tbody class="fw-semibold text-gray-600 data-table-body" id="product_list">
+                                    <tr class=" text-center ms-2 purchaseItemTable">
+                                        {{-- <td colspan="8 " >There is no data to show</td> --}}
+                                            <td class="ps-2">
+                                                {{-- <input type="text" class="form-control form-control-sm input-form" name="milo" value="Milo"> --}}
+                                                <select name="expense_product_id"  class="input-form form-select form-select-sm expenseProduct  border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 "  >
+
+                                                </select>
+                                                <span class="d-none text-span">Milo</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm input-form" value="50">
+                                                <span class="d-none text-span">20</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm input-form" value="bottles">
+                                                <span class="d-none text-span">bottles</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm input-form" value="50000">
+                                                <span class="d-none text-span">50000</span>
+                                            </td>
+                                            <td>
+
+                                                <input type="text" class="form-control form-control-sm input-form" value="50000">
+                                                <span class="d-none text-span">50000</span>
+                                            </td>
+                                            <td>
+
+                                                <input type="text" class="form-control form-control-sm input-form" value="50000">
+                                                <span class="d-none text-span">50000</span>
+                                            </td>
+                                            <th>
+                                                <i class="fa-regular fa-pen-to-square editRow cursor-pointer"></i>
+                                                <i class="fa-solid fa-trash text-danger deleteRow btn cursor-pointer" ></i>
+                                            </th>
                                     </tr>
                                 </tbody>
+
                             </table>
+                        </div>
+                        <div class="row mb-8">
+                            <div class="d-flex mx-5">
+                                <a type="button" class="text-decoration-underline cursor-pointer" id="add_product_row"><i class="fa-solid fa-plus text-primary"></i> add new product</a>
+                                <a type="button" class="text-decoration-underline cursor-pointer" id="delete_product_row"><i class="fa-solid fa-trash text-danger px-2"></i>remove</a>
+                            </div>
                         </div>
                         <div class="separator my-5"></div>
                         <div class="col-sm-4 col-12 float-end mt-3">
@@ -363,6 +403,69 @@
 
 
 $(document).ready(function(){
+    let purchaseItemRowCount=0;
+    $('#add_product_row').on('click',function(){
+        $('#product_list').append(productComponent());
+        $('.editRow').off('click').on('click',function(){
+        let parent = $(this).closest('.purchaseItemTable');
+
+        parent.find('.input-form').toggleClass('d-none');
+        parent.find('.text-span').toggleClass('d-none');
+
+        // parent.find('.input-form').addClass('d-none');
+        // parent.find('.text-span').removeClass('d-none');
+    })
+
+    })
+    $('#delete_product_row').on('click',function(){
+        $('#product_list tr:last').remove();
+    })
+    $('.editRow').on('click',function(){
+        let parent = $(this).closest('.purchaseItemTable');
+
+        parent.find('.input-form').toggleClass('d-none');
+        parent.find('.text-span').toggleClass('d-none');
+
+        // parent.find('.input-form').addClass('d-none');
+        // parent.find('.text-span').removeClass('d-none');
+    })
+
+    const productComponent=()=>{
+        return `
+        <tr class=" text-center ms-2 purchaseItemTable">
+                                            <td class="ps-2">
+                                                <input type="text" class="form-control form-control-sm input-form" value="Milo">
+                                                <span class="d-none text-span">Milo</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm input-form" value="50">
+                                                <span class="d-none text-span">20</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm input-form" value="bottles">
+                                                <span class="d-none text-span">bottles</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm input-form" value="50000">
+                                                <span class="d-none text-span">50000</span>
+                                            </td>
+                                            <td>
+
+                                                <input type="text" class="form-control form-control-sm input-form" value="50000">
+                                                <span class="d-none text-span">50000</span>
+                                            </td>
+                                            <td>
+
+                                                <input type="text" class="form-control form-control-sm input-form" value="50000">
+                                                <span class="d-none text-span">50000</span>
+                                            </td>
+                                            <th>
+                                                <i class="fa-regular fa-pen-to-square editRow"></i>
+                                                <i class="fa-solid fa-trash text-danger deleteRow btn" ></i>
+                                            </th>
+                                    </tr>
+        `
+    }
 
     $('[data-td-toggle="datetimepicker"]').flatpickr({
              enableTime: true,
@@ -392,6 +495,41 @@ $(document).ready(function(){
     if(locationVal){
         limitStatusBylocation(locationVal);
     }
+
+
+
+    $('.expenseProduct').select2({
+            ajax: {
+                url: `/purchase/get/product`,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                delay: 250,
+                processResults: function(data) {
+                        results=[];
+                        data.map(function(d) {
+                            let variations=d.product_variations;
+                            variations.forEach(function(v) {
+                                results.push({
+                                    id: v.id,
+                                    text: `${d.name} ${v.variation_template_value ?`(${v.variation_template_value.name})`: ''}`,
+                                    uom:d.uom
+                                });
+                            });
+                        })
+                    return {
+                        results
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Search for an item',
+            minimumInputLength: 3
+        })
+
+
 })
 </script>
 <script src={{asset('customJs/Ajax/getAccountByCurrency.js')}}></script>

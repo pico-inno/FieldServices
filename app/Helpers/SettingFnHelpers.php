@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Product\UOM;
 use App\Models\settings\businessSettings;
 
 function getSettingValue($key){

@@ -124,12 +124,16 @@ class purchaseController extends Controller
             return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse']);
         }
     }
-    public function listData()
+    public function listData(Request $request)
     {
 
         $purchases=purchases::where('is_delete',0)
             ->with('business_location_id','supplier')
-            ->OrderBy('id','desc')->get();
+            ->OrderBy('id','desc');
+            if($request->filled('form_data') && $request->filled('to_date')){
+                $purchases=$purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=',$request->to_date);
+            }
+            $purchases=$purchases->get();
         return DataTables::of($purchases)
             ->addColumn('checkbox',function($purchase){
                 return
@@ -175,7 +179,7 @@ class purchaseController extends Controller
                 // return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
             })
             ->editColumn('payment_status',function($e){
-                if($e->payment_status=='pending'){
+                if($e->payment_status=='due'){
                     return '<span class="badge badge-warning">Pending</span>';
                 }elseif($e->payment_status=='partial'){
                     return '<span class="badge badge-primary">Partial</span>';
@@ -553,7 +557,7 @@ class purchaseController extends Controller
     private function purchaseData($request)
     {
         if($request->paid_amount == 0){
-            $payment_status='pending';
+            $payment_status='due';
         }elseif($request->paid_amount >= $request->total_purchase_amount ){
             $payment_status='paid';
         }else{

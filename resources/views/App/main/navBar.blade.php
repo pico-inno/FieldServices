@@ -1061,7 +1061,7 @@
                                                                 <span class="menu-title px-0">Add Purchase</span>
                                                             </a>
                                                         </div>
-                                                        <div class="menu-item">
+                                                        <div class="menu-item d-none">
                                                             <a class="menu-link @yield('purchases_new_add_active_show') px-0" href="{{route('purchase_new_add')}}">
                                                                 <span class="menu-icon">
                                                                      <i class="fa-solid fa-cart-plus"></i>

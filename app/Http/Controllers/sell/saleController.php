@@ -109,9 +109,10 @@ class saleController extends Controller
                 return '';
             })
             ->editColumn('sold_at', function ($saleItem) {
-                $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$saleItem->sold_at);
-                $formattedDate = $dateTime->format("m/d/Y");
-                return $formattedDate;
+                return fDate($saleItem->sold_at,true);
+            })
+            ->editColumn('sale_amount', function ($saleItem) {
+                return price($saleItem->sale_amount,$saleItem->currency_id);
             })
             ->editColumn('status', function ($purchase) {
                 $html = '';
@@ -170,7 +171,7 @@ class saleController extends Controller
                 $html .= '</ul></div></div>';
                 return (hasView('sell') && hasPrint('sell') && hasUpdate('sell') && hasDelete('sell') ? $html : 'No Access');
             })
-            ->rawColumns(['action', 'checkbox','status'])
+            ->rawColumns(['action', 'checkbox','status','sold_at'])
             ->make(true);
     }
 
@@ -296,7 +297,7 @@ class saleController extends Controller
         try {
             $lastSaleId = sales::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
                 if($request->paid_amount == 0){
-                    $payment_status='pending';
+                    $payment_status='due';
                 }elseif($request->paid_amount >= $request->total_sale_amount ){
                     $payment_status='paid';
                 }else{
@@ -314,7 +315,7 @@ class saleController extends Controller
                     'total_sale_amount' => $request->total_sale_amount,
                     'paid_amount' => $request->paid_amount,
                     'payment_status'=>$payment_status,
-                    'pos_register_id'=>$request->pos_register_id ?? '',
+                    'pos_register_id'=>$request->pos_register_id ?? null,
                     'balance_amount' => $request->balance_amount,
                     'currency_id' => $request->currency_id,
                     'sold_at' => now(),

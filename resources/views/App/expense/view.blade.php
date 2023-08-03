@@ -65,8 +65,8 @@
                                             <span class="fw-semibold fs-7 text-gray-600">Payment Status:</span>
                                         </th>
                                         <td  class="text-end">
-                                            @if ($expense->payment_status=='pending')
-                                                <span class="badge badge-warning">Pending</span>
+                                            @if ($expense->payment_status=='due')
+                                                <span class="badge badge-warning">Due</span>
                                             @elseif ($expense->payment_status=='partial')
                                                 <span class="badge badge-primary">Partial</span>
                                             @elseif ($expense->payment_status=='paid')

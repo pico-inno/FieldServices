@@ -144,7 +144,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-row-dashed fs-6 gy-5 mt-3" id="sale_table">
+                            <table class="table table-row-dashed fs-6 gy-4 mt-3" id="sale_table">
                                 <!--begin::Table head-->
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
@@ -201,7 +201,7 @@
                                 <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm" value="0" >
                             </div>
                         </div>
-                        <div class="row justify-content-end">
+                        <div class="row justify-content-end  {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
                                     Total Item Discount:(-)Ks

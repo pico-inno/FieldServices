@@ -147,7 +147,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-row-dashed fs-6 gy-5 mt-10" id="sale_table">
+                            <table class="table table-row-dashed fs-6 gy-4 mt-10" id="sale_table">
                                 <!--begin::Table head-->
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
@@ -279,15 +279,15 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-end mb-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Sale Amount:(=)Ks
                                 </span>
                                <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm fs-7" value="{{$sale->sale_amount }}" >
                             </div>
                         </div>
-                        <div class="row justify-content-end">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                        <div class="row justify-content-end {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Total Item Discount:(-)Ks
                                 </span>
@@ -295,7 +295,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-7  col-12 col-md-3">
+                            <div class="mb-7  col-12 col-md-3 offset-1">
                                 <label class="form-label fs-6 fw-semibold text-gray-800" for="">
                                     Extra Discount Type
                                 </label>
@@ -304,13 +304,13 @@
                                     <option value="percentage" @selected($sale->extra_discount_type=='percentage')>Percentage</option>
                                 </select>
                             </div>
-                            <div class="mb-7  col-12 col-md-3">
+                            <div class="mb-7  col-12 col-md-3 ">
                                 <label class="form-label fs-6 fw-semibold text-gray-800" for="">
                                   Extra Discount Amount
                                 </label>
-                                 <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount" value="{{$sale->total_item_discount ?? 0}}">
+                                 <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount" value="{{$sale->extra_discount_amount ?? 0}}">
                             </div>
-                            <div class="fs-6  fw-semibold col-12 col-md-6 d-flex justify-content-end align-items-center">
+                            <div class="fs-6  fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Discount :(-)Ks
                                 </span>
@@ -318,7 +318,7 @@
                             </div>
                         </div>
                         <div class="row justify-content-end mt-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Total Sale Amount:(=)Ks
                                 </span>
@@ -326,7 +326,7 @@
                             </div>
                         </div>
                         {{-- <div class="row justify-content-end mt-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Paid Amount:(=)Ks
                                 </span>
@@ -334,7 +334,7 @@
                             </div>
                         </div>
                         <div class="row justify-content-end mt-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Balance Amount:(=)Ks
                                 </span>
@@ -358,7 +358,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
                                     Paid Amount:(=)Ks
                                 </span>
@@ -367,7 +367,7 @@
                         </div>
 
                         <div class="row justify-content-end">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
                                     Balance Amount:(=)Ks
                                 </span>
