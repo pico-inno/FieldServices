@@ -21,11 +21,13 @@ use App\Models\Stock\StockoutDetail;
 use App\Models\Stock\StockTransfer;
 use App\Models\Stock\StockTransferDetail;
 use App\Models\stock_history;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use Yajra\DataTables\Facades\DataTables;
 use function PHPUnit\Framework\isEmpty;
 use function Symfony\Component\String\b;
 
@@ -47,6 +49,7 @@ class StockTransferController extends Controller
      */
     public function index()
     {
+
         $locations = businessLocation::select('id', 'name')->get();
         $stockouts_person = BusinessUser::select('id', 'username')->get();
         return view('App.stock.transfer.index', [
@@ -1044,80 +1047,178 @@ class StockTransferController extends Controller
         }
     }
 
-    public function filterList(Request $request)
+    public function listData()
     {
 
-        $dateRange = $request->data['filter_date'];
-        $dates = explode(' - ', $dateRange);
-
-        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
-        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
-
-
-        $query = StockTransfer::where('is_delete', 0)
-            ->with(['businessLocationFrom:id,name', 'businessLocationTo:id,name','stocktransferPerson:id,username', 'stockreceivePerson:id,username', 'created_by:id,username'])
-            ->whereBetween('transfered_at', [$startDate, $endDate]);;
-
-        if ($request->data['filter_status'] != 0) {
-            $status = '';
-
-            switch ($request->data['filter_status']) {
-                case 1:
-                    $status = 'pending';
-                    break;
-                case 2:
-                    $status = 'confirmed';
-                    break;
-            }
-
-            $query->where('status', $status);
-        }
-
-        if ($request->data['filter_locations_from'] != 0) {
-            $query->where('from_location', $request->data['filter_locations_from']);
-        }
-
-        if ($request->data['filter_locations_to'] != 0) {
-            $query->where('to_location', $request->data['filter_locations_to']);
-        }
-
-        if ($request->data['filter_stocktransferperson'] != 0) {
-            $query->where('transfered_person', $request->data['filter_stocktransferperson']);
-        }
-
-        if ($request->data['filter_stockreceiveperson'] != 0) {
-            $query->where('received_person', $request->data['filter_stockreceiveperson']);
-        }
-
-        $stocktransfers = $query->get();
+        $transferResults = StockTransfer::where('is_delete',0)
+            ->with([
+                'businessLocationFrom:id,name',
+                'businessLocationTo:id,name',
+                'stocktransferPerson:id,username',
+                'stockreceivePerson:id,username',
+            ])
+            ->OrderBy('id','desc')->get();
 
 
-        return response()->json($stocktransfers, 200);
+        return DataTables::of($transferResults)
+            ->addColumn('checkbox',function($transfer){
+                return
+                    '
+                    <div class="form-check form-check-sm form-check-custom ">
+                        <input class="form-check-input" type="checkbox" data-checked="delete" value='.$transfer->id.' />
+                    </div>
+                ';
+            })
+            ->editColumn('business_location_from', function($transfer){
+                return $transfer->businessLocationFrom['name'] ?? '-';
+            })
+            ->editColumn('business_location_to', function($transfer){
+                return $transfer->businessLocationTo['name'] ?? '-';
+            })
+//            ->editColumn('stocktransfer_person', function($transfer){
+//                return $transfer->stocktransfer_person['username'] ?? '-';
+//            })
+//            ->editColumn('stockreceive_person', function($transfer){
+//                return $transfer->stockreceive_person['username'] ?? '-';
+//            })
+            ->editColumn('status', function($transfer) {
+                $html='';
+                if($transfer->status== 'prepared'){
+                    $html= "<span class='badge badge-light-secondary'> $transfer->status</span>";
+                }elseif($transfer->status == 'pending'){
+                    $html= "<span class='badge badge-light-primary'> $transfer->status</span>";
+                }elseif ($transfer->status == 'in_transit'){
+                    $html = "<span class='badge badge-light-warning'>$transfer->status</span>";
+                }elseif($transfer->status == 'completed'){
+                    $html = "<span class='badge badge-light-success'>$transfer->status</span>";
+                }
+                return $html;
+            })
+            ->addColumn('action', function ($transfer) {
+
+                $html = '
+                    <div class="dropdown ">
+                        <button class="btn m-2 btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle " type="button" id="purchaseDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Actions
+                        </button>
+                        <div class="z-3">
+                        <ul class="dropdown-menu z-10 p-5 " aria-labelledby="purchaseDropDown" role="menu">';
+                if(hasView('stock transfer')){
+                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2"   type="button" data-href="'.route('stock-transfer.show', $transfer->id).'">
+                                View
+                            </a>';
+                }
+                if (hasPrint('stock transfer')){
+                    $html .= ' <a class="dropdown-item p-2  px-3  text-gray-600 print-invoice rounded-2"  data-href="' . route('transfer.print',$transfer->id) .'">print</a>';
+                }
+                if (hasUpdate('stock transfer')){
+                    $html .= '      <a href="'.route('stock-transfer.edit', $transfer->id).'" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a> ';
+                }
+                if (hasDelete('stock transfer')){
+                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$transfer->id.' data-adjustment-voucher-no='.$transfer->adjustment_voucher_no.' data-adjustment-status='.$transfer->status.' data-kt-adjustmentItem-table="delete_row">Delete</a>';
+                }
+                $html .= '</ul></div></div>';
+
+                return (hasView('stock transfer') && hasPrint('stock transfer') && hasUpdate('stock transfer') && hasDelete('stock transfer') ? $html : 'No Access');
+            })
+            ->rawColumns(['checkbox', 'action', 'business_location_from', 'business_location_to', 'stocktransfer_person','stockreceive_person','status'])
+            ->make(true);
     }
 
-    public function stocktransferInvoicePrint($id)
+    public function invoicePrint($id)
     {
+        $transfer=StockAdjustment::with(['businessLocation', 'createdPerson:id,username'])->where('id',$id)->first()->toArray();
 
-        $stocktransfer = StockTransfer::with([
-            'businessLocationFrom:id,name,city,state,country,landmark,zip_code',
-            'businessLocationTo:id,name,city,state,country,landmark,zip_code',
-            'stocktransferPerson:id,username',
-            'stockreceivePerson:id,username'
-        ])->where('id', $id)->first()->toArray();
 
-        $stocktransfer_details = StockTransferDetail::where('transfer_id', $stocktransfer['id'])
-            ->where('is_delete', '0')
-            ->with(['product:id,name', 'productVariation:id,variation_template_value_id', 'productVariation.variationTemplateValue:id,name'])
-            ->leftJoin('uom_sets', 'transfer_details.uomset_id', '=', 'uom_sets.id')
-            ->leftJoin('units', 'transfer_details.unit_id', '=', 'units.id')
+
+        $location = $transfer['business_location'];
+
+        $transfer_detrails=StockAdjustmentDetail::where('adjustment_id',$transfer['id'])
+            ->where('is_delete','0')
+            ->with(['product', 'uom','productVariation'=>function($q){
+                $q->with('variationTemplateValue');
+            }])
             ->get();
 
 
-        $invoiceHtml = view('App.stock.transfer.invoice', compact('stocktransfer',  'stocktransfer_details'))->render();
-
+        $invoiceHtml = view('App.stock.adjustment.invoice',compact('adjustment','location','adjustment_details'))->render();
         return response()->json(['html' => $invoiceHtml]);
-
     }
+
+//    public function filterList(Request $request)
+//    {
+//
+//        $dateRange = $request->data['filter_date'];
+//        $dates = explode(' - ', $dateRange);
+//
+//        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
+//        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
+//
+//
+//        $query = StockTransfer::where('is_delete', 0)
+//            ->with(['businessLocationFrom:id,name', 'businessLocationTo:id,name','stocktransferPerson:id,username', 'stockreceivePerson:id,username', 'created_by:id,username'])
+//            ->whereBetween('transfered_at', [$startDate, $endDate]);;
+//
+//        if ($request->data['filter_status'] != 0) {
+//            $status = '';
+//
+//            switch ($request->data['filter_status']) {
+//                case 1:
+//                    $status = 'pending';
+//                    break;
+//                case 2:
+//                    $status = 'confirmed';
+//                    break;
+//            }
+//
+//            $query->where('status', $status);
+//        }
+//
+//        if ($request->data['filter_locations_from'] != 0) {
+//            $query->where('from_location', $request->data['filter_locations_from']);
+//        }
+//
+//        if ($request->data['filter_locations_to'] != 0) {
+//            $query->where('to_location', $request->data['filter_locations_to']);
+//        }
+//
+//        if ($request->data['filter_stocktransferperson'] != 0) {
+//            $query->where('transfered_person', $request->data['filter_stocktransferperson']);
+//        }
+//
+//        if ($request->data['filter_stockreceiveperson'] != 0) {
+//            $query->where('received_person', $request->data['filter_stockreceiveperson']);
+//        }
+//
+//        $stocktransfers = $query->get();
+//
+//
+//        return response()->json($stocktransfers, 200);
+//    }
+
+//    public function stocktransferInvoicePrint($id)
+//    {
+//
+//        $stocktransfer = StockTransfer::with([
+//            'businessLocationFrom:id,name,city,state,country,landmark,zip_code',
+//            'businessLocationTo:id,name,city,state,country,landmark,zip_code',
+//            'stocktransferPerson:id,username',
+//            'stockreceivePerson:id,username'
+//        ])->where('id', $id)->first()->toArray();
+//
+//        $stocktransfer_details = StockTransferDetail::where('transfer_id', $stocktransfer['id'])
+//            ->where('is_delete', '0')
+//            ->with(['product:id,name', 'productVariation:id,variation_template_value_id', 'productVariation.variationTemplateValue:id,name'])
+//            ->leftJoin('uom_sets', 'transfer_details.uomset_id', '=', 'uom_sets.id')
+//            ->leftJoin('units', 'transfer_details.unit_id', '=', 'units.id')
+//            ->get();
+//
+//
+//        $invoiceHtml = view('App.stock.transfer.invoice', compact('stocktransfer',  'stocktransfer_details'))->render();
+//
+//        return response()->json(['html' => $invoiceHtml]);
+//
+//    }
 
 
     private function createStockTansferDetails($stockTransferDetails, $stocktransferId)

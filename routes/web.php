@@ -162,6 +162,8 @@ Route::post('stock-transfer/filter-list', [StockTransferController::class, 'filt
 Route::get('stock-transfer/{id}/invoice-print',[StockTransferController::class, 'stocktransferInvoicePrint'])->name('stock-transfer.invoice.print');
 Route::resource('stock-transfer', StockTransferController::class)->except('destroy');
 Route::delete('stock-transfer/{id}/delete', [StockTransferController::class, 'softDelete']);
+Route::get('/transfer/tableData', [StockTransferController::class, 'listData']);
+Route::get('transfer/print/{id}/invoice', [StockTransferController::class, 'invoicePrint'])->name('transfer.print');
 //_End: Stock Transfer
 
 
@@ -170,14 +172,17 @@ Route::resource('stock-adjustment', StockAdjustmentController::class);
 Route::post('stock-adjustment/filter-list', [StockAdjustmentController::class, 'filterList']);
 Route::resource('stock-adjustment', StockAdjustmentController::class)->except('destroy');
 Route::delete('stock-adjustment/{id}/delete', [StockAdjustmentController::class, 'softDelete']);
+Route::get('/adjustment/tableData', [StockAdjustmentController::class, 'listData']);
+Route::get('adjustment/print/{id}/invoice', [StockAdjustmentController::class, 'invoicePrint'])->name('adjustment.print');
 //_End: Stock Adjustment
 
-Route::get('/stock/{id}/units', [StockInController::class, 'getUnits']);
-Route::get('/stock/{unit_id}/{uom_id}/values', [StockInController::class, 'getUOMVal']);
+//Route::get('/stock/{id}/units', [StockInController::class, 'getUnits']);
+//Route::get('/stock/{unit_id}/{uom_id}/values', [StockInController::class, 'getUOMVal']);
 Route::post('/stock/get-product', [StockTransferController::class, 'getProduct']);
 Route::post('/stock/get-product-edit', [StockTransferController::class, 'editGetProduct']);
 Route::get('/stock/get-stock', [StockTransferController::class, 'getStock']);
 Route::get('/stock/get-current-qty', [StockTransferController::class, 'getCurrentQtyOnUnit']);
+
 
 
 //============================ End: Stock - In, Out, Transfer, Adustment ===========================================

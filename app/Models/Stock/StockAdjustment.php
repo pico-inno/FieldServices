@@ -40,4 +40,9 @@ class StockAdjustment extends Model
     {
         return $this->hasOne(BusinessUser::class, 'id', 'created_by');
     }
+
+    public function createdPerson(): HasOne
+    {
+        return $this->hasOne(BusinessUser::class, 'id', 'created_by');
+    }
 }
