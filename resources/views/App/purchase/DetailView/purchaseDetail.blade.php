@@ -3,7 +3,7 @@
         <div class="modal-content">
               <form>
                 <div class="modal-header">
-                    <h3 class="fs-4">Purchase Details (Purchase Voucher No: <span class=" " id="clipboard">{{$purchase['purchase_voucher_no']}}</span> )
+                    <h3 class="fs-4">Purchase Details <br> (Purchase Voucher No: <span class=" " id="clipboard">{{$purchase['purchase_voucher_no']}}</span> )
                         <a type="button" class="btn btn-icon btn-sm p-0" data-clipboard-target="#clipboard">
                             <i class="fa-solid fa-copy fs-6 clipboard-icon ki-copy"></i>
                         </a></h3>
@@ -17,7 +17,7 @@
 
                 <div class="modal-body">
                     <div class="row mb-10">
-                        <div class="col-sm-4">
+                        <div class="col-sm-4 col-6 mb-5 mb-sm-0">
                             <h3 class="text-primary-emphasis fs-6">
                                 Supplier:
                             </h3>
@@ -28,7 +28,7 @@
                             </address>
                             @endif
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-4 col-6">
                             <h3 class="text-primary-emphasis fs-6">
                                 Bussiness:
                             </h3>
@@ -268,7 +268,7 @@
                                     <tr>
                                         <!--begin::Name=-->
                                         <td class="ps-2">
-                                            {{$purchase['purchased_at']}}
+                                            {{fDate($purchase['purchased_at'])}}
                                         </td>
                                         <!--end::Name=-->
                                         <!--begin::Email=-->
@@ -304,7 +304,7 @@
                                         <tr>
                                             <!--begin::Name=-->
                                             <td class="ps-2">
-                                                {{$purchase['updated_at']}}
+                                                {{fDate($purchase['updated_at'])}}
                                             </td>
                                             <!--end::Name=-->
                                             <!--begin::Email=-->

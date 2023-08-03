@@ -59,7 +59,7 @@
                                     At least one sale item is required to complete sale!
                                 </div>
                             @enderror
-                            <div class="mb-10 col-12 col-sm-6 mt-3 col-md-3">
+                            <div class="mb-sm-10 mb-3 col-12 col-sm-6 mt-3 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold" for="">
                                     Default Selling Price
                                 </label>
@@ -70,7 +70,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-10 mt-3 col-12 col-sm-6 col-md-3 fv-row">
+                            <div class="mb-sm-10 mb-3 mt-3 col-12 col-sm-6 col-md-3 fv-row">
                                 <label class="form-label fs-7 mb-3 fw-semibold required">Customer:</label>
                                 <div class="input-group input-group-sm flex-nowrap">
                                     <div class="input-group-text">
@@ -95,7 +95,7 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-10 col-12 mt-3 col-sm-6 col-md-3">
+                            <div class="mb-sm-10 mb-3  col-12 mt-3 col-sm-6 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Currency
                                 </label>
@@ -107,7 +107,7 @@
                             </div>
 
                             {{-- <input type="hidden" name="currency_id" value="{{$defaultCurrency['id']}}"> --}}
-                            <div class="mb-10 col-12 mt-3 col-sm-6 col-md-3">
+                            <div class="mb-sm-10 mb-3  col-12 mt-3 col-sm-6 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Status
                                 </label>
@@ -139,7 +139,7 @@
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card  autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <div class="col-4 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
+                            <div class="col-4 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal d-none"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Add new product
                             </div>
                         </div>
@@ -210,7 +210,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class=" mt-2 col-12 col-md-3 offset-1">
+                            <div class=" mt-2 col-12 col-md-3 offset-md-1">
                                 <label class="form-label fs-7 fw-semibold" for="">
                                     Extra Discount Type
                                 </label>
@@ -219,13 +219,13 @@
                                     <option value="percentage">Percentage</option>
                                 </select>
                             </div>
-                            <div class=" mt-2 col-12 col-md-3">
+                            <div class=" mt-2 col-12 col-md-3 mb-5 mb-sm-0">
                                 <label class="form-label fs-7 fw-semibold" for="">
                                   Extra Discount Amount
                                 </label>
                                  <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount">
                             </div>
-                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center mb-5 mb-md-0">
                                 <span class="min-w-200px pe-2" for="">
                                     Discount :(-)Ks
                                 </span>
@@ -261,7 +261,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-end mb-3">
-                            <div class="fs-6 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center mb-5 ">
                                 <select name="payment_account" id="payment_accounts" class="form-select form-select-sm" data-kt-select2="true" data-placeholder="select payment account">
                                     <option disabled selected>Select Account</option>
                                     @php
