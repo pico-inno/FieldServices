@@ -81,7 +81,7 @@
                         </div>
                     </div>
                     <div class="row customer-group hide">
-                        <div class="col-md-4 col-sm-12 mb-8">
+                        <div class="col-md-3 col-sm-12 mb-8">
                             <label for="customer_group_id" class="form-label">Customer Group</label>
                             @php
                                 $customer_groups = \App\Models\Contact\CustomerGroup::all();
@@ -93,7 +93,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 col-sm-12 mb-8">
+                        <div class="col-md-3 col-sm-12 mb-8">
                             <label class="form-label">Price List</label>
                             @php
                                 $price_lists = \App\Models\Product\PriceLists::all();
@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     <div class="row business-div">
-                        <div class="col-md-4 col-sm-12 mb-8">
+                        <div class="col-md-3 col-sm-12 mb-8">
                             <label for="company_name" class="form-label">Business Name</label>
                             <input type="text" name="company_name" id="company_name" class="form-control form-control-sm fs-7" placeholder="Business Name" />
                         </div>
