@@ -5,7 +5,11 @@
 @section('customer_group_list_active_show','active show')
 
 @section('styles')
-
+<style>
+    #kt_datatable_example {
+        min-height: 40vh;
+    }
+</style>
 @endsection
 
 @section('title')
@@ -188,11 +192,7 @@
                     { data: 'selling_price_group_id'},
                     { data: 'action'},
                 ],
-                drawCallback: function(settings) {
-                    adjustRowHeight();
-                }
             });
-            adjustRowHeight();
         }
 
         $(document).on('click', 'button.edit-btn', function(){
@@ -243,18 +243,6 @@
                     }
                 });
         });
-
-        var adjustRowHeight = function() {
-            var numRows = datatable.rows().count();
-            //  console.log(numRows);
-            var tableRows = $('#kt_datatable_example tbody tr');
-
-            if (numRows === 1) {
-                tableRows.css('height', '170px');
-            } else {
-                tableRows.css('height', '50px');
-            }
-        }
 
         // Hook export buttons
         var exportButtons = () => {

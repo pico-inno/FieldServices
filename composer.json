@@ -33,7 +33,7 @@
             "app/Helpers/UomHelpers.php",
             "app/Helpers/PriceHelpers.php",
             "app/Helpers/FunctionHelpers.php",
-            "app/Helpers/SettingHelpers.php"
+            "app/Helpers/SettingFnHelpers.php"
         ],
         "psr-4": {
             "App\\": "app/",

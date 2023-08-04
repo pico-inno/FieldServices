@@ -69,6 +69,10 @@ class purchases extends Model
     {
         return $this->hasOne(BusinessUser::class,'id', 'purchased_by');
     }
+    public function purchase_by(): HasOne
+    {
+        return $this->hasOne(BusinessUser::class,'id', 'purchased_by');
+    }
     public function confirm_by(): HasOne
     {
         return $this->hasOne(BusinessUser::class, 'id', 'confirm_by');

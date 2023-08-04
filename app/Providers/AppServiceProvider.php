@@ -2,8 +2,14 @@
 
 namespace App\Providers;
 
+use Ramsey\Uuid\Type\Integer;
+use App\Helpers\SettingHelpers;
+use App\Models\Currencies;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use App\Models\settings\businessSettings;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Currency;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +36,6 @@ class AppServiceProvider extends ServiceProvider
                 $user = Auth::user();
                 app()->setLocale($user->language ?? 'en');
             }
-            //   $view->with('user', auth()->user());
         });
     }
 }

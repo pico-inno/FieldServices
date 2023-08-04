@@ -61,7 +61,6 @@ class ProductController extends Controller
                     $variation_values[] = $value->variationTemplateValue->name;
                 }
             }
-
             return ['purchase_prices' => $purchase_price, 'variation_name' => $variation_values, 'product_type' => $product->product_type ];
         })
         ->addColumn('selling_price', function($product) {
@@ -142,103 +141,19 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
         try{
-            // Begin:: For Product Table
-            if($request->hasFile('avatar')){
-                $file = $request->file('avatar');
-                $img_name = time() . '_' . $request->file('avatar')->getClientOriginalName();
-                Storage::put('product-image/' . $img_name, file_get_contents($file));
-            }
+            $img_name = $this->saveProductImage($request);
+            $productData = $this->prepareProductData($request, $img_name);
 
-            $productData = $this->productData($request);
-
-            $product_count = Product::count();
-            $productData['sku'] = $request->sku ?? sprintf('%07d',($product_count+1));
-            if($request->hasFile('avatar')){
-                $productData['image'] = $img_name;
-            }
-            if($request->can_sale){
-                $productData['can_sale'] = 1;
-            }
-            if($request->can_purchase){
-                $productData['can_purchase'] = 1;
-            }
-            if($request->can_expense){
-                $productData['can_expense'] = 1;
-            }
-            if($request->product_inactive){
-                $productData['is_inactive'] = 1;
-            }
-            $productData['product_type'] = $request->product_type;
-            $productData['created_by'] = Auth::user()->id;
             $nextProductId = DB::table('products')->insertGetId($productData);
-            // End:: For Product Table
 
-            // Begin:: For Product Variation Template Table
+            $this->insertProductVariations($request, $nextProductId);
+
             DB::table('product_variations_tmplates')->insert([
                 'product_id' => $nextProductId,
                 'variation_template_id' => $request->variation_name,
                 'created_by' => Auth::user()->id,
                 'created_at' => now()
             ]);
-            // End:: For Product Variation Template Table
-
-            //  =====> Begin:: For Product Variation Table  <========
-
-            // Begin:: For Variable Product
-            if($request->product_type === "variable"){
-                $v_v_query = $this->variation_template_values->where('variation_template_id', $request->variation_name)->select('id', 'name')->get();
-
-                $format_key_and_id = $v_v_query->map(function ($item){
-                    return  [strtolower($item->name) => $item->id];
-                });
-                $v_v_key_and_id = [];
-                foreach($format_key_and_id->toArray() as $item){
-                    $key = key($item);
-                    $value = reset($item);
-                    $v_v_key_and_id[$key] = $value;
-                }
-
-                $format_p_v = [];
-                $product_vari_count = ProductVariation::withTrashed()->count();
-                foreach($request->variation_value as $index => $value){
-                    $lowercase_v_v = $v_v_query->pluck('name')->map(fn($v) => strtolower($v))->toArray();
-                    if(in_array(strtolower($value), $lowercase_v_v)){
-                        $vari_tem_value_id = $v_v_key_and_id[strtolower($value)];
-                    }else{
-                        $vari_tem_value_id = VariationTemplateValues::create(
-                                                ['name' => $value, 'variation_template_id' => $request->variation_name, 'created_by' => auth()->id()]
-                                            )->id;
-                    }
-                    $product_vari_sku = $request->variation_sku[$index] ?? sprintf('%07d',($product_vari_count + ($index+1)));
-
-                    $format_p_v[] = [
-                        'product_id' => $nextProductId,
-                        'variation_sku' => $product_vari_sku,
-                        'variation_template_value_id' => $vari_tem_value_id,
-                        'default_purchase_price' => $request->exc_purchase[$index],
-                        'profit_percent' => $request->profit_percentage[$index],
-                        'default_selling_price' => $request->selling_price[$index],
-                        'created_by' => auth()->id(),
-                        'created_at' => now()
-                    ];
-                }
-                ProductVariation::insert($format_p_v);
-            }
-            // End:: For Variable Product
-
-            // Begin:: For Single Product
-            if($request->product_type === "single"){
-                DB::table('product_variations')->insert([
-                    'product_id' => $nextProductId,
-                    'variation_template_value_id' => null,
-                    'default_purchase_price' => $request->single_exc,
-                    'profit_percent' => $request->single_profit,
-                    'default_selling_price' => $request->single_selling,
-                    'created_by' => Auth::user()->id,
-                    'created_at' => now()
-                ]);
-            }
-            // End:: For Single Product
 
             DB::commit();
             if($request->save === "save"){
@@ -252,7 +167,6 @@ class ProductController extends Controller
             }
         } catch(Exception $e){
             DB::rollBack();
-            Log::error($e->getMessage());
             return back()->with('message', $e->getMessage());
         }
     }
@@ -274,112 +188,20 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
         try{
-            // Begin:: FOR PRODUCT
-            if($request->hasFile('avatar')){
-                $file = $request->file('avatar');
-                $img_name = time() . '_' . $request->file('avatar')->getClientOriginalName();
-                Storage::delete('product-image/' . $product->image);
-                Storage::put('product-image/' . $img_name, file_get_contents($file));
-            }
-
-            $productData = $this->productData($request);
-            if($request->hasFile('avatar')){
-                $productData['image'] = $img_name;
-            }
-            if($request->can_sale){
-                $productData['can_sale'] = 1;
-            }
-            if($request->can_purchase){
-                $productData['can_purchase'] = 1;
-            }
-            if($request->can_expense){
-                $productData['can_expense'] = 1;
-            }
-            if($request->product_inactive){
-                $productData['is_inactive'] = 1;
-            }
-            $product_count = Product::withTrashed()->count();
-            $productData['sku'] = $request->sku ?? sprintf('%07d',($product_count+1));
-            $productData['product_type'] = $request->product_type_hidden;
-            $productData['updated_by'] = Auth::user()->id;
+            // Update Product
+            $img_name = $this->saveProductImage($request, $product->image);
+            $productData = $this->prepareProductData($request, $img_name, false);
             DB::table('products')->where('id', $product->id)->update($productData);
 
-            // for product variation template
+            // Update Product Variationn
+            $this->insertProductVariations($request, $product->id, false);
+
+            // Update Product Variation Template
             ProductVariationsTemplates::where('product_id', $product->id)->update([
                 'product_id' => $product->id,
                 'variation_template_id' => $request->variation_template_id_hidden,
                 'updated_by' => Auth::user()->id
-            ]);
-
-            // Begin:: FOR PRODUCT VARIATION
-            if($request->product_type_hidden === "variable"){
-                $db_variation_ids = ProductVariation::where('product_id', $product->id)->get()->pluck('id');
-                $array_diff_to_del = array_diff($db_variation_ids->toArray(), $request->product_variation_id);
-                if($array_diff_to_del){
-                    // to delete;
-                    ProductVariation::whereIn('id', $array_diff_to_del)->update(['deleted_by' => Auth::user()->id]);
-                    ProductVariation::whereIn('id', $array_diff_to_del)->update(['updated_by' => Auth::user()->id]);
-                    ProductVariation::destroy($array_diff_to_del);
-                }
-                $v_v_query = $this->variation_template_values->where('variation_template_id', $request->variation_template_id_hidden)->select('id', 'name')->get();
-
-                $format_key_and_id = $v_v_query->map(function ($item){
-                    return  [strtolower($item->name) => $item->id];
-                });
-                $v_v_key_and_id = [];
-                foreach($format_key_and_id->toArray() as $item){
-                    $key = key($item);
-                    $value = reset($item);
-                    $v_v_key_and_id[$key] = $value;
-                }
-
-                $format_p_v = [];
-                $product_vari_count = ProductVariation::count();
-                foreach($request->variation_value as $index => $value){
-                    $lowercase_v_v = $v_v_query->pluck('name')->map(fn($v) => strtolower($v))->toArray();
-
-                    if(in_array(strtolower($value), $lowercase_v_v)){
-                        $vari_tem_value_id = $v_v_key_and_id[strtolower($value)];
-                    }else{
-                        $vari_tem_value_id = VariationTemplateValues::create(
-                                                ['name' => $value, 'variation_template_id' => $request->variation_template_id_hidden, 'created_by' => auth()->id()]
-                                            )->id;
-                    }
-
-                    $product_vari_sku = $request->variation_sku[$index] ?? sprintf('%07d',($product_vari_count + ($index+1)));
-
-                    $format_p_v[] = [
-                        'id' => $request->product_variation_id[$index],
-                        'product_id' => $product->id,
-                        'variation_sku' => $product_vari_sku,
-                        'variation_template_value_id' => $vari_tem_value_id,
-                        'default_purchase_price' => $request->exc_purchase[$index],
-                        'profit_percent' => $request->profit_percentage[$index],
-                        'default_selling_price' => $request->selling_price[$index],
-                        'updated_by' => auth()->id(),
-                        'updated_at' => now()
-                    ];
-                }
-                foreach ($format_p_v as $v) {
-                    if (isset($v['id'])) {
-                        ProductVariation::where('id', $v['id'])->update($v);
-                    } else {
-                        ProductVariation::create($v);
-                    }
-                }
-            }
-
-            // for product single
-            if($request->product_type_hidden === "single"){
-                $updateSingle = ProductVariation::find($product->productVariations[0]->id);
-                $updateSingle->variation_template_value_id = null;
-                $updateSingle->default_purchase_price = $request->single_exc;
-                $updateSingle->profit_percent = $request->single_profit;
-                $updateSingle->default_selling_price = $request->single_selling;
-                $updateSingle->updated_by = Auth::user()->id;
-
-                $updateSingle->save();
-            }
+            ]);            
 
             DB::commit();
             if($request->has('save')){
@@ -389,7 +211,6 @@ class ProductController extends Controller
             DB::rollBack();
             return back()->with('message', $e->getMessage());
         }
-
     }
 
     public function delete(Product $product)
@@ -442,10 +263,33 @@ class ProductController extends Controller
         }
     }
 
-    // Product Data From Blade File
-    private function productData($request)
+    private function saveProductImage($request, $existingImagePath = null)
     {
-        return [
+        if($request->hasFile('avatar')){
+            if ($existingImagePath) {
+                Storage::delete('product-image/' . $existingImagePath);
+            }
+
+            $file = $request->file('avatar');
+            $img_name = time() . '_' . $file->getClientOriginalName();
+            Storage::put('product-image/' . $img_name, file_get_contents($file));
+
+            return $img_name;
+        }else {
+            if($request->avatar_remove == 1 && $existingImagePath){
+                Storage::delete('product-image/' . $existingImagePath);
+                return null;
+            }else{
+                return $existingImagePath;
+            }
+        }
+    }
+
+    private function prepareProductData($request, $img_name, $isCreating = true)
+    {
+        $product_type = $isCreating ? $request->product_type : $request->product_type_hidden;
+
+        $productData = [
             'name' => $request->product_name,
             'product_code' => $request->product_code,
             'brand_id' => $request->brand,
@@ -453,7 +297,6 @@ class ProductController extends Controller
             'sub_category_id' => $request->sub_category,
             'manufacturer_id' => $request->manufacturer,
             'generic_id' => $request->generic,
-            'lot_count' => $request->lot_count,
             'uom_id' => $request->uom_id,
             'purchase_uom_id' => $request->purchase_uom_id,
             'product_custom_field1' => $request->custom_field1,
@@ -461,116 +304,126 @@ class ProductController extends Controller
             'product_custom_field3' => $request->custom_field3,
             'product_custom_field4' => $request->custom_field4,
             'product_description' => $request->quill_data,
+            'sku' => $request->sku ?? sprintf('%07d', Product::count() + 1),
+            'image' => $img_name ?? null,
+            'can_sale' => $request->can_sale ? 1 : 0,
+            'can_purchase' => $request->can_purchase ? 1 : 0,
+            'can_expense' => $request->can_expense ? 1 : 0,
+            'is_inactive' => $request->product_inactive ? 1 : 0,
+            'product_type' => $product_type
         ];
+
+        if ($isCreating) {
+            $productData['created_by'] = Auth::user()->id;
+        } else {
+            $productData['updated_by'] = Auth::user()->id;
+        }
+
+        return $productData;
     }
 
-    // private function saveProductImage($request)
-    // {
-    //     if($request->hasFile('avatar')){
-    //         $file = $request->file('avatar');
-    //         $img_name = time() . '_' . $file->getClientOriginalName();
-    //         Storage::put('product-image/' . $img_name, file_get_contents($file));
-    //         return $img_name;
-    //     }
-    //     return null;
-    // }
+    private function insertProductVariations($request, $nextProductId, $isCreating = true)
+    {
+        $product_type = $isCreating ? $request->product_type : $request->product_type_hidden;
+        $variation_template_id = $isCreating ? $request->variation_name : $request->variation_template_id_hidden;
 
-    // private function prepareProductData($request, $img_name, $isCreating = true)
-    // {
-    //     $productData = [
-    //         'name' => $request->product_name,
-    //         'product_code' => $request->product_code,
-    //         'brand_id' => $request->brand,
-    //         'category_id' => $request->category,
-    //         'sub_category_id' => $request->sub_category,
-    //         'manufacturer_id' => $request->manufacturer,
-    //         'generic_id' => $request->generic,
-    //         'uom_id' => $request->uom_id,
-    //         'purchase_uom_id' => $request->purchase_uom_id,
-    //         'product_custom_field1' => $request->custom_field1,
-    //         'product_custom_field2' => $request->custom_field2,
-    //         'product_custom_field3' => $request->custom_field3,
-    //         'product_custom_field4' => $request->custom_field4,
-    //         'product_description' => $request->quill_data,
-    //         'sku' => $request->sku ?? sprintf('%07d', Product::count() + 1),
-    //         'image' => $img_name ?? null,
-    //         'can_sale' => $request->can_sale ? 1 : 0,
-    //         'can_purchase' => $request->can_purchase ? 1 : 0,
-    //         'can_expense' => $request->can_expense ? 1 : 0,
-    //         'is_inactive' => $request->product_inactive ? 1 : 0,
-    //         'product_type' => $request->product_type
-    //     ];
+        if ($product_type === "variable") {
+            if(!$isCreating){
+                // Get all variation IDs of the product from the database
+                $dbVariationIds = ProductVariation::where('product_id', $nextProductId)->pluck('id');
 
-    //     if ($isCreating) {
-    //         $productData['created_by'] = Auth::user()->id;
-    //     } else {
-    //         $productData['updated_by'] = Auth::user()->id;
-    //     }
+                // Find variation IDs to delete
+                $variationsToDelete = array_diff($dbVariationIds->toArray(), $request->product_variation_id);
+                
+                if (!empty($variationsToDelete)) {
+                    ProductVariation::whereIn('id', $variationsToDelete)->update([
+                        'deleted_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id,
+                    ]);
 
-    //     return $productData;
-    // }
-
-    // private function insertProduct($productData)
-    // {
-    //     return DB::table('products')->insertGetId($productData);
-    // }
-
-    // private function insertProductVariations($request, $nextProductId)
-    // {
-    //     if ($request->product_type === "variable") {
-    //         $variationTemplateValuesQuery = $this->variation_template_values
-    //                                         ->where('variation_template_id', $request->variation_name)
-    //                                         ->select('id', 'name')
-    //                                         ->get();
+                    ProductVariation::destroy($variationsToDelete);
+                }
+            }
+            $variationTemplateValuesQuery = $this->variation_template_values
+                                            ->where('variation_template_id', $variation_template_id)
+                                            ->select('id', 'name')
+                                            ->get();
             
-    //         $lowercaseVariationNames = $variationTemplateValuesQuery->pluck('name')->map(fn ($v) => strtolower($v))->toArray();
+            $lowercaseVariationNames = $variationTemplateValuesQuery->pluck('name')->map(fn ($v) => strtolower($v))->toArray();
             
-    //         $variationNameAndIdMap = $variationTemplateValuesQuery->mapWithKeys(function ($item) {
-    //             return [strtolower($item->name) => $item->id];
-    //         })->toArray();
+            $variationNameAndIdMap = $variationTemplateValuesQuery->mapWithKeys(function ($item) {
+                return [strtolower($item->name) => $item->id];
+            })->toArray();
             
-    //         $productVariationCount = ProductVariation::withTrashed()->count();
-    //         $productVariations = [];
+            $productVariationCount = ProductVariation::withTrashed()->count();
+            $productVariations = [];
             
-    //         foreach($request->variation_value as $index => $value){
-    //             $variationName = strtolower($value);
+            foreach($request->variation_value as $index => $value){
+                $variationName = strtolower($value);
 
-    //             if (in_array($variationName, $lowercaseVariationNames)) {
-    //                 $variationTemplateValueId = $variationNameAndIdMap[$variationName];
-    //             } else {
-    //                 $variationTemplateValueId = VariationTemplateValues::create([
-    //                     'name' => $value,
-    //                     'variation_template_id' => $request->variation_name,
-    //                     'created_by' => auth()->id(),
-    //                 ])->id;
-    //             }
-    
-    //             $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
-    
-    //             $productVariations[] = [
-    //                 'product_id' => $nextProductId,
-    //                 'variation_sku' => $productVariationSku,
-    //                 'variation_template_value_id' => $variationTemplateValueId,
-    //                 'default_purchase_price' => $request->exc_purchase[$index],
-    //                 'profit_percent' => $request->profit_percentage[$index],
-    //                 'default_selling_price' => $request->selling_price[$index],
-    //                 'created_by' => auth()->id(),
-    //                 'created_at' => now(),
-    //             ];
-    //         }
+                if (in_array($variationName, $lowercaseVariationNames)) {
+                    $variationTemplateValueId = $variationNameAndIdMap[$variationName];
+                } else {
+                    $variationTemplateValueId = VariationTemplateValues::create([
+                        'name' => $value,
+                        'variation_template_id' => $variation_template_id,
+                        'created_by' => auth()->id(),
+                    ])->id;
+                }
+                $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
+                
+                $variationData = [
+                    'product_id' => $nextProductId,
+                    'variation_sku' => $productVariationSku,
+                    'variation_template_value_id' => $variationTemplateValueId,
+                    'default_purchase_price' => $request->exc_purchase[$index],
+                    'profit_percent' => $request->profit_percentage[$index],
+                    'default_selling_price' => $request->selling_price[$index],
+                ];
+
+                if ($isCreating) {
+                    $variationData['created_by'] = auth()->id();
+                    $variationData['created_at'] = now();
+                } 
+                if(!$isCreating) {
+                    $variationData['id'] = $request->product_variation_id[$index] ?? null;
+                    $variationData['updated_by'] = auth()->id();
+                    $variationData['updated_at'] = now();
+                }
+
+                $productVariations[] = $variationData;
+            }
             
-    //         ProductVariation::insert($productVariations);
-    //     } 
-    //     elseif ($request->product_type === "single") {
-    //         DB::table('product_variations')->insert([
-    //             'product_id' => $nextProductId,
-    //             'variation_template_value_id' => null,
-    //             'default_purchase_price' => $request->single_exc,
-    //             'profit_percent' => $request->single_profit,
-    //             'default_selling_price' => $request->single_selling,
-    //             'created_by' => Auth::user()->id,
-    //             'created_at' => now()
-    //         ]);
-    //     }
-    // }
+            if($isCreating){
+                ProductVariation::insert($productVariations);
+            }
+            if(!$isCreating){
+                foreach ($productVariations as $variation) {
+                    ProductVariation::updateOrCreate(['id' => $variation['id']], $variation);
+                }               
+            }
+        } 
+        if ($product_type === "single") {
+            $productSingle = [
+                'product_id' => $nextProductId,
+                'variation_template_value_id' => null,
+                'default_purchase_price' => $request->single_exc,
+                'profit_percent' => $request->single_profit,
+                'default_selling_price' => $request->single_selling,
+            ];
+            
+            if($isCreating){
+                $productSingle['created_by'] = auth()->id();
+                $productSingle['created_at'] = now();
+                DB::table('product_variations')->insert($productSingle);
+            }
+
+            if(!$isCreating){
+                $productVariationId = ProductVariation::where('product_id', $nextProductId)->first()->id;
+                $productSingle['updated_by'] = auth()->id();
+                $productSingle['updated_at'] = now();
+                DB::table('product_variations')->where('id', $productVariationId)->update($productSingle);
+            }
+        }
+    }
 }

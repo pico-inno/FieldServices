@@ -517,21 +517,6 @@
             $(`#${infoPriceId} .sb-total-amount`).text(total_amount);
         }
 
-        // let checkSellingPriceGroupId = (product) => {
-        //     let product_id = product.find('input[name="product_id"]').val();
-        //     let variation_id = product.find('input[name="variation_id"]').val();
-        //     let original_sellingprice = $('#selling_price_group').val();
-        //     let filtered_product = productsOnSelectData.filter( item => {
-        //         return item.product_id == product_id && item.variation_id == variation_id;
-        //     });
-
-        //     let selling_price = filtered_product[0].sellingPrices;
-        //     let price_group_ids = $.unique($.map(selling_price, item => item.pricegroup_id));
-
-        //     let has_selling_price = price_group_ids.includes(parseInt(original_sellingprice));
-        //     return has_selling_price;
-        // }
-
         let ajaxToStorePosData = (dataForSale) => {
             $.ajax({
                 url: `/sell/create`,

@@ -47,7 +47,7 @@
 
                         <div class="row mb-5 flex-wrap">
                             <!--begin::Input group-->
-                            <div class="mb-7 mt-3 col-12 col-md-4 fv-row">
+                            <div class="mb-7 mt-3 col-12 col-md-3 fv-row">
                                 <label class="form-label fs-6 fw-semibold required">Supplier:</label>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-text">
@@ -71,7 +71,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="mb-7 mt-3 col-12 col-md-4">
+                            <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold required" for="">
                                     Business Location
                                 </label>
@@ -84,7 +84,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-7 mt-3 col-12 col-md-4">
+                            <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold required" for="">
                                     Purchase Status:
                                 </label>
@@ -99,7 +99,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-7 mt-3 col-12 col-md-4">
+                            <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Currency
                                 </label>
@@ -110,7 +110,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-7 mt-3 col-12 col-md-4">
+                            <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold" for="orderDate">
                                     Address:
                                 </label>
@@ -118,7 +118,7 @@
                                     {{-- ၅၅လမ်း၊ ၁၃၂ လမ်း နှင့် ၁၃၃လမ်းကြား၊ ပြည်ကြီးတံခွန်မြို့နယ်၊ မန္တလေးမြို့။ --}}
                                 </div>
                             </div>
-                            <div class="mb-7 mt-3 col-12 col-md-4">
+                            <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold required" for="purchaseDatee">
                                     Purchase Date:
                                 </label>
@@ -135,10 +135,7 @@
                 <div class="card border border-primary-subtle border-top-2 border-left-0 border-right-0 border-bottom-0">
                     <div class="card-body px-5">
                         <div class="row align-items-center mb-8">
-                            <div class="col-5 col-12 col-md-2 btn-primary btn add_new_product_modal  my-5 my-lg-0 d-none"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
-                                <i class="fa-solid fa-plus me-2 text-white"></i> Import Products
-                            </div>
-                            <div class="col-6 col-md-9">
+                            <div class="col-12 col-md-9">
                                 <div class="input-group quick-search-form p-0">
                                     <div class="input-group-text">
                                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -147,7 +144,7 @@
                                     <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <a class="col-6 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0"  target="__blank" href="{{route('product.add')}}">
+                            <a class="col-12 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0 d-none"  target="__blank" href="{{route('product.add')}}">
                                 <i class="fa-solid fa-plus me-2 "></i> Add new product
                             </a>
                         </div>
@@ -188,17 +185,17 @@
                         <div class="separator my-5"></div>
                         <div class="col-sm-4 col-12 float-end mt-3">
                             <table class="col-12 ">
-                                <tbody>
-                                    <tr class="mb-2">
+                                <tbody class="">
+                                    <tr class="mb-5 ">
                                         <th class="fw-semibold">Total Item :</th>
                                         <td class="rowcount text-left  fs-6 fw-semibold text-end" >
-                                            <span id="total_item"> 0 </span>
+                                            <span id="total_item fw-bold"> 0 </span>
                                         </td>
                                     </tr>
                                     <tr class="mb-2 d-none">
                                         <th class="fw-semibold"> Total Line Discount :</th>
                                         <td class="rowSum text-left  fs-6 fw-semibold text-end" >
-                                            <span class="total_line_discount">0 </span> {{$currency['symbol']}}
+                                            <span class="total_line_discount fw-bold">0 </span> {{$currency['symbol']}}
                                         </td>
                                     </tr>
                                     <input type="hidden" name="total_line_discount" class="total_line_discount_input input_number" id="" class="" value="{{old('purchase_amount',0)}}">
@@ -303,7 +300,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row ">
-                            <div class="fv-row fs-6 fw-semibold col-12 col-md-4 ">
+                            <div class="fv-row fs-6 fw-semibold col-12 col-md-4 mb-4 mb-md-0">
                                 <label class="form-label fs-6 fw-semibold required" for="">
                                     Payment Account
                                 </label>

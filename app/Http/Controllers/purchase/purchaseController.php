@@ -68,7 +68,17 @@ class purchaseController extends Controller
         return view('App.purchase.addPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
     }
 
-
+    public function purchase__new_add()
+    {
+        $locations=businessLocation::all();
+        $currency=$this->currency;
+        $suppliers=Contact::where('type','Supplier')
+                    ->select('id','company_name','first_name','address_line_1','address_line_2','zip_code','city','state','country')
+                    ->get();
+        $currencies=Currencies::get();
+        $setting=$this->setting;
+        return view('App.purchase.addNewPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
+    }
     public function store(Request $request)
     {
         Validator::make([
@@ -114,12 +124,16 @@ class purchaseController extends Controller
             return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse']);
         }
     }
-    public function listData()
+    public function listData(Request $request)
     {
 
         $purchases=purchases::where('is_delete',0)
             ->with('business_location_id','supplier')
-            ->OrderBy('id','desc')->get();
+            ->OrderBy('id','desc');
+            if($request->filled('form_data') && $request->filled('to_date')){
+                $purchases=$purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=',$request->to_date);
+            }
+            $purchases=$purchases->get();
         return DataTables::of($purchases)
             ->addColumn('checkbox',function($purchase){
                 return
@@ -134,10 +148,7 @@ class purchaseController extends Controller
             })
 
             ->editColumn('date',function($purchase){
-                $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$purchase->created_at);
-                $formattedDate = $dateTime->format("m-d-Y " );
-                $formattedTime = $dateTime->format(" h:i A " );
-                return $formattedDate.'<br>'.'('.$formattedTime.')';
+                return fDate($purchase->created_at,true);
             })
             ->editColumn('purchaseItems',function($purchase){
                 $purchaseDetails=$purchase->purchase_details;
@@ -168,7 +179,7 @@ class purchaseController extends Controller
                 // return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
             })
             ->editColumn('payment_status',function($e){
-                if($e->payment_status=='pending'){
+                if($e->payment_status=='due'){
                     return '<span class="badge badge-warning">Pending</span>';
                 }elseif($e->payment_status=='partial'){
                     return '<span class="badge badge-primary">Partial</span>';
@@ -444,10 +455,12 @@ class purchaseController extends Controller
             }]);
         },'product', 'purchaseUom','currency'])
         ->where('purchases_id',$id)->where('is_delete',0)->get();
+        $setting=$this->setting;
         return view('App.purchase.DetailView.purchaseDetail',compact(
             'purchase',
             'location',
-            'purchase_details'
+            'purchase_details',
+            'setting'
         ));
     }
 
@@ -544,7 +557,7 @@ class purchaseController extends Controller
     private function purchaseData($request)
     {
         if($request->paid_amount == 0){
-            $payment_status='pending';
+            $payment_status='due';
         }elseif($request->paid_amount >= $request->total_purchase_amount ){
             $payment_status='paid';
         }else{

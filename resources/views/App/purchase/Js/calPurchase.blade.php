@@ -19,14 +19,16 @@ $(document).ready(function() {
     }
     $('#contact_id').on('change',function(){
         var selected_supplier =$(this).val();
-        let supplier=suppliers.filter(function(supplier){
-            return supplier.id==selected_supplier;
-        })
-        supplier=supplier[0];
+        if(selected_supplier){
+            let supplier=suppliers.filter(function(supplier){
+                return supplier.id==selected_supplier;
+            })
+            supplier=supplier[0];
 
-        $('.supplier_address').html(`${supplier.address_line_1? supplier.address_line_1+',' :''} ${supplier.address_line_2? supplier.address_line_2+',' :''}<br>
-           ${supplier.city? supplier.city+',' :''}${supplier.state? supplier.state+',' :''}${supplier.country? supplier.country+',' :''}<br>
-           ${ supplier.zip_code? supplier.zip_code+',' :''}`)
+            $('.supplier_address').html(`${supplier.address_line_1? supplier.address_line_1+',' :''} ${supplier.address_line_2? supplier.address_line_2+',' :''}<br>
+            ${supplier.city? supplier.city+',' :''}${supplier.state? supplier.state+',' :''}${supplier.country? supplier.country+',' :''}<br>
+            ${ supplier.zip_code? supplier.zip_code+',' :''}`)
+        }
     })
 
     let unique_name_id=1;
@@ -57,6 +59,7 @@ $(document).ready(function() {
                 $.ajax({
                     url: `/purchase/get/product`,
                     type: 'POST',
+                    delay: 250,
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },

@@ -59,42 +59,62 @@
                                             <div class="row">
                                                 <div class="col-md-4 mb-5">
                                                     <label class="form-label d-block">{{ __('product/product.product_image') }}</label>
-        
                                                     <style>
+                                                        .image-input-placeholder {
+                                                            background-image: url('svg/avatars/blank.svg');
+                                                        }
+                                                    
                                                         [data-bs-theme="dark"] .image-input-placeholder {
-                                                            @if ($product->image)
-        
                                                             background-image: url('{{ asset("storage/product-image/$product->image") }}');
-                                                            @endif
                                                         }
                                                     </style>
-                                                    <!--end::Image input placeholder-->
-                                                    <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" data-kt-image-input="true">
-                                                        <!--begin::Preview existing avatar-->
-                                                        <div class="image-input-wrapper w-150px h-150px"></div>
-                                                        <!--end::Preview existing avatar-->
-                                                        <!--begin::Label-->
-                                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                                            <i class="bi bi-pencil-fill fs-7"></i>
+                                                    <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url(/assets/media/svg/avatars/blank.svg)">
+                                                        <!--begin::Image preview wrapper-->
+                                                        @if ($product->image)																	
+                                                            <div class="image-input-wrapper w-125px h-125px" style="background-image: url({{ '/storage/product-image/'.$product->image }})"></div>
+                                                        @else
+                                                            <div class="image-input-wrapper w-125px h-125px"></div>
+                                                        @endif
+                                                        <!--end::Image preview wrapper-->
+                                                    
+                                                        <!--begin::Edit button-->
+                                                        <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                        data-kt-image-input-action="change"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-dismiss="click"
+                                                        title="Change avatar">
+                                                            <i class="ki-duotone ki-pencil fs-6"><span class="path1"></span><span class="path2"></span></i>
+                                                    
                                                             <!--begin::Inputs-->
                                                             <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
                                                             <input type="hidden" name="avatar_remove" />
                                                             <!--end::Inputs-->
                                                         </label>
-                                                        <!--end::Label-->
-                                                        <!--begin::Cancel-->
-                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                                            <i class="bi bi-x fs-2"></i>
+                                                        <!--end::Edit button-->
+                                                    
+                                                        <!--begin::Cancel button-->
+                                                        <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                        data-kt-image-input-action="cancel"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-dismiss="click"
+                                                        title="Cancel avatar">
+                                                            <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
-                                                        <!--end::Cancel-->
-                                                        <!--begin::Remove-->
-                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                                            <i class="bi bi-x fs-2"></i>
+                                                        <!--end::Cancel button-->
+                                                    
+                                                        <!--begin::Remove button-->
+                                                        <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                        data-kt-image-input-action="remove"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-dismiss="click"
+                                                        title="Remove avatar">
+                                                            <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
-                                                        <!--end::Remove-->
-                                                        <div class="text-muted fs-7">Max File Size: 5MB</div>
-                                                        <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
+                                                        <!--end::Remove button-->
                                                     </div>
+                                                    <!--end::Image input-->
+                                                    <div class="text-muted fs-7">Max File Size: 5MB</div>
+                                                    <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
@@ -309,10 +329,10 @@
                                                     title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
                                                             <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
-                                                <div class="mb-3">
+                                                <div class="mb-3">                                                   
                                                     <select class="form-select form-select" name="product_type" id="product_type" data-hide-search="true" disabled>
-                                                        <option value="single" @selected($product->product_type === "single")>Single</option>
                                                         <option value="variable" @selected($product->product_type === "variable")>Variable</option>
+                                                        <option value="single" @selected($product->product_type === "single")>Single</option>
                                                     </select>
                                                     <input type="hidden" name="product_type_hidden" value="{{ $product->product_type }}">
                                                 </div>

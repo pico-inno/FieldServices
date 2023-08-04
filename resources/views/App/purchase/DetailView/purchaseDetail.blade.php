@@ -3,7 +3,7 @@
         <div class="modal-content">
               <form>
                 <div class="modal-header">
-                    <h3 class="fs-4">Purchase Details (Purchase Voucher No: <span class=" " id="clipboard">{{$purchase['purchase_voucher_no']}}</span> )
+                    <h3 class="fs-4">Purchase Details <br> (Purchase Voucher No: <span class=" " id="clipboard">{{$purchase['purchase_voucher_no']}}</span> )
                         <a type="button" class="btn btn-icon btn-sm p-0" data-clipboard-target="#clipboard">
                             <i class="fa-solid fa-copy fs-6 clipboard-icon ki-copy"></i>
                         </a></h3>
@@ -17,7 +17,7 @@
 
                 <div class="modal-body">
                     <div class="row mb-10">
-                        <div class="col-sm-4">
+                        <div class="col-sm-4 col-6 mb-5 mb-sm-0">
                             <h3 class="text-primary-emphasis fs-6">
                                 Supplier:
                             </h3>
@@ -28,7 +28,7 @@
                             </address>
                             @endif
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-4 col-6">
                             <h3 class="text-primary-emphasis fs-6">
                                 Bussiness:
                             </h3>
@@ -47,7 +47,7 @@
                                     Voucher No : <span class="text-gray-600 fw-semibold"> {{$purchase['purchase_voucher_no']}}3</span>
                                 </h3>
                                 <h3 class="text-primary-emphasis fw-semibold fs-6 mb-5">
-                                    Date : <span class="text-gray-600 fw-semibold">{{$purchase['purchased_at']}}</span>
+                                    Date : <span class="text-gray-600 fw-semibold">{{fDate($purchase['purchased_at'])}}</span>
                                 </h3>
                                 <h3 class="text-primary-emphasis fw-semibold fs-6 mb-5">
                                     Purchase Status : <span class="text-gray-600 fw-semibold">{{$purchase['status']}}</span>
@@ -66,8 +66,8 @@
                                     <th class="min-w-100px text-center ">Purchase Quantity</th>
                                     <th class="min-w-100px text-center ">UOM</th>
                                     <th class="min-w-100px text-center ">UOM Price</th>
-                                    <th class="min-w-100px text-center ">Per Item Discount</th>
-                                    <th class="min-w-100px text-center ">Subtotal With Discount</th>
+                                    <th class="min-w-100px text-center {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Per Item Discount</th>
+                                    <th class="min-w-100px text-center {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Subtotal With Discount</th>
                                     <th class="min-w-100px text-center ">Per Item Expense</th>
                                     <th class="min-w-100px text-center ">Subtotal </th>
                                 </tr>
@@ -83,7 +83,6 @@
                                     // dd($pd->toArray());
                                     $pdCurrency=$pd->currency['symbol'] ?? ' ';
 
-                                    $currencyDp=getSettingValue('currency_decimal_places');
                                     $quantityDp=getSettingValue('quantity_decimal_places');
                                 @endphp
                                 <tr class="text-center">
@@ -108,19 +107,19 @@
                                         {{$pd->toArray()['purchase_uom']['name']}}
                                     </td>
                                     <td>
-                                        {{round($pd->uom_price ?? 0,$currencyDp)}}&nbsp;{{$pdCurrency}}
+                                        {{price($pd->uom_price ?? 0,$pd->currency_id)}}
+                                    </td>
+                                    <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                        {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{ $pd->discount_type=='percentage'?'%':$pdCurrency }}
+                                    </td>
+                                    <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                        {{price($pd->subtotal_with_discount,$pd->currency_id)}}
                                     </td>
                                     <td>
-                                        {{round($pd->per_item_discount ?? 0,$currencyDp)}}&nbsp;{{ $pd->discount_type=='percentage'?'%':$pdCurrency }}
+                                        {{price($pd->per_item_expense,$pd->currency_id)}}
                                     </td>
                                     <td>
-                                        {{round($pd->subtotal_with_discount,$currencyDp)}}&nbsp;{{$pdCurrency}}
-                                    </td>
-                                    <td>
-                                        {{round($pd->per_item_expense,$currencyDp)}}&nbsp;{{$pdCurrency}}
-                                    </td>
-                                    <td>
-                                        {{round($pd->subtotal_with_tax,$currencyDp)}}&nbsp;{{$pdCurrency}}
+                                        {{price($pd->subtotal_with_tax,$pd->currency_id)}}
                                     </td>
 
 
@@ -173,7 +172,7 @@
                                         <td class="text-end">
                                         </td>
                                         <td class="text-end">
-                                            {{round($purchase['purchase_amount'] ?? 0,$currencyDp)}}&nbsp;{{$purchaseCurrency}}
+                                            {{price($purchase['purchase_amount'] ?? 0,$pd->currency_id)}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -184,7 +183,7 @@
                                             (-)
                                         </td>
                                         <td class="text-end">
-                                            {{round($purchase['extra_discount'] ?? 0,$currencyDp)}} &nbsp;{{ $purchase['extra_discount_type']=='percentage'?'%':$purchaseCurrency}}
+                                            {{round($purchase['extra_discount'] ?? 0,2)}} &nbsp;{{ $purchase['extra_discount_type']=='percentage'?'%':$purchaseCurrency}}
 
                                         </td>
                                     </tr>
@@ -196,7 +195,7 @@
                                             (+)
                                         </td>
                                         <td class="text-end">
-                                            {{round($purchase['purchase_expense'],$currencyDp)}}&nbsp;{{$purchaseCurrency}}
+                                            {{price($purchase['purchase_expense'],$pd->currency_id)}}
                                         </td>
                                     </tr>
                                     {{-- <tr>
@@ -216,7 +215,7 @@
                                             (=)
                                         </td>
                                         <td class="text-end">
-                                        {{round($purchase['total_purchase_amount'],$currencyDp)}}&nbsp;{{$purchaseCurrency}}
+                                        {{price($purchase['total_purchase_amount'],$pd->currency_id)}}
                                         </td>
                                     </tr>
 
@@ -269,7 +268,7 @@
                                     <tr>
                                         <!--begin::Name=-->
                                         <td class="ps-2">
-                                            {{$purchase['purchased_at']}}
+                                            {{fDate($purchase['purchased_at'])}}
                                         </td>
                                         <!--end::Name=-->
                                         <!--begin::Email=-->
@@ -305,7 +304,7 @@
                                         <tr>
                                             <!--begin::Name=-->
                                             <td class="ps-2">
-                                                {{$purchase['updated_at']}}
+                                                {{fDate($purchase['updated_at'])}}
                                             </td>
                                             <!--end::Name=-->
                                             <!--begin::Email=-->

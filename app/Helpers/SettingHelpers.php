@@ -1,26 +1,32 @@
 <?php
 
-use App\Models\Product\UOM;
+namespace App\Helpers;
+
 use App\Models\settings\businessSettings;
 
-function getSettingValue($key){
-    try {
-        $setting=businessSettings::select("$key")->first();
-        return $setting->$key;
-    } catch (\Throwable $th) {
-        return abort('500','Your Key Is Not In Setting DB');
+class SettingHelpers
+{
+    static $SettingHelpers = null;
+    public $settings = null;
+    protected function __construct()
+    {
+
+    }
+    static function load()
+    {
+        if(!static::$SettingHelpers) {
+            static::$SettingHelpers = new static;
+        }
+
+        return static::$SettingHelpers;
+    }
+    public function getSettingsValue($selector='*'){
+        if($this->settings){
+            return $this->settings;
+        }else{
+            $this->settings=businessSettings::select($selector)->first();
+            return $this->settings;
+        }
     }
 
 }
-
-function getReferenceUomId($currentUomId){
-    $currentUnit = UOM::where('id', $currentUomId)->with(['unit_category' => function ($q) {
-        $q->with('uomByCategory');
-    }])->first();
-    $unitsByCategory = $currentUnit->unit_category['uomByCategory'];
-    $referenceUnit = $unitsByCategory->first(function ($item) {
-        return $item['unit_type'] === 'reference';
-    });
-    return $referenceUnit;
-}
-

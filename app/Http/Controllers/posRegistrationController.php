@@ -42,7 +42,7 @@ class posRegistrationController extends Controller
                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="exchangeRateDropDown" role="menu">';
                     $html.='<a class="dropdown-item cursor-pointer" href="'.route('pos.sessionCheck',$posRegister->id).'">Open</a>';
                     $html.='<a class="dropdown-item cursor-pointer openModal" data-href="'.route('posEdit',$posRegister->id).'">Edit</a>';
-                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$posRegister->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('exchangeRate.destory',$posRegister->id).'">Delete</a>';
+                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$posRegister->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('posDestory',$posRegister->id).'">Delete</a>';
                     // $html .= $editBtn;
                 $html .= '</ul></div></div>';
                 return $html;

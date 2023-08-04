@@ -26,6 +26,7 @@
         label{
             font-size: 50px !important ;
         }
+
     </style>
 @endsection
 
@@ -142,12 +143,12 @@
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <div class="col-4 my-5 col-md-3 btn-sm btn-primary btn add_new_product_modal"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
+                            <div class="col-4 my-5 col-md-3 btn-sm btn-primary btn add_new_product_modal d-none"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Add new product
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-row-dashed fs-6 gy-5 mt-10" id="sale_table">
+                            <table class="table table-row-dashed fs-6 gy-4 mt-10" id="sale_table">
                                 <!--begin::Table head-->
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
@@ -176,87 +177,86 @@
                                             $product_variation =$sale_detail->toArray()['product_variation'];
 
                                         @endphp
-                                            <tr class="sale_row">
-                                                <td>
-                                                    <div class="ms-2">
-                                                        <span>{{$product->name}}</span>
-                                                        <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
-                                                        <br>
+                                        <tr class="sale_row">
+                                            <td>
+                                                <div class="ms-2">
+                                                    <span>{{$product->name}}</span>
+                                                    <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
+                                                    <br>
 
-                                                        <span class="current_stock_qty_txt">{{$sale_detail->stock_sum_current_quantity}}</span> <span class='smallest_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
+                                                    <span class="current_stock_qty_txt">{{$sale_detail->stock_sum_current_quantity}}</span> <span class='smallest_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
 
-                                                    </div>
-                                                </td>
-                                                <td class="d-none">
-                                                    <div>
-                                                        <input type='hidden' value="{{$sale_detail->product_id}}" class="product_id"  name="sale_details[{{$key}}][product_id]"  />
-                                                        <input type='hidden' value="{{$sale_detail->id}}"  name="sale_details[{{$key}}][sale_detail_id]"  />
-                                                        <input type='hidden' value="{{$sale_detail->variation_id}}" class="variation_id" name="sale_details[{{$key}}][variation_id]"  />
-                                                        {{-- <input type='hidden'name="sale_details[{{$key}}][uom_id]" value="{{$sale_detail->uom_id}}" class="uom_id"  /> --}}
-                                                    </div>
-                                                </td>
-                                                {{-- <td class="">
-                                                    <input class="form-control form-control-sm uom_set" placeholder="UOM SET" value="{{$sale_detail->toArray()['uom_set']['uomset_name']}}" disabled/>
-                                                </td> --}}
-                                                <td>
-                                                    <span class="text-danger-emphasis  stock_alert_{{$sale_detail->variation_id}} d-none fs-7 p-2">* Out of Stock</span>
-                                                    <div class="dialer_obj input-group-sm input-group mb-2 flex-nowrap">
-                                                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
-                                                            <i class="fa-solid fa-minus fs-2"></i>
-                                                        </button>
-                                                        <input type="text" class="form-control form-control-sm quantity  quantity-{{$sale_detail->variation_id}}"  placeholder="quantity" name="sale_details[{{$key}}][quantity]" value="{{round($sale_detail->quantity,2)}}" data-kt-dialer-control="input"/>
+                                                </div>
+                                            </td>
+                                            <td class="d-none">
+                                                <div>
+                                                    <input type='hidden' value="{{$sale_detail->product_id}}" class="product_id"  name="sale_details[{{$key}}][product_id]"  />
+                                                    <input type='hidden' value="{{$sale_detail->id}}"  name="sale_details[{{$key}}][sale_detail_id]"  />
+                                                    <input type='hidden' value="{{$sale_detail->variation_id}}" class="variation_id" name="sale_details[{{$key}}][variation_id]"  />
+                                                    {{-- <input type='hidden'name="sale_details[{{$key}}][uom_id]" value="{{$sale_detail->uom_id}}" class="uom_id"  /> --}}
+                                                </div>
+                                            </td>
+                                            {{-- <td class="">
+                                                <input class="form-control form-control-sm uom_set" placeholder="UOM SET" value="{{$sale_detail->toArray()['uom_set']['uomset_name']}}" disabled/>
+                                            </td> --}}
+                                            <td>
+                                                <span class="text-danger-emphasis  stock_alert_{{$sale_detail->variation_id}} d-none fs-7 p-2">* Out of Stock</span>
+                                                <div class="dialer_obj input-group-sm input-group mb-2 flex-nowrap">
+                                                    <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
+                                                        <i class="fa-solid fa-minus fs-2"></i>
+                                                    </button>
+                                                    <input type="text" class="form-control form-control-sm quantity  quantity-{{$sale_detail->variation_id}}"  placeholder="quantity" name="sale_details[{{$key}}][quantity]" value="{{round($sale_detail->quantity,2)}}" data-kt-dialer-control="input"/>
 
-                                                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
-                                                            <i class="fa-solid fa-plus fs-2"></i>
-                                                        </button>
-                                                    </div>
+                                                    <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
+                                                        <i class="fa-solid fa-plus fs-2"></i>
+                                                    </button>
+                                                </div>
 
-                                                </td>
-                                                <td>
-                                                    <select name="sale_details[{{$key}}][uom_id]" id="" class="form-select form-select-sm  unit_input uom_select" data-kt-repeater="uom_select"  data-hide-search="true"  data-placeholder="Select Unit" required>
-                                                        @foreach ($product->toArray()['uom']['unit_category']['uom_by_category'] as $uom)
-                                                            <option value="{{$uom['id']}}" @selected($uom['id']==$sale_detail->uom_id)>{{$uom['name']}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td class="fv-row">
-                                                    <select name=""  class="form-select form-select-sm price_group price_list w-180px" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price" disabled >
-                                                        <option value="default_selling_price">defalut selling price</option>
-                                                        @foreach ($priceLists as $priceList)
-                                                            <option value="{{$priceList->id}}" @selected($priceList->id==$sale_detail->price_list_id)>{{$PriceList->name}}</option>
-                                                        @endforeach
-                                                    </select>
+                                            </td>
+                                            <td>
+                                                <select name="sale_details[{{$key}}][uom_id]" id="" class="form-select form-select-sm  unit_input uom_select" data-kt-repeater="uom_select"  data-hide-search="true"  data-placeholder="Select Unit" required>
+                                                    @foreach ($product->toArray()['uom']['unit_category']['uom_by_category'] as $uom)
+                                                        <option value="{{$uom['id']}}" @selected($uom['id']==$sale_detail->uom_id)>{{$uom['name']}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="fv-row">
+                                                <select name=""  class="form-select form-select-sm price_group price_list w-180px" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price" disabled >
+                                                    <option value="default_selling_price">defalut selling price</option>
+                                                    @foreach ($priceLists as $priceList)
+                                                        <option value="{{$priceList->id}}" @selected($priceList->id==$sale_detail->price_list_id)>{{$PriceList->name}}</option>
+                                                    @endforeach
+                                                </select>
 
-                                                    <input type="hidden" class="price_list_id" name="sale_details[{{$key}}][price_list_id]" value='{{$sale_detail->price_list_id ?? 'default_selling_price'}}'/>
-                                                </td>
-                                                <input type="hidden" name="sale_details[{{$key}}][lot_serial_no]" class="lot_serial_no" value="{{$sale_detail->lot_serial_no}}">
-                                                <td class=" fv-row">
-                                                    <input type="text" class="form-control form-control-sm uom_price" value="{{$sale_detail->uom_price}}" name="sale_details[{{$key}}][uom_price]">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="subtotal form-control form-control-sm" name="sale_details[{{$key}}][subtotal]" value="{{$sale_detail->subtotal}}" readonly >
-                                                </td>
-                                                <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
-                                                    <select name="sale_details[{{$key}}][discount_type]" id="" class="form-select form-select-sm discount_type" data-kt-repeater="select2"  data-hide-search="true">
-                                                        <option value="fixed" @selected($sale_detail->discount_type=='fixed')>fixed</option>
-                                                        <option value="percentage" @selected($sale_detail->discount_type=='percentage')>Percentage</option>
-                                                    </select>
-                                                </td>
-                                                <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
-                                                    <input type="text" class="form-control form-control-sm per_item_discount" value="{{round($sale_detail->per_item_discount,2)??0}}" name="sale_details[{{$key}}][per_item_discount]" placeholder="Discount amount">
-                                                    <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>{{$currency->symbol}}</div>
-                                                    <input type="hidden" class="line_subtotal_discount" name="sale_details[{{$key}}][line_subtotal_discount]" value="0">
-                                                    {{-- <input type="hidden" class="currency_id" name="sale_details[{{$key}}][currency_id]" value="{{$sale_detail->currency_id}}"> --}}
-                                                </td>
-                                                <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
-                                            </tr>
+                                                <input type="hidden" class="price_list_id" name="sale_details[{{$key}}][price_list_id]" value='{{$sale_detail->price_list_id ?? 'default_selling_price'}}'/>
+                                            </td>
+                                            <input type="hidden" name="sale_details[{{$key}}][lot_serial_no]" class="lot_serial_no" value="{{$sale_detail->lot_serial_no}}">
+                                            <td class=" fv-row">
+                                                <input type="text" class="form-control form-control-sm uom_price" value="{{$sale_detail->uom_price}}" name="sale_details[{{$key}}][uom_price]">
+                                            </td>
+                                            <td>
+                                                <input type="text" class="subtotal form-control form-control-sm" name="sale_details[{{$key}}][subtotal]" value="{{$sale_detail->subtotal}}" readonly >
+                                            </td>
+                                            <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
+                                                <select name="sale_details[{{$key}}][discount_type]" id="" class="form-select form-select-sm discount_type" data-kt-repeater="select2"  data-hide-search="true">
+                                                    <option value="fixed" @selected($sale_detail->discount_type=='fixed')>fixed</option>
+                                                    <option value="percentage" @selected($sale_detail->discount_type=='percentage')>Percentage</option>
+                                                </select>
+                                            </td>
+                                            <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
+                                                <input type="text" class="form-control form-control-sm per_item_discount" value="{{round($sale_detail->per_item_discount,2)??0}}" name="sale_details[{{$key}}][per_item_discount]" placeholder="Discount amount">
+                                                <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>{{$currency->symbol}}</div>
+                                                <input type="hidden" class="line_subtotal_discount" name="sale_details[{{$key}}][line_subtotal_discount]" value="0">
+                                                {{-- <input type="hidden" class="currency_id" name="sale_details[{{$key}}][currency_id]" value="{{$sale_detail->currency_id}}"> --}}
+                                            </td>
+                                            <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
 
                             </table>
                         </div>
-                        <div class="separator my-5"></div>
                         <div class="col-6 float-end mt-3">
                             <table class="col-12 ">
                                 <tbody>
@@ -279,15 +279,15 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-end mb-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Sale Amount:(=)Ks
                                 </span>
                                <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm fs-7" value="{{$sale->sale_amount }}" >
                             </div>
                         </div>
-                        <div class="row justify-content-end">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                        <div class="row justify-content-end {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
+                            <div class="fs-6 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Total Item Discount:(-)Ks
                                 </span>
@@ -295,8 +295,8 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-7  col-12 col-md-3">
-                                <label class="form-label fs-6 fw-semibold text-gray-800" for="">
+                            <div class="mb-7  col-12 col-md-3 col-12 offset-md-1">
+                                <label class="form-label fs-7 fw-semibold text-gray-800" for="">
                                     Extra Discount Type
                                 </label>
                                 <select name="extra_discount_type" id="" class="form-select form-select-sm extra_discount_type" data-control="select2" data-hide-search="true">
@@ -304,13 +304,13 @@
                                     <option value="percentage" @selected($sale->extra_discount_type=='percentage')>Percentage</option>
                                 </select>
                             </div>
-                            <div class="mb-7  col-12 col-md-3">
-                                <label class="form-label fs-6 fw-semibold text-gray-800" for="">
+                            <div class="mb-7  col-12 col-md-3 col-12 ">
+                                <label class="form-label fs-7 fw-semibold text-gray-800" for="">
                                   Extra Discount Amount
                                 </label>
-                                 <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount" value="{{$sale->total_item_discount ?? 0}}">
+                                 <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount" value="{{$sale->extra_discount_amount ?? 0}}">
                             </div>
-                            <div class="fs-6  fw-semibold col-12 col-md-6 d-flex justify-content-end align-items-center">
+                            <div class="fs-7  fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Discount :(-)Ks
                                 </span>
@@ -318,7 +318,7 @@
                             </div>
                         </div>
                         <div class="row justify-content-end mt-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Total Sale Amount:(=)Ks
                                 </span>
@@ -326,7 +326,7 @@
                             </div>
                         </div>
                         {{-- <div class="row justify-content-end mt-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Paid Amount:(=)Ks
                                 </span>
@@ -334,7 +334,7 @@
                             </div>
                         </div>
                         <div class="row justify-content-end mt-2">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2 text-gray-800" for="">
                                     Balance Amount:(=)Ks
                                 </span>
@@ -347,7 +347,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-end mb-3">
-                            <div class="fs-6 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center mb-5 mb-md-0">
                                 <select name="payment_account" id="payment_accounts" class="form-select form-select-sm" data-kt-select2="true" data-placeholder="select payment account">
                                     <option disabled selected>Select Account</option>
                                     @php
@@ -358,7 +358,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
                                     Paid Amount:(=)Ks
                                 </span>
@@ -367,7 +367,7 @@
                         </div>
 
                         <div class="row justify-content-end">
-                            <div class="fs-6 fw-semibold col-12 col-md-6 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
                                     Balance Amount:(=)Ks
                                 </span>
