@@ -3,11 +3,10 @@
     <div class="modal-content">
         <form>
             <div class="modal-header">
-                <h3 class="fs-4">{{__('adjustment.adjustment_details')}} ({{__('adjustment.voucher_no')}}: <span class=" " id="clipboard">{{123}}</span> )
+                <h3 class="fs-4">{{__('transfer.transfer_details')}} ({{__('transfer.voucher_no')}}: <span class=" " id="clipboard">{{$stockTransfer->transfer_voucher_no}}</span> )
                     <a type="button" class="btn btn-icon btn-sm p-0" data-clipboard-target="#clipboard">
                         <i class="fa-solid fa-copy fs-6 clipboard-icon ki-copy"></i>
                     </a></h3>
-
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-light-danger ms-2" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times fs-2"></i>
@@ -16,7 +15,7 @@
             </div>
 
             <div class="modal-body">
-                <div class="card-body py-20">
+                <div class="card-body py-15">
                     <!-- begin::Wrapper-->
                     <div class="mw-lg-950px mx-auto w-100">
                         <!-- begin::Header-->
@@ -24,7 +23,7 @@
                             <h4 class=" text-gray-800  pe-5 pb-7"></h4>
                             <!--end::Logo-->
                             <div class="text-sm-end">
-                                <a data-href="{{route('adjustment.print',123)}}" class="btn btn-icon print-invoice btn-sm btn-active-light-primary ms-2" >
+                                <a data-href="{{route('transfer.print',$stockTransfer->id)}}" class="btn btn-icon print-invoice btn-sm btn-active-light-primary ms-2" >
                                     <i class="fa-solid fa-print fs-2"></i>
                                 </a>
 

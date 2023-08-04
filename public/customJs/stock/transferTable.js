@@ -77,11 +77,11 @@ var KTCustomersList = function () {
         datatable.on('draw', function () {
             // initToggleToolbar();
             handleDeleteRows();
-            handleBusinessLocationFilter();
+            handleFromLocationFilter();
+            handleToLocationFilter();
             // toggleToolbars();
             handleStatusFilter();
             handleDateFilterDatatable();
-            handleStatusFilter();
         });
     }
     var start = moment().subtract(1, "M");
@@ -106,21 +106,47 @@ var KTCustomersList = function () {
     }, cb);
 
     var handleSearchDatatable = () => {
-        const filterSearch = document.querySelector('[data-kt-purchase-table-filter="search"]');
+        const filterSearch = document.querySelector('[data-transfer-table-filter="search"]');
         filterSearch.addEventListener('keyup', function (e) {
             datatable.search(e.target.value).draw();
         });
     }
     var handleDateFilterDatatable = () => {
-        const filterSearch = document.querySelector('[data-kt-date-filter="date"]');
+        const filterSearch = document.querySelector('[data-transfer-date-filter="date"]');
         $(filterSearch).on('change', e => {
+            // console.log('good');
             let value = e.target.value;
-            datatable.column(2).search(value).draw();
+            const dateRange = value.split(" - ");
+
+            if (dateRange.length === 2) {
+
+                $.fn.dataTableExt.afnFiltering.push(
+                    function( settings, data, dataIndex ) {
+                        // var min  = $('#min-date').val()
+                        // var max  = $('#max-date').val()
+                        // var createdAt = data[0] || 0; // Our date column in the table
+                        //createdAt=createdAt.split(" ");
+                        // var startDate   = moment(min, "DD/MM/YYYY");
+                        // var endDate     = moment(max, "DD/MM/YYYY");
+                        // var diffDate = moment(createdAt, "DD/MM/YYYY");
+                        //console.log(startDate);
+                        if (
+                            (min == "" || max == "") ||
+                            (diffDate.isBetween(startDate, endDate))
+
+
+                        ) {  return true;  }
+                        return false;
+
+                    }
+                );
+            }
+
         });
     }
 
-    var handleBusinessLocationFilter = () => {
-        const filterStatus = document.querySelector('[data-kt-business-location-filter="locations"]');
+    var handleFromLocationFilter = () => {
+        const filterStatus = document.querySelector('[data-transfer-table-filter="from_location"]');
         $(filterStatus).on('change', e => {
             let value = e.target.value;
             if (value === 'all') {
@@ -131,18 +157,21 @@ var KTCustomersList = function () {
         });
     }
 
-    var handleStatusFilter = () => {
-        const filterStatus = document.querySelector('[data-table-filter="status"]');
+    var handleToLocationFilter = () => {
+        const filterStatus = document.querySelector('[data-transfer-table-filter="to_location"]');
         $(filterStatus).on('change', e => {
             let value = e.target.value;
             if (value === 'all') {
                 value = '';
             }
-            datatable.column(6).search(value).draw();
+
+            datatable.column(4).search(value).draw();
         });
     }
+
+
     var handleStatusFilter = () => {
-        const filterStatus = document.querySelector('[data-kt-status-table-filter="status"]');
+        const filterStatus = document.querySelector('[data-transfer-table-filter="status"]');
         $(filterStatus).on('change', e => {
             let value = e.target.value;
             if (value === 'all') {
@@ -155,18 +184,21 @@ var KTCustomersList = function () {
     // Delete location
     var handleDeleteRows = () => {
         // Select all delete buttons
-        const deleteButtons = document.querySelectorAll('[data-kt-adjustmentItem-table="delete_row"]');
+        const deleteButtons = document.querySelectorAll('[data-kt-transferItem-table="delete_row"]');
         deleteButtons.forEach(d => {
             // Delete button on click
             d.addEventListener('click', function (e) {
                 e.preventDefault();
-                // Select parent row
-                var id = $(this).data('id');
-                var voucherNo = $(this).data('adjustment-voucher-no');
-                var status = $(this).data('adjustment-status');
-                const parent = e.target.closest('tr');
 
-                if(status == 'completed'){
+                var id = $(this).data('id');
+                var voucherNo = $(this).data('transfer-voucher-no');
+                var status = $(this).data('transfer-status');
+
+                console.log('ID:', id);
+                console.log('Voucher No:', voucherNo);
+                e.preventDefault();
+
+                if(status == 'in_transit' || status == 'completed'){
                     Swal.fire({
                         text: "Are you sure you want to delete " + voucherNo + "?",
                         icon: "warning",
@@ -194,11 +226,11 @@ var KTCustomersList = function () {
                             }).then(function (result) {
                                 let url;
                                 if (result.isConfirmed) {
-                                    url = `/stock-adjustment/${id}/delete?restore=true`;
+                                    url = `/stock-transfer/${id}/delete?restore=true`;
                                 } else if (result.dismiss === 'cancel') {
-                                    url = `/stock-adjustment/${id}/delete?restore=false`;
+                                    url = `/stock-transfer/${id}/delete?restore=true`;
                                 } else {
-                                    url = `/stock-adjustment/${id}/delete?restore=true`;
+                                    url = `/stock-transfer/${id}/delete?restore=true`;
                                 }
                                 $.ajax({
                                     url,
@@ -217,7 +249,7 @@ var KTCustomersList = function () {
                                                 confirmButton: "btn fw-bold btn-primary",
                                             }
                                         }).then(function () {
-                                        });
+                                          });
                                     }
                                 });
                             });
@@ -248,7 +280,7 @@ var KTCustomersList = function () {
                     }).then(function (result) {
                         if (result.isConfirmed) {
 
-                            let url = `/stock-adjustment/${id}/delete?restore=false`;
+                            let url = `/stock-transfer/${id}/delete?restore=true`;
 
                             $.ajax({
                                 url,
@@ -267,7 +299,7 @@ var KTCustomersList = function () {
                                             confirmButton: "btn fw-bold btn-primary",
                                         }
                                     }).then(function () {
-                                    });
+                                 });
                                 }
                             });
                         } else if (result.dismiss === 'cancel') {
@@ -426,9 +458,10 @@ var KTCustomersList = function () {
             handleSearchDatatable();
             handleDeleteRows();
             handleStatusFilter();
-            handleBusinessLocationFilter();
+            handleFromLocationFilter();
+            handleToLocationFilter();
             handleDateFilterDatatable();
-            handleStatusFilter();
+
         }
     }
 }();

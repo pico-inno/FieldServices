@@ -4,7 +4,7 @@
 @extends('App.main.navBar')
 
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('stock_history_active_show', 'active show')
 
 

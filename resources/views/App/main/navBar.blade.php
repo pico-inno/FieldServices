@@ -1290,7 +1290,7 @@
                                         </div>
                                         @if(multiHasAll(['opening stock', 'stockin', 'stockout', 'stock transfer', 'stock adjustment']))
                                         <!--begin::Tab pane-->
-                                        <div class="tab-pane fade @yield('inventroy_show')" id="kt_aside_nav_tab_inventory" role="tabpanel">
+                                        <div class="tab-pane fade @yield('inventory_show')" id="kt_aside_nav_tab_inventory" role="tabpanel">
                                             <!--begin::Wrapper-->
                                             <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0" id="kt_aside_menu" data-kt-menu="true">
                                                 <div id="kt_aside_menu_wrapper" class="menu-fit">

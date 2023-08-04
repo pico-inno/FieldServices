@@ -1115,7 +1115,7 @@ class StockTransferController extends Controller
                     $html .= '      <a href="'.route('stock-transfer.edit', $transfer->id).'" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a> ';
                 }
                 if (hasDelete('stock transfer')){
-                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$transfer->id.' data-adjustment-voucher-no='.$transfer->adjustment_voucher_no.' data-adjustment-status='.$transfer->status.' data-kt-adjustmentItem-table="delete_row">Delete</a>';
+                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$transfer->id.' data-transfer-voucher-no='.$transfer->adjustment_voucher_no.' data-transfer-status='.$transfer->status.' data-kt-transferItem-table="delete_row">Delete</a>';
                 }
                 $html .= '</ul></div></div>';
 
@@ -1127,13 +1127,15 @@ class StockTransferController extends Controller
 
     public function invoicePrint($id)
     {
-        $transfer=StockAdjustment::with(['businessLocation', 'createdPerson:id,username'])->where('id',$id)->first()->toArray();
+        $transfer = StockTransfer::with([
+            'businessLocationFrom',
+            'businessLocationTo',
+            'stocktransferPerson:id,username',
+            'stockreceivePerson:id,username',
+        ])->where('id',$id)->first()->toArray();
 
 
-
-        $location = $transfer['business_location'];
-
-        $transfer_detrails=StockAdjustmentDetail::where('adjustment_id',$transfer['id'])
+        $transfer_details =StockTransferDetail::where('transfer_id',$transfer['id'])
             ->where('is_delete','0')
             ->with(['product', 'uom','productVariation'=>function($q){
                 $q->with('variationTemplateValue');
@@ -1141,7 +1143,7 @@ class StockTransferController extends Controller
             ->get();
 
 
-        $invoiceHtml = view('App.stock.adjustment.invoice',compact('adjustment','location','adjustment_details'))->render();
+        $invoiceHtml = view('App.stock.transfer.invoice',compact('transfer','transfer_details'))->render();
         return response()->json(['html' => $invoiceHtml]);
     }
 

@@ -2,7 +2,7 @@
 
 @section('stock_transfer_icon', 'active')
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('stock_transfer_show', 'active show')
 @section('stock_transfer_here_show', 'here show')
 @section('stock_transfer_active_show', 'active ')
@@ -64,11 +64,11 @@
                                     <label class="form-label fs-6 fw-semibold">{{__('transfer.from_location')}}</label>
                                     <select class="form-select  fw-bold filter_locations_from" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-stockins-table-filter="location" data-hide-search="true">
+                                            data-transfer-table-filter="from_location" data-hide-search="true">
                                         <option></option>
-                                        <option selected value="0">All</option>
+                                        <option selected value="all">All</option>
                                         @foreach($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
+                                            <option value="{{$location->name}}">{{$location->name}}</option>
                                         @endforeach
 
                                     </select>
@@ -76,14 +76,14 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-4 ">
-                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.to_Location')}}</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.to_location')}}</label>
                                     <select class="form-select  fw-bold filter_locations_to" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-stockins-table-filter="location" data-hide-search="true">
+                                            data-transfer-table-filter="to_location" data-hide-search="true">
                                         <option></option>
-                                        <option selected value="0">All</option>
+                                        <option selected value="all">All</option>
                                         @foreach($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
+                                            <option value="{{$location->name}}">{{$location->name}}</option>
                                         @endforeach
 
                                     </select>
@@ -94,47 +94,49 @@
                                     <label class="form-label fs-6 fw-semibold">{{__('transfer.status')}}</label>
                                     <select class="form-select  fw-bold filter_status" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="role" data-hide-search="true">
+                                            data-transfer-table-filter="status" data-hide-search="true">
                                         <option></option>
-                                        <option value="0" selected>All</option>
-                                        <option value="1">pending</option>
-                                        <option value="2">confirmed</option>
+                                        <option value="all" selected>All</option>
+                                        <option value="prepared">Prepared</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="in_transit">In Transit</option>
+                                        <option value="completed">Completed</option>
                                     </select>
                                 </div>
                                 <!--end::Input group-->
                             </div>
                             <div class="row mb-5">
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4">
-                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.transfer_person')}}</label>
-                                    <select class="form-select  fw-bold filter_transferperosn" data-kt-select2="true"
-                                            data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="two-step" data-hide-search="true">
-                                        <option selected value="0">All</option>
-                                        @foreach($stockoutsperson as $person)
-                                            <option value="{{$person->id}}">{{$person->username}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+{{--                                <div class="mb-5 col-6 col-md-4">--}}
+{{--                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.transfer_person')}}</label>--}}
+{{--                                    <select class="form-select  fw-bold filter_transferperosn" data-kt-select2="true"--}}
+{{--                                            data-placeholder="Select option" data-allow-clear="true"--}}
+{{--                                            data-kt-user-table-filter="two-step" data-hide-search="true">--}}
+{{--                                        <option selected value="0">All</option>--}}
+{{--                                        @foreach($stockoutsperson as $person)--}}
+{{--                                            <option value="{{$person->id}}">{{$person->username}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4">
-                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.receive_person')}}</label>
-                                    <select class="form-select  fw-bold filter_receiveperosn" data-kt-select2="true"
-                                            data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="two-step" data-hide-search="true">
-                                        <option selected value="0">All</option>
-                                        @foreach($stockoutsperson as $person)
-                                            <option value="{{$person->id}}">{{$person->username}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+{{--                                <div class="mb-5 col-6 col-md-4">--}}
+{{--                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.receive_person')}}</label>--}}
+{{--                                    <select class="form-select  fw-bold filter_receiveperosn" data-kt-select2="true"--}}
+{{--                                            data-placeholder="Select option" data-allow-clear="true"--}}
+{{--                                            data-kt-user-table-filter="two-step" data-hide-search="true">--}}
+{{--                                        <option selected value="0">All</option>--}}
+{{--                                        @foreach($stockoutsperson as $person)--}}
+{{--                                            <option value="{{$person->id}}">{{$person->username}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-10 col-6 col-md-4 ">
                                     <label class="form-label fs-6 fw-semibold">{{__('transfer.date')}}</label>
                                     <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
-                                           id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
+                                           id="kt_daterangepicker_4" data-dropdown-parent="#filter" data-transfer-date-filter="date"/>
                                 </div>
                                 <!--end::Input group-->
                             </div>
@@ -162,7 +164,7 @@
                             </svg>
                         </span>
                             <!--end::Svg Icon-->
-                            <input type="text" data-kt-customer-table-filter="search"
+                            <input type="text" data-transfer-table-filter="search"
                                    class="form-control form-control-solid w-250px ps-15"
                                    placeholder="{{__('transfer.search_stock_transfer')}}"/>
                         </div>
@@ -494,7 +496,7 @@
     $(document).ready(function(){
         let printId="{{session('print')}}";
         if(printId){
-            let url=`adjustment/print/${printId}/invoice`;
+            let url=`transfer/print/${printId}/invoice`;
             loadingOn();
             ajaxPrint(url);
         }
