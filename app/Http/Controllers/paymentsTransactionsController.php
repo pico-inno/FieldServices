@@ -53,6 +53,9 @@ class paymentsTransactionsController extends Controller
                     $formattedTime = $dateTime->format(" h:i A " );
                     return $formattedDate.'<br>'.'('.$formattedTime.')';
                 })
+                ->editColumn('payment_amount',function($transaction){
+                    return price($transaction->payment_amount,$transaction->currency_id);
+                })
                 ->rawColumns(['payment_date','payment_type'])
                 ->make(true);
     }

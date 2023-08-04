@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Contact\Contact;
+use App\Models\sale\sales;
+use App\Models\paymentsTransactions;
 use Yajra\DataTables\Facades\DataTables;
 use DateTime;
 use Illuminate\Support\Facades\Route;
@@ -80,9 +82,23 @@ class CustomerController extends Controller
     }
 
     public function show($id) {
-        $customer = Contact::find($id);
-
-        return view('App.contact_management.customers.show')->with(compact('customer'));
+        $contact= Contact::find($id);
+        $payments = [];
+        $sale = sales::where('contact_id', $id)->get();
+        // dd($sale);
+        if($sale) {
+            foreach($sale as $s) {
+                $payment = paymentsTransactions::where('transaction_id', $s->id)
+                    ->where('transaction_type', 'sale')
+                    ->get();
+                // dd($payment);
+                if($payment) {
+                    $payments[] = $payment;
+                    // dd($payments);
+                }
+            }
+        }
+        return view('App.contact_management.customers.show')->with(compact('contact', 'sale', 'payments'));
     }
 
     public function create(){

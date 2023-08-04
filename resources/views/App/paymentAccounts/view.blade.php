@@ -104,7 +104,7 @@
                                                     <span class="fw-semibold fs-7 text-gray-600">Opening Amount:</span>
                                                     </th>
                                                     <td  class="text-end">
-                                                    <span class="fw-bold fs-7 text-gray-800">{{number_format($account->opening_amount,2,'.')}} {{$account->currency->symbol}}</span>
+                                                    <span class="fw-bold fs-7 text-gray-800">{{price($account->opening_amount,$account->currency->id)}} </span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -112,7 +112,7 @@
                                                     <span class="fw-semibold fs-7 text-gray-600">Current Balance:</span>
                                                     </th>
                                                     <td  class="text-end">
-                                                    <span class="fw-bold fs-7 text-gray-800">{{number_format($account->current_balance,2,'.')}} {{$account->currency->symbol}}</span>
+                                                    <span class="fw-bold fs-7 text-gray-800">{{price($account->current_balance,$account->currency->id)}} </span>
                                                     </td>
                                                 </tr>
 
@@ -173,106 +173,6 @@
                     <!--end::Table head-->
                     <!--begin::Table body-->
                     <tbody class="fw-bold text-gray-600 text-start fs-7 text-end">
-                        <tr>
-                            <!--begin::Product ID-->
-                            <td class="text-start">#XGY-356</td>
-                            <!--end::Product ID-->
-                            <!--begin::Date added-->
-                            <td class="text-end">02 Apr, 2023</td>
-                            <!--end::Date added-->
-                            <!--begin::Price-->
-                            <td class="text-end">Opening</td>
-                            <!--end::Price-->
-                            <!--begin::Status-->
-                            <td class="text-end">
-                                SVN-0005
-                            </td>
-                            <td class="text-end">
-                                Cash
-                            </td>
-                            <!--end::Status-->
-                            <!--begin::Qty-->
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">KBZ Acc</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class=" fw-bold text-danger">Credit</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">50,000.00 $</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">Note </span>
-                            </td>
-                            <!--end::Qty-->
-                        </tr>
-                        <tr>
-                            <!--begin::Product ID-->
-                            <td class="text-start">#XGY-357</td>
-                            <!--end::Product ID-->
-                            <!--begin::Date added-->
-                            <td class="text-end">02 Apr, 2023</td>
-                            <!--end::Date added-->
-                            <!--begin::Price-->
-                            <td class="text-end">Sale</td>
-                            <!--end::Price-->
-                            <!--begin::Status-->
-                            <td class="text-end">
-                                SVN-0008
-                            </td>
-                            <td class="text-end">
-                                Wave
-                            </td>
-                            <!--end::Status-->
-                            <!--begin::Qty-->
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">Wave ACC</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class=" fw-bold text-success">Debit</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">50,000.00 $</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">Note </span>
-                            </td>
-                            <!--end::Qty-->
-                        </tr>
-                        <tr>
-                            <!--begin::Product ID-->
-                            <td class="text-start">#XGY-358</td>
-                            <!--end::Product ID-->
-                            <!--begin::Date added-->
-                            <td class="text-end">03 Apr, 2023</td>
-                            <!--end::Date added-->
-                            <!--begin::Price-->
-                            <td class="text-end">Purchase</td>
-                            <!--end::Price-->
-                            <!--begin::Status-->
-                            <td class="text-end">
-                                PVN-0005
-                            </td>
-                            <td class="text-end">
-                                Cash
-                            </td>
-                            <!--end::Status-->
-                            <!--begin::Qty-->
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">KBZ Acc</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class=" fw-bold text-danger">Credit</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">50,000.00 $</span>
-                            </td>
-                            <td class="text-end" data-order="58">
-                                <span class="text-dark fw-bold">Note </span>
-                            </td>
-                            <!--end::Qty-->
-                        </tr>
-
                     </tbody>
                     <!--end::Table body-->
                 </table>

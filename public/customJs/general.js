@@ -59,7 +59,7 @@ function _init_sound(){
             off();
         }
     }else{
-        on();
+        off();
     }
 }
 

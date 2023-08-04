@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Contact\Contact;
+use App\Models\paymentsTransactions;
+use App\Models\purchases\purchases;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 use DateTime;
@@ -50,19 +52,21 @@ class SupplierController extends Controller
                             </button>
 
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">';
-                        if (hasUpdate('supplier')){
-                            $html .= '<li><a href="'.route('suppliers.edit', $row->id).'" class="dropdown-item p-2"><i class="fas fa-pen-to-square me-3"></i> Edit</a></li>';
-                        }
+                            $html .= ' <li><a href="'.route('suppliers.show', $row->id).'" class="dropdown-item p-2"><i class="fa-solid fa-eye me-3"></i> View</a></li>';
 
-                        if (hasDelete('supplier')){
-                            $html .= '<li>
-                                    <form id="delete-form-' . $row->id . '" action="contacts/suppliers/' . $row->id . '" method="POST">
-                                        ' . csrf_field() . '
-                                        ' . method_field('DELETE') . '
-                                    </form>
-                                    <button type="button" class="delete-btn dropdown-item p-2 cursor-pointer" data-id="' . $row->id . '"><i class="fas fa-trash me-3"></i> Delete</button>
-                                </li>';
-                        }
+                            if (hasUpdate('supplier')){
+                                $html .= '<li><a href="'.route('suppliers.edit', $row->id).'" class="dropdown-item p-2"><i class="fas fa-pen-to-square me-3"></i> Edit</a></li>';
+                            }
+
+                            if (hasDelete('supplier')){
+                                $html .= '<li>
+                                        <form id="delete-form-' . $row->id . '" action="contacts/suppliers/' . $row->id . '" method="POST">
+                                            ' . csrf_field() . '
+                                            ' . method_field('DELETE') . '
+                                        </form>
+                                        <button type="button" class="delete-btn dropdown-item p-2 cursor-pointer" data-id="' . $row->id . '"><i class="fas fa-trash me-3"></i> Delete</button>
+                                    </li>';
+                            }
 
                         $html .= '</ul></div>';
 
@@ -77,8 +81,27 @@ class SupplierController extends Controller
         return view('App.contact_management.suppliers.index');
     }
 
-    public function show()
+    public function show($id)
     {
+        $contact = Contact::find($id);
+        $payments = [];
+
+        $purchase = purchases::where('contact_id', $id)->get();
+        // dd($purchase);
+        // if($purchase) {
+        //     foreach($purchase as $p) {
+        //         $payment = paymentsTransactions::where('transaction_id', $p->id)
+        //             ->where('transaction_type', '')
+        //             ->get();
+        //         // dd($payment);
+        //         if($payment) {
+        //             $payments[] = $payment;
+        //             // dd($payments);
+        //         }
+        //     }
+        // }
+        return view('App.contact_management.customers.show')->with(compact('contact', 'purchase'));
+
     }
 
     public function create()

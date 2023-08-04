@@ -2304,7 +2304,8 @@
                         <!--end::Card header-->
                         <!--begin::Card body-->
                         <div class="card-body">
-                            <!--begin::Table-->
+                            <div class="table-responsive">
+                                <!--begin::Table-->
                             <table class="table align-middle table-row-dashed fs-6 gy-3" id="kt_table_widget_5_table">
                                 <!--begin::Table head-->
                                 <thead>
@@ -2508,6 +2509,7 @@
                                 <!--end::Table body-->
                             </table>
                             <!--end::Table-->
+                            </div>
                         </div>
                         <!--end::Card body-->
                     </div>
