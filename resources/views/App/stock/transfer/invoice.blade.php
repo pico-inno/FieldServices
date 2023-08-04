@@ -18,8 +18,7 @@
 <body>
 <div id="print-invoice" class="m-10">
     <div class="-header">
-        <h4 class="fw-bolder text-gray-800 fs-2qx pe-5 pb-7">Transfer Details (Voucher
-            No: {{$stocktransfer['transfer_voucher_no']}} )</h4>
+        <h4 class="fw-bolder text-gray-800 fs-2qx pe-5 pb-7">{{__('transfer.transfer_details')}} ({{__('transfer.voucher_no')}}: {{$transfer['transfer_voucher_no']}} )</h4>
 
         <!--begin::Close-->
         <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="" aria-label="Close">
@@ -35,9 +34,9 @@
                     Location (From)
                 </h3>
                 <address class="mt-3 fs-5">
-                    {{$stocktransfer['business_location_from']['name']}}<br>
-                    {{!empty($stocktransfer['business_location_from']['landmark']) ? $stocktransfer['business_location_from']['landmark'].'<br>' : ''}}
-                    {{$stocktransfer['business_location_from']['city']}},{{$stocktransfer['business_location_from']['state']}},{{$stocktransfer['business_location_from']['country']}},{{$stocktransfer['business_location_from']['zip_code']}}
+                    {{$transfer['business_location_from']['name']}}<br>
+                    {{!empty($transfer['business_location_from']['landmark']) ? $transfer['business_location_from']['landmark'].'<br>' : ''}}
+                    {{$transfer['business_location_from']['city']}},{{$transfer['business_location_from']['state']}},{{$transfer['business_location_from']['country']}},{{$transfer['business_location_from']['zip_code']}}
                 </address>
             </div>
             <div class="col-4">
@@ -45,9 +44,9 @@
                     Location (To)
                 </h3>
                 <address class="mt-3 fs-5">
-                    {{$stocktransfer['business_location_to']['name']}}<br>
-                    {{!empty($stocktransfer['business_location_to']['landmark']) ? $stocktransfer['business_location_to']['landmark'].'<br>' : ''}}
-                    {{$stocktransfer['business_location_to']['city']}},{{$stocktransfer['business_location_to']['state']}},{{$stocktransfer['business_location_to']['country']}},{{$stocktransfer['business_location_to']['zip_code']}}
+                    {{$transfer['business_location_to']['name']}}<br>
+                    {{!empty($transfer['business_location_to']['landmark']) ? $transfer['business_location_to']['landmark'].'<br>' : ''}}
+                    {{$transfer['business_location_to']['city']}},{{$transfer['business_location_to']['state']}},{{$transfer['business_location_to']['country']}},{{$transfer['business_location_to']['zip_code']}}
                 </address>
             </div>
             <div class="col-4">
@@ -56,10 +55,10 @@
                 </h3>
                 <div class="text-group">
                     <h3 class="fw-semibold fs-5">
-                        Date : <span class="text-gray-600">{{$stocktransfer['transfered_at']}}</span>
+                        Date : <span class="text-gray-600">{{$transfer['transfered_at']}}</span>
                     </h3>
                     <h3 class="fw-semibold fs-5">
-                        Stockin Status : <span class="text-gray-600">{{$stocktransfer['status']}}</span>
+                        Stockin Status : <span class="text-gray-600">{{$transfer['status']}}</span>
                     </h3>
                 </div>
             </div>
@@ -71,19 +70,17 @@
                 <!--begin::Table row-->
                 <tr class="bg-success fw-bold fs-8 text-white text-start text-uppercase">
                     <th class="">#</th>
-                    <th class="min-w-80px">Products</th>
-                    <th class="min-w-50px">Lot No</th>
-                    <th class="min-w-50px">QTY/Unit</th>
-                    <th class="min-w-50px">UOM</th>
-                    <th class="min-w-50px">Purchase Price</th>
-                    <th class="min-w-40px">EXP date</th>
+                    <th class="min-w-175px pb-2">Products</th>
+                    <th class="min-w-80px pb-2">Transfer Qty</th>
+                    <th class="min-w-80px pb-2">UOM</th>
+                    <th class="min-w-100px pb-2">Remark</th>
                 </tr>
                 <!--end::Table row-->
                 </thead>
                 <!--end::Table head-->
                 <!--begin::Table body-->
                 <tbody class="fw-semibold text-gray-800 fs-7">
-                @foreach ($stocktransfer_details as $key=>$detail)
+                @foreach ($transfer_details as $key=>$detail)
                     @php
                         $variation_template_value=$detail->toArray()['product_variation']['variation_template_value'];
                     @endphp
@@ -92,13 +89,11 @@
                         <td>{{$key+1}}</td>
                         <td>
                             {{$detail->product->name}}<br>
-                            ({{$variation_template_value ? $variation_template_value['name']:''}})
+                            {{$variation_template_value ? "(".$variation_template_value['name'].")":''}}
                         </td>
-                        <td>{{$detail->lot_no}}</td>
-                        <td>{{round($detail->quantity,2)}} ({{$detail->name}})</td>
-                        <td>{{$detail->uomset_name}}</td>
-                        <td>{{round($detail->purchase_price,2)}}</td>
-                        <td>{{$detail->expired_date}}</td>
+                        <td>{{round($detail->quantity,2)}} ({{$detail->uom->short_name}})</td>
+                        <td>{{$detail->uom->name}}</td>
+                        <td>{{$detail->remark}}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -107,50 +102,6 @@
 
         </div>
 
-        <div class="col-md-6 col-12 col-xs-12  ">
-            <div class="mt-5">
-                <table class="table align-middle table-row-dashed fs-6 gy-2 p-5" id="kt_customers_table">
-                    <!--begin::Table body-->
-                    <tbody class="fw-semibold text-gray-800 table-bordere">
-                    <tr>
-                        <td>
-                            Net Total Amount:
-                        </td>
-                        <td class="text-end">
-                        </td>
-                        <td class="text-end">
-                            @php
-                                $totalPurchasePrice = $stocktransfer_details->sum('purchase_price');
-                            @endphp
-                            {{ round($totalPurchasePrice, 2) }}
-                        </td>
-                    <tr>
-                        <td>Additional Shipping charges:	</td>
-                        <td class="text-end">
-                            (+)
-                        </td>
-                        <td class="text-end">
-                            {{round($stocktransfer['transfer_expense'], 2)}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Purchase Total:
-                        </td>
-                        <td class="text-end">
-                            (=)
-                        </td>
-                        <td class="text-end">
-                            {{ round($totalPurchasePrice, 2) + round($stocktransfer['transfer_expense'], 2)}}
-                        </td>
-                    </tr>
-                    </tr>
-                    </tbody>
-                    <!--end::Table body-->
-                </table>
-
-            </div>
-        </div>
     </div>
 </div>
 </body>

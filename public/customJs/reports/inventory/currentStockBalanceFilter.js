@@ -12,6 +12,17 @@
     var filterLotVal = 1;
 
 
+     var handleSearchDatatable = () => {
+
+         const filterSearch = document.querySelector('[data-current-balance-report="search"]');
+         console.log(filterSearch)
+         filterSearch.addEventListener('keyup', function (e) {
+             console.log('nice 1')
+             dataTable.search(e.target.value).draw();
+         });
+     }
+
+     handleSearchDatatable();
     $('#kt_daterangepicker_5, #flexCheckDefault, .filter-card select, .filter-card input').on('change', function() {
         var checkbox = $('#flexCheckDefault');
         filterLotVal = checkbox.prop('checked') ? 0 : 1;
@@ -61,8 +72,6 @@
                     }
                 },
                 success: function (results) {
-                    console.log(results);
-
                     dataTable.clear();
 
                     results.forEach(function(item) {

@@ -1,11 +1,12 @@
 @extends('App.main.navBar')
 
-@section('styles')
-    {{-- css file for this page --}}
-@endsection
-@section('stock_transfer_icon', 'active')
+{{--@section('stock_transfer_icon', 'active')--}}
+@section('inventory_icon', 'active')
+@section('inventory_show', 'active show')
 @section('stock_transfer_show', 'active show')
-{{--@section('stock_transfer_add_active_show', 'active ')--}}
+@section('stock_transfer_here_show', 'here show')
+@section('stock_transfer_active_show', 'active ')
+
 
 @section('styles')
     <link href="{{asset("assets/plugins/global/plugins.bundle.css")}}" rel="stylesheet" type="text/css"/>

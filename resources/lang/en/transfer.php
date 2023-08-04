@@ -6,6 +6,7 @@ return [
     //Index Page
     'transfer' => 'Stock Transfer',
     'transfer_list' => 'Stock Transfer List',
+    'transfer_details' => 'Stock Transfer Details',
     'list' => 'list',
     'add' => 'add',
     'filter' => 'Filters',
