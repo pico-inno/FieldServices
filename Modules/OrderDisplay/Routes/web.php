@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\OrderDisplay\Http\Controllers\orderDisplayController;
+use Modules\OrderDisplay\Http\Controllers\ResOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,15 +17,21 @@ use Modules\OrderDisplay\Http\Controllers\orderDisplayController;
 
 Route::controller(orderDisplayController::class)->group(function () {
     // order
-    Route::get('/order/display/list','kdList')->name('kdList');
-    Route::get('/order/display/list/data','kdDataForList')->name('kdDataForList');
-    Route::get('/order/display/create','kdCreate')->name('kdCreate');
-    Route::post('/order/display/store','kdStore')->name('kdStore');
+    Route::get('/order/display/list','odList')->name('odList');
+    Route::get('/order/display/list/data','odDataForList')->name('odDataForList');
+    Route::get('/order/display/create','odCreate')->name('odCreate');
+    Route::post('/order/display/store','odStore')->name('odStore');
 
 
-    Route::get('/order/{id}/display/edit','kdEdit')->name('kdEdit');
-    Route::post('/order/{id}/display/update','kdUpdate')->name('kdUpdate');
+    Route::get('/order/{id}/display/edit','odEdit')->name('odEdit');
+    Route::post('/order/{id}/display/update','odUpdate')->name('odUpdate');
 
-    Route::delete('/order/display/destory','kdDestory')->name('kdDestory');
-    Route::get('/order/display','kDisplay')->name('orderDisplay');
+    Route::delete('/order/display/destory','odDestory')->name('odDestory');
+    Route::get('/order/display','odDisplay')->name('orderDisplay');
+
+
+});
+
+Route::controller(ResOrderController::class)->group(function(){
+    Route::get('/res/order/data','restOrderData')->name('odDisplayData');
 });

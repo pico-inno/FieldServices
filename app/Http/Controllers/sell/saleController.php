@@ -6,11 +6,14 @@ use Error;
 use DateTime;
 use stdClass;
 use Exception;
+use App\Models\resOrders;
 use App\Helpers\UomHelper;
 use App\Models\Currencies;
+use App\Models\res_orders;
 use App\Models\sale\sales;
 use App\Helpers\UomHelpers;
 use App\Models\Product\UOM;
+use App\Models\posRegisters;
 use Illuminate\Http\Request;
 use App\Models\stock_history;
 use Illuminate\Support\Carbon;
@@ -26,23 +29,22 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\posSession\posSessionController;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\hospitalRoomSaleDetails;
-use App\Models\posRegisters;
-use App\Models\posSession\posRegisterSessions;
 use App\Models\Product\UOMSellingprice;
-use Modules\Reservation\Entities\Reservation;
 use App\Models\Product\PriceListDetails;
 use App\Models\Product\ProductVariation;
-use Modules\Reservation\Entities\FolioInvoice;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
+use Modules\Reservation\Entities\Reservation;
+use App\Models\posSession\posRegisterSessions;
+use Modules\Reservation\Entities\FolioInvoice;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
+use App\Http\Controllers\posSession\posSessionController;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -331,8 +333,14 @@ class saleController extends Controller
                         'receivable_amount'=>$suppliers_receivable+$request->balance_amount
                     ]);
                 }
-                $this->saleDetailCreation($request, $sale_data, $sale_details);
+                $resOrderData=null;
+                if($request->type=='pos'){
+                    $resOrderData=$this->resOrderCreation($sale_data);
+                }
+                $this->saleDetailCreation($request, $sale_data, $sale_details,$resOrderData);
                 DB::commit();
+
+
             if($request->type=='pos'){
                  return response()->json([
                     'data' => $sale_data->sales_voucher_no,
@@ -350,6 +358,7 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
+            logger($e);
             DB::rollBack();
             if($request->type=='pos'){
                 return response()->json([
@@ -361,7 +370,14 @@ class saleController extends Controller
            }
         }
     }
+    public function resOrderCreation($sale_data){
+        return resOrders::create([
+            'order_voucher_no'=>generatorHelpers::resOrderVoucherNo(),
+            'order_status'=>'order',
+            'location_id'=>$sale_data->business_location_id,
+        ]);
 
+    }
 
     public function changeStockQty($requestQty, $business_location_id, $sale_detail, $current_stock=[])
     {
@@ -993,7 +1009,7 @@ class saleController extends Controller
 
     }
 
-    private function saleDetailCreation($request,Object $sale_data,Array $sale_details){
+    private function saleDetailCreation($request,Object $sale_data,Array $sale_details,$resOrderData=null){
 
         foreach ($sale_details as $sale_detail) {
 
@@ -1009,6 +1025,8 @@ class saleController extends Controller
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
+                'rest_order_id'=>$resOrderData ? $resOrderData->id : null,
+                'rest_order_status'=>$resOrderData ? 'order' : null,
                 'variation_id' => $sale_detail['variation_id'],
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],

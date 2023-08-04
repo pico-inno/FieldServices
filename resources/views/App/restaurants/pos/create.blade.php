@@ -20,14 +20,22 @@
                                 id="name"
                                 value=""/>
                     </div>
+                    <div class="col-12 mb-5 p-3 user-select-none">
+                        <div class="form-check form-check-custom">
+                            <input type="checkbox" class="form-check-input form-check-sm border-gray-400 me-3" name="use_for_res" id="use_for_res" value="1">
+                            <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_for_res">
+                                <span >Use For Restaurant</span>
+                            </label>
+                        </div>
+                    </div>
                     <div class="col-6 mb-5">
                         <label for="employeeTagify" class="required form-label">Employee</label>
-                        <input class="form-control form-control-solid" name="employee_id"  id="employeeTagify"/>
+                        <input class="form-control form-control-sm" name="employee_id"  id="employeeTagify"/>
 
                     </div>
                     <div class="col-6 mb-5">
                         <label for="paymentAccTagify" class="required form-label">Payment Account</label>
-                        <input class="form-control form-control-solid" name="payment_account_id"  id="paymentAccTagify"/>
+                        <input class="form-control form-control-sm" name="payment_account_id"  id="paymentAccTagify"/>
                     </div>
                     {{-- <div class="col-6 mb-5">
                         <label for="status" class="required form-label">Status</label>

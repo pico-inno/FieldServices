@@ -93,7 +93,7 @@ class posRegistrationController extends Controller
                 'name'=>$request->name,
                 'employee_id'=>$jsonEmloyeeId,
                 'payment_account_id'=>$jsonPaymentAccountId,
-                // 'status'=>$request->status,
+                'use_for_res'=>$request->use_for_res ? 1 :0,
                 'printer_id'=>$request->printer_id,
                 'description'=>$request->description,
             ]);
@@ -124,8 +124,9 @@ class posRegistrationController extends Controller
         $paymentAccountIds=json_decode($registeredPos->payment_account_id);
         $accountText='';
         if($paymentAccountIds){
-            $paymentAccountsQuery=paymentAccounts::whereIn('id',$paymentAccountIds)->exists();
-            if($paymentAccountsQuery){
+            $paymentAccountsQuery=paymentAccounts::whereIn('id',$paymentAccountIds);
+            $paymentAccountsCheck=$paymentAccountsQuery->exists();
+            if($paymentAccountsCheck){
                     $paymentAccountsById=$paymentAccountsQuery->get();
                     foreach ($paymentAccountsById as $key=>$a) {
                         $seperator=$key==0 ? '' :',';
@@ -146,6 +147,7 @@ class posRegistrationController extends Controller
                 'name'=>$request->name,
                 'employee_id'=>$jsonEmloyeeId,
                 'payment_account_id'=>$jsonPaymentAccountId,
+                'use_for_res'=>$request->use_for_res ? 1 :0,
             // 'status'=>$request->status,
                 'printer_id'=>$request->printer_id,
                 'description'=>$request->description,

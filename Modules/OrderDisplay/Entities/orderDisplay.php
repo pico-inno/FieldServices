@@ -11,6 +11,7 @@ class orderDisplay extends Model
     use HasFactory;
     public $timestamps=false;
     protected $fillable=[
+        'name',
         'location_id',
         'pos_register_id',
         'product_category_id'

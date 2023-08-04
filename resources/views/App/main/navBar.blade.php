@@ -1231,6 +1231,60 @@
                                                             <span class="menu-title">POS Register List</span>
                                                         </a>
                                                 </div>
+                                                @if (hasModule('OrderDisplay') && isEnableModule('OrderDisplay'))
+                                                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('order_display_here_show')">
+                                                        <!--begin:Menu link-->
+                                                        <span class="menu-link">
+                                                            <span class="menu-icon">
+                                                                <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                                                <span class="svg-icon svg-icon-2">
+                                                                    <i class="fa-solid fa-display fs-6"></i>
+                                                                </span>
+                                                                <!--end::Svg Icon-->
+                                                            </span>
+                                                            <span class="menu-title">Order Display</span>
+                                                            <span class="menu-arrow"></span>
+                                                        </span>
+                                                        <!--end:Menu link-->
+                                                        <!--begin:Menu sub-->
+                                                        <!--begin:Menu sub-->
+                                                        <div class="menu-sub menu-sub-accordion">
+                                                            <!--begin:Menu item-->
+                                                            @if(hasView('supplier'))
+                                                            <!--begin:Menu item-->
+                                                                <div class="menu-item">
+                                                                    <!--begin:Menu link-->
+                                                                    <a class="menu-link @yield('order_display_active_show')" href="{{route('orderDisplay')}}">
+                                                                        <span class="menu-bullet">
+                                                                            <span class="bullet bullet-dot"></span>
+                                                                        </span>
+                                                                        <span class="menu-title">Order Display</span>
+                                                                    </a>
+                                                                    <!--end:Menu link-->
+                                                                </div>
+                                                                <!--end:Menu item-->
+                                                                @endif
+                                                        </div>
+                                                        <!--end:Menu sub-->
+
+                                                        <!--begin:Menu sub-->
+                                                        <div class="menu-sub menu-sub-accordion">
+                                                            <!--begin:Menu item-->
+                                                                <div class="menu-item">
+                                                                    <!--begin:Menu link-->
+                                                                    <a class="menu-link @yield('order_display_list_active_show')" href="{{route('odList')}}">
+                                                                        <span class="menu-bullet">
+                                                                            <span class="bullet bullet-dot"></span>
+                                                                        </span>
+                                                                        <span class="menu-title">Order Display List</span>
+                                                                    </a>
+                                                                    <!--end:Menu link-->
+                                                                </div>
+                                                                <!--end:Menu item-->
+                                                        </div>
+                                                        <!--end:Menu sub-->
+                                                    </div>
+                                                @endif
                                             </div>
                                             <!--end::Wrapper-->
                                         </div>
@@ -2295,61 +2349,6 @@
 														</div>
 														<!--end:Menu sub-->
 													</div>
-
-                                                    @if (hasModule('OrderDisplay') && isEnableModule('OrderDisplay'))
-                                                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('order_display_here_show')">
-                                                            <!--begin:Menu link-->
-                                                            <span class="menu-link">
-                                                                <span class="menu-icon">
-                                                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-                                                                    <span class="svg-icon svg-icon-2">
-                                                                        <i class="fa-solid fa-display fs-6"></i>
-                                                                    </span>
-                                                                    <!--end::Svg Icon-->
-                                                                </span>
-                                                                <span class="menu-title">Order Display</span>
-                                                                <span class="menu-arrow"></span>
-                                                            </span>
-                                                            <!--end:Menu link-->
-                                                            <!--begin:Menu sub-->
-                                                            <!--begin:Menu sub-->
-                                                            <div class="menu-sub menu-sub-accordion">
-                                                                <!--begin:Menu item-->
-                                                                @if(hasView('supplier'))
-                                                                <!--begin:Menu item-->
-                                                                    <div class="menu-item">
-                                                                        <!--begin:Menu link-->
-                                                                        <a class="menu-link @yield('order_display_active_show')" href="{{route('orderDisplay')}}">
-                                                                            <span class="menu-bullet">
-                                                                                <span class="bullet bullet-dot"></span>
-                                                                            </span>
-                                                                            <span class="menu-title">Order Display</span>
-                                                                        </a>
-                                                                        <!--end:Menu link-->
-                                                                    </div>
-                                                                    <!--end:Menu item-->
-                                                                    @endif
-                                                            </div>
-                                                            <!--end:Menu sub-->
-
-                                                            <!--begin:Menu sub-->
-                                                            <div class="menu-sub menu-sub-accordion">
-                                                                <!--begin:Menu item-->
-                                                                    <div class="menu-item">
-                                                                        <!--begin:Menu link-->
-                                                                        <a class="menu-link @yield('order_display_list_active_show')" href="{{route('kdList')}}">
-                                                                            <span class="menu-bullet">
-                                                                                <span class="bullet bullet-dot"></span>
-                                                                            </span>
-                                                                            <span class="menu-title">Order Display List</span>
-                                                                        </a>
-                                                                        <!--end:Menu link-->
-                                                                    </div>
-                                                                    <!--end:Menu item-->
-                                                            </div>
-                                                            <!--end:Menu sub-->
-                                                        </div>
-                                                    @endif
 													<div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('pos_register_here_show')">
 														<!--begin:Menu link-->
 														<span class="menu-link">
@@ -2381,6 +2380,7 @@
                                                                 <!--end:Menu item-->
 														</div>
 														<!--end:Menu sub-->
+
 													</div>
 												</div>
 											</div>

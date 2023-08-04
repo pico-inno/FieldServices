@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Product\Category;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\resOrders;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use Modules\orderDisplay\Entities\orderDisplay;
@@ -15,12 +16,12 @@ use Modules\orderDisplay\Entities\orderDisplay;
 class orderDisplayController extends Controller
 {
     //order
-    public function kdList() {
+    public function odList() {
 
         return view('orderdisplay::App.list');
         // return view('main.list');
     }
-    public function kdDataForList(){
+    public function odDataForList(){
         $orderDisplays=orderDisplay::get();
         return DataTables::of($orderDisplays)
         ->addColumn('checkbox',function($orderDisplay){
@@ -39,8 +40,8 @@ class orderDisplayController extends Controller
                     </button>
                     <div class="z-3">
                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="exchangeRateDropDown" role="menu">';
-                    $html.='<a class="dropdown-item cursor-pointer openModal" data-href="'.route('kdEdit',$orderDisplay->id).'">Edit</a>';
-                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$orderDisplay->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('exchangeRate.destory',$orderDisplay->id).'">Delete</a>';
+                    $html.='<a class="dropdown-item cursor-pointer openModal" data-href="'.route('odEdit',$orderDisplay->id).'">Edit</a>';
+                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$orderDisplay->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('odDestory',$orderDisplay->id).'">Delete</a>';
                     // $html .= $editBtn;
                 $html .= '</ul></div></div>';
                 return $html;
@@ -72,18 +73,19 @@ class orderDisplayController extends Controller
         ->rawColumns(['checkbox','action'])
         ->make('true');
     }
-    public function kdCreate() {
+    public function odCreate() {
         $locations=businessLocation::where('is_active',1)->get();
         $categories=Category::get();
         $posRegisters=posRegisters::get();
         return view('orderdisplay::App.create',compact('locations','categories','posRegisters'));
     }
-    public function kdStore(Request $request){
+    public function odStore(Request $request){
         try {
             DB::beginTransaction();
             $jsonCategory=$this->requestJsonId($request->category_id);
             $jsonPosRegister=$this->requestJsonId($request->pos_register_id);
             orderDisplay::create([
+                'name'=>$request->name,
                 'location_id'=>$request->location_id,
                 'pos_register_id'=>$jsonPosRegister,
                 'product_category_id'=>$jsonCategory,
@@ -95,12 +97,13 @@ class orderDisplayController extends Controller
             return back()->with(['error'=>'Something Wrong!']);
         }
     }
-    public function kdUpdate($id,Request $request){
+    public function odUpdate($id,Request $request){
         try {
             DB::beginTransaction();
             $jsonCategory=$this->requestJsonId($request->category_id);
             $jsonPosRegister=$this->requestJsonId($request->pos_register_id);
             orderDisplay::where('id',$id)->update([
+                'name'=>$request->name,
                 'location_id'=>$request->location_id,
                 'pos_register_id'=>$jsonPosRegister,
                 'product_category_id'=>$jsonCategory,
@@ -112,11 +115,11 @@ class orderDisplayController extends Controller
             return back()->with(['error'=>'Something Wrong!']);
         }
     }
-    public function kDisplay() {
+    public function odDisplay() {
         return view('orderdisplay::App.orderDisplayDashboard');
     }
 
-    public function kdEdit($id) {
+    public function odEdit($id) {
         $locations=businessLocation::where('is_active',1)->get();
         $categories=Category::get();
         $posRegisters=posRegisters::get();
@@ -143,7 +146,7 @@ class orderDisplayController extends Controller
 
         return view('orderdisplay::App.edit',compact('orderDisplay','locations','categories','posRegisters','posRegisterText','productCategoryText'));
     }
-    public function kdDestory(Request $request){
+    public function odDestory(Request $request){
         try {
             $idForDelete=$request->idForDelete;
             foreach($idForDelete as $id){
@@ -161,6 +164,8 @@ class orderDisplayController extends Controller
             ], 200);
         }
     }
+
+
 
     // this function is change request json data that with nested data to only id json data
     protected function requestJsonId($requestJson){

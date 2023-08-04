@@ -85,255 +85,20 @@
                         <div class="col-12 p-2">
                             <div class="col-12 d-flex justify-content-around  align-items-center">
                                 <div class="col-9">
-                                    <button class="btn btn-primary btn-sm w-100 mb-3">Cook</button>
+                                    <button class="btn btn-primary btn-sm w-100 mb-3">Preparing</button>
                                 </div>
                                 <div class="col-2">
                                     <button class="btn btn-primary btn-sm mb-3 "><i class="fa-solid fa-print"></i></button>
                                 </div>
                             </div>
                             <div class="col-12 px-2">
-                                <button class="btn btn-success btn-sm w-100">Finish</button>
+                                <button class="btn btn-success btn-sm w-100">Ready</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-9 col-12 overflow-scroll position-lg-relative position-absolute" id="main-div" style="height: 95vh">
-                    <div class="row m-3 g-4 user-select-none">
-                        <!--begin::Col-->
-                        @for ($i = 0; $i < 100; $i++)
-                            <div class="col-lg-3 col-md-4 col-sm-6 res_order_card " data-table="Table-{{($i*3) +1}}">
-                                <!--begin::Card-->
-                                <div class="card card-flush h-md-100 cursor-pointer bg-hover-light" >
-                                    <!--begin::Card header-->
-                                    <div class="card-header ribbon ribbon-top ribbon-vertical">
-                                        <div class="ribbon-label  bg-success">
-                                            <i class="fa-regular fa-circle-check fs-4 me-3 text-white"></i>
-                                            <i class="fa-solid fa-utensils fs-4 text-white"></i>
-                                            {{-- <i class="fa-solid fa-utensils fs-3 text-white"></i> --}}
-                                        </div>
-                                        <div class="card-title mt-5 fw-bold mb-2">Table-000{{($i*3) +1}}</div>
-
-                                        <div class="w-100  d-flex justify-content-between mt-5">
-                                            <h6 class="fw-bold fs-6">10:00</h6>
-
-                                            <h6 class="fw-bold fs-6">Johny</h6>
-                                        </div>
-                                        <div class="w-100  d-flex justify-content-between mt-1 mb-10">
-                                            <h6 class="fw-bold fs-7">#R-001</h6>
-
-                                            <h6 class="fw-bold">T-0001</h6>
-                                        </div>
-                                    </div>
-                                    {{-- <div class="card-header">
-                                        <div class="ribbon-label bg-success">
-                                            <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
-                                        </div>
-                                        <div class="m-auto d-flex mt-5 justify-content-center align-items-center rounded-circle w-50px h-50px icon-process">
-                                            <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
-                                        </div>
-                                        <div class="w-100  text-center mt-5">
-                                            <h4 class="fw-bold">T-0001</h4>
-                                        </div>
-
-                                        <div class="w-100  d-flex justify-content-between">
-                                            <h4 class="fw-bold">T-0001</h4>
-                                        </div>
-                                    </div> --}}
-                                    <!--end::Card header-->
-                                    <!--begin::Card body-->
-                                    <div class="card-body pt-1">
-                                        <!--begin::Users-->
-                                        {{-- <div class="fw-bold text-gray-600 mb-3">Total Order Item: 11</div> --}}
-                                        <!--end::Users-->
-                                        <!--begin::Permissions-->
-                                        <div class="d-flex flex-column text-gray-800">
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Chese Burgar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Moh Hingar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Milk Tea</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Noodle Burgar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class='d-flex align-items-center py-3 pt-5'>
-                                                <span class='bullet bg-primary me-3'></span>
-                                                <em>and 7 more...</em>
-                                            </div>
-                                        </div>
-                                        <!--end::Permissions-->
-                                    </div>
-                                    <!--end::Card body-->
-                                    <!--begin::Card footer-->
-
-                                </div>
-                                <!--end::Card-->
-                            </div>
-                            <!--end::Col-->
-
-                            <div class="col-lg-3 col-md-4  col-sm-6  res_order_card"  data-table="Table-{{($i*3) +2}}">
-                                <!--begin::Card-->
-                                <div class="card card-flush h-md-100  cursor-pointer  bg-hover-light">
-                                    <!--begin::Card header-->
-                                    <div class="card-header ribbon ribbon-top ribbon-vertical">
-                                        <div class="ribbon-label  bg-primary">
-                                            <i class="fa-regular fa-hourglass-half fs-6 me-3 text-white"></i>
-                                            <i class="fa-solid fa-bag-shopping fs-6 text-white"></i>
-                                            {{-- <i class="fa-regular fa-circle-check fs-3 text-white"></i> --}}
-                                            {{-- <i class="fa-solid fa-utensils fs-3 text-white"></i> --}}
-                                        </div>
-                                        <div class="card-title mt-5 fw-bold mb-2">Table-000{{($i*3) +2}}</div>
-
-                                        <div class="w-100  d-flex justify-content-between mt-5">
-                                            <h6 class="fw-bold fs-6">10:00</h6>
-
-                                            <h6 class="fw-bold fs-6">Johny</h6>
-                                        </div>
-                                        <div class="w-100  d-flex justify-content-between mt-1 mb-10">
-                                            <h6 class="fw-bold fs-7">#R-001</h6>
-
-                                            <h6 class="fw-bold">T-0001</h6>
-                                        </div>
-                                    </div>
-                                    {{-- <div class="card-header">
-                                        <div class="ribbon-label bg-success">
-                                            <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
-                                        </div>
-                                        <div class="m-auto d-flex mt-5 justify-content-center align-items-center rounded-circle w-50px h-50px icon-process">
-                                            <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
-                                        </div>
-                                        <div class="w-100  text-center mt-5">
-                                            <h4 class="fw-bold">T-0001</h4>
-                                        </div>
-
-                                        <div class="w-100  d-flex justify-content-between">
-                                            <h4 class="fw-bold">T-0001</h4>
-                                        </div>
-                                    </div> --}}
-                                    <!--end::Card header-->
-                                    <!--begin::Card body-->
-                                    <div class="card-body pt-1">
-                                        <!--begin::Users-->
-                                        {{-- <div class="fw-bold text-gray-600 mb-3">Total Order Item: 11</div> --}}
-                                        <!--end::Users-->
-                                        <!--begin::Permissions-->
-                                        <div class="d-flex flex-column text-gray-800">
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Chese Burgar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Moh Hingar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Milk Tea</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Noodle Burgar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class='d-flex align-items-center py-3 pt-5'>
-                                                <span class='bullet bg-primary me-3'></span>
-                                                <em>and 7 more...</em>
-                                            </div>
-                                        </div>
-                                        <!--end::Permissions-->
-                                    </div>
-                                    <!--end::Card body-->
-                                    <!--begin::Card footer-->
-
-                                </div>
-                                <!--end::Card-->
-                            </div>
-
-                            <div class="col-lg-3 col-md-4  col-sm-6  res_order_card"  data-table="Table-{{($i*3) +3}}">
-                                <!--begin::Card-->
-                                <div class="card card-flush h-md-100  cursor-pointer  bg-hover-light">
-                                    <!--begin::Card header-->
-                                    <div class="card-header ribbon ribbon-top ribbon-vertical">
-                                        <div class="ribbon-label  bg-warning">
-                                            <i class="fa-solid fa-clock-rotate-left  fs-4 me-2 text-white"></i>
-                                            <i class="fa-solid fa-truck-fast fs-4 text-white"></i>
-                                            {{-- <i class="fa-regular fa-hourglass-half"></i> --}}
-                                            {{-- <i class="fa-regular fa-circle-check fs-3 text-white"></i> --}}
-                                            {{-- <i class="fa-solid fa-utensils fs-3 text-white"></i> --}}
-                                        </div>
-                                        <div class="card-title mt-5 fw-bold mb-2">Table-000{{($i*3) +3}}</div>
-
-                                        <div class="w-100  d-flex justify-content-between mt-5">
-                                            <h6 class="fw-bold fs-6">10:00</h6>
-
-                                            <h6 class="fw-bold fs-6">Johny</h6>
-                                        </div>
-                                        <div class="w-100  d-flex justify-content-between mt-1 mb-10">
-                                            <h6 class="fw-bold fs-7">#R-001</h6>
-
-                                            <h6 class="fw-bold">T-0001</h6>
-                                        </div>
-                                    </div>
-                                    {{-- <div class="card-header">
-                                        <div class="ribbon-label bg-success">
-                                            <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
-                                        </div>
-                                        <div class="m-auto d-flex mt-5 justify-content-center align-items-center rounded-circle w-50px h-50px icon-process">
-                                            <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
-                                        </div>
-                                        <div class="w-100  text-center mt-5">
-                                            <h4 class="fw-bold">T-0001</h4>
-                                        </div>
-
-                                        <div class="w-100  d-flex justify-content-between">
-                                            <h4 class="fw-bold">T-0001</h4>
-                                        </div>
-                                    </div> --}}
-                                    <!--end::Card header-->
-                                    <!--begin::Card body-->
-                                    <div class="card-body pt-1">
-                                        <!--begin::Users-->
-                                        {{-- <div class="fw-bold text-gray-600 mb-3">Total Order Item: 11</div> --}}
-                                        <!--end::Users-->
-                                        <!--begin::Permissions-->
-                                        <div class="d-flex flex-column text-gray-800">
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Chese Burgar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Moh Hingar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Milk Tea</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center py-2">
-                                                <span class="fw-semibold">Noodle Burgar</span>
-                                                <span class="fw-bold">x 10</span>
-                                            </div>
-                                            <div class='d-flex align-items-center py-3 pt-5'>
-                                                <span class='bullet bg-primary me-3'></span>
-                                                <em>and 7 more...</em>
-                                            </div>
-                                        </div>
-                                        <!--end::Permissions-->
-                                    </div>
-                                    <!--end::Card body-->
-                                    <!--begin::Card footer-->
-
-                                </div>
-                                <!--end::Card-->
-                            </div>
-                            <!--end::Col-->
-                        @endfor
+                    <div class="row m-3 g-4 user-select-none orderContainer">
 
                     </div>
                     <div class="position-fixed bottom-0  w-100 z-index-3 card rounded-0">
@@ -343,16 +108,16 @@
                             </div>
                             <div class="col-10  d-flex">
                                 <div class="pe-3">
-                                    <button class="btn rounded-0 text-primary ">Cooking</button>
+                                    <button class="btn rounded-0 text-primary ">Preparing</button>
                                 </div>
                                 <div class="pe-3 bg-light">
-                                    <button class="btn   rounded-0 text-warning-emphasis ">Waiting</button>
+                                    <button class="btn   rounded-0 text-warning-emphasis ">order</button>
                                 </div>
                                 <div class="pe-3">
-                                    <button class="btn  rounded-0 text-success-emphasis">Finish</button>
+                                    <button class="btn  rounded-0 text-success-emphasis">Ready</button>
                                 </div>
                                 <div class="pe-3 bg-light">
-                                    <button class="btn btn-light btn-sm rounded-0">All</button>
+                                    {{-- <button class="btn btn-light btn-sm rounded-0">All</button> --}}
                                 </div>
                             </div>
                         </div>
@@ -385,7 +150,11 @@
 
                 // sidebar
                 let sideBarOpen=true;
+                sideBarCotntrol();
                 $('#menu-icon').click(function(){
+                    sideBarCotntrol();
+                })
+                function sideBarCotntrol() {
                     let offsetWidth=document.querySelector('#sidebar').offsetWidth;
                     if(sideBarOpen){
                         sideBarOpen=false;
@@ -399,14 +168,20 @@
                         $('#main-div').addClass('col-lg-9 col-12');
                         $('#main-div').removeClass('col-12');
                     }
-                })
+                }
 
-                //
+
+                let resOrderLength=0;
+                var resOrder=[];
+                //card detail view
                 $(document).on('click','.res_order_card',function() {
                     let tableName=$(this).data('table');
-                    $('#detailHeader').html(tableName)
+                    let orderId=$(this).data('id');
+                    let order=resOrder.find((r)=>r.id==orderId);
+                    $('#detailHeader').html('Table-'+tableName);
+
                     $('.food-container').html(
-                        detailOrderComponent()
+                        detailOrderComponent(order)
                     )
 
                     if(!sideBarOpen){
@@ -417,7 +192,99 @@
                         $('#main-div').removeClass('col-12');
                     }
                 })
-                const detailOrderComponent=()=>{
+
+
+                setInterval(() => {
+                    // $('.orderContainer').html('')
+                    $.ajax({
+                        url: `/res/order/data`,
+                        type: 'get',
+                        error:function(e){
+                            status=e.status;
+                            if(status==405){
+                                warning('Method Not Allow!');
+                            }else if(status==419){
+                                error('Session Expired')
+                            }else{
+                                console.log(e);
+                                console.error(' Something Went Wrong! Error Status: '+status )
+                            };
+                        },
+                        success: function(response) {
+                            if(resOrderLength<response.length){
+                                for (let i = resOrderLength; i < response.length; i++) {
+                                    $('.orderContainer').prepend(orderComponent(response[i]));
+                                    resOrder=[...resOrder,response[i]]
+                                }
+
+                                resOrderLength=response.length;
+                            }
+
+                        }
+                    })
+                }, 1000);
+
+                const orderComponent=(data)=>{
+                    let items=``;
+                    let saleDetails=data.sale_detail;
+                    for (let i = 0; i < 5; i++) {
+                        let sd=saleDetails[i];
+                        if(sd){
+                            items += `
+                                <div class="d-flex justify-content-between align-items-center py-2">
+                                    <span class="fw-semibold">${sd.product.name}</span>
+                                    <span class="fw-bold">x ${Number(sd.quantity)}</span>
+                                </div>
+                            `;
+                        }
+
+                    }
+                    let moreItem=``;
+                    if(saleDetails.length-5 >0){
+                        moreItem+=`<div class='d-flex align-items-center py-3 pt-5'>
+                            <span class='bullet bg-primary me-3'></span>
+                            <em>and ${ saleDetails.length-5  } more...</em>
+                        </div>`
+                    }
+                    return `
+                            <div class="col-lg-3 col-md-4 col-sm-6 res_order_card " data-table="000${data.id}" data-id=${data.id}>
+                                <div class="card card-flush h-md-100 cursor-pointer bg-hover-light"  style="hight:40vh" >
+                                    <div class="card-header ribbon ribbon-top ribbon-vertical">
+                                        <div class="ribbon-label  bg-success">
+                                            <i class="fa-regular fa-circle-check fs-4 me-3 text-white"></i>
+                                            <i class="fa-solid fa-utensils fs-4 text-white"></i>
+                                        </div>
+                                        <div class="card-title mt-5 fw-bold mb-2">Table-000${data.id}</div>
+
+                                        <div class="w-100  d-flex justify-content-between mt-5">
+                                            <h6 class="fw-bold fs-6">10:00</h6>
+
+                                            <h6 class="fw-bold fs-6">Johny</h6>
+                                        </div>
+                                        <div class="w-100  d-flex justify-content-between mt-1 mb-10">
+                                            <h6 class="fw-bold fs-7">${data.order_voucher_no}</h6>
+
+                                            <h6 class="fw-bold">T-0001</h6>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-1">
+                                        <div class="d-flex flex-column text-gray-800 ">
+                                            ${items}
+                                            ${moreItem}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                    `
+                }
+
+                const detailOrderComponent=(data)=>{
+                    let items=``;
+                    let saleDetails=data.sale_detail;
+                    saleDetails.forEach(sd => {
+                        items += productItem(sd.product,sd.quantity);
+                    });
                         return `
                             <div class="food">
                                 <div class="d-flex justify-content-center px-5 py-3 bg-light">
@@ -425,96 +292,105 @@
                                         <h2 class=" fs-6 fw-bold">Food</h2>
                                     </div>
                                 </div>
+                                <div class="separator separator-dashed"></div>
+                                ${items}
 
-                                    {{-- <div class="col-12 mt-3 d-flex">
-                                        <span class="fw-semibold me-2">
-                                            note:
-                                        </span>
-                                        <p>
-                                            နံနံပင်မထည့်ပါ။
-                                        </p>
-                                    </div> --}}
-                                <div class="separator separator-dashed"></div>
-                                <div class="d-flex justify-content-between px-5 py-3">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">Chese Burgar</h2>
-                                    </div>
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">x 10</h2>
-                                    </div>
-                                </div>
-                                <div class="separator separator-dashed"></div>
-                                <div class="d-flex justify-content-between px-5 py-3">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">Moh Hingar</h2>
-                                    </div>
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">x 10</h2>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex px-5 py-3">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold me-2">note:</h2>
-                                    </div>
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-semibold">
-                                            <p>
-                                            နံနံပင်မထည့်ပါ။
-                                            </p>
-                                        </h2>
-                                    </div>
-                                </div>
-                                <div class="separator separator-dashed"></div>
-                                <div class="d-flex justify-content-between px-5 py-3">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">Bruschetta</h2>
-                                    </div>
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">x 10</h2>
-                                    </div>
-                                </div>
                             </div>
 
-                            <div class="beverage">
-                                <div class="d-flex justify-content-center px-5 py-3 bg-light">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">beverage</h2>
-                                    </div>
-                                </div>
 
-                                <div class="separator separator-dashed"></div>
-                                <div class="d-flex justify-content-between px-5 py-3">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">White Rum</h2>
-                                    </div>
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">x 10</h2>
-                                    </div>
-                                </div>
-
-                                <div class="separator separator-dashed"></div>
-                                <div class="d-flex justify-content-between px-5 py-3">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold"> Air Mail</h2>
-                                    </div>
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">x 2</h2>
-                                    </div>
-                                </div>
-                                <div class="separator separator-dashed"></div>
-                                <div class="d-flex justify-content-between px-5 py-3">
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold"> See You Tommorrow</h2>
-                                    </div>
-                                    <div class="">
-                                        <h2 class=" fs-6 fw-bold">x 2</h2>
-                                    </div>
-                                </div>
-                            </div>
                         `
-                    }
+                }
+                const productItem=(product,qty)=>{
+                    return `
+                            <div class="d-flex justify-content-between px-5 py-3">
+                                <div class="">
+                                    <h2 class=" fs-6 fw-bold">${product.name}</h2>
+                                </div>
+                                <div class="">
+                                    <h2 class=" fs-6 fw-bold">x ${Number(qty)}</h2>
+                                </div>
+                            </div>
+                            <div class="separator separator-dashed"></div>
+
+                    `;
+                }
+
             </script>
     </body>
     <!--end::Body-->
 </html>
+
+
+
+
+{{-- // <div class="d-flex justify-content-between px-5 py-3">
+    //     <div class="">
+    //         <h2 class=" fs-6 fw-bold">Moh Hingar</h2>
+    //     </div>
+    //     <div class="">
+    //         <h2 class=" fs-6 fw-bold">x 10</h2>
+    //     </div>
+    // </div>
+
+    // <div class="d-flex px-5 py-3">
+    //     <div class="">
+    //         <h2 class=" fs-6 fw-bold me-2">note:</h2>
+    //     </div>
+    //     <div class="">
+    //         <h2 class=" fs-6 fw-semibold">
+    //             <p>
+    //             နံနံပင်မထည့်ပါ။
+    //             </p>
+    //         </h2>
+    //     </div>
+    // </div>
+    // <div class="separator separator-dashed"></div>
+    // <div class="d-flex justify-content-between px-5 py-3">
+    //     <div class="">
+    //         <h2 class=" fs-6 fw-bold">Bruschetta</h2>
+    //     </div>
+    //     <div class="">
+    //         <h2 class=" fs-6 fw-bold">x 10</h2>
+    //     </div>
+    // </div> --}}
+
+    {{-- <div class="beverage">
+        <div class="d-flex justify-content-center px-5 py-3 bg-light">
+            <div class="">
+                <h2 class=" fs-6 fw-bold">beverage</h2>
+            </div>
+        </div>
+
+        <div class="separator separator-dashed"></div>
+        <div class="d-flex justify-content-between px-5 py-3">
+            <div class="">
+                <h2 class=" fs-6 fw-bold">White Rum</h2>
+            </div>
+            <div class="">
+                <h2 class=" fs-6 fw-bold">x 10</h2>
+            </div>
+        </div>
+
+        <div class="separator separator-dashed"></div>
+        <div class="d-flex justify-content-between px-5 py-3">
+            <div class="">
+                <h2 class=" fs-6 fw-bold"> Air Mail</h2>
+            </div>
+            <div class="">
+                <h2 class=" fs-6 fw-bold">x 2</h2>
+            </div>
+        </div>
+        <div class="separator separator-dashed"></div>
+        <div class="d-flex justify-content-between px-5 py-3">
+            <div class="">
+                <h2 class=" fs-6 fw-bold"> See You Tommorrow</h2>
+            </div>
+            <div class="">
+                <h2 class=" fs-6 fw-bold">x 2</h2>
+            </div>
+        </div>
+    </div> --}}
+
+
+
+

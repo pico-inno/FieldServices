@@ -1003,7 +1003,6 @@
         const inputUom =uoms.filter(function ($u) {
                 return $u.id ==inputUomId;
         })[0];
-                    console.log(uomChange);
         if(quantity >= qtyByPriceStage){
 
             parentDom.find('.uom_price').val(uomChange.resultPrice);

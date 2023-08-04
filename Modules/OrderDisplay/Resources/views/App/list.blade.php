@@ -74,7 +74,7 @@
                         </div>
                         <div class="card-toolbar">
                             <div class="d-flex flex-stack flex-wrap gap-4" data-kt-table-toolbar="base">
-                                <button type="button" class="btn btn-primary btn-sm openModal"  id="add" data-href="{{route('kdCreate')}}">Add</button>
+                                <button type="button" class="btn btn-primary btn-sm openModal"  id="add" data-href="{{route('odCreate')}}">Add</button>
                                 {{-- <a href="#" class="btn btn-primary btn-sm">Add</a> --}}
                             </div>
                             <div class="d-flex justify-content-end align-items-center d-none" data-kt-table-toolbar="selected">
@@ -95,13 +95,14 @@
                     <!--begin::Table head-->
                     <thead>
                         <!--begin::Table row-->
-                        <tr class="text-center text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                        <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
                             <th class="w-10px pe-2">
                                 <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
                                     <input class="form-check-input" data-checked="selectAll" id="selectAll" type="checkbox" data-kt-check="true"  data-kt-check-target="#listTable .form-check-input" value="1" />
                                 </div>
                             </th>
-                            <th>Actions</th>
+                            <th class="text-center">Actions</th>
+                            <th class="text-center ">name</th>
                             <th class="text-center ">Location</th>
                             <th class="text-center ">Pos Register</th>
                             <th class="text-center ">Product Category</th>
@@ -152,7 +153,6 @@ var listData = function () {
     // Private functions
     var tablelist = function () {
         datatable = $(table).DataTable({
-
             pageLength: 30,
             lengthMenu: [10, 20, 30, 50,70],
             'columnDefs': [
@@ -176,6 +176,10 @@ var listData = function () {
                     name: 'action',
                     searchable: false ,
                     orderable: false,
+                },
+                {
+                    name:'name',
+                    data:'name'
                 },
                 {
                     name:'location',
