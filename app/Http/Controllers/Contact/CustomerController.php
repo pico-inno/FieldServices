@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Contact\ContactUtility;
 use App\Models\Contact\Contact;
 use App\Models\sale\sales;
 use App\Models\paymentsTransactions;
@@ -18,6 +19,8 @@ use function PHPUnit\Framework\isEmpty;
 
 class CustomerController extends Controller
 {
+    use ContactUtility;
+
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
@@ -83,22 +86,9 @@ class CustomerController extends Controller
 
     public function show($id) {
         $contact= Contact::find($id);
-        $payments = [];
-        $sale = sales::where('contact_id', $id)->get();
-        // dd($sale);
-        if($sale) {
-            foreach($sale as $s) {
-                $payment = paymentsTransactions::where('transaction_id', $s->id)
-                    ->where('transaction_type', 'sale')
-                    ->get();
-                // dd($payment);
-                if($payment) {
-                    $payments[] = $payment;
-                    // dd($payments);
-                }
-            }
-        }
-        return view('App.contact_management.customers.show')->with(compact('contact', 'sale', 'payments'));
+        $data = $this->getSalesAndPurchases($id);
+
+        return view('App.contact_management.customers.show')->with(compact('contact', 'data'));
     }
 
     public function create(){
@@ -165,7 +155,7 @@ class CustomerController extends Controller
     }
 
     public function quickStoreCustomer(Request $request) {
-        // try{
+        try{
             // dd($request->all());
             $customer_data =  $request->only([
                 'type', 'pricelist_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
@@ -272,9 +262,9 @@ class CustomerController extends Controller
                 return redirect()->back()->with('error', 'Invalid form type');
             }
 
-        // } catch(\Exception $e){
-        //     return redirect()->back()->with('error', 'An error occurred while creating the contact');
-        // }
+        } catch(\Exception $e){
+            return redirect()->back()->with('error', 'An error occurred while creating the contact');
+        }
     }
 
     public function edit($id){

@@ -3,8 +3,6 @@
 @endsection
 @section('contact_active','active')
 @section('contact_active_show','active show')
-@section('customer_here_show','here show')
-@section('customer_add_active_show','active show')
 
 @section('title')
 <!--begin::Heading-->
@@ -654,8 +652,8 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody class="fw-semibold text-gray-600">
-                                    @if(isset($sale))
-                                    @foreach($sale as $s)
+                                    @if(isset($data['sales']))
+                                    @foreach($data['sales'] as $s)
                                     <tr>
                                         <td>
                                             <div class="dropdown">
@@ -805,8 +803,8 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody class="fw-semibold text-gray-600">
-                                    @if(isset($purchase))
-                                    @foreach($purchase as $p)
+                                    @if(isset($data['purchases']))
+                                    @foreach($data['purchases'] as $p)
                                     <tr>
                                         <td>
                                             <div class="dropdown">
@@ -834,7 +832,10 @@
                                         <td>{{$p->purchased_at}}</td>
                                         <td>{{$p->purchase_voucher_no}}</td>
                                         <td>{{$p->businessLocation->name}}</td>
-                                        <td>{{$p->supplier->company_name}}</td>
+                                        <td>
+                                            {{$p->supplier->company_name}}
+                                             
+                                        </td>
                                         <td>
                                             @if($p->status == 'request')
                                             <span class="badge badge-primary">{{$p->status}}</span>
@@ -1032,8 +1033,8 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody class="fw-semibold text-gray-600">
-                                    @if(isset($payments))
-                                    @foreach($payments as $payment)
+                                    @if(isset($data['payments']))
+                                    @foreach($data['payments'] as $payment)
                                     @foreach($payment as $payment_tran)
                                     <tr>
                                         <td>{{$payment_tran->payment_date}}</td>

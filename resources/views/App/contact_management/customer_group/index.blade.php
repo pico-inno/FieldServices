@@ -42,7 +42,7 @@
         <div class="card card-p-4 card-flush">
             <div class="card-header py-5 gap-2 gap-md-5 d-flex flex-column">
                 <div class="card-title d-flex flex-column">
-                    <h4>All customer groups</h4>
+                    <h4>All Customer Groups</h4>
                 </div>
                 <div class="card-toolbar d-flex justify-content-between ">
                     <!--begin::Search-->
