@@ -105,11 +105,17 @@
     <!--begin::Body-->
     <body >
         <div style="height: 100vh; overflow: hidden; ">
-            <div class="row bg-primary-subtle px-2 mh-80px py-1">
+            <div class="row bg-primary px-2 mh-80px ">
                 <div class=" d-flex  justify-content-between align-items-center ">
                     {{-- <button class="btn btn-sm p-2 btn-light">Home</button> --}}
-                    <a href="{{ route('home') }}" class="btn btn-sm p-2 btn-light">Home</a>
-                    <button class="btn btn-sm p-2 btn-light" data-bs-toggle="modal" data-bs-target="#pos_sale_recent">Recent</button>
+                    <div class="d-flex">
+                        <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
+                        @if (request('table_id'))
+                            <a href="{{url('/restaurant/table/dashboard')}}" class="ms-0 btn btn-sm btn-info rounded-0"><< {{request('table_no')}}</a>
+                        @endif
+                    </div>
+                    <a class="navbar-brand fw-bold fs-3 text-white" href="#">POS</a>
+                    <button class="btn btn-sm  text-dark fw-bold  rounded-0" data-bs-toggle="modal" data-bs-target="#pos_sale_recent"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
                 </div>
             </div>
             <!--begin::Content-->
@@ -131,15 +137,15 @@
                                 </div>
                                 <div class="col-6">
                                     <select name="selling_price_group" id="selling_price_group" class="form-select form-select-sm " data-kt-select2="true" data-placeholder="Select selling price group">
-                                        
+
                                     </select>
                                 </div>
                             </div>
                             <div class="row mt-3" style="max-height: 5%">
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control" name="pos_product_search" placeholder="Search products..." >
-                                    <span class="input-group-text custom-tooltip bg-success"  type="button" data-bs-toggle="modal" data-bs-target="#quick_add_product_modal" >
-                                        <i class="fas fa-plus"></i>
+                                    <span class="input-group-text custom-tooltip "  type="button" data-bs-toggle="modal" data-bs-target="#quick_add_product_modal" >
+                                        <i class="fas fa-plus text-primary fs-2"></i>
                                     </span>
                                 </div>
                                 <div class="search-item-container " style="z-index: 500;">
@@ -158,7 +164,7 @@
                             <div class=" bg-transparent border-0 my-3 mb-10" style="height: 85%; overflow: scroll;">
                                 <!--begin::Nav-->
                                 <div class="row mb-10 p-5  flex-wrap" id="all_product_list">
-                                    
+
                                 </div>
                                 <!--end::Nav-->
                             </div>
@@ -173,25 +179,25 @@
                                     <select name="pos_customer" id="sb_pos_customer" class="form-select rounded-end-0 border-start border-end" data-kt-select2="true"  data-placeholder="Select customer">
 
                                     </select>
-                                    <span class="input-group-text border-gray-300 cursor-pointer bg-success" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
-                                        <i class="fas fa-plus"></i>
+                                    <span class="input-group-text border-gray-300 cursor-pointer" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
+                                        <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
                                     </span>
 
-                                    <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn bg-warning" id="contact_edit_btn">
-                                        <i class="fas fa-edit"></i><i class="fa-sharp fa-solid fa-phone-plus"></i>
+                                    <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn " id="contact_edit_btn">
+                                        <i class="fas fa-edit text-success-emphasis"></i><i class="fa-sharp fa-solid fa-phone-plus"></i>
                                     </span>
 
-                                    <span class="input-group-text border-gray-300 cursor-pointer bg-info" id="contact_edit_phone_btn">
-                                        <i class="fa-sharp fa-solid fa-phone"></i>
+                                    <span class="input-group-text border-gray-300 cursor-pointer" id="contact_edit_phone_btn">
+                                        <i class="fa-sharp fa-solid fa-phone text-info"></i>
                                     </span>
-                                    
+
                                     <span class="input-group-text border-gray-300 receivable-amount">
                                         00
                                     </span>
                                     {{-- <span class="input-group-text border-gray-300 cursor-pointer" data-bs-toggle="modal" data-bs-target="#contact_add_modal">
                                         <i class="fas fa-plus"></i>
                                     </span> --}}
-                                    
+
                                 </div>
                             </div>
                             <div class="row position-relative " style="height: 95%">
@@ -344,11 +350,11 @@
                                         <span class="input-group-text border-gray-300 cursor-pointer bg-info" id="contact_edit_phone_btn_modal">
                                             <i class="fa-sharp fa-solid fa-phone"></i>
                                         </span>
-                                        
+
                                         <span class="input-group-text border-gray-300 receivable-amount">
                                             00
                                         </span>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -529,7 +535,7 @@
                             <div id="payment_amount_repeater">
                                 <!--begin::Form group-->
                                 <div class="form-group">
-                                    
+
                                     <div id="payment_row_body">
 
                                     </div>

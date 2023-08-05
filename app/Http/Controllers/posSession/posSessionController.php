@@ -26,9 +26,14 @@ class posSessionController extends Controller
             $paymentAccountForRegister=$this->getPaymnetAccountForPosRegister($posRegisteredId);
             return view('App.posSession.posSessionCreate',compact('posRegisteredId','paymentAccounts','paymentAccountForRegister'));
         }else{
+            $pos=posRegisters::where('id',$posRegisteredId)->first();
+            if($pos->use_for_res==1 && hasModule('Restaurant') &&  isEnableModule('Restaurant')){
+                return redirect()->route('table.dashboard',['pos_register_id'=>encrypt($posRegisteredId)]);
+            }
             return redirect()->route('pos.create',['pos_register_id'=>encrypt($posRegisteredId)]);
         }
     }
+
     public function sessionCreate($posRegisteredId){
         $statusCheck=posRegisterSessions::where('pos_register_id',$posRegisteredId)->where('status','open')->exists();
         if($statusCheck == false){
@@ -36,9 +41,14 @@ class posSessionController extends Controller
             $paymentAccountForRegister=$this->getPaymnetAccountForPosRegister($posRegisteredId);
             return view('App.posSession.posSessionCreate',compact('posRegisteredId','paymentAccounts','paymentAccountForRegister'));
         }else{
+            $pos=posRegisters::where('id',$posRegisteredId)->first();
+            if($pos->use_for_res==1 && hasModule('Restaurant') &&  isEnableModule('Restaurant')){
+                return redirect()->route('table.dashboard',['pos_register_id'=>encrypt($posRegisteredId)]);
+            }
             return redirect()->route('pos.create',['pos_register_id'=>encrypt($posRegisteredId)]);
         }
     }
+
     public function sessionStore($posRegisteredId,Request $request){
         $statusCheck=posRegisterSessions::where('pos_register_id',$posRegisteredId)->where('status','open')->exists();
         if($statusCheck==false){
@@ -69,6 +79,7 @@ class posSessionController extends Controller
         return redirect()->route('pos.create',['pos_register_id'=>encrypt($posRegisteredId)]);
 
     }
+
 
     private function getPaymnetAccountForPosRegister($posRegisteredId){
         try {
