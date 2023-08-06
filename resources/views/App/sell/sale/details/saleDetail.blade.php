@@ -73,10 +73,10 @@
                                         <th class="min-w-100px">Deivered Quantity</th>
                                     @endif
                                     <th class="min-w-100px">UOM</th>
-                                    <th class="min-w-100px">sale Price</th>
+                                    <th class="min-w-100px text-end">sale Price</th>
                                     <th class="min-w-100px   {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Discount Type</th>
                                     <th class="min-w-100px   {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Per Item Discount Amount</th>
-                                    <th class="min-w-100px">Subtotal</th>
+                                    <th class="min-w-100px text-end pe-3">Subtotal</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -114,7 +114,7 @@
                                         <td>
                                             {{$sd['uom']['name']}}
                                         </td>
-                                        <td>
+                                        <td class="text-end">
                                             {{price($sd->subtotal,$sd->currency_id)}}
                                         </td>
                                         <td class="  {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
@@ -123,7 +123,7 @@
                                         <td class="  {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                                             {{price($sd->per_item_discount)}} &nbsp; {{ $sd->discount_type=='percentage'?'%':$currency }}
                                         </td>
-                                        <td>
+                                        <td class="text-end pe-3">
                                             {{price($sd->subtotal_with_tax,$sd->currency_id)}}
                                         </td>
 

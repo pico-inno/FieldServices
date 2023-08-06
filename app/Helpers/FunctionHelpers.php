@@ -64,7 +64,7 @@ function price($price,$currencyId='default'){
 
 function fDate($date,$br=false)
 {
-    $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$date);
+    $dateTime =date_create($date);
     $formattedDate = $dateTime->format("m-d-Y " );
     $formattedTime = $dateTime->format(" h:i A " );
     if($br){

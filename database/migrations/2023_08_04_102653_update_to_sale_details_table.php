@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sale_details', function (Blueprint $table) {
-            $table->unsignedBigInteger('rest_order_id');
-            $table->enum('rest_order_status',['order','cooking','ready','complete']);
+            $table->unsignedBigInteger('rest_order_id')->nullable();
+            $table->enum('rest_order_status',['order','cooking','ready','complete'])->nullable();
         });
     }
 

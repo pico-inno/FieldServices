@@ -14,8 +14,10 @@ class resOrders extends Model
         'order_voucher_no',
         'order_status',
         'location_id',
+        'services',
     ];
     public function saleDetail(){
-        return $this->hasMany(sale_details::class,'rest_order_id','id')->with('product');
+        return $this->hasMany(sale_details::class,'rest_order_id','id')
+                    ->with('product','saleWithTable');
     }
 }

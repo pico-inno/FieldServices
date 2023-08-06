@@ -29,6 +29,7 @@ use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Product\VariationTemplates;
 use App\Models\Product\ProductVariationsTemplates;
+use Modules\Restaurant\Entities\table;
 
 class POSController extends Controller
 {
@@ -65,8 +66,13 @@ class POSController extends Controller
         $generics = Generic::all();
         $manufacturers = Manufacturer::all();
         $variations = VariationTemplates::all();
+        $tables=null;
+        if (class_exists(table::class)) {
+            $tables=table::get();
+        }
 
-        return view('App.pos.create', compact('locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister'));
+
+        return view('App.pos.create', compact('locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
     }
 
     public function productVariationsGet()

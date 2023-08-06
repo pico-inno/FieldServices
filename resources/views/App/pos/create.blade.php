@@ -94,11 +94,6 @@
             .for_disable_btn {
                 /* cursor: not-allowed; */
             }
-
-            /* .individual-div.hide, .business-div.hide, .customer-group.hide, .credit-limit.hide{
-                display: none;
-            } */
-
           </style>
     </head>
     <!--end::Head-->
@@ -110,11 +105,17 @@
                     {{-- <button class="btn btn-sm p-2 btn-light">Home</button> --}}
                     <div class="d-flex">
                         <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
-                        @if (request('table_id'))
-                            <a href="{{url('/restaurant/table/dashboard')}}" class="ms-0 btn btn-sm btn-info rounded-0"><< {{request('table_no')}}</a>
+                        @if ($tables)
+                            <select name="table_id" id="table_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light" data-control="select2" data-allow-clear="true">
+                                <option disabled selected>Select Table</option>
+                                @foreach ($tables as $table)
+                                    <option value="{{$table->id}}">{{$table->table_no}}</option>
+                                @endforeach
+                            </select>
+                            {{-- <a href="{{url('/restaurant/table/dashboard?pos_register_id='.encrypt($posRegisterId))}}" class="ms-0 btn btn-sm btn-info rounded-0"><< {{request('table_no')}}</a> --}}
                         @endif
                     </div>
-                    <a class="navbar-brand fw-bold fs-3 text-white" href="#">POS</a>
+                    <a class="navbar-brand fw-bold fs-3 text-white" href="#"></a>
                     <button class="btn btn-sm  text-dark fw-bold  rounded-0" data-bs-toggle="modal" data-bs-target="#pos_sale_recent"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
                 </div>
             </div>
@@ -131,7 +132,7 @@
                                     <select name="business_location_id" id="business_location_id" class="form-select form-select-sm me-2" data-kt-select2="true" data-placeholder="Select locations">
                                         <option></option>
                                         @foreach ($locations as $location)
-                                            <option value="{{ $location->id }}">{{ $location->name }}</option>
+                                            <option value="{{ $location->id }}" @selected(Auth::user()->default_location_id==$location->id)>{{ $location->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -268,12 +269,14 @@
                                                         </label>
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
-                                                        <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+                                                        <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
                                                             <!--begin::Input-->
                                                             <input class="btn-check" type="radio" name="method" value="1" />
                                                             <!--end::Input-->
                                                             <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block sale_order">Order</span>
+
+                                                            <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                            {{-- <span class="fs-7 fw-bold d-block sale_order">Order</span> --}}
                                                             <!--end::Title-->
                                                         </label>
                                                         <!--end::Radio-->
@@ -962,7 +965,74 @@
                 </div>
             </div>
         </div>
+        {{-- POS order confirm  --}}
+        <div class="modal fade" tabindex="-1" id="order_confirm_modal">
+            <div class="modal-dialog modal-dialog-scrollable  w-500px">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Order Preview</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="p-5">
+                    <label for="" class="form-label">Sevices:</label>
+                    <select name="services" class="form-select form-select-sm" id="services" placeholder="Services" data-placeholder="Services" data-kt-select2="true" data-hide-search="true">
+                        <option value="dine_in">dine in</option>
+                        <option value="take_away">Take Away</option>
+                        <option value="delivery">Delivery</option>
+                    </select>
+                  </div>
+                  <div class="modal-body" id="orderDetailConfirm">
 
+                        {{-- <div class="separator separator-dashed"></div>
+                        <div class="d-flex justify-content-between px-5 py-3">
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold">Chese Burgar</h2>
+                            </div>
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold">x 10</h2>
+                            </div>
+                        </div>
+
+                        <div class="separator separator-dashed"></div>
+                        <div class="d-flex justify-content-between px-5 py-3">
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold">Moh Hingar</h2>
+                            </div>
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold">x 10</h2>
+                            </div>
+                        </div>
+                        <div class="d-flex px-5 py-3">
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold me-2">note:</h2>
+                            </div>
+                            <div class="">
+                                <h2 class=" fs-6 fw-semibold">
+                                    <p>
+                                    နံနံပင်မထည့်ပါ။
+                                    </p>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="separator separator-dashed"></div>
+
+                        <div class="d-flex justify-content-between px-5 py-3">
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold">Bruschetta</h2>
+                            </div>
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold">x 10</h2>
+                            </div>
+                        </div> --}}
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" id="finalizeOrder" data-bs-dismiss="modal">Finalize Order</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+            </div>
+        </div>
         {{-- Edit Contact Modal  --}}
         <div class="modal fade" tabindex="-1"  id="edit_contact_modal">
         </div>

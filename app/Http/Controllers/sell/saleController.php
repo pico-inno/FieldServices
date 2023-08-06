@@ -280,7 +280,7 @@ class saleController extends Controller
     {
         $sale_details = $request->sale_details;
         if($request->type=='pos'){
-            $registeredPos=posRegisters::where('id',$request->pos_register_id)->select('id','payment_account_id')->first();
+            $registeredPos=posRegisters::where('id',$request->pos_register_id)->select('id','payment_account_id','use_for_res')->first();
             $paymentAccountIds=json_decode($registeredPos->payment_account_id);
             $request['payment_account']=$paymentAccountIds[0];
             $request['currency_id']=$this->currency->id;
@@ -318,6 +318,7 @@ class saleController extends Controller
                     'paid_amount' => $request->paid_amount,
                     'payment_status'=>$payment_status,
                     'pos_register_id'=>$request->pos_register_id ?? null,
+                    'table_id'=>$request->table_id,
                     'balance_amount' => $request->balance_amount,
                     'currency_id' => $request->currency_id,
                     'sold_at' => now(),
@@ -334,10 +335,12 @@ class saleController extends Controller
                     ]);
                 }
                 $resOrderData=null;
-                if($request->type=='pos'){
-                    $resOrderData=$this->resOrderCreation($sale_data);
+                if($request->type=='pos' && $registeredPos->use_for_res == 1){
+                    $resOrderData=$this->resOrderCreation($sale_data,$request);
+                    $this->saleDetailCreation($request, $sale_data, $sale_details,$resOrderData);
+                }else{
+                    $this->saleDetailCreation($request, $sale_data, $sale_details);
                 }
-                $this->saleDetailCreation($request, $sale_data, $sale_details,$resOrderData);
                 DB::commit();
 
 
@@ -370,11 +373,13 @@ class saleController extends Controller
            }
         }
     }
-    public function resOrderCreation($sale_data){
+    public function resOrderCreation($sale_data,$request){
+
         return resOrders::create([
             'order_voucher_no'=>generatorHelpers::resOrderVoucherNo(),
             'order_status'=>'order',
             'location_id'=>$sale_data->business_location_id,
+            'services'=>$request->services
         ]);
 
     }
@@ -777,7 +782,7 @@ class saleController extends Controller
                     return !isset($item['sale_detail_id']);
                 });
                 if (count($new_sale_details) > 0) {
-                    $this->saleDetailCreation($request, $sales, $new_sale_details);
+                    $this->saleDetailCreation($request, $sales, $new_sale_details,$sales);
                 }
             } else {
                 $saleDetailQuery= sale_details::where('sales_id', $id);
@@ -1025,8 +1030,6 @@ class saleController extends Controller
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
-                'rest_order_id'=>$resOrderData ? $resOrderData->id : null,
-                'rest_order_status'=>$resOrderData ? 'order' : null,
                 'variation_id' => $sale_detail['variation_id'],
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],
@@ -1041,6 +1044,10 @@ class saleController extends Controller
                 'per_item_tax'=>0,
                 'subtotal_with_tax' =>$sale_detail['subtotal']  - $line_subtotal_discount ,
             ];
+            if($resOrderData){
+                $sale_details_data['rest_order_id']=$resOrderData ? $resOrderData->id : null;
+                $sale_details_data['rest_order_status']=$resOrderData ? 'order' : null;
+            }
             $created_sale_details = sale_details::create($sale_details_data);
 
             $requestQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_detail['quantity'], $sale_detail['uom_id'])['qtyByReferenceUom'];

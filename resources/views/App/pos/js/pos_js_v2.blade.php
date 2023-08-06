@@ -379,6 +379,7 @@
         let checkAndStoreSelectedProduct = (newSelectedProduct) => {
             let newProductData={
                 'product_id':newSelectedProduct.id,
+                'product_name':newSelectedProduct.name,
                 'variation_id':newSelectedProduct.product_variations.id,
                 'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
                 'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
@@ -564,7 +565,9 @@
 
         let datasForSale = (status) => {
             let business_location_id = $('select[name="business_location_id"]').val();
+            let table_id=$('#table_id').val();
             let contact_id = $("#invoice_side_bar").is(':hidden') ? $('#pos_customer').val() : $('#sb_pos_customer').val();
+            let services=$('#services').val();
             let pos_register_id = posRegisterId;
             let sale_amount = $(`#${infoPriceId} .sb-total`).text();
             let total_item_discount = $(`#${infoPriceId} .sb-discount`).text();
@@ -580,6 +583,7 @@
                     'contact_id': contact_id,
                     'status': status,
                     'pos_register_id': pos_register_id,
+                    'table_id':table_id,
                     'sale_amount': sale_amount,
                     'total_item_discount': total_item_discount,
                     'extra_discount_type': extra_discount_type,
@@ -587,7 +591,8 @@
                     'total_sale_amount': total_sale_amount,
                     'paid_amount': paid_amount,
                     'balance_amount': balance_amount,
-                    'currency_id': currency_id
+                    'currency_id': currency_id,
+                    'services':services,
                 }
 
 
@@ -862,10 +867,11 @@
                     };
                 },
                 success: function(results){
-                    // console.log(results)
-                    if(results[0].total_current_stock_qty === 0 || results[0].total_current_stock_qty === ''){
-                        error('Out of stock');
-                        return;
+                    if(results.length>0){
+                        if(results[0].total_current_stock_qty === 0 || results[0].total_current_stock_qty === ''){
+                            error('Out of stock');
+                            return;
+                        }
                     }
 
                     if(results[0].product_type === "single"){
@@ -1221,11 +1227,70 @@
         })
 
         // Sale With Order
-        $(document).on('click', '.sale_order', function() {
+        $(document).on('click', '#finalizeOrder', function() {
             if(checkContact()){
                 let dataForSale = datasForSale('order');
-                ajaxToStorePosData(dataForSale);
+
+                if(datasForSale('order').sale_details.length>0){
+                    ajaxToStorePosData(dataForSale);
+                }else{
+                    warning('need to add at least one item')
+                }
             }
+        })
+        $(document).on('click', '#order_confirm_modal_btn', function() {
+            let saleDetailOrders = datasForSale('order').sale_details;
+            $('#services').val('dine_in').trigger('change');
+            if(saleDetailOrders.length>0){
+                let orderComponent='';
+                saleDetailOrders.forEach(sd => {
+                    let product=productsOnSelectData.find((pos) => {
+                        return pos.variation_id==sd.variation_id
+                    });
+                    let uoms=product.uom.unit_category.uom_by_category;
+                    let currentUom=uoms.find((uom)=>uom.id==sd.uom_id);
+                    console.log(currentUom);
+                    orderComponent+=`
+                        <div class="separator separator-dashed"></div>
+                        <div class="d-flex justify-content-between px-5 py-3">
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold">${product.product_name}</h2>
+                            </div>
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold"> ${sd.quantity} ${currentUom.short_name}</h2>
+                            </div>
+                        </div>
+
+                        <div class="separator separator-dashed"></div>
+                    `
+                });
+                    // <div class="d-flex px-5 py-3">
+                    //     <div class="">
+                    //         <h2 class=" fs-6 fw-bold me-2">note:</h2>
+                    //     </div>
+                    //     <div class="">
+                    //         <h2 class=" fs-6 fw-semibold">
+                    //             <p>
+                    //             နံနံပင်မထည့်ပါ။
+                    //             </p>
+                    //         </h2>
+                    //     </div>
+                    // </div>
+                $('#orderDetailConfirm').html(
+                    orderComponent
+                )
+            }else{
+                $('#orderDetailConfirm').html(
+                        `
+                        <div class="d-flex justify-content-center px-5 py-3 ">
+                            <div class="">
+                                <h2 class=" fs-7 text-gray-500 fw-bold">There is no item for order !</h2>
+                            </div>
+                        </div>
+                        `
+                    )
+            }
+
         })
 
         // Sale With Draft

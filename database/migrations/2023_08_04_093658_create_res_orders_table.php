@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('order_voucher_no');
             $table->enum('order_status',['order','preparing','ready','complete']);
+            $table->enum('services',['dine_in','take_away','delivery']);
             $table->unsignedBigInteger('location_id');
         });
     }
