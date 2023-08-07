@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('res_orders', function (Blueprint $table) {
             $table->id();
-            $table->text('order_voucher_no');
-            $table->enum('order_status',['order','preparing','ready','complete']);
-            $table->unsignedBigInteger('location_id');
+            $table->text('order_voucher_no')->nullable();
+            $table->enum('order_status',['order','preparing','ready','complete'])->nullable();
+            $table->unsignedBigInteger('location_id')->nullable();
         });
     }
 

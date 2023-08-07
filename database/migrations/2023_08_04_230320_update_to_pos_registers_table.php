@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pos_registers', function (Blueprint $table) {
-            $table->unsignedBigInteger('use_for_res')->before('printer_id');
+            $table->unsignedBigInteger('use_for_res')->before('printer_id')->nullable();
         });
     }
 
