@@ -7,6 +7,7 @@
     var price_lists_with_location = [];
     var uoms = @json($uoms ?? null);
     var posRegisterId=@json($posRegisterId);
+    var posRegister=@json($posRegister);
     $(document).ready(function() {
         let tableBodyId = $("#invoice_side_bar").is(':hidden') ? 'invoice_with_modal' : 'invoice_with_sidebar';
         let infoPriceId = $("#invoice_side_bar").is(':hidden') ? 'info_price_with_modal' : 'info_price_with_sidebar';
@@ -1227,10 +1228,20 @@
         })
 
         // Sale With Order
-        $(document).on('click', '#finalizeOrder', function() {
+        $(document).on('click', '.finalizeOrder', function() {
+            if(posRegister.use_for_res==1){
+                let table_id = $('select[name="table_id"]').val();
+                let services=$('#services').val();
+                if(services=='dine_in'){
+                    if(table_id == '' || table_id==null){
+                        warning('Select Table!');
+                        return;
+                    }
+                }
+            }
+
             if(checkContact()){
                 let dataForSale = datasForSale('order');
-
                 if(datasForSale('order').sale_details.length>0){
                     ajaxToStorePosData(dataForSale);
                 }else{

@@ -105,7 +105,7 @@
                     {{-- <button class="btn btn-sm p-2 btn-light">Home</button> --}}
                     <div class="d-flex">
                         <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
-                        @if ($tables)
+                        @if ($posRegister->use_for_res=='1')
                             <select name="table_id" id="table_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light" data-control="select2" data-allow-clear="true">
                                 <option disabled selected>Select Table</option>
                                 @foreach ($tables as $table)
@@ -269,16 +269,18 @@
                                                         </label>
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
-                                                        <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                            <!--begin::Input-->
-                                                            <input class="btn-check" type="radio" name="method" value="1" />
-                                                            <!--end::Input-->
-                                                            <!--begin::Title-->
+                                                        @if ($posRegister->use_for_res=='1')
+                                                            <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+                                                                <input class="btn-check" type="radio" name="method" value="1" />
+                                                                <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                            </label>
+                                                        @else
+                                                            <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
+                                                                <input class="btn-check" type="radio" name="method" value="1" />
+                                                                <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                            </label>
+                                                        @endif
 
-                                                            <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
-                                                            {{-- <span class="fs-7 fw-bold d-block sale_order">Order</span> --}}
-                                                            <!--end::Title-->
-                                                        </label>
                                                         <!--end::Radio-->
                                                     </div>
                                                     <div class="row mb-3">
@@ -1027,7 +1029,7 @@
 
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-primary btn-sm" id="finalizeOrder" data-bs-dismiss="modal">Finalize Order</button>
+                    <button type="button" class="btn btn-primary btn-sm finalizeOrder" id="" data-bs-dismiss="modal">Finalize Order</button>
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                   </div>
                 </div>
