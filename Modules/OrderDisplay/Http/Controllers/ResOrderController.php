@@ -9,8 +9,10 @@ use Illuminate\Contracts\Support\Renderable;
 
 class ResOrderController extends Controller
 {
-    public function restOrderData(){
-        $resOrders=resOrders::with('saleDetail')->get();
+    public function restOrderData(Request $request){
+        $order_status=$request->orderStatus;
+        $resOrders=resOrders::where('order_status',$order_status)->with('saleDetail')->get();
+        // $resOrders=resOrders::where('order_status',$order_status)->with('saleDetail')->get();
         return response()->json($resOrders, 200);
     }
 

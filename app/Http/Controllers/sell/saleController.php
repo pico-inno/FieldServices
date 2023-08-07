@@ -529,6 +529,7 @@ class saleController extends Controller
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
             ]);
+            
             $this->changeTransaction($saleBeforeUpdate,$sales,$request);
             // begin sale_detail_update
             if ($request_sale_details) {

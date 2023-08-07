@@ -78,7 +78,12 @@
                         <div class="separator "></div>
                     </div>
                     <div class="food-container  overflow-scroll " style="padding-bottom: 150px">
-
+                        {{-- <div class="col-6" data-kt-app-page-loading-enabled="true" data-kt-app-page-loading="on" >
+                            <div class="page-loader flex-column">
+                                <span class="spinner-border text-primary" role="status"></span>
+                                <span class="text-muted fs-6 fw-semibold mt-5">Loading...</span>
+                            </div>
+                        </div> --}}
                     </div>
 
                     <div class="w-100 bg-white position-absolute bottom-0 py-3">
@@ -107,18 +112,15 @@
                                 <i class="fa-solid fa-filter me-3"></i> <span class="fw-bold">Filters</span>
                             </div>
                             <div class="col-10  d-flex">
-                                <div class="pe-3 bg-light">
-                                    <button class="btn   rounded-0 text-warning-emphasis ">order</button>
+                                <div class="pe-3 bg-secondary tab-div" id="order_tab">
+                                    <button class="btn  rounded-0 text-warning-emphasis">order</button>
                                 </div>
-                                <div class="pe-3">
+                                <div class="pe-3 tab-div" id="prepare_tab">
                                     <button class="btn rounded-0 text-primary ">Preparing</button>
                                 </div>
-                                <div class="pe-3">
+                                <div class="pe-3 tab-div" id="ready_tab">
                                     <button class="btn  rounded-0 text-success-emphasis">Ready</button>
                                 </div>
-                                {{-- <div class="pe-3 bg-light">
-                                    <button class="btn btn-light btn-sm rounded-0">All</button>
-                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -162,13 +164,84 @@
                         $('#main-div').removeClass('col-12');
                     }
                 }
-
+                //--end-sidebar
 
                 let resOrderLength=0;
                 var resOrder=[];
+                var currentTag='order';
                 var selectedOrder;
                 var selectedOrderId;
                 let intervalMap=new Map();
+                var intervalForDataFetch;
+                 const fetchData=()=>{
+                    intervalForDataFetch=setInterval(() => {
+                        ajaxForData(currentTag);
+                    }, 5000);
+                 }
+                 const ajaxForData=(orderStatus)=>{
+                    $.ajax({
+                            url: `/res/order/data`,
+                            type: 'GET',
+                            data:{
+                                orderStatus,
+                            },
+                            error:function(e){
+                                status=e.status;
+                                if(status==405){
+                                    warning('Method Not Allow!');
+                                }else if(status==419){
+                                    error('Session Expired')
+                                }else{
+                                    console.log(e);
+                                    console.error(' Something Went Wrong! Error Status: '+status )
+                                };
+                            },
+                            success: function(response) {
+                                if(response.length>0){
+                                    $('.empty-msg').remove();
+                                    if(resOrderLength<response.length){
+                                        for (let i = resOrderLength; i < response.length; i++) {
+                                            $('.orderContainer').prepend(orderComponent(response[i]));
+                                            if(response[i].order_status!='ready'){
+                                                const givenTime = response[i].sale_detail[0].created_at;
+                                                startStopwatch(givenTime,$('.time_div_'+response[i].id));
+                                            }
+                                            resOrder=[...resOrder,response[i]];
+                                        }
+
+                                        resOrderLength=response.length;
+
+                                    }
+                                    for (let j = 0; j < resOrderLength; j++) {
+                                            if(response[j]){
+                                                let upToDateSaleDetailOrderTime=response[j].sale_detail[0].sale_with_table.updated_at;
+                                                let currentSaleDetailDateOrderTime=resOrder[j].sale_detail[0].sale_with_table.updated_at;
+
+                                                if(upToDateSaleDetailOrderTime != currentSaleDetailDateOrderTime){
+                                                    resOrder[j]=response[j];
+                                                    $(`[data-id=${resOrder[j].id}]`).html(
+                                                        subComponent(response[j])
+                                                    )
+                                                    if(selectedOrderId==response[j].id){
+                                                        $(`[data-id=${resOrder[j].id}]`).click();
+                                                    }
+                                                }
+                                            }
+                                    }
+                                }else{
+                                    $('.orderContainer').html(`
+                                        <div class="col-12 empty-msg">
+                                            <div class="col-6 m-auto text-center mt-10 ">
+                                                <h1 class="text-gray-600">There is no order</h1>
+                                            </div>
+                                        </div>
+                                        `)
+                                    }
+                            }
+                        })
+                 }
+                 ajaxForData(currentTag);
+                 fetchData();
                 //card detail view
                 $(document).on('click','.res_order_card',function() {
                     let tableName=$(this).data('table');
@@ -199,8 +272,6 @@
                     ribbon.prepend(component);
                     timeCount.addClass('text-primary');
                     const interval = intervalMap.get(selectedOrderId);
-                    parent.removeClass('order-2') ;
-                    parent.addClass('order-1') ;
                     if (!interval) {
                         const givenTime = selectedOrder.sale_detail[0].created_at;
                         startStopwatch(givenTime,$('.time_div_'+selectedOrderId));
@@ -208,13 +279,16 @@
                         timeCount.addClass('text-primary');
                     }
                     ajaxForStatusChange('preparing');
+                    if(currentTag!='preparing'){
+                        parent.remove();
+                        parent.removeClass('order-2') ;
+                        parent.addClass('order-1') ;
+                    }
                 })
 
                 $(document).on('click','#readyStatus',function(){
                     let component=statusComponent('ready',selectedOrder.services);
                     let parent=$(`[data-id=${selectedOrderId}]`);
-                    parent.removeClass('order-1') ;
-                    parent.addClass('order-2') ;
                     let ribbon=parent.find('.ribbon');
                     let ribbonLabel=parent.find('.ribbon-label');
                     let timeCount=parent.find('.time-count');
@@ -225,9 +299,49 @@
                     stopStopwatch(selectedOrderId);
                     ajaxForStatusChange('ready');
 
+                    if(currentTag!='ready'){
+                        parent.remove();
+                        parent.removeClass('order-1') ;
+                        parent.addClass('order-2') ;
+
+                    }
 
 
                 })
+
+                $('#order_tab').click(function(){
+                    resOrderLength=0;
+                    resOrder=[];
+                    $('.orderContainer').html('');
+                    currentTag='order';
+                    $('.tab-div').removeClass('bg-secondary');
+                    $(this).addClass('bg-secondary');
+                    $('.food-container').html('');
+                    ajaxForData('order');
+                })
+                $('#prepare_tab').click(function(){
+                    resOrderLength=0;
+                    resOrder=[];
+                    $('.orderContainer').html('');
+                    currentTag='preparing';
+                    $('.tab-div').removeClass('bg-secondary');
+                    $(this).addClass('bg-secondary');
+                    $('.food-container').html('');
+                    ajaxForData('preparing');
+                })
+                $('#ready_tab').click(function(){
+                    resOrder=[];
+                    resOrderLength=0;
+                    $('.orderContainer').html('');
+                    currentTag='ready';
+                    $('.tab-div').removeClass('bg-secondary');
+                    $(this).addClass('bg-secondary');
+                    $('.food-container').html('');
+                    ajaxForData('ready');
+                })
+
+
+
 
                 const ajaxForStatusChange=(status)=>{
                     $.ajax({
@@ -255,54 +369,6 @@
                         }
                     })
                 }
-                setInterval(() => {
-                    // $('.orderContainer').html('')
-                    $.ajax({
-                        url: `/res/order/data`,
-                        type: 'get',
-                        error:function(e){
-                            status=e.status;
-                            if(status==405){
-                                warning('Method Not Allow!');
-                            }else if(status==419){
-                                error('Session Expired')
-                            }else{
-                                console.log(e);
-                                console.error(' Something Went Wrong! Error Status: '+status )
-                            };
-                        },
-                        success: function(response) {
-                            if(resOrderLength<response.length){
-                                for (let i = resOrderLength; i < response.length; i++) {
-                                    $('.orderContainer').prepend(orderComponent(response[i]));
-                                    if(response[i].order_status!='ready'){
-                                        const givenTime = response[i].sale_detail[0].created_at;
-                                        startStopwatch(givenTime,$('.time_div_'+response[i].id));
-                                    }
-                                    resOrder=[...resOrder,response[i]];
-
-                                }
-
-                                resOrderLength=response.length;
-                            }
-                            for (let j = 0; j < resOrderLength; j++) {
-                                let upToDateSaleDetailOrderTime=response[j].sale_detail[0].sale_with_table.updated_at;
-                                let currentSaleDetailDateOrderTime=resOrder[j].sale_detail[0].sale_with_table.updated_at;
-
-                                if(upToDateSaleDetailOrderTime != currentSaleDetailDateOrderTime){
-                                    resOrder[j]=response[j];
-                                    $(`[data-id=${resOrder[j].id}]`).html(
-                                        subComponent(response[j])
-                                    )
-                                    if(selectedOrderId==response[j].id){
-                                        $(`[data-id=${resOrder[j].id}]`).click();
-                                    }
-                                }
-
-                            }
-                        }
-                    })
-                }, 2000);
 
                 const orderComponent=(data)=>{
                     let Component=subComponent(data);
