@@ -29,6 +29,8 @@ use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Product\VariationTemplates;
 use App\Models\Product\ProductVariationsTemplates;
+use App\Models\resOrders;
+use App\Models\sale\sales;
 use Modules\Restaurant\Entities\table;
 
 class POSController extends Controller
@@ -70,11 +72,39 @@ class POSController extends Controller
         if (class_exists(table::class)) {
             $tables=table::get();
         }
-
-
         return view('App.pos.create', compact('locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
     }
+    public function edit($posRegisterId,)
+    {
+        try {
+            $posRegisterQry=posRegisters::where('id',$posRegisterId);
+            $checkPos=$posRegisterQry->exists();
+            if(!$checkPos){
+                return back()->with(['warning'=>'something went wrong']);
+            }
+            $posRegister=$posRegisterQry->first();
+        } catch (\Throwable $th) {
+            return back()->with(['warning'=>'something went wrong']);
+        }
+        $saleId=request('saleId');
+        $sale=sales::where('id',$saleId)->
+                where('pos_register_id',$posRegisterId)->first();
+        $locations = businessLocation::all();
+        $price_lists = PriceLists::all();
+        $currentStockBalance = CurrentStockBalance::all();
+        $uoms = UOM::all();
 
+        $categories = Category::all();
+        $brands = Brand::all();
+        $generics = Generic::all();
+        $manufacturers = Manufacturer::all();
+        $variations = VariationTemplates::all();
+        $tables=null;
+        if (class_exists(table::class)) {
+            $tables=table::get();
+        }
+        return view('App.pos.edit', compact('sale','locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
+    }
     public function productVariationsGet()
     {
         $products = Product::with('productVariations')->select('id', 'name', 'sku', 'product_type','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image')->get();
@@ -306,5 +336,31 @@ class POSController extends Controller
         } catch (\Exception $e){
             return response()->json(['error' => $e->getMessage()], 404);
         }
+    }
+
+
+    public function recentSale($id){
+        // $posRegister=posRegisters::where('id',$id)->firstOrFail();
+        // if($posRegister->use_for_res == 1){
+        //    $resOrder= resOrders::where('id',$saleId)->get();
+        //    dd($resOrder->toArray());
+        // }
+        $posRegisterId=$id;
+        $saleOrders=sales::where('pos_register_id',$id)
+            ->orderBy('id','DESC')
+            ->where('status','order')
+            ->limit(5)
+            ->get();
+        $saleDelivered=sales::where('pos_register_id',$id)
+            ->orderBy('id','DESC')
+            ->where('status','delivered')
+            ->limit(5)
+            ->get();
+        $saleDrafts=sales::where('pos_register_id',$id)
+            ->orderBy('id','DESC')
+            ->where('status','draft')
+            ->limit(5)
+            ->get();
+        return view('App.pos.recentTransactions',compact('saleOrders','saleDelivered','saleDrafts','posRegisterId'));
     }
 }

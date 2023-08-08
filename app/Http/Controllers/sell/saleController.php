@@ -374,12 +374,12 @@ class saleController extends Controller
         }
     }
     public function resOrderCreation($sale_data,$request){
-
         return resOrders::create([
             'order_voucher_no'=>generatorHelpers::resOrderVoucherNo(),
             'order_status'=>'order',
             'location_id'=>$sale_data->business_location_id,
-            'services'=>$request->services
+            'services'=>$request->services,
+            'pos_register_id'=>$request->pos_register_id
         ]);
 
     }
@@ -529,7 +529,7 @@ class saleController extends Controller
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
             ]);
-            
+
             $this->changeTransaction($saleBeforeUpdate,$sales,$request);
             // begin sale_detail_update
             if ($request_sale_details) {

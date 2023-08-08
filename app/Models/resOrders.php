@@ -15,9 +15,10 @@ class resOrders extends Model
         'order_status',
         'location_id',
         'services',
+        'pos_register_id',
     ];
     public function saleDetail(){
         return $this->hasMany(sale_details::class,'rest_order_id','id')
-                    ->with('product','saleWithTable');
+                    ->with('saleWithTable');
     }
 }

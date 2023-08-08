@@ -3,9 +3,11 @@
 
 @extends('App.main.navBar')
 
-@section('res_icon', 'active')
-@section('order_display_here_show', 'here show')
-@section('res_management_show', 'active show')
+@section('pos_icon', 'active')
+@section('pos_icon', 'active')
+@section('pos_active_show', 'here show')
+@section('pos_bar_show', 'active show')
+{{-- @section('res_management_show', 'active show') --}}
 @section('order_display_list_active_show', 'active show')
 
 
@@ -54,22 +56,22 @@
         </div>
         <div class="card card-flush h-xl-100">
             <!--begin::Card header-->
-            <div class="d-flex  justify-content-between py-5 px-5">
+            <div class="d-flex  justify-content-between py-1 px-5">
                 <div class="d-flex">
-                    <div class=" col-6 me-sm-5 mb-3 mb-sm-0 ms-3">
+                    {{-- <div class=" col-6 me-sm-5 mb-3 mb-sm-0 ms-3">
                         <input type="text" class="form-control form-control-sm" placeholder="Search Product" data-filter="input">
                     </div>
                     <div class="col-6">
                         <select name="locationfilter" id="locationFilter" class="form-select form-select-sm" data-control="select2" data-placeholder="Filter Location" data-filter="location" placeholder="Filter Location" data-allow-clear="true">
                             <option></option>
-                            {{-- @foreach ($locations as $l)
+                            @foreach ($locations as $l)
                                 <option value="{{$l->name}}">{{$l->name}}</option>
-                            @endforeach --}}
+                            @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="">
-                    <div class="d-flex  justify-content-between py-5 px-5">
+                    <div class="d-flex  justify-content-between py-3 px-10">
                         <div class="d-flex">
                         </div>
                         <div class="card-toolbar">

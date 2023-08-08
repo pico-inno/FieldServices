@@ -40,6 +40,7 @@ class orderDisplayController extends Controller
                     </button>
                     <div class="z-3">
                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="exchangeRateDropDown" role="menu">';
+                    $html.='<a class="dropdown-item cursor-pointer " href="'.route('orderDisplay',$orderDisplay->id).'">Open Display</a>';
                     $html.='<a class="dropdown-item cursor-pointer openModal" data-href="'.route('odEdit',$orderDisplay->id).'">Edit</a>';
                     $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$orderDisplay->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('odDestory',$orderDisplay->id).'">Delete</a>';
                     // $html .= $editBtn;
@@ -50,6 +51,9 @@ class orderDisplayController extends Controller
             return $orderDisplay->location->name;
         })
         ->editColumn('posRegister',function($orderDisplay){
+            if($orderDisplay->pos_register_id==0){
+                return 'All POS';
+            }
             $pos_register_ids=json_decode($orderDisplay->pos_register_id);
             $pos_registers=posRegisters::whereIn('id',$pos_register_ids)->get();
             $posText='';
@@ -60,6 +64,9 @@ class orderDisplayController extends Controller
             return $posText;
         })
         ->editColumn('productCategory',function($orderDisplay){
+            if($orderDisplay->product_category_id==0){
+                return 'All Category';
+            }
             $product_category_ids=json_decode($orderDisplay->product_category_id);
             $product_categorys=Category::whereIn('id',$product_category_ids)->get();
             $categoryText='';
@@ -115,8 +122,17 @@ class orderDisplayController extends Controller
             return back()->with(['error'=>'Something Wrong!']);
         }
     }
-    public function odDisplay() {
-        return view('orderdisplay::App.orderDisplayDashboard');
+    public function odDisplay($id) {
+        if(!$id){
+            return back();
+        }
+        $odDisplaysQuery=orderDisplay::where('id',$id);
+        if($odDisplaysQuery->exists()){
+            $odDisplayData=$odDisplaysQuery->first();
+            return view('orderdisplay::App.orderDisplay',compact('odDisplayData'));
+        }else{
+            return back();
+        }
     }
 
     public function odEdit($id) {

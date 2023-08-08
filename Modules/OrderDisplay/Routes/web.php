@@ -27,7 +27,7 @@ Route::controller(orderDisplayController::class)->group(function () {
     Route::post('/order/{id}/display/update','odUpdate')->name('odUpdate');
 
     Route::delete('/order/display/destory','odDestory')->name('odDestory');
-    Route::get('/order/display','odDisplay')->name('orderDisplay');
+    Route::get('{id}/order/display','odDisplay')->name('orderDisplay');
 
 
 });

@@ -166,6 +166,8 @@
                 }
                 //--end-sidebar
 
+
+                let odDisplayData=@json($odDisplayData);
                 let resOrderLength=0;
                 var resOrder=[];
                 var currentTag='order';
@@ -184,6 +186,7 @@
                             type: 'GET',
                             data:{
                                 orderStatus,
+                                displayData:odDisplayData,
                             },
                             error:function(e){
                                 status=e.status;
@@ -374,6 +377,9 @@
                     let Component=subComponent(data);
                     let saleDetails=data.sale_detail;
                     let fsd=saleDetails[0];
+                    if(Component==false){
+                        return ``;
+                    }
                     return `
                         <div class="col-lg-3 col-md-4 col-sm-6 res_order_card  ${data.order_status=='ready'?'order-2':''}" style="height:390px" data-table="${fsd.sale_with_table.table ?fsd.sale_with_table.table.table_no: data.order_voucher_no}" data-id=${data.id}>
                             ${Component}
@@ -383,17 +389,19 @@
 
                 const subComponent=(data)=>{
                     let items=``;
+                    let itemCount=0;
                     let saleDetails=data.sale_detail;
                     let fsd=saleDetails[0];
                     for (let i = 0; i < 5; i++) {
                         let sd=saleDetails[i];
-                        if(sd){
+                        if(sd && sd.product){
                             items += `
                                 <div class="d-flex justify-content-between align-items-center py-2">
                                     <span class="fw-semibold">${sd.product.name}</span>
                                     <span class="fw-bold">x ${Number(sd.quantity)}</span>
                                 </div>
                             `;
+                            itemCount++;
                         }
 
                     }
@@ -404,8 +412,11 @@
                             <em>and ${ saleDetails.length-5  } more...</em>
                         </div>`
                     }
-                    console.log(data);
                     let status=statusComponent(data.order_status,data.services);
+                    if(itemCount==0){
+                        return false;
+                    }
+
                     return `
                         <div class="card card-flush h-md-100 cursor-pointer bg-hover-light"  style="hight:40vh" >
                             <div class="card-header ribbon ribbon-top ribbon-vertical">
@@ -420,7 +431,7 @@
                                 <div class="w-100  d-flex justify-content-between mt-1 mb-10">
                                     <h6 class="fw-bold fs-7">${data.order_voucher_no}</h6>
 
-                                    <h6 class="fw-bold">T-0001</h6>
+                                    <h6 class="fw-bold fs-6">${data.services}</h6>
                                 </div>
                             </div>
                             <div class="card-body pt-1">

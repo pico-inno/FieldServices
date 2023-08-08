@@ -1249,7 +1249,7 @@
                 }
             }
         })
-        $(document).on('click', '#order_confirm_modal_btn', function() {
+        $(document).on('click', '.order_confirm_modal_btn', function() {
             let saleDetailOrders = datasForSale('order').sale_details;
             $('#services').val('dine_in').trigger('change');
             if(saleDetailOrders.length>0){
@@ -1495,12 +1495,9 @@
                 }
             });
         })
-
-        // ============> LOCATION CHANGE PROCESS
-        $(document).on('change', `#business_location_id`, function() {
-            let location_id = $(this).val();
+        const ajaxToGetPriceList=(locationId)=>{
             $.ajax({
-                url: `/pos/pricelist-location/${location_id}`,
+                url: `/pos/pricelist-location/${locationId}`,
                 type: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1543,6 +1540,16 @@
                     console.log(e);
                 }
             });
+        }
+        // ============> LOCATION CHANGE PROCESS
+        $(document).on('change', `#business_location_id`, function() {
+            let location_id = $(this).val();
+            ajaxToGetPriceList(location_id);
         })
+        let locationId=$('#business_location_id').val();
+        if(locationId){
+            ajaxToGetPriceList(locationId);
+        }
+
     });
 </script>

@@ -819,6 +819,9 @@ Route::controller(POSController::class)->group(function() {
     Route::get('/pos/create', 'create')->name('pos.create');
     Route::get('/pos/payment-print-layout', 'paymentPrintLayout')->name('pos.pryment-print-layout');
 
+    Route::get('/pos/{posRegisterId}/edit/', 'edit')->name('pos.edit');
+
+    Route::get('/pos/{id}/recent/sale/', 'recentSale')->name('pos.recentSale');
     // product
     Route::get('/pos/product-variations', 'productVariationsGet')->name('pos.product-variations');
 

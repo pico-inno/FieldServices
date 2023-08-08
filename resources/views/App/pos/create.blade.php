@@ -26,6 +26,7 @@
         <link href={{ asset("assets/css/style.bundle.css") }} rel="stylesheet" type="text/css" />
         <!--end::Global Stylesheets Bundle-->
         <link href={{ asset("assets/plugins/custom/datatables/datatables.bundle.css") }} rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href={{asset("customCss/scrollbar.css")}}>
         <style>
 
             .search-item-container {
@@ -116,14 +117,21 @@
                         @endif
                     </div>
                     <a class="navbar-brand fw-bold fs-3 text-white" href="#"></a>
-                    <button class="btn btn-sm  text-dark fw-bold  rounded-0" data-bs-toggle="modal" data-bs-target="#pos_sale_recent"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
+                    <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
                 </div>
             </div>
             <!--begin::Content-->
+            <div class="">
+                <div id="spinnerWrapper" class="spinner-wrapper">
+                    <div class="spinner">
+                    </div>
+                </div>
+            </div>
             <div class="content d-flex flex-column flex-column-fluid ms-8 " id="pos_kt_content" style="height:100%;">
                 <!--begin::container-->
                 <div class="container-fluid  pe-1 h-100" id="kt_content_container">
                     <!--begin::Layout-->
+
                     <div class="d-flex flex-column flex-lg-row p-2">
                         <!--begin::Content-->
                         <div class="d-flex flex-column flex-row-fluid me-lg-9 mb-lg-0 me-xl-9 mb-10 mb-xl-0" style="height: 100vh;">
@@ -270,7 +278,7 @@
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
                                                         @if ($posRegister->use_for_res=='1')
-                                                            <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+                                                            <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
                                                                 <input class="btn-check" type="radio" name="method" value="1" />
                                                                 <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
                                                             </label>
@@ -424,17 +432,24 @@
                                                     </label>
                                                     <!--end::Radio-->
                                                     <!--begin::Radio-->
-                                                    <label class=" mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                        <!--begin::Input-->
+
+                                                    @if ($posRegister->use_for_res=='1')
+                                                        <label  data-bs-toggle="modal"  data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                        </label>
+                                                    @else
+                                                        <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                        </label>
+                                                    @endif
+
+                                                    {{-- <label class=" mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+
                                                         <input class="btn-check" type="radio" name="method" value="1" />
-                                                        <!--end::Input-->
-                                                        <!--begin::Icon-->
-                                                        {{-- <i class="fonticon-card fs-2hx mb-2 pe-0"></i> --}}
-                                                        <!--end::Icon-->
-                                                        <!--begin::Title-->
                                                         <span class="fs-8 fw-bold d-block sale_order">Order</span>
-                                                        <!--end::Title-->
-                                                    </label>
+                                                    </label> --}}
                                                     <!--end::Radio-->
                                                 </div>
                                                 <div class="row mb-sm-3 col-6">
@@ -825,7 +840,7 @@
 
         {{-- POS Sale Recent --}}
         <div class="modal fade" tabindex="-1" id="pos_sale_recent">
-            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            {{-- <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h4 class="modal-title">POS Sale Recent Transactions</h4>
@@ -965,7 +980,7 @@
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                   </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
         {{-- POS order confirm  --}}
         <div class="modal fade" tabindex="-1" id="order_confirm_modal">
@@ -1076,12 +1091,14 @@
                 </div>
             </div>
         </div>
-
+        <div class="modal fade purchaseDetail" tabindex="-1"></div>
+        <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="modal"></div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
         <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
-
+        <script src={{asset('customJs/loading/miniLoading.js')}}></script>
+		<script src={{asset('customJs/print/print.js')}}></script>
         <!--end::Global Javascript Bundle-->
 
         @include('App.pos.contactAdd')
@@ -1092,3 +1109,33 @@
     </body>
     <!--end::Body-->
 </html>
+<script>
+$(document).on('click', '#pos_sale_recent_btn', function(e){
+    e.preventDefault();
+    loadingOn();
+    $('#pos_sale_recent').load($(this).data('href'), function() {
+    //     // $(this).remove();
+        $(this).modal('show');
+        loadingOff();
+
+    });
+});
+$(document).on('click', '.view_detail', function(){
+        $url=$(this).data('href');
+
+        loadingOn();
+        $('.purchaseDetail').load($url, function() {
+            $(this).modal('show');
+
+            loadingOff();
+        });
+    });
+
+
+    $(document).on('click', '.print-invoice', function(e) {
+            e.preventDefault();
+            loadingOn();
+            var url = $(this).data('href');
+            ajaxPrint(url); //function from print.js
+        });
+</script>
