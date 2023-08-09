@@ -10,6 +10,7 @@ use App\Models\settings\businessLocation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Restaurant\Entities\table;
 
 class sales extends Model
 {
@@ -20,6 +21,7 @@ class sales extends Model
         'contact_id',
         'status',
         'pos_register_id',
+        'table_id',
         'sale_amount',
         'total_line_discount',
         'extra_discount_type',
@@ -46,11 +48,14 @@ class sales extends Model
     {
         return $this->belongsTo(BusinessLocation::class);
     }
-     public function customer()
+    public function customer()
     {
         return $this->hasOne(Contact::class,'id','contact_id');
     }
-
+    public function table()
+    {
+        return $this->hasOne(table::class,'id','table_id');
+    }
     public function business_location_id()
     {
         return $this->belongsTo(businessLocation::class, 'business_location_id', 'id');

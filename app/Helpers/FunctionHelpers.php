@@ -61,7 +61,12 @@ function price($price,$currencyId='default'){
     }
 }
 
-
+function fprice($price){
+    $loadSetting=SettingHelpers::load();
+    $setting=$loadSetting->getSettingsValue();
+    $formattedPrice=number_format($price,$setting->currency_decimal_places,'.','');
+    return $formattedPrice;
+}
 function fDate($date,$br=false)
 {
     $dateTime =date_create($date);

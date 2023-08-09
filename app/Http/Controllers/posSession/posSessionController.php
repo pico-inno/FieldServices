@@ -27,9 +27,9 @@ class posSessionController extends Controller
             return view('App.posSession.posSessionCreate',compact('posRegisteredId','paymentAccounts','paymentAccountForRegister'));
         }else{
             $pos=posRegisters::where('id',$posRegisteredId)->first();
-            if($pos->use_for_res==1 && hasModule('Restaurant') &&  isEnableModule('Restaurant')){
-                return redirect()->route('table.dashboard',['pos_register_id'=>encrypt($posRegisteredId)]);
-            }
+            // if($pos->use_for_res==1 && hasModule('Restaurant') &&  isEnableModule('Restaurant')){
+            //     return redirect()->route('table.dashboard',['pos_register_id'=>encrypt($posRegisteredId)]);
+            // }
             return redirect()->route('pos.create',['pos_register_id'=>encrypt($posRegisteredId)]);
         }
     }
@@ -42,9 +42,9 @@ class posSessionController extends Controller
             return view('App.posSession.posSessionCreate',compact('posRegisteredId','paymentAccounts','paymentAccountForRegister'));
         }else{
             $pos=posRegisters::where('id',$posRegisteredId)->first();
-            if($pos->use_for_res==1 && hasModule('Restaurant') &&  isEnableModule('Restaurant')){
-                return redirect()->route('table.dashboard',['pos_register_id'=>encrypt($posRegisteredId)]);
-            }
+            // if($pos->use_for_res==1 && hasModule('Restaurant') &&  isEnableModule('Restaurant')){
+            //     return redirect()->route('table.dashboard',['pos_register_id'=>encrypt($posRegisteredId)]);
+            // }
             return redirect()->route('pos.create',['pos_register_id'=>encrypt($posRegisteredId)]);
         }
     }

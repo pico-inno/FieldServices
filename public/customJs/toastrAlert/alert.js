@@ -1,5 +1,21 @@
 
-
+toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toastr-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  };
 function success(message = "Need to add message") {
     toastr.success(message);
     var audio = new Audio("/customJs/toastrAlert/sound/success.mp3");
@@ -25,6 +41,7 @@ function error(message='need to add message') {
 }
 function flotemessage(message=''){
     toastr.options = {
+        "closeButton": true,
         "positionClass": "toastr-top-center",
         "backgroundColor": "gray",
         "showDuration": "500",

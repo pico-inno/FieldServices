@@ -53,7 +53,9 @@ class sale_details extends Model
     public function sale(){
         return $this->hasOne(sales::class, 'id', 'sales_id');
     }
-
+    public function saleWithTable(){
+        return $this->hasOne(sales::class, 'id', 'sales_id')->with('table');
+    }
 
     public function product(): HasOne
     {

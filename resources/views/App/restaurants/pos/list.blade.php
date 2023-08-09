@@ -6,8 +6,6 @@
 @section('pos_icon', 'active')
 @section('pos_icon', 'active')
 @section('pos_active_show', 'here show')
-{{-- @section('res_management_show', 'active show') --}}
-
 @section('pos_bar_show', 'active show')
 @section('pos_register_list_active_show', 'active show')
 
