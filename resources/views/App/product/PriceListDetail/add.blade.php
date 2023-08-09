@@ -90,11 +90,11 @@
                             <thead>
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-600">
-                                    <th class="min-w-150px">Type</th>
-                                    <th class="min-w-150px">Product</th>
-                                    <th class="min-w-100px">Min Quantity</th>
-                                    <th class="min-w-150px">Calculate Type</th>
-                                    <th class="min-w-100px">Value</th>
+                                    <th class="min-w-150px required">Apply Type</th>
+                                    <th class="min-w-150px required">Apply Value</th>
+                                    <th class="min-w-100px required">Min Quantity</th>
+                                    <th class="min-w-100px required">Cal Type</th>
+                                    <th class="min-w-100px required">Cal Value</th>
                                     <th class="min-w-150px">Start Date</th>
                                     <th class="min-w-150px">End Date</th>
                                     <th><i class="fa-solid fa-trash text-danger"></i></th>
@@ -126,7 +126,7 @@
                                         <select name="cal_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="true" data-placeholder="Please select">
                                             <option></option>
                                             <option value="fixed">Fix</option>
-                                            <option value="percentage">Percentage</option>
+                                            <option value="percentage" selected>Percentage</option>
                                         </select>
                                     </td>
                                     <td>
@@ -166,5 +166,15 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
+    
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <script>
+                error( @json($error) )
+            </script>
+        @endforeach
+    @endif
+
     @include('App.product.PriceListDetail.js.price_list_detail_js');
 @endpush

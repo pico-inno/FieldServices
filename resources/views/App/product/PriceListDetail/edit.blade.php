@@ -36,37 +36,27 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4 col-sm-12 mb-8">
-                            <label for="" class="fs-5 form-label">{{ __('product/product.name') }}</label>
+                            <label for="" class="fs-5 form-label required">{{ __('product/product.name') }}</label>
                             <input type="text" class="form-control form-control-sm " name="name" placeholder="Name" value="{{old('name',$priceList->name)}}">
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="col-md-4 col-sm-12 mb-8">
-                            <label class="form-label">{{ __('product/pricelist.base_price') }}</label>
+                            <label class="form-label required">{{ __('product/pricelist.base_price') }}</label>
                             <select name="base_price" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Select Location">
                                 <option></option> 
-                                @if($price_list_details->isEmpty()) 
-                                   <option value="0">{{ __('product/pricelist.cost') }}</option>
-                                    @foreach($price_lists as $price_list)
-                                        <option value="{{ $price_list->id }}">{{ $price_list->name }}</option>
-                                    @endforeach                        
-                                @else
-                                    <option value="0" @selected(0 == $priceList->priceListDetails[0]->base_price)>{{ __('product/pricelist.cost') }}</option>
-                                    @foreach($price_lists as $price_list)
-                                        @if ($priceList->id == $price_list->id)
-                                            @continue;
-                                        @endif
-                                        <option value="{{ $price_list->id }}" @selected($price_list->id === $priceList->priceListDetails[0]->base_price)>{{ $price_list->name }}</option>
-                                    @endforeach
-                                @endif
+                                <option value="0" @selected(0 == $priceList->priceListDetails[0]->base_price)>{{ __('product/pricelist.cost') }}</option>
+                                @foreach($price_lists as $price_list)
+                                    <option value="{{ $price_list->id }}" @selected($price_list->id === $priceList->priceListDetails[0]->base_price)>{{ $price_list->name }}</option>
+                                @endforeach
                             </select>
                             @error('base_price')
                                 <div class="text-danger my-2">{{ $message }}</div>
                             @enderror
                         </div>                        
                         <div class="col-md-4 col-sm-12 mb-8 ">
-                            <label for="" class="form-label">{{ __('product/pricelist.currency') }}</label>
+                            <label for="" class="form-label required">{{ __('product/pricelist.currency') }}</label>
                             <select name="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
                                 <option></option>
                                 @foreach($currencies as $currency)
@@ -94,10 +84,11 @@
                             <thead>
                                 <!--begin::Table row-->
                                 <tr class="text-start text-gray-600">
-                                    <th class="min-w-150px">Type</th>
-                                    <th class="min-w-150px">Product</th>
-                                    <th class="min-w-100px">Min Quantity</th>
-                                    <th class="min-w-100px">Price</th>
+                                    <th class="min-w-150px required">Apply Type</th>
+                                    <th class="min-w-150px required">Apply Value</th>
+                                    <th class="min-w-100px required">Min Quantity</th>
+                                    <th class="min-w-100px required">Cal Type</th>
+                                    <th class="min-w-100px required">Cal Value</th>
                                     <th class="min-w-150px">Start Date</th>
                                     <th class="min-w-150px">End Date</th>
                                     <th><i class="fa-solid fa-trash text-danger"></i></th>
@@ -126,7 +117,7 @@
                                                 </select>
                                             </td> 
                                             <td>
-                                                <input type="text" class="form-control form-control-sm rounded-0" name="min_qty[]" value="{{old('min_qty[]',$item->min_qty)}}">
+                                                <input type="text" class="form-control form-control-sm rounded-0" name="min_qty[]" value="{{old('min_qty[]',$item->min_qty * 1)}}">
                                             </td>
                                             <td>
                                                 <select name="cal_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="true" data-placeholder="Please select">
@@ -136,7 +127,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control form-control-sm rounded-0" name="cal_val[]" value="{{old('cal_val[]',$item->cal_value)}}">
+                                                <input type="text" class="form-control form-control-sm rounded-0" name="cal_val[]" value="{{old('cal_val[]',$item->cal_value * 1)}}">
                                             </td>
                                             <td>
                                                 <input type="text" name="start_date[]" class="form-control form-control-sm rounded-0 fs-7 select_date" value="{{ old('start_date[]', $item->from_date) }}" placeholder="Select date" autocomplete="off" />
@@ -173,6 +164,16 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
+    
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <script>
+                error( @json($error) )
+            </script>
+        @endforeach
+    @endif
+
     @include('App.product.PriceListDetail.js.pricelist_js_for_edit');
     @include('App.product.PriceListDetail.js.price_list_detail_js');
 

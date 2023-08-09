@@ -836,7 +836,7 @@
                                     </li>
                                 </ul>
 
-                                <div class="tab-content">
+                                <div class="tab-content"> 
                                     <div class="tab-pane fade show active" id="pos_sale_recent_delivered" role="tab-panel">
                                         <div class="table-responsive">
                                             <table class="table gs-7 gy-7 gx-7">
@@ -848,25 +848,10 @@
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>INV-2023-0000084</td>
-                                                        <td>Aung Aung</td>
-                                                        <td>540000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>INV-2023-0008555</td>
-                                                        <td>Zaw Zaw</td>
-                                                        <td>450000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
+                                                <tbody id="deliever_table_body">
+                                                    <tr class="not-exist-data text-center">
+                                                        <td colspan="9" class=" text-muted">
+                                                            There is no data to show
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -884,25 +869,10 @@
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>INV-2023-0000084</td>
-                                                        <td>Aung Aung</td>
-                                                        <td>540000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>INV-2023-0008555</td>
-                                                        <td>Zaw Zaw</td>
-                                                        <td>450000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
+                                                <tbody id="draft_table_body">
+                                                    <tr class="not-exist-data text-center">
+                                                        <td colspan="9" class=" text-muted">
+                                                            There is no data to show
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -920,25 +890,10 @@
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>INV-2023-0000084</td>
-                                                        <td>Aung Aung</td>
-                                                        <td>540000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>INV-2023-0008555</td>
-                                                        <td>Zaw Zaw</td>
-                                                        <td>450000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
+                                                <tbody id="order_table_body">
+                                                    <tr class="not-exist-data text-center">
+                                                        <td colspan="9" class=" text-muted">
+                                                            There is no data to show
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -949,7 +904,7 @@
                             </div>
                         </div>
                     </div>
-                  </div>
+                  </div> 
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                   </div>

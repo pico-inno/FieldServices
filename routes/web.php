@@ -819,6 +819,9 @@ Route::controller(POSController::class)->group(function() {
     // check price list
     Route::get('/pos/pricelist-contact/{id}', 'checkByContact');
     Route::get('/pos/pricelist-location/{id}', 'checkByLocation');
+
+    // get sale product
+    Route::get('/pos/sold/{posId}', 'getSoldProduct');
 });
 
 Route::prefix('pos')->group(function () {

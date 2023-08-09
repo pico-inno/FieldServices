@@ -5,7 +5,9 @@ namespace App\Http\Controllers\POS;
 use DB;
 
 use Exception;
+use App\Models\sale\sales;
 use App\Models\Product\UOM;
+use App\Models\posRegisters;
 use Illuminate\Http\Request;
 use App\Models\Product\Brand;
 use App\Models\Product\UOMSet;
@@ -18,14 +20,13 @@ use App\Models\Product\PriceLists;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\posRegisters;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use function PHPUnit\Framework\isEmpty;
 use Maatwebsite\Excel\Concerns\ToArray;
 use App\Models\Product\ProductVariation;
-use App\Models\settings\businessLocation;
 
+use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Product\VariationTemplates;
 use App\Models\Product\ProductVariationsTemplates;
@@ -299,6 +300,25 @@ class POSController extends Controller
 
         } catch (\Exception $e){
             return response()->json(['error' => $e->getMessage()], 404);
+        }
+    }
+
+    // GET SOLD PRODUCT
+    public function getSoldProduct($posId)
+    {
+        try {
+            $salesQuery = sales::with('contact')->wherePosRegisterId(1)->select('id', 'sales_voucher_no', 'contact_id', 'status', 'total_sale_amount')->get();
+
+            $saleDataCollection = $salesQuery->map(function ($item){
+                $item['contact_name'] = $item->contact->getFullNameAttribute();
+                return $item;
+            });
+            
+            $sales = $saleDataCollection->chunk(40)->flatten();
+    
+            return response()->json(['saleDatas' => $sales]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching data.'], 500);
         }
     }
 }

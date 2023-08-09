@@ -48,7 +48,7 @@ const priceListRow =
         <select name="cal_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="true" data-placeholder="Please select">
             <option></option>
             <option value="fixed">Fix</option>
-            <option value="percentage">Percentage</option>
+            <option value="percentage" selected>Percentage</option>
         </select>
     </td>
     <td>
