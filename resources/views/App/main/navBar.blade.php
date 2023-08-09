@@ -1241,7 +1241,8 @@
                                                             <span class="menu-title ">Order Display</span>
                                                         </a>
                                                     </div> --}}
-                                                    <div  class="menu-item menu-accordion ">
+                                                    @if (Route::has('odList'))
+                                                        <div  class="menu-item menu-accordion ">
                                                             <a class="menu-link @yield('order_display_list_active_show')" href="{{route('odList')}}">
                                                                 <span class="menu-icon">
                                                                     <i class="fa-solid fa-list fs-6"></i>
@@ -1249,6 +1250,7 @@
                                                                 <span class="menu-title">Order Display List</span>
                                                             </a>
                                                     </div>
+                                                    @endif
                                                 @endif
                                             </div>
                                             <!--end::Wrapper-->

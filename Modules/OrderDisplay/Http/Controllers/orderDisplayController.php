@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 use App\Models\Product\Category;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\resOrders;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
-use Modules\OrderDisplay\Entities\orderDisplay;
+use Modules\orderDisplay\Entities\orderDisplay;
 
 class orderDisplayController extends Controller
 {

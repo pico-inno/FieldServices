@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\OrderDisplay\Entities;
+namespace Modules\orderDisplay\Entities;
 
 use App\Models\settings\businessLocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
