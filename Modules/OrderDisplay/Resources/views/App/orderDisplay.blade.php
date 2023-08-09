@@ -154,18 +154,33 @@
                     if(sideBarOpen){
                         sideBarOpen=false;
                         $('#sidebar').css('margin-left',`-${offsetWidth}px`);
+                        $('#sidebar').removeClass('col-9 col-sm-6');
+
                         $('#main-div').removeClass('col-lg-9 col-12');
                         $('#main-div').addClass('col-12');
                     }else{
                         sideBarOpen=true;
                         $('#sidebar').css('margin-left',`0px`);
+                        $('#sidebar').addClass('col-9 col-sm-6');
 
                         $('#main-div').addClass('col-lg-9 col-12');
-                        $('#main-div').removeClass('col-12');
+                        // $('#main-div').removeClass('col-12');
                     }
                 }
                 //--end-sidebar
 
+                $('#main-div').click(function(){
+                    let offsetWidth=document.querySelector('#sidebar').offsetWidth;
+                    if(sideBarOpen==true){
+                        sideBarOpen=false;
+                        $('#sidebar').css('margin-left',`-${offsetWidth}px`);
+                        $('#sidebar').removeClass('col-9 col-sm-6');
+
+                        $('#main-div').removeClass('col-lg-9 col-12');
+                        $('#main-div').addClass('col-12');
+                        sideBarOpen=false;
+                    }
+                })
 
                 let odDisplayData=@json($odDisplayData);
                 let resOrderLength=0;
@@ -223,7 +238,7 @@
                                                 if(upToDateSaleDetailOrderTime != currentSaleDetailDateOrderTime){
                                                     resOrder[j]=response[j];
                                                     $(`[data-id=${resOrder[j].id}]`).html(
-                                                        subComponent(response[j])
+                                                        subComponent(response[j],true)
                                                     )
                                                     if(selectedOrderId==response[j].id){
                                                         $(`[data-id=${resOrder[j].id}]`).click();
@@ -262,7 +277,7 @@
                         sideBarOpen=true;
                         $('#sidebar').css('margin-left',`0px`);
                         $('#main-div').addClass('col-lg-9 col-12');
-                        $('#main-div').removeClass('col-12');
+                        $('#sidebar').addClass('col-9 col-sm-6');
                     }
                 })
                 $(document).on('click','#prepareStatus',function(){
@@ -387,10 +402,11 @@
                     `
                 }
 
-                const subComponent=(data)=>{
+                const subComponent=(data,isUpdate=false)=>{
                     let items=``;
                     let itemCount=0;
                     let saleDetails=data.sale_detail;
+                    let updateStatus=isUpdate==true ? '<span class="badge badge-success">New</span>':'';
                     let fsd=saleDetails[0];
                     for (let i = 0; i < 5; i++) {
                         let sd=saleDetails[i];
@@ -418,10 +434,10 @@
                     }
 
                     return `
-                        <div class="card card-flush h-md-100 cursor-pointer bg-hover-light"  style="hight:40vh" >
+                        <div class="card card-flush h-md-100 cursor-pointer bg-hover-light h-100"   >
                             <div class="card-header ribbon ribbon-top ribbon-vertical">
                                 ${status}
-                                <div class="card-title mt-5 fw-bold mb-2">${fsd.sale_with_table.table ?fsd.sale_with_table.table.table_no: data.order_voucher_no}</div>
+                                <div class="card-title mt-5 fw-bold mb-2">${fsd.sale_with_table.table ?fsd.sale_with_table.table.table_no: data.order_voucher_no}${updateStatus}</div>
 
                                 <div class="w-100  d-flex justify-content-between mt-5">
                                     <h6 class="fw-bold fs-6 time-count time_div_${data.id}" id="timeCount_${data.id}">00:00</h6>

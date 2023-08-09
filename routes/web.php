@@ -326,7 +326,7 @@ Route::prefix('sell')->group(function () {
         Route::get('{id}/edit', 'saleEdit')->name('saleEdit');
 
         Route::post('create/', 'store')->name('crate_sale');
-        Route::post('${id}/update/', 'update')->name('update_sale');
+        Route::post('/${id}/update', 'update')->name('update_sale');
 
         Route::post('get/product', 'getProduct');
         Route::get('{id}/price/list', 'getpriceList');

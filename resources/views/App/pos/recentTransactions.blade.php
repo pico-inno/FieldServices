@@ -46,7 +46,7 @@
                                                 <td>{{price($sd->total_sale_amount,$sd->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
                                                     <span class="me-5 view_detail"  type="button" data-href="{{ route('saleDetail',$sd->id)}}"><i class="fa-regular fa-eye fs-5"></i></span>
-                                                    <span class="me-5"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></span>
+                                                    <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$sd->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span>
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $sd->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
                                                 </td>
@@ -96,7 +96,7 @@
                                                 <td>{{price($sdf->total_sale_amount,$sdf->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
                                                     <span class="me-5 view_detail"  type="button" data-href="{{ route('saleDetail',$sdf->id)}}"><i class="fa-regular fa-eye fs-5"></i></span>
-                                                    <span class="me-5"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></span>
+                                                    <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$sdf->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span>
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $sdf->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
                                                 </td>
@@ -155,7 +155,7 @@
                                                 <td>{{price($so->total_sale_amount,$so->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
                                                     <span class="me-5 view_detail"  type="button" data-href="{{ route('saleDetail',$so->id)}}"><i class="fa-regular fa-eye fs-5"></i></span>
-                                                    <a class="me-5" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$so->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
+                                                    <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$so->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span>
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $so->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
                                                 </td>

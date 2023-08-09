@@ -74,7 +74,7 @@ class POSController extends Controller
         }
         return view('App.pos.create', compact('locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
     }
-    public function edit($posRegisterId,)
+    public function edit($posRegisterId)
     {
         try {
             $posRegisterQry=posRegisters::where('id',$posRegisterId);
@@ -107,7 +107,9 @@ class POSController extends Controller
     }
     public function productVariationsGet()
     {
-        $products = Product::with('productVariations')->select('id', 'name', 'sku', 'product_type','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image')->get();
+        $products = Product::with('productVariations')
+                ->where('can_sale',1)
+                ->select('id', 'name', 'sku', 'product_type','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image')->get();
 
         $product_with_variations = $products->map(function ($item, $key){
 

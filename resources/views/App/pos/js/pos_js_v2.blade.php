@@ -8,6 +8,13 @@
     var uoms = @json($uoms ?? null);
     var posRegisterId=@json($posRegisterId);
     var posRegister=@json($posRegister);
+    let editSale=@json($sale ?? []);
+    let editSaleDetails=@json($sale->sale_details ?? []);
+    let saleId=editSale ? editSale.id :'';
+    let route=null;
+    @if(isset($sale))
+        route="{{route('update_sale',$sale->id)}}"
+    @endif
     $(document).ready(function() {
         let tableBodyId = $("#invoice_side_bar").is(':hidden') ? 'invoice_with_modal' : 'invoice_with_sidebar';
         let infoPriceId = $("#invoice_side_bar").is(':hidden') ? 'info_price_with_modal' : 'info_price_with_sidebar';
@@ -39,6 +46,7 @@
                 return v;
             }
         }
+
 
         let checkContact = () => {
             let business_location_id = $('select[name="business_location_id"]').val();
@@ -148,7 +156,7 @@
                                     <i class="fas fa-minus fs-7"></i>
                                 </button>
 
-                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800" name="quantity[]" readonly value="1" />
+                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input" name="quantity[]"  value="1" />
 
                                 <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-600 border-end-0" id="increase">
                                     <i class="fas fa-plus"></i>
@@ -394,7 +402,6 @@
             if(productsOnSelectData.length>0){
                 let fileterProduct = productsOnSelectData.filter(function(p){
                     return p.product_id == newSelectedProduct.id && p.variation_id == newSelectedProduct.product_variations.id
-
                 })[0];
                 if(fileterProduct){
                     return
@@ -520,8 +527,9 @@
         }
 
         let ajaxToStorePosData = (dataForSale) => {
+            let url=saleId ?route : `/sell/create`;
             $.ajax({
-                url: `/sell/create`,
+                url,
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -529,25 +537,43 @@
                 data: dataForSale,
                 success: function(results){
                     if(results.status==200){
-                        Swal.fire({
-                            text: "Successfully Sold! Thanks you.",
-                            icon: "success",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
-                            customClass: {
-                                confirmButton: "btn fw-bold btn-primary",
-                            }
-                        }).then(function () {
-                            //sth
+                        if(saleId){
+                            Swal.fire({
+                                text: "Successfully Update! Thanks you.",
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary",
+                                }
+                            }).then(function () {
+                                //sth
 
-                            $(`#${tableBodyId} tr`).remove();
-                            totalSubtotalAmountCalculate();
-                            totalDisPrice();
-                            $('#payment_info .print_paid').text(0);
-                            $('#payment_info .print_change').text(0);
-                            $('#payment_info .print_balance').text(0);
-                            $('input[name="pay_amount"]').val(0);
-                        });
+                                window.history.back();
+
+                            });
+                        }else{
+                            Swal.fire({
+                                text: "Successfully Sold! Thanks you.",
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary",
+                                }
+                            }).then(function () {
+                                //sth
+
+                                $(`#${tableBodyId} tr`).remove();
+                                totalSubtotalAmountCalculate();
+                                totalDisPrice();
+                                $('#payment_info .print_paid').text(0);
+                                $('#payment_info .print_change').text(0);
+                                $('#payment_info .print_balance').text(0);
+                                $('input[name="pay_amount"]').val(0);
+                            });
+                        }
+
                     }
                 },
                 error:function(e){
@@ -580,6 +606,7 @@
             let currency_id = null;
 
             let sales ={
+                    'saleId':saleId,
                     'business_location_id': business_location_id,
                     'contact_id': contact_id,
                     'status': status,
@@ -601,6 +628,7 @@
             $(`#${tableBodyId} .invoiceRow`).each(function() {
                 let parent = $(this).closest('tr');
                 let product_id = parent.find('input[name="product_id"]').val();
+                let sale_detail_id = parent.find('input[name="saleDetail_id"]').val();
                 let variation_id = parent.find('input[name="variation_id"]').val();
                 let uom_id = parent.find('.invoice_unit_select').val();
                 let quantity = parent.find('input[name="quantity[]"]').val();
@@ -612,6 +640,7 @@
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
 
                 let raw_sale_details = {
+                    sale_detail_id,
                     'product_id': product_id,
                     'variation_id': variation_id,
                     'uom_id': uom_id,
@@ -928,7 +957,13 @@
             hideCalDisPrice($(this));
             totalDisPrice();
         })
-
+        $(document).on('change', '.quantity_input', function() {
+            calPrice($(this));
+            totalSubtotalAmountCalculate();
+            checkStock($(this));
+            hideCalDisPrice($(this));
+            totalDisPrice();
+        })
         $(document).on('click', '#decrease', function() {
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
             let decVal = parent.find('input[name="quantity[]"]');
@@ -1243,6 +1278,7 @@
             if(checkContact()){
                 let dataForSale = datasForSale('order');
                 if(datasForSale('order').sale_details.length>0){
+                    console.log(dataForSale);
                     ajaxToStorePosData(dataForSale);
                 }else{
                     warning('need to add at least one item')
@@ -1260,7 +1296,7 @@
                     });
                     let uoms=product.uom.unit_category.uom_by_category;
                     let currentUom=uoms.find((uom)=>uom.id==sd.uom_id);
-                    console.log(currentUom);
+                    let quantity=Number(sd.quantity);
                     orderComponent+=`
                         <div class="separator separator-dashed"></div>
                         <div class="d-flex justify-content-between px-5 py-3">
@@ -1268,7 +1304,7 @@
                                 <h2 class=" fs-6 fw-bold">${product.product_name}</h2>
                             </div>
                             <div class="">
-                                <h2 class=" fs-6 fw-bold"> ${sd.quantity} ${currentUom.short_name}</h2>
+                                <h2 class=" fs-6 fw-bold"> ${quantity.toFixed(0)} ${currentUom.short_name}</h2>
                             </div>
                         </div>
 
@@ -1551,5 +1587,88 @@
             ajaxToGetPriceList(locationId);
         }
 
+
+
+
+
+        function getCurrentAndRefUom(uoms,currentUomId){
+            const currentUom =uoms.filter(function ($u) {
+                return $u.id ==currentUomId;
+            })[0];
+            const referenceUom =uoms.filter(function ($u) {
+                return $u.unit_type == "reference";
+            })[0];
+            return {currentUom,referenceUom};
+        }
+
+        // if edit mode
+        if (editSaleDetails.length>0) {
+            editSaleDetails.forEach(function(sale,index){
+                let secIndex;
+                product= productsOnSelectData.find(function(pd,i) {
+                    secIndex=i;
+                    return sale.product_variation.id== pd.variation_id;
+                });
+                let uoms=getCurrentAndRefUom(sale.product.uom.unit_category.uom_by_category,sale.uom_id);
+                let saleQty=0;
+                if(uoms.currentUom){
+                    saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(sale.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
+                }
+                if(!product){
+                    newProductData={
+                        'product_id':sale.product.id,
+                        'product_name':sale.product.name,
+                        'variation_id':sale.product_variation.id,
+                        'category_id':sale.product.category_id,
+                        'defaultSellingPrices':sale.product_variation.default_selling_price,
+                        'sellingPrices':sale.product_variation.uom_selling_price,
+                        'total_current_stock_qty':sale.total_current_stock_qty,
+                        'aviable_qty':editSale.status=='delivered' ? isNullOrNan(sale.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(sale.stock_sum_current_quantity) ,
+                        'validate':true,
+                        'uom':sale.product.uom,
+                        'uom_id':sale.uom_id,
+                        'stock':sale.stock,
+                    };
+                    productsOnSelectData=[...productsOnSelectData,newProductData];
+                }else{
+                    if(editSale.status=='delivered'){
+                        productsOnSelectData[secIndex].total_current_stock_qty=isNullOrNan(productsOnSelectData[secIndex].total_current_stock_qty)+ saleQty;
+                    }
+                }
+            })
+            // for increase and decrease SERVICE ITEM QUANTITY
+            $(document).on('click', '#increase', function() {
+                let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                let incVal = parent.find('input[name="quantity[]"]');
+                let value = parseInt(incVal.val()) + 1;
+                incVal.val(value);
+                false ? getPriceByEachRow() : getPrice();
+                calPrice($(this));
+                totalSubtotalAmountCalculate();
+                checkStock($(this));
+                hideCalDisPrice($(this));
+                totalDisPrice();
+            })
+            $(document).on('change', '.quantity_input', function() {
+                calPrice($(this));
+                totalSubtotalAmountCalculate();
+                checkStock($(this));
+                hideCalDisPrice($(this));
+                totalDisPrice();
+            })
+            $(document).on('click', '#decrease', function() {
+                let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                let decVal = parent.find('input[name="quantity[]"]');
+                let value = parseInt(decVal.val()) - 1;
+                decVal.val(value >= 1 ? value : 1);
+                false ? getPriceByEachRow() : getPrice();
+                calPrice($(this));
+                totalSubtotalAmountCalculate();
+                checkStock($(this));
+                hideCalDisPrice($(this));
+                totalDisPrice();
+            })
+
+        }
     });
 </script>

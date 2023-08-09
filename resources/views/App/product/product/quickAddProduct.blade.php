@@ -1,6 +1,6 @@
 <style>
     .box {
-        display: none;  
+        display: none;
     }
 </style>
 <div class="modal fade"  id="quick_add_product_modal" >
@@ -33,7 +33,7 @@
                                                 <div class="row">
                                                     <div class="col-md-4 mb-5">
                                                         <label class="form-label d-block">{{ __('product/product.product_image') }}</label>
-            
+
                                                         <style>.image-input-placeholder { background-image: url('assets/media/svg/files/blank-image.svg'); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url('assets/media/svg/files/blank-image-dark.svg'); }</style>
                                                         <!--end::Image input placeholder-->
                                                         <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" data-kt-image-input="true">
@@ -62,7 +62,7 @@
                                                         </div>
                                                         <!--end::Image input-->
                                                         <div class="text-muted fs-7">Max File Size: 5MB</div>
-                                                        <div class="text-muted fs-7">Aspect ratio should be 1:1</div>                                                    
+                                                        <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
                                                     </div>
                                                     <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                         <div class="form-check form-check-custom form-check-solid mt-8">
@@ -84,7 +84,7 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                </div>                                            
+                                                </div>
                                             </div>
                                             <div class="mb-10 fv-row">
                                                 <div class="row mb-5">
@@ -150,7 +150,7 @@
                                                             {{ __('product/product.sub_category') }}
                                                         </label>
                                                         <select class="form-select form-select-sm" name="sub_category" id="subCategorySelect" data-control="select2" data-hide-search="true" data-placeholder="Select sub category">
-        
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -170,7 +170,7 @@
                                                                 <i class="fas fa-circle-plus text-primary"></i>
                                                             </span>
                                                         </div>
-    
+
                                                     </div>
                                                     <div class="col-md-4 mb-5">
                                                         <label for="" class="form-label">Generic</label>
@@ -187,7 +187,7 @@
                                                                 <i class="fas fa-circle-plus text-primary"></i>
                                                             </span>
                                                         </div>
-    
+
                                                     </div>
                                                     <div class="col-md-4 mb-5">
                                                         {{-- <div class="fv-row">
@@ -219,7 +219,7 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
-                                                            </div>    
+                                                            </div>
                                                         </div>
                                                         @error('uom_id')
                                                             <div class="text-danger my-2">{{ $message }}</div>
@@ -235,7 +235,7 @@
                                                             <div class="input-group mb-5 flex-nowrap">
                                                                 <div class="overflow-hidden flex-grow-1">
                                                                     <select class="form-select form-select-sm" name="purchase_uom_id" id="unitOfUom" data-control="select2" data-hide-search="true" data-placeholder="Select purchase UoM">
-        
+
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -263,7 +263,7 @@
                                                 </div>
                                             </div>
                                             <!--end::Input group-->
-    
+
                                             {{-- Product Type  --}}
                                             <div class="row advance-toggle-class d-none">
                                                 <div class="col-md-4 mb-3 col-md-offset-4">
@@ -282,7 +282,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div id="single_box" class="box advance-toggle-class d-none">
                                                 <div class="table-responsive mb-4">
                                                     <table class="table table-row-dashed fs-6 gy-4" id="">
@@ -333,7 +333,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-    
+
                                             <div id="variable_box" class="box advance-toggle-class d-none">
                                                 <div class="my-3 table-responsive">
                                                     <table class="table table-bordered">
@@ -386,7 +386,7 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody data-repeater-list="variation_lists" id="variation-row">
-                                                                               
+
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
@@ -396,20 +396,20 @@
                                                     </table>
                                                 </div>
                                             </div>
-    
+
                                             <div class="separator border-dark my-10 advance-toggle-class d-none"></div>
                                             {{-- Custom Fields  --}}
                                             <div class="row mt-5 advance-toggle-class d-none">
-                                                <div class="col-md-4 mb-3">                                                
+                                                <div class="col-md-4 mb-3">
                                                     <label class="form-label">{{ __('product/product.custom_field_1') }}</label>
-                                                    
+
                                                     <input type="text" name="custom_field1" class="form-control form-control-sm mb-2" placeholder="Custom field1" value="" />
-                                                
+
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <label class="form-label">{{ __('product/product.custom_field_2') }}</label>
                                                     <input type="text" name="custom_field2" class="form-control form-control-sm mb-2" placeholder="Custom field2" value="" />
-                                                </div>  
+                                                </div>
                                                 <div class="col-md-4 mb-3">
                                                     <label class="form-label">{{ __('product/product.custom_field_3') }}</label>
                                                     <input type="text" name="custom_field3" class="form-control form-control-sm mb-2" placeholder="Custom field3" value="" />
@@ -421,13 +421,13 @@
                                                     <input type="text" name="custom_field4" class="form-control form-control-sm mb-2" placeholder="Custom field4" value="" />
                                                 </div>
                                                 <div class="col-md-4 mb-3">
-                                                    
+
                                                 </div>
                                                 <div class="col-md-4 mb-3">
-                                                    
+
                                                 </div>
                                             </div>
-    
+
                                             {{-- Product Description  --}}
                                             <div class="mb-5">
                                                 <!--begin::Label-->
@@ -435,7 +435,7 @@
                                                 <!--end::Label-->
                                                 <!--begin::Editor-->
                                                 <div id="kt_docs_quill_basic" name="product_desc" class="min-h-100px mb-2">
-    
+
                                                 </div>
                                                 <input type="hidden" name="quill_data" value="{{ old('quill_data', $quillData ?? '') }}">
                                                 <!--end::Editor-->
@@ -444,7 +444,7 @@
                                                 <!--end::Description-->
                                             </div>
                                             <!--end::Input group-->
-    
+
                                             {{-- Product Disable --}}
                                             <div class="row advance-toggle-class d-none">
                                                 <div class="col-md-3 mb-8">
@@ -640,7 +640,7 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody data-repeater-list="variation_lists" id="variation-row">
-                                                                                
+
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
@@ -668,10 +668,10 @@
     </div>
 </div>
 
-<script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+{{-- <script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script> --}}
 <script>
     $(document).ready(function() {
-        $('[data-control="select2"]').each(function() { 
+        $('[data-control="select2"]').each(function() {
             $(this).select2({ dropdownParent: $(this).parent()});
         })
     })
@@ -694,7 +694,7 @@
             document.querySelector('input[name="quill_data"]').value = quillData;
         });
     // ============= > End:: For Product Description < =======================
-    $('#quick_add_product_modal').on('shown.bs.modal', function() {    
+    $('#quick_add_product_modal').on('shown.bs.modal', function() {
 
         // ============= > Begin:: For Product Type      < =======================
 
@@ -973,12 +973,12 @@
             })
         // ============= > End:: For Sub Category Select Box  < ==================
 
-        // ============= > Begin:: For Show advance  < ================== 
+        // ============= > Begin:: For Show advance  < ==================
             $(document).on('click', '#advance_toggle', function() {
                 $('.show_advance, .hide_advance').toggleClass('d-none');
                 $('.advance-toggle-class').toggleClass('d-none');
             })
         // ============= > End:: For Show advance  < ==================
     })
-   
+
 </script>

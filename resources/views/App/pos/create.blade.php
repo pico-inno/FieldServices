@@ -1120,6 +1120,9 @@ $(document).on('click', '#pos_sale_recent_btn', function(e){
 
     });
 });
+$(document).on('click','.editRecent',function(){
+    $('#pos_sale_recent').modal('hide');
+})
 $(document).on('click', '.view_detail', function(){
         $url=$(this).data('href');
 
