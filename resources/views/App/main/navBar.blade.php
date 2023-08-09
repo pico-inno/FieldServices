@@ -1233,16 +1233,14 @@
                                                 </div>
 
                                                 @if (hasModule('OrderDisplay') && isEnableModule('OrderDisplay'))
-                                                    <div  class="menu-item menu-accordion ">
-                                                        <!--begin:Menu link-->
-                                                        <!--begin:Menu link-->
+                                                    {{-- <div  class="menu-item menu-accordion ">
                                                         <a class="menu-link @yield('')" href="{{route('pos.selectPos')}}">
                                                             <span class=" menu-icon">
                                                                 <i class="fa-solid fa-display fs-6"></i>
                                                             </span>
                                                             <span class="menu-title ">Order Display</span>
                                                         </a>
-                                                    </div>
+                                                    </div> --}}
                                                     <div  class="menu-item menu-accordion ">
                                                             <a class="menu-link @yield('order_display_list_active_show')" href="{{route('odList')}}">
                                                                 <span class="menu-icon">

@@ -674,6 +674,7 @@ class purchaseController extends Controller
                 }
             }
         }
+        
         return response()->json($products, 200);
     }
 
