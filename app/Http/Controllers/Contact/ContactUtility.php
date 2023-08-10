@@ -10,8 +10,8 @@ trait ContactUtility
 {
     public function getSalesAndPurchases($id)
     {
-        $sales = sales::where('contact_id', $id)->get();
-        $purchases = purchases::where('contact_id', $id)->get();
+        $sales = sales::where('contact_id', $id)->where('is_delete',0)->get();
+        $purchases = purchases::where('contact_id', $id)->where('is_delete',0)->get();
 
         $payments = [];
         if ($sales) {

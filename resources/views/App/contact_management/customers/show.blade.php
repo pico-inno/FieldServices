@@ -1,5 +1,12 @@
 @extends('App.main.navBar')
 @section('styles')
+<style>
+    #purchase_table,
+    #sales_table,
+    #payment_table {
+        min-height: 55vh;
+    }
+</style>
 @endsection
 @section('contact_active','active')
 @section('contact_active_show','active show')
@@ -33,22 +40,22 @@
                                     <!--begin::Name-->
                                     <div class="d-flex">
                                         <a href="#" class="text-gray-700 text-hover-primary fs-4 fw-bold me-1 mb-3">
-                                            @if(in_array($contact->type, ['Both', 'Customer']) || in_array($contact->type, ['Both', 'Supplier']))                                            
-                                                @if(!empty($contact->prefix))
-                                                {{$contact->prefix}}
-                                                @endif
-                                                @if(!empty($contact->first_name))
-                                                {{$contact->first_name}}
-                                                @endif
-                                                @if(!empty($contact->middle_name))
-                                                {{$contact->middle_name}}
-                                                @endif
-                                                @if(!empty($contact->last_name))
-                                                {{$contact->last_name}}
-                                                @endif
-                                                @if(!empty($contact->company_name))
-                                                {{$contact->company_name}}
-                                                @endif
+                                            @if(in_array($contact->type, ['Both', 'Customer']) || in_array($contact->type, ['Both', 'Supplier']))
+                                            @if(!empty($contact->prefix))
+                                            {{$contact->prefix}}
+                                            @endif
+                                            @if(!empty($contact->first_name))
+                                            {{$contact->first_name}}
+                                            @endif
+                                            @if(!empty($contact->middle_name))
+                                            {{$contact->middle_name}}
+                                            @endif
+                                            @if(!empty($contact->last_name))
+                                            {{$contact->last_name}}
+                                            @endif
+                                            @if(!empty($contact->company_name))
+                                            {{$contact->company_name}}
+                                            @endif
                                             @endif
                                         </a>
                                     </div>
@@ -76,7 +83,7 @@
                                         <a href="#" class="d-flex text-gray-400 text-hover-primary mb-2">
                                             {{$contact->mobile}}
                                         </a>
-                                        @endif 
+                                        @endif
                                     </div>
                                     <!--end::Info-->
                                 </div>
@@ -682,7 +689,7 @@
                                         <td>{{$s->sales_voucher_no}}</td>
                                         <td>
                                             {{$s->contact->prefix}}
-                                            {{$s->contact->first_name}} 
+                                            {{$s->contact->first_name}}
                                             {{$s->contact->middle_name}}
                                             {{$s->contact->last_name}}
                                         </td>
@@ -691,7 +698,7 @@
                                         <td>
                                             @if($s->payment_status == 'paid')
                                             <span class="badge badge-success">{{$s->payment_status}}</span>
-                                            @elseif($s->payment_status == 'pending') 
+                                            @elseif($s->payment_status == 'pending')
                                             <span class="badge badge-warning">{{$s->payment_status}}</span>
                                             @else
                                             <span class="badge badge-primary">{{$s->payment_status}}</span>
@@ -816,15 +823,27 @@
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                     <li>
-                                                        <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        <a data-href="{{route('purchaseDetail', $p->id)}}" id="view_purchase_detail" class="dropdown-item px-4 py-2 cursor-pointer"> View</a>
                                                     </li>
                                                     <li>
-                                                        <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-pen-to-square me-3"></i> Edit</a>
+                                                        <a href="/home" class="dropdown-item px-4 py-2"> Print</a>
                                                     </li>
                                                     <li>
-                                                        <button type="button" class="delete-btn dropdown-item p-2" data-id="' . $row->id . '">
-                                                            <i class="fa-solid fa-trash me-3"></i> Delete
-                                                        </button>
+                                                        <a href="{{route('purchase_edit', $p->id)}}" class="dropdown-item px-4 py-2"> Edit</a>
+                                                    </li>
+                                                    @if($p->balance_amount > 0)
+                                                    <li>
+                                                        <a data-href="{{route('paymentTransaction.createForPurchase', $p->id)}}" id="add_payment_from_purchase" class="dropdown-item px-4 py-2 cursor-pointer"> Add Payment</a>
+                                                    </li>
+                                                    @endif
+                                                    <li>
+                                                        <a data-href="{{route('paymentTransaction.viewForPurchase', $p->id)}}" id="view_payment_from_purchase" class="dropdown-item px-4 py-2 cursor-pointer"> View Payment</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item px-4 py-2 cursor-pointer delete-purchase-btn" data-id="$p->id">Delete</a>
+                                                        <!-- <button type="button" class="delete-btn dropdown-item px-4 py-2" data-id="$p->id" data-kt-purchase-table="delete_row">
+                                                            Delete
+                                                        </button> -->
                                                     </li>
                                                 </ul>
                                             </div>
@@ -834,12 +853,12 @@
                                         <td>{{$p->businessLocation->name}}</td>
                                         <td>
                                             {{$p->supplier->company_name}}
-                                             
+
                                         </td>
                                         <td>
                                             @if($p->status == 'request')
                                             <span class="badge badge-primary">{{$p->status}}</span>
-                                            @elseif($p->status == 'pending') 
+                                            @elseif($p->status == 'pending')
                                             <span class="badge badge-danger">{{$p->status}}</span>
                                             @elseif($p->status == 'order')
                                             <span class="badge badge-secondary">{{$p->status}}</span>
@@ -854,7 +873,7 @@
                                         <td>
                                             @if($p->payment_status == 'paid')
                                             <span class="badge badge-success">{{$p->payment_status}}</span>
-                                            @elseif($p->payment_status == 'pending') 
+                                            @elseif($p->payment_status == 'pending')
                                             <span class="badge badge-warning">{{$p->payment_status}}</span>
                                             @else
                                             <span class="badge badge-primary">{{$p->payment_status}}</span>
@@ -1052,7 +1071,7 @@
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                     <li>
-                                                        <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        <a data-href="{{route('paymentTransaction.viewForPurchase', $payment_tran->transaction_id)}}" id="view_payment" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
                                                     </li>
                                                     <li>
                                                         <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-pen-to-square me-3"></i> Edit</a>
@@ -1089,7 +1108,10 @@
     <!--end::container-->
 
     @include('App.contact_management.customers.addDocument&Note')
-    
+
+    <div class="modal modal-lg fade" tabindex="-1" id="view_payment_modal"></div>
+    <div class="modal modal-lg fade" tabindex="-1" id="add_payment_modal"></div>
+    <div class="modal fade" tabindex="-1" id="view_purchase_detail_modal"></div>
 
 </div>
 <!--end::Content-->
@@ -1124,6 +1146,24 @@
         "paging": false,
         "info": false,
         "dom": "<'table-responsive'tr>"
+    });
+
+    $(document).on('click', '#view_payment, #view_payment_from_purchase', function() {
+        $('#view_payment_modal').load($(this).data('href'), function() {
+            $(this).modal('show');
+        });
+    });
+
+    $(document).on('click', '#add_payment_from_purchase', function() {
+        $('#add_payment_modal').load($(this).data('href'), function() {
+            $(this).modal('show');
+        });
+    });
+
+    $(document).on('click', '#view_purchase_detail', function() {
+        $('#view_purchase_detail_modal').load($(this).data('href'), function() {
+            $(this).modal('show');
+        });
     });
 
     var myDropzone = new Dropzone("#kt_dropzonejs_example_1", {
