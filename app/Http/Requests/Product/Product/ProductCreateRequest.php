@@ -24,7 +24,8 @@ class ProductCreateRequest extends FormRequest
         return [
             'product_name' => 'required',
             'uom_id' => 'required',
-            'purchase_uom_id' => 'required'
+            'purchase_uom_id' => 'required',
+            
         ];
     }
 
@@ -33,7 +34,8 @@ class ProductCreateRequest extends FormRequest
         return [
             'product_name.required' => 'Product name is required',
             'uom_id.required' => 'Select Sale UoM',
-            'purchase_uom_id.required' => 'Select Purchase UoM'
+            'purchase_uom_id.required' => 'Select Purchase UoM',
+            
         ];
     }
 }

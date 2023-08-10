@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Product;
 
 use Exception;
+use App\Models\Product\UOM;
+use App\Models\BusinessUser;
 use Illuminate\Http\Request;
 use App\Models\Product\Brand;
 use App\Models\Product\Generic;
@@ -11,19 +13,19 @@ use App\Models\Product\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\Product\ProductCreateRequest;
-use App\Http\Requests\Product\Product\ProductUpdateRequest;
 use App\Models\Product\Manufacturer;
+use App\Models\Product\UnitCategory;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\UOMSellingprice;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product\ProductVariation;
-use App\Models\Product\ProductVariationsTemplates;
-use App\Models\Product\UnitCategory;
-use App\Models\Product\UOM;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\settings\businessLocation;
 use App\Models\Product\VariationTemplates;
 use App\Models\Product\VariationTemplateValues;
+use App\Models\Product\ProductVariationsTemplates;
+use App\Http\Requests\Product\Product\ProductCreateRequest;
+use App\Http\Requests\Product\Product\ProductUpdateRequest;
 
 class ProductController extends Controller
 {
@@ -164,6 +166,15 @@ class ProductController extends Controller
             }
             if($request->input('form_type') === 'from_pos'){
                 return response()->json(['success' => true, 'message' => 'Product created sucessfully']);
+            }
+            if($request->save === "app_opening_stock"){
+                $stockin_persons = BusinessUser::with('personal_info')->get();
+                $locations = businessLocation::all();
+
+                return view('App.openingStock.add', [
+                    'stockin_persons' => $stockin_persons,
+                    'locations' => $locations,
+                ]);
             }
         } catch(Exception $e){
             DB::rollBack();

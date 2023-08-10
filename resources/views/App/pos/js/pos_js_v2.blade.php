@@ -1,6 +1,8 @@
 <script src="{{ asset('customJs/debounce.js') }}"></script>
 <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script>
 <script src="{{ asset('customJs/pos/calc_pos.js') }}"></script>
+<script src="{{ asset('customJs/pos/sale.js') }}"></script>
+<script src="{{ asset('customJs/pos/recent.js') }}"></script>
 <script src="{{ asset('customJs/pos/filter_products.js') }}"></script>
 
 <script>
@@ -15,6 +17,7 @@
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
+    let productsOnSelectData=[];
     $(document).ready(function() {
         let tableBodyId = $("#invoice_side_bar").is(':hidden') ? 'invoice_with_modal' : 'invoice_with_sidebar';
         let infoPriceId = $("#invoice_side_bar").is(':hidden') ? 'info_price_with_modal' : 'info_price_with_sidebar';
@@ -29,7 +32,6 @@
             }
         }
 
-        var productsOnSelectData = [];
         let currentStockBalance = @json($currentStockBalance ?? null);
         let product_with_variations = [];
         let customers = [];
@@ -105,6 +107,7 @@
         }
 
         let invoiceSidebar = (product) => {
+            console.log(product)
             let variation_value_and_name;
             // Get Variation Value and Variation Template Value Name
             if(product.variation_id){
@@ -245,6 +248,7 @@
         }
 
         let getPrice = () => {
+            // console.log(productsOnSelectData)
             let contact_pricelist_id = customer_price_list;
             let all_pricelist_id = $('#selling_price_group option:selected').val();
 
@@ -267,6 +271,7 @@
                     }
                 });
                 let datas = { pricelist_id, product_variation_id, quantity, uom_id };
+                // getProducts2(datas);
                 let price_info = getProducts(datas);
                 let result_pricelist_id, price;
                 if(price_info == undefined){
@@ -274,8 +279,9 @@
                     result_pricelist_id = pricelist_id;
                     price = default_sell_price * 1;
                 }else{
+                    let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
                     result_pricelist_id = price_info.price_id;
-                    price = price_info.price;
+                    price = isNaN(price_info.price) ? default_sell_price * 1 : price_info.price;
                 }
 
                 if(price === undefined){
@@ -1475,6 +1481,8 @@
         });
         // End
 
+
+
         // Begin:: quick add product
         $('form#quick_add_product_form').submit(function(e) {
             event.preventDefault();
@@ -1637,38 +1645,40 @@
                 }
             })
             // for increase and decrease SERVICE ITEM QUANTITY
-            $(document).on('click', '#increase', function() {
-                let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
-                let incVal = parent.find('input[name="quantity[]"]');
-                let value = parseInt(incVal.val()) + 1;
-                incVal.val(value);
-                false ? getPriceByEachRow() : getPrice();
-                calPrice($(this));
-                totalSubtotalAmountCalculate();
-                checkStock($(this));
-                hideCalDisPrice($(this));
-                totalDisPrice();
-            })
-            $(document).on('change', '.quantity_input', function() {
-                calPrice($(this));
-                totalSubtotalAmountCalculate();
-                checkStock($(this));
-                hideCalDisPrice($(this));
-                totalDisPrice();
-            })
-            $(document).on('click', '#decrease', function() {
-                let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
-                let decVal = parent.find('input[name="quantity[]"]');
-                let value = parseInt(decVal.val()) - 1;
-                decVal.val(value >= 1 ? value : 1);
-                false ? getPriceByEachRow() : getPrice();
-                calPrice($(this));
-                totalSubtotalAmountCalculate();
-                checkStock($(this));
-                hideCalDisPrice($(this));
-                totalDisPrice();
-            })
 
+                (()=>{
+                    $(document).on('click', '#increase', function() {
+                    let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                    let incVal = parent.find('input[name="quantity[]"]');
+                    let value = parseInt(incVal.val()) + 1;
+                    incVal.val(value);
+                    false ? getPriceByEachRow() : getPrice();
+                    calPrice($(this));
+                    totalSubtotalAmountCalculate();
+                    checkStock($(this));
+                    hideCalDisPrice($(this));
+                    totalDisPrice();
+                })
+                $(document).on('change', '.quantity_input', function() {
+                    calPrice($(this));
+                    totalSubtotalAmountCalculate();
+                    checkStock($(this));
+                    hideCalDisPrice($(this));
+                    totalDisPrice();
+                })
+                $(document).on('click', '#decrease', function() {
+                    let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                    let decVal = parent.find('input[name="quantity[]"]');
+                    let value = parseInt(decVal.val()) - 1;
+                    decVal.val(value >= 1 ? value : 1);
+                    false ? getPriceByEachRow() : getPrice();
+                    calPrice($(this));
+                    totalSubtotalAmountCalculate();
+                    checkStock($(this));
+                    hideCalDisPrice($(this));
+                    totalDisPrice();
+                })
+            })();
         }
     });
 </script>

@@ -479,8 +479,8 @@
                  
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                             {{-- <button type="submit" class="btn btn-warning btn-sm">Save & Add Selling-Price-Group Prices</button> --}}
-                            {{-- <button type="submit" class="btn btn-success btn-sm">Save & Add Opening Stock</button> --}}
-                            <button type="submit" class="btn btn-info btn-sm" name="save" value="save_and_another">Save & Add Another</button>
+                            <button type="submit" class="btn btn-info btn-sm" name="save" value="app_opening_stock">Save & Add Opening Stock</button>
+                            <button type="submit" class="btn btn-warning btn-sm" name="save" value="save_and_another">Save & Add Another</button>
                             <button type="submit" class="btn btn-primary btn-sm" name="save" value="save">Save</button>
                           </div>
                     </div>

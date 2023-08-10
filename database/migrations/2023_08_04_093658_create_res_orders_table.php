@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('res_orders', function (Blueprint $table) {
             $table->id();
-            $table->text('order_voucher_no')->nullable();
-            $table->enum('order_status',['order','preparing','ready','complete'])->nullable();
+            $table->text('order_voucher_no')->nullable()->nullable();
+            $table->enum('order_status',['order','preparing','ready','complete'])->nullable()->nullable();
             $table->enum('services',['dine_in','take_away','delivery'])->nullable();
-            $table->unsignedBigInteger('location_id')->nullable();
+            $table->unsignedBigInteger('location_id')->nullable()->nullable();
             $table->unsignedBigInteger('pos_register_id')->nullable();
 
 
