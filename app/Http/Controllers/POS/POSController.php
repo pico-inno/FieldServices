@@ -5,7 +5,9 @@ namespace App\Http\Controllers\POS;
 use DB;
 
 use Exception;
+use App\Models\sale\sales;
 use App\Models\Product\UOM;
+use App\Models\posRegisters;
 use Illuminate\Http\Request;
 use App\Models\Product\Brand;
 use App\Models\Product\UOMSet;
@@ -18,19 +20,17 @@ use App\Models\Product\PriceLists;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\posRegisters;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use function PHPUnit\Framework\isEmpty;
 use Maatwebsite\Excel\Concerns\ToArray;
 use App\Models\Product\ProductVariation;
-use App\Models\settings\businessLocation;
 
+use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Product\VariationTemplates;
 use App\Models\Product\ProductVariationsTemplates;
 use App\Models\resOrders;
-use App\Models\sale\sales;
 use Modules\Restaurant\Entities\table;
 
 class POSController extends Controller
@@ -210,21 +210,147 @@ class POSController extends Controller
         }
     }
 
+    // public function checkByLocation($id)
+    // {
+    //     try {
+    //         // \DB::enableQueryLog();
+    //         $default_price_list = businessLocation::with('pricelist')->find($id)->pricelist ?? null;
+
+    //         $price_lists = PriceLists::with('priceListDetails')->get();
+
+    //         $pricelist_details = $price_lists->map->priceListDetails->flatten()->all();
+
+    //         $raw_products_with_pricelist = [];
+    //         foreach($pricelist_details as $index => $value){
+    //             $apply_type = $value['applied_type'];
+    //             $apply_value = $value['applied_value'];
+
+    //             if($apply_type === 'All'){
+    //                 $product_with_variations = Product::with('productVariations')->get();
+    //                 $products = [];
+    //                 foreach($product_with_variations as $inner_val){
+    //                     if($inner_val->product_type === 'single'){
+    //                         $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
+    //                     }
+    //                     if($inner_val->product_type === 'variable'){
+    //                         $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
+    //                     }
+    //                     $inner_val['pricelist_detail_id'] = $value['id'];
+    //                     $inner_val['pricelist_id'] = $value['pricelist_id'];
+    //                     $inner_val['applied_type'] = $value['applied_type'];
+    //                     $inner_val['applied_value'] = $value['applied_value'];
+    //                     $inner_val['min_qty'] = $value['min_qty'];
+    //                     $inner_val['from_date'] = $value['from_date'];
+    //                     $inner_val['to_date'] = $value['to_date'];
+    //                     $inner_val['price'] = $value['cal_value'];
+    //                     $inner_val['base_price'] = $value['base_price'];
+    //                     $products[] = $inner_val;
+    //                 }
+    //                 $raw_products_with_pricelist[] = collect($products)->toArray();
+    //             }
+    //             if($apply_type === 'Product'){
+    //                 $product = Product::with('productVariations')->where('id', $apply_value)->first();
+    //                 if($product && $product->product_type === 'single'){
+    //                     $product['product_variation_id'] = $product->productVariations[0]->id;
+    //                     $product['pricelist_detail_id'] = $value['id'];
+    //                     $product['pricelist_id'] = $value['pricelist_id'];
+    //                     $product['applied_type'] = $value['applied_type'];
+    //                     $product['applied_value'] = $value['applied_value'];
+    //                     $product['min_qty'] = $value['min_qty'];
+    //                     $product['from_date'] = $value['from_date'];
+    //                     $product['to_date'] = $value['to_date'];
+    //                     $product['price'] = $value['cal_value'];
+    //                     $product['base_price'] = $value['base_price'];
+    //                     $raw_products_with_pricelist[] = $product;
+    //                 }
+    //                 if($product->product_type === 'variable'){
+    //                     $product['product_variation_id'] = $product->productVariations->pluck('id')->toArray();
+    //                     $product['pricelist_detail_id'] = $value['id'];
+    //                     $product['pricelist_id'] = $value['pricelist_id'];
+    //                     $product['applied_type'] = $value['applied_type'];
+    //                     $product['applied_value'] = $value['applied_value'];
+    //                     $product['min_qty'] = $value['min_qty'];
+    //                     $product['from_date'] = $value['from_date'];
+    //                     $product['to_date'] = $value['to_date'];
+    //                     $product['price'] = $value['cal_value'];
+    //                     $product['base_price'] = $value['base_price'];
+    //                     $raw_products_with_pricelist[] = $product;
+    //                 }
+    //             }
+    //             if($apply_type === 'Variation'){
+    //                 $variation = ProductVariation::with('product')->where('id', $apply_value)->first();
+    //                 if($variation){
+    //                     $variationData = $variation->toArray();
+    //                     $variationData['product_variation_id'] = $variation->id;
+    //                     $variationData['uom_id'] = $variation->product->uom_id;
+    //                     $variationData['purchase_uom_id'] = $variation->product->purchase_uom_id;
+    //                     $variationData['pricelist_detail_id'] = $value['id'];
+    //                     $variationData['pricelist_id'] = $value['pricelist_id'];
+    //                     $variationData['applied_type'] = $value['applied_type'];
+    //                     $variationData['applied_value'] = $value['applied_value'];
+    //                     $variationData['min_qty'] = $value['min_qty'];
+    //                     $variationData['from_date'] = $value['from_date'];
+    //                     $variationData['to_date'] = $value['to_date'];
+    //                     $variationData['price'] = $value['cal_value'];
+    //                     $variationData['base_price'] = $value['base_price'];
+    //                 }
+
+    //                 $raw_products_with_pricelist[][0] = $variationData;
+    //             }
+    //             if($apply_type === 'Category'){
+    //                 $raw_products = Product::with('productVariations')->where('category_id', $apply_value)->get();
+    //                 $products = [];
+    //                 foreach($raw_products as $inner_val){
+    //                     if($inner_val->product_type === 'single'){
+    //                         $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
+    //                     }
+    //                     if($inner_val->product_type === 'variable'){
+    //                         $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
+    //                     }
+    //                     $inner_val['pricelist_detail_id'] = $value['id'];
+    //                     $inner_val['pricelist_id'] = $value['pricelist_id'];
+    //                     $inner_val['applied_type'] = $value['applied_type'];
+    //                     $inner_val['applied_value'] = $value['applied_value'];
+    //                     $inner_val['min_qty'] = $value['min_qty'];
+    //                     $inner_val['from_date'] = $value['from_date'];
+    //                     $inner_val['to_date'] = $value['to_date'];
+    //                     $inner_val['price'] = $value['cal_value'];
+    //                     $inner_val['base_price'] = $value['base_price'];
+    //                     $products[] = $inner_val;
+    //                 }
+    //                 $raw_products_with_pricelist[] = collect($products)->toArray();
+    //             }
+
+    //         }
+    //         $products_with_pricelist = collect($raw_products_with_pricelist)->flatten(1)->toArray();
+
+
+    //         return response()->json([
+    //             'status' => 200,
+    //             'default_price_list' => $default_price_list,
+    //             'price_lists' => $price_lists,
+    //             'pricelist_details' => $pricelist_details,
+    //             'products_with_pricelist' => $products_with_pricelist
+    //         ]);
+    //         // $queries = \DB::getQueryLog();
+    //         // Log::error(count($queries));
+
+    //     } catch (\Exception $e){
+    //         return response()->json(['error' => $e->getMessage()], 404);
+    //     }
+    // }
+
     public function checkByLocation($id)
     {
         try {
             // \DB::enableQueryLog();
             $default_price_list = businessLocation::with('pricelist')->find($id)->pricelist ?? null;
-
             $price_lists = PriceLists::with('priceListDetails')->get();
-
             $pricelist_details = $price_lists->map->priceListDetails->flatten()->all();
-
             $raw_products_with_pricelist = [];
             foreach($pricelist_details as $index => $value){
                 $apply_type = $value['applied_type'];
                 $apply_value = $value['applied_value'];
-
                 if($apply_type === 'All'){
                     $product_with_variations = Product::with('productVariations')->get();
                     $products = [];
@@ -242,7 +368,8 @@ class POSController extends Controller
                         $inner_val['min_qty'] = $value['min_qty'];
                         $inner_val['from_date'] = $value['from_date'];
                         $inner_val['to_date'] = $value['to_date'];
-                        $inner_val['price'] = $value['cal_value'];
+                        $inner_val['cal_type'] = $value['cal_type'];
+                        $inner_val['cal_value'] = $value['cal_value'];
                         $inner_val['base_price'] = $value['base_price'];
                         $products[] = $inner_val;
                     }
@@ -259,7 +386,8 @@ class POSController extends Controller
                         $product['min_qty'] = $value['min_qty'];
                         $product['from_date'] = $value['from_date'];
                         $product['to_date'] = $value['to_date'];
-                        $product['price'] = $value['cal_value'];
+                        $product['cal_type'] = $value['cal_type'];
+                        $product['cal_value'] = $value['cal_value'];
                         $product['base_price'] = $value['base_price'];
                         $raw_products_with_pricelist[] = $product;
                     }
@@ -272,7 +400,8 @@ class POSController extends Controller
                         $product['min_qty'] = $value['min_qty'];
                         $product['from_date'] = $value['from_date'];
                         $product['to_date'] = $value['to_date'];
-                        $product['price'] = $value['cal_value'];
+                        $product['cal_type'] = $value['cal_type'];
+                        $product['cal_value'] = $value['cal_value'];
                         $product['base_price'] = $value['base_price'];
                         $raw_products_with_pricelist[] = $product;
                     }
@@ -291,10 +420,10 @@ class POSController extends Controller
                         $variationData['min_qty'] = $value['min_qty'];
                         $variationData['from_date'] = $value['from_date'];
                         $variationData['to_date'] = $value['to_date'];
-                        $variationData['price'] = $value['cal_value'];
+                        $variationData['cal_type'] = $value['cal_type'];
+                        $variationData['cal_value'] = $value['cal_value'];
                         $variationData['base_price'] = $value['base_price'];
                     }
-
                     $raw_products_with_pricelist[][0] = $variationData;
                 }
                 if($apply_type === 'Category'){
@@ -314,17 +443,15 @@ class POSController extends Controller
                         $inner_val['min_qty'] = $value['min_qty'];
                         $inner_val['from_date'] = $value['from_date'];
                         $inner_val['to_date'] = $value['to_date'];
-                        $inner_val['price'] = $value['cal_value'];
+                        $inner_val['cal_type'] = $value['cal_type'];
+                        $inner_val['cal_value'] = $value['cal_value'];
                         $inner_val['base_price'] = $value['base_price'];
                         $products[] = $inner_val;
                     }
                     $raw_products_with_pricelist[] = collect($products)->toArray();
                 }
-
             }
             $products_with_pricelist = collect($raw_products_with_pricelist)->flatten(1)->toArray();
-
-
             return response()->json([
                 'status' => 200,
                 'default_price_list' => $default_price_list,
@@ -334,13 +461,10 @@ class POSController extends Controller
             ]);
             // $queries = \DB::getQueryLog();
             // Log::error(count($queries));
-
         } catch (\Exception $e){
             return response()->json(['error' => $e->getMessage()], 404);
         }
     }
-
-
     public function recentSale($id){
         // $posRegister=posRegisters::where('id',$id)->firstOrFail();
         // if($posRegister->use_for_res == 1){
@@ -364,5 +488,24 @@ class POSController extends Controller
             ->limit(5)
             ->get();
         return view('App.pos.recentTransactions',compact('saleOrders','saleDelivered','saleDrafts','posRegisterId'));
+    }
+
+    // GET SOLD PRODUCT
+    public function getSoldProduct($posId)
+    {
+        try {
+            $salesQuery = sales::with('contact')->wherePosRegisterId(1)->select('id', 'sales_voucher_no', 'contact_id', 'status', 'total_sale_amount')->get();
+
+            $saleDataCollection = $salesQuery->map(function ($item){
+                $item['contact_name'] = $item->contact->getFullNameAttribute();
+                return $item;
+            });
+
+            $sales = $saleDataCollection->chunk(40)->flatten();
+
+            return response()->json(['saleDatas' => $sales]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching data.'], 500);
+        }
     }
 }
