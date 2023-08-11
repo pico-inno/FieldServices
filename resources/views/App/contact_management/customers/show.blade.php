@@ -672,14 +672,25 @@
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                     <li>
-                                                        <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        <a data-href="{{route('saleDetail', $s->id)}}" id="view_sale_detail" class="dropdown-item px-4 py-2 cursor-pointer"> View</a>
                                                     </li>
                                                     <li>
-                                                        <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-pen-to-square me-3"></i> Edit</a>
+                                                        <a href="/home" class="dropdown-item px-4 py-2"> Print</a>
                                                     </li>
                                                     <li>
-                                                        <button type="button" class="delete-btn dropdown-item p-2" data-id="' . $row->id . '">
-                                                            <i class="fa-solid fa-trash me-3"></i> Delete
+                                                        <a href="{{route('saleEdit', $s->id)}}" class="dropdown-item px-4 py-2 cursor-pointer"> Edit</a>
+                                                    </li>
+                                                    @if($s->balance_amount > 0)
+                                                    <li>
+                                                        <a data-href="{{route('paymentTransaction.createForSale', $s->id)}}" id="add_payment_from_sale" class="dropdown-item px-4 py-2 cursor-pointer"> Add Payment</a>
+                                                    </li>
+                                                    @endif
+                                                    <li>
+                                                        <a data-href="{{route('paymentTransaction.viewForSell', $s->id)}}" id="view_payment_from_sale" class="dropdown-item px-4 py-2 cursor-pointer"> View Payment</a>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button" class="delete-btn dropdown-item px-4 py-2" data-id="' . $row->id . '">
+                                                            Delete
                                                         </button>
                                                     </li>
                                                 </ul>
@@ -1060,7 +1071,14 @@
                                         <td>{{$payment_tran->payment_voucher_no}}</td>
                                         <td>{{$payment_tran->payment_amount}}</td>
                                         <td>{{$payment_tran->payment_method}}</td>
-                                        <td>{{$payment_tran->transaction_ref_no}}</td>
+                                        <td>
+                                            {{$payment_tran->transaction_ref_no}} 
+                                            @if($payment_tran->transaction_type == 'sale') 
+                                            <span class="text-primary">(sale)</span>
+                                            @elseif($payment_tran->transaction_type == 'purchase')
+                                            <span class="text-primary">(purchase)</span>
+                                            @endif 
+                                        </td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-sm btn-primary fw-semibold fs-7 " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1070,9 +1088,15 @@
                                                     </span>
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                    @if($data['purchases'] || $data['sales'])
                                                     <li>
-                                                        <a data-href="{{route('paymentTransaction.viewForPurchase', $payment_tran->transaction_id)}}" id="view_payment" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        @if($data['purchases'] && $payment_tran->transaction_type == 'purchase')
+                                                            <a data-href="{{route('paymentTransaction.viewForPurchase', $payment_tran->transaction_id)}}" id="view_payment" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        @elseif($data['sales'] && $payment_tran->transaction_type == 'sale')
+                                                            <a data-href="{{route('paymentTransaction.viewForSell', $payment_tran->transaction_id)}}" id="view_payment_sale" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        @endif                                                    
                                                     </li>
+                                                    @endif
                                                     <li>
                                                         <a href="/home" class="dropdown-item p-2"><i class="fa-solid fa-pen-to-square me-3"></i> Edit</a>
                                                     </li>
@@ -1113,6 +1137,10 @@
     <div class="modal modal-lg fade" tabindex="-1" id="add_payment_modal"></div>
     <div class="modal fade" tabindex="-1" id="view_purchase_detail_modal"></div>
 
+    <div class="modal fade" tabindex="-1" id="view_sale_detail_modal"></div>
+    <div class="modal modal-lg fade" tabindex="-1" id="add_payment_for_sale_modal"></div>
+    <div class="modal modal-lg fade" tabindex="-1" id="view_payment_for_sale_modal"></div>
+    
 </div>
 <!--end::Content-->
 @endsection
@@ -1162,6 +1190,24 @@
 
     $(document).on('click', '#view_purchase_detail', function() {
         $('#view_purchase_detail_modal').load($(this).data('href'), function() {
+            $(this).modal('show');
+        });
+    });
+
+    $(document).on('click', '#view_sale_detail', function() {
+        $('#view_sale_detail_modal').load($(this).data('href'), function() {
+            $(this).modal('show');
+        });
+    });
+
+    $(document).on('click', '#add_payment_from_sale', function() {
+        $('#add_payment_for_sale_modal').load($(this).data('href'), function() {
+            $(this).modal('show');
+        });
+    });
+
+    $(document).on('click', '#view_payment_from_sale, #view_payment_sale', function() {
+        $('#view_payment_for_sale_modal').load($(this).data('href'), function() {
             $(this).modal('show');
         });
     });
