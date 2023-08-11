@@ -14,10 +14,10 @@ class TestController extends Controller
         $this->middleware('canUpdate:warranty')->only('warrantyEdit');
     }
 
-    public function index()
-    {
-        return view('App.dashboard');
-    }
+//    public function index()
+//    {
+//        return view('App.dashboard');
+//    }
 
     // Print Label
     public function printLabel()

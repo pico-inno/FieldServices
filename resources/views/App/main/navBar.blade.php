@@ -1547,7 +1547,7 @@
                                                             <!--begin:Menu item-->
                                                             <div class="menu-item">
                                                                 <!--begin:Menu link-->
-                                                                <a class="menu-link @yield('sales_summary_active_show')" href="#">
+                                                                <a class="menu-link @yield('sales_summary_active_show')" href="{{route('report.sale.index')}}">
                                                                     <span class="menu-bullet">
                                                                         <span class="bullet bullet-dot"></span>
                                                                     </span>
@@ -1559,63 +1559,63 @@
                                                             <!--begin:Menu item-->
                                                             <div class="menu-item">
                                                                 <!--begin:Menu link-->
-                                                                <a class="menu-link  @yield('sales_by_product_active_show')" href="#">
+                                                                <a class="menu-link  @yield('sales_details_active_show')" href="{{route('report.sale.details.index')}}">
                                                                     <span class="menu-bullet">
                                                                         <span class="bullet bullet-dot"></span>
                                                                     </span>
-                                                                    <span class="menu-title">Sales by Product</span>
+                                                                    <span class="menu-title">Sales Details</span>
                                                                 </a>
                                                                 <!--end:Menu link-->
                                                             </div>
                                                             <!--end:Menu item-->
                                                             <!--begin:Menu item-->
-                                                            <div class="menu-item">
-                                                                <!--begin:Menu link-->
-                                                                <a class="menu-link  @yield('sales_by_category_active_show')" href="#">
-                                                                    <span class="menu-bullet">
-                                                                        <span class="bullet bullet-dot"></span>
-                                                                    </span>
-                                                                    <span class="menu-title">Sales by Category</span>
-                                                                </a>
-                                                                <!--end:Menu link-->
-                                                            </div>
-                                                            <!--end:Menu item-->
-                                                            <!--begin:Menu item-->
-                                                            <div class="menu-item">
-                                                                <!--begin:Menu link-->
-                                                                <a class="menu-link  @yield('sales_by_customer_active_show')" href="#">
-                                                                    <span class="menu-bullet">
-                                                                        <span class="bullet bullet-dot"></span>
-                                                                    </span>
-                                                                    <span class="menu-title">Sales by Customer</span>
-                                                                </a>
-                                                                <!--end:Menu link-->
-                                                            </div>
-                                                            <!--end:Menu item-->
-                                                            <!--begin:Menu item-->
-                                                            <div class="menu-item">
-                                                                <!--begin:Menu link-->
-                                                                <a class="menu-link  @yield('sales_by_employee_active_show')" href="#">
-                                                                    <span class="menu-bullet">
-                                                                        <span class="bullet bullet-dot"></span>
-                                                                    </span>
-                                                                    <span class="menu-title">Sales by Employee</span>
-                                                                </a>
-                                                                <!--end:Menu link-->
-                                                            </div>
-                                                            <!--end:Menu item-->
-                                                            <!--begin:Menu item-->
-                                                            <div class="menu-item">
-                                                                <!--begin:Menu link-->
-                                                                <a class="menu-link  @yield('top_selling_products_active_show')" href="#">
-                                                                    <span class="menu-bullet">
-                                                                        <span class="bullet bullet-dot"></span>
-                                                                    </span>
-                                                                    <span class="menu-title">Top Selling Prouducts</span>
-                                                                </a>
-                                                                <!--end:Menu link-->
-                                                            </div>
-                                                            <!--end:Menu item-->
+{{--                                                            <div class="menu-item">--}}
+{{--                                                                <!--begin:Menu link-->--}}
+{{--                                                                <a class="menu-link  @yield('sales_by_category_active_show')" href="#">--}}
+{{--                                                                    <span class="menu-bullet">--}}
+{{--                                                                        <span class="bullet bullet-dot"></span>--}}
+{{--                                                                    </span>--}}
+{{--                                                                    <span class="menu-title">Sales by Category</span>--}}
+{{--                                                                </a>--}}
+{{--                                                                <!--end:Menu link-->--}}
+{{--                                                            </div>--}}
+{{--                                                            <!--end:Menu item-->--}}
+{{--                                                            <!--begin:Menu item-->--}}
+{{--                                                            <div class="menu-item">--}}
+{{--                                                                <!--begin:Menu link-->--}}
+{{--                                                                <a class="menu-link  @yield('sales_by_customer_active_show')" href="#">--}}
+{{--                                                                    <span class="menu-bullet">--}}
+{{--                                                                        <span class="bullet bullet-dot"></span>--}}
+{{--                                                                    </span>--}}
+{{--                                                                    <span class="menu-title">Sales by Customer</span>--}}
+{{--                                                                </a>--}}
+{{--                                                                <!--end:Menu link-->--}}
+{{--                                                            </div>--}}
+{{--                                                            <!--end:Menu item-->--}}
+{{--                                                            <!--begin:Menu item-->--}}
+{{--                                                            <div class="menu-item">--}}
+{{--                                                                <!--begin:Menu link-->--}}
+{{--                                                                <a class="menu-link  @yield('sales_by_employee_active_show')" href="#">--}}
+{{--                                                                    <span class="menu-bullet">--}}
+{{--                                                                        <span class="bullet bullet-dot"></span>--}}
+{{--                                                                    </span>--}}
+{{--                                                                    <span class="menu-title">Sales by Employee</span>--}}
+{{--                                                                </a>--}}
+{{--                                                                <!--end:Menu link-->--}}
+{{--                                                            </div>--}}
+{{--                                                            <!--end:Menu item-->--}}
+{{--                                                            <!--begin:Menu item-->--}}
+{{--                                                            <div class="menu-item">--}}
+{{--                                                                <!--begin:Menu link-->--}}
+{{--                                                                <a class="menu-link  @yield('top_selling_products_active_show')" href="#">--}}
+{{--                                                                    <span class="menu-bullet">--}}
+{{--                                                                        <span class="bullet bullet-dot"></span>--}}
+{{--                                                                    </span>--}}
+{{--                                                                    <span class="menu-title">Top Selling Prouducts</span>--}}
+{{--                                                                </a>--}}
+{{--                                                                <!--end:Menu link-->--}}
+{{--                                                            </div>--}}
+{{--                                                            <!--end:Menu item-->--}}
 
 
                                                         </div>
@@ -1641,7 +1641,7 @@
                                                             <!--begin:Menu item-->
                                                             <div class="menu-item">
                                                                 <!--begin:Menu link-->
-                                                                <a class="menu-link @yield('purchase_summary_active_show')" href="#">
+                                                                <a class="menu-link @yield('purchase_summary_active_show')" href="{{route('report.purchase.index')}}">
                                                                     <span class="menu-bullet">
                                                                         <span class="bullet bullet-dot"></span>
                                                                     </span>
@@ -1653,11 +1653,11 @@
                                                             <!--begin:Menu item-->
                                                             <div class="menu-item">
                                                                 <!--begin:Menu link-->
-                                                                <a class="menu-link  @yield('top_purchased_products_active_show')" href="#">
+                                                                <a class="menu-link  @yield('purchased_details_active_show')" href="{{route('report.purchase.details.index')}}">
                                                                     <span class="menu-bullet">
                                                                         <span class="bullet bullet-dot"></span>
                                                                     </span>
-                                                                    <span class="menu-title">Top Purchased Products</span>
+                                                                    <span class="menu-title">Purchase Details</span>
                                                                 </a>
                                                                 <!--end:Menu link-->
                                                             </div>
@@ -1726,28 +1726,19 @@
                                                                     <!--end:Menu item-->
                                                                 @endif
                                                                 <!--begin:Menu item-->
-                                                                <div class="menu-item">
-                                                                    <!--begin:Menu link-->
-                                                                    <a class="menu-link  @yield('stock_by_category_active_show')" href="#">
-                                                                            <span class="menu-bullet">
-                                                                                <span class="bullet bullet-dot"></span>
-                                                                            </span>
-                                                                        <span class="menu-title">Stock by Category</span>
-                                                                    </a>
-                                                                    <!--end:Menu link-->
-                                                                </div>
+{{--                                                                <div class="menu-item">--}}
+{{--                                                                    <!--begin:Menu link-->--}}
+{{--                                                                    <a class="menu-link  @yield('stock_by_category_active_show')" href="#">--}}
+{{--                                                                            <span class="menu-bullet">--}}
+{{--                                                                                <span class="bullet bullet-dot"></span>--}}
+{{--                                                                            </span>--}}
+{{--                                                                        <span class="menu-title">Stock by Category</span>--}}
+{{--                                                                    </a>--}}
+{{--                                                                    <!--end:Menu link-->--}}
+{{--                                                                </div>--}}
                                                                 <!--end:Menu item-->
                                                                 <!--begin:Menu item-->
-                                                                <div class="menu-item">
-                                                                    <!--begin:Menu link-->
-                                                                    <a class="menu-link  @yield('stock_alert_active_show')" href="#">
-                                                                            <span class="menu-bullet">
-                                                                                <span class="bullet bullet-dot"></span>
-                                                                            </span>
-                                                                        <span class="menu-title">Stock Alert</span>
-                                                                    </a>
-                                                                    <!--end:Menu link-->
-                                                                </div>
+{{--                                               d--}}
                                                                 <!--end:Menu item-->
                                                                 @if(multiHasAll(['stockin', 'stockout', 'stock transfer', 'stock adjustment', 'opening stock']))
                                                                 <!--begin:Menu item-->
@@ -1769,6 +1760,48 @@
                                                     </div>
                                                     <!--end:Menu item-->
                                                     @endif
+                                                    <!--begin:Menu item-->
+                                                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('stock_alert_reports_here_show')">
+
+                                                        <!--begin:Menu link-->
+                                                        <span class="menu-link">
+                                                        <span class="menu-title">Stock Alerts</span>
+                                                        <span class="menu-arrow"></span>
+                                                    </span>
+                                                        <!--end:Menu link-->
+                                                        <!--begin:Menu sub-->
+                                                        <!--begin:Menu sub-->
+                                                        <div class="menu-sub menu-sub-accordion">
+                                                            <!--begin:Menu item-->
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('quantity_alerts_active_show')" href="{{route('report.stockAlert.quantity')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title">Quantity Alerts</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link  @yield('expire_alerts_active_show')" href="{{route('report.stockAlert.expire')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title">Expire Alerts</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                        </div>
+                                                        <!--end:Menu sub-->
+                                                    </div>
+                                                    <!--end:Menu item-->
+
                                                 </div>
                                             </div>
                                             <!--end::Wrapper-->
