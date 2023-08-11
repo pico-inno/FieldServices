@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Models\Manufacturer;
 
 use Illuminate\Http\Request;
@@ -105,6 +106,18 @@ Auth::routes();
 Route::get('/', [LoginController::class, 'showLoginForm']);
 //_End: Auth
 
+//Being: Dashboard
+Route::controller(DashboardController::class)->group(function () {
+    Route::get('/home', 'index')->name('home');
+
+    //Filter
+    Route::post('/dashboard/current-balance-filter','currentBalanceFilter');
+    Route::post('/dashboard/total-current-qty','totalCurrentBalanceQty');
+    Route::post('/dashboard/total-contacts-widget','totalContact');
+    Route::post('/dashboard/total-sale-purchase-order-widget','totalSaleAndPurchaseOrder');
+});
+//End: Dashboard
+
 //_Being: Users
 Route::resource('users', BusinessUserController::class);
 //_End: Users
@@ -198,6 +211,32 @@ Route::controller(ReportController::class)->group(function () {
         //Stock in/out  details
 //        Route::get('/stock-details-report','stock_details_index')->name('report.stock.details.index');
 //        Route::post('stock-details/filter-list', 'stockDetailsFilter');
+
+        //Being: Sale
+        Route::get('/sales','saleIndex')->name('report.sale.index');
+        Route::post('/sales/filter-list', 'saleFilter');
+        Route::get('/sales-details','saleDetailsIndex')->name('report.sale.details.index');
+        Route::post('/sale-details/filter-list','saleDetailsFilter');
+        //End: Sale
+
+        //Being: Purchase
+        Route::get('/purchase','purchaseIndex')->name('report.purchase.index');
+        Route::post('/purchase/filter-list', 'purchaseFilter');
+        Route::get('/purchase-details','purchaseDetailsIndex')->name('report.purchase.details.index');
+        Route::post('/purchase-details/filter-list','purchaseDetailsFilter');
+        //End: Purchase
+
+        //Being: Qty Alert
+        Route::get('/alert-quantity', 'quantityAlert')->name('report.stockAlert.quantity');
+        Route::post('/alert-quantity/filter-list', 'quantityAlertFilter');
+        //End: Qty Alert
+
+        //Being: Expire Alert
+        Route::get('/alert-expire', 'expireAlert')->name('report.stockAlert.expire');
+        Route::post('/alert-expire/filter-list', 'expireAlertFilter');
+        //End: Expire Alert
+
+
 
         //Stock transfer summary
         Route::get('/stock-transfer-report','stock_transfer_index')->name('report.stocktransfer.index');
@@ -756,7 +795,7 @@ Route::controller(PriceListDetailController::class)->group(function () {
 });
 
 Route::controller(TestController::class)->group(function () {
-    Route::get('/home', 'index')->name('home');
+//    Route::get('/home', 'index')->name('home');
 
     // Print Labels
     Route::get('/printLabel', 'printLabel');
