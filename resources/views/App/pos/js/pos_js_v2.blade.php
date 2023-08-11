@@ -1,7 +1,7 @@
 <script src="{{ asset('customJs/debounce.js') }}"></script>
-<script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script>
+{{-- <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script> --}}
 <script src="{{ asset('customJs/pos/calc_pos.js') }}"></script>
-<script src="{{ asset('customJs/pos/sale.js') }}"></script>
+{{-- <script src="{{ asset('customJs/pos/sale.js') }}"></script> --}}
 <script src="{{ asset('customJs/pos/recent.js') }}"></script>
 <script src="{{ asset('customJs/pos/filter_products.js') }}"></script>
 
@@ -9,11 +9,12 @@
     var price_lists_with_location = [];
     var uoms = @json($uoms ?? null);
     var posRegisterId=@json($posRegisterId);
+    var sessionId=@json(request('sessionId'));
     var posRegister=@json($posRegister);
-    let editSale=@json($sale ?? []);
-    let editSaleDetails=@json($sale->sale_details ?? []);
-    let saleId=editSale ? editSale.id :'';
-    let route=null;
+    var editSale=@json($sale ?? []);
+    var editSaleDetails=@json($sale->sale_details ?? []);
+    var saleId=editSale ? editSale.id :'';
+    var route=null;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -395,6 +396,7 @@
             let newProductData={
                 'product_id':newSelectedProduct.id,
                 'product_name':newSelectedProduct.name,
+                'variation_name':newSelectedProduct.variation_name,
                 'variation_id':newSelectedProduct.product_variations.id,
                 'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
                 'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
@@ -519,7 +521,6 @@
                 let parent = $(this).closest('tr');
                 let subtotal = parent.find('.subtotal_price').text();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
-
                 if(subtotal_with_discount !== ''){
                     let result = isNullOrNan(subtotal) - isNullOrNan(subtotal_with_discount);
                     totalDisPrice += result;
@@ -596,7 +597,7 @@
             })
         }
 
-        let datasForSale = (status) => {
+        let datasForSale = (status,onlySale=false) => {
             let business_location_id = $('select[name="business_location_id"]').val();
             let table_id=$('#table_id').val();
             let contact_id = $("#invoice_side_bar").is(':hidden') ? $('#pos_customer').val() : $('#sb_pos_customer').val();
@@ -627,7 +628,11 @@
                     'balance_amount': balance_amount,
                     'currency_id': currency_id,
                     'services':services,
+                    'sessionId':sessionId
                 }
+            if(onlySale==true){
+                return sales;
+            }
 
 
             let sale_details = [];
@@ -1181,7 +1186,7 @@
                                     iframeDoc.write(response.html);
                                     iframeDoc.close();
 
-                                    // Trigger the print dialog
+                                    // Trigger the print dialogre
                                     iframe.contentWindow.focus();
                                     setTimeout(() => {
                                         iframe.contentWindow.print();
@@ -1284,12 +1289,78 @@
             if(checkContact()){
                 let dataForSale = datasForSale('order');
                 if(datasForSale('order').sale_details.length>0){
-                    console.log(dataForSale);
                     ajaxToStorePosData(dataForSale);
                 }else{
                     warning('need to add at least one item')
                 }
             }
+        })
+        $(document).on('click', '.splitOrder', function() {
+            let saleDetailIds=$('#splitOrderForm').serialize();
+            // let saleData=datasForSale(editSale.status,true);
+            $.ajax({
+                url:'/sell/split/',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    saleDetailIds,
+                    saleId
+                },
+                success: function(results){
+                    if(results.status==200){
+                        if(saleId){
+                            Swal.fire({
+                                text: "Successfully Update! Thanks you.",
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary",
+                                }
+                            }).then(function () {
+                                //sth
+
+                                window.history.back();
+
+                            });
+                        }else{
+                            Swal.fire({
+                                text: "Successfully Sold! Thanks you.",
+                                icon: "success",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn fw-bold btn-primary",
+                                }
+                            }).then(function () {
+                                //sth
+
+                                $(`#${tableBodyId} tr`).remove();
+                                totalSubtotalAmountCalculate();
+                                totalDisPrice();
+                                $('#payment_info .print_paid').text(0);
+                                $('#payment_info .print_change').text(0);
+                                $('#payment_info .print_balance').text(0);
+                                $('input[name="pay_amount"]').val(0);
+                            });
+                        }
+
+                    }
+                },
+                error:function(e){
+                    status=e.status;
+                    if(status==405){
+                        warning('Method Not Allow!');
+                    }else if(status==419){
+                        error('Session Expired')
+                    }else{
+                        error(' Something Went Wrong! Error Status: '+status )
+                    };
+                },
+
+            })
         })
         $(document).on('click', '.order_confirm_modal_btn', function() {
             let saleDetailOrders = datasForSale('order').sale_details;
@@ -1307,7 +1378,7 @@
                         <div class="separator separator-dashed"></div>
                         <div class="d-flex justify-content-between px-5 py-3">
                             <div class="">
-                                <h2 class=" fs-6 fw-bold">${product.product_name}</h2>
+                                <h2 class=" fs-6 fw-bold">${product.product_name} <span class="text-gray-700">${product.variation_name ? '('+ product.variation_name +')' : ''}</span></h2>
                             </div>
                             <div class="">
                                 <h2 class=" fs-6 fw-bold"> ${quantity.toFixed(0)} ${currentUom.short_name}</h2>
@@ -1334,6 +1405,63 @@
                 )
             }else{
                 $('#orderDetailConfirm').html(
+                        `
+                        <div class="d-flex justify-content-center px-5 py-3 ">
+                            <div class="">
+                                <h2 class=" fs-7 text-gray-500 fw-bold">There is no item for order !</h2>
+                            </div>
+                        </div>
+                        `
+                    )
+            }
+
+        })
+        $(document).on('click', '.split_order_modal_btn', function() {
+            let saleDetailOrders = datasForSale('order').sale_details;
+            $('#services').val('dine_in').trigger('change');
+            if(saleDetailOrders.length>0){
+                let orderComponent='';
+                editSaleDetails.forEach((sd,index) => {
+                    let product=productsOnSelectData.find((pos) => {
+                        return pos.variation_id==sd.variation_id
+                    });
+                    let uoms=product.uom.unit_category.uom_by_category;
+                    let currentUom=uoms.find((uom)=>uom.id==sd.uom_id);
+                    let quantity=Number(sd.quantity);
+                    orderComponent+=`
+                        <div class="separator separator-dashed"></div>
+                        <div class="d-flex justify-content-between px-5 py-3">
+                            <div class="">
+                                <div class="form-check form-check-custom">
+                                    <input type="checkbox" class="form-check-input me-3 border-gray-400" name="saleDetailId[]" value="${sd.id}" id="${product.product_name}_${index}">
+                                    <label class="fs-6 fw-semibold form-label mt-3" for="${product.product_name}_${index}">
+                                        <span > ${product.product_name}<span class="text-gray-700">${product.variation_name ? '('+ product.variation_name +')' : ''}</span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="">
+                                <h2 class=" fs-6 fw-bold"> ${quantity.toFixed(0)} ${currentUom.short_name}</h2>
+                            </div>
+                        </div>
+                    `
+                });
+                    // <div class="d-flex px-5 py-3">
+                    //     <div class="">
+                    //         <h2 class=" fs-6 fw-bold me-2">note:</h2>
+                    //     </div>
+                    //     <div class="">
+                    //         <h2 class=" fs-6 fw-semibold">
+                    //             <p>
+                    //             နံနံပင်မထည့်ပါ။
+                    //             </p>
+                    //         </h2>
+                    //     </div>
+                    // </div>
+                $('#orderListForSplit').html(
+                    orderComponent
+                )
+            }else{
+                $('#orderListForSplit').html(
                         `
                         <div class="d-flex justify-content-center px-5 py-3 ">
                             <div class="">
@@ -1611,74 +1739,79 @@
 
         // if edit mode
         if (editSaleDetails.length>0) {
-            editSaleDetails.forEach(function(sale,index){
-                let secIndex;
-                product= productsOnSelectData.find(function(pd,i) {
-                    secIndex=i;
-                    return sale.product_variation.id== pd.variation_id;
-                });
-                let uoms=getCurrentAndRefUom(sale.product.uom.unit_category.uom_by_category,sale.uom_id);
-                let saleQty=0;
-                if(uoms.currentUom){
-                    saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(sale.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
-                }
-                if(!product){
-                    newProductData={
-                        'product_id':sale.product.id,
-                        'product_name':sale.product.name,
-                        'variation_id':sale.product_variation.id,
-                        'category_id':sale.product.category_id,
-                        'defaultSellingPrices':sale.product_variation.default_selling_price,
-                        'sellingPrices':sale.product_variation.uom_selling_price,
-                        'total_current_stock_qty':sale.total_current_stock_qty,
-                        'aviable_qty':editSale.status=='delivered' ? isNullOrNan(sale.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(sale.stock_sum_current_quantity) ,
-                        'validate':true,
-                        'uom':sale.product.uom,
-                        'uom_id':sale.uom_id,
-                        'stock':sale.stock,
-                    };
-                    productsOnSelectData=[...productsOnSelectData,newProductData];
-                }else{
-                    if(editSale.status=='delivered'){
-                        productsOnSelectData[secIndex].total_current_stock_qty=isNullOrNan(productsOnSelectData[secIndex].total_current_stock_qty)+ saleQty;
+            setTimeout(() => {
+                editSaleDetails.forEach(function(saleDetail,index){
+                    let secIndex;
+                    product= productsOnSelectData.find(function(pd,i) {
+                        secIndex=i;
+                        return saleDetail.product_variation.id== pd.variation_id;
+                    });
+                    let uoms=getCurrentAndRefUom(saleDetail.product.uom.unit_category.uom_by_category,saleDetail.uom_id);
+                    let saleQty=0;
+                    if(uoms.currentUom){
+                        saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(saleDetail.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
                     }
-                }
-            })
-            // for increase and decrease SERVICE ITEM QUANTITY
+                    if(!product){
+                        console.log(saleDetail.product);
+                        newProductData={
+                            'product_id':saleDetail.product.id,
+                            'product_name':saleDetail.product.name,
+                            'variation_id':saleDetail.product_variation.id,
+                            'category_id':saleDetail.product.category_id,
+                            'defaultSellingPrices':saleDetail.product_variation.default_selling_price,
+                            'variation_name':saleDetail.product_variation.variation_template_value ? saleDetail.product_variation.variation_template_value.name:'',
+                            'sellingPrices':saleDetail.product_variation.uom_selling_price,
+                            'total_current_stock_qty':saleDetail.total_current_stock_qty,
+                            'aviable_qty':editSale.status=='delivered' ? isNullOrNan(saleDetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saleDetail.stock_sum_current_quantity) ,
+                            'validate':true,
+                            'uom':saleDetail.product.uom,
+                            'uom_id':saleDetail.uom_id,
+                            'stock':saleDetail.stock,
+                        };
+                        console.log(newProductData);
+                        productsOnSelectData=[...productsOnSelectData,newProductData];
+                    }else{
+                        if(editSale.status=='delivered'){
+                            productsOnSelectData[secIndex].total_current_stock_qty=isNullOrNan(productsOnSelectData[secIndex].total_current_stock_qty)+ saleQty;
+                        }
+                    }
+                })
+                // for increase and decrease SERVICE ITEM QUANTITY
 
-                (()=>{
-                    $(document).on('click', '#increase', function() {
-                    let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
-                    let incVal = parent.find('input[name="quantity[]"]');
-                    let value = parseInt(incVal.val()) + 1;
-                    incVal.val(value);
-                    false ? getPriceByEachRow() : getPrice();
-                    calPrice($(this));
-                    totalSubtotalAmountCalculate();
-                    checkStock($(this));
-                    hideCalDisPrice($(this));
-                    totalDisPrice();
-                })
-                $(document).on('change', '.quantity_input', function() {
-                    calPrice($(this));
-                    totalSubtotalAmountCalculate();
-                    checkStock($(this));
-                    hideCalDisPrice($(this));
-                    totalDisPrice();
-                })
-                $(document).on('click', '#decrease', function() {
-                    let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
-                    let decVal = parent.find('input[name="quantity[]"]');
-                    let value = parseInt(decVal.val()) - 1;
-                    decVal.val(value >= 1 ? value : 1);
-                    false ? getPriceByEachRow() : getPrice();
-                    calPrice($(this));
-                    totalSubtotalAmountCalculate();
-                    checkStock($(this));
-                    hideCalDisPrice($(this));
-                    totalDisPrice();
-                })
-            })();
+                    (()=>{
+                        $(document).on('click', '#increase', function() {
+                        let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                        let incVal = parent.find('input[name="quantity[]"]');
+                        let value = parseInt(incVal.val()) + 1;
+                        incVal.val(value);
+                        false ? getPriceByEachRow() : getPrice();
+                        calPrice($(this));
+                        totalSubtotalAmountCalculate();
+                        checkStock($(this));
+                        hideCalDisPrice($(this));
+                        totalDisPrice();
+                    })
+                    $(document).on('change', '.quantity_input', function() {
+                        calPrice($(this));
+                        totalSubtotalAmountCalculate();
+                        checkStock($(this));
+                        hideCalDisPrice($(this));
+                        totalDisPrice();
+                    })
+                    $(document).on('click', '#decrease', function() {
+                        let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                        let decVal = parent.find('input[name="quantity[]"]');
+                        let value = parseInt(decVal.val()) - 1;
+                        decVal.val(value >= 1 ? value : 1);
+                        false ? getPriceByEachRow() : getPrice();
+                        calPrice($(this));
+                        totalSubtotalAmountCalculate();
+                        checkStock($(this));
+                        hideCalDisPrice($(this));
+                        totalDisPrice();
+                    })
+                })();
+            }, 1000);
         }
     });
 </script>

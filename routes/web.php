@@ -344,6 +344,9 @@ Route::prefix('sell')->group(function () {
         Route::post('/registration/post/Folio', 'addToRegistrationFolio')->name('addToRegistrationFolio');
 
 
+        Route::post('/split/', 'saleSplitForPos')->name('saleSplitForPos');
+
+
 
     });
 });
@@ -822,6 +825,7 @@ Route::controller(POSController::class)->group(function() {
     Route::get('/pos/{posRegisterId}/edit/', 'edit')->name('pos.edit');
 
     Route::get('/pos/{id}/recent/sale/', 'recentSale')->name('pos.recentSale');
+    Route::get('/pos/{posRegisterId}/close/', 'closeSession')->name('pos.closeSession');
     // product
     Route::get('/pos/product-variations', 'productVariationsGet')->name('pos.product-variations');
 
@@ -839,6 +843,7 @@ Route::prefix('pos')->group(function () {
         Route::get('{id}/session/check','sessionCheck')->name('pos.sessionCheck');
         Route::get('{id}/session/create','sessionCreate')->name('pos.sessionCreate');
         Route::post('{id}/session/store','sessionStore')->name('pos.sessionStore');
+        Route::post('{id}/session/destory','sessionDestory')->name('pos.sessionDestory');
     });
 });
 //============================ End: POS ==============================================

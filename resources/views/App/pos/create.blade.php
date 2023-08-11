@@ -117,7 +117,16 @@
                         @endif
                     </div>
                     <a class="navbar-brand fw-bold fs-3 text-white" href="#"></a>
-                    <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
+                    <div class="">
+                        <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
+                        <button class="btn btn-sm  btn-danger fw-bold  rounded-0"  data-href="{{route(
+                        'pos.closeSession',
+                            [
+                            'posRegisterId'=>$posRegister->id,
+                            'sessionId'=>request('sessionId')
+                            ]
+                            )}}" id="close_session_btn"><i class="fa-solid fa-power-off  fw-bolder"></i></button>
+                    </div>
                 </div>
             </div>
             <!--begin::Content-->
@@ -838,105 +847,6 @@
             </div>
         </div>
 
-        {{-- POS Sale Recent --}}
-        <div class="modal fade" tabindex="-1" id="pos_sale_recent">
-            {{-- <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title">POS Sale Recent Transactions</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="card p-0">
-                        <div class="card-body p-0">
-                            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 p-0">
-                                <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
-                                    <li class="nav-item">
-                                        <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#pos_sale_recent_delivered">Delivered</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#pos_sale_recent_draft">Draft</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#pos_sale_recent_order">Order</a>
-                                    </li>
-                                </ul>
-
-                                <div class="tab-content">
-                                    <div class="tab-pane fade show active" id="pos_sale_recent_delivered" role="tab-panel">
-                                        <div class="table-responsive">
-                                            <table class="table gs-7 gy-7 gx-7">
-                                                <thead>
-                                                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                                                        <th>Product</th>
-                                                        <th>Customer</th>
-                                                        <th>Amount</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="deliever_table_body">
-                                                    <tr class="not-exist-data text-center">
-                                                        <td colspan="9" class=" text-muted">
-                                                            There is no data to show
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="pos_sale_recent_draft" role="tab-panel">
-                                        <div class="table-responsive">
-                                            <table class="table gs-7 gy-7 gx-7">
-                                                <thead>
-                                                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                                                        <th>Product</th>
-                                                        <th>Customer</th>
-                                                        <th>Amount</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="draft_table_body">
-                                                    <tr class="not-exist-data text-center">
-                                                        <td colspan="9" class=" text-muted">
-                                                            There is no data to show
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="pos_sale_recent_order" role="tab-panel">
-                                        <div class="table-responsive">
-                                            <table class="table gs-7 gy-7 gx-7">
-                                                <thead>
-                                                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                                                        <th>Product</th>
-                                                        <th>Customer</th>
-                                                        <th>Amount</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="order_table_body">
-                                                    <tr class="not-exist-data text-center">
-                                                        <td colspan="9" class=" text-muted">
-                                                            There is no data to show
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                  </div>
-                </div>
-            </div> --}}
-        </div>
         {{-- POS order confirm  --}}
         <div class="modal fade" tabindex="-1" id="order_confirm_modal">
             <div class="modal-dialog modal-dialog-scrollable  w-md-500px">
@@ -1046,8 +956,11 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade purchaseDetail" tabindex="-1"></div>
+        <div class="modal fade" tabindex="-1" id="pos_sale_recent"></div>
+        <div class="modal fade viewDetailModal" style="z-index: 99999" tabindex="-1"></div>
         <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="modal"></div>
+        {{-- POS Sale Recent --}}
+        <div class="modal fade" tabindex="-1" id="closeSessionModal"></div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
@@ -1065,29 +978,50 @@
     <!--end::Body-->
 </html>
 <script>
-$(document).on('click', '#pos_sale_recent_btn', function(e){
-    e.preventDefault();
-    loadingOn();
-    $('#pos_sale_recent').load($(this).data('href'), function() {
-    //     // $(this).remove();
-        $(this).modal('show');
-        loadingOff();
+    $(document).ready(function(){
+        $(document).on('click', '#pos_sale_recent_btn', function(e){
+            e.preventDefault();
+            loadingOn();
+            $('#pos_sale_recent').load($(this).data('href'), function() {
+            //     // $(this).remove();
+                $(this).modal('show');
+                loadingOff();
 
-    });
-});
-$(document).on('click','.editRecent',function(){
-    $('#pos_sale_recent').modal('hide');
-})
-$(document).on('click', '.view_detail', function(){
-        $url=$(this).data('href');
-
-        loadingOn();
-        $('.purchaseDetail').load($url, function() {
-            $(this).modal('show');
-
-            loadingOff();
+            });
         });
-    });
+        $(document).on('click', '#close_session_btn', function(e){
+            e.preventDefault();
+            loadingOn();
+            $('#closeSessionModal').load($(this).data('href'), function() {
+            //     // $(this).remove();
+                $(this).modal('show');
+                loadingOff();
+
+            });
+        });
+        $(document).on('click', '#pos_sale_recent_btn', function(e){
+            e.preventDefault();
+            loadingOn();
+            $('#pos_sale_recent').load($(this).data('href'), function() {
+            //     // $(this).remove();
+                $(this).modal('show');
+                loadingOff();
+
+            });
+        });
+        $(document).on('click','.editRecent',function(){
+            $('#pos_sale_recent').modal('hide');
+        })
+        $(document).on('click', '.view_detail', function(){
+            $url=$(this).data('href');
+
+            loadingOn();
+            $('.viewDetailModal').load($url, function() {
+                $(this).modal('show');
+
+                loadingOff();
+            });
+         });
 
 
     $(document).on('click', '.print-invoice', function(e) {
@@ -1096,4 +1030,5 @@ $(document).on('click', '.view_detail', function(){
             var url = $(this).data('href');
             ajaxPrint(url); //function from print.js
         });
+})
 </script>

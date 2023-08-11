@@ -45,6 +45,7 @@ use App\Models\posSession\posRegisterSessions;
 use Modules\Reservation\Entities\FolioInvoice;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
+use App\Models\posRegisterTransactions;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -326,9 +327,9 @@ class saleController extends Controller
                     'sold_by' => Auth::user()->id,
                     'created_by' => Auth::user()->id,
                 ]);
-                logger('hello');
+
                 if($request->payment_account && $request->paid_amount >0){
-                     $this->makePayment($sale_data,$request->payment_account);
+                    $payemntTransaction=$this->makePayment($sale_data,$request->payment_account);
                 }else{
                     $suppliers=Contact::where('id',$request->contact_id)->first();
                     $suppliers_receivable=$suppliers->receivable_amount;
@@ -347,6 +348,15 @@ class saleController extends Controller
 
 
             if($request->type=='pos'){
+                posRegisterTransactions::create([
+                    'register_session_id'=>$request->sessionId,
+                    'payment_account_id'=>$request->payment_account,
+                    'transaction_type'=>'sale',
+                    'transaction_id'=>$sale_data->id,
+                    'transaction_amount'=>$request->total_sale_amount,
+                    'currency_id'=>$request->currency_id,
+                    'payment_transaction_id'=>$payemntTransaction->id?? null,
+                ]);
                  return response()->json([
                     'data' => $sale_data->sales_voucher_no,
                     'status'=>'200',
@@ -1035,7 +1045,6 @@ class saleController extends Controller
     }
 
     private function saleDetailCreation($request,Object $sale_data,Array $sale_details,$resOrderData=null){
-
         foreach ($sale_details as $sale_detail) {
 
             $stock = CurrentStockBalance::where('product_id', $sale_detail['product_id'])
@@ -1046,8 +1055,8 @@ class saleController extends Controller
                 }])
                 ->where('variation_id', $sale_detail['variation_id'])
                 ->get()->first();
-                logger($sale_detail);
             $line_subtotal_discount= $sale_detail['line_subtotal_discount'] ?? 0;
+            $subtotal_with_discount=$request->type =='pos' ? $sale_detail['subtotal_with_discount']: ($sale_detail['subtotal']  - $line_subtotal_discount);
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
@@ -1058,7 +1067,7 @@ class saleController extends Controller
                 'subtotal' =>  $sale_detail['subtotal'],
                 'discount_type' => $sale_detail['discount_type'],
                 'per_item_discount' => $sale_detail['per_item_discount'],
-                'subtotal_with_discount' => $sale_detail['subtotal']  - $line_subtotal_discount ,
+                'subtotal_with_discount' =>$subtotal_with_discount,
                 'currency_id'=>$request->currency_id ?? $this->currency->id,
                 'price_list_id'=> $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
                 'tax_amount' =>0,
@@ -1214,7 +1223,7 @@ class saleController extends Controller
                 'payment_amount'=>$paymentAmount,
                 'currency_id'=>$sale->currency_id,
             ];
-            paymentsTransactions::create($data);
+            $paymentTransaction=paymentsTransactions::create($data);
             $accountInfo=paymentAccounts::where('id',$payment_account_id);
             if($accountInfo){
                 $currentBalanceFromDb=$accountInfo->first()->current_balance ;
@@ -1235,7 +1244,9 @@ class saleController extends Controller
                     'payable_amount'=>$suppliers_payable+$sale->balance_amount
                 ]);
             }
+            return $paymentTransaction;
         }
+        return null;
     }
 
 
@@ -1315,4 +1326,28 @@ class saleController extends Controller
         return $descendants;
     }
 
+    public function saleSplitForPos(Request $request){
+        $lastSaleId = sales::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
+        parse_str($request->saleDetailIds,$saleDetailId);
+        $saleId=$request->saleId;
+
+        $originalItem = sales::find($saleId);
+        if (!$originalItem) {
+            return redirect()->back()->with('error', 'Sales voucher not found.');
+        }
+
+        // Clone the original item
+        $clonedItem = $originalItem->replicate();
+
+        $clonedItem->sales_voucher_no = sprintf('SVN-' . '%06d', ($lastSaleId + 1));
+        $clonedItem->created_at = now();
+        $clonedItem->created_by=Auth::user()->id;
+        $clonedItem->updated_at = now();
+        $clonedItem->save();
+        foreach ($saleDetailId as $id) {
+            sale_details::where('id',$id)->update([
+                'sales_id'=>$clonedItem->id
+            ]);
+        }
+    }
 }

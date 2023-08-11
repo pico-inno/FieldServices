@@ -173,7 +173,7 @@ class paymentsTransactionsController extends Controller
         $tx_payment->update([
             'transaction_ref_no'=>$rx_voucher_no,
         ]);
-        paymentsTransactions::create([
+        return paymentsTransactions::create([
             'payment_voucher_no'=>$rx_voucher_no,
             'payment_date'=>now(),
             'payment_account_id'=>$rx_account_id,

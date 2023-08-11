@@ -1,3 +1,37 @@
+
+let tableBodyId = $("#invoice_side_bar").is(':hidden') ? 'invoice_with_modal' : 'invoice_with_sidebar';
+let infoPriceId = $("#invoice_side_bar").is(':hidden') ? 'info_price_with_modal' : 'info_price_with_sidebar';
+let contact_id = $("#invoice_side_bar").is(':hidden') ? 'pos_customer' : 'sb_pos_customer';
+let contact_edit_btn_id = $("#invoice_side_bar").is(':hidden') ? 'contact_edit_btn_modal' : 'contact_edit_btn';
+let contact_phone_btn_id = $("#invoice_side_bar").is(':hidden') ? 'contact_edit_phone_btn_modal' : 'contact_edit_phone_btn';
+let paymentRow = () => {
+    return `
+        <div class="payment_row">
+            <div class="mb-3">
+                <div class="form-group row">
+                    <div class="col-md-12 col-sm-5 col-12">
+                        <label class="form-label">Amount:</label>
+                        <input type="text" class="form-control form-control-sm mb-2 mb-md-0" name="pay_amount" placeholder="" value=""/>
+                    </div>
+                    <div class="col-md-3 col-sm-5 col-5 d-none">
+                        <label class="form-label">Payment Method:</label>
+                        <select class="form-select mb-2 form-select-sm" name="payment_method" data-control="select2" data-hide-search="true" data-placeholder="Select category">
+                            <option></option>
+                            <option value="1">Cash</option>
+                            <option value="2">Card</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-sm-2 col-2 d-none">
+                        <button class="btn btn-sm btn-light-danger mt-3 mt-md-8 remove_payment_row">
+                            <i class="fas fa-trash fs-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+};
 let ajaxToStorePosData = (dataForSale) => {
     $.ajax({
         url: `/sell/create`,
@@ -197,11 +231,11 @@ $('#payment_print').on('click', function(){
                 }
             },
             error:function(e){
-                
+
             },
         })
     }
-})    
+})
 
 // Form Repeater payment amount add
 $(document).on('click', '.add-payment-row', function(){

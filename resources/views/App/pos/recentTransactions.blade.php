@@ -5,8 +5,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="card p-0">
-            <div class="card-body p-0">
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 p-0">
                     <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
                         <li class="nav-item">
@@ -187,8 +185,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>

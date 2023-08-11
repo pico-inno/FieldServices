@@ -20,6 +20,8 @@ use App\Models\Product\PriceLists;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\posRegisterTransactions;
+use App\Models\posSession\posRegisterSessions;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use function PHPUnit\Framework\isEmpty;
@@ -42,13 +44,17 @@ class POSController extends Controller
     }
     public function create()
     {
-        if(request('pos_register_id')){
+        if(request('pos_register_id') && request('sessionId')){
            try {
+                $sessionId=request('sessionId');
+                $posSession=posRegisterSessions::where('id',$sessionId)->where('status','open')->firstOrFail();
                 $posRegisterId=decrypt(request('pos_register_id'));
+
                 $posRegisterQry=posRegisters::where('id',$posRegisterId);
                 $checkPos=$posRegisterQry->exists();
+
                 if(!$checkPos){
-                    return back()->with(['warning'=>'something went wrong']);
+                    return back()->with(['warning'=>'This POS is not in Register List']);
                 }
                 $posRegister=$posRegisterQry->first();
            } catch (\Throwable $th) {
@@ -489,6 +495,24 @@ class POSController extends Controller
             ->get();
         return view('App.pos.recentTransactions',compact('saleOrders','saleDelivered','saleDrafts','posRegisterId'));
     }
+    public function closeSession($posRegisterId){
+        $posRegister=posRegisters::where('id',$posRegisterId)->first();
+        $sessionId=request('sessionId');
+        $posSession=posRegisterSessions::where('id',$sessionId)->first();
+        $transactions=posRegisterTransactions::where('register_session_id',$sessionId)
+                                                        ->where('transaction_type','sale')
+                                                        ->where('transaction_type','sale')
+                                                        ->with('sale')
+                                                        ->get();
+        $paymentTransactions=posRegisterTransactions::where('register_session_id',$sessionId)
+                                                        ->whereNotNull('payment_transaction_id')
+                                                        ->with('paymentTransaction')
+                                                        ->get();
+                                                        // dd($paymentTransactions);
+        return view('App.pos.closeSession',compact('posRegister','posSession','transactions','paymentTransactions'));
+    }
+
+
 
     // GET SOLD PRODUCT
     public function getSoldProduct($posId)

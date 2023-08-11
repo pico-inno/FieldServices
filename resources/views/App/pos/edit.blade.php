@@ -117,7 +117,8 @@
                         @endif
                     </div>
                     <a class="navbar-brand fw-bold fs-3 text-white" href="#">Edit POS Salse #{{$sale->sales_voucher_no}}</a>
-                    <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
+                    <a href="{{ url()->previous() }}" class="btn btn-sm pt-2 btn-secondary">Back</a>
+                    {{-- <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button> --}}
                 </div>
             </div>
             <!--begin::Content-->
@@ -229,7 +230,7 @@
                                                 $variationTemplateId=$sd->productVariation->variation_template_value_id;
                                                 $uoms=$product->uom->unit_category->uomByCategory;
                                             @endphp
-                                                <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer">
+                                                <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer" data-saleDetail="{{$sd->id}}">
                                                     <input type="hidden" name="saleDetail_id" value="{{$sd->id}}" />
                                                     <input type="hidden" name="product_id" value="{{$sd->product_id}}" />
                                                     <input type="hidden" name="lot_no" value="0" />
@@ -239,15 +240,19 @@
                                                     <input type="hidden" name="per_item_discount" value="{{$sd->per_item_discount}}" />
                                                     <input type="hidden" name="subtotal_with_discount" value="{{$sd->subtotal_with_discount}}" />
                                                     <input type="hidden" name="cost_price" value="fprice({{$sd->uom_price}})" />
-                                                    <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
+                                                    <input type="hidden" name="_default_sell_price" value="{{$sd->productVariation->default_selling_price * 1}}" />
 
-                                                    <td class=" text-break text-start fw-bold fs-6 text-gray-700 "><span class="product-name">{{$product->name}}</span>
+                                                    <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
+                                                        <span class="product-name">
+                                                            {{$product->name}}
+                                                            <br>
+                                                            {{
+                                                            $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.'('.($sd->productVariation->variationTemplateValue->name).')'.`</span><br>`: ''
+                                                            }}
+                                                        </span>
                                                         <br>
                                                         <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : {{$product->sku ?? ''}}</span>
                                                         <br>
-                                                       {{
-                                                       $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$variation_value_and_name.`</span><br>`: ''
-                                                       }}
                                                         <span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">{{$product->uom->value }}</span> -
                                                         <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">{{$product->uom->name}}</span>
                                                     </td>
@@ -279,7 +284,7 @@
 
                                                         </div>
                                                     </td>
-                                                    <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} subtotal_price">{{fprice($sd->subtotal_with_tax)}}</td>
+                                                    <td class="fs-6 fw-bold subtotal_price_{{$sd->productVariation->id}} subtotal_price">{{fprice($sd->subtotal)}}</td>
                                                     <td class="exclude-modal">
                                                         <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
                                                     </td>
@@ -368,15 +373,21 @@
                                                         </label>
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
-                                                        <label class="for_disable_btn mb-3 btn  btn-sm {{$sale->status=='card'?'bg-primary' : 'bg-light'}} btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+                                                        {{-- <label class="for_disable_btn mb-3 btn  btn-sm {{$sale->status=='card'?'bg-primary' : 'bg-light'}} btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
                                                             <!--begin::Input-->
                                                             <input class="btn-check " type="radio" name="method" value="4" />
                                                             <!--end::Input-->
                                                             <!--begin::Title-->
                                                             <span class="fs-7 fw-bold d-block  {{$sale->status=='card'?'text-white' : 'text-dark'}}">card</span>
                                                             <!--end::Title-->
+                                                        </label> --}}
+
+                                                        <label  data-bs-toggle="modal" data-bs-target="#splitOrderModal" class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 split_order_modal_btn" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <button class="btn btn-sm   fw-bold  rounded-0">
+                                                                 Split Voucher
+                                                            </button>
                                                         </label>
-                                                        <!--end::Radio-->
                                                     </div>
                                             </div>
 
@@ -456,7 +467,7 @@
                                                     $variationTemplateId=$sd->productVariation->variation_template_value_id;
                                                     $uoms=$product->uom->unit_category->uomByCategory;
                                                 @endphp
-                                                    <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer">
+                                                    <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer" data-saleDetail="{{$sd->id}}">
                                                         <input type="hidden" name="saleDetail_id" value="{{$sd->id}}" />
                                                         <input type="hidden" name="product_id" value="{{$sd->product_id}}" />
                                                         <input type="hidden" name="lot_no" value="0" />
@@ -468,13 +479,20 @@
                                                         <input type="hidden" name="cost_price" value="fprice({{$sd->uom_price}})" />
                                                         <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
 
-                                                        <td class=" text-break text-start fw-bold fs-6 text-gray-700 "><span class="product-name">{{$product->name}}</span>
+                                                        <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
+                                                            <span class="product-name">
+                                                                {{$product->name}}
+                                                                <br>
+                                                                {{
+                                                                $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.'('.($sd->productVariation->variationTemplateValue->name).')'.`</span><br>`: ''
+                                                                }}
+
+
+                                                            </span>
                                                             <br>
                                                             <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : {{$product->sku ?? ''}}</span>
                                                             <br>
-                                                           {{
-                                                           $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$variation_value_and_name.`</span><br>`: ''
-                                                           }}
+
                                                             <span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">{{$product->uom->value }}</span> -
                                                             <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">{{$product->uom->name}}</span>
                                                         </td>
@@ -529,7 +547,7 @@
                                             <div class="fs-7 fs-md-6 fw-bold text-end">
                                                 <span class="d-block lh-1  mb-4 sb-item-quantity" data-kt-pos-element="total"></span>
                                                 <span class="d-block lh-1  mb-4 sb-total" data-kt-pos-element="total"></span>
-                                                <span class="d-block mb-5 mb-4 sb-discount" data-kt-pos-element="discount"></span>
+                                                <span class="d-block mb-5 mb-4 sb-discount editDis" data-kt-pos-element="discount"></span>
                                             </div>
                                             <!--end::Content-->
                                         </div>
@@ -953,7 +971,7 @@
                         <div class="row mb-5">
                             <div class="col-12">
                                 <label for="" class="fs-5">Subtotal With Discount</label>
-                                <input type="text" class="form-control form-control-sm rounded-0" name="subtotal_with_discount" value="">
+                                <input type="text" class="form-control form-control-sm rounded-0" name="subtotal_with_discount" value="{{$sd->subtotal_with_discount}}">
                             </div>
                         </div>
                     </div>
@@ -1174,6 +1192,28 @@
                     <button type="button" class="btn btn-primary btn-sm finalizeOrder" id="" data-bs-dismiss="modal">Update Order</button>
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                   </div>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- POS order confirm  --}}
+        <div class="modal fade" tabindex="-1" id="splitOrderModal">
+            <div class="modal-dialog modal-dialog-scrollable  w-500px">
+                <div class="modal-content">
+                    <form id="splitOrderForm">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Split Order</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="orderListForSplit">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary btn-sm splitOrder" id="" data-bs-dismiss="modal">Split Selected Order</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
