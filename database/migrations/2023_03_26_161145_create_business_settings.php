@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name', 191)->nullable(true);
             $table->unsignedBigInteger('currency_id')->nullable(true);
             $table->enum('lot_control',['on','off'])->nullable(true);
+            $table->boolean('use_paymentAccount')->nullable()->default(true);
             $table->date('start_date')->nullable(true);
             $table->double('default_profit_percent', 5, 2)->default(0.00)->nullable(true);
             $table->unsignedBigInteger('owner_id')->nullable(true);

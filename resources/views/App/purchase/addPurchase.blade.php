@@ -58,7 +58,7 @@
                                             <option></option>
                                             @foreach($suppliers as $supplier)
 
-                                                <option value="{{$supplier->id}}" @selected(old('contact_id')==$supplier->id)>{{$supplier->company_name ?? $supplier->firstname}}</option>
+                                                <option value="{{$supplier->id}}" @selected(old('contact_id')==$supplier->id)>{{$supplier->company_name ?? $supplier->getFullNameAttribute() }}</option>
 
                                             @endforeach
                                         </select>
@@ -93,7 +93,7 @@
                                         <option></option>
                                         <option value="request" @selected(old('status')=='request')>Request</option>
                                         <option value="pending" @selected(old('status')=='pending')>Pending</option>
-                                        <option value="order" @selected(old('status')=='order')>order</option>
+                                        <option value="order" @selected(old('status')=='order')>Ordering</option>
                                         <option value="partial" @selected(old('status')=='partial')>Partial</option>
                                         <option value="received" @selected(old('status')=='received')>Received</option>
                                     </select>
@@ -144,7 +144,7 @@
                                     <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <a class="col-12 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0 d-none"  target="__blank" href="{{route('product.add')}}">
+                            <a class="col-12 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0 productQuickAdd"   data-href="{{route('product.quickAdd')}}"  >
                                 <i class="fa-solid fa-plus me-2 "></i> Add new product
                             </a>
                         </div>
@@ -351,6 +351,7 @@
 {{--
 @include('App.purchase.contactAdd')
 @include('App.purchase.newProductAdd') --}}
+<div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
 @endsection
 
 @push('scripts')
@@ -396,6 +397,20 @@ $(document).ready(function(){
 {{-- <script src={{asset('customJs/customFileInput.js')}}></script> --}}
 {{-- <script src="{{asset('customJs/Purchases/purchaseAdd.js')}}"></script> --}}
 @include('App.purchase.Js.calPurchase')
+
+
+<script>
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
+
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+        });
+    });
+</script>
+
 @endpush
 
 

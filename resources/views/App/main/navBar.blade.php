@@ -1984,16 +1984,19 @@
                                                                 </a>
                                                         </div>
                                                     @endif
-                                                    <div  class="menu-item menu-accordion ">
-                                                        <!--begin:Menu link-->
+                                                    @if (getSettingsValue('use_paymentAccount')==1)
+                                                        <div  class="menu-item menu-accordion ">
                                                             <!--begin:Menu link-->
-                                                            <a class="menu-link @yield('payment_account_active')" href="{{route('paymentAcc.list')}}">
-                                                                <span class=" menu-icon">
-                                                                    <i class="fa-solid fa-money-check-dollar"></i>
-                                                                </span>
-                                                                <span class="menu-title">Payment Accounts</span>
-                                                            </a>
-                                                    </div>
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('payment_account_active')" href="{{route('paymentAcc.list')}}">
+                                                                    <span class=" menu-icon">
+                                                                        <i class="fa-solid fa-money-check-dollar"></i>
+                                                                    </span>
+                                                                    <span class="menu-title">Payment Accounts</span>
+                                                                </a>
+                                                        </div>
+
+                                                    @endif
 													<!--begin:Menu item-->
 													{{-- <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('business_setting_here_show')">
 														<!--begin:Menu link-->
@@ -2877,25 +2880,10 @@
 		<!--begin::Vendors Javascript(used for this page only)-->
 		<script src={{asset("assets/plugins/custom/datatables/datatables.bundle.js")}}></script>
 		<script src={{asset("assets/plugins/custom/vis-timeline/vis-timeline.bundle.js")}}></script>
-		<script src={{asset('customJs/toastrAlert/alert.js')}}></script>
 
 
 		<script src={{asset('customJs/general.js')}}></script>
-            @if(session('success'))
-
-                <script>
-                    success("{{session('success')}}");
-                </script>
-            @endif
-            @if(session('warning'))
-
-                <script>
-                    warning("{{session('warning')}}");
-                </script>
-            @endif
-            <!--end::Custom Javascript-->
-            <!--end::Javascript-->
-
+        @include('App.alert.alert')
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
         @stack('scripts')
 	</body>

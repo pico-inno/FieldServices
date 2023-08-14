@@ -10,6 +10,7 @@ use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
+use App\Models\settings\businessSettings;
 
 class businessLocationController extends Controller
 {
@@ -30,6 +31,7 @@ class businessLocationController extends Controller
     {
         $location_count=businessLocation::count();
         $location_id= $request->location_id ?? sprintf('BL' . '%03d', ($location_count + 1));
+        $request['business_id']=businessSettings::first()->id;
         $request['location_id']=$location_id;
         $request['is_active'] = $request['is_acitve']??0;
         $request['allow_purchase_order'] = $request['is_active'] ?? 0;

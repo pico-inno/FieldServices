@@ -12,8 +12,8 @@
         // Init add schedule modal
         var purchase = () => {
             // Submit button handler
-            const submitButton = element.querySelector('[data-kt-purchase-action="submit"]');
-            submitButton.addEventListener('click', function (e) {
+            const submitButton = $('[data-kt-purchase-action="submit"]');
+            submitButton.on('click', function (e) {
                 validator = validationField(form);
                 if (validator) {
                     validator.validate().then(function (status) {

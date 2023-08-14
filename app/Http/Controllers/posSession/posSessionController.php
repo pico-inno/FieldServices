@@ -57,20 +57,23 @@ class posSessionController extends Controller
         try {
             DB::beginTransaction();
             if($statusCheck==false){
-                // transfer_account
-                $tx=paymentAccounts::where('id',$request->tx_account);
-                $tx_acc=$tx->first();
-                $tx_acc_currency_id=$tx_acc->currency_id;
+                if(getSettingsValue('use_paymentAccount')){
+                    // transfer_account
+                    $tx=paymentAccounts::where('id',$request->tx_account);
+                    $tx_acc=$tx->first();
+                    $tx_acc_currency_id=$tx_acc->currency_id;
 
-                // receive_account
-                $rx=paymentAccounts::where('id',$request->rx_account);
-                $rx_acc=$rx->first();
-                $rx_acc_currency_id=$rx_acc->currency_id;
-                $rx_amount=$request->opening_amount;
+                    // receive_account
+                    $rx=paymentAccounts::where('id',$request->rx_account);
+                    $rx_acc=$rx->first();
+                    $rx_acc_currency_id=$rx_acc->currency_id;
+                    $rx_amount=$request->opening_amount;
 
-                // make transfer
-                $paymentsTransactionController=new paymentsTransactionsController();
-                $paymentTransaction=$paymentsTransactionController->transfer($request->tx_account,$request->rx_account,$request->opening_amount,$rx_amount,'opening_amount');
+                    // make transfer
+                    $paymentsTransactionController=new paymentsTransactionsController();
+                    $paymentTransaction=$paymentsTransactionController->transfer($request->tx_account,$request->rx_account,$request->opening_amount,$rx_amount,'opening_amount');
+                }
+
                $posSession= posRegisterSessions::create([
                     'pos_register_id'=>$posRegisteredId,
                     'opening_amount'=>$request->opening_amount,
@@ -81,10 +84,10 @@ class posSessionController extends Controller
                     'register_session_id'=>$posSession->id,
                     'payment_account_id'=>$request->rx_account,
                     'transaction_type'=>'opening_amount',
-                    'transaction_id'=>$paymentTransaction->id,
                     'transaction_amount'=>$request->opening_amount,
-                    'currency_id'=>$rx_acc->currency_id,
-                    'payment_transaction_id'=>$paymentTransaction->id
+                    'currency_id'=>$rx_acc->currency_id ?? null,
+                    'payment_transaction_id'=>$paymentTransaction->id ?? null,
+                    'transaction_id'=>$paymentTransaction->id ?? null,
 
                 ]);
                 posRegisters::where('id',$posRegisteredId)->update([

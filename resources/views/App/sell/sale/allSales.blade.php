@@ -8,12 +8,15 @@
 @section('styles')
 		<link href={{asset("assets/plugins/custom/datatables/datatables.bundle.css")}} rel="stylesheet" type="text/css" />
         <style>
-            .billDiv tr td{
-                padding: 8px 0 !important;
+                .billDiv tr td{
+                    padding: 8px 0 !important;
                 }
                 .saleTableCard .table-responsive{
                     min-height: 60vh;
                 }
+                /* #allSaleTable tr td:last-child{
+                    text-align: start;
+                } */
         </style>
 @endsection
 
@@ -222,7 +225,7 @@
                     </thead>
                     <!--end::Table head-->
                     <!--begin::Table body-->
-                    <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold">
+                    <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                     </tbody>
                     <!--end::Table body-->

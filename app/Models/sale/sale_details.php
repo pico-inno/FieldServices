@@ -39,6 +39,7 @@ class sale_details extends Model
         'per_item_tax',
         'subtotal_with_tax',
         'currency_id',
+        'note',
         'delivered_quantity',
         'created_by',
         'updated_by',

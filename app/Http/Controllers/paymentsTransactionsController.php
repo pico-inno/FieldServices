@@ -231,9 +231,9 @@ class paymentsTransactionsController extends Controller
     public function storeForPurchase($id,Request $request){
         try {
             DB::beginTransaction();
-            if($request->payment_account_id== '' || $request->payment_account_id==null){
-                return back()->with(['warning'=>'Payment Account require!']);
-            }
+            // if($request->payment_account_id== '' || $request->payment_account_id==null){
+            //     return back()->with(['warning'=>'Payment Account require!']);
+            // }
             $purchase=purchases::where('id',$id)->first();
             $paid_amount=$purchase->paid_amount + $request->payment_amount;
             $balance_amount=($purchase->total_purchase_amount - $paid_amount);
@@ -409,10 +409,12 @@ class paymentsTransactionsController extends Controller
                     'current_balance'=>$current_balance,
                 ]);
             }else{
-                $current_balance=$paymentAccounts->current_balance+$data->payment_amount;
-                $paymentAccounts->update([
-                    'current_balance'=>$current_balance,
-                ]);
+                if($paymentAccounts){
+                    $current_balance=$paymentAccounts->current_balance+$data->payment_amount;
+                    $paymentAccounts->update([
+                        'current_balance'=>$current_balance,
+                    ]);
+                }
                 $this->makePayment($transaction,$request,$transaction_type);
                 $data->delete();
             }
@@ -593,24 +595,26 @@ class paymentsTransactionsController extends Controller
             'transaction_id'=>$transaction->id,
             'transaction_ref_no'=>$transaction->expense_voucher_no,
             'payment_method'=>'card',
-            'payment_account_id'=>$request->payment_account_id,
+            'payment_account_id'=>$request->payment_account_id ?? null,
             'payment_type'=>'credit',
             'payment_amount'=>$request->payment_amount,
             'currency_id'=>$transaction->currency_id,
             'note'=>$request->note,
         ];
         paymentsTransactions::create($data);
-        $accountInfo=paymentAccounts::where('id',$request->payment_account_id);
-        if($accountInfo->exists()){
-            $currentBalanceFromDb=$accountInfo->first()->current_balance ;
-            if($transaction_type=='sale'){
-                $finalCurrentBalance=$currentBalanceFromDb + $request->payment_amount;
-            }else{
-                $finalCurrentBalance=$currentBalanceFromDb - $request->payment_amount;
+        if($request->payment_account_id){
+            $accountInfo=paymentAccounts::where('id',$request->payment_account_id);
+            if($accountInfo->exists()){
+                $currentBalanceFromDb=$accountInfo->first()->current_balance ;
+                if($transaction_type=='sale'){
+                    $finalCurrentBalance=$currentBalanceFromDb + $request->payment_amount;
+                }else{
+                    $finalCurrentBalance=$currentBalanceFromDb - $request->payment_amount;
+                }
+                $accountInfo->update([
+                    'current_balance'=>$finalCurrentBalance,
+                ]);
             }
-            $accountInfo->update([
-                'current_balance'=>$finalCurrentBalance,
-            ]);
         }
     }
 }

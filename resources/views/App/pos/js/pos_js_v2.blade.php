@@ -12,7 +12,6 @@
     var sessionId=@json(request('sessionId'));
     var posRegister=@json($posRegister);
     var editSale=@json($sale ?? []);
-    var editSaleDetails=@json($sale->sale_details ?? []);
     var saleId=editSale ? editSale.id :'';
     var route=null;
     @if(isset($sale))
@@ -20,6 +19,7 @@
     @endif
     let productsOnSelectData=[];
     $(document).ready(function() {
+        var editSaleDetails=@json($sale->sale_details ?? []) ?? [];
         let tableBodyId = $("#invoice_side_bar").is(':hidden') ? 'invoice_with_modal' : 'invoice_with_sidebar';
         let infoPriceId = $("#invoice_side_bar").is(':hidden') ? 'info_price_with_modal' : 'info_price_with_sidebar';
         let contact_id = $("#invoice_side_bar").is(':hidden') ? 'pos_customer' : 'sb_pos_customer';
@@ -138,6 +138,7 @@
                     <input type="hidden" name="discount_type" value="" />
                     <input type="hidden" name="per_item_discount" value="" />
                     <input type="hidden" name="subtotal_with_discount" value="" />
+                    <input type="hidden" name="item_detail_note" value="" />
                     <input type="hidden" name="cost_price" value="${product.stock[0].ref_uom_price}" />
                     <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
 
@@ -302,7 +303,9 @@
                     $(`#${tableBodyId} tr`).each(function() {
                         let each_uom_id = $(this).closest('tr').find('.invoice_unit_select option:selected').val();
                         let variation_id = $(this).closest('tr').find('input[name="variation_id"]').val();
-
+                        if(price==0){
+                           price=$(this).closest('tr').find('input[name="selling_price[]"]').val();
+                        }
                         if(variation_id == product_variation_id && each_uom_id == uom_id){
                             $(this).closest('tr').find('input[name="selling_price[]"]').val(price * 1);
                         }
@@ -599,7 +602,7 @@
 
         let datasForSale = (status,onlySale=false) => {
             let business_location_id = $('select[name="business_location_id"]').val();
-            let table_id=$('#table_id').val();
+            let table_id=$('.table_id').val();
             let contact_id = $("#invoice_side_bar").is(':hidden') ? $('#pos_customer').val() : $('#sb_pos_customer').val();
             let services=$('#services').val();
             let pos_register_id = posRegisterId;
@@ -649,9 +652,10 @@
                 let discount_type = parent.find('input[name="discount_type"]').val();
                 let per_item_discount = parent.find('input[name="per_item_discount"]').val();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
-
+                let item_detail_note = parent.find('input[name="item_detail_note"]').val();
                 let raw_sale_details = {
                     sale_detail_id,
+                    item_detail_note,
                     'product_id': product_id,
                     'variation_id': variation_id,
                     'uom_id': uom_id,
@@ -661,7 +665,7 @@
                     'subtotal': subtotal,
                     'discount_type': discount_type,
                     'per_item_discount': per_item_discount,
-                    'subtotal_with_discount': subtotal_with_discount,
+                    'subtotal_with_discount': subtotal_with_discount ?? subtotal,
                     'tax_amount': null,
                     'subtotal_with_tax': null,
                     'currency_id': null,
@@ -1014,7 +1018,7 @@
             let product_id = current_tr.find('input[name="product_id"]').val();
             let variation_id = current_tr.find('input[name="variation_id"]').val();
             let uom_id = current_tr.find('.invoice_unit_select').val();
-
+            let item_detail_note = current_tr.find('input[name="item_detail_note"]').val();
             // let filtered_product = productsOnSelectData.filter( item => item.product_id == product_id && item.variation_id == variation_id);
 
 
@@ -1023,6 +1027,7 @@
             $('#invoice_row_discount').find('.modal-title').text(`${product_name} - ${product_sku}`);
             $('#invoice_row_discount').find('select[name="each_selling_price"]').val(each_selling_price).trigger('change');
             $('#invoice_row_discount').find('input[name="modal_price_without_dis"]').val(price);
+            $('#invoice_row_discount').find('#item_detail_note_input').val(item_detail_note);
 
             if(dis_type !== ''){
                 $('#invoice_row_discount').find('select[name="invoice_row_discount_type"]').val(dis_type).trigger('change');
@@ -1073,6 +1078,7 @@
         $('#invoice_row_discount').on('hidden.bs.modal', function(event) {
             // let selling_price_group = $(this).find('select[name="each_selling_price"]').val();
             let uom_price = $(this).find('input[name="modal_price_without_dis"]').val();
+            let item_detail_note = $(this).find('#item_detail_note_input').val();
             let dis_type = $(this).find('select[name="invoice_row_discount_type"]').val();
             let dis_amount = $(this).find('input[name="discount_amount"]').val();
             let subtotal_with_dis = $(this).find('input[name="subtotal_with_discount"]').val();
@@ -1082,7 +1088,7 @@
             current_tr.find('input[name="discount_type"]').val(dis_type);
             current_tr.find('input[name="per_item_discount"]').val(dis_amount);
             current_tr.find('input[name="subtotal_with_discount"]').val(subtotal_with_dis);
-
+            current_tr.find('input[name="item_detail_note"]').val(item_detail_note);
             calPrice(current_tr);
             totalDisPrice();
         });
@@ -1295,76 +1301,15 @@
                 }
             }
         })
-        $(document).on('click', '.splitOrder', function() {
-            let saleDetailIds=$('#splitOrderForm').serialize();
-            // let saleData=datasForSale(editSale.status,true);
-            $.ajax({
-                url:'/sell/split/',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    saleDetailIds,
-                    saleId
-                },
-                success: function(results){
-                    if(results.status==200){
-                        if(saleId){
-                            Swal.fire({
-                                text: "Successfully Update! Thanks you.",
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn fw-bold btn-primary",
-                                }
-                            }).then(function () {
-                                //sth
 
-                                window.history.back();
-
-                            });
-                        }else{
-                            Swal.fire({
-                                text: "Successfully Sold! Thanks you.",
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn fw-bold btn-primary",
-                                }
-                            }).then(function () {
-                                //sth
-
-                                $(`#${tableBodyId} tr`).remove();
-                                totalSubtotalAmountCalculate();
-                                totalDisPrice();
-                                $('#payment_info .print_paid').text(0);
-                                $('#payment_info .print_change').text(0);
-                                $('#payment_info .print_balance').text(0);
-                                $('input[name="pay_amount"]').val(0);
-                            });
-                        }
-
-                    }
-                },
-                error:function(e){
-                    status=e.status;
-                    if(status==405){
-                        warning('Method Not Allow!');
-                    }else if(status==419){
-                        error('Session Expired')
-                    }else{
-                        error(' Something Went Wrong! Error Status: '+status )
-                    };
-                },
-
-            })
-        })
         $(document).on('click', '.order_confirm_modal_btn', function() {
             let saleDetailOrders = datasForSale('order').sale_details;
             $('#services').val('dine_in').trigger('change');
+            let tableName = $('#table_nav_id').children("option:selected").text();
+            let tableId=$('#table_nav_id').val();
+            $('#table-text').text(tableName);
+            $('#tableForFinalize').val(tableId).trigger('change');
+
             if(saleDetailOrders.length>0){
                 let orderComponent='';
                 saleDetailOrders.forEach(sd => {
@@ -1416,64 +1361,105 @@
             }
 
         })
+        $(document).on('change','#tableForFinalize',function(){
+            $('#table_nav_id').val($(this).val()).trigger('change');
+        })
         $(document).on('click', '.split_order_modal_btn', function() {
+            console.log('here');
             let saleDetailOrders = datasForSale('order').sale_details;
             $('#services').val('dine_in').trigger('change');
-            if(saleDetailOrders.length>0){
-                let orderComponent='';
-                editSaleDetails.forEach((sd,index) => {
-                    let product=productsOnSelectData.find((pos) => {
-                        return pos.variation_id==sd.variation_id
-                    });
-                    let uoms=product.uom.unit_category.uom_by_category;
-                    let currentUom=uoms.find((uom)=>uom.id==sd.uom_id);
-                    let quantity=Number(sd.quantity);
-                    orderComponent+=`
-                        <div class="separator separator-dashed"></div>
-                        <div class="d-flex justify-content-between px-5 py-3">
-                            <div class="">
-                                <div class="form-check form-check-custom">
-                                    <input type="checkbox" class="form-check-input me-3 border-gray-400" name="saleDetailId[]" value="${sd.id}" id="${product.product_name}_${index}">
-                                    <label class="fs-6 fw-semibold form-label mt-3" for="${product.product_name}_${index}">
-                                        <span > ${product.product_name}<span class="text-gray-700">${product.variation_name ? '('+ product.variation_name +')' : ''}</span></span>
-                                    </label>
+            if(saleDetailOrders){
+                if(saleDetailOrders.length>0){
+                    let orderComponent='';
+                    editSaleDetails.forEach((sd,index) => {
+                        let product=productsOnSelectData.find((pos) => {
+                            return pos.variation_id==sd.variation_id
+                        });
+                        let uoms=product.uom.unit_category.uom_by_category;
+                        let currentUom=uoms.find((uom)=>uom.id==sd.uom_id);
+                        let quantity=Number(sd.quantity);
+                        orderComponent+=`
+                            <div class="separator separator-dashed"></div>
+                            <div class="d-flex justify-content-between px-5 py-3">
+                                <div class="col-7">
+                                    <div class="form-check form-check-custom">
+                                        <input type="hidden" name="saleId" value="${saleId}" />
+                                        <input type="checkbox" class="form-check-input me-3 border-gray-400" name="detailToSplit[${index}][id]" value="${sd.id}" id="${product.product_name}_${index}">
+                                        <label class="fs-6 fw-semibold form-label mt-3 user-select-none" for="${product.product_name}_${index}">
+                                            <span > ${product.product_name}<span class="text-gray-700">${product.variation_name ? '('+ product.variation_name +')' : ''}</span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="input-group sale_dialer" >
+                                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
+                                            <i class="fa-solid fa-minus fs-2"></i>
+                                        </button>
+                                        <input type="text" class="form-control form-control-sm quantity form-control-sm text-center quantity"   placeholder="quantity"  name="detailToSplit[${index}][quantity]" value=" ${quantity.toFixed(0)}" data-kt-dialer-control="input"/>
+                                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
+                                            <i class="fa-solid fa-plus fs-2"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold"> ${quantity.toFixed(0)} ${currentUom.short_name}</h2>
-                            </div>
-                        </div>
-                    `
-                });
-                    // <div class="d-flex px-5 py-3">
-                    //     <div class="">
-                    //         <h2 class=" fs-6 fw-bold me-2">note:</h2>
-                    //     </div>
-                    //     <div class="">
-                    //         <h2 class=" fs-6 fw-semibold">
-                    //             <p>
-                    //             နံနံပင်မထည့်ပါ။
-                    //             </p>
-                    //         </h2>
-                    //     </div>
-                    // </div>
-                $('#orderListForSplit').html(
-                    orderComponent
-                )
-            }else{
-                $('#orderListForSplit').html(
                         `
-                        <div class="d-flex justify-content-center px-5 py-3 ">
-                            <div class="">
-                                <h2 class=" fs-7 text-gray-500 fw-bold">There is no item for order !</h2>
-                            </div>
-                        </div>
-                        `
+
+                    });
+                                    // <h2 class=" fs-6 fw-bold"> ${quantity.toFixed(0)} ${currentUom.short_name}</h2>
+                        // <div class="d-flex px-5 py-3">
+                        //     <div class="">
+                        //         <h2 class=" fs-6 fw-bold me-2">note:</h2>
+                        //     </div>
+                        //     <div class="">
+                        //         <h2 class=" fs-6 fw-semibold">
+                        //             <p>
+                        //             နံနံပင်မထည့်ပါ။
+                        //             </p>
+                        //         </h2>
+                        //     </div>
+                        // </div>
+                    $('#orderListForSplit').html(
+                        orderComponent
                     )
+
+                    let name=`.sale_dialer`;
+                    let dialerElements = document.querySelectorAll(name);
+                    dialerElements.forEach(dialerElement => {
+                        let max=$(dialerElement).find('.quantity').val();
+                        console.log(max);
+                        new KTDialer(dialerElement, {
+                            min: 1,
+                            max,
+                            step: 1,
+                        });
+                    });
+                }else{
+                    $('#orderListForSplit').html(
+                            `
+                            <div class="d-flex justify-content-center px-5 py-3 ">
+                                <div class="">
+                                    <h2 class=" fs-7 text-gray-500 fw-bold">There is no item for order !</h2>
+                                </div>
+                            </div>
+                            `
+                        )
+                }
+            }else{
+                alert('please save first');
             }
 
         })
-
+        $(document).on('click','.split_order_modal_btn_from_create',function(){
+            Swal.fire({
+                text: "Please Save Order First.",
+                icon: "warning",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn fw-bold btn-primary",
+                }
+            })
+        })
         // Sale With Draft
         $(document).on('click', '.sale_draft', function() {
             if(checkContact()){

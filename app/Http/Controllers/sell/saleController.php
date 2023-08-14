@@ -115,7 +115,7 @@ class saleController extends Controller
                 return fDate($saleItem->sold_at,true);
             })
             ->editColumn('sale_amount', function ($saleItem) {
-                return price($saleItem->sale_amount,$saleItem->currency_id);
+                return price($saleItem->total_sale_amount,$saleItem->currency_id);
             })
             ->editColumn('status', function ($purchase) {
                 $html = '';
@@ -284,7 +284,7 @@ class saleController extends Controller
         if($request->type=='pos'){
             $registeredPos=posRegisters::where('id',$request->pos_register_id)->select('id','payment_account_id','use_for_res')->first();
             $paymentAccountIds=json_decode($registeredPos->payment_account_id);
-            $request['payment_account']=$paymentAccountIds[0];
+            $request['payment_account']=$paymentAccountIds[0] ?? null;
             $request['currency_id']=$this->currency->id;
         }
         DB::beginTransaction();
@@ -328,7 +328,7 @@ class saleController extends Controller
                     'created_by' => Auth::user()->id,
                 ]);
 
-                if($request->payment_account && $request->paid_amount >0){
+                if($request->paid_amount >0){
                     $payemntTransaction=$this->makePayment($sale_data,$request->payment_account);
                 }else{
                     $suppliers=Contact::where('id',$request->contact_id)->first();
@@ -739,8 +739,8 @@ class saleController extends Controller
                         'price_list_id' =>$request_old_sale['price_list_id'] == "default_selling_price" ? null :   $request_old_sale['price_list_id'],
                         'updated_by' => $request_old_sale['updated_by'],
                         'subtotal_with_tax' => $request_old_sale['subtotal'] - ($request_old_sale['line_subtotal_discount'] ?? 0),
+                        'note'=>$request_old_sale['item_detail_note'] ?? null,
                     ];
-                    logger($request_sale_details_data);
                     // dd($request_sale_details_data);
                     // dd($request_sale_details_data);
                     if($request_old_sale['quantity'] <= 0){
@@ -1056,7 +1056,6 @@ class saleController extends Controller
                 ->where('variation_id', $sale_detail['variation_id'])
                 ->get()->first();
             $line_subtotal_discount= $sale_detail['line_subtotal_discount'] ?? 0;
-            $subtotal_with_discount=$request->type =='pos' ? $sale_detail['subtotal_with_discount']: ($sale_detail['subtotal']  - $line_subtotal_discount);
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
@@ -1067,12 +1066,13 @@ class saleController extends Controller
                 'subtotal' =>  $sale_detail['subtotal'],
                 'discount_type' => $sale_detail['discount_type'],
                 'per_item_discount' => $sale_detail['per_item_discount'],
-                'subtotal_with_discount' =>$subtotal_with_discount,
+                'subtotal_with_discount' =>$request->type !='pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ,
                 'currency_id'=>$request->currency_id ?? $this->currency->id,
                 'price_list_id'=> $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
                 'tax_amount' =>0,
                 'per_item_tax'=>0,
-                'subtotal_with_tax' =>$sale_detail['subtotal']  - $line_subtotal_discount ,
+                'subtotal_with_tax' =>$request->type !='pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ,
+                'note'=>$sale_detail['item_detail_note'] ?? null,
             ];
             if($resOrderData){
                 $sale_details_data['rest_order_id']=$resOrderData ? $resOrderData->id : null;
@@ -1109,17 +1109,20 @@ class saleController extends Controller
     }
 
     public function postToRegistrationFolio($id){
-        $folioDetailQuery= hospitalFolioInvoiceDetails::where('transaction_type','sale')
-                                                        ->where('transaction_id',$id);
-        $checkFolioDetails= $folioDetailQuery->exists();
-        $postedRegistration=[];
-        if($checkFolioDetails){
-            $folioDetail=$folioDetailQuery->select('id', 'folio_invoice_id')->get()->first();
-            $registrationId=hospitalFolioInvoices::where('id',$folioDetail->folio_invoice_id)->select('registration_id')->first()->registration_id;
-            $postedRegistration=hospitalRegistrations::where('id', $registrationId)->get()->first();
+        if(class_exists(hospitalFolioInvoiceDetails::class)){
+            $folioDetailQuery= hospitalFolioInvoiceDetails::where('transaction_type','sale')
+                                                            ->where('transaction_id',$id);
+            $checkFolioDetails= $folioDetailQuery->exists();
+            $postedRegistration=[];
+            if($checkFolioDetails){
+                $folioDetail=$folioDetailQuery->select('id', 'folio_invoice_id')->get()->first();
+                $registrationId=hospitalFolioInvoices::where('id',$folioDetail->folio_invoice_id)->select('registration_id')->first()->registration_id;
+                $postedRegistration=hospitalRegistrations::where('id', $registrationId)->get()->first();
+            }
+            $SaleVoucher=sales::where('id',$id)->select('id','sales_voucher_no')->first();
+            $registrations=hospitalRegistrations::with('patient')->where('is_delete',0)->get();
+
         }
-        $SaleVoucher=sales::where('id',$id)->select('id','sales_voucher_no')->first();
-        $registrations=hospitalRegistrations::with('patient')->where('is_delete',0)->get();
 
          return view('App.sell.modal.joinToRegistrationFolioModal',compact('registrations', 'SaleVoucher', 'postedRegistration'));
 
@@ -1218,32 +1221,35 @@ class saleController extends Controller
                 'transaction_id'=>$sale->id,
                 'transaction_ref_no'=>$sale->sales_voucher_no,
                 'payment_method'=>'card',
-                'payment_account_id'=>$payment_account_id,
+                'payment_account_id'=>$payment_account_id ?? null,
                 'payment_type'=>'debit',
                 'payment_amount'=>$paymentAmount,
                 'currency_id'=>$sale->currency_id,
             ];
             $paymentTransaction=paymentsTransactions::create($data);
-            $accountInfo=paymentAccounts::where('id',$payment_account_id);
-            if($accountInfo){
-                $currentBalanceFromDb=$accountInfo->first()->current_balance ;
-                $finalCurrentBalance=$currentBalanceFromDb+$paymentAmount;
-                $accountInfo->update([
-                    'current_balance'=>$finalCurrentBalance,
-                ]);
+            if($payment_account_id){
+                $accountInfo=paymentAccounts::where('id',$payment_account_id);
+                if($accountInfo->exists()){
+                    $currentBalanceFromDb=$accountInfo->first()->current_balance ;
+                    $finalCurrentBalance=$currentBalanceFromDb+$paymentAmount;
+                    $accountInfo->update([
+                        'current_balance'=>$finalCurrentBalance,
+                    ]);
+                }
+                $suppliers=Contact::where('id',$sale->contact_id)->first();
+                if($sale->balance_amount > 0){
+                    $suppliers_receivable=$suppliers->receivable_amount;
+                    $suppliers->update([
+                        'receivable_amount'=>$suppliers_receivable+$sale->receivable_amount
+                    ]);
+                }else if($sale->balance_amount < 0){
+                    $suppliers_payable=$suppliers->receivable_amount;
+                    $suppliers->update([
+                        'payable_amount'=>$suppliers_payable+$sale->balance_amount
+                    ]);
+                }
             }
-            $suppliers=Contact::where('id',$sale->contact_id)->first();
-            if($sale->balance_amount > 0){
-                $suppliers_receivable=$suppliers->receivable_amount;
-                $suppliers->update([
-                    'receivable_amount'=>$suppliers_receivable+$sale->receivable_amount
-                ]);
-            }else if($sale->balance_amount < 0){
-                $suppliers_payable=$suppliers->receivable_amount;
-                $suppliers->update([
-                    'payable_amount'=>$suppliers_payable+$sale->balance_amount
-                ]);
-            }
+
             return $paymentTransaction;
         }
         return null;
@@ -1327,27 +1333,118 @@ class saleController extends Controller
     }
 
     public function saleSplitForPos(Request $request){
-        $lastSaleId = sales::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
-        parse_str($request->saleDetailIds,$saleDetailId);
-        $saleId=$request->saleId;
+        try {
+            DB::beginTransaction();
+            $detailToSplit=$request->detailToSplit;
 
-        $originalItem = sales::find($saleId);
-        if (!$originalItem) {
-            return redirect()->back()->with('error', 'Sales voucher not found.');
-        }
+            $ids = array(); // Initialize an array to store the extracted ids
 
-        // Clone the original item
-        $clonedItem = $originalItem->replicate();
+            foreach ($detailToSplit as $subArray) {
+                if (isset($subArray["id"])) {
+                    $ids[] = $subArray["id"];
+                }
+            }
+            if(count($ids)  <= 0){
+                return back()->with([
+                    'warning'=>'Add at least one item to split'
+                ]);
+            }
+            $lastSaleId = sales::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
+            $saleId=$request->saleId;
 
-        $clonedItem->sales_voucher_no = sprintf('SVN-' . '%06d', ($lastSaleId + 1));
-        $clonedItem->created_at = now();
-        $clonedItem->created_by=Auth::user()->id;
-        $clonedItem->updated_at = now();
-        $clonedItem->save();
-        foreach ($saleDetailId as $id) {
-            sale_details::where('id',$id)->update([
-                'sales_id'=>$clonedItem->id
+            $originalSale = sales::find($saleId);
+            if (!$originalSale) {
+                return redirect()->back()->with('error', 'Sales voucher not found.');
+            }
+
+
+
+            // Clone the original item
+            $clonedSale = $originalSale->replicate();
+
+            $clonedSale->sales_voucher_no = sprintf('SVN-' . '%06d', ($lastSaleId + 1));
+            $clonedSale->created_at = now();
+            $clonedSale->created_by=Auth::user()->id;
+            $clonedSale->updated_at = now();
+            $clonedSale->save();
+
+            $totalSplitAmount=0;
+            $totalSplitAmountwithDis=0;
+
+            $totalLeftAmount=0;
+            $totalLeftAmountwithDis=0;
+
+            $totalSplitDiscount=0;
+            foreach ($detailToSplit as $ds) {
+                if(isset($ds['id'])){
+                    $sd=sale_details::where('id',$ds['id'])->first();
+                    $dsq= $ds['quantity']; //$dop=detail to split quanity
+                    $sdq=$sd->quantity;
+                    if($sd->quantity ==$dsq){
+                        $totalSplitAmount+=$sd->subtotal;
+                        $totalSplitAmountwithDis+=$sd->subtotal_with_discount;
+                        $totalSplitDiscount+=($sd->subtotal - $sd->subtotal_with_discount ) * $dsq;
+
+                        sale_details::where('id',$ds['id'])->update([
+                            'sales_id'=>$clonedSale->id
+                        ]);
+                    }elseif( $sdq > $dsq){
+                        $leftQty=$sdq-$dsq ;
+                        $splitQTy=$dsq;
+                        $totalSplitDiscount+=($sd->subtotal - $sd->subtotal_with_discount)/ $sdq * $splitQTy;
+                        $toSplitPrice=$sd->uom_price * $splitQTy;
+                        $totalSplitAmount+=$toSplitPrice;
+                        $leftSubTotal=$sd->subtotal - $toSplitPrice;
+                        $leftSbutotalAmount=$leftSubTotal;
+                        $totalLeftAmount+=$leftSbutotalAmount;
+
+                        $splitSubtotalWithDis=($sd->subtotal_with_discount / $sdq) * $splitQTy;
+                        $leftSubtotalWithDis=$sd->subtotal_with_discount-$splitSubtotalWithDis;
+                        $totalLeftAmountwithDis+=$leftSubtotalWithDis;
+                        $totalSplitAmountwithDis+=$splitSubtotalWithDis;
+
+                        $clonedSaleDetail = $sd->replicate();
+                        $clonedSaleDetail->sales_id = $clonedSale->id;
+                        $clonedSaleDetail->quantity = $splitQTy;
+                        $clonedSaleDetail->subtotal = $toSplitPrice;
+                        $clonedSaleDetail->subtotal_with_discount = $splitSubtotalWithDis;
+                        $clonedSaleDetail->subtotal_with_tax = $splitSubtotalWithDis;
+                        $clonedSaleDetail->save();
+
+
+                        $sd->update([
+                            'quantity'=>$leftQty,
+                            'subtotal'=>$leftSubTotal,
+                            'subtotal_with_discount'=>$leftSubtotalWithDis,
+                            'subtotal_with_tax'=>$leftSubtotalWithDis,
+                        ]);
+                    }
+
+                }
+
+            }
+            $clonedSale->sale_amount=$totalSplitAmount;
+            $clonedSale->total_sale_amount=$totalSplitAmountwithDis;
+            $clonedSale->total_item_discount=$totalSplitDiscount;
+            $clonedSale->balance_amount = $totalSplitAmountwithDis;
+            $clonedSale->update();
+
+
+            $originalSale->sale_amount=$originalSale->sale_amount-$totalSplitAmount;
+            $originalSale->total_sale_amount=$originalSale->total_sale_amount-$totalSplitAmountwithDis;
+            $originalSale->total_item_discount=$originalSale->total_item_discount - $totalSplitDiscount;
+            $originalSale->balance_amount =  $originalSale->balance_amount-$totalSplitAmountwithDis;
+            $originalSale->update();
+            DB::commit();
+            return back()->with([
+                'success'=>'Successfully Splited'
             ]);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with([
+                'error'=>'Something Went Wrongs'
+            ]);
+
         }
     }
 }

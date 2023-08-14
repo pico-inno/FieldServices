@@ -107,7 +107,7 @@
                     <div class="d-flex">
                         <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
                         @if ($posRegister->use_for_res=='1')
-                            <select name="table_id" id="table_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light" data-control="select2" data-allow-clear="true">
+                            <select  name="table_id" id="table_nav_id"  autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="table_id w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light" data-control="select2" data-allow-clear="true">
                                 <option disabled selected>Select Table</option>
                                 @foreach ($tables as $table)
                                     <option value="{{$table->id}}" @selected($sale->table_id==$table->id)>{{$table->table_no}}</option>
@@ -117,7 +117,7 @@
                         @endif
                     </div>
                     <a class="navbar-brand fw-bold fs-3 text-white" href="#">Edit POS Salse #{{$sale->sales_voucher_no}}</a>
-                    <a href="{{ url()->previous() }}" class="btn btn-sm pt-2 btn-secondary">Back</a>
+                    <a href="{{route('pos.create',['pos_register_id'=>encrypt($posRegisterId),'sessionId'=>$posSession->id]) }}" class="btn btn-sm pt-2 btn-secondary">Back</a>
                     {{-- <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button> --}}
                 </div>
             </div>
@@ -154,7 +154,7 @@
                             <div class="row mt-3" style="max-height: 5%">
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control" name="pos_product_search" placeholder="Search products..." >
-                                    <span class="input-group-text custom-tooltip "  type="button" data-bs-toggle="modal" data-bs-target="#quick_add_product_modal" >
+                                    <span class="input-group-text custom-tooltip productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button"  >
                                         <i class="fas fa-plus text-primary fs-2"></i>
                                     </span>
                                 </div>
@@ -232,6 +232,7 @@
                                             @endphp
                                                 <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer" data-saleDetail="{{$sd->id}}">
                                                     <input type="hidden" name="saleDetail_id" value="{{$sd->id}}" />
+                                                    <input type="hidden" name="item_detail_note" value="{{$sd->note}}" />
                                                     <input type="hidden" name="product_id" value="{{$sd->product_id}}" />
                                                     <input type="hidden" name="lot_no" value="0" />
                                                     <input type="hidden" name="variation_id" value="{{$sd->variation_id}}" />
@@ -240,7 +241,7 @@
                                                     <input type="hidden" name="per_item_discount" value="{{$sd->per_item_discount}}" />
                                                     <input type="hidden" name="subtotal_with_discount" value="{{$sd->subtotal_with_discount}}" />
                                                     <input type="hidden" name="cost_price" value="fprice({{$sd->uom_price}})" />
-                                                    <input type="hidden" name="_default_sell_price" value="{{$sd->productVariation->default_selling_price * 1}}" />
+                                                    <input type="hidden" name="_default_sell_price" value="{{$sd->uom_price * 1}}" />
 
                                                     <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
                                                         <span class="product-name">
@@ -974,6 +975,13 @@
                                 <input type="text" class="form-control form-control-sm rounded-0" name="subtotal_with_discount" value="{{$sd->subtotal_with_discount}}">
                             </div>
                         </div>
+
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5">Note</label>
+                                <textarea name="item_detail_note_input"  id="item_detail_note_input" cols="30" rows="4" class="form-control form-control-sm"></textarea>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -1132,17 +1140,26 @@
             <div class="modal-dialog modal-dialog-scrollable  w-500px">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="modal-title">Order Preview</h4>
+                    <h4 class="modal-title">(<span id="table-text"></span>) Order Preview</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="p-5">
                     <label for="" class="form-label">Sevices:</label>
                     <select name="services" class="form-select form-select-sm" id="services" placeholder="Services" data-placeholder="Services" data-kt-select2="true" data-hide-search="true">
-                        <option value="dine_in">dine in</option>
-                        <option value="take_away">Take Away</option>
-                        <option value="delivery">Delivery</option>
+                        <option value="dine_in" @selected($sale->service =='dine_in')>dine in</option>
+                        <option value="take_away"  @selected($sale->service=='take_away')>Take Away</option>
+                        <option value="delivery" @selected($sale->service=='delivery')>Delivery</option>
                     </select>
                   </div>
+
+                  <div class="px-5 mt-3 mb-5">
+                        <select id="tableForFinalize"  autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="form-select form-select-sm" data-control="select2" data-allow-clear="true">
+                            <option disabled selected>Select Table</option>
+                            @foreach ($tables as $table)
+                                <option value="{{$table->id}}">{{$table->table_no}}</option>
+                            @endforeach
+                        </select>
+                </div>
                   <div class="modal-body" id="orderDetailConfirm">
 
                         {{-- <div class="separator separator-dashed"></div>
@@ -1197,11 +1214,12 @@
         </div>
 
 
-        {{-- POS order confirm  --}}
+        {{-- POS split confirm  --}}
         <div class="modal fade" tabindex="-1" id="splitOrderModal">
             <div class="modal-dialog modal-dialog-scrollable  w-500px">
                 <div class="modal-content">
-                    <form id="splitOrderForm">
+                    <form id="splitOrderForm" action="{{route('saleSplitForPos')}}" method="POST">
+                        @csrf
                         <div class="modal-header">
                             <h4 class="modal-title">Split Order</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -1211,7 +1229,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-sm splitOrder" id="" data-bs-dismiss="modal">Split Selected Order</button>
+                            <button type="submit" class="btn btn-primary btn-sm splitOrder" id="" >Split Selected Order</button>
                         </div>
                     </form>
                 </div>
@@ -1260,6 +1278,7 @@
         </div>
         <div class="modal fade purchaseDetail" tabindex="-1"></div>
         <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="modal"></div>
+        <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
@@ -1269,10 +1288,10 @@
         <!--end::Global Javascript Bundle-->
 
         @include('App.pos.contactAdd')
-        @include('App.product.product.quickAddProduct')
 
         {{-- @include('App.pos.js.pos_js') --}}
         @include('App.pos.js.pos_js_v2')
+        @include('App.alert.alert')
     </body>
     <!--end::Body-->
 </html>
@@ -1305,4 +1324,14 @@ $(document).on('click', '.view_detail', function(){
             var url = $(this).data('href');
             ajaxPrint(url); //function from print.js
         });
+
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
+
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+        });
+    });
 </script>

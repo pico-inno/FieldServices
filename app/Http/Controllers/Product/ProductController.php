@@ -138,6 +138,16 @@ class ProductController extends Controller
 
         return view('App.product.product.productAdd', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations'));
     }
+    public function quickAdd() {
+        $brands = Brand::all();
+        $categories = Category::with('parentCategory', 'childCategory')->get();
+        $manufacturers = Manufacturer::all();
+        $generics = Generic::all();
+        $uoms = UOM::all();
+        $variations = VariationTemplates::all();
+        $unitCategories = UnitCategory::all();
+        return view('App.product.product.quickAddProduct', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations'));
+    }
 
     public function create(ProductCreateRequest $request)
     {
@@ -212,7 +222,7 @@ class ProductController extends Controller
                 'product_id' => $product->id,
                 'variation_template_id' => $request->variation_template_id_hidden,
                 'updated_by' => Auth::user()->id
-            ]);            
+            ]);
 
             DB::commit();
             if($request->has('save')){
@@ -345,7 +355,7 @@ class ProductController extends Controller
 
                 // Find variation IDs to delete
                 $variationsToDelete = array_diff($dbVariationIds->toArray(), $request->product_variation_id);
-                
+
                 if (!empty($variationsToDelete)) {
                     ProductVariation::whereIn('id', $variationsToDelete)->update([
                         'deleted_by' => Auth::user()->id,
@@ -359,16 +369,16 @@ class ProductController extends Controller
                                             ->where('variation_template_id', $variation_template_id)
                                             ->select('id', 'name')
                                             ->get();
-            
+
             $lowercaseVariationNames = $variationTemplateValuesQuery->pluck('name')->map(fn ($v) => strtolower($v))->toArray();
-            
+
             $variationNameAndIdMap = $variationTemplateValuesQuery->mapWithKeys(function ($item) {
                 return [strtolower($item->name) => $item->id];
             })->toArray();
-            
+
             $productVariationCount = ProductVariation::withTrashed()->count();
             $productVariations = [];
-            
+
             foreach($request->variation_value as $index => $value){
                 $variationName = strtolower($value);
 
@@ -382,7 +392,7 @@ class ProductController extends Controller
                     ])->id;
                 }
                 $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
-                
+
                 $variationData = [
                     'product_id' => $nextProductId,
                     'variation_sku' => $productVariationSku,
@@ -395,7 +405,7 @@ class ProductController extends Controller
                 if ($isCreating) {
                     $variationData['created_by'] = auth()->id();
                     $variationData['created_at'] = now();
-                } 
+                }
                 if(!$isCreating) {
                     $variationData['id'] = $request->product_variation_id[$index] ?? null;
                     $variationData['updated_by'] = auth()->id();
@@ -404,16 +414,16 @@ class ProductController extends Controller
 
                 $productVariations[] = $variationData;
             }
-            
+
             if($isCreating){
                 ProductVariation::insert($productVariations);
             }
             if(!$isCreating){
                 foreach ($productVariations as $variation) {
                     ProductVariation::updateOrCreate(['id' => $variation['id']], $variation);
-                }               
+                }
             }
-        } 
+        }
         if ($product_type === "single") {
             $productSingle = [
                 'product_id' => $nextProductId,
@@ -422,7 +432,7 @@ class ProductController extends Controller
                 'profit_percent' => $request->single_profit,
                 'default_selling_price' => $request->single_selling,
             ];
-            
+
             if($isCreating){
                 $productSingle['created_by'] = auth()->id();
                 $productSingle['created_at'] = now();

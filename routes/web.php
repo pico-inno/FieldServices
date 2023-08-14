@@ -745,6 +745,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product-datas', 'productDatas')->name('product.data');
     Route::get('/product', 'index')->name('products');
     Route::get('/product/add', 'add')->name('product.add');
+    Route::get('/product/quick-add', 'quickAdd')->name('product.quickAdd');
     Route::post('/product/create', 'create')->name('product.create');
     Route::get('/product/edit/{product}', 'edit')->name('product.edit');
     Route::put('/product/update/{product}', 'update')->name('product.update');

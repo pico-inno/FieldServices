@@ -70,11 +70,19 @@ function fprice($price){
 function fDate($date,$br=false)
 {
     $dateTime =date_create($date);
-    $formattedDate = $dateTime->format("m-d-Y " );
+    $formattedDate = $dateTime->format("d-M-Y " );
     $formattedTime = $dateTime->format(" h:i A " );
     if($br){
         return $formattedDate.'<br>'.'('.$formattedTime.')';
     }else{
      return $formattedDate.' '.'('.$formattedTime.')';
     }
+}
+
+function getSettingsValue($selector){
+    return SettingHelpers::load()->getSettingsValue($selector)->$selector;
+}
+
+function isUsePaymnetAcc(){
+    return getSettingsValue('use_paymentAccount')==1 ? true :false;
 }

@@ -65,6 +65,7 @@ class purchaseController extends Controller
                     ->get();
         $currencies=Currencies::get();
         $setting=$this->setting;
+        
         return view('App.purchase.addPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
     }
 
@@ -674,7 +675,7 @@ class purchaseController extends Controller
                 }
             }
         }
-        
+
         return response()->json($products, 200);
     }
 

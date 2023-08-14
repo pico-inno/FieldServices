@@ -21,6 +21,8 @@ var KTCustomersList = function () {
 
         // Init datatable --- more info on datatables: https://datatables.net/manual/
         datatable = $(table).DataTable({
+            pageLength: 30,
+            lengthMenu: [10, 20, 30, 50,40,80],
             'columnDefs': [
                // Disable ordering on column 0 (checkbox)
                 { orderable: false, targets: 0 },

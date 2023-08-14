@@ -107,7 +107,7 @@
                     <div class="d-flex">
                         <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
                         @if ($posRegister->use_for_res=='1')
-                            <select name="table_id" id="table_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light" data-control="select2" data-allow-clear="true">
+                            <select name="table_id" id="table_nav_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light table_id" data-control="select2" data-allow-clear="true">
                                 <option disabled selected>Select Table</option>
                                 @foreach ($tables as $table)
                                     <option value="{{$table->id}}">{{$table->table_no}}</option>
@@ -162,7 +162,7 @@
                             <div class="row mt-3" style="max-height: 5%">
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control" name="pos_product_search" placeholder="Search products..." >
-                                    <span class="input-group-text custom-tooltip "  type="button" data-bs-toggle="modal" data-bs-target="#quick_add_product_modal" >
+                                    <span class="input-group-text custom-tooltip productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button"  >
                                         <i class="fas fa-plus text-primary fs-2"></i>
                                     </span>
                                 </div>
@@ -311,16 +311,12 @@
                                                             <!--end::Title-->
                                                         </label>
                                                         <!--end::Radio-->
-                                                        <!--begin::Radio-->
-                                                        <label class="for_disable_btn mb-3 btn  btn-sm bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                            <!--begin::Input-->
-                                                            <input class="btn-check " type="radio" name="method" value="4" />
-                                                            <!--end::Input-->
-                                                            <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block">card</span>
-                                                            <!--end::Title-->
+                                                        <label  class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 split_order_modal_btn_from_create" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <button class="btn btn-sm   fw-bold  rounded-0">
+                                                                 Split Voucher
+                                                            </button>
                                                         </label>
-                                                        <!--end::Radio-->
                                                     </div>
                                             </div>
 
@@ -475,19 +471,12 @@
                                                         <!--end::Title-->
                                                     </label>
                                                     <!--end::Radio-->
-                                                    <!--begin::Radio-->
-                                                    <label class=" mb-3 btn   btn-sm bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                        <!--begin::Input-->
-                                                        <input class="btn-check" type="radio" name="method" value="4" />
-                                                        <!--end::Input-->
-                                                        <!--begin::Icon-->
-                                                        {{-- <i class="fonticon-mobile-payment fs-2hx mb-2 pe-0"></i> --}}
-                                                        <!--end::Icon-->
-                                                        <!--begin::Title-->
-                                                        <span class="fs-8 fw-bold d-block">card</span>
-                                                        <!--end::Title-->
+                                                    <label  class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 split_order_modal_btn_from_create" data-kt-button="true">
+                                                        <input class="btn-check" type="radio" name="method" value="1" />
+                                                        <button class="btn btn-sm   fw-bold  rounded-0">
+                                                             Split Voucher
+                                                        </button>
                                                     </label>
-                                                    <!--end::Radio-->
                                                 </div>
                                             </div>
                                         </div>
@@ -684,6 +673,8 @@
             </div>
         </div>
 
+
+
         {{-- Filter Brand --}}
         <div class="modal fade sec-custom-modal" tabindex="-1" id="filter_brand">
             <div class="modal-dialog">
@@ -838,6 +829,12 @@
                                 <input type="text" class="form-control form-control-sm rounded-0" name="subtotal_with_discount" value="">
                             </div>
                         </div>
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5">Note</label>
+                                <textarea name="item_detail_note_input"  id="item_detail_note_input" cols="30" rows="4" class="form-control form-control-sm"></textarea>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -852,7 +849,7 @@
             <div class="modal-dialog modal-dialog-scrollable  w-md-500px">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="modal-title">Order Preview</h4>
+                    <h4 class="modal-title"> (<span id="table-text"></span>) Order Preview </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="p-5">
@@ -863,50 +860,15 @@
                         <option value="delivery">Delivery</option>
                     </select>
                   </div>
+                   <div class="px-5 mt-3 mb-5">
+                        <select id="tableForFinalize"  autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="form-select form-select-sm" data-control="select2" data-allow-clear="true">
+                            <option disabled selected>Select Table</option>
+                            @foreach ($tables as $table)
+                                <option value="{{$table->id}}">{{$table->table_no}}</option>
+                            @endforeach
+                        </select>
+                   </div>
                   <div class="modal-body" id="orderDetailConfirm">
-
-                        {{-- <div class="separator separator-dashed"></div>
-                        <div class="d-flex justify-content-between px-5 py-3">
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold">Chese Burgar</h2>
-                            </div>
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold">x 10</h2>
-                            </div>
-                        </div>
-
-                        <div class="separator separator-dashed"></div>
-                        <div class="d-flex justify-content-between px-5 py-3">
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold">Moh Hingar</h2>
-                            </div>
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold">x 10</h2>
-                            </div>
-                        </div>
-                        <div class="d-flex px-5 py-3">
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold me-2">note:</h2>
-                            </div>
-                            <div class="">
-                                <h2 class=" fs-6 fw-semibold">
-                                    <p>
-                                    နံနံပင်မထည့်ပါ။
-                                    </p>
-                                </h2>
-                            </div>
-                        </div>
-                        <div class="separator separator-dashed"></div>
-
-                        <div class="d-flex justify-content-between px-5 py-3">
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold">Bruschetta</h2>
-                            </div>
-                            <div class="">
-                                <h2 class=" fs-6 fw-bold">x 10</h2>
-                            </div>
-                        </div> --}}
-
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-primary btn-sm finalizeOrder" id="" data-bs-dismiss="modal">Finalize Order</button>
@@ -961,6 +923,7 @@
         <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="modal"></div>
         {{-- POS Sale Recent --}}
         <div class="modal fade" tabindex="-1" id="closeSessionModal"></div>
+        <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
@@ -970,10 +933,11 @@
         <!--end::Global Javascript Bundle-->
 
         @include('App.pos.contactAdd')
-        @include('App.product.product.quickAddProduct')
 
         {{-- @include('App.pos.js.pos_js') --}}
         @include('App.pos.js.pos_js_v2')
+
+        @include('App.alert.alert')
     </body>
     <!--end::Body-->
 </html>
@@ -1030,5 +994,16 @@
             var url = $(this).data('href');
             ajaxPrint(url); //function from print.js
         });
+
+
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
+
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+        });
+    });
 })
 </script>

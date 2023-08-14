@@ -24,9 +24,9 @@
         .data-table-body tr td{
             padding: 3px;
         }
-        label{
+        /* label{
             font-size: 50px !important ;
-        }
+        } */
     </style>
 @endsection
 
@@ -81,7 +81,7 @@
                                             <option value=""></option>
                                             {{-- <option value="2">Aung Aung</option> --}}
                                             @foreach ($customers as $customer)
-                                                <option value="{{$customer->id}}" @selected(old('contact_id')==$customer->id)  priceList={{$customer->pricelist_id}}>{{ $customer->company_name ?? $customer->first_name .' '. $customer->middle_name .' '.$customer->last_name }}</option>
+                                                <option value="{{$customer->id}}" @selected(old('contact_id')==$customer->id)  priceList={{$customer->pricelist_id}}>{{ $customer->company_name ?? $customer->getFullNameAttribute() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -113,11 +113,11 @@
                                 </label>
                                 <select name="status" id="saleStatus"  class="form-select form-select-sm" data-kt-select2="true" data-status="filter" data-hide-search="true" required>
                                     <option value="quotation"  >Quotation</option>
-                                    <option value="draft"  >draft</option>
-                                    <option value="pending"  >pending</option>
-                                    <option value="order" >Order</option>
+                                    <option value="draft"  >Draft</option>
+                                    <option value="pending"  >Pending</option>
+                                    <option value="order" >Ordering</option>
                                     <option value="partial"  >Partial</option>
-                                    <option value="delivered"  >delivered</option>
+                                    <option value="delivered"  >Delivered</option>
                                 </select>
                             </div>
 
@@ -139,9 +139,9 @@
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card  autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <div class="col-4 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal d-none"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
+                            <button class="col-md-3 col-12 p-3 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal  productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button">
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Add new product
-                            </div>
+                            </button>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-row-dashed fs-6 gy-4 mt-3" id="sale_table">
@@ -149,8 +149,8 @@
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-8 text-uppercase gs-0 ">
-                                        <th class="min-w-150px ps-3">Product </th>
-                                        <th class="min-w-125px">Quantity </th>
+                                        <th class="min-w-175px ps-3">Product </th>
+                                        <th class="min-w-100px">Quantity </th>
                                         <th class="min-w-125px">UOM </th>
                                         <th class="min-w-80px" style="max-width: 100px;">Price List</th>
                                         <th class="min-w-125px">Uom Price</th>
@@ -219,7 +219,7 @@
                                     <option value="percentage">Percentage</option>
                                 </select>
                             </div>
-                            <div class=" mt-2 col-12 col-md-3 mb-5 mb-sm-0">
+                            <div class="mt-2 col-12 col-md-3 mb-5 mb-md-0">
                                 <label class="form-label fs-7 fw-semibold" for="">
                                   Extra Discount Amount
                                 </label>
@@ -302,6 +302,7 @@
     <!--end::Container-->
 </div>
 
+<div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
 @include('App.purchase.contactAdd')
 @include('App.purchase.newProductAdd')
 @include('App.sell.sale.subscribeModel')
@@ -451,7 +452,15 @@ const usersList = [
         }]
         )
     }
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
 
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+        });
+    });
 </script>
 @include('App.sell.js.saleJs')
 <script src={{asset('customJs/Ajax/getAccountByCurrency.js')}}></script>

@@ -6,7 +6,7 @@ use App\Models\Product\PriceLists;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Contact extends Model 
+class Contact extends Model
 {
     use HasFactory;
 
@@ -72,7 +72,6 @@ class Contact extends Model
         if (!empty($this->last_name)) {
             $name_array[] = $this->last_name;
         }
-        
         return implode(' ', $name_array);
     }
 
@@ -94,7 +93,7 @@ class Contact extends Model
         if(!empty($this->state)){
             $address_array[] = $this->state;
         }
-        
+
         if(!empty($this->country)){
             $address_array[] = $this->country;
         }
