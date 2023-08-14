@@ -32,7 +32,7 @@
         <div class="card card-p-4 card-flush">
             <div class="card-header py-5 gap-2 gap-md-5 d-flex flex-column">
                 <div class="card-title d-flex flex-column">
-                    <h4>All suppliers</h4>
+                    <h4>All Suppliers</h4>
                 </div>
                 <div class="card-toolbar d-flex justify-content-between ">
                     <!--begin::Search-->
@@ -113,21 +113,15 @@
                             <th class="min-w-125px">Contact ID</th>
                             <th class="min-w-125px">Business Name</th>
                             <th class="min-w-125px">Supplier Name</th>
-                            <th class="min-w-125px">Email</th>
-                            <th class="min-w-125px">Tax Number</th>
-                            <th class="min-w-125px">Pay Term</th>
-                            <th class="min-w-125px">Address</th>
                             <th class="min-w-125px">Mobile</th>
+                            <th class="min-w-125px">Email</th>
+                            <th class="min-w-125px">Address</th>
+                            <th class="min-w-125px">Payable Amount</th>
+                            <th class="min-w-125px">Receivable Amount</th>
                             <th class="min-w-125px">Custom Field 1</th>
                             <th class="min-w-125px">Custom Field 2</th>
                             <th class="min-w-125px">Custom Field 3</th>
                             <th class="min-w-125px">Custom Field 4</th>
-                            <th class="min-w-125px">Custom Field 5</th>
-                            <th class="min-w-125px">Custom Field 6</th>
-                            <th class="min-w-125px">Custom Field 7</th>
-                            <th class="min-w-125px">Custom Field 8</th>
-                            <th class="min-w-125px">Custom Field 9</th>
-                            <th class="min-w-125px">Custom Field 10</th>
                         </tr>
                         <!--end::Table row-->
                     </thead>
@@ -200,21 +194,15 @@
                     { data: 'contact_id'},
                     { data: 'company_name'},
                     { data: 'first_name'},
-                    { data: 'email'},
-                    { data: 'tax_number'},
-                    { data: 'pay_term_number'},
-                    { data: 'address_line_1'},
                     { data: 'mobile'},
+                    { data: 'email'},
+                    { data: 'address_line_1'},
+                    { data: 'payable_amount'},
+                    { data: 'receivable_amount'},
                     { data: 'custom_field_1'},
                     { data: 'custom_field_2'},
                     { data: 'custom_field_3'},
-                    { data: 'custom_field_4'},
-                    { data: 'custom_field_5'},
-                    { data: 'custom_field_6'},
-                    { data: 'custom_field_7'},
-                    { data: 'custom_field_8'},
-                    { data: 'custom_field_9'},
-                    { data: 'custom_field_10'},
+                    { data: 'custom_field_4'}
                 ],
             });
 

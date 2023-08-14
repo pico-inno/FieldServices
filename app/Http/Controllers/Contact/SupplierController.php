@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Contact;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Contact\ContactUtility;
 use App\Models\Contact\Contact;
 use App\Models\paymentsTransactions;
 use App\Models\purchases\purchases;
@@ -14,6 +15,8 @@ use DateTime;
 
 class SupplierController extends Controller
 {
+    use ContactUtility;
+
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
@@ -22,6 +25,7 @@ class SupplierController extends Controller
         $this->middleware('canUpdate:supplier')->only(['edit', 'update']);
         $this->middleware('canDelete:supplier')->only('destroy');
     }
+
     public function index()
     {
         if (request()->ajax()) {
@@ -84,24 +88,9 @@ class SupplierController extends Controller
     public function show($id)
     {
         $contact = Contact::find($id);
-        $payments = [];
+        $data = $this->getSalesAndPurchases($id);
 
-        $purchase = purchases::where('contact_id', $id)->get();
-        // dd($purchase);
-        // if($purchase) {
-        //     foreach($purchase as $p) {
-        //         $payment = paymentsTransactions::where('transaction_id', $p->id)
-        //             ->where('transaction_type', '')
-        //             ->get();
-        //         // dd($payment);
-        //         if($payment) {
-        //             $payments[] = $payment;
-        //             // dd($payments);
-        //         }
-        //     }
-        // }
-        return view('App.contact_management.customers.show')->with(compact('contact', 'purchase'));
-
+        return view('App.contact_management.customers.show')->with(compact('contact', 'data'));
     }
 
     public function create()

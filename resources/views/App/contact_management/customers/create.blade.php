@@ -128,12 +128,6 @@
                             <input type="text" name="last_name" id="last_name" class="form-control form-control-sm fs-7" placeholder="Last Name" />
                         </div>
                     </div>
-                    <!-- <div class="row business-div hide">
-                        <div class="col-md-3 col-sm-12 mb-8">
-                            <label for="company_name" class="form-label">Business Name</label>
-                            <input type="text" name="company_name" id="company_name" class="form-control form-control-sm fs-7" placeholder="Business Name" />
-                        </div>
-                    </div> -->
                     <div class="row">
                         <div class="col-md-3 col-sm-12 mb-8">
                             <label for="mobile" class="required form-label">Mobile</label>
@@ -173,8 +167,8 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-12 mb-8">
                             <label for="country" class="form-label">Country</label>
-                            <select name="country" id="country" class="form-select form-select-sm fs-7" aria-label="Select example">
-                                <option value="" selected disabled>Select Country</option>
+                            <select name="country" id="country" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Select Country">
+                                <option></option>
                                 <option value="Afghanistan">Afghanistan</option>
                                 <option value="Aland Islands">Aland Islands</option>
                                 <option value="Albania">Albania</option>
@@ -405,7 +399,7 @@
                             <label for="zip_code" class="form-label">Zip Code</label>
                             <input type="text" name="zip_code" id="zip_code" class="form-control form-control-sm fs-7" placeholder="Zip Code">
                         </div>
-                        <div class="col-md-3 col-sm-12 mb-7 individual-div">
+                        <div class="col-md-3 col-sm-12 mb-8 individual-div">
                             <label for="dob" class="form-label">Date of birth</label>
                             <input type="text" name="dob" id="dob" class="form-control form-control-sm fs-7" placeholder="Date of birth" autocomplete="off" />
                         </div>
@@ -425,13 +419,15 @@
                             </div>
                             <div class="col-md-3 col-sm-12 mb-8">
                                 <label for="pay_term_number" class="form-label">Pay Term</label>
-                                <div class="input-group">
-                                    <input type="number" name="pay_term_number" id="pay_term_number" class="form-control form-control-sm fs-7">
-                                    <select name="pay_term_type" class="form-select form-select-sm fs-7" aria-label="Select example">
-                                        <option value="" selected disabled>Please select</option>
-                                        <option value="Months">Months</option>
-                                        <option value="Days">Days</option>
-                                    </select>
+                                <div class="input-group flex-nowrap">
+                                    <input type="number" name="pay_term_number" id="pay_term_number" class="form-control form-control-sm rounded-end-0 fs-7">
+                                    <div class="overflow-hidden flex-grow-1">
+                                        <select name="pay_term_type" class="form-select form-select-sm rounded-start-0 fs-7" data-control="select2" data-placeholder="Please select">
+                                            <option></option>
+                                            <option value="Months">Months</option>
+                                            <option value="Days">Days</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-12 mb-8">
@@ -518,77 +514,5 @@
 @endsection
 
 @push('scripts')
-<script>
-    tempusDominus.extend(tempusDominus.plugins.customDateFormat);
-
-    new tempusDominus.TempusDominus(document.getElementById('dob'), {
-        localization: {
-            locale: "en",
-            format: "dd/MM/yyyy",
-        }
-    });
-
-    const individual = document.getElementById('individual');
-    const individualdivs = document.querySelectorAll('.individual-div');
-    const business = document.getElementById('business');
-    const businessdiv = document.querySelector('.business-div');
-
-    // if(individual.checked){
-    //     for(let i = 0; i < individualdivs.length; i++){
-    //         individualdivs[i].classList.remove('hide');
-    //     }
-    // }
-
-    individual.addEventListener('change', () => {
-        for (let i = 0; i < individualdivs.length; i++) {
-            business.checked = false;
-            individualdivs[i].classList.remove('hide');
-            businessdiv.classList.add('hide');
-        }
-    });
-
-    business.addEventListener('change', () => {
-        for (let i = 0; i < individualdivs.length; i++) {
-            individual.checked = false;
-            individualdivs[i].classList.add('hide');
-            businessdiv.classList.remove('hide');
-        }
-    });
-
-    const showMoreInfo = () => {
-        const moreInfo = document.querySelector("#more-info-fields");
-        const moreInfoBtn = document.querySelector(".moreBtn")
-        if (moreInfo.style.display === "none") {
-            moreInfo.style.display = "block";
-            moreInfoBtn.innerHTML = `Less Informations <i class="fa-solid fa-chevron-up text-white ms-4"></i>`;
-        } else {
-            moreInfo.style.display = "none";
-            moreInfoBtn.innerHTML = `More Informations <i class="fa-solid fa-chevron-down text-white ms-4"></i>`;
-        }
-    }
-
-    // Get references to the select elements and divs
-    const contactTypeSelect = document.getElementById('contact-type');
-    const customerGroupDiv = document.querySelectorAll('.customer-group');
-    const creditLimitDiv = document.querySelector('.credit-limit');
-
-    const showCG = () => {
-        if (contactTypeSelect.value === "Customer") {
-            customerGroupDiv.forEach(function(customer_group) {
-                customer_group.classList.remove('hide');
-            });
-            creditLimitDiv.classList.remove('hide');
-        } else if (contactTypeSelect.value === "Supplier") {
-            customerGroupDiv.forEach(function(customer_group) {
-                customer_group.classList.add('hide');
-            });
-            creditLimitDiv.classList.add('hide');
-        } else if (contactTypeSelect.value === "Both") {
-            customerGroupDiv.forEach(function(customer_group) {
-                customer_group.classList.remove('hide');
-            });            
-            creditLimitDiv.classList.remove('hide');
-        }
-    }
-</script>
+<script src="{{asset('customJs/contact/contact.js')}}"></script>
 @endpush
