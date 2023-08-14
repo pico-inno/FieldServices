@@ -75,7 +75,7 @@ class POSController extends Controller
         $manufacturers = Manufacturer::all();
         $variations = VariationTemplates::all();
         $tables=null;
-        if (class_exists(table::class)) {
+        if (class_exists(Modules\Restaurant\Entities\table::class)) {
             $tables=table::get();
         }
         return view('App.pos.create', compact('locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
@@ -107,7 +107,7 @@ class POSController extends Controller
         $manufacturers = Manufacturer::all();
         $variations = VariationTemplates::all();
         $tables=null;
-        if (class_exists(table::class)) {
+        if (class_exists(Modules\Restaurant\Entities\table::class)) {
             $tables=table::get();
         }
         return view('App.pos.edit', compact('sale','locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables','posSession'));

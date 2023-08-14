@@ -109,9 +109,11 @@
                         @if ($posRegister->use_for_res=='1')
                             <select name="table_id" id="table_nav_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light table_id" data-control="select2" data-allow-clear="true">
                                 <option disabled selected>Select Table</option>
-                                @foreach ($tables as $table)
-                                    <option value="{{$table->id}}">{{$table->table_no}}</option>
-                                @endforeach
+                                @if ($tables)
+                                    @foreach ($tables as $table)
+                                        <option value="{{$table->id}}">{{$table->table_no}}</option>
+                                    @endforeach
+                                @endif
                             </select>
                             {{-- <a href="{{url('/restaurant/table/dashboard?pos_register_id='.encrypt($posRegisterId))}}" class="ms-0 btn btn-sm btn-info rounded-0"><< {{request('table_no')}}</a> --}}
                         @endif
@@ -863,9 +865,11 @@
                    <div class="px-5 mt-3 mb-5">
                         <select id="tableForFinalize"  autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="form-select form-select-sm" data-control="select2" data-allow-clear="true">
                             <option disabled selected>Select Table</option>
-                            @foreach ($tables as $table)
-                                <option value="{{$table->id}}">{{$table->table_no}}</option>
-                            @endforeach
+                            @if ($tables)
+                                @foreach ($tables as $table)
+                                    <option value="{{$table->id}}">{{$table->table_no}}</option>
+                                @endforeach
+                            @endif
                         </select>
                    </div>
                   <div class="modal-body" id="orderDetailConfirm">
