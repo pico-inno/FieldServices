@@ -40,6 +40,7 @@
                         <option value="kt_datepicker_1">{{__('business_settings.start_date')}}</option>
                         <option value="default_profit_percent">{{__('business_settings.default_profit_percent')}}</option>
                         <option value="currency">{{__('business_settings.currency')}}</option>
+                        <option value="use_payment_account">{{__('business_settings.use_payment_account')}}</option>
                         <option value="currency_symbol_placement">{{__('business_settings.currency_symbol_placement')}}</option>
                         <option value="timezone">{{__('business_settings.time_zone')}}</option>
                         <option value="update_logo">{{__('business_settings.update_logo')}}</option>
@@ -504,11 +505,20 @@
                                                         <input class="form-control form-control form-control form-control-sm" name="start_date" placeholder="Pick a date"  id="kt_datepicker_1" value="{{date('d-m-Y')}}" />
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
+                                                {{-- <div class="col-md-12 mb-7 col-lg-4">
                                                     <div class="form-check form-check-custom">
                                                     <input type="checkbox" class="form-check-input border-gray-400 me-3" name="lot_control" id="lot_control" @checked($settingData['lot_control']=='on') disabled readonly>
                                                         <label class="fs-6 fw-semibold form-label mt-3" for="lot_control">
                                                             <span >{{__('business_settings.lot_control')}}</span>
+                                                        </label>
+                                                    </div>
+                                                </div> --}}
+
+                                                <div class="col-md-12 mb-7 col-lg-4">
+                                                    <div class="form-check form-check-custom">
+                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="use_paymentAccount" id="use_payment_account" @checked($settingData['use_paymentAccount']==1)  >
+                                                        <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_payment_account">
+                                                            <span >{{__('business_settings.use_payment_account')}}</span>
                                                         </label>
                                                     </div>
                                                 </div>

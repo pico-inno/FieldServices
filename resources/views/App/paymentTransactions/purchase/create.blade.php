@@ -197,11 +197,11 @@
                     }
                 }
                 var validationFields = {
-                        payment_account_id:{
-                            validators: {
-                                notEmpty: { message: "* Payment Account is required" }
-                            },
-                        },
+                        // payment_account_id:{
+                        //     validators: {
+                        //         notEmpty: { message: "* Payment Account is required" }
+                        //     },
+                        // },
                         payment_amount:paidAmountValidator,
                 };
                 return  FormValidation.formValidation(

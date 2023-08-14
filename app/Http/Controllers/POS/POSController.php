@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\POS;
 
-use DB;
-
 use Exception;
+
+use App\Models\resOrders;
 use App\Models\sale\sales;
 use App\Models\Product\UOM;
 use App\Models\posRegisters;
@@ -17,23 +17,23 @@ use App\Models\Product\Product;
 use App\Models\Product\Category;
 use App\Models\Product\PriceGroup;
 use App\Models\Product\PriceLists;
+use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\posRegisterTransactions;
-use App\Models\posSession\posRegisterSessions;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
+use Modules\Restaurant\Entities\table;
+use App\Models\posRegisterTransactions;
 use function PHPUnit\Framework\isEmpty;
 use Maatwebsite\Excel\Concerns\ToArray;
-use App\Models\Product\ProductVariation;
 
+use App\Models\Product\ProductVariation;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Product\VariationTemplates;
+use App\Models\posSession\posRegisterSessions;
 use App\Models\Product\ProductVariationsTemplates;
-use App\Models\resOrders;
-use Modules\Restaurant\Entities\table;
 
 class POSController extends Controller
 {
@@ -89,6 +89,7 @@ class POSController extends Controller
                 return back()->with(['warning'=>'something went wrong']);
             }
             $posRegister=$posRegisterQry->first();
+            $posSession=posRegisterSessions::where('pos_register_id',$posRegisterId)->where('status','open')->first();
         } catch (\Throwable $th) {
             return back()->with(['warning'=>'something went wrong']);
         }
@@ -109,7 +110,7 @@ class POSController extends Controller
         if (class_exists(table::class)) {
             $tables=table::get();
         }
-        return view('App.pos.edit', compact('sale','locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
+        return view('App.pos.edit', compact('sale','locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables','posSession'));
     }
     public function productVariationsGet()
     {
@@ -472,11 +473,16 @@ class POSController extends Controller
         }
     }
     public function recentSale($id){
-        // $posRegister=posRegisters::where('id',$id)->firstOrFail();
-        // if($posRegister->use_for_res == 1){
-        //    $resOrder= resOrders::where('id',$saleId)->get();
-        //    dd($resOrder->toArray());
-        // }
+        $posRegisterCheck=posRegisters::where('id',$id)->exists();
+        $restaurantOrder=null;
+        if($posRegisterCheck){
+
+            $posRegister=posRegisters::where('id',$id)->first();
+            if($posRegister->use_for_res == 1){
+                $restaurantOrder=resOrders::where('pos_register_id',$id)
+                ->limit(20)->get();
+             }
+        }
         $posRegisterId=$id;
         $saleOrders=sales::where('pos_register_id',$id)
             ->orderBy('id','DESC')
@@ -493,7 +499,9 @@ class POSController extends Controller
             ->where('status','draft')
             ->limit(5)
             ->get();
-        return view('App.pos.recentTransactions',compact('saleOrders','saleDelivered','saleDrafts','posRegisterId'));
+
+
+        return view('App.pos.recentTransactions',compact('saleOrders','saleDelivered','saleDrafts','posRegisterId','restaurantOrder','posRegister'));
     }
     public function closeSession($posRegisterId){
         $posRegister=posRegisters::where('id',$posRegisterId)->first();
@@ -508,8 +516,14 @@ class POSController extends Controller
                                                         ->whereNotNull('payment_transaction_id')
                                                         ->with('paymentTransaction')
                                                         ->get();
+
+        $sumAmountOnPaymentAcc = posRegisterTransactions::select('payment_account_id', DB::raw('SUM(transaction_amount) as total_amount'))
+                            ->where('register_session_id',$sessionId)
+                            ->with('paymentAccount')
+                            ->groupBy('payment_account_id','currency_id')
+                            ->get();
                                                         // dd($paymentTransactions);
-        return view('App.pos.closeSession',compact('posRegister','posSession','transactions','paymentTransactions'));
+        return view('App.pos.closeSession',compact('posRegister','posSession','transactions','paymentTransactions','sumAmountOnPaymentAcc'));
     }
 
 

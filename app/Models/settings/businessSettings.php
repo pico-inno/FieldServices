@@ -22,6 +22,7 @@ class businessSettings extends Model
         'time_zone',
         'fy_start_month',
         'accounting_method',
+        'use_paymentAccount',
         'default_sales_discount',
         'sell_price_tax',
         'logo',

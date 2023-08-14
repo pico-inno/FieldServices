@@ -28,4 +28,8 @@ class posRegisterTransactions extends Model
     public function paymentTransaction():HasOne{
         return $this->hasOne(paymentsTransactions::class,'id','payment_transaction_id');
     }
+
+    public function paymentAccount():HasOne{
+        return $this->hasOne(paymentAccounts::class,'id','payment_account_id');
+    }
 }

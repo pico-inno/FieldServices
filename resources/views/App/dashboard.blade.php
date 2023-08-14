@@ -2,6 +2,18 @@
 @section('dashboard_active','active')
 @section('dashboard_show', 'active show')
 @section('dashboard_active_show', 'active ')
+@section('title')
+    <!--begin::Heading-->
+    <h1 class="text-dark fw-bold my-0 fs-2">{{getSettingsValue('name')}}</h1>
+    <!--end::Heading-->
+    <!--begin::Breadcrumb-->
+    <ul class="breadcrumb fw-semibold fs-base my-1">
+        <li class="breadcrumb-item text-muted">Home</li>
+        {{-- <li class="breadcrumb-item text-muted">add</li> --}}
+        <li class="breadcrumb-item text-dark">Dashboard </li>
+    </ul>
+    <!--end::Breadcrumb-->
+@endsection
 @section('styles')
     <style>
         .current-stock-balance-table-card .table-responsive{

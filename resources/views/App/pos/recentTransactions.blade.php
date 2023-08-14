@@ -16,6 +16,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#pos_sale_recent_order">Order</a>
                         </li>
+                        @if ($posRegister->use_for_res == 1)
+                            <li class="nav-item">
+                                <a class="nav-link text-active-primary pb-4 " data-bs-toggle="tab" href="#pos_res_recent_order">Restaurant Order</a>
+                            </li>
+                        @endif
                     </ul>
 
                     <div class="tab-content">
@@ -180,6 +185,39 @@
                                             </td>
                                         </tr> --}}
                                     </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane fade  " id="pos_res_recent_order" role="tab-panel">
+                            <div class="table-responsive">
+                                <table class="table gs-7 gy-7 gx-7">
+                                    <thead>
+                                        <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
+                                            <th>Order Voucher No</th>
+                                            <th>Order Status</th>
+                                            <th>location</th>
+                                            <th>services</th>
+                                        </tr>
+                                    </thead>
+                                    @if($restaurantOrder)
+                                        <tbody>
+                                            @if (count($restaurantOrder)<=0)
+                                                <tr>
+                                                    <td colspan="3" class="text-end fw-bold text-gray-400">There is no res order salek</td>
+                                                </tr>
+                                            @endif
+                                            @foreach ($restaurantOrder as $ro)
+                                                <tr>
+                                                    <td>{{$ro->order_voucher_no}}</td>
+                                                    <td>{{$ro->order_status}}</td>
+                                                    <td>{{$ro->location->name}}</td>
+                                                    <td>{{$ro->services}}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    @endif
                                 </table>
                             </div>
                         </div>

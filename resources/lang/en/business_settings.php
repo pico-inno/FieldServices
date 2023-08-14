@@ -275,6 +275,7 @@ return [
     'customs_label' => 'Customs Label',
     'owner_name' => 'Owner Name',
     'lot_control' => 'Lot Control',
+    'use_payment_account' => 'Use Payment Accounts',
     'upload_logo' => 'Upload Logo',
     'browses' => 'Browse',
 

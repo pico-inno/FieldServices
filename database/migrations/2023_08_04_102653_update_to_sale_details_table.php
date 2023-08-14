@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('sale_details', function (Blueprint $table) {
             $table->unsignedBigInteger('rest_order_id')->nullable();
+            $table->text('note')->nullable();
             $table->enum('rest_order_status',['order','preparing','ready','complete'])->nullable();
         });
     }

@@ -946,7 +946,14 @@
                         return p.product_id==productId && variationId == p.variation_id;
                     })[0];
                     let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices);
-                    parent.find('.uom_price').val(isNullOrNan(result.resultPrice));
+                    let price=isNullOrNan(result.resultPrice);
+                    if(price == 0){
+                        let uomPirce=parent.find('.uom_price').val();
+                        parent.find('.uom_price').val(uomPirce ?? 0);
+
+                    }else{
+                        parent.find('.uom_price').val(price);
+                    }
                 }
             }
         }

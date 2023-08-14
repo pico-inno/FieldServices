@@ -23,9 +23,7 @@
         .data-table-body tr td{
             padding: 3px;
         }
-        label{
-            font-size: 50px !important ;
-        }
+
 
     </style>
 @endsection
@@ -116,12 +114,12 @@
                                 <div class="overflow-hidden  flex-grow-1">
                                     <select name="status" id="" class="form-select form-select-sm" data-kt-select2="true" data-hide-search="true">
                                         <option value="quotation" @selected($sale->status=='quotation')>Quotation</option>
-                                        <option value="draft" @selected($sale->status=='draft')>draft</option>
+                                        <option value="draft" @selected($sale->status=='draft')>Draft</option>
                                         <option value="pending" @selected($sale->status=='pending')>Pending</option>
-                                        <option value="order" @selected($sale->status=='order')>Order</option>
+                                        <option value="order" @selected($sale->status=='order')>Ordering</option>
                                         <option value="partial" @selected($sale->status=='partial')>Partial</option>
                                         @if ($current_location->allow_sale_order == 0)
-                                            <option value="delivered"   @selected($sale->status=="delivered")>delivered</option>
+                                            <option value="delivered"   @selected($sale->status=="delivered")>Delivered</option>
                                         @endif
                                     </select>
                                 </div>
@@ -143,9 +141,9 @@
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <div class="col-4 my-5 col-md-3 btn-sm btn-primary btn add_new_product_modal d-none"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
+                            <button class="col-4 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal  productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button">
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Add new product
-                            </div>
+                            </button>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-row-dashed fs-6 gy-4 mt-10" id="sale_table">
@@ -388,6 +386,7 @@
     <!--end::Container-->
 </div>
 
+<div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
 @include('App.purchase.contactAdd')
 @include('App.purchase.newProductAdd')
 @include('App.sell.sale.subscribeModel')
@@ -420,6 +419,16 @@
             },
             placeholder: 'Type your text here...',
             theme: 'snow' // or 'bubble'
+        });
+
+        $(document).on('click', '.productQuickAdd', function(){
+            $url=$(this).data('href');
+
+            loadingOn();
+            $('#quick_add_product_modal').load($url, function() {
+                $(this).modal('show');
+                loadingOff();
+            });
         });
     </script>
 <script>

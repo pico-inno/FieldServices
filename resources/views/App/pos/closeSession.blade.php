@@ -64,6 +64,35 @@
                                 </tbody>
                         </table>
                     </div>
+
+                    @if (isUsePaymnetAcc())
+                        <div class="col-12 mt-10">
+                            <table class="table  table-layout-fixed  table-row-bordered">
+                                    <thead class="">
+                                        <h5 class="text-gray-600 ps-3">Payment Accounts</h5>
+                                    </thead>
+                                    <tbody class="">
+                                            @foreach ($sumAmountOnPaymentAcc as $sumAcc)
+                                            @php
+                                                $paymentAcc=$sumAcc->paymentAccount;
+                                            @endphp
+                                            @if ($paymentAcc)
+                                                <tr>
+                                                    <th class="text-start ps-3">
+                                                        <span class="fw-semibold fs-7 text-gray-600">{{$paymentAcc->name ?? ''}}</span>
+                                                    </th>
+                                                    <td  class="text-end pe-3">
+                                                        <span class="fw-bold fs-7 text-gray-800">{{price($sumAcc->total_amount,$sumAcc->currency_id)}}</span>
+                                                    </td>
+                                                </tr>
+
+                                            @endif
+                                            @endforeach
+                                    </tbody>
+                            </table>
+                        </div>
+
+                    @endif
                     <div class="col-12 mt-10">
                         <div class="p-2 px-3 bg-gray-100">
                             <h2 class="text-primary mb-0">Sell Vouchers</h2>
@@ -111,7 +140,10 @@
                                         <th class="text-start">Payment Vouncher No</th>
                                         <th class="">Transaction Type</th>
                                         <th>Paid Ref Vounchers</th>
-                                        <th>Payment Account</th>
+
+                                        @if (isUsePaymnetAcc())
+                                            <th>Payment Account</th>
+                                        @endif
                                         <th>Payment Amount</th>
                                     </tr>
                                 </thead>
@@ -123,16 +155,19 @@
                                         </tr>
                                     @endif
                                     @foreach ($paymentTransactions as $pt)
-                                    @php
-                                        $pyt=$pt->paymentTransaction;
-                                    @endphp
+                                        @php
+                                            $pyt=$pt->paymentTransaction;
+                                        @endphp
                                         <tr class="fw-semibold text-end">
                                             <td class="text-start">{{$pyt->payment_voucher_no}}</td>
                                             <td>{{$pyt->transaction_type}}</td>
                                             <td>{{$pyt->transaction_ref_no}}</td>
-                                            <td class=" text-end">
-                                                {{$pyt->payment_account->name,$pyt->currency_id}}
-                                            </td>
+
+                                            @if (isUsePaymnetAcc())
+                                                <td class=" text-end">
+                                                    {{$pyt->payment_account->name}}
+                                                </td>
+                                            @endif
                                             <td class=" text-end">
                                                 {{price($pyt->payment_amount,$pyt->currency_id)}}
                                             </td>

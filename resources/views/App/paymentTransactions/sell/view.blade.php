@@ -110,7 +110,7 @@
                                     <span>{{$paymentAccount}}</span>
                                 </th>
                                 <th class="text-start text-gray-600 fw-semibold">
-                                    <span>{{number_format(price($t->payment_amount,$t->currency_id))}} </span>
+                                    <span>{{price($t->payment_amount,$t->currency_id)}} </span>
                                 </th>
                                 <th class="text-end pe-3">
                                     <button type="button" class="btn btn-sm  pe-2 edit_payment" data-id="{{$t->id}}" data-href="{{route('paymentTransaction.editForSale',$t->id)}}"><i class="fa-regular fa-pen-to-square text-primary"></i></button>
