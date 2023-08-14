@@ -73,7 +73,7 @@ class saleController extends Controller
     public function index()
     {
         $locations=businessLocation::select('name','id')->get();
-        $customers = contact::where('type', 'Customer')->get();
+        $customers = contact::where('type', 'Customer')->orWhere('type','Both')->get();
         // dd($customers);
         return view('App.sell.sale.allSales',compact('locations','customers'));
     }
@@ -218,7 +218,7 @@ class saleController extends Controller
     {
         $locations = businessLocation::all();
         $products = Product::with('productVariations')->get();
-        $customers = Contact::where('type', 'Customer')->get();
+        $customers = Contact::where('type', 'Customer')->orWhere('type','Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description')->get();
         $paymentAccounts=paymentAccounts::get();
         $setting=businessSettings::first();
@@ -232,7 +232,7 @@ class saleController extends Controller
     {
         $locations = businessLocation::all();
         $products = Product::with('productVariations')->get();
-        $customers = Contact::where('type', 'Customer')->get();
+        $customers = Contact::where('type', 'Customer')->orWhere('type','Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description')->get();
         // $priceGroups = PriceGroup::select('id', 'name', 'description')->get();
         // $locations = businessLocation::all();

@@ -98,7 +98,11 @@ class Contact extends Model
             $address_array[] = $this->country;
         }
 
-        return implode(' ', $address_array);
+        if(!empty($this->zip_code)){
+            $address_array[] = $this->zip_code;
+        }
+
+        return implode(', ', $address_array);
     }
 
     public function getPayTerm(){

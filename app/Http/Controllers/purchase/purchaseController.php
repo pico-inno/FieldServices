@@ -51,7 +51,8 @@ class purchaseController extends Controller
     {
         $locations = businessLocation::all();
         $suppliers=Contact::where('type','Supplier')
-            ->select('id','company_name','first_name')
+            ->orWhere('type','Both')
+            ->select('id','company_name','prefix','first_name','last_name','middle_name')
             ->get();
         return view('App.purchase.listPurchase', compact('locations','suppliers'));
     }
@@ -61,11 +62,12 @@ class purchaseController extends Controller
         $locations=businessLocation::all();
         $currency=$this->currency;
         $suppliers=Contact::where('type','Supplier')
-                    ->select('id','company_name','first_name','address_line_1','address_line_2','zip_code','city','state','country')
+                    ->orWhere('type','Both')
+                    ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
                     ->get();
         $currencies=Currencies::get();
         $setting=$this->setting;
-        
+
         return view('App.purchase.addPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
     }
 
@@ -74,7 +76,8 @@ class purchaseController extends Controller
         $locations=businessLocation::all();
         $currency=$this->currency;
         $suppliers=Contact::where('type','Supplier')
-                    ->select('id','company_name','first_name','address_line_1','address_line_2','zip_code','city','state','country')
+                    ->orWhere('type','Both')
+                    ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
                     ->get();
         $currencies=Currencies::get();
         $setting=$this->setting;
@@ -230,7 +233,8 @@ class purchaseController extends Controller
         $locations = businessLocation::all();
         $currency = $this->currency;
         $suppliers=Contact::where('type','Supplier')
-                ->select('id','company_name','first_name','address_line_1','address_line_2','zip_code','city','state','country')
+                ->orWhere('type','Both')
+                ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
                 ->get();
         $purchase=purchases::where('id',$id)->first();
         $currencies=Currencies::get();
