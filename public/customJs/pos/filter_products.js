@@ -11,7 +11,7 @@ $('#filter_category .modal-footer .save-parent-category').on('click', function()
             $(this).removeClass('d-none');
         }
     });
-
+    alert('here');
     $('#filter_category').modal('hide');
 });
 

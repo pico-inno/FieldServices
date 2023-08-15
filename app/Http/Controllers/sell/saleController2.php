@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
 use App\Models\settings\businessSettings;
 
-class saleController extends Controller
+class saleController2 extends Controller
 {
     private $setting;
     public function __construct()
@@ -273,7 +273,7 @@ class saleController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('all_sales')->with(['success' => 'successfully created sale']);
+            return redirect()->route('all_sales', 'allSales')->with(['success' => 'successfully created sale']);
         } catch (Exception $e) {
             dd($e);
             DB::rollBack();
@@ -468,7 +468,7 @@ class saleController extends Controller
                                 $availableQty = $current_stock->sum('current_quantity');
                                 $newQty = round($requestQty - $sale_detial_qty_from_db, 2);
                                 if ($newQty > $availableQty) {
-                                    return redirect()->route('all_sales')->with(['warning' => 'out of stock']);
+                                    return redirect()->route('all_sales', 'allSales')->with(['warning' => 'out of stock']);
                                 }
                                 $qtyToRemove = $request_old_sale['quantity'] - $sale_details->quantity;
                                 foreach ($availableStocks as $stock) {
@@ -735,7 +735,7 @@ class saleController extends Controller
             DB::rollBack();
         }
         // dd($request->toArray());
-        return redirect()->route('all_sales')->with(['success' => 'successfully updated']);
+        return redirect()->route('all_sales', 'allSales')->with(['success' => 'successfully updated']);
     }
 
 

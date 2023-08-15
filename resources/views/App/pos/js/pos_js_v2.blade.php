@@ -14,12 +14,13 @@
     var editSale=@json($sale ?? []);
     var saleId=editSale ? editSale.id :'';
     var route=null;
+    var getProductVariations;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
     let productsOnSelectData=[];
     $(document).ready(function() {
-        var editSaleDetails=@json($sale->sale_details ?? []) ?? [];
+        var editSaleDetails=@json($saleDetails ?? []) ?? [];
         let tableBodyId = $("#invoice_side_bar").is(':hidden') ? 'invoice_with_modal' : 'invoice_with_sidebar';
         let infoPriceId = $("#invoice_side_bar").is(':hidden') ? 'info_price_with_modal' : 'info_price_with_sidebar';
         let contact_id = $("#invoice_side_bar").is(':hidden') ? 'pos_customer' : 'sb_pos_customer';
@@ -72,22 +73,22 @@
                 <div class="payment_row">
                     <div class="mb-3">
                         <div class="form-group row">
-                            <div class="col-md-12 col-sm-5 col-12">
-                                <label class="form-label">Amount:</label>
+                            <div class="col-md-5 col-sm-5 col-12">
+                                <label class="form-label fw-bold">Amount:</label>
                                 <input type="text" class="form-control form-control-sm mb-2 mb-md-0" name="pay_amount" placeholder="" value=""/>
                             </div>
-                            <div class="col-md-3 col-sm-5 col-5 d-none">
-                                <label class="form-label">Payment Method:</label>
+                            <div class="col-md-5 col-sm-5 col-5 ">
+                                <label class="form-label fw-bold">Payment Method:</label>
                                 <select class="form-select mb-2 form-select-sm" name="payment_method" data-control="select2" data-hide-search="true" data-placeholder="Select category">
                                     <option></option>
                                     <option value="1">Cash</option>
                                     <option value="2">Card</option>
                                 </select>
                             </div>
-                            <div class="col-md-4 col-sm-2 col-2 d-none">
+                            <div class="col-md-2 col-sm-2 col-2 d-none">
                                 <button class="btn btn-sm btn-light-danger mt-3 mt-md-8 remove_payment_row">
-                                    <i class="fas fa-trash fs-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
-                                    Delete
+                                    <i class="fas fa-trash fs-7"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+
                                 </button>
                             </div>
                         </div>
@@ -232,8 +233,11 @@
         let calPrice = ($element) => {
             let quantity = $element.closest('tr').find('input[name="quantity[]"]').val();
             let default_price = $element.closest('tr').find('input[name="selling_price[]"]').val();
+            let perItemDis = $element.closest('tr').find('input[name="per_item_discount"]').val();
             let total_price = default_price * quantity;
+            let perItemDiscounts=isNullOrNan(perItemDis) * isNullOrNan(quantity);
 
+            $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - perItemDiscounts);
             $element.closest('tr').find('.subtotal_price').text(total_price);
         }
 
@@ -454,6 +458,7 @@
 
             let variationId = tr_parent.find('input[name="variation_id"]').val();
             let index;
+            // console.log(productsOnSelectData,'--');
             let product = productsOnSelectData.find(function(pd,i) {
                 index = i;
                 return  variationId == pd.variation_id;
@@ -504,9 +509,9 @@
 
         let hideCalDisPrice = (currentRow) => {
             // per item discount တွက်တာတွေကို modal box ထဲမှာ တွက်ထားတာဖြစ်လို့၊ modal box ပိတ်တဲ့ချိန် quantity အတိုးအလျှော့မှာ discount တွက်ပေးနိုင်အောင်လို။
-            let price = currentRow.closest('tr').find('input[name="selling_price[]"]').val();
-            let dis_type = currentRow.closest('tr').find('input[name="discount_type"]').val();
-            let dis_amount = currentRow.closest('tr').find('input[name="per_item_discount"]').val();
+            let price = isNullOrNan(currentRow.closest('tr').find('input[name="selling_price[]"]').val());
+            let dis_type = isNullOrNan(currentRow.closest('tr').find('input[name="discount_type"]').val());
+            let dis_amount = isNullOrNan(currentRow.closest('tr').find('input[name="per_item_discount"]').val());
             let subtotal_with_discount = currentRow.closest('tr').find('input[name="subtotal_with_discount"]').val();
             let quantity = currentRow.closest('tr').find('input[name="quantity[]"]').val();
 
@@ -523,9 +528,11 @@
             $(`#${tableBodyId} .invoiceRow`).each(function() {
                 let parent = $(this).closest('tr');
                 let subtotal = parent.find('.subtotal_price').text();
+                let quantity = parent.find('.quantity_input').val();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 if(subtotal_with_discount !== ''){
-                    let result = isNullOrNan(subtotal) - isNullOrNan(subtotal_with_discount);
+                    let result =isNullOrNan(subtotal) - isNullOrNan(subtotal_with_discount);
+                    console.log(result,isNullOrNan(subtotal) , isNullOrNan(subtotal_with_discount));
                     totalDisPrice += result;
                 }
                 subTotalPrice += isNullOrNan(subtotal);
@@ -714,7 +721,7 @@
         }
 
         // !IMPORTANT => PRODUCT VARIATIONS ICON TO SHOW
-        let getProductVariations = () => {
+        getProductVariations = () => {
             $.ajax({
                 method: 'GET',
                 url: '/pos/product-variations',
@@ -738,14 +745,14 @@
                                 <input type="hidden" name="product_variation_id" value="${item.product_variation_id}">
                                 <div class="card-body text-center p-3">
                                     ${item.image ? `<img src="/storage/product-image/${item.image}" class="rounded-3 mb-4 w-80px h-80px w-xxl-100px h-xxl-100px" alt="" />` :
-                                    `<div class="rounded-3 mb-4 w-80px h-80px w-xxl-100px h-xxl-100px"></div>`}
+                                    `<img src="{{asset('assets/media/svg/files/blank-image.svg')}}" class="rounded-3 mb-4 w-80px h-80px w-xxl-100px h-xxl-100px" alt="" />`}
                                     <div class="mb-2">
                                         <div class="text-center">
                                             <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-7 mb-3 pos-product-name">${item.name}</span>
                                             <span class="text-gray-400 fw-semibold d-block fs-8 mt-n1">${item.vari_tem_name ? item.vari_tem_name : ''} - ${item.vari_tem_val_name ? item.vari_tem_val_name : ''}</span>
                                         </div>
                                     </div>
-                                    <span class="text-primary text-end fw-bold fs-6">${item.default_selling_price}</span>
+                                    <span class="text-primary text-end fw-bold fs-6">${item.default_selling_price ?? ''}</span>
                                 </div>
                             </div>
                         </div>
@@ -1008,6 +1015,7 @@
         $(document).on('click', '.invoiceRow td:not(.exclude-modal)', function(event) {
             event.stopPropagation();
             current_tr = $(this).closest('tr');
+            let status = current_tr.data('status');
             let each_selling_price = current_tr.find('input[name="each_selling_price"]').val();
             let dis_type = current_tr.find('input[name="discount_type"]').val();
             let per_item_dis = current_tr.find('input[name="per_item_discount"]').val();
@@ -1236,9 +1244,9 @@
             })
 
             let change = Math.abs(isNullOrNan(payable_amount) - pay_amount);
-            $('#payment_info .print_paid').text(pay_amount);
-            $('#payment_info .print_change').text(change);
-            $('#payment_info .print_balance').text(balance);
+            $('#payment_info .print_paid').text(isNullOrNan(pay_amount));
+            $('#payment_info .print_change').text(isNullOrNan(change));
+            $('#payment_info .print_balance').text(isNullOrNan(balance));
         })
 
         // when opening payment info modal box
@@ -1597,34 +1605,6 @@
 
 
 
-        // Begin:: quick add product
-        $('form#quick_add_product_form').submit(function(e) {
-            event.preventDefault();
-
-            var formData = new FormData(this);
-
-            $.ajax({
-                url: $(this).attr('action'),
-                type: $(this).attr('method'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response){
-                    if (response.success == true) {
-                        $('#quick_add_product_modal').modal('hide');
-                        success(response.message);
-
-                        // Clear the input fields in the modal form
-                        $('#quick_add_product_form')[0].reset();
-
-                        getProductVariations();
-                    }
-                },
-                error: function(result) {
-                    //
-                }
-            })
-        })
         // End
 
         // ============> CONTACT CHANGE PROCESS
@@ -1732,13 +1712,13 @@
                         secIndex=i;
                         return saleDetail.product_variation.id== pd.variation_id;
                     });
+                    // console.log(editSaleDetails);
                     let uoms=getCurrentAndRefUom(saleDetail.product.uom.unit_category.uom_by_category,saleDetail.uom_id);
                     let saleQty=0;
                     if(uoms.currentUom){
                         saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(saleDetail.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
                     }
                     if(!product){
-                        console.log(saleDetail.product);
                         newProductData={
                             'product_id':saleDetail.product.id,
                             'product_name':saleDetail.product.name,
@@ -1747,7 +1727,7 @@
                             'defaultSellingPrices':saleDetail.product_variation.default_selling_price,
                             'variation_name':saleDetail.product_variation.variation_template_value ? saleDetail.product_variation.variation_template_value.name:'',
                             'sellingPrices':saleDetail.product_variation.uom_selling_price,
-                            'total_current_stock_qty':saleDetail.total_current_stock_qty,
+                            'total_current_stock_qty':saleDetail.stock_sum_current_quantity,
                             'aviable_qty':editSale.status=='delivered' ? isNullOrNan(saleDetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saleDetail.stock_sum_current_quantity) ,
                             'validate':true,
                             'uom':saleDetail.product.uom,
@@ -1764,39 +1744,39 @@
                 })
                 // for increase and decrease SERVICE ITEM QUANTITY
 
-                    (()=>{
-                        $(document).on('click', '#increase', function() {
-                        let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
-                        let incVal = parent.find('input[name="quantity[]"]');
-                        let value = parseInt(incVal.val()) + 1;
-                        incVal.val(value);
-                        false ? getPriceByEachRow() : getPrice();
-                        calPrice($(this));
-                        totalSubtotalAmountCalculate();
-                        checkStock($(this));
-                        hideCalDisPrice($(this));
-                        totalDisPrice();
-                    })
-                    $(document).on('change', '.quantity_input', function() {
-                        calPrice($(this));
-                        totalSubtotalAmountCalculate();
-                        checkStock($(this));
-                        hideCalDisPrice($(this));
-                        totalDisPrice();
-                    })
-                    $(document).on('click', '#decrease', function() {
-                        let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
-                        let decVal = parent.find('input[name="quantity[]"]');
-                        let value = parseInt(decVal.val()) - 1;
-                        decVal.val(value >= 1 ? value : 1);
-                        false ? getPriceByEachRow() : getPrice();
-                        calPrice($(this));
-                        totalSubtotalAmountCalculate();
-                        checkStock($(this));
-                        hideCalDisPrice($(this));
-                        totalDisPrice();
-                    })
-                })();
+                //     (()=>{
+                //         $(document).on('click', '#increase', function() {
+                //         let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                //         let incVal = parent.find('input[name="quantity[]"]');
+                //         let value = parseInt(incVal.val()) + 1;
+                //         incVal.val(value);
+                //         false ? getPriceByEachRow() : getPrice();
+                //         calPrice($(this));
+                //         totalSubtotalAmountCalculate();
+                //         checkStock($(this));
+                //         hideCalDisPrice($(this));
+                //         totalDisPrice();
+                //     })
+                //     $(document).on('change', '.quantity_input', function() {
+                //         calPrice($(this));
+                //         totalSubtotalAmountCalculate();
+                //         checkStock($(this));
+                //         hideCalDisPrice($(this));
+                //         totalDisPrice();
+                //     })
+                //     $(document).on('click', '#decrease', function() {
+                //         let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
+                //         let decVal = parent.find('input[name="quantity[]"]');
+                //         let value = parseInt(decVal.val()) - 1;
+                //         decVal.val(value >= 1 ? value : 1);
+                //         false ? getPriceByEachRow() : getPrice();
+                //         calPrice($(this));
+                //         totalSubtotalAmountCalculate();
+                //         checkStock($(this));
+                //         hideCalDisPrice($(this));
+                //         totalDisPrice();
+                //     })
+                // })();
             }, 1000);
         }
     });

@@ -135,7 +135,7 @@
                                                     <label for="" class="form-label">
                                                         {{ __('product/product.category') }}
                                                     </label>
-                                                    <select id="categorySelect" name="category" class="form-select form-select-sm" data-control="select2" data-placeholder="Select category">
+                                                    <select id="categorySelect" name="category" class="form-select form-select-sm" data-control="select2" data-placeholder="Select category" data-parent='#quick_add_product_form'>
                                                         <option></option>
                                                         @foreach ($categories as $category)
                                                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -1026,8 +1026,6 @@
 
                         // Clear the input fields in the modal form
                         $('#quick_add_product_form')[0].reset();
-
-                        getProductVariations();
                     }
                 },
                 error: function(result) {
