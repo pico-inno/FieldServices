@@ -122,16 +122,16 @@
                                                         <label for="" class="form-label">{{ __('product/product.brand') }}</label>
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="brand" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select brand">
+                                                                <select name="brand" class="form-select form-select-sm" data-control="select2" data-placeholder="Select brand">
                                                                     <option></option>
                                                                     @foreach ($brands as $brand)
                                                                         <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                            <span class="input-group-text cursor-pointer" data-bs-toggle="modal" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_brand">
+                                                            {{-- <span class="input-group-text cursor-pointer" data-bs-toggle="modal" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_brand">
                                                                 <i class="fas fa-circle-plus text-primary"></i>
-                                                            </span>
+                                                            </span> --}}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 mb-5">
@@ -159,16 +159,16 @@
                                                         <label for="" class="form-label">Manufacturer</label>
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="manufacturer" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select manufacturer">
+                                                                <select name="manufacturer" class="form-select form-select-sm " data-control="select2" data-placeholder="Select manufacturer">
                                                                     <option></option>
                                                                     @foreach ($manufacturers as $manufacturer)
                                                                         <option value="{{ $manufacturer->id }}">{{ $manufacturer->name }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                            <span class="input-group-text cursor-pointer" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_manufacturer">
+                                                            {{-- <span class="input-group-text cursor-pointer" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_manufacturer">
                                                                 <i class="fas fa-circle-plus text-primary"></i>
-                                                            </span>
+                                                            </span> --}}
                                                         </div>
     
                                                     </div>
@@ -176,16 +176,16 @@
                                                         <label for="" class="form-label">Generic</label>
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="generic" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select generic">
+                                                                <select name="generic" class="form-select form-select-sm " data-control="select2" data-placeholder="Select generic">
                                                                     <option></option>
                                                                     @foreach ($generics as $generic)
                                                                         <option value="{{ $generic->id }}">{{ $generic->name }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                            <span class="input-group-text cursor-pointer" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_generic">
+                                                            {{-- <span class="input-group-text cursor-pointer" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_generic">
                                                                 <i class="fas fa-circle-plus text-primary"></i>
-                                                            </span>
+                                                            </span> --}}
                                                         </div>
     
                                                     </div>
@@ -461,200 +461,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!--end::Tab pane-->
-                            <!--begin::Tab pane-->
-                            {{-- <div class="tab-pane fade" id="kt_ecommerce_add_product_advanced" role="tab-panel">
-                                <div class="d-flex flex-column gap-7 gap-lg-10">
-                                    <div class="card card-flush py-4">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-3 mb-3">
-                                                    <!--begin::Label-->
-                                                    <label class="form-label">Custom Field1</label>
-                                                    <!--end::Label-->
-                                                    <!--begin::Input-->
-                                                    <input type="text" name="custom_field1" class="form-control form-control-sm mb-2" placeholder="Custom field1" value="" />
-                                                    <!--end::Input-->
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <!--begin::Label-->
-                                                    <label class="form-label">Custom Field2</label>
-                                                    <!--end::Label-->
-                                                    <!--begin::Input-->
-                                                    <input type="text" name="custom_field2" class="form-control form-control-sm mb-2" placeholder="Custom field2" value="" />
-                                                    <!--end::Input-->
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <!--begin::Label-->
-                                                    <label class="form-label">Custom Field3</label>
-                                                    <!--end::Label-->
-                                                    <!--begin::Input-->
-                                                    <input type="text" name="custom_field3" class="form-control form-control-sm mb-2" placeholder="Custom field3" value="" />
-                                                    <!--end::Input-->
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <!--begin::Label-->
-                                                    <label class="form-label">Custom Field4</label>
-                                                    <!--end::Label-->
-                                                    <!--begin::Input-->
-                                                    <input type="text" name="custom_field4" class="form-control form-control-sm mb-2" placeholder="Custom field4" value="" />
-                                                    <!--end::Input-->
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4 mb-3 col-md-offset-4">
-                                                    <label for="" class="form-label required">
-                                                        Product Type
-                                                    </label>
-                                                    <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                        title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
-                                                                <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
-                                                                <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
-                                                    <div class="mb-3">
-                                                        <select class="form-select form-select-sm" name="product_type" id="product_type" data-hide-search="true">
-                                                            <option value="single" selected>Single</option>
-                                                            <option value="variable">Variable</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4 mb-8 col-md-offset-4">
-                                                    <div class="form-check form-check-custom form-check-solid mt-8">
-                                                        <label class="" for="tab2_check1">
-                                                            <input class="form-check-input" name="product_inactive" type="checkbox" value="1" id="tab2_check1"/>
-                                                            <strong class="ms-4 h5">Product Inactive</strong>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div id="single_box" class="box">
-
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                            <tr class="bg-secondary fw-bold fs-6 text-gray-800 text-center">
-                                                                <th>Default Purchase Price</th>
-                                                                <th>
-                                                                    x Margin(%) <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                    title="Default profit margin for the product.<br/>
-                                                                        <i class='text-muted'>You can manage default profit margin in Business Settings.</i>"></i>
-                                                                </th>
-                                                                <th>Default Selling Price</th>
-                                                                <th>Product image</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="row">
-                                                                        <div class="col-md-6">
-                                                                            <label for="" class="required form-label">Exc. tax</label>
-                                                                            <input type="text" name="single_exc" class="form-control form-control-sm" placeholder="Exc. tax">
-                                                                        </div>
-                                                                        <div class="col-md-6">
-                                                                            <label for="" class="required form-label">Inc. tax</label>
-                                                                            <input type="text" name="single_inc" class="form-control form-control-sm" placeholder="Inc. tax">
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <label for=""></label>
-                                                                    <input type="text" name="single_profit" class="form-control form-control-sm" value="">
-                                                                </td>
-                                                                <td>
-                                                                    <label for="" class="form-label">Exc. Tax</label>
-                                                                    <input type="text" name="single_selling" class="form-control form-control-sm" placeholder="Exc. tax">
-                                                                </td>
-                                                                <td>
-                                                                    <label for="" class="form-label">Product image</label>
-                                                                    <input type="file" name="" id="" class="form-control form-control-sm">
-                                                                    <div class="text-muted">
-                                                                        Max File size: 5MB <br/>
-                                                                        Aspect ration should be 1:1
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                            <div id="variable_box" class="box">
-                                                <span class="required fs-2">
-                                                    Add Variation
-                                                </span>
-
-                                                <div class="my-3 table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                            <tr class="fw-bold fs-3 text-gray-800 text-start bg-gray-300">
-                                                                <th class="text-center">Variation</th>
-                                                                <th>Variation Values</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="repeater" >
-                                                            <tr >
-                                                                <td class="min-w-200px">
-                                                                    <select name="variation_name" id="variationSelect" class="form-select" data-control="select2" data-hide-search="true" data-placeholder="Please select">
-                                                                        <option></option>
-                                                                        @php
-                                                                            $variations = \App\Models\Product\VariationTemplates::all();
-                                                                        @endphp
-                                                                        @foreach ($variations as $variation)
-                                                                            <option value="{{ $variation->id }}">{{ $variation->name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="table-responsive">
-                                                                        <table class="table  table-bordered" id="variation-table">
-                                                                            <thead>
-                                                                                <tr class="fw-bold fs-6 text-gray-800 text-start bg-gray-500">
-                                                                                    <th class="text-center min-w-100px">
-                                                                                        SKU <i class="fas fa-exclamation-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                                        title="SKU is optional. <br/> <br/>
-                                                                                            Keep it blank to automatically generate sku."></i>
-                                                                                    </th>
-                                                                                    <th class="min-w-100px">Value</th>
-                                                                                    <th class="min-w-200px">
-                                                                                        Default Purchase Price <br/>
-                                                                                        <i>Exc. tax Inc. tax</i>
-                                                                                    </th>
-                                                                                    <th class="min-w-150px">
-                                                                                        x Margin(%)
-                                                                                    </th>
-                                                                                    <th class="min-w-150px">
-                                                                                        Default Selling Price <br/>
-                                                                                        <i>Exc. Tax</i>
-                                                                                    </th>
-                                                                                    <th class="min-w-200px">Variation Images</th>
-                                                                                    <th class=" min-w-50px">
-                                                                                        <span id="child-repeater" name="add" data-repeater-create class="svg-icon svg-icon-primary svg-icon-4 cursor-pointer add-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                            <path opacity="0.3" d="M11 13H7C6.4 13 6 12.6 6 12C6 11.4 6.4 11 7 11H11V13ZM17 11H13V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z" fill="currentColor"/>
-                                                                                            <path d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12ZM17 11H13V7C13 6.4 12.6 6 12 6C11.4 6 11 6.4 11 7V11H7C6.4 11 6 11.4 6 12C6 12.6 6.4 13 7 13H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z" fill="currentColor"/>
-                                                                                            </svg>
-                                                                                        </span>
-                                                                                    </th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody data-repeater-list="variation_lists" id="variation-row">
-                                                                                
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> --}}
-                            <!--end::Tab pane-->
                         </div>
                         <!--end::Tab content-->
                     </div>
@@ -698,24 +504,24 @@
 
         // ============= > Begin:: For Product Type      < =======================
 
-            const selectBox = document.getElementById("product_type");
-            const singleBox = document.getElementById("single_box");
-            const variableBox = document.getElementById("variable_box");
+            const selectBox = $("#product_type");
+            const singleBox = $("#single_box");
+            const variableBox = $("#variable_box");
 
-            singleBox.style.display = "block";
+            singleBox.show();
 
-            selectBox.addEventListener("change", () => {
-                const selectedValue = selectBox.value;
+            selectBox.on("change", function () {
+                const selectedValue = selectBox.val();
 
                 // Hide all contact boxes
-                singleBox.style.display = "none";
-                variableBox.style.display = "none";
+                singleBox.hide();
+                variableBox.hide();
 
                 // Show the contact box associated with the selected option
                 if (selectedValue === "single") {
-                    singleBox.style.display = "block";
+                    singleBox.show();
                 } else if (selectedValue === "variable") {
-                    variableBox.style.display = "block";
+                    variableBox.show();
                 }
             });
         // ============= > End:: For Product Type      < =========================

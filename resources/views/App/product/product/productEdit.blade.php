@@ -554,118 +554,18 @@
             </form>
             <!--end::Form-->
 
-            {{-- =============================>BEGIN :: MODALS <==================================== --}}
-
-            {{-- =========> Begin :: Brand Create Modal <============ --}}
-            <div class="modal fade" tabindex="-1" id="kt_modal_brand">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="{{ route('brand.create') }}" method="POST">
-                            @csrf
-                            <div class="modal-header">
-                                <h3 class="modal-title">Add Brand</h3>
-
-                                <!--begin::Close-->
-                                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                                    <i class="fas fa-times"></i>
-                                </div>
-                                <!--end::Close-->
-                            </div>
-
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="" class="required form-label">Brand Name</label>
-                                    <input type="text" name="brand_name" class="form-control" placeholder="Name">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="" class="form-label">Short description</label>
-                                    <input type="text" name="brand_desc" class="form-control" placeholder="Short name">
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" name="brand_create" value="brand_create">Save changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {{-- =========> End :: Brand Create Modal <============ --}}
-
-            {{-- =========> Begin :: Manufacturer Create Modal <============ --}}
-            <div class="modal fade" tabindex="-1" id="kt_modal_manufacturer">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="{{ route('manufacturer.create') }}" method="POST">
-                            @csrf
-                            <div class="modal-header">
-                                <h3 class="modal-title">Add Manufacturer</h3>
-
-                                <!--begin::Close-->
-                                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                                    <i class="fas fa-times"></i>
-                                </div>
-                                <!--end::Close-->
-                            </div>
-
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="" class="required form-label">Manufacturer Name</label>
-                                    <input type="text" name="manufacturer_name" class="form-control" placeholder="Name">
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" name="manufacturer_create" value="manufacturer">Save changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {{-- =========> End :: Manufacturer Create Modal <============ --}}
-
-            {{-- =========> Begin :: Generic Create Modal <============ --}}
-            <div class="modal fade" tabindex="-1" id="kt_modal_generic">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="{{ route('generic.create') }}" method="POST">
-                            @csrf
-                            <div class="modal-header">
-                                <h3 class="modal-title">Add Generic</h3>
-
-                                <!--begin::Close-->
-                                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                                    <i class="fas fa-times"></i>
-                                </div>
-                                <!--end::Close-->
-                            </div>
-
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="" class="required form-label">Generic Name</label>
-                                    <input type="text" name="generic_name" class="form-control" placeholder="Name">
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" name="generic_create" value="generic_create">Save changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {{-- =========> End :: Generic Create Modal <============ --}}
         </div>
         <!--end::Container-->
     </div>
     <!--end::Content-->
+    @include('App.product.brand.quickAddBrand')
+    @include('App.product.generic.quickAddGeneric')
+    @include('App.product.manufacturer.quickAddManufacturer')
 @endsection
 
 @push('scripts')
     <script src="/assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+    <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
 
 <script>
     toastr.options = {
@@ -1000,31 +900,6 @@
                 toShowVariation = true;
             }
 
-            // variationSelect.on('change', function() {
-            //     let id = variationSelect.val()
-            //     $.ajax({
-            //         url: '/variation-values/'+id,
-            //         type: 'GET',
-            //         dataType: 'json',
-            //         success: function(data) {
-            //             $('tbody tr[data-repeater-item]').remove();
-
-            //             $.each(data, function(index, item) {
-            //                 $('.variation-add-delete').remove();
-            //                 let cloneRow = $(newVariation).clone();
-            //                 cloneRow.find('input[name="variation_value[]"]').val(item.name)
-            //                 cloneRow.find('input[name="product_variation_id[]"]').val(oldValues[index].id)
-            //                 cloneRow.find('input[name="variation_id[]"]').val(item.id)
-            //                 cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
-            //                 $('#variation-row').append(cloneRow);
-            //             });
-            //             calculateVariation();
-            //         },
-            //         error: function(xhr, status, error) {
-            //             console.log(error);
-            //         }
-            //     });
-            // })
             $(document).on('click', '#child-repeater', function() {
                 $('#variation-row').append(newVariation);
                 calculateVariation();
@@ -1232,6 +1107,117 @@
             });
         })
     // ============= > End:: For UOM  < ==================
+
+
+    // ============= > Begin:: For Brand  < ==================
+        $('.quick-add-brand').on('click', function(e) {
+            // e.preventDefault();
+            let brand_name = $(document).find('input[name="brand_name"]').val();
+            let brand_desc = $(document).find('input[name="brand_desc"]').val();
+            let form_type = "from_product";
+
+            var formData = {brand_name, brand_desc, form_type};
+
+            $.ajax({
+                url: '/brands/create',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    success(response.message)
+                    $('select[name="brand"]').empty();
+
+                    $('select[name="brand"]').append($('<option>'));
+
+                    $.each(response.brands, function(index, brand) {
+                        $('select[name="brand"]').append($('<option>', {
+                            value: brand.id,
+                            text: brand.name
+                        }));
+                    });
+
+                    $('#kt_modal_brand').modal('hide');
+                },
+                error: function(error) {
+                   
+                }
+            });
+        })
+    // ============= > End:: For Brand  < ==================
+
+    // ============= > Begin:: For Generic  < ==================
+        $('.quick-add-generic').on('click', function(e) {
+            let generic_name = $(document).find('input[name="generic_name"]').val();
+            let form_type = "from_product";
+
+            var formData = {generic_name, form_type};
+
+            $.ajax({
+                url: '/generic/create',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    success(response.message)
+                    $('select[name="generic"]').empty();
+
+                    $('select[name="generic"]').append($('<option>'));
+
+                    $.each(response.generics, function(index, generic) {
+                        $('select[name="generic"]').append($('<option>', {
+                            value: generic.id,
+                            text: generic.name
+                        }));
+                    });
+
+                    $('#kt_modal_generic').modal('hide');
+                },
+                error: function(error) {
+                   
+                }
+            });
+        })
+    // ============= > End:: For Generic  < ==================
+
+    // ============= > Begin:: For Manufacturer  < ==================
+        $('.quick-add-manufacturer').on('click', function(e) {
+            let manufacturer_name = $(document).find('input[name="manufacturer_name"]').val();
+            let form_type = "from_product";
+
+            var formData = {manufacturer_name, form_type};
+
+            $.ajax({
+                url: '/manufacturer/create',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    success(response.message)
+                    $('select[name="manufacturer"]').empty();
+
+                    $('select[name="manufacturer"]').append($('<option>'));
+
+                    $.each(response.manufacturers, function(index, manufacturer) {
+                        $('select[name="manufacturer"]').append($('<option>', {
+                            value: manufacturer.id,
+                            text: manufacturer.name
+                        }));
+                    });
+
+                    $('#kt_modal_manufacturer').modal('hide');
+                },
+                error: function(error) {
+                   
+                }
+            });
+        })
+    // ============= > End:: For Manufacturer  < ==================
 </script>
 
     @if (session('message'))

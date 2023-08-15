@@ -299,7 +299,7 @@ const totalCountDiscount = (pricelist, product_vari_id, quantity) => {
         if (!filteredProduct) break;
         base_price_arr.push(filteredProduct.base_price);
         id = filteredProduct.base_price;
-    } while (true);
+    } while (true)
     
     count += parseInt(pricelist.cal_value);
     // end တဖြတ် 
@@ -339,7 +339,6 @@ const totalCountDiscount = (pricelist, product_vari_id, quantity) => {
 }
 
 const isPercent = (pricelist, product_vari_id, quantity) => {
-
     let result;
     if(!checkProductExistenceAndQuantity(pricelist.pricelist_id, product_vari_id, quantity)) return;
     let basePriceId = pricelist.base_price;

@@ -210,7 +210,7 @@
         </div>
         <!--end::Container-->
     </div>
-    <!--end::Content-->
+    <!--end::Content--> 
 @endsection
 
 @push('scripts')

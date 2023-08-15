@@ -205,7 +205,8 @@ class POSController extends Controller
                         $inner_val['min_qty'] = $value['min_qty'];
                         $inner_val['from_date'] = $value['from_date'];
                         $inner_val['to_date'] = $value['to_date'];
-                        $inner_val['price'] = $value['cal_value'];
+                        $inner_val['cal_type'] = $value['cal_type'];
+                        $inner_val['cal_value'] = $value['cal_value'];
                         $inner_val['base_price'] = $value['base_price'];
                         $products[] = $inner_val;
                     }
@@ -222,7 +223,8 @@ class POSController extends Controller
                         $product['min_qty'] = $value['min_qty'];
                         $product['from_date'] = $value['from_date'];
                         $product['to_date'] = $value['to_date'];
-                        $product['price'] = $value['cal_value'];
+                        $product['cal_type'] = $value['cal_type'];
+                        $product['cal_value'] = $value['cal_value'];
                         $product['base_price'] = $value['base_price'];
                         $raw_products_with_pricelist[] = $product;
                     }
@@ -235,7 +237,8 @@ class POSController extends Controller
                         $product['min_qty'] = $value['min_qty'];
                         $product['from_date'] = $value['from_date'];
                         $product['to_date'] = $value['to_date'];
-                        $product['price'] = $value['cal_value'];
+                        $product['cal_type'] = $value['cal_type'];
+                        $product['cal_value'] = $value['cal_value'];
                         $product['base_price'] = $value['base_price'];
                         $raw_products_with_pricelist[] = $product;
                     }
@@ -254,7 +257,8 @@ class POSController extends Controller
                         $variationData['min_qty'] = $value['min_qty'];
                         $variationData['from_date'] = $value['from_date'];
                         $variationData['to_date'] = $value['to_date'];
-                        $variationData['price'] = $value['cal_value'];
+                        $variationData['cal_type'] = $value['cal_type'];
+                        $variationData['cal_value'] = $value['cal_value'];
                         $variationData['base_price'] = $value['base_price'];
                     }
 
@@ -277,7 +281,8 @@ class POSController extends Controller
                         $inner_val['min_qty'] = $value['min_qty'];
                         $inner_val['from_date'] = $value['from_date'];
                         $inner_val['to_date'] = $value['to_date'];
-                        $inner_val['price'] = $value['cal_value'];
+                        $inner_val['cal_type'] = $value['cal_type'];
+                        $inner_val['cal_value'] = $value['cal_value'];
                         $inner_val['base_price'] = $value['base_price'];
                         $products[] = $inner_val;
                     }

@@ -964,8 +964,7 @@
         @include('App.pos.contactAdd')
         @include('App.product.product.quickAddProduct')
 
-        {{-- @include('App.pos.js.pos_js') --}}
-        @include('App.pos.js.pos_js_v2')
+        @include('App.pos.js.pos_js')
     </body>
     <!--end::Body-->
 </html>
