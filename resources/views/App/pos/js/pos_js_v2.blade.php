@@ -77,7 +77,7 @@
                                 <label class="form-label fw-bold">Amount:</label>
                                 <input type="text" class="form-control form-control-sm mb-2 mb-md-0" name="pay_amount" placeholder="" value=""/>
                             </div>
-                            <div class="col-md-5 col-sm-5 col-5 ">
+                            <div class="col-md-5 col-sm-5 col-5 d-none">
                                 <label class="form-label fw-bold">Payment Method:</label>
                                 <select class="form-select mb-2 form-select-sm" name="payment_method" data-control="select2" data-hide-search="true" data-placeholder="Select category">
                                     <option></option>
@@ -1371,9 +1371,10 @@
         })
         $(document).on('change','#tableForFinalize',function(){
             $('#table_nav_id').val($(this).val()).trigger('change');
+            let tableName = $(this).children("option:selected").text();
+            $('#table-text').text(tableName);
         })
         $(document).on('click', '.split_order_modal_btn', function() {
-            console.log('here');
             let saleDetailOrders = datasForSale('order').sale_details;
             $('#services').val('dine_in').trigger('change');
             if(saleDetailOrders){

@@ -34,7 +34,6 @@ use App\Models\settings\businessSettings;
 use App\Models\Product\VariationTemplates;
 use App\Models\posSession\posRegisterSessions;
 use App\Models\Product\ProductVariationsTemplates;
-use App\Models\sale\sale_details;
 
 class POSController extends Controller
 {
@@ -56,6 +55,11 @@ class POSController extends Controller
 
                 if(!$checkPos){
                     return back()->with(['warning'=>'This POS is not in Register List']);
+                }
+                $posRegisterQry = posRegisters::whereJsonContains('employee_id', Auth::user()->id);
+                $checkAccess = $posRegisterQry->exists();
+                if (!$checkAccess) {
+                    return back()->with(['error' => 'Access Denied']);
                 }
                 $posRegister=$posRegisterQry->first();
            } catch (\Throwable $th) {
@@ -99,39 +103,6 @@ class POSController extends Controller
         $saleId=request('saleId');
         $sale=sales::where('id',$saleId)->
                 where('pos_register_id',$posRegisterId)->first();
-
-        $business_location_id=$sale->business_location_id;
-        $sale_details_query = sale_details::with([
-            'currency',
-            'productVariation' => function ($q) {
-                $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
-                ->with([
-                    'product' => function ($q) {
-                        $q->select('id', 'name', 'product_type');
-                    },
-                    'variationTemplateValue' => function ($q) {
-                        $q->select('id', 'name');
-                    }, 'uomSellingPrice'
-                ]);
-            },
-            'stock' => function ($q) use ($business_location_id) {
-                $q->where('current_quantity', '>', 0)
-                    ->where('business_location_id', $business_location_id);
-            },
-            'Currentstock',  'product' => function ($q) {
-                $q->with(['uom' => function ($q) {
-                    $q->with(['unit_category' => function ($q) {
-                        $q->with('uomByCategory');
-                    }]);
-                }]);
-            },
-        ])
-        ->where('sales_id', $saleId)->where('is_delete', 0)
-        ->withSum(['stock' => function ($q) use ($business_location_id) {
-            $q->where('business_location_id', $business_location_id);
-        }], 'current_quantity');
-        $saleDetails = $sale_details_query->get();
-
         $locations = businessLocation::all();
         $price_lists = PriceLists::all();
         $currentStockBalance = CurrentStockBalance::all();
@@ -148,8 +119,7 @@ class POSController extends Controller
         } catch (\Throwable $th) {
             $table=null;
         }
-        // dd($saleDetails->toArray());
-        return view('App.pos.edit', compact('sale', 'saleDetails','locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables','posSession'));
+        return view('App.pos.edit', compact('sale','locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables','posSession'));
     }
     public function productVariationsGet()
     {

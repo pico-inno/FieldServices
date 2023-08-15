@@ -216,11 +216,15 @@
                                 };
                             },
                             success: function(response) {
+                                console.log('herer');
                                 if(response.length>0){
                                     $('.empty-msg').remove();
+                                    console.log(resOrderLength,response.length,'---------------');
                                     if(resOrderLength<response.length){
-                                        for (let i = resOrderLength; i < response.length; i++) {
-                                            let checkExist=resOrder.find(res=>res.id==response[i].id);
+                                        console.log(response);
+                                        for (let i = resOrderLength ; i < response.length; i++) {
+                                            let checkExist=resOrder.find(res=>res.id==response[i].id) ?? false;
+                                            console.log(checkExist);
                                             if(!checkExist){
                                                 $('.orderContainer').prepend(orderComponent(response[i]));
                                                 if(response[i].order_status!='ready'){
@@ -235,7 +239,7 @@
 
                                     }
                                     for (let j = 0; j < resOrderLength; j++) {
-                                            if(response[j]){
+                                            if(response[j] && resOrder[j]){
                                                 let upToDateSaleDetailOrderTime=response[j].sale_detail[0].sale_with_table.updated_at;
                                                 let currentSaleDetailDateOrderTime=resOrder[j].sale_detail[0].sale_with_table.updated_at;
 
@@ -301,7 +305,6 @@
                         timeCount.removeClass('text-success');
                         timeCount.addClass('text-primary');
                     }
-                    resOrderLength--;
                     if(currentTag!='preparing'){
                         ajaxForStatusChange('preparing');
                         parent.remove();
@@ -547,6 +550,12 @@
                         let prepareSd=selectedSaleDetail.filter(s=>s.rest_order_status=='preparing');
                         if(prepareSd.length <= selectedSaleDetail.length){
                             ajaxForStatusChange('preparing');
+                            // let resOrderIndex=resOrder.findIndex(ro=>ro.id==selectedOrderId);
+                            // resOrder.splice(resOrderIndex, 1);
+                            resOrderLength--;
+                            selectedOrder=[];
+                            selectedOrderId=null;
+                            $('.food-container').html('');
                         }else{
                             ajaxForStatusChange('preparing',detailId);
                         }
@@ -564,9 +573,12 @@
 
                             $(`[data-id=${selectedOrderId}]`).remove();
                             ajaxForStatusChange('ready');
+                            // let resOrderIndex=resOrder.findIndex(ro=>ro.id==selectedOrderId);
+                            // resOrder.splice(resOrderIndex, 1);console.log(resOrder);
                             selectedOrder=[];
-                            selectedOrderId=null;
+                            selectedOrderId=null;resOrderLength--;
                             $('.food-container').html('');
+
                         }else{
                             ajaxForStatusChange('ready',detailId);
                         }

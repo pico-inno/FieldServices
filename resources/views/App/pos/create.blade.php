@@ -939,7 +939,6 @@
         <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
 		<script src={{asset('customJs/print/print.js')}}></script>
-        <script src={{asset('customJs/pos/filter_products.js')}}></script>
         <!--end::Global Javascript Bundle-->
 
         @include('App.pos.contactAdd')
