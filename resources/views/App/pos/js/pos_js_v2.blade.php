@@ -77,15 +77,16 @@
                                 <label class="form-label fw-bold">Amount:</label>
                                 <input type="text" class="form-control form-control-sm mb-2 mb-md-0" name="pay_amount" placeholder="" value=""/>
                             </div>
-                            <div class="col-md-5 col-sm-5 col-5 d-none">
-                                <label class="form-label fw-bold">Payment Method:</label>
-                                <select class="form-select mb-2 form-select-sm" name="payment_method" data-control="select2" data-hide-search="true" data-placeholder="Select category">
+                            <div class="col-md-5 col-sm-5 col-5 ">
+                                <label class="form-label fw-bold">Payment Account:</label>
+                                <select class="form-select mb-2 form-select-sm" name="payment_method" data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
                                     <option></option>
-                                    <option value="1">Cash</option>
-                                    <option value="2">Card</option>
+                                    @foreach ($paymentAcc as $acc)
+                                        <option value="{{$acc->id}}">{{$acc->name}} ({{$acc->account_number}})</option>
+                                    @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-2 col-sm-2 col-2 d-none">
+                            <div class="col-md-2 col-sm-2 col-2 ">
                                 <button class="btn btn-sm btn-light-danger mt-3 mt-md-8 remove_payment_row">
                                     <i class="fas fa-trash fs-7"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
 

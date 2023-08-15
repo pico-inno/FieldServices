@@ -567,7 +567,7 @@
                                     <!--end::Form group-->
 
                                     <!--begin::Form group-->
-                                    <div class="form-group mt-5 d-none">
+                                    <div class="form-group mt-5 ">
                                         <a href="javascript:;" class="btn btn-light-primary btn-sm add-payment-row">
                                             <i class="fas fa-plus fs-3"></i>
                                             Add
