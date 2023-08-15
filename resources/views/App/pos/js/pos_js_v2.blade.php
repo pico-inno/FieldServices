@@ -140,7 +140,7 @@
                     <input type="hidden" name="per_item_discount" value="" />
                     <input type="hidden" name="subtotal_with_discount" value="" />
                     <input type="hidden" name="item_detail_note" value="" />
-                    <input type="hidden" name="cost_price" value="${product.stock[0].ref_uom_price}" />
+                    <input type="hidden" name="cost_price" value="${product.stock[0] ?product.stock[0].ref_uom_price : 0}" />
                     <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
 
                     <td class=" text-break text-start fw-bold fs-6 text-gray-700 "><span class="product-name">${product.name}</span>
@@ -736,7 +736,7 @@
                         productsHtml += `
                         <div class="p-1 col-lg-2 col-md-2 col-2 min-w-125px cursor-pointer each_product">
                             <div class="card">
-                                <input type="hidden" name="category_id" value="${item.parent_category_id}">
+                                <input type="hidden" name="category_id" value="${item.category_id}">
                                 <input type="hidden" name="sub_category_id" value="${item.sub_category_id}">
                                 <input type="hidden" name="brand_id" value="${item.brand_id}">
                                 <input type="hidden" name="manufacturer_id" value="${item.manufacturer_id}">

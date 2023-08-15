@@ -122,10 +122,14 @@ class purchaseController extends Controller
             }else{
                 return redirect()->route('purchase_list')->with(['success' => 'Successfully Created Purchase']);
             }
-        } catch (Exception $e) {
-            dd($e);
+        } catch (\Exception $e) {
+            $filePath = $e->getFile();
+            $fileName = basename($filePath);
             DB::rollBack();
-            return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse']);
+            if($fileName=='UomHelpers.php'){
+                return redirect()->back()->with(['error' => 'Something Wrong with UOM ! Check UOM category and UOM'])->withInput($request->toArray());
+            }
+            return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse'])->withInput();
         }
     }
     public function listData(Request $request)
