@@ -942,12 +942,10 @@
         <!--end::Global Javascript Bundle-->
 
         @include('App.pos.contactAdd')
-
-        {{-- @include('App.pos.js.pos_js') --}}
-        @include('App.pos.js.pos_js_v2')
-
         @include('App.alert.alert')
+        @include('App.pos.js.pos_js')
     </body>
+
     <!--end::Body-->
 </html>
 <script>

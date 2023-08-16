@@ -50,9 +50,13 @@ class GenericController extends Controller
         $generic->created_by = Auth::user()->id;
 
         $generic->save();
+        $generics = Generic::all();
 
-        if($request->generic_create){
-            return back()->with('message', 'Created sucessfully generic');
+        if($request->form_type === "from_product"){
+            return response()->json([
+                'message' => 'Generic created sucessfully',
+                'generics' => $generics
+            ]);
         }
 
         return redirect('/generic')->with('message', 'Created sucessfully generic');

@@ -51,12 +51,17 @@ class BrandController extends Controller
         $brand->created_by = Auth::user()->id;
 
         $brand->save();
+        $brands = Brand::all();
 
-        if($request->brand_create){
-            return back()->with('message', 'Created sucessfully brand');
+        if($request->form_type === "from_product"){
+            return response()->json([
+                'message' => 'Brand created sucessfully',
+                'brands' => $brands
+            ]);
         }
-
-        return redirect('/brands')->with('message', 'Created sucessfully brand');
+        if($request->save === "save"){
+            return redirect('/brands')->with('message', 'Created sucessfully brand');
+        }
     }
 
     public function edit(Brand $brand)

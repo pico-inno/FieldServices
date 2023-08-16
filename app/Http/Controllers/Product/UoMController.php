@@ -47,10 +47,6 @@ class UoMController extends Controller
 
     public function update(UoMUpdateRequest $request, UOM $uom)
     {
-        if($request->has('cancle')){
-            return redirect(route('unit-category'))->with('toUOM', 'cancel');
-        }
-
         $uom->update([
             'name' => $request->name,
             'short_name' => $request->short_name,
