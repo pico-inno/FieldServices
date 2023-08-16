@@ -357,7 +357,7 @@ Route::get('purchase/list/return/add', fn () => view('App.purchase.addListPurcha
 //============================ Being: Sale  ==========================================
 Route::prefix('sell')->group(function () {
     Route::controller(saleController::class)->group(function () {
-        Route::get('all/sales', 'index')->name('all_sales');
+        Route::get('{saleType?}/sales', 'index')->name('all_sales');
         Route::get('view/{id}/detail', 'saleDetail')->name('saleDetail');
         Route::get('get/saleItem', 'saleItemsList');
         Route::get('create/page/', 'createPage')->name('add_sale');

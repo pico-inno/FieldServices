@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\paymentAccounts;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use Modules\Restaurant\Entities\table;
@@ -56,7 +57,17 @@ class POSController extends Controller
                 if(!$checkPos){
                     return back()->with(['warning'=>'This POS is not in Register List']);
                 }
+                $posRegisterQry = posRegisters::whereJsonContains('employee_id', Auth::user()->id);
+                $checkAccess = $posRegisterQry->exists();
+                if (!$checkAccess) {
+                    return back()->with(['error' => 'Access Denied']);
+                }
                 $posRegister=$posRegisterQry->first();
+                $paymentAccIds=json_decode($posRegister->payment_account_id);
+                $paymentAcc=[];
+                if($paymentAccIds != false){
+                    $paymentAcc=paymentAccounts::whereIn('id',$paymentAccIds)->get();
+                }
            } catch (\Throwable $th) {
                 return back()->with(['warning'=>'something went wrong']);
            }
@@ -80,7 +91,7 @@ class POSController extends Controller
         } catch (\Throwable $th) {
             $table=null;
         }
-        return view('App.pos.create', compact('locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
+        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
     }
     public function edit($posRegisterId)
     {
@@ -550,4 +561,6 @@ class POSController extends Controller
             return response()->json(['error' => 'An error occurred while fetching data.'], 500);
         }
     }
+
+
 }

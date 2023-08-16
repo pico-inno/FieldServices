@@ -1123,16 +1123,7 @@
                                                                 <span class="menu-title">Add Sale Order</span>
                                                             </a>
                                                         </div>
-                                                        @if(hasView('sell'))
-                                                        <div class="menu-item">
-                                                            <a class="menu-link @yield('all_sales_active_show') px-0 fs-6" href="{{route('all_sales')}}">
-                                                                <span class="menu-icon">
-                                                                    <i class="fa-solid fa-list-ul"></i>
-                                                                </span>
-                                                                <span class="menu-title">All Sale</span>
-                                                            </a>
-                                                        </div>
-                                                        @endif
+
                                                         @if(hasCreate('sell'))
                                                         <div class="menu-item">
                                                             <a class="menu-link @yield('add_sales_active_show') px-0 fs-6" href="{{route('add_sale')}}">
@@ -1142,6 +1133,32 @@
                                                                 <span class="menu-title">Add Sale</span>
                                                             </a>
                                                         </div>
+                                                        @endif
+                                                        @if(hasView('sell'))
+                                                            <div class="menu-item">
+                                                                <a class="menu-link @yield('allSales_active_show') px-0 fs-6" href="{{route('all_sales','allSales')}}">
+                                                                    <span class="menu-icon">
+                                                                        <i class="fa-solid fa-list-ul"></i>
+                                                                    </span>
+                                                                    <span class="menu-title">All Sale</span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="menu-item">
+                                                                <a class="menu-link @yield('sales_active_show') px-0 fs-6" href="{{route('all_sales','sales')}}">
+                                                                    <span class="menu-icon">
+                                                                        <i class="fa-solid fa-list-ul"></i>
+                                                                    </span>
+                                                                    <span class="menu-title">Sale List</span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="menu-item">
+                                                                <a class="menu-link @yield('posSales_active_show') px-0 fs-6" href="{{route('all_sales','posSales')}}">
+                                                                    <span class="menu-icon">
+                                                                        <i class="fa-solid fa-list-ul"></i>
+                                                                    </span>
+                                                                    <span class="menu-title">POS Sale List</span>
+                                                                </a>
+                                                            </div>
                                                         @endif
                                                         <div class="menu-item d-none">
                                                             <a class="menu-link @yield('list_pos_active_show') px-0" href="{{route('list_pos')}}">

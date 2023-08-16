@@ -26,7 +26,7 @@
                     <div class="tab-content">
                         <div class="tab-pane fade" id="pos_sale_recent_delivered" role="tab-panel">
                             <div class="table-responsive">
-                                <table class="table gs-7 gy-7 gx-7">
+                                <table class="table  g-5">
                                     <thead>
                                         <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
                                             <th>Product</th>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="tab-pane fade" id="pos_sale_recent_draft" role="tab-panel">
                             <div class="table-responsive">
-                                <table class="table gs-7 gy-7 gx-7">
+                                <table class="table  g-5">
                                     <thead>
                                         <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
                                             <th>Product</th>
@@ -136,16 +136,16 @@
                         </div>
                         <div class="tab-pane fade show active" id="pos_sale_recent_order" role="tab-panel">
                             <div class="table-responsive">
-                                <table class="table gs-7 gy-7 gx-7">
+                                <table class="table g-5">
                                     <thead>
-                                        <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
+                                        <tr class="fw-semibold fs-6 text-gray-600 border-bottom border-gray-200">
                                             <th>Product</th>
                                             <th>Customer</th>
                                             <th>Amount</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="fw-semibold">
                                         @if (count($saleOrders)<=0)
                                             <tr>
                                                 <td colspan="3" class="text-end fw-bold text-gray-400">There is no order salek</td>
@@ -192,7 +192,7 @@
 
                         <div class="tab-pane fade  " id="pos_res_recent_order" role="tab-panel">
                             <div class="table-responsive">
-                                <table class="table gs-7 gy-7 gx-7">
+                                <table class="table g-5">
                                     <thead>
                                         <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
                                             <th>Order Voucher No</th>
@@ -202,7 +202,7 @@
                                         </tr>
                                     </thead>
                                     @if($restaurantOrder)
-                                        <tbody>
+                                        <tbody class="fw-semibold">
                                             @if (count($restaurantOrder)<=0)
                                                 <tr>
                                                     <td colspan="3" class="text-end fw-bold text-gray-400">There is no res order salek</td>
@@ -213,7 +213,15 @@
                                                     <td>{{$ro->order_voucher_no}}</td>
                                                     <td>{{$ro->order_status}}</td>
                                                     <td>{{$ro->location->name}}</td>
-                                                    <td>{{$ro->services}}</td>
+                                                    <td>
+                                                        @if ($ro->services=='dine_in')
+                                                            <span class="badge bade-sm badge badge-primary">Dine In</span>
+                                                        @elseif ($ro->services=='delivery')
+                                                            <span class="badge bade-sm badge badge-info">Delivary</span>
+                                                        @elseif ($ro->services=='take_away')
+                                                            <span class="badge bade-sm badge badge-info">Take Away</span>
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

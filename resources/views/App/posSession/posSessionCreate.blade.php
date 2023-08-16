@@ -25,7 +25,7 @@
 <!--begin::Root-->
 <div class="d-flex flex-column flex-root">
     <!--end::Page bg image-->
-    <div class="col-6 m-auto mt-20">
+    <div class="col-12  col-md-8 col-lg-6 m-auto mt-20">
         <form action="{{route('pos.sessionStore',$posRegisteredId)}}" method="POST">
             @csrf
             <div class="card shadow-sm">

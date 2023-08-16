@@ -521,65 +521,70 @@
 
         {{-- Payment --}}
         <div class="modal fade" tabindex="-1" id="payment_info">
-            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-dialog modal-dialog-scrollable w-lg-600px">
                 <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Payment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body px-1">
-                    <div class="card">
-                        <div class="card-body d-flex flex-column">
-                            <div class="bg-success rounded-top d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Payable Amount</h5>
-                                <span class="fs-5 me-5 print_payable_amount"></span>
-                            </div>
-                            <div class="bg-primary d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Paid</h5>
-                                <span class="fs-5 me-5 print_paid"></span>
-                            </div>
-                            <div class="bg-info d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Balance</h5>
-                                <span class="fs-5 me-5 print_balance"></span>
-                            </div>
-                            <div class="bg-primary rounded-bottom d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Change</h5>
-                                <span class="fs-5 me-5 print_change"></span>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Payment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="card rounded-bottom-0 bg-white pb-10">
+                            <div class="card-body d-flex flex-column ">
+                                <div class=" rounded-top d-flex justify-content-between align-items-center ">
+                                    <h4 class="p-1 text-primary">Payable Amount</h4>
+                                    <span class="fs-3 text-primary me-5 print_payable_amount fw-bold">0.00</span>
+                                </div>
+                                <div class="separator my-2 separator-dashed border-gray-400"></div>
+                                <div class=" d-flex justify-content-between align-items-center">
+                                    <h4 class="p-1">Paid</h4>
+                                    <span class="fs-5 me-5 print_paid fw-bold"></span>
+                                </div>
+                                <div class="separator my-2 separator-dashed border-gray-400"></div>
+                                <div class=" d-flex justify-content-between align-items-center">
+                                    <h4 class="p-1">Balance</h4>
+                                    <span class="fs-5 me-5 print_balance fw-bold"></span>
+                                </div>
+
+                                <div class="separator my-2 separator-dashed border-gray-400"></div>
+                                <div class=" rounded-bottom d-flex justify-content-between align-items-center">
+                                    <h4 class="p-1">Change</h4>
+                                    <span class="fs-5 me-5 print_change fw-bold">0.00</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <!--begin::Repeater-->
-                            <div id="payment_amount_repeater">
-                                <!--begin::Form group-->
-                                <div class="form-group">
+                        <div class="card shadow ">
+                            <div class="card-body">
+                                <!--begin::Repeater-->
+                                <div id="payment_amount_repeater">
+                                    <!--begin::Form group-->
+                                    <div class="form-group">
 
-                                    <div id="payment_row_body">
+                                        <div id="payment_row_body">
 
+                                        </div>
                                     </div>
-                                </div>
-                                <!--end::Form group-->
+                                    <!--end::Form group-->
 
-                                <!--begin::Form group-->
-                                <div class="form-group mt-5 d-none">
-                                    <a href="javascript:;" class="btn btn-light-primary btn-sm add-payment-row">
-                                        <i class="fas fa-plus fs-3"></i>
-                                        Add
-                                    </a>
+                                    <!--begin::Form group-->
+                                    <div class="form-group mt-5 ">
+                                        <a href="javascript:;" class="btn btn-light-primary btn-sm add-payment-row">
+                                            <i class="fas fa-plus fs-3"></i>
+                                            Add
+                                        </a>
+                                    </div>
+                                    <!--end::Form group-->
                                 </div>
-                                <!--end::Form group-->
+                                <!--end::Repeater-->
                             </div>
-                            <!--end::Repeater-->
                         </div>
                     </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-info btn-sm payment_save_btn" data-bs-dismiss="modal">Save</button>
-                    <button type="button" class="btn btn-primary btn-sm" id="payment_print" data-bs-dismiss="modal">Save / Print</button>
-                  </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-info btn-sm payment_save_btn" data-bs-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="payment_print" data-bs-dismiss="modal">Save /
+                            Print</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1002,11 +1007,16 @@
 
     $(document).on('click', '.productQuickAdd', function(){
         $url=$(this).data('href');
-
         loadingOn();
         $('#quick_add_product_modal').load($url, function() {
             $(this).modal('show');
             loadingOff();
+// Begin:: quick add product
+        $('form#quick_add_product_form').submit(function(e) {
+            setTimeout(() => {
+                (()=>{getProductVariations()})();
+            }, 1500);
+        })
         });
     });
 })

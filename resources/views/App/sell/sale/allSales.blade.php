@@ -2,7 +2,7 @@
 
 @section('sell_icon', 'active')
 @section('sell_show', 'active show')
-@section('all_sales_active_show', 'active ')
+@section($saleType.'_active_show', 'active ')
 
 
 @section('styles')
@@ -14,21 +14,41 @@
                 .saleTableCard .table-responsive{
                     min-height: 60vh;
                 }
-                /* #allSaleTable tr td:last-child{
-                    text-align: start;
-                } */
+                #allSaleTable tr td:nth-child(6){
+                    text-align: end;
+
+                }
+                #sale_table_card .table-responsive{
+                    min-height: 60vh;
+                }
         </style>
 @endsection
 
 
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-4">All Sales</h1>
+    <h1 class="text-dark fw-bold my-0 fs-4">
+        @if ($saleType=='posSales')
+            POS Sale List
+        @elseif ($saleType=='sales')
+            Sale list
+        @else
+            All Sale
+        @endif
+    </h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">sell</li>
-        <li class="breadcrumb-item text-dark">all sales </li>
+        <li class="breadcrumb-item text-muted">sale</li>
+        <li class="breadcrumb-item text-dark">
+            @if ($saleType=='posSales')
+                POS Sale List
+            @elseif ($saleType=='sales')
+                Sale list
+            @else
+                All Sale
+            @endif
+        </li>
     </ul>
     <!--end::Breadcrumb-->
 @endsection
@@ -47,6 +67,7 @@
                     <div class="card-body">
                         <div class="row mb-5 flex-wrap">
                             <!--begin::Input group-->
+                            <input type="hidden" id="saleType" value="{{$saleType}}">
                             <div class="mb-5 col-4 col-sm12 col-md-3 ">
                                 <label class="form-label fs-6 fw-semibold">Bussiness Location:</label>
                                 <select class="form-select form-select-sm fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-saleItem-table-filter="businesslocation" data-hide-search="true">
@@ -203,8 +224,8 @@
                 </div>
                 <!--end::Card toolbar-->
             </div>
-            <div class="card-body pt-0 saleTableCard">
-                <table class="table align-middle table-row-dashed fs-7 gy-3" id="kt_saleItem_table">
+            <div class="card-body pt-0 saleTableCard" id="sale_table_card">
+                <table class="table align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table">
                     <thead>
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
                             <th class="w-10px pe-2">
@@ -217,7 +238,7 @@
                             <th class="min-w-100px">Sale Voucher No</th>
                             <th class="min-w-100px">Customer</th>
                             <th class="min-w-100px">Date</th>
-                            <th class="min-w-100px">Sale Amount</th>
+                            <th class="min-w-100px text-end">Sale Amount</th>
                             <th class="min-w-100px">location</th>
                             <th class="min-w-100px">status</th>
                         </tr>
@@ -228,17 +249,6 @@
                     <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                     </tbody>
-                    <!--end::Table body-->
-                    {{-- <tfoot>
-                        <tr>
-                            <th colspan="5" style="text-align:right"  class=" fs-4 fw-bold bg-secondary">Total:</th>
-                            <th class="bg-secondary fw-bold text-end"></th>
-                            <th class="bg-secondary fw-bold text-end"></th>
-                            <th colspan="" class="bg-secondary fw-bold text-end"></th>
-                            <th class="bg-secondary fw-bold " ></th>
-                            <th class="bg-secondary fw-bold "></th>
-                        </tr>
-                    </tfoot> --}}
                 </table>
                 <!--end::Table-->
             </div>

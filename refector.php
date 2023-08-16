@@ -353,7 +353,7 @@ class {
             DB::rollBack();
         }
         // dd($request->toArray());
-        return redirect()->route('all_sales')->with(['success' => 'successfully updated']);
+        return redirect()->route('all_sales','allSales')->with(['success' => 'successfully updated']);
     }
 }
 

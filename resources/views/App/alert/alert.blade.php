@@ -14,6 +14,6 @@
 @if(session('error'))
 
     <script>
-        error("{{session('warning')}}");
+        error("{{session('error')}}");
     </script>
 @endif
