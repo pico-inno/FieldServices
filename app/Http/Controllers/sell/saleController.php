@@ -334,7 +334,25 @@ class saleController extends Controller
             ]);
 
             if ($request->paid_amount > 0) {
-                $payemntTransaction = $this->makePayment($sale_data, $request->payment_account);
+                if($request->type=='pos'){
+                    $multiPayment=$request->multiPayment;
+                    foreach ($multiPayment as $mp ) {
+                        $sale_data['paid_amount']=$mp['payment_amount'];
+                        $payemntTransaction = $this->makePayment($sale_data, $mp['payment_account_id']);
+                        posRegisterTransactions::create([
+                            'register_session_id' => $request->sessionId,
+                            'payment_account_id' => $mp['payment_account_id'],
+                            'transaction_type' => 'sale',
+                            'transaction_id' => $sale_data->id,
+                            'transaction_amount' => $mp['payment_amount'],
+                            'currency_id' => $request->currency_id,
+                            'payment_transaction_id' => $payemntTransaction->id ?? null,
+                        ]);
+                    }
+
+                }else{
+                    $payemntTransaction = $this->makePayment($sale_data, $request->payment_account);
+                }
             } else {
                 $suppliers = Contact::where('id', $request->contact_id)->first();
                 $suppliers_receivable = $suppliers->receivable_amount;
@@ -353,15 +371,7 @@ class saleController extends Controller
 
 
             if ($request->type == 'pos') {
-                posRegisterTransactions::create([
-                    'register_session_id' => $request->sessionId,
-                    'payment_account_id' => $request->payment_account,
-                    'transaction_type' => 'sale',
-                    'transaction_id' => $sale_data->id,
-                    'transaction_amount' => $request->total_sale_amount,
-                    'currency_id' => $request->currency_id,
-                    'payment_transaction_id' => $payemntTransaction->id ?? null,
-                ]);
+
                 return response()->json([
                     'data' => $sale_data->sales_voucher_no,
                     'status' => '200',
