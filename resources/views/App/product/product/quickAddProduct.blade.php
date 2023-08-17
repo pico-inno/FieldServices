@@ -138,7 +138,7 @@
                                                 </label>
                                                 <div class="input-group flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select name="product_type" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Product Type">
+                                                        <select name="product_type" class="form-select form-select-sm" data-control="select2" id="product_type" data-placeholder="Select Product Type">
                                                             <option></option>
                                                             <option value="consumeable">Consumeable</option>
                                                             <option selected value="storable">Storable</option>
