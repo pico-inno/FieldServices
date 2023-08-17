@@ -457,7 +457,7 @@ class purchaseController extends Controller
             $q->select('id','product_id','variation_template_value_id')
                 ->with([
                     'product'=>function($q){
-                     $q->select('id','name','product_type','uom_id');
+                     $q->select('id','name','has_variation','uom_id');
             },
             'variationTemplateValue'=>function($q){
                 $q->select('id','name');
@@ -643,7 +643,7 @@ class purchaseController extends Controller
     protected function getProductForPurchase(Request $request)
     {
         $q=$request->data;
-        $products = Product::select('id', 'name', 'product_code', 'sku', 'product_type','uom_id', 'purchase_uom_id')
+        $products = Product::select('id', 'name', 'product_code', 'sku', 'has_variation','uom_id', 'purchase_uom_id')
         ->where('can_purchase',1)
         ->where('name', 'like', '%' . $q . '%')
         ->orWhere('sku', 'like', '%' . $q . '%')
@@ -663,7 +663,7 @@ class purchaseController extends Controller
         ]
         )->get()->toArray();
         foreach ($products as $product) {
-            if ($product['product_type'] == 'variable') {
+            if ($product['has_variation'] == 'variable') {
                 $p = $product['product_variations'];
                 foreach ($p as $variation) {
                     $variation_product = [
@@ -674,7 +674,7 @@ class purchaseController extends Controller
                         'uom_id'=>$product['uom_id'],
                         'uom'=>$product['uom'],
                         'variation_id' => $variation['id'],
-                        'product_type' => 'sub_variable',
+                        'has_variation' => 'sub_variable',
                         'variation_name' => $variation['variation_template_value']['name'],
                         'default_purchase_price' => $variation['default_purchase_price'],
                         'default_selling_price' => $variation['default_selling_price']

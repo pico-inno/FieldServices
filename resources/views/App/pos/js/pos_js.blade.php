@@ -406,6 +406,7 @@
         let checkAndStoreSelectedProduct = (newSelectedProduct) => {
             let newProductData={
                 'product_id':newSelectedProduct.id,
+                'product_type':newSelectedProduct.product_type,
                 'product_name':newSelectedProduct.name,
                 'variation_name':newSelectedProduct.variation_name,
                 'variation_id':newSelectedProduct.product_variations.id,
@@ -486,14 +487,16 @@
                 let refQty = getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
                 result += isNullOrNan(refQty)
             })
-
-            if(result > productsOnSelectData[index].total_current_stock_qty){
-                productsOnSelectData[index].validate=false;
-                $(`.stock_alert_${variationId}`).removeClass('d-none');
-            }else{
-                productsOnSelectData[index].validate=true;
-                $(`.stock_alert_${variationId}`).addClass('d-none');
+            if(product.product_type == 'storable'){
+                if(result > productsOnSelectData[index].total_current_stock_qty){
+                    productsOnSelectData[index].validate=false;
+                    $(`.stock_alert_${variationId}`).removeClass('d-none');
+                }else{
+                    productsOnSelectData[index].validate=true;
+                    $(`.stock_alert_${variationId}`).addClass('d-none');
+                }
             }
+
         }
 
         let calDiscountPrice = (disType, disAmount, priceWithoutDis) => {
@@ -548,6 +551,13 @@
         }
 
         let ajaxToStorePosData = (dataForSale) => {
+            let qtyValidate = productsOnSelectData.find(function (pd) {
+                return pd.validate==false;
+            });
+            if(qtyValidate){
+                // error('Products Are Out Of Stock');
+                // return;
+            }
             let url=saleId ?route : `/sell/create`;
             $.ajax({
                 url,
@@ -851,12 +861,12 @@
                             // console.log(element)
                             let css_class = element.total_current_stock_qty !== 0 ? " " : " text-gray-500 order-3 not-use";
 
-                            let product_countOrSku = element.product_type === 'variable' ? element.product_variations.length : element.sku;
+                            let product_countOrSku = element.has_variation === 'variable' ? element.product_variations.length : element.sku;
                             // let stock_qty = element.total_current_stock_qty !== 0 ? element.total_current_stock_qty * 1 + ' ' + element.smallest_unit : 'Out of Stocks';
-                            let vari_name_or_selectAll = element.product_type === 'sub_variable' ? element.variation_name : 'select all';
+                            let vari_name_or_selectAll = element.has_variation === 'sub_variable' ? element.variation_name : 'select all';
                             let unit = element.uom.name;
 
-                            $('#search_container').append(searchNewRow(index, element.id, element.product_type, element.variation_id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
+                            $('#search_container').append(searchNewRow(index, element.id, element.has_variation, element.variation_id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
                         })
                     }
                 },
@@ -885,7 +895,7 @@
                 return;
             }
 
-            if(selected_product.product_type === 'variable'){
+            if(selected_product.has_variation === 'variable'){
                 let variation = selected_product.product_variations;
                 variation.forEach(variation => {
                     let filteredId = products.filter( p => p.variation_id === variation.id);
@@ -939,14 +949,14 @@
                     };
                 },
                 success: function(results){
-                    if(results.length>0){
+                    if(results.length>0 && results[0].product_type=="storable"){
                         if(results[0].total_current_stock_qty === 0 || results[0].total_current_stock_qty === ''){
                             error('Out of stock');
                             return;
                         }
                     }
 
-                    if(results[0].product_type === "single"){
+                    if(results[0].has_variation === "single"){
                         let product = results[0];
                         let newInvoiceSidebar = $(invoiceSidebar(product));
                         $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
@@ -1756,6 +1766,7 @@
                     if(!product){
                         newProductData={
                             'product_id':saleDetail.product.id,
+                            'product_type':saleDetail.product.product_type,
                             'product_name':saleDetail.product.name,
                             'variation_id':saleDetail.product_variation.id,
                             'category_id':saleDetail.product.category_id,
