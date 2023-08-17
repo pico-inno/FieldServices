@@ -163,7 +163,7 @@ class purchaseController extends Controller
                 $items='';
                 foreach ($purchaseDetails as $key => $pd) {
                     $variation=$pd->productVariation;
-                    $productName=$variation->product->name;
+                    $productName=$variation->product->name ?? '';
                     $sku=$variation->product->sku ?? '';
                     $variationName=$variation->variationTemplateValue->name ?? '';
                     $items.="$productName,$variationName,$sku ;";

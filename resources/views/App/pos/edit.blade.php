@@ -1304,8 +1304,8 @@
 
         @include('App.pos.contactAdd')
 
-        {{-- @include('App.pos.js.pos_js') --}}
-        @include('App.pos.js.pos_js_v2')
+        @include('App.pos.js.pos_js')
+        {{-- @include('App.pos.js.pos_js_v') --}}
         @include('App.alert.alert')
     </body>
     <!--end::Body-->

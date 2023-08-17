@@ -342,7 +342,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                {{-- <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-end mb-3">
                             <div class="fs-7 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center mb-5 mb-md-0">
@@ -374,7 +374,7 @@
                         </div>
 
                     </div>
-                </div>
+                </div> --}}
 
             </div>
             <div class="col-12 text-center">

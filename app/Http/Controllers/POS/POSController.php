@@ -535,6 +535,8 @@ class POSController extends Controller
             $posRegister=posRegisters::where('id',$id)->first();
             if($posRegister->use_for_res == 1){
                 $restaurantOrder=resOrders::where('pos_register_id',$id)
+
+                ->orderBy('id', 'DESC')
                 ->limit(20)->get();
              }
         }

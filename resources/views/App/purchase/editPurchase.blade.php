@@ -88,16 +88,16 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden flex-grow-1">
-                                        <select name="contact_id" class="form-select form-select-sm  fw-bold rounded-0" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true">
+                                        <select name="contact_id" class="form-select form-select-sm  fw-bold rounded-start-0" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true">
                                             <option></option>
                                             @foreach($suppliers as $supplier)
                                                 <option value="{{$supplier->id}}" @selected($supplier->id==old('contact_id',$purchase->contact_id))>{{$supplier->company_name ?? $supplier->firstname}}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
+                                    {{-- <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
-                                    </button>
+                                    </button> --}}
                                 </div>
                             </div>
                             <div class="mb-7 mt-3 col-12 col-md-3">

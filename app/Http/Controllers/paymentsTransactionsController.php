@@ -400,17 +400,19 @@ class paymentsTransactionsController extends Controller
             }
             $paymentAccounts=paymentAccounts::where('id',$data->payment_account_id)->first();
             if($data->payment_account_id == $request->payment_account_id){
-                $diffAmt=$request->payment_amount-$data->payment_amount;
+                $diffAmt = $request->payment_amount - $data->payment_amount;
                 $data->update([
-                    'payment_amount'=>$request->payment_amount
+                    'payment_amount' => $request->payment_amount
                 ]);
-                $current_balance=$paymentAccounts->current_balance - $diffAmt;
-                $paymentAccounts->update([
-                    'current_balance'=>$current_balance,
-                ]);
+                if($paymentAccounts){
+                    $current_balance = $paymentAccounts->current_balance - $diffAmt;
+                    $paymentAccounts->update([
+                        'current_balance' => $current_balance,
+                    ]);
+                }
             }else{
                 if($paymentAccounts){
-                    $current_balance=$paymentAccounts->current_balance+$data->payment_amount;
+                    $current_balance=$paymentAccounts->current_balance  +$data->payment_amount;
                     $paymentAccounts->update([
                         'current_balance'=>$current_balance,
                     ]);
@@ -421,9 +423,10 @@ class paymentsTransactionsController extends Controller
             DB::commit();
             return back()->with(['success'=>'Successfully updated']);
        } catch (\Throwable $th) {
+        dd($th);
             DB::rollBack();
+            return back()->with(['success' => 'Something Wrong']);
        }
-        return back();
     }
 
 

@@ -48,7 +48,7 @@
 
                 <div class="separator my-5"></div>
                 <div class="row mb-6">
-                    <div class="col-md-4 mb-5">
+                    <div class="{{isUsePaymnetAcc() ? 'col-md-4'  : 'col-md-6' }} col-12 mb-5">
                         <label class="form-label fs-6 fw-semibold required" for="expense_on">
                             Paid On
                         </label>
@@ -65,19 +65,21 @@
                         <label for="" class="form-label fs-7 mb-2">Total Expense Amount</label>
                         <input type="text" name="total_expense_amount" id="total_expense_amount" class="form-control form-control-sm quantity" placeholder="Amount" value="1" />
                     </div> --}}
-                    <div class="col-md-4 mb-5 fv-row ">
-                        <label for="payment_account" class="form-label fs-7 mb-2 required">Payment Account</label>
-                        <select name="payment_account_id" id="payment_account" data-control="select2-acc" class="form-select form-select-sm" data-dropdown-parent="#payment_container" >
-                            <option value="" disabled selected>Please Select Payment Account</option>
-                            @foreach ($paymentAccounts as $p)
-                                <option value="{{$p->id}}" data-price="$p->balance_amount">{{$p->name}} ({{$p->account_number}})</option>
-                            @endforeach
-                        </select>
-                        <div class="fs-7 text-gray-400 mt-3">
-                            Account current balance :<span id="currentAccBalanceTxt">0</span> <span id="currencySymbol"></span>
+                    @if (isUsePaymnetAcc())
+                        <div class="col-md-4 mb-5 fv-row ">
+                            <label for="payment_account" class="form-label fs-7 mb-2 required">Payment Account</label>
+                            <select name="payment_account_id" id="payment_account" data-control="select2-acc" class="form-select form-select-sm" data-dropdown-parent="#payment_container" >
+                                <option value="" disabled selected>Please Select Payment Account</option>
+                                @foreach ($paymentAccounts as $p)
+                                    <option value="{{$p->id}}" data-price="$p->balance_amount">{{$p->name}} ({{$p->account_number}})</option>
+                                @endforeach
+                            </select>
+                            <div class="fs-7 text-gray-400 mt-3">
+                                Account current balance :<span id="currentAccBalanceTxt">0</span> <span id="currencySymbol"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4 mb-5 fv-row" >
+                    @endif
+                    <div class="{{isUsePaymnetAcc() ? 'col-md-4'  : 'col-md-6' }} col-12 mb-5 fv-row" >
                         <label for="payment_amount" class="form-label fs-7 mb-2"> Amount</label>
                         <input type="text" name="payment_amount" id="payment_amount" class="form-control form-control-sm" value="{{$data->balance_amount}}">
                     </div>
