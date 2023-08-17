@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('delivery_channels', function (Blueprint $table) {
             $table->id();
-            $table->varchar('name')->nullable();
+            $table->text('name')->nullable();
             $table->text('phone')->nullable();
             $table->timestamps();
         });
