@@ -38,6 +38,7 @@
         let product_with_variations = [];
         let customers = [];
         let customer_price_list = null;
+        $('.tableSelect').select2();
         // let price_lists_with_location = [];
 
         let products = null;
@@ -73,25 +74,27 @@
                 <div class="payment_row">
                     <div class="mb-3">
                         <div class="form-group row">
-                            <div class="col-md-5 col-sm-5 col-12">
+                            <div class=" {{isUsePaymnetAcc() ? 'col-md-5 col-sm-5 col-12 ' : 'col-12'}}">
                                 <label class="form-label fw-bold">Amount:</label>
                                 <input type="text" class="form-control form-control-sm mb-2 mb-md-0" name="pay_amount" placeholder="" value=""/>
                             </div>
-                            <div class="col-md-5 col-sm-5 col-5 ">
-                                <label class="form-label fw-bold">Payment Account:</label>
-                                <select class="form-select mb-2 form-select-sm" name="payment_account" id="payment_account" data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
-                                    <option></option>
-                                    @foreach ($paymentAcc as $acc)
-                                        <option value="{{$acc->id}}">{{$acc->name}} ({{$acc->account_number}})</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2 col-sm-2 col-2 ">
-                                <button class="btn btn-sm btn-light-danger mt-3 mt-md-8 remove_payment_row">
-                                    <i class="fas fa-trash fs-7"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+                            @if (isUsePaymnetAcc())
+                                <div class="col-md-5 col-sm-5 col-5 ">
+                                    <label class="form-label fw-bold">Payment Account:</label>
+                                    <select class="form-select mb-2 form-select-sm" name="payment_account" id="payment_account" data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
+                                        <option></option>
+                                        @foreach ($paymentAcc as $acc)
+                                            <option value="{{$acc->id}}">{{$acc->name}} ({{$acc->account_number}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                                </button>
-                            </div>
+                                <div class="col-md-2 col-sm-2 col-2 ">
+                                    <button class="btn btn-sm btn-light-danger mt-3 mt-md-8 remove_payment_row">
+                                        <i class="fas fa-trash fs-7"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -305,11 +308,11 @@
 
                 if(price !== undefined && !isNaN(price)){
                     parent_row.find('input[name="each_selling_price"]').val(result_pricelist_id);
-                    $(`#${tableBodyId} tr`).each(function() {
+                    $(`#${tableBodyId} tr`).each(()=>{
                         let each_uom_id = $(this).closest('tr').find('.invoice_unit_select option:selected').val();
                         let variation_id = $(this).closest('tr').find('input[name="variation_id"]').val();
                         if(price==0){
-                           price=$(this).closest('tr').find('input[name="selling_price[]"]').val();
+                           price=isNullOrNan($(this).closest('tr').find('input[name="selling_price[]"]').val());
                         }
                         if(variation_id == product_variation_id && each_uom_id == uom_id){
                             $(this).closest('tr').find('input[name="selling_price[]"]').val(price * 1);
@@ -608,7 +611,7 @@
             })
         }
 
-        let datasForSale = (status,onlySale=false) => {
+        let datasForSale = (status,onlySale=false,payment=false) => {
             let business_location_id = $('select[name="business_location_id"]').val();
             let table_id=$('.table_id').val();
             let contact_id = $("#invoice_side_bar").is(':hidden') ? $('#pos_customer').val() : $('#sb_pos_customer').val();
@@ -619,19 +622,23 @@
             let extra_discount_type = null;
             let extra_discount_amount = null;
             let total_sale_amount = $(`#${infoPriceId} .sb-total-amount`).text();
-            let paid_amount = $('.print_paid').text();
-            let balance_amount = total_sale_amount - paid_amount;
+            let paid_amount = 0;
+            let balance_amount = total_sale_amount;
             let currency_id = null;
             let multiPayment=[];
-            let paymentAmountRepeater=$('#payment_amount_repeater');
-            let paymentAmountFromRep=paymentAmountRepeater.find('input[name="pay_amount"]');
-            let paymentAccountFromRep=document.querySelectorAll('#payment_account');
-            paymentAmountFromRep.each((i,p) => {
-                multiPayment=[...multiPayment,{
-                    payment_amount:$(p).val(),
-                    payment_account_id:$(paymentAccountFromRep[i]).val()
-                }]
-            });
+            if(payment){
+                paid_amount = $('.print_paid').text();
+                balance_amount = total_sale_amount - paid_amount;
+                let paymentAmountRepeater=$('#payment_amount_repeater');
+                let paymentAmountFromRep=paymentAmountRepeater.find('input[name="pay_amount"]');
+                let paymentAccountFromRep=document.querySelectorAll('#payment_account');
+                paymentAmountFromRep.each((i,p) => {
+                    multiPayment=[...multiPayment,{
+                        payment_amount:$(p).val(),
+                        payment_account_id:$(paymentAccountFromRep[i]).val()
+                    }]
+                });
+            }
             console.log(multiPayment);
 
             let sales ={
@@ -1172,7 +1179,7 @@
 
                 let totalPriceAndOtherData = {total, discount, paid, balance, change, business_location, customer_name, customer_mobile};
 
-                let dataForSale = datasForSale('delivered');
+                let dataForSale = datasForSale('delivered',false,true);
                 $.ajax({
                     url: `/sell/create`,
                     type: 'POST',
@@ -1299,7 +1306,16 @@
                 ajaxToStorePosData(dataForSale);
             }
         })
+        $(document).on('change','#services',function(){
+            let val=$(this).val();
+            console.log(val);
+            if(val != 'dine_in'){
+                $('.tableSelect').addClass('d-none');
+            }else{
+                $('.tableSelect').removeClass('d-none');
 
+            }
+        })
         // Sale With Order
         $(document).on('click', '.finalizeOrder', function() {
             if(posRegister.use_for_res==1){
@@ -1317,8 +1333,11 @@
                 let dataForSale = datasForSale('order');
                 if(datasForSale('order').sale_details.length>0){
                     ajaxToStorePosData(dataForSale);
+                    $('.tableSelect').removeClass('d-none');
                 }else{
                     warning('need to add at least one item')
+
+                $('.tableSelect').removeClass('d-none');
                 }
             }
         })
@@ -1493,7 +1512,7 @@
         // Sale With Payment
         $(document).on('click', '.payment_save_btn', function() {
             if(checkContact()){
-                let dataForSale = datasForSale('delivered');
+                let dataForSale = datasForSale('delivered',false,true);
                 ajaxToStorePosData(dataForSale);
             }
         })

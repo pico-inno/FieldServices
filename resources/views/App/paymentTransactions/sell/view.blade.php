@@ -79,13 +79,16 @@
                         <thead>
                             <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
                                <th class="min-w-100px">Payment Date</th>
-                               <th  class="min-w-100px">Payment Voucher No</th>
-                               <th  class="min-w-100px">Payment Account</th>
-                               <th  class="min-w-100px">Payment Amount</th>
-                               <th class="text-end min-w-100px" style="max-width: 100px">
-                                    <span class="btn btn-sm pe-3">
+                               <th  class="min-w-100px text-center">Payment Voucher No</th>
+                                @if (isUsePaymnetAcc())
+                                    <th class="min-w-100px">Payment Account</th>
+                               @endif
+                               <th  class="min-w-100px text-end">Payment Amount</th>
+                               <th class="text-center min-w-100px" style="max-width: 100px">
+                                    {{-- <span class="btn btn-sm pe-3">
                                         <i class="fa-solid fa-trash text-danger"></i>
-                                    </span>
+                                    </span> --}}
+                                    Actions
                                 </th>
                             </tr>
                         </thead>
@@ -100,16 +103,18 @@
                                 <th class="text-start text-gray-600  fw-semibold">
                                   <span>{{fDate($t->payment_date)}}</span>
                                 </th>
-                                <th class="text-start text-gray-600 fw-semibold voucher_no">
+                                <th class="text-center text-gray-600 fw-semibold voucher_no">
                                     <span>{{$t->payment_voucher_no}}</span>
                                 </th>
                                 @php
                                    $paymentAccount=$t->payment_account->name ?? '';
                                 @endphp
-                                <th class="text-start text-gray-600  fw-semibold">
-                                    <span>{{$paymentAccount}}</span>
-                                </th>
-                                <th class="text-start text-gray-600 fw-semibold">
+                                @if (isUsePaymnetAcc())
+                                    <th class="text-start text-gray-600  fw-semibold">
+                                        <span>{{$paymentAccount}}</span>
+                                    </th>
+                                @endif
+                                <th class="text-end text-gray-600 fw-semibold">
                                     <span>{{price($t->payment_amount,$t->currency_id)}} </span>
                                 </th>
                                 <th class="text-end pe-3">

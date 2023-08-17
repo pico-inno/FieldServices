@@ -187,23 +187,13 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">{{ __('product/product.brand') }}</label>
-                                            <div class="input-group mb-5 flex-nowrap">
-                                                <div class="overflow-hidden flex-grow-1">
-                                                    <select name="brand"
-                                                        class="form-select form-select-sm rounded-end-0"
-                                                        data-control="select2" data-placeholder="Select brand">
-                                                        <option></option>
-                                                        @foreach ($brands as $brand)
-                                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <span class="input-group-text cursor-pointer" data-bs-toggle="modal"
-                                                    id="basic-addon1" data-bs-toggle="modal"
-                                                    data-bs-target="#kt_modal_brand">
-                                                    <i class="fas fa-circle-plus text-primary"></i>
-                                                </span>
-                                            </div>
+                                           <select name="brand" class="form-select form-select-sm" data-control="select2"
+                                                data-placeholder="Select brand">
+                                                <option></option>
+                                                @foreach ($brands as $brand)
+                                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">
@@ -233,43 +223,25 @@
                                     <div class="row advance-toggle-class d-none">
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">Manufacturer</label>
-                                            <div class="input-group mb-5 flex-nowrap">
-                                                <div class="overflow-hidden flex-grow-1">
-                                                    <select name="manufacturer"
-                                                        class="form-select form-select-sm rounded-end-0"
-                                                        data-control="select2" data-placeholder="Select manufacturer">
-                                                        <option></option>
-                                                        @foreach ($manufacturers as $manufacturer)
-                                                        <option value="{{ $manufacturer->id }}">{{ $manufacturer->name
-                                                            }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <span class="input-group-text cursor-pointer" id="basic-addon1"
-                                                    data-bs-toggle="modal" data-bs-target="#kt_modal_manufacturer">
-                                                    <i class="fas fa-circle-plus text-primary"></i>
-                                                </span>
-                                            </div>
+                                           <select name="manufacturer" class="form-select form-select-sm" data-control="select2"
+                                                data-placeholder="Select manufacturer">
+                                                <option></option>
+                                                @foreach ($manufacturers as $manufacturer)
+                                                <option value="{{ $manufacturer->id }}">{{ $manufacturer->name
+                                                    }}</option>
+                                                @endforeach
+                                            </select>
 
                                         </div>
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">Generic</label>
-                                            <div class="input-group mb-5 flex-nowrap">
-                                                <div class="overflow-hidden flex-grow-1">
-                                                    <select name="generic"
-                                                        class="form-select form-select-sm rounded-end-0"
-                                                        data-control="select2" data-placeholder="Select generic">
-                                                        <option></option>
-                                                        @foreach ($generics as $generic)
-                                                        <option value="{{ $generic->id }}">{{ $generic->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <span class="input-group-text cursor-pointer" id="basic-addon1"
-                                                    data-bs-toggle="modal" data-bs-target="#kt_modal_generic">
-                                                    <i class="fas fa-circle-plus text-primary"></i>
-                                                </span>
-                                            </div>
+                                            <select name="generic" class="form-select form-select-sm" data-control="select2"
+                                                data-placeholder="Select generic">
+                                                <option></option>
+                                                @foreach ($generics as $generic)
+                                                <option value="{{ $generic->id }}">{{ $generic->name }}</option>
+                                                @endforeach
+                                            </select>
 
                                         </div>
                                         <div class="col-md-4 mb-5">

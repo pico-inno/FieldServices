@@ -107,7 +107,7 @@
                     <div class="d-flex">
                         <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
                         @if ($posRegister->use_for_res=='1')
-                            <select name="table_id" id="table_nav_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light table_id" data-control="select2" data-allow-clear="true">
+                            <select name="table_id" id="table_nav_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light table_id tableSelect" data-control="select2" data-allow-clear="true">
                                 <option disabled selected>Select Table</option>
                                 @if ($tables)
                                     @foreach ($tables as $table)
@@ -204,7 +204,7 @@
                                     </span>
 
                                     <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn " id="contact_edit_btn">
-                                        <i class="fas fa-edit text-success-emphasis"></i><i class="fa-sharp fa-solid fa-phone-plus"></i>
+                                        <i class="fas fa-edit text-success-emphasis"></i>
                                     </span>
 
                                     <span class="input-group-text border-gray-300 cursor-pointer" id="contact_edit_phone_btn">
@@ -343,7 +343,7 @@
             <!--begin::Content-->
             <div class="content pb-15 d-flex flex-column flex-column-fluid ms-8 d-none d-lg-none d-xl-none d-xxl-none " id="pos_second_content"  style="height: 100vh">
                 <!--begin::container-->
-                <div class="container-xxl" id="pos_second_content_container"  style="height: 100%;">
+                <div class="container-xxl" id="pos_second_content_container"  style="height: 90%;">
                     <div class="card  card-flush" style="height: 100%; overflow: hidden">
                         <div class="card-body p-5">
                             <div class="row mb-1">
@@ -359,16 +359,15 @@
 
                                         </select>
 
-                                        <span class="input-group-text border-gray-300 cursor-pointer bg-success" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
-                                            <i class="fas fa-plus"></i>
+                                        <span class="input-group-text border-gray-300 cursor-pointer " data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
+                                            <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
                                         </span>
 
-                                        <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn bg-warning" id="contact_edit_btn_modal">
-                                            <i class="fas fa-edit"></i><i class="fa-sharp fa-solid fa-phone-plus"></i>
+                                        <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn " id="contact_edit_btn_modal">
+                                            <i class="fas fa-edit text-success-emphasis"></i>
                                         </span>
 
-                                        <span class="input-group-text border-gray-300 cursor-pointer bg-info" id="contact_edit_phone_btn_modal">
-                                            <i class="fa-sharp fa-solid fa-phone"></i>
+                                        <span class="input-group-text border-gray-300 cursor-pointer " id="contact_edit_phone_btn_modal"><i class="fa-sharp fa-solid fa-phone text-info"></i>
                                         </span>
 
                                         <span class="input-group-text border-gray-300 receivable-amount">
@@ -512,7 +511,7 @@
                 </button>
             </div>
 
-            <div class="app-engage-secondary">
+            <div class="app-engage-secondary" style="z-index: 700;">
                 <button class="app-engage-btn hover-gray d-lg-none d-xl-none d-xxl-none btn bg-primary btn-lg me-2" id="pos_shopping_cart">
                     <i class="fa-sharp fa-solid fa-cart-shopping text-white fs-3"></i>
                 </button>
@@ -528,7 +527,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-0">
-                        <div class="card rounded-bottom-0 bg-white pb-10">
+                        <div class="card rounded-bottom-0  shadow-none pb-10" style="z-index: 800">
                             <div class="card-body d-flex flex-column ">
                                 <div class=" rounded-top d-flex justify-content-between align-items-center ">
                                     <h4 class="p-1 text-primary">Payable Amount</h4>
@@ -553,7 +552,7 @@
                             </div>
                         </div>
 
-                        <div class="card shadow ">
+                        <div class="card  border border-left-0 border-right-0 border-bottom-0 border-top-1 border-primary  ">
                             <div class="card-body">
                                 <!--begin::Repeater-->
                                 <div id="payment_amount_repeater">
@@ -567,12 +566,15 @@
                                     <!--end::Form group-->
 
                                     <!--begin::Form group-->
+                                    @if (isUsePaymnetAcc())
                                     <div class="form-group mt-5 ">
                                         <a href="javascript:;" class="btn btn-light-primary btn-sm add-payment-row">
                                             <i class="fas fa-plus fs-3"></i>
                                             Add
                                         </a>
                                     </div>
+
+                                    @endif
                                     <!--end::Form group-->
                                 </div>
                                 <!--end::Repeater-->
@@ -868,7 +870,7 @@
                     </select>
                   </div>
                    <div class="px-5 mt-3 mb-5">
-                        <select id="tableForFinalize"  autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="form-select form-select-sm" data-control="select2" data-allow-clear="true">
+                        <select id="tableForFinalize"  autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="form-select form-select-sm tableSelect" data-kt-select2="true" data-allow-clear="true">
                             <option disabled selected>Select Table</option>
                             @if ($tables)
                                 @foreach ($tables as $table)

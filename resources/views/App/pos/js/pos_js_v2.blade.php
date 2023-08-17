@@ -608,7 +608,7 @@
             })
         }
 
-        let datasForSale = (status,onlySale=false) => {
+        let datasForSale = (status,onlySale=false,payment=false) => {
             let business_location_id = $('select[name="business_location_id"]').val();
             let table_id=$('.table_id').val();
             let contact_id = $("#invoice_side_bar").is(':hidden') ? $('#pos_customer').val() : $('#sb_pos_customer').val();
@@ -619,20 +619,24 @@
             let extra_discount_type = null;
             let extra_discount_amount = null;
             let total_sale_amount = $(`#${infoPriceId} .sb-total-amount`).text();
-            let paid_amount = $('.print_paid').text();
-            let balance_amount = total_sale_amount - paid_amount;
+            let paid_amount = 0;
+            let balance_amount = total_sale_amount ;
             let currency_id = null;
             let multiPayment=[];
-            let paymentAmountRepeater=$('#payment_amount_repeater');
-            let paymentAmountFromRep=paymentAmountRepeater.find('input[name="pay_amount"]');
-            let paymentAccountFromRep=document.querySelectorAll('#payment_account');
-            paymentAmountFromRep.each((i,p) => {
-                multiPayment=[...multiPayment,{
-                    payment_amount:$(p).val(),
-                    payment_account_id:$(paymentAccountFromRep[i]).val()
-                }]
-            });
-            console.log(multiPayment);
+            if(payment){
+                paid_amount = $('.print_paid').text();
+                balance_amount = total_sale_amount - paid_amount;
+                let paymentAmountRepeater=$('#payment_amount_repeater');
+                let paymentAmountFromRep=paymentAmountRepeater.find('input[name="pay_amount"]');
+                let paymentAccountFromRep=document.querySelectorAll('#payment_account');
+                paymentAmountFromRep.each((i,p) => {
+                    multiPayment=[...multiPayment,{
+                        payment_amount:$(p).val(),
+                        payment_account_id:$(paymentAccountFromRep[i]).val()
+                    }]
+                });
+            }
+
 
             let sales ={
                     'saleId':saleId,
@@ -1493,7 +1497,7 @@
         // Sale With Payment
         $(document).on('click', '.payment_save_btn', function() {
             if(checkContact()){
-                let dataForSale = datasForSale('delivered');
+                let dataForSale = datasForSale('delivered','',true);
                 ajaxToStorePosData(dataForSale);
             }
         })

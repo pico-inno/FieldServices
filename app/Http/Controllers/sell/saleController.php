@@ -139,7 +139,7 @@ class saleController extends Controller
                 return $html;
                 // return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
             })
-            ->addColumn('action', function ($saleItem) {
+            ->addColumn('action', function ($saleItem) use($request) {
                 $postTo = '';
                 if (hasModule('HospitalManagement') && isEnableModule('HospitalManagement')) {
                     $postTo = '<a type="button" class="dropdown-item p-2 edit-unit  postToRegisterationFolio" data-href="' . route('postToRegistrationFolio', $saleItem->id) . '">Post to Folio</a>';
@@ -157,7 +157,11 @@ class saleController extends Controller
                             </a>';
                 }
                 if (hasUpdate('sell')) {
-                    $html .= ' <a href="' . route('saleEdit', $saleItem->id) . '" class="dropdown-item p-2   edit-unit " >Edit</a>';
+                    if($request->saleType == 'posSales'){
+                        $html .= '<a class="dropdown-item p-2" href=" '.route('pos.edit',['posRegisterId'=> $saleItem->pos_register_id,'saleId'=> $saleItem->id]). ' ">Edit</a>';
+                    }else {
+                        $html .= ' <a href="' . route('saleEdit', $saleItem->id) . '" class="dropdown-item p-2   edit-unit " >Edit</a>';
+                    }
                 }
                 if (hasPrint('sell')) {
                     $html .= '<a class="dropdown-item p-2  cursor-pointer  print-invoice"  data-href="' . route('print_sale', $saleItem->id) . '">print</a>';
@@ -338,10 +342,10 @@ class saleController extends Controller
                     $multiPayment=$request->multiPayment;
                     foreach ($multiPayment as $mp ) {
                         $sale_data['paid_amount']=$mp['payment_amount'];
-                        $payemntTransaction = $this->makePayment($sale_data, $mp['payment_account_id']);
+                        $payemntTransaction = $this->makePayment($sale_data, $mp['payment_account_id'] ?? null);
                         posRegisterTransactions::create([
                             'register_session_id' => $request->sessionId,
-                            'payment_account_id' => $mp['payment_account_id'],
+                            'payment_account_id' => $mp['payment_account_id'] ?? null,
                             'transaction_type' => 'sale',
                             'transaction_id' => $sale_data->id,
                             'transaction_amount' => $mp['payment_amount'],
@@ -534,7 +538,7 @@ class saleController extends Controller
         $request_sale_details = $request->sale_details;
         $lot_control = $this->setting->lot_control;
 
-        // I fetch to sales data one for store as old data that fetch form database and one is to update data and after updated ,if you call slaes the will be updated!!
+        // I fetch  sales data ,one for store as old data that fetch form database and one is to update data and after updated ,if you call slaes the will be updated!!
         $saleBeforeUpdate = sales::where('id', $id)->first();
         $sales = sales::where('id', $id)->first();
         DB::beginTransaction();
@@ -553,12 +557,12 @@ class saleController extends Controller
                 'extra_discount_type' => $request->extra_discount_type,
                 'extra_discount_amount' => $request->extra_discount_amount,
                 'total_sale_amount' => $request->total_sale_amount,
-                'paid_amount' => $request->paid_amount,
-                'balance_amount' => $request->balance_amount,
+                'paid_amount' => $saleBeforeUpdate->paid_amount,
+                'balance_amount' => $request->total_sale_amount - $saleBeforeUpdate->paid_amount,
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
             ]);
-            $this->changeTransaction($saleBeforeUpdate, $sales, $request);
+            // $this->changeTransaction($saleBeforeUpdate, $sales, $request);
             // begin sale_detail_update
             if ($request_sale_details) {
                 //get old sale_details
@@ -1345,7 +1349,6 @@ class saleController extends Controller
         try {
             DB::beginTransaction();
             $detailToSplit = $request->detailToSplit;
-
             $ids = array(); // Initialize an array to store the extracted ids
 
             foreach ($detailToSplit as $subArray) {
@@ -1358,6 +1361,8 @@ class saleController extends Controller
                     'warning' => 'Add at least one item to split'
                 ]);
             }
+
+
             $lastSaleId = sales::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
             $saleId = $request->saleId;
 
@@ -1366,7 +1371,20 @@ class saleController extends Controller
                 return redirect()->back()->with('error', 'Sales voucher not found.');
             }
 
+            $currentDetailCount= sale_details::where('sales_id', $saleId)->count();
+            if ( count($ids) >= $currentDetailCount) {
+                $splitLineCount=0;
+                foreach ($detailToSplit as $d) {
+                    $check= sale_details::where('id', $d['id'])->where('quantity',$d['quantity'])->exists();
+                    if($check){
+                        $splitLineCount++;
+                    }
+                }
+                if($currentDetailCount == $splitLineCount) {
+                    return redirect()->back()->with('warning', "Can't Split All Item.");
+                }
 
+            }
 
             // Clone the original item
             $clonedSale = $originalSale->replicate();
@@ -1447,6 +1465,7 @@ class saleController extends Controller
                 'success' => 'Successfully Splited'
             ]);
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollBack();
             return back()->with([
                 'error' => 'Something Went Wrongs'

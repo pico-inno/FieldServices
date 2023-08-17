@@ -209,7 +209,12 @@
                         @endif
                         @if(hasCreate('sell'))
                         <!--begin::Add customer-->
-                        <a  class="btn btn-sm btn-primary" href="{{route('add_sale')}}" >Add</a>
+                        @if ($saleType == 'posSales')
+
+                            <a class="btn btn-sm btn-primary" href="{{route('pos.selectPos')}}">Add</a>
+                        @else
+                            <a class="btn btn-sm btn-primary" href="{{route('add_sale')}}">Add</a>
+                        @endif
                         <!--end::Add customer-->
                             @endif
                     </div>
