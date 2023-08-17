@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use App\Models\Manufacturer;
-
 use Illuminate\Http\Request;
+
 use App\Models\Product\UOMSet;
 use App\Models\Contact\Contact;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -24,6 +23,7 @@ use App\Http\Controllers\expenseController;
 use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\printerController;
 use App\Http\Controllers\currencyController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\sell\saleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\restaurantController;
@@ -37,11 +37,14 @@ use App\Http\Controllers\stockHistoryController;
 // use App\Http\Controllers\ContactController\CustomerGroupController;
 // use App\Http\Controllers\ContactController\ImportContactsController;
 use App\Http\Controllers\expenseReportController;
+use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Stock\StockInController;
-use App\Http\Controllers\Stock\StockOutController;
 //use App\Http\Controllers\Stock\StockTransferController;
+use App\Http\Controllers\settings\FloorController;
+use App\Http\Controllers\Stock\StockOutController;
+use App\Http\Controllers\deliveryChannelController;
 use App\Http\Controllers\paymentAccountsController;
 use App\Http\Controllers\posRegistrationController;
 use App\Http\Controllers\Product\GenericController;
@@ -51,10 +54,11 @@ use App\Http\Controllers\Contact\CustomerController;
 use App\Http\Controllers\Contact\SupplierController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\PriceListController;
+// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Product\VariationController;
 use App\Http\Controllers\purchase\purchaseController;
+use App\Http\Controllers\settings\BuildingController;
 use App\Http\Controllers\importOpeningStockController;
-// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Service\ServiceTypeController;
 use App\Http\Controllers\Stock\StockTransferController;
 use \App\Http\Controllers\userManagement\RoleController;
@@ -67,18 +71,15 @@ use App\Http\Controllers\hospitalFolioInvoicesController;
 use App\Http\Controllers\hospitalRegistrationsController;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Controllers\Product\ImportProductController;
+// use App\Http\Controllers\Product\UOMSellingPriceController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
-use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\PriceListDetailController;
-// use App\Http\Controllers\Product\UOMSellingPriceController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
-use App\Http\Controllers\settings\BuildingController;
-use App\Http\Controllers\settings\FloorController;
 
 // use App\Models\Manufacturer;
 
@@ -449,7 +450,22 @@ Route::prefix('stock-history')->group(function () {
 
 //============================ start::exchange rate ============================================
 
+Route::prefix('deliver-channel')->group(function () {
+    Route::controller(deliveryChannelController::class)->group(function () {
+        Route::get('/list', 'index')->name('deliveryChannel.list');
+        Route::get('/create', 'create')->name('paymentAcc.create');
+        Route::post('/store', 'store')->name('paymentAcc.store');
 
+        Route::get('{id}/edit', 'edit')->name('paymentAcc.edit');
+        Route::post('{id}/update', 'update')->name('paymentAcc.update');
+
+        Route::get('{id}/view', 'view')->name('paymentAcc.view');
+        Route::delete('/destory', 'destory')->name('paymentAcc.destory');
+
+        Route::get('/get/list/', 'list');
+        Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
+    });
+});
 
 
 

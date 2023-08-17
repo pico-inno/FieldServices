@@ -167,7 +167,7 @@
                                 </table>
                             </div>
                         </div> --}}
-                        <div class="col-md-6 col-sm-12 col-xs-12  me-10">
+                        <div class="col-md-6 col-sm-12 col-xs-12  me-lg-10">
                             <div class="table-responsive mt-10">
                                 <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_customers_table">
                                     <!--begin::Table body-->

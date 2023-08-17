@@ -367,9 +367,18 @@ class saleController extends Controller
             $resOrderData = null;
             if ($request->type == 'pos' && $registeredPos->use_for_res == 1) {
                 $resOrderData = $this->resOrderCreation($sale_data, $request);
-                $this->saleDetailCreation($request, $sale_data, $sale_details, $resOrderData);
+                $sdcStatus=$this->saleDetailCreation($request, $sale_data, $sale_details, $resOrderData);
+                if($sdcStatus== 'outOfStock'){
+                    return response()->json([
+                        'status' => '422',
+                        'message' => 'Product Out of Stock'
+                    ], 422);
+                }
             } else {
-                $this->saleDetailCreation($request, $sale_data, $sale_details);
+                $sdcStatus= $this->saleDetailCreation($request, $sale_data, $sale_details);
+                if ($sdcStatus == 'outOfStock') {
+                    return redirect()->back()->withInput()->with(['error' => 'Product Out Of Stock']);
+                }
             }
 
             DB::commit();
@@ -398,8 +407,6 @@ class saleController extends Controller
                     'message' => 'Something wrong'
                 ], 500);
             } else {
-
-                dd($e);
                 return redirect()->back()->with(['warning' => 'Something Went Wrong While creating sale']);
             }
         }
@@ -1117,7 +1124,7 @@ class saleController extends Controller
             $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
 
             if($product){
-                if($product->type!='storable'){
+                if($product->product_type!='storable'){
                     $stock_history_data = [
                         'business_location_id' => $sale_data->business_location_id,
                         'product_id' => $sale_detail['product_id'],
@@ -1129,33 +1136,34 @@ class saleController extends Controller
                         'ref_uom_id' => $refInfo['referenceUomId'],
                         'decrease_qty'=> $requestQty
                     ];
-
                     stock_history::create($stock_history_data);
-                    return;
-                }
-            }
-            if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
-                $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $created_sale_details->toArray(), $stock);
-                if ($changeQtyStatus == false) {
-                    return redirect()->back()->withInput()->with(['warning' => "Out of Stock In " . $stock['product']['name']]);
-                } else {
-                    if ($this->setting->lot_control == "off") {
-                        $datas = $changeQtyStatus;
-                        foreach ($datas as $data) {
-                            // dd($datas);
-                            $sale_uom_qty = UomHelper::changeQtyOnUom($data['ref_uom_id'], $created_sale_details->uom_id, $data['stockQty']);
-                            lotSerialDetails::create([
-                                'transaction_type' => 'sale',
-                                'transaction_detail_id' => $created_sale_details->id,
-                                'current_stock_balance_id' => $data['stock_id'],
-                                'lot_serial_numbers' => $data['lot_serial_no'],
-                                'uom_quantity' => $sale_uom_qty,
-                                'uom_id' => $created_sale_details->uom_id,
-                            ]);
+                }else{
+                    if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
+                        $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $created_sale_details->toArray(), $stock);
+                        if ($changeQtyStatus == false) {
+                            return 'outOfStock';
+                            // return redirect()->back()->withInput()->with(['warning' => "Out of Stock In " . $stock['product']['name']]);
+                        } else {
+                            if ($this->setting->lot_control == "off") {
+                                $datas = $changeQtyStatus;
+                                foreach ($datas as $data) {
+                                    // dd($datas);
+                                    $sale_uom_qty = UomHelper::changeQtyOnUom($data['ref_uom_id'], $created_sale_details->uom_id, $data['stockQty']);
+                                    lotSerialDetails::create([
+                                        'transaction_type' => 'sale',
+                                        'transaction_detail_id' => $created_sale_details->id,
+                                        'current_stock_balance_id' => $data['stock_id'],
+                                        'lot_serial_numbers' => $data['lot_serial_no'],
+                                        'uom_quantity' => $sale_uom_qty,
+                                        'uom_id' => $created_sale_details->uom_id,
+                                    ]);
+                                }
+                            }
                         }
                     }
                 }
             }
+
         }
         return;
     }

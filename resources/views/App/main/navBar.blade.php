@@ -788,6 +788,14 @@
 													</div>
 													<!--end:Menu item-->
 													@endif
+                                                    <div class="menu-item d-none">
+                                                        <a class="menu-link @yield('shipments_active_show') px-0" href="{{route('deliveryChannel.list')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-truck-fast"></i>
+                                                            </span>
+                                                            <span class="menu-title">Delivery Chanels</span>
+                                                        </a>
+                                                    </div>
                                                     @if(hasImport('supplier') && hasImport('customer'))
                                                     <div class="menu-item ">
 														<!--begin:Menu link-->

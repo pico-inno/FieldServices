@@ -555,8 +555,8 @@
                 return pd.validate==false;
             });
             if(qtyValidate){
-                // error('Products Are Out Of Stock');
-                // return;
+                error('Products Are Out Of Stock');
+                return;
             }
             let url=saleId ?route : `/sell/create`;
             $.ajax({
@@ -608,11 +608,14 @@
                     }
                 },
                 error:function(e){
+                    console.log(e);
                     status=e.status;
                     if(status==405){
                         warning('Method Not Allow!');
                     }else if(status==419){
                         error('Session Expired')
+                    }else if(status==422){
+                        error(e.message)
                     }else{
                         error(' Something Went Wrong! Error Status: '+status )
                     };
