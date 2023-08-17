@@ -692,6 +692,7 @@
                             <div class="separator my-2 separator-dashed border-gray-400"></div>
                             <div class=" d-flex justify-content-between align-items-center">
                                 <h4 class="p-1">Paid</h4>
+                                <input type="hidden" name="" id="paidAmount" value="{{$sale->paid_amount}}">
                                 <span class="fs-5 me-5 print_paid fw-bold">{{fprice($sale->paid_amount)}}</span>
                             </div>
                             <div class="separator my-2 separator-dashed border-gray-400"></div>

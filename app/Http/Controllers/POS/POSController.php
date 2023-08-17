@@ -123,7 +123,7 @@ class POSController extends Controller
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                 ->with([
                     'product' => function ($q) {
-                        $q->select('id', 'name', 'product_type');
+                        $q->select('id', 'name', 'has_variation');
                     },
                     'variationTemplateValue' => function ($q) {
                         $q->select('id', 'name');
@@ -171,18 +171,18 @@ class POSController extends Controller
     {
         $products = Product::with('productVariations')
                 ->where('can_sale',1)
-                ->select('id', 'name', 'sku', 'product_type','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image')->get();
+                ->select('id', 'name', 'sku', 'has_variation','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image')->get();
 
         $product_with_variations = $products->map(function ($item, $key){
 
             $to_return_data = [];
-            if($item->product_type === "single"){
+            if($item->has_variation === "single"){
                 $item['product_variation_id'] = $item->productVariations[0]->id;
                 $item['default_selling_price'] = $item->productVariations[0]->default_selling_price;
                 $to_return_data[] = $item;
             }
 
-            if($item->product_type === "variable"){
+            if($item->has_variation === "variable"){
                 foreach($item->productVariations as $variation){
                     $variation['product_variation_id'] = $variation->id;
                     $variation['name'] = $item->name;
@@ -291,10 +291,10 @@ class POSController extends Controller
     //                 $product_with_variations = Product::with('productVariations')->get();
     //                 $products = [];
     //                 foreach($product_with_variations as $inner_val){
-    //                     if($inner_val->product_type === 'single'){
+    //                     if($inner_val->has_variation === 'single'){
     //                         $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
     //                     }
-    //                     if($inner_val->product_type === 'variable'){
+    //                     if($inner_val->has_variation === 'variable'){
     //                         $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
     //                     }
     //                     $inner_val['pricelist_detail_id'] = $value['id'];
@@ -312,7 +312,7 @@ class POSController extends Controller
     //             }
     //             if($apply_type === 'Product'){
     //                 $product = Product::with('productVariations')->where('id', $apply_value)->first();
-    //                 if($product && $product->product_type === 'single'){
+    //                 if($product && $product->has_variation === 'single'){
     //                     $product['product_variation_id'] = $product->productVariations[0]->id;
     //                     $product['pricelist_detail_id'] = $value['id'];
     //                     $product['pricelist_id'] = $value['pricelist_id'];
@@ -325,7 +325,7 @@ class POSController extends Controller
     //                     $product['base_price'] = $value['base_price'];
     //                     $raw_products_with_pricelist[] = $product;
     //                 }
-    //                 if($product->product_type === 'variable'){
+    //                 if($product->has_variation === 'variable'){
     //                     $product['product_variation_id'] = $product->productVariations->pluck('id')->toArray();
     //                     $product['pricelist_detail_id'] = $value['id'];
     //                     $product['pricelist_id'] = $value['pricelist_id'];
@@ -363,10 +363,10 @@ class POSController extends Controller
     //                 $raw_products = Product::with('productVariations')->where('category_id', $apply_value)->get();
     //                 $products = [];
     //                 foreach($raw_products as $inner_val){
-    //                     if($inner_val->product_type === 'single'){
+    //                     if($inner_val->has_variation === 'single'){
     //                         $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
     //                     }
-    //                     if($inner_val->product_type === 'variable'){
+    //                     if($inner_val->has_variation === 'variable'){
     //                         $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
     //                     }
     //                     $inner_val['pricelist_detail_id'] = $value['id'];
@@ -417,10 +417,10 @@ class POSController extends Controller
                     $product_with_variations = Product::with('productVariations')->get();
                     $products = [];
                     foreach($product_with_variations as $inner_val){
-                        if($inner_val->product_type === 'single'){
+                        if($inner_val->has_variation === 'single'){
                             $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
                         }
-                        if($inner_val->product_type === 'variable'){
+                        if($inner_val->has_variation === 'variable'){
                             $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
                         }
                         $inner_val['pricelist_detail_id'] = $value['id'];
@@ -439,7 +439,7 @@ class POSController extends Controller
                 }
                 if($apply_type === 'Product'){
                     $product = Product::with('productVariations')->where('id', $apply_value)->first();
-                    if($product && $product->product_type === 'single'){
+                    if($product && $product->has_variation === 'single'){
                         $product['product_variation_id'] = $product->productVariations[0]->id;
                         $product['pricelist_detail_id'] = $value['id'];
                         $product['pricelist_id'] = $value['pricelist_id'];
@@ -453,7 +453,7 @@ class POSController extends Controller
                         $product['base_price'] = $value['base_price'];
                         $raw_products_with_pricelist[] = $product;
                     }
-                    if($product->product_type === 'variable'){
+                    if($product->has_variation === 'variable'){
                         $product['product_variation_id'] = $product->productVariations->pluck('id')->toArray();
                         $product['pricelist_detail_id'] = $value['id'];
                         $product['pricelist_id'] = $value['pricelist_id'];
@@ -492,10 +492,10 @@ class POSController extends Controller
                     $raw_products = Product::with('productVariations')->where('category_id', $apply_value)->get();
                     $products = [];
                     foreach($raw_products as $inner_val){
-                        if($inner_val->product_type === 'single'){
+                        if($inner_val->has_variation === 'single'){
                             $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
                         }
-                        if($inner_val->product_type === 'variable'){
+                        if($inner_val->has_variation === 'variable'){
                             $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
                         }
                         $inner_val['pricelist_detail_id'] = $value['id'];
@@ -564,7 +564,7 @@ class POSController extends Controller
         $posRegister=posRegisters::where('id',$posRegisterId)->first();
         $sessionId=request('sessionId');
         $posSession=posRegisterSessions::where('id',$sessionId)->first();
-        $transactions=posRegisterTransactions::where('register_session_id',$sessionId)
+        $saleTransactions=posRegisterTransactions::where('register_session_id',$sessionId)
                                                         ->where('transaction_type','sale')
                                                         ->where('transaction_type','sale')
                                                         ->with('sale')
@@ -580,7 +580,7 @@ class POSController extends Controller
                             ->groupBy('payment_account_id','currency_id')
                             ->get();
                                                         // dd($sumAmountOnPaymentAcc->toArray());
-        return view('App.pos.closeSession',compact('posRegister','posSession','transactions','paymentTransactions','sumAmountOnPaymentAcc'));
+        return view('App.pos.closeSession',compact('posRegister','posSession', 'saleTransactions','paymentTransactions','sumAmountOnPaymentAcc'));
     }
 
 

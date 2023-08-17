@@ -9,28 +9,35 @@
                     <div class="col-12">
                         <table class="table  table-layout-fixed  table-row-bordered">
                                 <tbody class="">
+                                        @php
+                                            $paidAmount=0;
+                                            $balanceAmount=0;
+                                            $currencyId=$saleTransactions[0]->currency_id ?? null;
+                                            $finalAmount=$paidAmount+$posSession->opening_amount;
+                                            $transactionIds=[];
+                                            $totalSaleAmount=0;
+                                        @endphp
+                                        @foreach ($saleTransactions as $transaction)
+                                            @php
+                                                if(in_array($transaction->sale->id,$transactionIds)){
+                                                    continue;
+                                                }
+                                                $transactionIds[]=$transaction->sale->id;
+                                                $paidAmount+=$transaction->sale->paid_amount;
+                                                $balanceAmount+=$transaction->sale->balance_amount;
+                                                $totalSaleAmount+=$transaction->sale->total_sale_amount;
+                                            @endphp
+                                        @endforeach
                                     <tr>
                                         <th class="text-start ps-3">
                                             <span class="fw-semibold fs-7 text-gray-600">Total Sale Amout:</span>
                                         </th>
                                         <td  class="text-end pe-3">
-                                            <span class="fw-bold fs-7 text-gray-800">{{price($transactions->sum('transaction_amount'),$transactions[0]->currency_id ?? '')}}</span>
+                                            <span class="fw-bold fs-7 text-gray-800">{{price($totalSaleAmount,$saleTransactions[0]->currency_id ?? '')}}</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="text-start ps-3">
-                                            @php
-                                                $paidAmount=0;
-                                                $balanceAmount=0;
-                                                $currencyId=$transactions[0]->currency_id ?? null;
-                                                $finalAmount=$paidAmount+$posSession->opening_amount;
-                                            @endphp
-                                        @foreach ($transactions as $transaction)
-                                            @php
-                                                $paidAmount+=$transaction->sale->paid_amount;
-                                                $balanceAmount+=$transaction->sale->balance_amount;
-                                            @endphp
-                                        @endforeach
                                             <span class="fw-semibold fs-7 text-gray-600">Total Paid Amount:</span>
                                         </th>
                                         <td  class="text-end pe-3">
@@ -95,7 +102,7 @@
                     @endif
                     <div class="col-12 mt-10">
                         <div class="p-2 px-3 bg-gray-100">
-                            <h2 class="text-primary mb-0">Sell Vouchers</h2>
+                            <h2 class="text-primary mb-0">Sale Vouchers</h2>
                         </div>
                         <div class="table-responsive col-12 p-2 mb-5">
                             <table class="table g-3  min-w-500px">
@@ -109,12 +116,21 @@
                                 </thead>
                                 <tbody>
 
-                                    @if (count($transactions)<=0)
+                                    @if (count($saleTransactions)<=0)
                                         <tr>
                                             <td colspan="4" class="text-end fw-bold text-gray-400 text-center">There is no  sale voucher</td>
                                         </tr>
                                     @endif
-                                    @foreach ($transactions as $transaction)
+                                    @php
+                                        $saleTransactionIds=[]
+                                    @endphp
+                                    @foreach ($saleTransactions as $transaction)
+                                        @php
+                                            if(in_array($transaction->sale->id,$saleTransactionIds)){
+                                                continue;
+                                            }
+                                            $saleTransactionIds[]=$transaction->sale->id;
+                                        @endphp
                                         <tr class="fw-semibold text-end">
                                             <td class="text-start">{{$transaction->sale->sales_voucher_no}}</td>
                                             <td>{{price($transaction->sale->total_sale_amount,$transaction->sale->currency_id)}}</td>
@@ -165,7 +181,7 @@
 
                                             @if (isUsePaymnetAcc())
                                                 <td class=" text-end">
-                                                    {{$pyt->payment_account->name}}
+                                                    {{$pyt->payment_account->name ?? ''}}
                                                 </td>
                                             @endif
                                             <td class=" text-end">

@@ -198,7 +198,7 @@ class saleController extends Controller
                 $q->select('id', 'product_id', 'variation_template_value_id')
                     ->with([
                         'product' => function ($q) {
-                            $q->select('id', 'name', 'product_type');
+                            $q->select('id', 'name', 'has_variation');
                         },
                         'variationTemplateValue' => function ($q) {
                             $q->select('id', 'name');
@@ -256,7 +256,7 @@ class saleController extends Controller
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                     ->with([
                         'product' => function ($q) {
-                            $q->select('id', 'name', 'product_type');
+                            $q->select('id', 'name', 'has_variation');
                         },
                         'variationTemplateValue' => function ($q) {
                             $q->select('id', 'name');
@@ -371,9 +371,8 @@ class saleController extends Controller
             } else {
                 $this->saleDetailCreation($request, $sale_data, $sale_details);
             }
+
             DB::commit();
-
-
             if ($request->type == 'pos') {
 
                 return response()->json([
@@ -392,7 +391,6 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
-            logger($e);
             DB::rollBack();
             if ($request->type == 'pos') {
                 return response()->json([
@@ -400,6 +398,8 @@ class saleController extends Controller
                     'message' => 'Something wrong'
                 ], 500);
             } else {
+
+                dd($e);
                 return redirect()->back()->with(['warning' => 'Something Went Wrong While creating sale']);
             }
         }
@@ -543,13 +543,7 @@ class saleController extends Controller
         $sales = sales::where('id', $id)->first();
         DB::beginTransaction();
         try {
-            if ($request->type == 'pos') {
-                $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
-                $paymentAccountIds = json_decode($registeredPos->payment_account_id);
-                $request['payment_account'] = $paymentAccountIds[0] ?? null;
-                $request['currency_id'] = $this->currency->id;
-            }
-            $sales->update([
+            $saleData= [
                 'contact_id' => $request->contact_id,
                 'status' => $request->status,
                 'sale_amount' => $request->sale_amount,
@@ -561,8 +555,36 @@ class saleController extends Controller
                 'balance_amount' => $request->total_sale_amount - $saleBeforeUpdate->paid_amount,
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
-            ]);
+            ];
+            if ($request->type == 'pos') {
+                $saleData['paid_amount'] = $request->paid_amount;
+                $saleData['balance_amount'] = $request->balance_amount;
+            }
+            $sales->update($saleData);
+            if ($request->paid_amount > 0) {
+                if ($request->type == 'pos') {
+                    $multiPayment = $request->multiPayment;
+                    foreach ($multiPayment as $mp) {
+                        $payemntTransaction = $this->makePayment($sales, $mp['payment_account_id'] ?? null,true, $mp['payment_amount']);
+
+                        $pRSQry= posRegisterTransactions::where('transaction_type', 'sale')->where('transaction_id', $sales->id)->select('register_session_id')->first();
+                        if($pRSQry){
+                            $sessionId=$pRSQry->register_session_id ;
+                        }
+                        posRegisterTransactions::create([
+                            'register_session_id' => $sessionId ?? null,
+                            'payment_account_id' => $mp['payment_account_id'] ?? null,
+                            'transaction_type' => 'sale',
+                            'transaction_id' => $sales->id,
+                            'transaction_amount' =>  $mp['payment_amount'],
+                            'currency_id' => $request->currency_id,
+                            'payment_transaction_id' => $payemntTransaction->id ?? null,
+                        ]);
+                    }
+                }
+            }
             // $this->changeTransaction($saleBeforeUpdate, $sales, $request);
+
             // begin sale_detail_update
             if ($request_sale_details) {
                 //get old sale_details
@@ -924,8 +946,7 @@ class saleController extends Controller
         $q = $request->data['query'];
         $variation_id = $request->data['variation_id'] ?? null;
 
-        $products = Product::select('id', 'name', 'product_code', 'category_id', 'sku', 'product_type', 'uom_id', 'purchase_uom_id')
-            ->where('can_sale', 1)
+        $products = Product::where('can_sale', 1)
             ->where('deleted_at', null)
             ->where('name', 'like', '%' . $q . '%')
             ->orWhere('sku', 'like', '%' . $q . '%')
@@ -966,18 +987,19 @@ class saleController extends Controller
                     'product_code' => $product->product_code,
                     'category_id' => $product->category_id,
                     'sku' => $product->sku,
+                    'has_variation' => $product->has_variation,
                     'product_type' => $product->product_type,
                     'uom_id' => $product->uom_id,
                     'uom' => $product->uom,
                     'purchase_uom_id' => $product->purchase_uom_id,
-                    'product_variations' => $product->product_type == 'single' ? $product->productVariations->toArray()[0] : $product->productVariations->toArray(),
+                    'product_variations' => $product->has_variation == 'single' ? $product->productVariations->toArray()[0] : $product->productVariations->toArray(),
                     'total_current_stock_qty' => $product->stock_sum_current_quantity ?? 0,
                     'batch_nos' => $batch_nos,
                     'stock' => $product->stock->toArray(),
                 ];
             });
         foreach ($products as $product) {
-            if ($product['product_type'] == 'variable') {
+            if ($product['has_variation'] == 'variable') {
                 $product_variation = $product['product_variations'];
                 foreach ($product_variation as $variation) {
                     $batch_nos = [];
@@ -1006,7 +1028,8 @@ class saleController extends Controller
                         'batch_nos' => $product['batch_nos'],
                         'variation_id' => $variation['id'],
                         'category_id' => $product['category_id'],
-                        'product_type' => 'sub_variable',
+                        'has_variation' => 'sub_variable',
+                        'product_type' => $product['product_type'],
                         'variation_name' => $variation['variation_template_value']['name'],
                     ];
                     $products[] = $variation_product;
@@ -1027,7 +1050,7 @@ class saleController extends Controller
             $q->select('id', 'product_id', 'variation_template_value_id')
                 ->with([
                     'product' => function ($q) {
-                        $q->select('id', 'name', 'product_type');
+                        $q->select('id', 'name', 'has_variation');
                     },
                     'variationTemplateValue' => function ($q) {
                         $q->select('id', 'name');
@@ -1056,7 +1079,7 @@ class saleController extends Controller
     private function saleDetailCreation($request, Object $sale_data, array $sale_details, $resOrderData = null)
     {
         foreach ($sale_details as $sale_detail) {
-
+            $product=Product::where('id', $sale_detail['product_id'])->select('product_type')->first();
             $stock = CurrentStockBalance::where('product_id', $sale_detail['product_id'])
                 ->where('business_location_id', $sale_data->business_location_id)
                 // ->where('id', $sale_detail['stock_id_by_batch_no'])
@@ -1089,9 +1112,28 @@ class saleController extends Controller
                 $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;
             }
             $created_sale_details = sale_details::create($sale_details_data);
-
-            $requestQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_detail['quantity'], $sale_detail['uom_id'])['qtyByReferenceUom'];
+            $refInfo= UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_detail['quantity'], $sale_detail['uom_id']);
+            $requestQty = $refInfo['qtyByReferenceUom'];
             $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
+
+            if($product){
+                if($product->type!='storable'){
+                    $stock_history_data = [
+                        'business_location_id' => $sale_data->business_location_id,
+                        'product_id' => $sale_detail['product_id'],
+                        'variation_id' => $sale_detail['variation_id'],
+                        'expired_date' => $sale_detail['expired_date'] ?? null,
+                        'transaction_type' => 'sale',
+                        'transaction_details_id' => $created_sale_details->id,
+                        'increase_qty' => 0,
+                        'ref_uom_id' => $refInfo['referenceUomId'],
+                        'decrease_qty'=> $requestQty
+                    ];
+
+                    stock_history::create($stock_history_data);
+                    return;
+                }
+            }
             if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
                 $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $created_sale_details->toArray(), $stock);
                 if ($changeQtyStatus == false) {
