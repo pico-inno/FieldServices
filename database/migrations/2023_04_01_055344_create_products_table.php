@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('product_code')->nullable();
             $table->string('sku')->nullable();
-            $table->enum('product_type', ['consumeable', 'storable', 'service','single', 'variable'])->default('storable');
+            $table->enum('product_type', ['consumeable', 'storable', 'service',])->default('storable');
             $table->enum('has_variation', ['single', 'variable'])->default('single');
             $table->integer('brand_id')->nullable();
             $table->integer('category_id')->nullable();

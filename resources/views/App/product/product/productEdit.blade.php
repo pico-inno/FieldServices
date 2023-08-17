@@ -174,7 +174,7 @@
                                                                 <select name="product_type" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Product Type">
                                                                     <option></option>
                                                                     <option value="consumeable" @selected($product->product_type === 'consumeable')>Consumeable</option>
-                                                                    <option selected value="storable" @selected($product->product_type === 'storable')>Storable</option>
+                                                                    <option value="storable" @selected($product->product_type === 'storable')>Storable</option>
                                                                     <option value="service" @selected($product->product_type === 'service')>Service</option>
                                                                 </select>
                                                             </div>

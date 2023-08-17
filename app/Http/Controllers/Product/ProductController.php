@@ -151,7 +151,7 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request)
     {
-//        return $request;
+//return $request;
         DB::beginTransaction();
         try{
             $img_name = $this->saveProductImage($request);
@@ -333,7 +333,8 @@ class ProductController extends Controller
             'can_expense' => $request->can_expense ? 1 : 0,
             'is_recurring' => $request->is_recurring ? 1 : 0,
             'is_inactive' => $request->product_inactive ? 1 : 0,
-            'has_variation' => $has_variation
+            'has_variation' => $has_variation,
+            'product_type' => $request->product_type,
         ];
 
         if ($isCreating) {
