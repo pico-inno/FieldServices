@@ -22,6 +22,7 @@ class Product extends Model
         'product_code',
         'sku',
         'product_type',
+        'has_variation',
         'brand_id',
         'category_id',
         'sub_category_id',
@@ -30,6 +31,7 @@ class Product extends Model
         'lot_count',
         'uom_id',
         'purchase_uom_id',
+
         'product_custom_field1',
         'product_custom_field2',
         'product_custom_field3',
@@ -39,13 +41,15 @@ class Product extends Model
         'is_inactive',
         'created_by',
         'updated_by',
-        'deleted_by'
+        'deleted_by',
+
+
     ];
 
     protected $dates = ['deleted_at'];
 
     public function getVariationName(){
-        
+
     }
 
     public function productVariations(): HasMany

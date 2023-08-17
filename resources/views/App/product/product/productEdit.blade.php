@@ -42,7 +42,7 @@
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
                     <!--begin:::Tabs-->
                     <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
-                        
+
                     </ul>
                     <!--end:::Tabs-->
                     <!--begin::Tab content-->
@@ -63,20 +63,20 @@
                                                         .image-input-placeholder {
                                                             background-image: url('svg/avatars/blank.svg');
                                                         }
-                                                    
+
                                                         [data-bs-theme="dark"] .image-input-placeholder {
                                                             background-image: url('{{ asset("storage/product-image/$product->image") }}');
                                                         }
                                                     </style>
                                                     <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url(/assets/media/svg/avatars/blank.svg)">
                                                         <!--begin::Image preview wrapper-->
-                                                        @if ($product->image)																	
+                                                        @if ($product->image)
                                                             <div class="image-input-wrapper w-125px h-125px" style="background-image: url({{ '/storage/product-image/'.$product->image }})"></div>
                                                         @else
                                                             <div class="image-input-wrapper w-125px h-125px"></div>
                                                         @endif
                                                         <!--end::Image preview wrapper-->
-                                                    
+
                                                         <!--begin::Edit button-->
                                                         <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
                                                         data-kt-image-input-action="change"
@@ -84,14 +84,14 @@
                                                         data-bs-dismiss="click"
                                                         title="Change avatar">
                                                             <i class="ki-duotone ki-pencil fs-6"><span class="path1"></span><span class="path2"></span></i>
-                                                    
+
                                                             <!--begin::Inputs-->
                                                             <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
                                                             <input type="hidden" name="avatar_remove" />
                                                             <!--end::Inputs-->
                                                         </label>
                                                         <!--end::Edit button-->
-                                                    
+
                                                         <!--begin::Cancel button-->
                                                         <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
                                                         data-kt-image-input-action="cancel"
@@ -101,7 +101,7 @@
                                                             <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
                                                         <!--end::Cancel button-->
-                                                    
+
                                                         <!--begin::Remove button-->
                                                         <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
                                                         data-kt-image-input-action="remove"
@@ -135,6 +135,12 @@
                                                             <strong class="ms-4 h5">{{ __('product/product.can_expense') }}</strong>
                                                         </label>
                                                     </div>
+                                                    <div class="form-check form-check-custom form-check-solid mt-8">
+                                                        <label class="" for="is_recurring">
+                                                            <input class="form-check-input" name="is_recurring" type="checkbox" value="1" id="is_recurring" @checked($product->is_recurring === 1)/>
+                                                            <strong class="ms-4 h5">{{ __('product/product.is_recurring') }}</strong>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <!--end::Image input-->
@@ -143,10 +149,43 @@
 
                                         <div class="mb-10 fv-row">
                                             <div class="row mb-5">
-                                                <div class="btn btn-sm btn-light-info w-200px" id="advance_toggle">
-                                                    <span class="show_advance"><i class="fa-solid fa-eye-slash me-5"></i>Show Advance</span>
-                                                    <span class="hide_advance d-none"><i class="fa-solid fa-eye me-5"></i>Hide Advance</span>
+                                                <div class="col-md-4">
+                                                    <div class="fv-row">
+                                                        <label class="form-label required">
+
+                                                        </label>
+                                                        <div class="input-group flex-nowrap">
+                                                            <div class="overflow-hidden flex-grow-1">
+                                                                <div class="btn btn-sm btn-light-info w-200px" id="advance_toggle">
+                                                                    <span class="show_advance"><i class="fa-solid fa-eye-slash me-5"></i>Show Advance</span>
+                                                                    <span class="hide_advance d-none"><i class="fa-solid fa-eye me-5"></i>Hide Advance</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                <div class="col-md-4">
+                                                    <div class="fv-row">
+                                                        <label class="form-label required">
+                                                            {{ __('product/product.product_type') }}
+                                                        </label>
+                                                        <div class="input-group flex-nowrap">
+                                                            <div class="overflow-hidden flex-grow-1">
+                                                                <select name="product_type" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Product Type">
+                                                                    <option></option>
+                                                                    <option value="consumeable" @selected($product->product_type === 'consumeable')>Consumeable</option>
+                                                                    <option selected value="storable" @selected($product->product_type === 'storable')>Storable</option>
+                                                                    <option value="service" @selected($product->product_type === 'service')>Service</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @error('product_type')
+                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+
+
                                             </div>
                                             <div class="row mb-5">
                                                 <div class="col-md-4 mb-5">
@@ -189,7 +228,7 @@
                                                         <span class="input-group-text cursor-pointer" data-bs-toggle="modal" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_brand">
                                                             <i class="fas fa-circle-plus text-primary"></i>
                                                         </span>
-    
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-5">
@@ -208,10 +247,10 @@
                                                         Sub Category
                                                     </label>
                                                     <select class="form-select form-select-sm" name="sub_category" id="subCategorySelect" data-control="select2" data-hide-search="true" data-placeholder="Select sub category">
-    
+
                                                     </select>
                                                 </div>
-                                            </div>                                           
+                                            </div>
                                             <div class="row mb-5  advance-toggle-class d-none">
                                                 <div class="col-md-4 mb-5">
                                                     <label for="" class="form-label">Manufacturer</label>
@@ -293,7 +332,7 @@
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
                                                                 <select name="purchase_uom_id" id="unitOfUom" class="form-select form-select-sm" data-control="select2" data-placeholder="Select purchase UoM">
-                                                                    
+
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -318,23 +357,23 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         {{-- Product Type  --}}
                                         <div class="row advance-toggle-class d-none">
                                             <div class="col-md-4 mb-3 col-md-offset-4">
                                                 <label for="" class="form-label required">
-                                                    {{ __('product/product.product_type') }}
+                                                    Has Variation
                                                 </label>
                                                 <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
                                                     title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
                                                             <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
-                                                <div class="mb-3">                                                   
-                                                    <select class="form-select form-select" name="product_type" id="product_type" data-hide-search="true" disabled>
-                                                        <option value="variable" @selected($product->product_type === "variable")>Variable</option>
-                                                        <option value="single" @selected($product->product_type === "single")>Single</option>
+                                                <div class="mb-3">
+                                                    <select class="form-select form-select" name="has_variation" id="has_variation" data-hide-search="true" disabled>
+                                                        <option value="variable" @selected($product->has_variation === "variable")>Variable</option>
+                                                        <option value="single" @selected($product->has_variation === "single")>Single</option>
                                                     </select>
-                                                    <input type="hidden" name="product_type_hidden" value="{{ $product->product_type }}">
+                                                    <input type="hidden" name="has_variation_hidden" value="{{ $product->has_variation }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -468,36 +507,36 @@
                                         <div class="row advance-toggle-class d-none">
                                             <div class="col-md-4 mb-8">
                                                 <div class="fv-row">
-                                                    
+
                                                     <label class="form-label">{{ __('product/product.custom_field_1') }}</label>
-                                                    
+
                                                     <input type="text" name="custom_field1" class="form-control form-control-sm mb-2" placeholder="Custom field1" value="{{old('custom_field1',$product->product_custom_field1)}}" />
-                                                    
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                
+
                                                 <label class="form-label">{{ __('product/product.custom_field_2') }}</label>
-                                              
+
                                                 <input type="text" name="custom_field2" class="form-control form-control-sm mb-2" placeholder="Custom field2" value="{{old('custom_field2',$product->product_custom_field2)}}" />
-                                                
+
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                               
+
                                                 <label class="form-label">{{ __('product/product.custom_field_3') }}</label>
-                                                
+
                                                 <input type="text" name="custom_field3" class="form-control form-control-sm mb-2" placeholder="Custom field3" value="{{old('custom_field3',$product->product_custom_field3)}}" />
-                                                
+
                                             </div>
-                                            
+
                                         </div>
                                         <div class="row mb-5 advance-toggle-class d-none">
                                             <div class="col-md-4 mb-3">
-                                                
+
                                                 <label class="form-label">{{ __('product/product.custom_field_4') }}</label>
-                                                
+
                                                 <input type="text" name="custom_field4" class="form-control form-control-sm mb-2" placeholder="Custom field4" value="{{old('custom_field4',$product->product_custom_field4)}}" />
-                                                
+
                                             </div>
                                         </div>
 
@@ -612,7 +651,7 @@
 
     // ============= > Begin:: For Product Type      < =======================
 
-        const selectBox = document.getElementById("product_type");
+        const selectBox = document.getElementById("has_variation");
         const singleBox = document.getElementById("single_box");
         const variableBox = document.getElementById("variable_box");
 
@@ -656,20 +695,20 @@
         let anotherSell = $('input[name="sell_price_for_single"]');
 
         let oldSingleValue = @json($productVariation);
-        
+
         let oldSingleSellingPrice;
         if(oldSingleValue.length !== 0){
             oldSingleSellingPrice = profitPercentage( oldSingleValue[0].default_selling_price, oldSingleValue[0].default_purchase_price );
         }
-        
-        let singleProductType = (@json($product)).product_type;
+
+        let singleProductType = (@json($product)).has_variation;
 
         if(singleProductType === "variable"){
             anotherPurchase.prop('disabled', true);
             anotherProfit.prop('disabled', true);
             anotherSell.prop('disabled', true);
         }
-        
+
         if((oldSingleValue.length !== 0) && (singleProductType !== "variable")){
             singleExc.val(oldSingleValue[0].default_purchase_price);
             singleInc.val(oldSingleValue[0].default_purchase_price);
@@ -679,7 +718,7 @@
             anotherPurchase.val(oldSingleValue[0].default_purchase_price)
             anotherProfit.val(oldSingleSellingPrice)
             anotherSell.val(oldSingleValue[0].default_selling_price)
-            
+
             $(document).find('input[name="sell_price_for_single"]').val(oldSingleValue[0].default_selling_price) // for basic form selling price
         }
 
@@ -876,7 +915,7 @@
             // show old value variation
             let toShowVariation = false;
             if(!toShowVariation){
-                let productType = (@json($product)).product_type;
+                let productType = (@json($product)).has_variation;
                 if(productType !== "single"){
                     let oldValues = @json($productVariation);
 
@@ -957,7 +996,7 @@
 
             cateSelect.on('change', function() {
                 let id = cateSelect.val();
-                
+
                 $.ajax({
                     url: '/category/sub-category/'+id,
                     type: 'GET',
@@ -995,7 +1034,7 @@
         $(document).on('input', 'input[name="purchase_price_for_single"]', function() {
             let value = $(this).val();
             let profit = $(document).find('input[name="profit_margin_for_single"]').val();
-            
+
             let sellPrice;
             if(profit !== ''){
                 sellPrice = (profit, value);
@@ -1076,7 +1115,7 @@
 
         $(document).on('change', 'select[name="uom_id"]', function() {
             let uom_id = $(this).val();
-            
+
             $.ajax({
                 url: `/uom/get/${uom_id}`,
                 type: 'GET',
@@ -1141,7 +1180,7 @@
                     $('#kt_modal_brand').modal('hide');
                 },
                 error: function(error) {
-                   
+
                 }
             });
         })
@@ -1177,7 +1216,7 @@
                     $('#kt_modal_generic').modal('hide');
                 },
                 error: function(error) {
-                   
+
                 }
             });
         })
@@ -1213,7 +1252,7 @@
                     $('#kt_modal_manufacturer').modal('hide');
                 },
                 error: function(error) {
-                   
+
                 }
             });
         })
