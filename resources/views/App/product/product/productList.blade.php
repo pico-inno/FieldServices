@@ -523,7 +523,7 @@
                         data: 'action',
                         name: 'action',
                         render: function(data, type, full, meta){
-                        
+
                             let updatePermission = <?php echo hasUpdate('product') ? 'true' : 'false'; ?>;
                             let deletePermission = <?php echo hasDelete('product') ? 'true' : 'false'; ?>;
 
@@ -549,7 +549,7 @@
                         data: 'product',
                         name: 'product',
                         render: function(data, type, full, meta) {
-                            
+
                             return `
                             <div class="d-flex align-items-center">
                                 <div class="symbol symbol-50px">
@@ -564,10 +564,10 @@
                         data: 'purchase_price',
                         name: 'purchase_price',
                         render: function(data) {
-                            if(data.product_type === "single"){
+                            if(data.has_variation === "single"){
                                 return data.purchase_prices;
                             }
-                            if(data.product_type === "variable"){
+                            if(data.has_variation === "variable"){
                                 return '';
                             }
                         }
@@ -576,10 +576,10 @@
                         data: 'selling_price',
                         name: 'selling_price',
                         render: function(data) {
-                            if(data.product_type === "single"){
+                            if(data.has_variation === "single"){
                                 return data.selling_prices;
                             }
-                            if(data.product_type === "variable"){
+                            if(data.has_variation === "variable"){
                                 return '';
                             }
                         }
@@ -717,7 +717,7 @@
                 var row = table.row( tr );
 
                 // for single product type
-                if(row.data().product_type === "single"){
+                if(row.data().has_variation === "single"){
                     return;
                 }
 
@@ -784,7 +784,7 @@
                             <td class="w-150px text-gray-500">${data.name} | ${variation_name}</td>
                             <td class="text-start w-150px text-gray-500">Ks ${purchase_price}</td>
                             <td class="text-start w-100px text-gray-500">Ks ${selling_price}</td>
-                            <td class="text-start w-100px text-gray-500">${data.product_type}</td>
+                            <td class="text-start w-100px text-gray-500">${data.has_variation}</td>
                             <td class="text-start w-150px text-gray-500">${category}</td>
                             <td class="text-start w-100px text-gray-500">${data.brand !== null ? data.brand : ''}</td>
                             <td class="text-start w-100px text-gray-500"></td>
@@ -805,7 +805,7 @@
             success("{{session('message')}}");
         </script>
     @endif
-  
+
     <script>
         var KTDatatablesExampleStock = function () {
             // Shared variables

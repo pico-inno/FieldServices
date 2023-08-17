@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('product_code')->nullable();
             $table->string('sku')->nullable();
-            $table->enum('product_type', ['single', 'variable', 'combo'])->nullable();
+            $table->enum('product_type', ['consumeable', 'storable', 'service','single', 'variable'])->default('storable');
+            $table->enum('has_variation', ['single', 'variable'])->default('single');
             $table->integer('brand_id')->nullable();
             $table->integer('category_id')->nullable();
             $table->integer('sub_category_id')->nullable();
@@ -34,6 +35,7 @@ return new class extends Migration
             $table->boolean('can_sale')->default(0);
             $table->boolean('can_purchase')->default(0);
             $table->boolean('can_expense')->default(0);
+            $table->boolean('is_recurring')->default(0);
             $table->boolean('is_inactive')->default(0);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

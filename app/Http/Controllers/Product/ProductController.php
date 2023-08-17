@@ -53,32 +53,32 @@ class ProductController extends Controller
             $purchase_price = null;
             $variation_values = null;
             // for single product
-            if($product->product_type === "single"){
+            if($product->has_variation === "single"){
                 $purchase_price = $product->productVariations[0]->default_purchase_price ?? 0;
             }
             // for variation product
-            if($product->product_type === "variable"){
+            if($product->has_variation === "variable"){
                 foreach($product->productVariations as $value){
                     $purchase_price[] = $value->default_purchase_price;
                     $variation_values[] = $value->variationTemplateValue->name;
                 }
             }
-            return ['purchase_prices' => $purchase_price, 'variation_name' => $variation_values, 'product_type' => $product->product_type ];
+            return ['purchase_prices' => $purchase_price, 'variation_name' => $variation_values, 'has_variation' => $product->has_variation ];
         })
         ->addColumn('selling_price', function($product) {
             $selling_price = null;
             // for single product
-            if($product->product_type === "single"){
+            if($product->has_variation === "single"){
                 $selling_price = $product->productVariations[0]->default_selling_price ?? 0;
             }
             // for variation product
-            if($product->product_type === "variable"){
+            if($product->has_variation === "variable"){
                 foreach($product->productVariations as $value){
                     $selling_price[] = $value->default_selling_price;
                 }
             }
 
-            return ['selling_prices' => $selling_price, 'product_type' => $product->product_type ];
+            return ['selling_prices' => $selling_price, 'has_variation' => $product->has_variation ];
         })
         ->addColumn('category', function($product) {
             $parentCategory = null;
@@ -151,6 +151,7 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request)
     {
+//        return $request;
         DB::beginTransaction();
         try{
             $img_name = $this->saveProductImage($request);
@@ -308,7 +309,7 @@ class ProductController extends Controller
 
     private function prepareProductData($request, $img_name, $isCreating = true)
     {
-        $product_type = $isCreating ? $request->product_type : $request->product_type_hidden;
+        $has_variation = $isCreating ? $request->has_variation : $request->has_variation_hidden;
 
         $productData = [
             'name' => $request->product_name,
@@ -330,8 +331,9 @@ class ProductController extends Controller
             'can_sale' => $request->can_sale ? 1 : 0,
             'can_purchase' => $request->can_purchase ? 1 : 0,
             'can_expense' => $request->can_expense ? 1 : 0,
+            'is_recurring' => $request->is_recurring ? 1 : 0,
             'is_inactive' => $request->product_inactive ? 1 : 0,
-            'product_type' => $product_type
+            'has_variation' => $has_variation
         ];
 
         if ($isCreating) {
@@ -345,10 +347,10 @@ class ProductController extends Controller
 
     private function insertProductVariations($request, $nextProductId, $isCreating = true)
     {
-        $product_type = $isCreating ? $request->product_type : $request->product_type_hidden;
+        $has_variation = $isCreating ? $request->has_variation : $request->has_variation_hidden;
         $variation_template_id = $isCreating ? $request->variation_name : $request->variation_template_id_hidden;
 
-        if ($product_type === "variable") {
+        if ($has_variation === "variable") {
             if(!$isCreating){
                 // Get all variation IDs of the product from the database
                 $dbVariationIds = ProductVariation::where('product_id', $nextProductId)->pluck('id');
@@ -424,7 +426,7 @@ class ProductController extends Controller
                 }
             }
         }
-        if ($product_type === "single") {
+        if ($has_variation === "single") {
             $productSingle = [
                 'product_id' => $nextProductId,
                 'variation_template_value_id' => null,

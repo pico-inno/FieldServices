@@ -35,11 +35,11 @@
             <!--begin::Form-->
             <form action="{{ route('product.create') }}" method="POST" enctype="multipart/form-data" id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo7/dist/apps/ecommerce/catalog/products.html">
                 @csrf
-                
+
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
-                    
+
                     <div class="tab-content">
-                    
+
                         <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
                             <div class="d-flex flex-column gap-7 gap-lg-10">
                                 <!--begin::General options-->
@@ -50,9 +50,9 @@
                                             <div class="row">
                                                 <div class="col-md-4 mb-5">
                                                     <label class="form-label d-block">{{ __('product/product.product_image') }}</label>
-        
+
                                                     <style>.image-input-placeholder { background-image: url('assets/media/svg/files/blank-image.svg'); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url('assets/media/svg/files/blank-image-dark.svg'); }</style>
-                                                   
+
                                                     <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3" data-kt-image-input="true">
                                                         <!--begin::Preview existing avatar-->
                                                         <div class="image-input-wrapper w-150px h-150px"></div>
@@ -78,7 +78,7 @@
                                                         <!--end::Remove-->
                                                     </div>
                                                     <div class="text-muted fs-7">Max File Size: 5MB</div>
-                                                    <div class="text-muted fs-7">Aspect ratio should be 1:1</div>                                                    
+                                                    <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
@@ -99,15 +99,54 @@
                                                             <strong class="ms-4 h5">{{ __('product/product.can_expense') }}</strong>
                                                         </label>
                                                     </div>
+                                                    <div class="form-check form-check-custom form-check-solid mt-8">
+                                                        <label class="" for="is_recurring">
+                                                            <input class="form-check-input" name="is_recurring" type="checkbox" value="1" id="is_recurring"/>
+                                                            <strong class="ms-4 h5">{{ __('product/product.is_recurring') }}</strong>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>                                            
+                                            </div>
                                         </div>
                                         <div class="mb-10 fv-row">
                                             <div class="row mb-5">
-                                                <div class="btn btn-sm btn-light-info w-200px" id="advance_toggle">
-                                                    <span class="show_advance"><i class="fa-solid fa-eye-slash me-5"></i>Show Advance</span>
-                                                    <span class="hide_advance d-none"><i class="fa-solid fa-eye me-5"></i>Hide Advance</span>
+                                                <div class="col-md-4">
+                                                    <div class="fv-row">
+                                                        <label class="form-label required">
+
+                                                        </label>
+                                                        <div class="input-group flex-nowrap">
+                                                            <div class="overflow-hidden flex-grow-1">
+                                                                <div class="btn btn-sm btn-light-info w-200px" id="advance_toggle">
+                                                                    <span class="show_advance"><i class="fa-solid fa-eye-slash me-5"></i>Show Advance</span>
+                                                                    <span class="hide_advance d-none"><i class="fa-solid fa-eye me-5"></i>Hide Advance</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                <div class="col-md-4">
+                                                    <div class="fv-row">
+                                                        <label class="form-label required">
+                                                            {{ __('product/product.product_type') }}
+                                                        </label>
+                                                        <div class="input-group flex-nowrap">
+                                                            <div class="overflow-hidden flex-grow-1">
+                                                                <select name="product_type" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Product Type">
+                                                                    <option></option>
+                                                                    <option value="consumeable">Consumeable</option>
+                                                                    <option selected value="storable">Storable</option>
+                                                                    <option value="service">Service</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @error('product_type')
+                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+
+
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4 mb-5">
@@ -166,7 +205,7 @@
                                                         {{ __('product/product.sub_category') }}
                                                     </label>
                                                     <select class="form-select form-select-sm" name="sub_category" id="subCategorySelect" data-control="select2" data-hide-search="true" data-placeholder="Select sub category">
-    
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -247,7 +286,7 @@
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
                                                                 <select class="form-select form-select-sm" name="purchase_uom_id" id="unitOfUom" data-control="select2" data-hide-search="true" data-placeholder="Select purchase UoM">
-    
+
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -280,21 +319,21 @@
                                         <div class="row advance-toggle-class d-none">
                                             <div class="col-md-4 mb-3 col-md-offset-4">
                                                 <label for="" class="form-label required">
-                                                    Product Type
+                                                   Has Variation
                                                 </label>
                                                 <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
                                                     title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
                                                             <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
                                                 <div class="mb-3">
-                                                    <select class="form-select form-select-sm" name="product_type" data-control="select2" id="product_type" data-hide-search="true">
+                                                    <select class="form-select form-select-sm" name="has_variation" data-control="select2" id="has_variation" data-hide-search="true">
                                                         <option value="single" selected>Single</option>
                                                         <option value="variable">Variable</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div id="single_box" class="box advance-toggle-class d-none">
                                             <div class="table-responsive mb-4">
                                                 <table class="table table-row-dashed fs-6 gy-4" id="">
@@ -398,7 +437,7 @@
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody data-repeater-list="variation_lists" id="variation-row">
-                                                                           
+
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -412,16 +451,16 @@
                                         <div class="separator border-dark my-10 advance-toggle-class d-none"></div>
                                         {{-- Custom Fields  --}}
                                         <div class="row mt-5 advance-toggle-class d-none">
-                                            <div class="col-md-4 mb-3">                                                
+                                            <div class="col-md-4 mb-3">
                                                 <label class="form-label">{{ __('product/product.custom_field_1') }}</label>
-                                                
+
                                                 <input type="text" name="custom_field1" class="form-control form-control-sm mb-2" placeholder="Custom field1" value="" />
-                                            
+
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label class="form-label">{{ __('product/product.custom_field_2') }}</label>
                                                 <input type="text" name="custom_field2" class="form-control form-control-sm mb-2" placeholder="Custom field2" value="" />
-                                            </div>  
+                                            </div>
                                             <div class="col-md-4 mb-3">
                                                 <label class="form-label">{{ __('product/product.custom_field_3') }}</label>
                                                 <input type="text" name="custom_field3" class="form-control form-control-sm mb-2" placeholder="Custom field3" value="" />
@@ -433,10 +472,10 @@
                                                 <input type="text" name="custom_field4" class="form-control form-control-sm mb-2" placeholder="Custom field4" value="" />
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                
+
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                
+
                                             </div>
                                         </div>
 
@@ -474,9 +513,9 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-start">
-                     
+
                         <a href="{{ url('/product') }}" id="kt_ecommerce_add_product_cancel" class="btn btn-sm btn-light me-5">Cancel</a>
-                 
+
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                             {{-- <button type="submit" class="btn btn-warning btn-sm">Save & Add Selling-Price-Group Prices</button> --}}
                             <button type="submit" class="btn btn-info btn-sm" name="save" value="app_opening_stock">Save & Add Opening Stock</button>
@@ -541,7 +580,7 @@
     // ============= > End:: For Product Description < =======================
 
     // ============= > Begin:: For Product Type      < =======================
-        const selectBox = $("#product_type");
+        const selectBox = $("#has_variation");
         const singleBox = $("#single_box");
         const variableBox = $("#variable_box");
 
@@ -844,7 +883,7 @@
         $(document).on('input', 'input[name="purchase_price_for_single"]', function() {
             let value = $(this).val();
             let profit = $(document).find('input[name="profit_margin_for_single"]').val();
-            
+
             let sellPrice;
             if(profit !== ''){
                 sellPrice = (profit, value);
@@ -877,7 +916,7 @@
         })
     // ============= > End:: For Purchase, Profit, Selling price  < ==================
 
-    // ============= > Begin:: For Show advance  < ================== 
+    // ============= > Begin:: For Show advance  < ==================
         $(document).on('click', '#advance_toggle', function() {
             $('.show_advance, .hide_advance').toggleClass('d-none');
             $('.advance-toggle-class').toggleClass('d-none');
@@ -950,7 +989,7 @@
                     $('#kt_modal_brand').modal('hide');
                 },
                 error: function(error) {
-                   
+
                 }
             });
         })
@@ -986,7 +1025,7 @@
                     $('#kt_modal_generic').modal('hide');
                 },
                 error: function(error) {
-                   
+
                 }
             });
         })
@@ -1022,7 +1061,7 @@
                     $('#kt_modal_manufacturer').modal('hide');
                 },
                 error: function(error) {
-                   
+
                 }
             });
         })
