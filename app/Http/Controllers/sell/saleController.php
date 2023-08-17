@@ -371,9 +371,8 @@ class saleController extends Controller
             } else {
                 $this->saleDetailCreation($request, $sale_data, $sale_details);
             }
+
             DB::commit();
-
-
             if ($request->type == 'pos') {
 
                 return response()->json([
@@ -543,13 +542,7 @@ class saleController extends Controller
         $sales = sales::where('id', $id)->first();
         DB::beginTransaction();
         try {
-            if ($request->type == 'pos') {
-                $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
-                $paymentAccountIds = json_decode($registeredPos->payment_account_id);
-                $request['payment_account'] = $paymentAccountIds[0] ?? null;
-                $request['currency_id'] = $this->currency->id;
-            }
-            $sales->update([
+            $saleData= [
                 'contact_id' => $request->contact_id,
                 'status' => $request->status,
                 'sale_amount' => $request->sale_amount,
@@ -561,8 +554,36 @@ class saleController extends Controller
                 'balance_amount' => $request->total_sale_amount - $saleBeforeUpdate->paid_amount,
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
-            ]);
+            ];
+            if ($request->type == 'pos') {
+                $saleData['paid_amount'] = $request->paid_amount;
+                $saleData['balance_amount'] = $request->balance_amount;
+            }
+            $sales->update($saleData);
+            if ($request->paid_amount > 0) {
+                if ($request->type == 'pos') {
+                    $multiPayment = $request->multiPayment;
+                    foreach ($multiPayment as $mp) {
+                        $payemntTransaction = $this->makePayment($sales, $mp['payment_account_id'] ?? null,true, $mp['payment_amount']);
+                     
+                        $pRSQry= posRegisterTransactions::where('transaction_type', 'sale')->where('transaction_id', $sales->id)->select('register_session_id')->first();
+                        if($pRSQry){
+                            $sessionId=$pRSQry->register_session_id ;
+                        }
+                        posRegisterTransactions::create([
+                            'register_session_id' => $sessionId ?? null,
+                            'payment_account_id' => $mp['payment_account_id'] ?? null,
+                            'transaction_type' => 'sale',
+                            'transaction_id' => $sales->id,
+                            'transaction_amount' =>  $mp['payment_amount'],
+                            'currency_id' => $request->currency_id,
+                            'payment_transaction_id' => $payemntTransaction->id ?? null,
+                        ]);
+                    }
+                }
+            }
             // $this->changeTransaction($saleBeforeUpdate, $sales, $request);
+
             // begin sale_detail_update
             if ($request_sale_details) {
                 //get old sale_details

@@ -564,7 +564,7 @@ class POSController extends Controller
         $posRegister=posRegisters::where('id',$posRegisterId)->first();
         $sessionId=request('sessionId');
         $posSession=posRegisterSessions::where('id',$sessionId)->first();
-        $transactions=posRegisterTransactions::where('register_session_id',$sessionId)
+        $saleTransactions=posRegisterTransactions::where('register_session_id',$sessionId)
                                                         ->where('transaction_type','sale')
                                                         ->where('transaction_type','sale')
                                                         ->with('sale')
@@ -580,7 +580,7 @@ class POSController extends Controller
                             ->groupBy('payment_account_id','currency_id')
                             ->get();
                                                         // dd($sumAmountOnPaymentAcc->toArray());
-        return view('App.pos.closeSession',compact('posRegister','posSession','transactions','paymentTransactions','sumAmountOnPaymentAcc'));
+        return view('App.pos.closeSession',compact('posRegister','posSession', 'saleTransactions','paymentTransactions','sumAmountOnPaymentAcc'));
     }
 
 

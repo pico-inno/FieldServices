@@ -1282,6 +1282,7 @@
             let pay_amount = 0;
             $(document).on('input', 'input[name="pay_amount"]', function() {
                 pay_amount = 0;
+                paidAmount=isNullOrNan($('#paidAmount').val()) ?? 0;
                 $('#payment_row_body .payment_row').each(function() {
                     let parent = $(this).closest('.payment_row');
                     let each_amount = parent.find('input[name="pay_amount"]').val();
@@ -1289,9 +1290,10 @@
                 })
 
                 // let change = Math.abs(isNullOrNan(payable_amount) - pay_amount);
+                pay_amount=pay_amount+ paidAmount;
                 let change = isNullOrNan(payable_amount) < pay_amount ? pay_amount - isNullOrNan(payable_amount) : '0';
                 let balance = isNullOrNan(payable_amount) > pay_amount ? isNullOrNan(payable_amount) - pay_amount : '0';
-                $('#payment_info .print_paid').text(pay_amount);
+                $('#payment_info .print_paid').text(pay_amount );
                 $('#payment_info .print_change').text(change);
                 $('#payment_info .print_balance').text(balance);
             })
