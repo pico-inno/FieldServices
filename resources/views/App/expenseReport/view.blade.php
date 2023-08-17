@@ -258,8 +258,8 @@
                                         <td>
                                             @if ($e->payment_status == 'paid')
                                                 <span class="badge badge-success">Paid</span>
-                                            @elseif($e->payment_status == 'pending')
-                                                <span class="badge badge-warning">Pending</span>
+                                            @elseif($e->payment_status == 'due')
+                                                <span class="badge badge-warning">Due</span>
                                             @else
                                                 <span class="badge badge-primary">Partial</span>
                                             @endif

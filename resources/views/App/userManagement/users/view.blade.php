@@ -1,7 +1,7 @@
 @extends('App.main.navBar')
 
 @section('styles')
-     css file for this page
+     {{-- css file for this page --}}
 @endsection
 
 @section('content')

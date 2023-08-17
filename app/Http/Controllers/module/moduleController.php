@@ -41,7 +41,7 @@ class moduleController extends Controller
         $decryptName=decrypt($request->module_name);
         $moduleName=ucwords($decryptName);
         $module = Module::find($moduleName);
-        Artisan::call('module:migrate-rollback', ['module' => $moduleName]);
+        // Artisan::call('module:migrate-rollback', ['module' => $moduleName]);
         $module->delete();
         return back()->with(['success'=>'Successfully Uninstall']);
     }

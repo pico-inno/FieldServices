@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers\Report;
 use App\Helpers\UomHelper;
+use App\Http\Controllers\Contact\CustomerController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\sell\saleController;
 use App\Models\BusinessUser;
+use App\Models\Contact\Contact;
 use App\Models\CurrentStockBalance;
 use App\Models\Product\Brand;
 use App\Models\Product\Category;
 use App\Models\Product\Product;
 use App\Models\Product\Unit;
+use App\Models\purchases\purchases;
+use App\Models\sale\sales;
 use App\Models\settings\businessLocation;
 use App\Models\Stock\Stockin;
 use App\Models\Stock\Stockout;
@@ -18,104 +23,595 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isActive']);
+    }
 
-    //Being: Inventory Reports
-//    public function stock_index(){
-//        $locations = businessLocation::select('id', 'name')->get();
-//        $stocks_person = BusinessUser::select('id', 'username')->get();
-//
-//        return view('App.report.inventory.stock.index', [
-//            'locations' => $locations,
-//            'stocksperson' => $stocks_person,
-//        ]);
-//    }
-//
-//    public function stockFilter(Request $request)
-//    {
-//        $filterType = $request->data['filter_type'];
-//        $dateRange = $request->data['filter_date'];
-//        $dates = explode(' - ', $dateRange);
-//
-//        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
-//        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
-//
-//        if ($filterType == 1){
-//            $query = Stockin::where('is_deleted', 0)
-//                ->with(['businessLocation:id,name', 'stockinPerson:id,username', 'created_by:id,username'])
-//                ->whereBetween('stockin_date', [$startDate, $endDate]);;
-//
-//            // if ($request->data['filter_status'] != 0) {
-//            //     $status = '';
-//
-//            //     switch ($request->data['filter_status']) {
-//            //         case 1:
-//            //             $status = 'pending';
-//            //             break;
-//            //         case 2:
-//            //             $status = 'received';
-//            //             break;
-//            //         case 3:
-//            //             $status = 'issued';
-//            //             break;
-//            //         case 4:
-//            //             $status = 'confirmed';
-//            //             break;
-//            //     }
-//
-//            //     $query->where('status', $status);
-//            // }
-//
-//            if ($request->data['filter_locations'] != 0) {
-//                $query->where('business_location_id', $request->data['filter_locations']);
-//            }
-//
-//            if ($request->data['filter_stocksperson'] != 0) {
-//                $query->where('stockin_person', $request->data['filter_stocksperson']);
-//            }
-//
-//        }
-//
-//        if ($filterType == 2){
-//
-//            $query = Stockout::where('is_deleted', 0)
-//                ->with(['businessLocation:id,name', 'stockoutPerson:id,username', 'created_by:id,username'])
-//                ->whereBetween('stockout_date', [$startDate, $endDate]);;
-//
-//            // if ($request->data['filter_status'] != 0) {
-//            //     $status = '';
-//
-//            //     switch ($request->data['filter_status']) {
-//            //         case 1:
-//            //             $status = 'pending';
-//            //             break;
-//            //         case 2:
-//            //             $status = 'received';
-//            //             break;
-//            //         case 3:
-//            //             $status = 'issued';
-//            //             break;
-//            //         case 4:
-//            //             $status = 'confirmed';
-//            //             break;
-//            //     }
-//
-//            //     $query->where('status', $status);
-//            // }
-//
-//            if ($request->data['filter_locations'] != 0) {
-//                $query->where('business_location_id', $request->data['filter_locations']);
-//            }
-//
-//            if ($request->data['filter_stocksperson'] != 0) {
-//                $query->where('stockout_person', $request->data['filter_stocksperson']);
-//            }
-//
-//        }
-//
-//        $results = $query->get();
-//
-//        return response()->json($results, 200);
-//    }
+    //Start: Sale
+    public function saleIndex(){
+        $locations = businessLocation::select('id', 'name')->get();
+        $customers = Contact::where('type', 'Customer')->get();
+
+        return view('App.report.sale.index', [
+            'locations' => $locations,
+            'customers' => $customers,
+        ]);
+    }
+    public function saleFilter(Request $request){
+        $dateRange = $request->data['filter_date'];
+        $dates = explode(' - ', $dateRange);
+
+        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
+        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
+
+        $query = sales::where('is_delete', 0)
+            ->with('business_location_id', 'customer')
+            ->whereBetween('sold_at', [$startDate, $endDate]);
+
+        if ($request->data['filter_locations'] != 0) {
+            $query->where('business_location_id', $request->data['filter_locations']);
+        }
+
+        if ($request->data['filter_customers'] != 0) {
+            $query->where('contact_id', $request->data['filter_customers']);
+        }
+
+        if ($request->data['filter_status'] != 0) {
+            $query->where('status', $request->data['filter_status']);
+        }
+
+
+        $result = $query->get()->toArray();
+
+        return response()->json($result, 200);
+    }
+
+    public function saleDetailsIndex(){
+        $locations = businessLocation::select('id', 'name')->get();
+        $customers = Contact::where('type', 'Customer')->get();
+
+        $categories = Category::select('id', 'name', 'parent_id')->get();
+        $brands = Brand::select('id', 'name',)->get();
+        $products = Product::select('id', 'name')->get();
+
+        return view('App.report.sale.details', [
+            'locations' => $locations,
+            'customers' => $customers,
+
+            'categories' => $categories,
+            'brands' => $brands,
+            'products' => $products,
+        ]);
+    }
+    public function saleDetailsFilter(Request $request){
+        $filterProduct = $request->data['filter_product'];
+        $filterCategory = $request->data['filter_category'];
+        $filterBrand = $request->data['filter_brand'];
+        $dateRange = $request->data['filter_date'];
+        $dates = explode(' - ', $dateRange);
+
+        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
+        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
+
+        $query = sales::where('is_delete', 0)
+            ->with('saleDetails', 'customer', 'business_location_id')
+            ->whereBetween('sold_at', [$startDate, $endDate]);
+
+        if ($request->data['filter_locations'] != 0) {
+            $query->where('business_location_id', $request->data['filter_locations']);
+        }
+
+        $sales = $query->get();
+        $saleDetails = $query->get()->pluck('saleDetails')->flatten();
+
+        $productIds = $saleDetails->pluck('product_id')->unique()->toArray();
+
+        $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
+            ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
+                $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
+                    ->with(['variationTemplateValue' => function ($query) {
+                        $query->select('id', 'name', 'variation_template_id')
+                            ->with(['variationTemplate:id,name']);
+                    }]);
+            }, 'uom' => function ($q) {
+                $q->with(['unit_category' => function ($q) {
+                    $q->with('uomByCategory');
+                }]);
+            }
+            ])
+            ->whereIn('id', $productIds);
+
+        if ($filterProduct != 0) {
+            $finalProduct->where('id', $filterProduct);
+        }
+
+        if ($filterCategory != 0) {
+            $finalProduct->where('category_id', $filterCategory);
+        }
+
+        if ($filterBrand != 0) {
+            $finalProduct->where('brand_id', $filterBrand);
+        }
+
+        $finalProduct = $finalProduct->get()->toArray();
+
+        $result = [];
+
+           foreach ($saleDetails as $detail) {
+               $productId = $detail['product_id'];
+               $variationId = $detail['variation_id'];
+               $lotNo = $detail['lot_no'];
+
+               foreach ($finalProduct as $product) {
+                   if ($product['id'] == $productId) {
+                       $variations = $product['product_variations'];
+
+                       foreach ($variations as $variation) {
+                           if ($variation['id'] == $variationId) {
+                              $sale = $sales->firstWhere('id', $detail['sales_id']);
+
+                               $variationProduct = [
+                                   'id' => $product['id'],
+                                   'sale_data' => $sale,
+                                   'name' => $product['name'],
+                                   'sku' => $product['sku'],
+                                   'variation_id' => $variation['id'],
+                                   'product_type' => $product['product_type'],
+                                   'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
+                                   'category_id' => $product['category']['id'] ?? '',
+                                   'category_name' => $product['category']['name'] ?? '',
+                                   'brand_name' => $product['brand']['name'] ?? '',
+                                   'brand_id' => $product['brand']['id'] ?? '',
+                                   'quantity' => $detail['quantity'],
+                                   'uom_price' => $detail['uom_price'],
+                                   'uom_name' => $detail['uom']['name'],
+                                   'uom_short_name' => $detail['uom']['short_name'],
+                               ];
+
+                               $result[] = $variationProduct;
+                           }
+                       }
+                   }
+               }
+           }
+
+
+        return response()->json($result, 200);
+
+    }
+    //End: Sale
+
+    //Being: Purchase
+    public function purchaseIndex(){
+        $locations = businessLocation::select('id', 'name')->get();
+        $suppliers = Contact::where('type', 'Supplier')->get();
+
+        return view('App.report.purchase.index', [
+            'locations' => $locations,
+            'suppliers' => $suppliers,
+        ]);
+    }
+    public function purchaseFilter(Request $request){
+        $dateRange = $request->data['filter_date'];
+        $dates = explode(' - ', $dateRange);
+
+        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
+        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
+
+        $query = purchases::where('is_delete', 0)
+            ->with('business_location_id', 'supplier')
+            ->whereBetween('purchased_at', [$startDate, $endDate]);
+
+        if ($request->data['filter_locations'] != 0) {
+            $query->where('business_location_id', $request->data['filter_locations']);
+        }
+
+        if ($request->data['filter_customers'] != 0) {
+            $query->where('contact_id', $request->data['filter_customers']);
+        }
+
+        if ($request->data['filter_status'] != 0) {
+            $query->where('status', $request->data['filter_status']);
+        }
+
+
+        $result = $query->get()->toArray();
+
+        return response()->json($result, 200);
+    }
+
+    public function purchaseDetailsIndex(){
+        $locations = businessLocation::select('id', 'name')->get();
+        $customers = Contact::where('type', 'Customer')->get();
+
+        $categories = Category::select('id', 'name', 'parent_id')->get();
+        $brands = Brand::select('id', 'name',)->get();
+        $products = Product::select('id', 'name')->get();
+
+        return view('App.report.purchase.details', [
+            'locations' => $locations,
+            'customers' => $customers,
+
+            'categories' => $categories,
+            'brands' => $brands,
+            'products' => $products,
+        ]);
+    }
+    public function purchaseDetailsFilter(Request $request){
+
+        $filterProduct = $request->data['filter_product'];
+        $filterCategory = $request->data['filter_category'];
+        $filterBrand = $request->data['filter_brand'];
+        $dateRange = $request->data['filter_date'];
+        $dates = explode(' - ', $dateRange);
+
+        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
+        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
+
+        $query = purchases::where('is_delete', 0)
+            ->with('purchase_details', 'supplier', 'business_location_id')
+            ->whereBetween('purchased_at', [$startDate, $endDate]);
+
+        if ($request->data['filter_locations'] != 0) {
+            $query->where('business_location_id', $request->data['filter_locations']);
+        }
+
+        $sales = $query->get();
+        $saleDetails = $query->get()->pluck('purchase_details')->flatten();
+
+        $productIds = $saleDetails->pluck('product_id')->unique()->toArray();
+
+        $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
+            ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
+                $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
+                    ->with(['variationTemplateValue' => function ($query) {
+                        $query->select('id', 'name', 'variation_template_id')
+                            ->with(['variationTemplate:id,name']);
+                    }]);
+            }, 'uom' => function ($q) {
+                $q->with(['unit_category' => function ($q) {
+                    $q->with('uomByCategory');
+                }]);
+            }
+            ])
+            ->whereIn('id', $productIds);
+
+        if ($filterProduct != 0) {
+            $finalProduct->where('id', $filterProduct);
+        }
+
+        if ($filterCategory != 0) {
+            $finalProduct->where('category_id', $filterCategory);
+        }
+
+        if ($filterBrand != 0) {
+            $finalProduct->where('brand_id', $filterBrand);
+        }
+
+        $finalProduct = $finalProduct->get()->toArray();
+
+        $result = [];
+
+        foreach ($saleDetails as $detail) {
+            $productId = $detail['product_id'];
+            $variationId = $detail['variation_id'];
+
+            foreach ($finalProduct as $product) {
+                if ($product['id'] == $productId) {
+                    $variations = $product['product_variations'];
+
+                    foreach ($variations as $variation) {
+                        if ($variation['id'] == $variationId) {
+                            $sale = $sales->firstWhere('id', $detail['purchases_id']);
+
+                            $variationProduct = [
+                                'id' => $product['id'],
+                                'sale_data' => $sale,
+                                'name' => $product['name'],
+                                'sku' => $product['sku'],
+                                'variation_id' => $variation['id'],
+                                'product_type' => $product['product_type'],
+                                'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
+                                'category_id' => $product['category']['id'] ?? '',
+                                'category_name' => $product['category']['name'] ?? '',
+                                'brand_name' => $product['brand']['name'] ?? '',
+                                'brand_id' => $product['brand']['id'] ?? '',
+                                'quantity' => $detail['quantity'],
+                                'uom_price' => $detail['uom_price'],
+//                                'uom_name' => $detail['uom']['name'],
+//                                'uom_short_name' => $detail['uom']['short_name'],
+                            ];
+
+                            $result[] = $variationProduct;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return response()->json($result, 200);
+
+    }
+    //End: Purchase
+
+    //Being: Qty Alert
+    public function quantityAlert(){
+        $locations = businessLocation::select('id', 'name')->get();
+        $customers = Contact::where('type', 'Customer')->get();
+
+        $categories = Category::select('id', 'name', 'parent_id')->get();
+        $brands = Brand::select('id', 'name',)->get();
+        $products = Product::select('id', 'name')->get();
+
+        return view('App.report.stockAlert.quantity', [
+            'locations' => $locations,
+            'customers' => $customers,
+            'categories' => $categories,
+            'brands' => $brands,
+            'products' => $products,
+        ]);
+    }
+
+    public function quantityAlertFilter(Request $request)
+    {
+        $filterProduct = $request->data['filter_product'];
+        $filterCategory = $request->data['filter_category'];
+        $filterBrand = $request->data['filter_brand'];
+        $dateRange = $request->data['filter_date'];
+        [$startDate, $endDate] = explode(' - ', $dateRange);
+        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $startDate)->startOfDay();
+        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $endDate)->endOfDay();
+
+        $query = CurrentStockBalance::with(['uom', 'location:id,name'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('current_quantity', '<=', 10);
+
+        if ($request->data['filter_locations'] != 0) {
+            $query->where('business_location_id', $request->data['filter_locations']);
+        }
+
+
+        $currentStocks = $query->get();
+        $productIds = $currentStocks->pluck('product_id')->unique()->toArray();
+
+        $finalProductQuery = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
+            ->with([
+                'category:id,name',
+                'brand:id,name',
+                'productVariations' => function ($query) {
+                    $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
+                        ->with(['variationTemplateValue.variationTemplate:id,name']);
+                },
+                'uom'
+            ])
+            ->whereIn('id', $productIds);
+
+        if ($filterProduct != 0) {
+            $finalProductQuery->where('id', $filterProduct);
+        }
+
+        if ($filterCategory != 0) {
+            $finalProductQuery->where('category_id', $filterCategory);
+        }
+
+        if ($filterBrand != 0) {
+            $finalProductQuery->where('brand_id', $filterBrand);
+        }
+
+        $finalProduct = $finalProductQuery->get()->toArray();
+
+        $mergedStocks = [];
+        foreach ($currentStocks as $currentStock) {
+            $productId = $currentStock['product_id'];
+            $variationId = $currentStock['variation_id'];
+            $locationId = $currentStock['location']['id'];
+
+            $key = $productId . '_' . $variationId . '_' . $locationId;
+
+            if (!isset($mergedStocks[$key])) {
+                $mergedStocks[$key] = $currentStock;
+            } else {
+                $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
+                $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+            }
+        }
+
+        $result = [];
+        foreach ($mergedStocks as $currentStock) {
+            foreach ($finalProduct as $product) {
+                if ($product['id'] == $currentStock['product_id']) {
+                    $variations = $product['product_variations'];
+
+                    foreach ($variations as $variation) {
+                        if ($variation['id'] == $currentStock['variation_id']) {
+                            $variationProduct = [
+                                'id' => $product['id'],
+                                'name' => $product['name'],
+                                'sku' => $product['sku'],
+                                'product_type' => $product['product_type'],
+                                'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
+                                'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
+                                'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
+                                'location_name' => $currentStock['location']['name'],
+                                'category_name' => $product['category']['name'] ?? '',
+                                'brand_name' => $product['brand']['name'] ?? '',
+                                'ref_uom_name' => $currentStock['uom']['name'],
+                                'ref_uom_short_name' => $currentStock['uom']['short_name'],
+                                'purchase_qty' => $currentStock['ref_uom_quantity'],
+                                'current_qty' => $currentStock['current_quantity'],
+                            ];
+                            $result[] = $variationProduct;
+                        }
+                    }
+                }
+            }
+        }
+
+        return response()->json($result, 200);
+    }
+
+    //End: Qty Alert
+
+    //Being: Expire Alert
+    public function expireAlert(){
+
+        $locations = businessLocation::select('id', 'name')->get();
+        $customers = Contact::where('type', 'Customer')->get();
+
+        $categories = Category::select('id', 'name', 'parent_id')->get();
+        $brands = Brand::select('id', 'name',)->get();
+        $products = Product::select('id', 'name')->get();
+
+        return view('App.report.stockAlert.expire', [
+            'locations' => $locations,
+            'customers' => $customers,
+            'categories' => $categories,
+            'brands' => $brands,
+            'products' => $products,
+        ]);
+    }
+
+    public function expireAlertFilter(Request $request)
+    {
+
+
+        $filterProduct = $request->data['filter_product'];
+        $filterCategory = $request->data['filter_category'];
+        $filterBrand = $request->data['filter_brand'];
+        $filterExpire = $request->data['filter_expire'];
+
+        $currentDate = now();
+
+
+        $dateInterval = null;
+        $expiredCondition = false;
+        switch ($filterExpire) {
+            case 'expire_week':
+                $dateInterval = now()->addWeek()->format('Y-m-d');
+                break;
+            case 'expire_15_days':
+                $dateInterval = now()->addDays(15)->format('Y-m-d');
+                break;
+            case 'expire_month':
+                $dateInterval = now()->addMonth()->format('Y-m-d');
+                break;
+            case 'expire_3_months':
+                $dateInterval = now()->addMonth(3)->format('Y-m-d');
+                break;
+            case 'expire_6_months':
+                $dateInterval = now()->addMonth(6)->format('Y-m-d');
+                break;
+            case 'expire_year':
+                $dateInterval = now()->addYear()->format('Y-m-d');
+                break;
+            case 'expired':
+                $expiredCondition = true;
+                break;
+            default:
+
+                break;
+        }
+
+
+        $query = CurrentStockBalance::with(['uom', 'location:id,name']);
+
+        if ($dateInterval) {
+            $query->where('expired_date', '<=', $dateInterval);
+        }
+
+        if ($expiredCondition) {
+            $query->where('expired_date', '<=', $currentDate);
+        }
+
+
+
+        if ($request->data['filter_locations'] != 0) {
+            $query->where('business_location_id', $request->data['filter_locations']);
+        }
+
+
+        $currentStocks = $query->get();
+        $productIds = $currentStocks->pluck('product_id')->unique()->toArray();
+
+        $finalProductQuery = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
+            ->with([
+                'category:id,name',
+                'brand:id,name',
+                'productVariations' => function ($query) {
+                    $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
+                        ->with(['variationTemplateValue.variationTemplate:id,name']);
+                },
+                'uom'
+            ])
+            ->whereIn('id', $productIds);
+
+        if ($filterProduct != 0) {
+            $finalProductQuery->where('id', $filterProduct);
+        }
+
+        if ($filterCategory != 0) {
+            $finalProductQuery->where('category_id', $filterCategory);
+        }
+
+        if ($filterBrand != 0) {
+            $finalProductQuery->where('brand_id', $filterBrand);
+        }
+
+        $finalProduct = $finalProductQuery->get()->toArray();
+
+        $mergedStocks = [];
+        foreach ($currentStocks as $currentStock) {
+            $productId = $currentStock['product_id'];
+            $variationId = $currentStock['variation_id'];
+            $locationId = $currentStock['location']['id'];
+
+            $key = $productId . '_' . $variationId . '_' . $locationId;
+
+            if (!isset($mergedStocks[$key])) {
+                $mergedStocks[$key] = $currentStock;
+            } else {
+                $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
+                $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+            }
+        }
+
+        $result = [];
+        foreach ($mergedStocks as $currentStock) {
+            foreach ($finalProduct as $product) {
+                if ($product['id'] == $currentStock['product_id']) {
+                    $variations = $product['product_variations'];
+
+                    foreach ($variations as $variation) {
+                        if ($variation['id'] == $currentStock['variation_id']) {
+                            $variationProduct = [
+                                'id' => $product['id'],
+                                'name' => $product['name'],
+                                'sku' => $product['sku'],
+                                'product_type' => $product['product_type'],
+                                'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
+                                'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
+                                'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
+                                'location_name' => $currentStock['location']['name'],
+                                'category_name' => $product['category']['name'] ?? '',
+                                'brand_name' => $product['brand']['name'] ?? '',
+                                'ref_uom_name' => $currentStock['uom']['name'],
+                                'ref_uom_short_name' => $currentStock['uom']['short_name'],
+                                'purchase_qty' => $currentStock['ref_uom_quantity'],
+                                'current_qty' => $currentStock['current_quantity'],
+                                'expired_date' => $currentStock['expired_date'],
+                            ];
+                            $result[] = $variationProduct;
+                        }
+                    }
+                }
+            }
+        }
+
+        return response()->json($result, 200);
+    }
+    //End: Expire ALert
 
 
     public function stock_transfer_index(){

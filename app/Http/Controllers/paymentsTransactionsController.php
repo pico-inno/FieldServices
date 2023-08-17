@@ -53,6 +53,9 @@ class paymentsTransactionsController extends Controller
                     $formattedTime = $dateTime->format(" h:i A " );
                     return $formattedDate.'<br>'.'('.$formattedTime.')';
                 })
+                ->editColumn('payment_amount',function($transaction){
+                    return price($transaction->payment_amount,$transaction->currency_id);
+                })
                 ->rawColumns(['payment_date','payment_type'])
                 ->make(true);
     }
@@ -170,7 +173,7 @@ class paymentsTransactionsController extends Controller
         $tx_payment->update([
             'transaction_ref_no'=>$rx_voucher_no,
         ]);
-        paymentsTransactions::create([
+        return paymentsTransactions::create([
             'payment_voucher_no'=>$rx_voucher_no,
             'payment_date'=>now(),
             'payment_account_id'=>$rx_account_id,
@@ -207,7 +210,7 @@ class paymentsTransactionsController extends Controller
             if($expense['expense_amount'] ==  $paid_amount){
                 $payment_status='paid';
             }elseif($expense['expense_amount'] ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -228,16 +231,16 @@ class paymentsTransactionsController extends Controller
     public function storeForPurchase($id,Request $request){
         try {
             DB::beginTransaction();
-            if($request->payment_account_id== '' || $request->payment_account_id==null){
-                return back()->with(['warning'=>'Payment Account require!']);
-            }
+            // if($request->payment_account_id== '' || $request->payment_account_id==null){
+            //     return back()->with(['warning'=>'Payment Account require!']);
+            // }
             $purchase=purchases::where('id',$id)->first();
             $paid_amount=$purchase->paid_amount + $request->payment_amount;
             $balance_amount=($purchase->total_purchase_amount - $paid_amount);
             if($purchase->total_purchase_amount==  $paid_amount){
                 $payment_status='paid';
             }elseif($purchase->total_purchase_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -273,7 +276,7 @@ class paymentsTransactionsController extends Controller
             if($sale->total_sale_amount ==  $paid_amount){
                 $payment_status='paid';
             }elseif($sale->total_sale_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -359,7 +362,7 @@ class paymentsTransactionsController extends Controller
             if($oriPaymentAmount == $request->paid_amount){
                 $payment_status='paid';
             }elseif($request->paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -397,28 +400,33 @@ class paymentsTransactionsController extends Controller
             }
             $paymentAccounts=paymentAccounts::where('id',$data->payment_account_id)->first();
             if($data->payment_account_id == $request->payment_account_id){
-                $diffAmt=$request->payment_amount-$data->payment_amount;
+                $diffAmt = $request->payment_amount - $data->payment_amount;
                 $data->update([
-                    'payment_amount'=>$request->payment_amount
+                    'payment_amount' => $request->payment_amount
                 ]);
-                $current_balance=$paymentAccounts->current_balance - $diffAmt;
-                $paymentAccounts->update([
-                    'current_balance'=>$current_balance,
-                ]);
+                if($paymentAccounts){
+                    $current_balance = $paymentAccounts->current_balance - $diffAmt;
+                    $paymentAccounts->update([
+                        'current_balance' => $current_balance,
+                    ]);
+                }
             }else{
-                $current_balance=$paymentAccounts->current_balance+$data->payment_amount;
-                $paymentAccounts->update([
-                    'current_balance'=>$current_balance,
-                ]);
+                if($paymentAccounts){
+                    $current_balance=$paymentAccounts->current_balance  +$data->payment_amount;
+                    $paymentAccounts->update([
+                        'current_balance'=>$current_balance,
+                    ]);
+                }
                 $this->makePayment($transaction,$request,$transaction_type);
                 $data->delete();
             }
             DB::commit();
             return back()->with(['success'=>'Successfully updated']);
        } catch (\Throwable $th) {
+        dd($th);
             DB::rollBack();
+            return back()->with(['success' => 'Something Wrong']);
        }
-        return back();
     }
 
 
@@ -440,7 +448,7 @@ class paymentsTransactionsController extends Controller
             if($paid_amount ==  $expense->expense_amount){
                 $payment_status='paid';
             }elseif($paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -485,7 +493,7 @@ class paymentsTransactionsController extends Controller
             if($paid_amount ==  $purchase->total_purchase_amount){
                 $payment_status='paid';
             }elseif($paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -533,7 +541,7 @@ class paymentsTransactionsController extends Controller
             if($paid_amount ==  $sale->total_sale_amount){
                 $payment_status='paid';
             }elseif($paid_amount ==  0){
-                $payment_status='pending';
+                $payment_status='due';
             }else{
                 $payment_status='partial';
             }
@@ -590,24 +598,26 @@ class paymentsTransactionsController extends Controller
             'transaction_id'=>$transaction->id,
             'transaction_ref_no'=>$transaction->expense_voucher_no,
             'payment_method'=>'card',
-            'payment_account_id'=>$request->payment_account_id,
+            'payment_account_id'=>$request->payment_account_id ?? null,
             'payment_type'=>'credit',
             'payment_amount'=>$request->payment_amount,
             'currency_id'=>$transaction->currency_id,
             'note'=>$request->note,
         ];
         paymentsTransactions::create($data);
-        $accountInfo=paymentAccounts::where('id',$request->payment_account_id);
-        if($accountInfo->exists()){
-            $currentBalanceFromDb=$accountInfo->first()->current_balance ;
-            if($transaction_type=='sale'){
-                $finalCurrentBalance=$currentBalanceFromDb + $request->payment_amount;
-            }else{
-                $finalCurrentBalance=$currentBalanceFromDb - $request->payment_amount;
+        if($request->payment_account_id){
+            $accountInfo=paymentAccounts::where('id',$request->payment_account_id);
+            if($accountInfo->exists()){
+                $currentBalanceFromDb=$accountInfo->first()->current_balance ;
+                if($transaction_type=='sale'){
+                    $finalCurrentBalance=$currentBalanceFromDb + $request->payment_amount;
+                }else{
+                    $finalCurrentBalance=$currentBalanceFromDb - $request->payment_amount;
+                }
+                $accountInfo->update([
+                    'current_balance'=>$finalCurrentBalance,
+                ]);
             }
-            $accountInfo->update([
-                'current_balance'=>$finalCurrentBalance,
-            ]);
         }
     }
 }

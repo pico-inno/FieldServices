@@ -12,7 +12,7 @@
 <!--end::Heading-->
 <!--begin::Breadcrumb-->
 <ul class="breadcrumb fw-semibold fs-base my-1">
-    <li class="breadcrumb-item text-muted">Room Management</li>
+    <li class="breadcrumb-item text-muted">Setting</li>
     <li class="breadcrumb-item text-dark">Floor</li>
 </ul>
 <!--end::Breadcrumb-->

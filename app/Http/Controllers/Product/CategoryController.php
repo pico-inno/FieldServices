@@ -26,16 +26,6 @@ class CategoryController extends Controller
         return DataTables::of($categories)
         ->addColumn('action', function($category){
             return $category->id;
-            // <div class="dropdown">
-            //     <button class="btn btn-sm btn-light btn-active-light-primary fw-semibold fs-7  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            //         Actions
-            //     </button>
-            //     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            //         <li><a href="' . route('category.edit',$category->id) . '" class="dropdown-item p-2 edit-brand" data-id="'.$category->id.'" >Edit</a></li>
-            //         <li><div class="dropdown-item p-2 delete-confirm cursor-pointer"  data-id="'.$category->id.'" >Delete</div></li>
-            //     </ul>
-            // </div>
-            // ';
         })
         ->rawColumns(['action'])
         ->make(true);

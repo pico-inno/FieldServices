@@ -7,6 +7,7 @@ namespace App\Helpers;
 use App\Models\Product\UOM;
 use App\Models\CurrentStockBalance;
 use App\Models\paymentsTransactions;
+use App\Models\resOrders;
 
 class generatorHelpers
 {
@@ -26,6 +27,12 @@ class generatorHelpers
         $paymentCount=paymentsTransactions::orderBy('id','DESC')->first()->id ?? 0;
         $numberCount = "%0" . 6 . "d";
         $voucherNo = sprintf('PMV-'.$numberCount, ($paymentCount + 1));
+        return $voucherNo;
+    }
+    public static function resOrderVoucherNo(){
+        $paymentCount=resOrders::orderBy('id','DESC')->first()->id ?? 0;
+        $numberCount = "%0" . 6 . "d";
+        $voucherNo = sprintf('ROV-'.$numberCount, ($paymentCount + 1));
         return $voucherNo;
     }
 }

@@ -94,7 +94,7 @@
 				
 					<a href="{{ route('brands') }}"  class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>
 				
-					<button type="submit" class="btn btn-primary btn-sm">
+					<button type="submit" class="btn btn-primary btn-sm" name="save" value="save">
 						{{ __('product/product.save') }}
 					</button>
 				</div>

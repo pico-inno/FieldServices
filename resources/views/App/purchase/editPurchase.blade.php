@@ -88,16 +88,16 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden flex-grow-1">
-                                        <select name="contact_id" class="form-select form-select-sm  fw-bold rounded-0" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true">
+                                        <select name="contact_id" class="form-select form-select-sm  fw-bold rounded-start-0" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true">
                                             <option></option>
                                             @foreach($suppliers as $supplier)
                                                 <option value="{{$supplier->id}}" @selected($supplier->id==old('contact_id',$purchase->contact_id))>{{$supplier->company_name ?? $supplier->firstname}}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
+                                    {{-- <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
-                                    </button>
+                                    </button> --}}
                                 </div>
                             </div>
                             <div class="mb-7 mt-3 col-12 col-md-3">
@@ -134,7 +134,7 @@
                                         <option></option>
                                         <option value="request" @selected(old('status',$purchase->status)=='request')>Request</option>
                                         <option value="pending"  @selected(old('status',$purchase->status)=='pending')>Pending</option>
-                                        <option value="order"  @selected(old('status',$purchase->status)=='order')>order</option>
+                                        <option value="order"  @selected(old('status',$purchase->status)=='order')>Order</option>
                                         <option value="partial" @selected(old('status',$purchase->status)=='partial')>Partial</option>
                                         <option value="received"  @selected(old('status',$purchase->status)=='received')>Received</option>
                                     </select>
@@ -235,9 +235,9 @@
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-3 btn-light-primary btn add_new_product_modal my-5 my-lg-0"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
+                            <button type="button" class="col-12 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0 productQuickAdd"   data-href="{{route('product.quickAdd')}}"  >
                                 <i class="fa-solid fa-plus me-2 "></i> Add new product
-                            </div>
+                            </button>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="purchase_table">
@@ -482,6 +482,7 @@
     <!--end::Container-->
 </div>
 
+<div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
 @include('App.purchase.contactAdd')
 @include('App.purchase.newProductAdd')
 @endsection
@@ -650,6 +651,16 @@ $(document).ready(function() {
                     }
 
                 }
+
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
+
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+        });
+    });
 
 });
 

@@ -29,7 +29,7 @@ return new class extends Migration
             $table->decimal('paid_amount', 22, 4)->nullable();
             $table->decimal('balance_amount', 22, 4)->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
-            $table->enum('payment_status', [ 'pending', 'partial', 'paid'])->nullable();
+            $table->enum('payment_status', [ 'due', 'partial', 'paid'])->nullable();
             $table->dateTime('purchased_at')->nullable();
             $table->unsignedBigInteger('purchased_by')->nullable();
             $table->dateTime('confirm_at')->nullable();

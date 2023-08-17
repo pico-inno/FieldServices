@@ -19,14 +19,16 @@ $(document).ready(function() {
     }
     $('#contact_id').on('change',function(){
         var selected_supplier =$(this).val();
-        let supplier=suppliers.filter(function(supplier){
-            return supplier.id==selected_supplier;
-        })
-        supplier=supplier[0];
+        if(selected_supplier){
+            let supplier=suppliers.filter(function(supplier){
+                return supplier.id==selected_supplier;
+            })
+            supplier=supplier[0];
 
-        $('.supplier_address').html(`${supplier.address_line_1? supplier.address_line_1+',' :''} ${supplier.address_line_2? supplier.address_line_2+',' :''}<br>
-           ${supplier.city? supplier.city+',' :''}${supplier.state? supplier.state+',' :''}${supplier.country? supplier.country+',' :''}<br>
-           ${ supplier.zip_code? supplier.zip_code+',' :''}`)
+            $('.supplier_address').html(`${supplier.address_line_1? supplier.address_line_1+',' :''} ${supplier.address_line_2? supplier.address_line_2+',' :''}<br>
+            ${supplier.city? supplier.city+',' :''}${supplier.state? supplier.state+',' :''}${supplier.country? supplier.country+',' :''}<br>
+            ${ supplier.zip_code? supplier.zip_code+',' :''}`)
+        }
     })
 
     let unique_name_id=1;
@@ -57,6 +59,7 @@ $(document).ready(function() {
                 $.ajax({
                     url: `/purchase/get/product`,
                     type: 'POST',
+                    delay: 300,
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -82,8 +85,8 @@ $(document).ready(function() {
                             results.forEach(function(result,key) {
                                 html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
                                 html += `<h4 class="fs-6 ps-10 pt-3">
-                                    ${result.name} ${result.product_type==='variable'?'-('+result.product_variations.length+') select all' :''}`;
-                                if(result.product_type=='sub_variable'){
+                                    ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :''}`;
+                                if(result.has_variation=='sub_variable'){
                                     html +=  `<span class="text-gray-700 fw-semibold p-1 fs-5">(${result.variation_name??''})</span>`;
                                 }
 
@@ -134,7 +137,7 @@ $(document).ready(function() {
         let id = $(this).attr('data-id');
         let name = $(this).attr('data-name');
         let selected_product= results[id] ?? results[0];
-        if(selected_product.product_type==='variable')
+        if(selected_product.has_variation==='variable')
         {
             let variation=selected_product.product_variations;
             variation.forEach(v => {
@@ -152,10 +155,10 @@ $(document).ready(function() {
 
     function append_row(selected_product,unique_name_id) {
         let default_purchase_price,variation_id;
-        if(selected_product.product_type=='single'){
+        if(selected_product.has_variation=='single'){
             default_purchase_price=selected_product.product_variations[0].default_purchase_price;
             variation_id=selected_product.product_variations[0].id;
-        }else if(selected_product.product_type=='sub_variable'){
+        }else if(selected_product.has_variation=='sub_variable'){
             default_purchase_price=selected_product.default_purchase_price;
             variation_id=selected_product.variation_id;
         }

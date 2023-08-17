@@ -29,6 +29,7 @@
                 if(!product){
                     newProductData={
                         'product_id':sale.product.id,
+                        'product_type':sale.product.product_type,
                         'variation_id':sale.product_variation.id,
                         'category_id':sale.product.category_id,
                         'defaultSellingPrices':sale.product_variation.default_selling_price,
@@ -53,6 +54,7 @@
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
                 uom.select2();
                 let uom_select=uom.val();
+                getPrice(uom);
                 changeQtyOnUom(uom,uom_select);
                 // lineDiscountCalulation(uom);
                 extraDiscCal();
@@ -62,7 +64,7 @@
                 let diaO = new KTDialer(e, {
                     min: 0,
                     step: 1,
-                    decimals: 2
+                    // decimals: 2
                 });
 
                 diaO.on('kt.dialer.change',function(ev) {
@@ -115,6 +117,7 @@
                     $.ajax({
                         url: `/sell/get/product`,
                         type: 'POST',
+                        delay: 250,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
@@ -139,25 +142,27 @@
                                 if (results.length > 0) {
                                     results.forEach(function(result,key) {
                                         let total_current_stock_qty=Number(result.total_current_stock_qty);
-                                        let css_class=result.total_current_stock_qty<=0?" text-gray-600 order-3":'';
+                                        let css_class=result.total_current_stock_qty<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
 
                                         html += `<div class="quick-search-result result  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
                                         html += `<h4 class="fs-6  pt-3 ${css_class}">
-                                                ${result.name} ${result.product_type==='variable'?'-('+result.product_variations.length+') select all' :result.sku??'' }`;
-                                                if(result.product_type=='sub_variable'){
+                                                ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :result.sku??'' }`;
+                                                if(result.has_variation=='sub_variable'){
                                                     html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
                                                 }
                                         html+='</h4>'
-                                        if(result.total_current_stock_qty>0){
-                                            html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
-                                        }else{
-                                            html += '<p>Out of Stocks</p>';
+                                        if(result.product_type=="storable"){
+                                            if(result.total_current_stock_qty>0){
+                                                html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
+                                            }else{
+                                                html += '<p>Out of Stocks</p>';
+                                            }
                                         }
                                         html += '</div>';
                                     });
                                     if (results.length == 1) {
                                         $('.quick-search-results').show();
-                                        if(results[0].total_current_stock_qty>0){
+                                        if(results[0].total_current_stock_qty>0 || results[0].product_type!="storable"){
                                             setTimeout(() => {
                                                 $(`.result[data-name|='${results[0].name}']`).click();
                                                 $('.quick-search-results').hide();
@@ -193,12 +198,13 @@
         $('#autocomplete').on('click', '.result', function() {
             let id = $(this).attr('data-id');
             let selected_product= products[id];
-            if(selected_product.total_current_stock_qty==0 || selected_product.total_current_stock_qty==null){
+            let isStorable=selected_product.product_type=="storable";
+            if((selected_product.total_current_stock_qty==0 || selected_product.total_current_stock_qty==null) && isStorable){
                 return;
             }
 
             $('.dataTables_empty').addClass('d-none');
-            if(selected_product.product_type==='variable')
+            if(selected_product.has_variation==='variable')
             {
                 let variation=selected_product.product_variations;
                 variation.forEach(v => {
@@ -219,12 +225,12 @@
 
         //append table row for product to sell
         function append_row(selected_product,unique_name_id) {
-
             let default_purchase_price,variation_id;
+            let isStorable=selected_product.product_type=="storable";
             // let uomSetOption=""
             let uomIds=[];
             // if the item is out of stock reutrn do nothing;
-            if(selected_product.total_current_stock_qty==0){
+            if(selected_product.total_current_stock_qty==0 && isStorable){
                 return;
             }
             let uomByCategory=selected_product['uom']['unit_category']['uom_by_category'];
@@ -256,6 +262,7 @@
                 //     <input type="hidden" name="sale_details[${unique_name_id}][stock_id_by_lot_serial_no]" class="lot_no" value="${value.id}">
                 // `
                 }
+            $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
             var newRow = `
                 <tr class="sale_row mt-2">
                     <td>
@@ -263,7 +270,7 @@
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
-                            <span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)
+                            ${$currentQtyText}
                         </div>
                     </td>
                     <td class="d-none">
@@ -273,7 +280,7 @@
                             @if ($setting->lot_control=='on')
                                 <input type='hidden' value="0" class="uom_set_id"  />
                             @else
-                                <input type='hidden' value="${selected_product.stock[0].id}" class="uom_set_id"  />
+                                <input type='hidden' value="${isStorable ? selected_product.stock[0].id :null}" class="uom_set_id"  />
                             @endif
                         </div>
 
@@ -352,7 +359,7 @@
             let dialerObject = new KTDialer(dialerElement, {
                 min: 0,
                 step: 1,
-                decimals: 2
+                // decimals: 2
             });
                     // <td>
                     //     <div>
@@ -429,6 +436,7 @@
     function checkAndStoreSelectedProduct(newSelectedProduct) {
         let newProductData={
             'product_id':newSelectedProduct.id,
+            'product_type':newSelectedProduct.product_type,
             'variation_id':newSelectedProduct.product_variations.id,
             'category_id':newSelectedProduct.category_id,
             'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
@@ -561,7 +569,6 @@
         });
 
         const uoms=product.uom.unit_category.uom_by_category;
-
         const referenceUom =uoms.filter(function ($u) {
             return $u.unit_type == "reference";
         })[0];
@@ -579,13 +586,16 @@
             result+=isNullOrNan(refQty)
 
         })
-        if(result > productsOnSelectData[index].total_current_stock_qty){
-                    productsOnSelectData[index].validate=false;
-            $(`.stock_alert_${variationId}`).removeClass('d-none');
-        }else{
-            productsOnSelectData[index].validate=true;
-            $(`.stock_alert_${variationId}`).addClass('d-none');
+        if(product.product_type =='storable'){
+            if(result > productsOnSelectData[index].total_current_stock_qty){
+                        productsOnSelectData[index].validate=false;
+                $(`.stock_alert_${variationId}`).removeClass('d-none');
+            }else{
+                productsOnSelectData[index].validate=true;
+                $(`.stock_alert_${variationId}`).addClass('d-none');
+            }
         }
+
     }
 
     function getCurrentAndRefUom(uoms,currentUomId){
@@ -632,6 +642,7 @@
             changeQtyOnUom($(this),$(this).val());
             getSellingPrice($(this));
             checkStock($(this));
+            getPrice($(this));
             subtotalCalculation($(this));
             sale_amount_cal();
             setTimeout(() => {
@@ -925,16 +936,32 @@
             let mainPriceList=priceList.mainPriceList;
             let basePriceLists=priceList.basePriceList;
             let mainPriceStatus=priceSetting(mainPriceList,parent);
-            console.log(priceList,'click edit');
             if(!mainPriceStatus){
-                let i = 0;
-                while (i < basePriceLists.length) {
-                    let bp = basePriceLists[i];
-                    let priceStatus = priceSetting(bp, parent);
-                    if(priceStatus){
-                        break;
+                if(basePriceLists.length > 0){
+                    let i = 0;
+                    while (i < basePriceLists.length) {
+                        let bp = basePriceLists[i];
+                        let priceStatus = priceSetting(bp, parent);
+                        if(priceStatus){
+                            break;
+                        }
+                        i++;
                     }
-                    i++;
+                }else{
+                    let productId=parent.find('.product_id').val();
+                    let variationId=parent.find('.variation_id').val();
+                    let product=productsOnSelectData.filter(function(p){
+                        return p.product_id==productId && variationId == p.variation_id;
+                    })[0];
+                    let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices);
+                    let price=isNullOrNan(result.resultPrice);
+                    if(price == 0){
+                        let uomPirce=parent.find('.uom_price').val();
+                        parent.find('.uom_price').val(uomPirce ?? 0);
+
+                    }else{
+                        parent.find('.uom_price').val(price);
+                    }
                 }
             }
         }
@@ -983,25 +1010,14 @@
     }
     function priceSettingToUi(priceStage,parentDom,product){
         let quantity=isNullOrNan(parentDom.find('.quantity').val());
-        let inputUomId=parentDom.find('.uom_select').val();
-        let uomIdForSale=product.uom_id;
+        let uomChange=getPriceByUOM(parentDom,product,priceStage.min_qty,priceStage.cal_value);
+        let qtyByPriceStage=uomChange.resultQty;
 
         const uoms=product.uom.unit_category.uom_by_category;
-        const uomForSale =uoms.filter(function ($u) {
-                return $u.id ==uomIdForSale;
-        })[0];
+        let inputUomId=parentDom.find('.uom_select').val();
         const inputUom =uoms.filter(function ($u) {
                 return $u.id ==inputUomId;
         })[0];
-        const refUOM =uoms.filter(function ($u) {
-                return $u.unit_type =="reference";
-        })[0];
-
-        let refQtyForSale=getReferenceUomInfoByCurrentUomQty(priceStage.min_qty,uomForSale,refUOM)['qtyByReferenceUom'];
-        // let qtyByPriceStage=changeQty(parentDom.find('.uom_select'),inputUomId,refQtyForSale,product).roundedResult;
-        // changeQty(e,newUomId,refQty,product)
-        let uomChange=changeQtyOnUom2(uomIdForSale,inputUomId,priceStage.min_qty,uoms,priceStage.cal_value );
-        let qtyByPriceStage=uomChange.resultQty;
         if(quantity >= qtyByPriceStage){
 
             parentDom.find('.uom_price').val(uomChange.resultPrice);
@@ -1009,13 +1025,35 @@
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
+            // let productId=parentDom.find('.product_id').val();
+            // let variationId=parentDom.find('.variation_id').val();
+            // let product=productsOnSelectData.filter(function(p){
+            //     return p.product_id==productId && variationId == p.variation_id;
+            // })[0];
+            // parentDom.find('.uom_price').val(isNullOrNan(product.defaultSellingPrices));
+            // return true;
+
+
             let refPrice=product.stock[0].ref_uom_price;
             let result=refPrice * isNullOrNan( inputUom.value);
             parentDom.find('.uom_price').val(result);
         }
         return false;
     }
+    function getPriceByUOM(parentDom,product,priceStageQty=1,priceStageCalVal=''){
+        const uoms=product.uom.unit_category.uom_by_category;
+        let inputUomId=parentDom.find('.uom_select').val();
+        let uomIdForSale=product.uom_id;
+        const uomForSale =uoms.filter(function ($u) {
+                return $u.id ==uomIdForSale;
+        })[0];
 
+        const refUOM =uoms.filter(function ($u) {
+                return $u.unit_type =="reference";
+        })[0];
+
+        return changeQtyOnUom2(uomIdForSale,inputUomId,priceStageQty,uoms,priceStageCalVal);
+    }
 
 
     function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='') {

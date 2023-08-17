@@ -24,9 +24,9 @@
         .data-table-body tr td{
             padding: 3px;
         }
-        label{
+        /* label{
             font-size: 50px !important ;
-        }
+        } */
     </style>
 @endsection
 
@@ -59,7 +59,7 @@
                                     At least one sale item is required to complete sale!
                                 </div>
                             @enderror
-                            <div class="mb-10 col-12 col-sm-6 mt-3 col-md-3">
+                            <div class="mb-sm-10 mb-3 col-12 col-sm-6 mt-3 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold" for="">
                                     Default Selling Price
                                 </label>
@@ -70,7 +70,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-10 mt-3 col-12 col-sm-6 col-md-3 fv-row">
+                            <div class="mb-sm-10 mb-3 mt-3 col-12 col-sm-6 col-md-3 fv-row">
                                 <label class="form-label fs-7 mb-3 fw-semibold required">Customer:</label>
                                 <div class="input-group input-group-sm flex-nowrap">
                                     <div class="input-group-text">
@@ -81,7 +81,7 @@
                                             <option value=""></option>
                                             {{-- <option value="2">Aung Aung</option> --}}
                                             @foreach ($customers as $customer)
-                                                <option value="{{$customer->id}}" @selected(old('contact_id')==$customer->id)  priceList={{$customer->pricelist_id}}>{{ $customer->company_name ?? $customer->first_name .' '. $customer->middle_name .' '.$customer->last_name }}</option>
+                                                <option value="{{$customer->id}}" @selected(old('contact_id')==$customer->id)  priceList={{$customer->pricelist_id}}>{{ $customer->company_name ?? $customer->getFullNameAttribute() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -95,7 +95,7 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-10 col-12 mt-3 col-sm-6 col-md-3">
+                            <div class="mb-sm-10 mb-3  col-12 mt-3 col-sm-6 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Currency
                                 </label>
@@ -107,17 +107,17 @@
                             </div>
 
                             {{-- <input type="hidden" name="currency_id" value="{{$defaultCurrency['id']}}"> --}}
-                            <div class="mb-10 col-12 mt-3 col-sm-6 col-md-3">
+                            <div class="mb-sm-10 mb-3  col-12 mt-3 col-sm-6 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Status
                                 </label>
                                 <select name="status" id="saleStatus"  class="form-select form-select-sm" data-kt-select2="true" data-status="filter" data-hide-search="true" required>
                                     <option value="quotation"  >Quotation</option>
-                                    <option value="draft"  >draft</option>
-                                    <option value="pending"  >pending</option>
-                                    <option value="order" >Order</option>
+                                    <option value="draft"  >Draft</option>
+                                    <option value="pending"  >Pending</option>
+                                    <option value="order" >Ordering</option>
                                     <option value="partial"  >Partial</option>
-                                    <option value="delivered"  >delivered</option>
+                                    <option value="delivered"  >Delivered</option>
                                 </select>
                             </div>
 
@@ -139,18 +139,18 @@
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card  autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
-                            <div class="col-4 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal"   data-bs-toggle="modal" type="button" data-bs-target="#add_new_product_modal" data-href="{{ url('purchase/add/supplier')}}">
+                            <button class="col-md-3 col-12 p-3 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal  productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button">
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Add new product
-                            </div>
+                            </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-row-dashed fs-6 gy-5 mt-3" id="sale_table">
+                            <table class="table table-row-dashed fs-6 gy-4 mt-3" id="sale_table">
                                 <!--begin::Table head-->
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-8 text-uppercase gs-0 ">
-                                        <th class="min-w-150px ps-3">Product </th>
-                                        <th class="min-w-125px">Quantity </th>
+                                        <th class="min-w-175px ps-3">Product </th>
+                                        <th class="min-w-100px">Quantity </th>
                                         <th class="min-w-125px">UOM </th>
                                         <th class="min-w-80px" style="max-width: 100px;">Price List</th>
                                         <th class="min-w-125px">Uom Price</th>
@@ -201,7 +201,7 @@
                                 <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm" value="0" >
                             </div>
                         </div>
-                        <div class="row justify-content-end">
+                        <div class="row justify-content-end  {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
                                     Total Item Discount:(-)Ks
@@ -210,7 +210,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class=" mt-2 col-12 col-md-3 offset-1">
+                            <div class=" mt-2 col-12 col-md-3 offset-md-1">
                                 <label class="form-label fs-7 fw-semibold" for="">
                                     Extra Discount Type
                                 </label>
@@ -219,13 +219,13 @@
                                     <option value="percentage">Percentage</option>
                                 </select>
                             </div>
-                            <div class=" mt-2 col-12 col-md-3">
+                            <div class="mt-2 col-12 col-md-3 mb-5 mb-md-0">
                                 <label class="form-label fs-7 fw-semibold" for="">
                                   Extra Discount Amount
                                 </label>
                                  <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount">
                             </div>
-                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center mb-5 mb-md-0">
                                 <span class="min-w-200px pe-2" for="">
                                     Discount :(-)Ks
                                 </span>
@@ -261,7 +261,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-end mb-3">
-                            <div class="fs-6 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center">
+                            <div class="fs-6 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center mb-5 ">
                                 <select name="payment_account" id="payment_accounts" class="form-select form-select-sm" data-kt-select2="true" data-placeholder="select payment account">
                                     <option disabled selected>Select Account</option>
                                     @php
@@ -302,6 +302,7 @@
     <!--end::Container-->
 </div>
 
+<div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
 @include('App.purchase.contactAdd')
 @include('App.purchase.newProductAdd')
 @include('App.sell.sale.subscribeModel')
@@ -451,7 +452,15 @@ const usersList = [
         }]
         )
     }
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
 
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+        });
+    });
 </script>
 @include('App.sell.js.saleJs')
 <script src={{asset('customJs/Ajax/getAccountByCurrency.js')}}></script>

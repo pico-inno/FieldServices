@@ -473,6 +473,102 @@ KTUtil.onDOMContentLoaded(function () {
 });
 
 
+    $(document).ready(function(){
+                // user update validation
+        var paidAllValidator = function () {
+            // Shared variables
+
+            const element = document.getElementById("add_payment_acounts_modal");
+            const form = element.querySelector("#add_payment_acounts");
+            // let value={account->current_balance}};
+            // Init add schedule modal
+            var initPaidAll = () => {
+
+                // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+
+                // Submit button handler
+                const submitButton = element.querySelectorAll('#submit');
+
+                submitButton.forEach((btn) => {
+                    btn.addEventListener('click', function (e) {
+                            var validator =validationField(form);
+                            if (validator) {
+                                validator.validate().then(function (status) {
+                                    if (status == 'Valid') {
+                                        e.currentTarget=true;
+                                        btn.setAttribute('data-kt-indicator', 'on');
+                                        return true;
+                                    } else {
+                                        e.preventDefault();
+
+                                        btn.setAttribute('data-kt-indicator', 'off');
+                                        // Show popup warning. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                                        Swal.fire({
+                                            text: "Sorry, looks like there are some errors detected, please try again.",
+                                            icon: "error",
+                                            buttonsStyling: false,
+                                            confirmButtonText: "Ok, got it!",
+                                            customClass: {
+                                                confirmButton: "btn btn-primary"
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+
+                    });
+                })
+
+            }
+
+            // Select all handler
+
+            return {
+                // Public functions
+                init: function () {
+                    initPaidAll();
+                }
+            };
+        }();
+        // On document ready
+        KTUtil.onDOMContentLoaded(function () {
+            paidAllValidator.init();
+        });
+
+        function validationField(form) {
+            $('.fv-plugins-message-container').remove();
+            let accountId=$('#payment_account').val();
+            let paidAmountValidator;
+
+            var validationFields = {
+                    name:{
+                        validators: {
+                            notEmpty: { message: "* Payment Account Name is required" }
+                        },
+                    },
+                    currency_id:{
+                        validators: {
+                            notEmpty: { message: "* Currency is required" }
+                        },
+                    },
+            };
+            return  FormValidation.formValidation(
+                form,
+                {
+                    fields:validationFields,
+                    plugins: {
+                        trigger: new FormValidation.plugins.Trigger(),
+                        bootstrap: new FormValidation.plugins.Bootstrap5({
+                            rowSelector: '.fv-row',
+                            eleInvalidClass: '',
+                            eleValidClass: ''
+                        })
+                    },
+
+                }
+            );
+        }
+    })
 </script>
 @endpush
 

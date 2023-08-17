@@ -48,9 +48,13 @@ class ManufacturerController extends Controller
         $manufacturer->created_by = Auth::user()->id;
 
         $manufacturer->save();
+        $manufacturers = Manufacturer::all();
 
-        if($request->manufacturer_create){
-            return back()->with('message', 'Created sucessfully manufacturer');
+        if($request->form_type === "from_product"){
+            return response()->json([
+                'message' => 'Manufacturer created sucessfully',
+                'manufacturers' => $manufacturers
+            ]);
         }
 
         return redirect('/manufacturer')->with('message', 'Created sucessfully manufacturer');

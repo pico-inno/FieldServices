@@ -15,7 +15,7 @@
 
                 <div class="modal-body">
                     <div class="row mb-6">
-                        <div class="col-4 mb-5">
+                        <div class="col-4 mb-5 fv-row">
                             <label for="name" class="required form-label">Account Name</label>
                             <input type="text" name="name" id="name" class="form-control form-control-sm">
                         </div>
@@ -23,18 +23,18 @@
                             <label for="account_type" class="required form-label">Account Type</label>
                             <input type="text" name="account_type" id="account_type" class="form-control form-control-sm">
                         </div> --}}
-                        <div class="col-4 mb-5">
-                            <label for="account_number" class="required form-label">Account Number</label>
+                        <div class="col-4 mb-5 ">
+                            <label for="account_number" class=" form-label">Account Number</label>
                             <input type="text" name="account_number" id="account_number" class="form-control form-control-sm">
                         </div>
-                        <div class="col-4 mb-5">
-                            <label for="opening_amount" class="required form-label">Opening Amount</label>
-                            <input type="text" name="opening_amount" id="opening_amount" class="form-control form-control-sm">
+                        <div class="col-4 mb-5 fv-row">
+                            <label for="opening_amount" class=" form-label">Opening Amount</label>
+                            <input type="text" name="opening_amount" value="0" id="opening_amount" class="form-control form-control-sm">
                         </div>
-                        <div class="col-4 mb-5">
+                        <div class="col-4 mb-5 fv-row">
                             <label for="currency" class="required form-label">Currency</label>
                             <select name="currency_id" id="" data-control="select2" data-dropdown-parent="#add_payment_acounts_modal" class="form-select form-select-sm" required>
-                                <option disabled selected>Select Currency</option>
+                                <option disabled selected value="">Select Currency</option>
                                 @php
                                     $currencies=App\Models\Currencies::get();
                                 @endphp
@@ -65,7 +65,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary" id="submit">Save</button>
                 </div>
             </form>
         </div>

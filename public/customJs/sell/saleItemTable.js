@@ -2,104 +2,107 @@
 
 // Class definition
     var datatable;
-var KTCustomersList = function () {
-    // Define shared variables
-    var filterMonth;
-    var filterPayment;
-    var table
+    var KTCustomersList = function () {
+        // Define shared variables
+        var filterMonth;
+        var filterPayment;
+        var table
 
-    // Private functions
-    var initCustomerList = function () {
-        // Set date data order
-        const tableRows = table.querySelectorAll('tbody tr');
+        // Private functions
+        var initCustomerList = function () {
+            // Set date data order
+            const tableRows = table.querySelectorAll('tbody tr');
 
-        tableRows.forEach(row => {
-            const dateRow = row.querySelectorAll('td');
-            const realDate = moment(dateRow[5].innerHTML, "DD MMM YYYY, LT").format(); // select date from 5th column in table
-            dateRow[5].setAttribute('data-order', realDate);
-        });
+            tableRows.forEach(row => {
+                const dateRow = row.querySelectorAll('td');
+                const realDate = moment(dateRow[5].innerHTML, "DD MMM YYYY, LT").format(); // select date from 5th column in table
+                dateRow[5].setAttribute('data-order', realDate);
+            });
 
-        // Init datatable --- more info on datatables: https://datatables.net/manual/
-        datatable = $(table).DataTable({
-            'columnDefs': [
-               // Disable ordering on column 0 (checkbox)
-                { orderable: false, targets: 0 },
-                { orderable: false, targets: 1 },
-                {    targets: [2],
-                    visible: false,
-                    searchable: true
-                }
-            ],
-            order: [[1, 'desc']],
-            processing: true,
-            serverSide: true,
-               ajax: {
-                url: '/sell/get/saleItem',
-                data:function(data){
-                    data.form_data=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
-                    data.to_date=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
-                }
-            },
-
-            columns: [
-                {
-                    data: 'checkbox',
-                    name: 'checkbox',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    searchable: false ,
-                    orderable: false,
-                },
-                {
-                    name:'saleItems',
-                    data:'saleItems',
-                },
-                {
-                    data: 'sales_voucher_no',
-                    name: 'sales_voucher_no'
-                },
-                {
-                    data: 'customer',
-                    name: 'customer'
-                },
-                {
-                    data: 'sold_at',
-                    name: 'sold_at'
-                },{
-                    data: 'sale_amount',
-                    name: 'sale_amount'
-                },
-                {
-                    data: "business_location_id.name",
-                    name: "business_location_id.name"
+            // Init datatable --- more info on datatables: https://datatables.net/manual/
+            datatable = $(table).DataTable({
+                pageLength: 30,
+                lengthMenu: [10, 20, 30, 50,40,80],
+                'columnDefs': [
+                // Disable ordering on column 0 (checkbox)
+                    { orderable: false, targets: 0 },
+                    { orderable: false, targets: 1 },
+                    {    targets: [2],
+                        visible: false,
+                        searchable: true
+                    }
+                ],
+                order: [[1, 'desc']],
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '/sell/get/saleItem',
+                    data: function (data) {
+                        data.saleType=$('#saleType').val() ?? 'allSale',
+                        data.form_data=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                        data.to_date=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                    }
                 },
 
-                {
-                    data: 'status',
-                    name: 'status'
-                }
+                columns: [
+                    {
+                        data: 'checkbox',
+                        name: 'checkbox',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        searchable: false ,
+                        orderable: false,
+                    },
+                    {
+                        name:'saleItems',
+                        data:'saleItems',
+                    },
+                    {
+                        data: 'sales_voucher_no',
+                        name: 'sales_voucher_no'
+                    },
+                    {
+                        data: 'customer',
+                        name: 'customer'
+                    },
+                    {
+                        data: 'sold_at',
+                        name: 'sold_at'
+                    },{
+                        data: 'sale_amount',
+                        name: 'sale_amount'
+                    },
+                    {
+                        data: "business_location_id.name",
+                        name: "business_location_id.name"
+                    },
 
-            ]
+                    {
+                        data: 'status',
+                        name: 'status'
+                    }
 
-        });
+                ]
 
-        // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
-        datatable.on('draw', function () {
-            initToggleToolbar();
-            handleDeleteRows();
-            handleBusinessLocationFilter();
-            // DateRangeFilter();
-            handleCustomerFilter();
-            handleStatusFilter();
-            // toggleToolbars();
-            // handleStatusFilter();
-            // handleDateFilterDatatable();
-        });
-    }
+            });
+
+            // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
+            datatable.on('draw', function () {
+                initToggleToolbar();
+                handleDeleteRows();
+                handleBusinessLocationFilter();
+                // DateRangeFilter();
+                handleCustomerFilter();
+                handleStatusFilter();
+                // toggleToolbars();
+                // handleStatusFilter();
+                // handleDateFilterDatatable();
+            });
+        }
 
     // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
     var handleSearchDatatable = () => {

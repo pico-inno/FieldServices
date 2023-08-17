@@ -76,7 +76,7 @@ class expenseController extends Controller
         if($data['expense_amount'] ==  $data['paid_amount']){
             $data['payment_status']='paid';
         }elseif($data['expense_amount'] ==  0){
-            $data['payment_status']='pending';
+            $data['payment_status']='due';
         }else{
             $data['payment_status']='partial';
         }
@@ -110,7 +110,7 @@ class expenseController extends Controller
         if($data['expense_amount'] ==  $expense->paid_amount){
             $data['payment_status']='paid';
         }elseif($data['expense_amount'] ==  0){
-            $data['payment_status']='pending';
+            $data['payment_status']='due';
         }else{
             $data['payment_status']='partial';
         }
@@ -128,7 +128,7 @@ class expenseController extends Controller
             if($expense->expense_amount ==  $req['paid_amount']){
                 $req['payment_status']='paid';
             }elseif($req['paid_amount'] ==  0){
-                $req['payment_status']='pending';
+                $req['payment_status']='due';
             }else{
                 $req['payment_status']='partial';
             }
@@ -240,7 +240,7 @@ class expenseController extends Controller
             return $finalText;
         })
         ->editColumn('payment_status',function($e){
-            if($e->payment_status=='pending'){
+            if($e->payment_status=='due'){
                 return '<span class="badge badge-warning">Pending</span>';
             }elseif($e->payment_status=='partial'){
                 return '<span class="badge badge-primary">Partial</span>';

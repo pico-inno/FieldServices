@@ -1,7 +1,7 @@
 
-    <div class="modal-dialog">
+    <div class="modal-dialog" id="edit_payment_accounts">
         <div class="modal-content">
-            <form action="{{route('paymentAcc.update',$account->id)}}" method="POST" id="add_payment_acounts">
+            <form action="{{route('paymentAcc.update',$account->id)}}" method="POST" id="edit_payment_accounts_form">
                 @csrf
                 <div class="modal-header">
                     <h3 class="modal-title">Edit Payment Accounts</h3>
@@ -15,7 +15,7 @@
 
                 <div class="modal-body">
                     <div class="row mb-6">
-                        <div class="col-4 mb-5">
+                        <div class="col-4 mb-5 fv-row">
                             <label for="name" class="required form-label">Account Name</label>
                             <input type="text" name="name" id="name" class="form-control form-control-sm" value="{{$account->name}}">
                         </div>
@@ -24,14 +24,14 @@
                             <input type="text" name="account_type" id="account_type" class="form-control form-control-sm" value="{{$account->account_type}}">
                         </div> --}}
                         <div class="col-4 mb-5">
-                            <label for="account_number" class="required form-label">Account Number</label>
+                            <label for="account_number" class=" form-label">Account Number</label>
                             <input type="text" name="account_number" id="account_number" class="form-control form-control-sm" value="{{$account->account_number}}">
                         </div>
-                        <div class="col-4 mb-5">
-                            <label for="opening_amount" class="required form-label">Opening Amount</label>
+                        <div class="col-4 mb-5 fv-row">
+                            <label for="opening_amount" class=" form-label">Opening Amount</label>
                             <input type="text" name="opening_amount" id="opening_amount" class="form-control form-control-sm" value="{{$account->opening_amount}}">
                         </div>
-                        <div class="col-4 mb-5">
+                        <div class="col-4 mb-5 fv-row">
                             <label for="currency" class="required form-label">Currency</label>
                             <select name="currency_id" id="" data-control="select2" data-dropdown-parent="#add_payment_acounts_modal" class="form-select form-select-sm">
                                 <option disabled selected>Select Currency</option>
@@ -65,7 +65,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary" id="edit_submit">Save</button>
                 </div>
             </form>
         </div>
@@ -74,4 +74,101 @@
 
 <script>
     autosize($('[data-kt-autosize="true"]'))
+
+    $(document).ready(function(){
+                    // user update validation
+            var paidAllValidator = function () {
+                // Shared variables
+
+                const element = document.getElementById("edit_payment_accounts");
+                const form = element.querySelector("#edit_payment_accounts_form");
+                // let value={account->current_balance}};
+                // Init add schedule modal
+                var initPaidAll = () => {
+
+                    // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+
+                    // Submit button handler
+                    const submitButton = element.querySelectorAll('#edit_submit');
+
+                    submitButton.forEach((btn) => {
+                        btn.addEventListener('click', function (e) {
+                                var validator =validationField(form);
+                                if (validator) {
+                                    validator.validate().then(function (status) {
+                                        if (status == 'Valid') {
+                                            e.currentTarget=true;
+                                            btn.setAttribute('data-kt-indicator', 'on');
+                                            return true;
+                                        } else {
+                                            e.preventDefault();
+
+                                            btn.setAttribute('data-kt-indicator', 'off');
+                                            // Show popup warning. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                                            Swal.fire({
+                                                text: "Sorry, looks like there are some errors detected, please try again.",
+                                                icon: "error",
+                                                buttonsStyling: false,
+                                                confirmButtonText: "Ok, got it!",
+                                                customClass: {
+                                                    confirmButton: "btn btn-primary"
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+
+                        });
+                    })
+
+                }
+
+                // Select all handler
+
+                return {
+                    // Public functions
+                    init: function () {
+                        initPaidAll();
+                    }
+                };
+            }();
+            // On document ready
+            KTUtil.onDOMContentLoaded(function () {
+                paidAllValidator.init();
+            });
+
+            function validationField(form) {
+                $('.fv-plugins-message-container').remove();
+                let accountId=$('#payment_account').val();
+                let paidAmountValidator;
+
+                var validationFields = {
+                        name:{
+                            validators: {
+                                notEmpty: { message: "* Payment Account Name is required" }
+                            },
+                        },
+                        currency_id:{
+                            validators: {
+                                notEmpty: { message: "* Currency is required" }
+                            },
+                        },
+                };
+                return  FormValidation.formValidation(
+                    form,
+                    {
+                        fields:validationFields,
+                        plugins: {
+                            trigger: new FormValidation.plugins.Trigger(),
+                            bootstrap: new FormValidation.plugins.Bootstrap5({
+                                rowSelector: '.fv-row',
+                                eleInvalidClass: '',
+                                eleValidClass: ''
+                            })
+                        },
+
+                    }
+                );
+            }
+        })
 </script>

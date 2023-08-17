@@ -24,6 +24,8 @@ class sale_details extends Model
         'sales_id',
         'product_id',
         'variation_id',
+        'rest_order_id',
+        'rest_order_status',
         'uom_id',
         'quantity',
         'uom_price',
@@ -37,6 +39,7 @@ class sale_details extends Model
         'per_item_tax',
         'subtotal_with_tax',
         'currency_id',
+        'note',
         'delivered_quantity',
         'created_by',
         'updated_by',
@@ -51,7 +54,9 @@ class sale_details extends Model
     public function sale(){
         return $this->hasOne(sales::class, 'id', 'sales_id');
     }
-
+    public function saleWithTable(){
+        return $this->hasOne(sales::class, 'id', 'sales_id')->with('table');
+    }
 
     public function product(): HasOne
     {

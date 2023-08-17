@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name', 191)->nullable(true);
             $table->unsignedBigInteger('currency_id')->nullable(true);
             $table->enum('lot_control',['on','off'])->nullable(true);
+            $table->boolean('use_paymentAccount')->nullable()->default(true);
             $table->date('start_date')->nullable(true);
             $table->double('default_profit_percent', 5, 2)->default(0.00)->nullable(true);
             $table->unsignedBigInteger('owner_id')->nullable(true);
@@ -62,7 +63,7 @@ return new class extends Migration
             $table->enum('sales_cmsn_agnt', ['value1', 'value2', 'value3'])->nullable()->default(NULL);
             $table->tinyInteger('item_addition_method')->unsigned()->notNull()->default(1);
             $table->tinyInteger('enable_inline_tax')->unsigned()->notNull()->default(1);
-            $table->enum('currency_symbol_placement', ['before', 'after'])->notNull()->default('before');
+            $table->enum('currency_symbol_placement', ['before', 'after'])->notNull()->default('after');
             $table->text('enabled_modules')->nullable();
             $table->string('date_format', 191)->notNull()->default('m/d/Y');
             $table->enum('time_format', ['12', '24'])->notNull()->default('24');

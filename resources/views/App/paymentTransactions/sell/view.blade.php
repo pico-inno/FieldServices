@@ -27,7 +27,7 @@
                                           <span class="fw-semibold fs-7 text-gray-600">sold_at:</span>
                                         </th>
                                         <td  class="text-end">
-                                          <span class="fw-bold fs-7 text-gray-800">{{$data->sold_at}}</span>
+                                          <span class="fw-bold fs-7 text-gray-800">{{fDate($data->sold_at)}}</span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -49,7 +49,7 @@
                                          <span class="fw-semibold fs-7 text-gray-600">Total Sale Amout:</span>
                                        </th>
                                        <td  class="text-end">
-                                         <span class="fw-bold fs-7 text-gray-800">{{$data->total_sale_amount}} {{$data->currency->symbol ?? ''}}</span>
+                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->total_sale_amount,$data->currency->id)}}</span>
                                        </td>
                                    </tr>
                                    <tr>
@@ -57,7 +57,7 @@
                                          <span class="fw-semibold fs-7 text-gray-600">Paid Amount:</span>
                                        </th>
                                        <td  class="text-end">
-                                         <span class="fw-bold fs-7 text-gray-800">{{$data->paid_amount}} {{$data->currency->symbol ?? ''}}</span>
+                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->paid_amount,$data->currency->id)}} </span>
                                        </td>
                                    </tr>
                                    <tr>
@@ -65,7 +65,7 @@
                                       <span class="fw-semibold fs-7 text-gray-600">Balance Amount:</span>
                                     </th>
                                     <td  class="text-end me-3">
-                                      <span class="fw-bold fs-7 text-gray-800">{{$data->balance_amount}} {{$data->currency->symbol ?? ''}}</span>
+                                      <span class="fw-bold fs-7 text-gray-800">{{price($data->balance_amount,$data->currency->id)}} </span>
                                     </td>
                                 </tr>
                                </tbody>
@@ -79,13 +79,16 @@
                         <thead>
                             <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
                                <th class="min-w-100px">Payment Date</th>
-                               <th  class="min-w-100px">Payment Voucher No</th>
-                               <th  class="min-w-100px">Payment Account</th>
-                               <th  class="min-w-100px">Payment Amount</th>
-                               <th class="text-end min-w-100px" style="max-width: 100px">
-                                    <span class="btn btn-sm pe-3">
+                               <th  class="min-w-100px text-center">Payment Voucher No</th>
+                                @if (isUsePaymnetAcc())
+                                    <th class="min-w-100px">Payment Account</th>
+                               @endif
+                               <th  class="min-w-100px text-end">Payment Amount</th>
+                               <th class="text-center min-w-100px" style="max-width: 100px">
+                                    {{-- <span class="btn btn-sm pe-3">
                                         <i class="fa-solid fa-trash text-danger"></i>
-                                    </span>
+                                    </span> --}}
+                                    Actions
                                 </th>
                             </tr>
                         </thead>
@@ -98,19 +101,21 @@
                             @foreach ($transactions as $t)
                             <tr class="transactionList">
                                 <th class="text-start text-gray-600  fw-semibold">
-                                  <span>{{$t->payment_date}}</span>
+                                  <span>{{fDate($t->payment_date)}}</span>
                                 </th>
-                                <th class="text-start text-gray-600 fw-semibold voucher_no">
+                                <th class="text-center text-gray-600 fw-semibold voucher_no">
                                     <span>{{$t->payment_voucher_no}}</span>
                                 </th>
                                 @php
                                    $paymentAccount=$t->payment_account->name ?? '';
                                 @endphp
-                                <th class="text-start text-gray-600  fw-semibold">
-                                    <span>{{$paymentAccount}}</span>
-                                </th>
-                                <th class="text-start text-gray-600 fw-semibold">
-                                    <span>{{number_format($t->payment_amount,2)}}  {{$t->currency->symbol ?? ''}}</span>
+                                @if (isUsePaymnetAcc())
+                                    <th class="text-start text-gray-600  fw-semibold">
+                                        <span>{{$paymentAccount}}</span>
+                                    </th>
+                                @endif
+                                <th class="text-end text-gray-600 fw-semibold">
+                                    <span>{{price($t->payment_amount,$t->currency_id)}} </span>
                                 </th>
                                 <th class="text-end pe-3">
                                     <button type="button" class="btn btn-sm  pe-2 edit_payment" data-id="{{$t->id}}" data-href="{{route('paymentTransaction.editForSale',$t->id)}}"><i class="fa-regular fa-pen-to-square text-primary"></i></button>

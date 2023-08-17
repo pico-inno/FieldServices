@@ -82,10 +82,13 @@
                                <th  class="min-w-100px" >Payment Date</th>
                                <th  class="min-w-100px">Payment Voucher No</th>
                                <th  class="min-w-100px">Payment Account</th>
-                               <th  class="min-w-100px">Payment Amount</th>
+                                @if (isUsePaymnetAcc())
+                                    <th  class="min-w-100px">Payment Amount</th>
+                                @endif
                                <th class="text-end min-w-100px" style="max-width: 80px">
                                     <span class="btn btn-sm pe-3">
-                                        <i class="fa-solid fa-trash text-danger"></i>
+                                        {{-- <i class="fa-solid fa-trash text-danger"></i> --}}
+                                        Actions
                                     </span>
                                 </th>
                             </tr>

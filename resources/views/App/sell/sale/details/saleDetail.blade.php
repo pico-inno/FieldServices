@@ -52,7 +52,7 @@
                                     Reference No : <span class="text-gray-600"> {{$sale['reference_no']}}3</span>
                                 </h3> --}}
                                 <h3 class="text-primary-emphasis fw-semibold fs-5">
-                                    Date : <span class="text-gray-600">{{$sale['sold_at']}}</span>
+                                    Date : <span class="text-gray-600">{{fDate($sale['sold_at'])}}</span>
                                 </h3>
                                 <h3 class="text-primary-emphasis fw-semibold fs-5">
                                     sale Status : <span class="text-gray-600">{{$sale['status']}}</span>
@@ -73,10 +73,11 @@
                                         <th class="min-w-100px">Deivered Quantity</th>
                                     @endif
                                     <th class="min-w-100px">UOM</th>
-                                    <th class="min-w-100px">sale Price</th>
-                                    <th class="min-w-100px">Discount Type</th>
-                                    <th class="min-w-100px">Per Item Discount Amount</th>
-                                    <th class="min-w-100px">Subtotal</th>
+                                    <th class="min-w-100px text-end">UOM Price</th>
+                                    <th class="min-w-100px text-end">Subtotal </th>
+                                    <th class="min-w-100px   ">Discount Type</th>
+                                    <th class="min-w-100px  ">Per Item Discount Amount</th>
+                                    <th class="min-w-100px text-end pe-3">Subtotal with Dis</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -114,17 +115,20 @@
                                         <td>
                                             {{$sd['uom']['name']}}
                                         </td>
-                                        <td>
-                                            {{round($sd->subtotal,$currencyDp)}}&nbsp;{{$currency}}
+                                        <td class="text-end">
+                                            {{price($sd->uom_price,$sd->currency_id)}}
                                         </td>
-                                        <td>
+                                        <td class="text-end">
+                                            {{price($sd->subtotal,$sd->currency_id)}}
+                                        </td>
+                                        <td class=" ">
                                             {{$sd->discount_type}}
                                         </td>
-                                        <td>
-                                            {{round($sd->per_item_discount,$currencyDp)}} &nbsp; {{ $sd->discount_type=='percentage'?'%':$currency }}
+                                        <td class=" ">
+                                            {{price($sd->per_item_discount)}} &nbsp; {{ $sd->discount_type=='percentage'?'%':$currency }}
                                         </td>
-                                        <td>
-                                            {{round($sd->subtotal_with_tax,$currencyDp)}}&nbsp;{{$currency}}
+                                        <td class="text-end pe-3">
+                                            {{price($sd->subtotal_with_discount,$sd->currency_id)}}
                                         </td>
 
 
@@ -176,10 +180,10 @@
                                                 (=)
                                             </td>
                                             <td class="text-end">
-                                                {{round($sale['sale_amount'] ?? 0,$currencyDp)}}&nbsp;{{$currency}}
+                                                {{price($sale['sale_amount'] ?? 0,$sale['currency_id'])}}
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr class="">
                                             <td>
                                                 Total Item Discount:
                                             </td>
@@ -187,7 +191,7 @@
                                                 (-)
                                             </td>
                                             <td class="text-end">
-                                                {{round($sale['total_item_discount'] ?? 0,$currencyDp)}}&nbsp;{{$currency}}
+                                                {{price($sale['total_item_discount'] ?? 0,$sale['currency_id'])}}
 
                                             </td>
                                         </tr>
@@ -199,7 +203,7 @@
                                                 (-)
                                             </td>
                                             <td class="text-end">
-                                                {{round($sale['extra_discount'] ?? 0,$currencyDp)}} &nbsp;{{ $sale['extra_discount_type']=='percentage'?'%':$currency}}
+                                                {{price($sale['extra_discount'] ?? 0)}} &nbsp;{{ $sale['extra_discount_type']=='percentage'?'%':$currency}}
 
                                             </td>
                                         </tr>
@@ -211,7 +215,7 @@
                                                 (=)
                                             </td>
                                             <td class="text-end">
-                                            {{round($sale['total_sale_amount'],$currencyDp)}}&nbsp;{{$currency}}
+                                            {{price($sale['total_sale_amount'],$sale['currency_id'])}}
                                             </td>
                                         </tr>
                                         <tr>
@@ -222,18 +226,18 @@
                                                 (-)
                                             </td>
                                             <td class="text-end">
-                                                {{round($sale['paid_amount'],$currencyDp)}}&nbsp;{{$currency}}
+                                                {{price($sale['paid_amount'],$sale['currency_id'])}}
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                Balance Total:
+                                                Balance Amount:
                                             </td>
                                             <td class="text-end">
                                                 (=)
                                             </td>
                                             <td class="text-end">
-                                                {{round($sale['balance_amount'],$currencyDp)}}&nbsp;{{$currency}}
+                                                {{price($sale['balance_amount'],$sale['currency_id'])}}
                                             </td>
                                         </tr>
 
@@ -286,7 +290,7 @@
                                     <tr>
                                         <!--begin::Name=-->
                                         <td class="ps-2">
-                                            {{$sale['sold_at']}}
+                                            {{fDate($sale['sold_at'])}}
                                         </td>
                                         <!--end::Name=-->
                                         <!--begin::Email=-->
@@ -322,7 +326,7 @@
                                         <tr>
                                             <!--begin::Name=-->
                                             <td class="ps-2">
-                                                {{$sale['updated_at']}}
+                                                {{fDate($sale['updated_at'])}}
                                             </td>
                                             <!--end::Name=-->
                                             <!--begin::Email=-->
@@ -359,7 +363,7 @@
                                         <tr>
                                             <!--begin::Name=-->
                                             <td class="ps-2">
-                                                {{$sale['sold_at']}}
+                                                {{fDate($sale['sold_at'])}}
                                             </td>
                                             <!--end::Name=-->
                                             <!--begin::Email=-->

@@ -29,6 +29,8 @@ class businessSettingController extends Controller
             'accounting_method'=>$request->accounting_method,
             'enable_line_discount_for_purchase'=>$request->enable_line_discount_for_purchase ? '1':'0',
             'enable_line_discount_for_sale'=>$request->enable_line_discount_for_sale ? '1':'0',
+            'currency_symbol_placement'=>$request->currency_symbol_placement,
+            'use_paymentAccount'=>$request->use_paymentAccount ? '1':'0',
         ];
         if(businessSettings::exists()){
             businessSettings::first()->update($data);

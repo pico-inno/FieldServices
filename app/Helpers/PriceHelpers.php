@@ -28,4 +28,5 @@ function exchangeCurrency($amount, $fromCurrencyid, $toCurrencyid) {
         }
         return $amount;
     }
+    return $amount;
 }

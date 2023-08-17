@@ -26,6 +26,7 @@
         <link href={{ asset("assets/css/style.bundle.css") }} rel="stylesheet" type="text/css" />
         <!--end::Global Stylesheets Bundle-->
         <link href={{ asset("assets/plugins/custom/datatables/datatables.bundle.css") }} rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href={{asset("customCss/scrollbar.css")}}>
         <style>
 
             .search-item-container {
@@ -94,29 +95,54 @@
             .for_disable_btn {
                 /* cursor: not-allowed; */
             }
-
-            /* .individual-div.hide, .business-div.hide, .customer-group.hide, .credit-limit.hide{
-                display: none;
-            } */
-
           </style>
     </head>
     <!--end::Head-->
     <!--begin::Body-->
     <body >
         <div style="height: 100vh; overflow: hidden; ">
-            <div class="row bg-primary-subtle px-2 mh-80px py-1">
+            <div class="row bg-primary px-2 mh-80px ">
                 <div class=" d-flex  justify-content-between align-items-center ">
                     {{-- <button class="btn btn-sm p-2 btn-light">Home</button> --}}
-                    <a href="{{ route('home') }}" class="btn btn-sm p-2 btn-light">Home</a>
-                    <button class="btn btn-sm p-2 btn-light" data-bs-toggle="modal" data-bs-target="#pos_sale_recent">Recent</button>
+                    <div class="d-flex">
+                        <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
+                        @if ($posRegister->use_for_res=='1')
+                            <select name="table_id" id="table_nav_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light table_id tableSelect" data-control="select2" data-allow-clear="true">
+                                <option disabled selected>Select Table</option>
+                                @if ($tables)
+                                    @foreach ($tables as $table)
+                                        <option value="{{$table->id}}">{{$table->table_no}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                            {{-- <a href="{{url('/restaurant/table/dashboard?pos_register_id='.encrypt($posRegisterId))}}" class="ms-0 btn btn-sm btn-info rounded-0"><< {{request('table_no')}}</a> --}}
+                        @endif
+                    </div>
+                    <a class="navbar-brand fw-bold fs-3 text-white" href="#"></a>
+                    <div class="">
+                        <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
+                        <button class="btn btn-sm  btn-danger fw-bold  rounded-0"  data-href="{{route(
+                        'pos.closeSession',
+                            [
+                            'posRegisterId'=>$posRegister->id,
+                            'sessionId'=>request('sessionId')
+                            ]
+                            )}}" id="close_session_btn"><i class="fa-solid fa-power-off  fw-bolder"></i></button>
+                    </div>
                 </div>
             </div>
             <!--begin::Content-->
+            <div class="">
+                <div id="spinnerWrapper" class="spinner-wrapper">
+                    <div class="spinner">
+                    </div>
+                </div>
+            </div>
             <div class="content d-flex flex-column flex-column-fluid ms-8 " id="pos_kt_content" style="height:100%;">
                 <!--begin::container-->
                 <div class="container-fluid  pe-1 h-100" id="kt_content_container">
                     <!--begin::Layout-->
+
                     <div class="d-flex flex-column flex-lg-row p-2">
                         <!--begin::Content-->
                         <div class="d-flex flex-column flex-row-fluid me-lg-9 mb-lg-0 me-xl-9 mb-10 mb-xl-0" style="height: 100vh;">
@@ -125,21 +151,21 @@
                                     <select name="business_location_id" id="business_location_id" class="form-select form-select-sm me-2" data-kt-select2="true" data-placeholder="Select locations">
                                         <option></option>
                                         @foreach ($locations as $location)
-                                            <option value="{{ $location->id }}">{{ $location->name }}</option>
+                                            <option value="{{ $location->id }}" @selected(Auth::user()->default_location_id==$location->id)>{{ $location->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-6">
                                     <select name="selling_price_group" id="selling_price_group" class="form-select form-select-sm " data-kt-select2="true" data-placeholder="Select selling price group">
-                                        
+
                                     </select>
                                 </div>
                             </div>
                             <div class="row mt-3" style="max-height: 5%">
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control" name="pos_product_search" placeholder="Search products..." >
-                                    <span class="input-group-text custom-tooltip bg-success"  type="button" data-bs-toggle="modal" data-bs-target="#quick_add_product_modal" >
-                                        <i class="fas fa-plus"></i>
+                                    <span class="input-group-text custom-tooltip productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button"  >
+                                        <i class="fas fa-plus text-primary fs-2"></i>
                                     </span>
                                 </div>
                                 <div class="search-item-container " style="z-index: 500;">
@@ -158,7 +184,7 @@
                             <div class=" bg-transparent border-0 my-3 mb-10" style="height: 85%; overflow: scroll;">
                                 <!--begin::Nav-->
                                 <div class="row mb-10 p-5  flex-wrap" id="all_product_list">
-                                    
+
                                 </div>
                                 <!--end::Nav-->
                             </div>
@@ -173,25 +199,25 @@
                                     <select name="pos_customer" id="sb_pos_customer" class="form-select rounded-end-0 border-start border-end" data-kt-select2="true"  data-placeholder="Select customer">
 
                                     </select>
-                                    <span class="input-group-text border-gray-300 cursor-pointer bg-success" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
-                                        <i class="fas fa-plus"></i>
+                                    <span class="input-group-text border-gray-300 cursor-pointer" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
+                                        <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
                                     </span>
 
-                                    <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn bg-warning" id="contact_edit_btn">
-                                        <i class="fas fa-edit"></i><i class="fa-sharp fa-solid fa-phone-plus"></i>
+                                    <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn " id="contact_edit_btn">
+                                        <i class="fas fa-edit text-success-emphasis"></i>
                                     </span>
 
-                                    <span class="input-group-text border-gray-300 cursor-pointer bg-info" id="contact_edit_phone_btn">
-                                        <i class="fa-sharp fa-solid fa-phone"></i>
+                                    <span class="input-group-text border-gray-300 cursor-pointer" id="contact_edit_phone_btn">
+                                        <i class="fa-sharp fa-solid fa-phone text-info"></i>
                                     </span>
-                                    
+
                                     <span class="input-group-text border-gray-300 receivable-amount">
                                         00
                                     </span>
                                     {{-- <span class="input-group-text border-gray-300 cursor-pointer" data-bs-toggle="modal" data-bs-target="#contact_add_modal">
                                         <i class="fas fa-plus"></i>
                                     </span> --}}
-                                    
+
                                 </div>
                             </div>
                             <div class="row position-relative " style="height: 95%">
@@ -262,14 +288,18 @@
                                                         </label>
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
-                                                        <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                            <!--begin::Input-->
-                                                            <input class="btn-check" type="radio" name="method" value="1" />
-                                                            <!--end::Input-->
-                                                            <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block sale_order">Order</span>
-                                                            <!--end::Title-->
-                                                        </label>
+                                                        @if ($posRegister->use_for_res=='1')
+                                                            <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
+                                                                <input class="btn-check" type="radio" name="method" value="1" />
+                                                                <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                            </label>
+                                                        @else
+                                                            <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
+                                                                <input class="btn-check" type="radio" name="method" value="1" />
+                                                                <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                            </label>
+                                                        @endif
+
                                                         <!--end::Radio-->
                                                     </div>
                                                     <div class="row mb-3">
@@ -283,16 +313,12 @@
                                                             <!--end::Title-->
                                                         </label>
                                                         <!--end::Radio-->
-                                                        <!--begin::Radio-->
-                                                        <label class="for_disable_btn mb-3 btn  btn-sm bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                            <!--begin::Input-->
-                                                            <input class="btn-check " type="radio" name="method" value="4" />
-                                                            <!--end::Input-->
-                                                            <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block">card</span>
-                                                            <!--end::Title-->
+                                                        <label  class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 split_order_modal_btn_from_create" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <button class="btn btn-sm   fw-bold  rounded-0">
+                                                                 Split Voucher
+                                                            </button>
                                                         </label>
-                                                        <!--end::Radio-->
                                                     </div>
                                             </div>
 
@@ -317,7 +343,7 @@
             <!--begin::Content-->
             <div class="content pb-15 d-flex flex-column flex-column-fluid ms-8 d-none d-lg-none d-xl-none d-xxl-none " id="pos_second_content"  style="height: 100vh">
                 <!--begin::container-->
-                <div class="container-xxl" id="pos_second_content_container"  style="height: 100%;">
+                <div class="container-xxl" id="pos_second_content_container"  style="height: 90%;">
                     <div class="card  card-flush" style="height: 100%; overflow: hidden">
                         <div class="card-body p-5">
                             <div class="row mb-1">
@@ -333,22 +359,21 @@
 
                                         </select>
 
-                                        <span class="input-group-text border-gray-300 cursor-pointer bg-success" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
-                                            <i class="fas fa-plus"></i>
+                                        <span class="input-group-text border-gray-300 cursor-pointer " data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
+                                            <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
                                         </span>
 
-                                        <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn bg-warning" id="contact_edit_btn_modal">
-                                            <i class="fas fa-edit"></i><i class="fa-sharp fa-solid fa-phone-plus"></i>
+                                        <span class="input-group-text border-gray-300 cursor-pointer contact_edit_btn " id="contact_edit_btn_modal">
+                                            <i class="fas fa-edit text-success-emphasis"></i>
                                         </span>
 
-                                        <span class="input-group-text border-gray-300 cursor-pointer bg-info" id="contact_edit_phone_btn_modal">
-                                            <i class="fa-sharp fa-solid fa-phone"></i>
+                                        <span class="input-group-text border-gray-300 cursor-pointer " id="contact_edit_phone_btn_modal"><i class="fa-sharp fa-solid fa-phone text-info"></i>
                                         </span>
-                                        
+
                                         <span class="input-group-text border-gray-300 receivable-amount">
                                             00
                                         </span>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -413,17 +438,24 @@
                                                     </label>
                                                     <!--end::Radio-->
                                                     <!--begin::Radio-->
-                                                    <label class=" mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                        <!--begin::Input-->
+
+                                                    @if ($posRegister->use_for_res=='1')
+                                                        <label  data-bs-toggle="modal"  data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                        </label>
+                                                    @else
+                                                        <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                        </label>
+                                                    @endif
+
+                                                    {{-- <label class=" mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+
                                                         <input class="btn-check" type="radio" name="method" value="1" />
-                                                        <!--end::Input-->
-                                                        <!--begin::Icon-->
-                                                        {{-- <i class="fonticon-card fs-2hx mb-2 pe-0"></i> --}}
-                                                        <!--end::Icon-->
-                                                        <!--begin::Title-->
                                                         <span class="fs-8 fw-bold d-block sale_order">Order</span>
-                                                        <!--end::Title-->
-                                                    </label>
+                                                    </label> --}}
                                                     <!--end::Radio-->
                                                 </div>
                                                 <div class="row mb-sm-3 col-6">
@@ -440,19 +472,12 @@
                                                         <!--end::Title-->
                                                     </label>
                                                     <!--end::Radio-->
-                                                    <!--begin::Radio-->
-                                                    <label class=" mb-3 btn   btn-sm bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
-                                                        <!--begin::Input-->
-                                                        <input class="btn-check" type="radio" name="method" value="4" />
-                                                        <!--end::Input-->
-                                                        <!--begin::Icon-->
-                                                        {{-- <i class="fonticon-mobile-payment fs-2hx mb-2 pe-0"></i> --}}
-                                                        <!--end::Icon-->
-                                                        <!--begin::Title-->
-                                                        <span class="fs-8 fw-bold d-block">card</span>
-                                                        <!--end::Title-->
+                                                    <label  class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 split_order_modal_btn_from_create" data-kt-button="true">
+                                                        <input class="btn-check" type="radio" name="method" value="1" />
+                                                        <button class="btn btn-sm   fw-bold  rounded-0">
+                                                             Split Voucher
+                                                        </button>
                                                     </label>
-                                                    <!--end::Radio-->
                                                 </div>
                                             </div>
                                         </div>
@@ -486,7 +511,7 @@
                 </button>
             </div>
 
-            <div class="app-engage-secondary">
+            <div class="app-engage-secondary" style="z-index: 700;">
                 <button class="app-engage-btn hover-gray d-lg-none d-xl-none d-xxl-none btn bg-primary btn-lg me-2" id="pos_shopping_cart">
                     <i class="fa-sharp fa-solid fa-cart-shopping text-white fs-3"></i>
                 </button>
@@ -495,65 +520,73 @@
 
         {{-- Payment --}}
         <div class="modal fade" tabindex="-1" id="payment_info">
-            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-dialog modal-dialog-scrollable w-lg-600px">
                 <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Payment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body px-1">
-                    <div class="card">
-                        <div class="card-body d-flex flex-column">
-                            <div class="bg-success rounded-top d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Payable Amount</h5>
-                                <span class="fs-5 me-5 print_payable_amount"></span>
-                            </div>
-                            <div class="bg-primary d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Paid</h5>
-                                <span class="fs-5 me-5 print_paid"></span>
-                            </div>
-                            <div class="bg-info d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Balance</h5>
-                                <span class="fs-5 me-5 print_balance"></span>
-                            </div>
-                            <div class="bg-primary rounded-bottom d-flex justify-content-between align-items-center p-2">
-                                <h5 class="p-2">Change</h5>
-                                <span class="fs-5 me-5 print_change"></span>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Payment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="card rounded-bottom-0  shadow-none pb-10" style="z-index: 800">
+                            <div class="card-body d-flex flex-column ">
+                                <div class=" rounded-top d-flex justify-content-between align-items-center ">
+                                    <h4 class="p-1 text-primary">Payable Amount</h4>
+                                    <span class="fs-3 text-primary me-5 print_payable_amount fw-bold">0.00</span>
+                                </div>
+                                <div class="separator my-2 separator-dashed border-gray-400"></div>
+                                <div class=" d-flex justify-content-between align-items-center">
+                                    <h4 class="p-1">Paid</h4>
+                                    <span class="fs-5 me-5 print_paid fw-bold"></span>
+                                </div>
+                                <div class="separator my-2 separator-dashed border-gray-400"></div>
+                                <div class=" d-flex justify-content-between align-items-center">
+                                    <h4 class="p-1">Balance</h4>
+                                    <span class="fs-5 me-5 print_balance fw-bold"></span>
+                                </div>
+
+                                <div class="separator my-2 separator-dashed border-gray-400"></div>
+                                <div class=" rounded-bottom d-flex justify-content-between align-items-center">
+                                    <h4 class="p-1">Change</h4>
+                                    <span class="fs-5 me-5 print_change fw-bold">0.00</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <!--begin::Repeater-->
-                            <div id="payment_amount_repeater">
-                                <!--begin::Form group-->
-                                <div class="form-group">
-                                    
-                                    <div id="payment_row_body">
+                        <div class="card  border border-left-0 border-right-0 border-bottom-0 border-top-1 border-primary  ">
+                            <div class="card-body">
+                                <!--begin::Repeater-->
+                                <div id="payment_amount_repeater">
+                                    <!--begin::Form group-->
+                                    <div class="form-group">
 
+                                        <div id="payment_row_body">
+
+                                        </div>
                                     </div>
-                                </div>
-                                <!--end::Form group-->
+                                    <!--end::Form group-->
 
-                                <!--begin::Form group-->
-                                <div class="form-group mt-5 d-none">
-                                    <a href="javascript:;" class="btn btn-light-primary btn-sm add-payment-row">
-                                        <i class="fas fa-plus fs-3"></i>
-                                        Add
-                                    </a>
+                                    <!--begin::Form group-->
+                                    @if (isUsePaymnetAcc())
+                                    <div class="form-group mt-5 ">
+                                        <a href="javascript:;" class="btn btn-light-primary btn-sm add-payment-row">
+                                            <i class="fas fa-plus fs-3"></i>
+                                            Add
+                                        </a>
+                                    </div>
+
+                                    @endif
+                                    <!--end::Form group-->
                                 </div>
-                                <!--end::Form group-->
+                                <!--end::Repeater-->
                             </div>
-                            <!--end::Repeater-->
                         </div>
                     </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-info btn-sm payment_save_btn" data-bs-dismiss="modal">Save</button>
-                    <button type="button" class="btn btn-primary btn-sm" id="payment_print" data-bs-dismiss="modal">Save / Print</button>
-                  </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-info btn-sm payment_save_btn" data-bs-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="payment_print" data-bs-dismiss="modal">Save /
+                            Print</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -648,6 +681,8 @@
                 </div>
             </div>
         </div>
+
+
 
         {{-- Filter Brand --}}
         <div class="modal fade sec-custom-modal" tabindex="-1" id="filter_brand">
@@ -803,6 +838,12 @@
                                 <input type="text" class="form-control form-control-sm rounded-0" name="subtotal_with_discount" value="">
                             </div>
                         </div>
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5">Note</label>
+                                <textarea name="item_detail_note_input"  id="item_detail_note_input" cols="30" rows="4" class="form-control form-control-sm"></textarea>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -812,151 +853,41 @@
             </div>
         </div>
 
-        {{-- POS Sale Recent --}}
-        <div class="modal fade" tabindex="-1" id="pos_sale_recent">
-            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        {{-- POS order confirm  --}}
+        <div class="modal fade" tabindex="-1" id="order_confirm_modal">
+            <div class="modal-dialog modal-dialog-scrollable  w-md-500px">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="modal-title">POS Sale Recent Transactions</h4>
+                    <h4 class="modal-title"> (<span id="table-text"></span>) Order Preview </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div class="modal-body">
-                    <div class="card p-0">
-                        <div class="card-body p-0">
-                            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 p-0">
-                                <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
-                                    <li class="nav-item">
-                                        <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#pos_sale_recent_delivered">Delivered</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#pos_sale_recent_draft">Draft</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#pos_sale_recent_order">Order</a>
-                                    </li>
-                                </ul>
-
-                                <div class="tab-content">
-                                    <div class="tab-pane fade show active" id="pos_sale_recent_delivered" role="tab-panel">
-                                        <div class="table-responsive">
-                                            <table class="table gs-7 gy-7 gx-7">
-                                                <thead>
-                                                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                                                        <th>Product</th>
-                                                        <th>Customer</th>
-                                                        <th>Amount</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>INV-2023-0000084</td>
-                                                        <td>Aung Aung</td>
-                                                        <td>540000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>INV-2023-0008555</td>
-                                                        <td>Zaw Zaw</td>
-                                                        <td>450000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="pos_sale_recent_draft" role="tab-panel">
-                                        <div class="table-responsive">
-                                            <table class="table gs-7 gy-7 gx-7">
-                                                <thead>
-                                                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                                                        <th>Product</th>
-                                                        <th>Customer</th>
-                                                        <th>Amount</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>INV-2023-0000084</td>
-                                                        <td>Aung Aung</td>
-                                                        <td>540000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>INV-2023-0008555</td>
-                                                        <td>Zaw Zaw</td>
-                                                        <td>450000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="pos_sale_recent_order" role="tab-panel">
-                                        <div class="table-responsive">
-                                            <table class="table gs-7 gy-7 gx-7">
-                                                <thead>
-                                                    <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
-                                                        <th>Product</th>
-                                                        <th>Customer</th>
-                                                        <th>Amount</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>INV-2023-0000084</td>
-                                                        <td>Aung Aung</td>
-                                                        <td>540000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>INV-2023-0008555</td>
-                                                        <td>Zaw Zaw</td>
-                                                        <td>450000</td>
-                                                        <td class="d-flex flex-row">
-                                                            <span class="me-5"><i class="fas fa-edit fs-4 text-warning cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-trash fs-4 text-danger cursor-pointer"></i></span>
-                                                            <span class="me-5"><i class="fas fa-print fs-4 text-primary cursor-pointer"></i></span>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                  <div class="p-5">
+                    <label for="" class="form-label">Sevices:</label>
+                    <select name="services" class="form-select form-select-sm" id="services" placeholder="Services" data-placeholder="Services" data-kt-select2="true" data-hide-search="true">
+                        <option value="dine_in">dine in</option>
+                        <option value="take_away">Take Away</option>
+                        <option value="delivery">Delivery</option>
+                    </select>
+                  </div>
+                   <div class="px-5 mt-3 mb-5">
+                        <select id="tableForFinalize"  autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="form-select form-select-sm tableSelect" data-kt-select2="true" data-allow-clear="true">
+                            <option disabled selected>Select Table</option>
+                            @if ($tables)
+                                @foreach ($tables as $table)
+                                    <option value="{{$table->id}}">{{$table->table_no}}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                   </div>
+                  <div class="modal-body" id="orderDetailConfirm">
                   </div>
                   <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm finalizeOrder" id="" data-bs-dismiss="modal">Finalize Order</button>
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                   </div>
                 </div>
             </div>
         </div>
-
         {{-- Edit Contact Modal  --}}
         <div class="modal fade" tabindex="-1"  id="edit_contact_modal">
         </div>
@@ -998,19 +929,95 @@
                 </div>
             </div>
         </div>
-
+        <div class="modal fade" tabindex="-1" id="pos_sale_recent"></div>
+        <div class="modal fade viewDetailModal" style="z-index: 99999" tabindex="-1"></div>
+        <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="modal"></div>
+        {{-- POS Sale Recent --}}
+        <div class="modal fade" tabindex="-1" id="closeSessionModal"></div>
+        <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
         <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
-
+        <script src={{asset('customJs/loading/miniLoading.js')}}></script>
+		<script src={{asset('customJs/print/print.js')}}></script>
         <!--end::Global Javascript Bundle-->
 
         @include('App.pos.contactAdd')
-        @include('App.product.product.quickAddProduct')
-
-        {{-- @include('App.pos.js.pos_js') --}}
-        @include('App.pos.js.pos_js_v2')
+        @include('App.alert.alert')
+        @include('App.pos.js.pos_js')
     </body>
+
     <!--end::Body-->
 </html>
+<script>
+    $(document).ready(function(){
+        $(document).on('click', '#pos_sale_recent_btn', function(e){
+            e.preventDefault();
+            loadingOn();
+            $('#pos_sale_recent').load($(this).data('href'), function() {
+            //     // $(this).remove();
+                $(this).modal('show');
+                loadingOff();
+
+            });
+        });
+        $(document).on('click', '#close_session_btn', function(e){
+            e.preventDefault();
+            loadingOn();
+            $('#closeSessionModal').load($(this).data('href'), function() {
+            //     // $(this).remove();
+                $(this).modal('show');
+                loadingOff();
+
+            });
+        });
+        $(document).on('click', '#pos_sale_recent_btn', function(e){
+            e.preventDefault();
+            loadingOn();
+            $('#pos_sale_recent').load($(this).data('href'), function() {
+            //     // $(this).remove();
+                $(this).modal('show');
+                loadingOff();
+
+            });
+        });
+        $(document).on('click','.editRecent',function(){
+            $('#pos_sale_recent').modal('hide');
+        })
+        $(document).on('click', '.view_detail', function(){
+            $url=$(this).data('href');
+
+            loadingOn();
+            $('.viewDetailModal').load($url, function() {
+                $(this).modal('show');
+
+                loadingOff();
+            });
+         });
+
+
+    $(document).on('click', '.print-invoice', function(e) {
+            e.preventDefault();
+            loadingOn();
+            var url = $(this).data('href');
+            ajaxPrint(url); //function from print.js
+        });
+
+
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+// Begin:: quick add product
+        $('form#quick_add_product_form').submit(function(e) {
+            setTimeout(() => {
+                (()=>{getProductVariations()})();
+            }, 1500);
+        })
+        });
+    });
+})
+</script>

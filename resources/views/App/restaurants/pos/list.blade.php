@@ -6,8 +6,6 @@
 @section('pos_icon', 'active')
 @section('pos_icon', 'active')
 @section('pos_active_show', 'here show')
-{{-- @section('res_management_show', 'active show') --}}
-
 @section('pos_bar_show', 'active show')
 @section('pos_register_list_active_show', 'active show')
 
@@ -91,7 +89,9 @@
                             <th>Name</th>
                             <th class="text-start ">Description</th>
                             <th class="text-start ">Employee</th>
-                            <th class="text-start ">Payment Account</th>
+                            @if ($usePaymentAccount==1)
+                             <th class="text-start ">Payment Account</th>
+                            @endif
                             <th class="text-start ">Status</th>
                             <th class="text-start ">Printer</th>
                             {{-- <th class="text-end pe-0 min-w-25px">Qty</th> --}}
@@ -149,6 +149,7 @@ $(document).on('click', '.openModal', function(e){
         $(this).modal('show');
     });
 });
+let usePaymentAccount={{$usePaymentAccount}};
 // Class definition
 var listData = function () {
     // Define shared variables
@@ -157,26 +158,8 @@ var listData = function () {
 
     // Private functions
     var tablelist = function () {
-        datatable = $(table).DataTable({
+        columnArray=[
 
-            pageLength: 30,
-            lengthMenu: [10, 20, 30, 50,70],
-            'columnDefs': [
-                { orderable: false, targets: 0 },
-            ],
-            order: [[0, ' ']],
-            processing: true,
-            serverSide: true,
-               ajax: {
-                url: '/pos/register/data',
-            },
-            columns: [
-                // <th>Name</th>
-                //             <th class="text-center ">Description</th>
-                //             <th class="text-center ">Employee</th>
-                //             <th class="text-center ">Payment Account</th>
-                //             <th class="text-center ">Status</th>
-                //             <th class="text-center ">Printer</th>
                 {
                     data: 'checkbox',
                     name: 'checkbox',
@@ -201,10 +184,7 @@ var listData = function () {
                     data: 'employee',
                     name: 'employee',
                 },
-                {
-                    data: 'paymentAccount',
-                    name: 'paymentAccount',
-                },
+
                 {
                     data: 'status',
                     name: 'status',
@@ -214,7 +194,27 @@ var listData = function () {
                     name: 'printer',
                 }
 
-            ]
+            ];
+        if(usePaymentAccount){
+            columnArray.push({
+                        data: 'paymentAccount',
+                        name: 'paymentAccount',
+                    },)
+        }
+        datatable = $(table).DataTable({
+
+            pageLength: 30,
+            lengthMenu: [10, 20, 30, 50,70],
+            'columnDefs': [
+                { orderable: false, targets: 0 },
+            ],
+            order: [[0, ' ']],
+            processing: true,
+            serverSide: true,
+               ajax: {
+                url: '/pos/register/data',
+            },
+            columns:columnArray
 
         });
 

@@ -6,7 +6,7 @@
 
 @section('stock_transfer_icon', 'active')
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('stock_transfer_show', 'active show')
 @section('stock_transfer_here_show', 'here show')
 @section('stock_transfer_add_active_show', 'active ')

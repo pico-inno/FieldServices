@@ -5,7 +5,11 @@
 @section('customer_group_list_active_show','active show')
 
 @section('styles')
-
+<style>
+    #kt_datatable_example {
+        min-height: 40vh;
+    }
+</style>
 @endsection
 
 @section('title')
@@ -38,7 +42,7 @@
         <div class="card card-p-4 card-flush">
             <div class="card-header py-5 gap-2 gap-md-5 d-flex flex-column">
                 <div class="card-title d-flex flex-column">
-                    <h4>All customer groups</h4>
+                    <h4>All Customer Groups</h4>
                 </div>
                 <div class="card-toolbar d-flex justify-content-between ">
                     <!--begin::Search-->
@@ -188,11 +192,7 @@
                     { data: 'selling_price_group_id'},
                     { data: 'action'},
                 ],
-                drawCallback: function(settings) {
-                    adjustRowHeight();
-                }
             });
-            adjustRowHeight();
         }
 
         $(document).on('click', 'button.edit-btn', function(){
@@ -243,18 +243,6 @@
                     }
                 });
         });
-
-        var adjustRowHeight = function() {
-            var numRows = datatable.rows().count();
-            //  console.log(numRows);
-            var tableRows = $('#kt_datatable_example tbody tr');
-
-            if (numRows === 1) {
-                tableRows.css('height', '170px');
-            } else {
-                tableRows.css('height', '50px');
-            }
-        }
 
         // Hook export buttons
         var exportButtons = () => {

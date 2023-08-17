@@ -2,14 +2,19 @@
 
 @section('stock_transfer_icon', 'active')
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('stock_transfer_show', 'active show')
 @section('stock_transfer_here_show', 'here show')
 @section('stock_transfer_active_show', 'active ')
 
-
 @section('styles')
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+    <style>
+
+        #transfer_table_card .table-responsive{
+            min-height: 60vh;
+        }
+    </style>
 @endsection
 
 
@@ -59,11 +64,11 @@
                                     <label class="form-label fs-6 fw-semibold">{{__('transfer.from_location')}}</label>
                                     <select class="form-select  fw-bold filter_locations_from" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-stockins-table-filter="location" data-hide-search="true">
+                                            data-transfer-table-filter="from_location" data-hide-search="true">
                                         <option></option>
-                                        <option selected value="0">All</option>
+                                        <option selected value="all">All</option>
                                         @foreach($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
+                                            <option value="{{$location->name}}">{{$location->name}}</option>
                                         @endforeach
 
                                     </select>
@@ -71,14 +76,14 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-4 ">
-                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.to_Location')}}</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.to_location')}}</label>
                                     <select class="form-select  fw-bold filter_locations_to" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-stockins-table-filter="location" data-hide-search="true">
+                                            data-transfer-table-filter="to_location" data-hide-search="true">
                                         <option></option>
-                                        <option selected value="0">All</option>
+                                        <option selected value="all">All</option>
                                         @foreach($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
+                                            <option value="{{$location->name}}">{{$location->name}}</option>
                                         @endforeach
 
                                     </select>
@@ -89,47 +94,49 @@
                                     <label class="form-label fs-6 fw-semibold">{{__('transfer.status')}}</label>
                                     <select class="form-select  fw-bold filter_status" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="role" data-hide-search="true">
+                                            data-transfer-table-filter="status" data-hide-search="true">
                                         <option></option>
-                                        <option value="0" selected>All</option>
-                                        <option value="1">pending</option>
-                                        <option value="2">confirmed</option>
+                                        <option value="all" selected>All</option>
+                                        <option value="prepared">Prepared</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="in_transit">In Transit</option>
+                                        <option value="completed">Completed</option>
                                     </select>
                                 </div>
                                 <!--end::Input group-->
                             </div>
                             <div class="row mb-5">
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4">
-                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.transfer_person')}}</label>
-                                    <select class="form-select  fw-bold filter_transferperosn" data-kt-select2="true"
-                                            data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="two-step" data-hide-search="true">
-                                        <option selected value="0">All</option>
-                                        @foreach($stockoutsperson as $person)
-                                            <option value="{{$person->id}}">{{$person->username}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+{{--                                <div class="mb-5 col-6 col-md-4">--}}
+{{--                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.transfer_person')}}</label>--}}
+{{--                                    <select class="form-select  fw-bold filter_transferperosn" data-kt-select2="true"--}}
+{{--                                            data-placeholder="Select option" data-allow-clear="true"--}}
+{{--                                            data-kt-user-table-filter="two-step" data-hide-search="true">--}}
+{{--                                        <option selected value="0">All</option>--}}
+{{--                                        @foreach($stockoutsperson as $person)--}}
+{{--                                            <option value="{{$person->id}}">{{$person->username}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4">
-                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.receive_person')}}</label>
-                                    <select class="form-select  fw-bold filter_receiveperosn" data-kt-select2="true"
-                                            data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="two-step" data-hide-search="true">
-                                        <option selected value="0">All</option>
-                                        @foreach($stockoutsperson as $person)
-                                            <option value="{{$person->id}}">{{$person->username}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+{{--                                <div class="mb-5 col-6 col-md-4">--}}
+{{--                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.receive_person')}}</label>--}}
+{{--                                    <select class="form-select  fw-bold filter_receiveperosn" data-kt-select2="true"--}}
+{{--                                            data-placeholder="Select option" data-allow-clear="true"--}}
+{{--                                            data-kt-user-table-filter="two-step" data-hide-search="true">--}}
+{{--                                        <option selected value="0">All</option>--}}
+{{--                                        @foreach($stockoutsperson as $person)--}}
+{{--                                            <option value="{{$person->id}}">{{$person->username}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-10 col-6 col-md-4 ">
                                     <label class="form-label fs-6 fw-semibold">{{__('transfer.date')}}</label>
                                     <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
-                                           id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
+                                           id="kt_daterangepicker_4" data-dropdown-parent="#filter" data-transfer-date-filter="date"/>
                                 </div>
                                 <!--end::Input group-->
                             </div>
@@ -157,7 +164,7 @@
                             </svg>
                         </span>
                             <!--end::Svg Icon-->
-                            <input type="text" data-kt-customer-table-filter="search"
+                            <input type="text" data-transfer-table-filter="search"
                                    class="form-control form-control-solid w-250px ps-15"
                                    placeholder="{{__('transfer.search_stock_transfer')}}"/>
                         </div>
@@ -272,25 +279,25 @@
                 </div>
                 <!--end::Card header-->
                 <!--begin::Card body-->
-                <div class="card-body pt-0">
+                <div class="card-body pt-0" id='transfer_table_card'>
                     <!--begin::Table-->
-                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="stocktransfer_table">
+                    <table class="table align-middle table-row-dashed fs-7 fw-bold gy-2 pb-3 " id="stocktransfer_table">
                         <!--begin::Table head-->
                         <thead>
                         <!--begin::Table row-->
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                            <th class="w-8px pe-2">
-                                <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                                    <input class="form-check-input" type="checkbox" data-kt-check="true"
-                                           data-kt-check-target="#kt_customers_table .form-check-input" value="1"/>
-                                </div>
-                            </th>
+                            {{--                            <th class="w-10px pe-2">--}}
+                            {{--                                <div class="form-check form-check-sm form-check-custom  me-3">--}}
+                            {{--                                    <input class="form-check-input" data-checked="selectAll" id="selectAll" type="checkbox" data-kt-check="true" data-kt-check-target="#stockadjustment_table .form-check-input" value="" />--}}
+                            {{--                                </div>--}}
+                            {{--                            </th>--}}
                             <th class="min-w-100px text-center">{{__('transfer.actions')}}</th>
                             <th class="min-w-100px">{{__('transfer.date')}}</th>
                             <th class="min-w-125px">{{__('transfer.voucher_no')}}</th>
                             <th class="min-w-125px">{{__('transfer.from_location')}}</th>
                             <th class="min-w-125px">{{__('transfer.to_location')}}</th>
                             <th class="min-w-100px">{{__('transfer.status')}}</th>
+
                         </tr>
                         <!--end::Table row-->
                         </thead>
@@ -432,13 +439,17 @@
         </div>
         <!--end::Container-->
     </div>
+    <div class="modal fade adjustmentDetail" tabindex="-1">
 
+    </div>
+    <div class="modal modal-lg fade " tabindex="-1" id="modal"></div>
 @endsection
 
 @push('scripts')
-    <script src={{asset('customJs/Purchases/purchasesOrderList.js')}}></script>
-    <script src="assets/js/custom/apps/ecommerce/customers/listing/add.js"></script>
-    <script src="assets/js/custom/apps/ecommerce/customers/listing/export.js"></script>
+{{--    <script src={{asset('customJs/Purchases/purchasesOrderList.js')}}></script>--}}
+{{--    <script src="assets/js/custom/apps/ecommerce/customers/listing/add.js"></script>--}}
+{{--    <script src="assets/js/custom/apps/ecommerce/customers/listing/export.js"></script>--}}
+    <script src={{asset('customJs/stock/transferTable.js')}}></script>
     <script src="customJs/toaster.js"></script>
     <script>
         @if(session('message'))
@@ -479,321 +490,27 @@
         cb(start, end);
     </script>
 
-    <script>
-        $(document).ready(function () {
-
-            var stocktransferTableBody = $('#stocktransfer_table tbody');
-            var filterCard = $('.filter-card');
-            var filterLocationsFrom = filterCard.find('.filter_locations_from');
-            var filterLocationsTo = filterCard.find('.filter_locations_to');
-            var filterStockTransferperson = filterCard.find('.filter_transferperosn');
-            var filterStockReceiveperson = filterCard.find('.filter_receiveperosn');
-            var filterStatus = filterCard.find('.filter_status');
-            var filterDate = filterCard.find('.filter_date');
-
-            $(document).on('change', '.filter-card select, .filter-card input', function () {
-                var filterLocationsFromVal = filterLocationsFrom.val();
-                var filterLocationsToVal = filterLocationsTo.val();
-                var filterStockTransferpersonVal = filterStockTransferperson.val();
-                var filterStockReceivepersonVal = filterStockReceiveperson.val();
-                var filterStatusVal = filterStatus.val();
-                var filterDateVal = filterDate.val();
-
-                stocktransferTableBody.empty();
-                filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal);
-            });
-
-            var filterDateVal = filterDate.val();
-            filterData(0, 0, 0, 0, 0, filterDateVal);
-
-            async function filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal) {
-                var data = {
-                    filter_locations_from: filterLocationsFromVal,
-                    filter_locations_to: filterLocationsToVal,
-                    filter_stocktransferperson: filterStockTransferpersonVal,
-                    filter_stockreceiveperson: filterStockReceivepersonVal,
-                    filter_status: filterStatusVal,
-                    filter_date: filterDateVal
-                };
-                try {
-                    $.ajax({
-                        url: '/stock-transfer/filter-list',
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data: {
-                            data: data,
-                        },
-                        error: function (e) {
-                            var status = e.status;
-                            if (status === 405) {
-                                warning('Method Not Allowed!');
-                            } else if (status === 419) {
-                                error('Session Expired');
-                            } else {
-                                error('Something Went Wrong! Error Status: ' + status);
-                            }
-                        },
-                        success: function (results) {
-                            console.log(results);
-                            if (results.length > 0) {
-                                var rowsHTML = '';
-                                results.forEach(function (result) {
-                                    rowsHTML += createRow(result);
-                                });
-                                stocktransferTableBody.append(rowsHTML);
-                            }else {
-                                stocktransferTableBody.append('<tr><td colspan="7" class="text-center">{{__('transfer.no_data_table')}}</td></tr>');
-                            }
-                        },
-                    });
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-
-            function createRow(filteredProduct) {
-
-                var viewRouteUrl = generateRouteUrl("{{ route('stock-transfer.show', ':id') }}", filteredProduct.id);
-                var editRouteUrl = generateRouteUrl("{{ route('stock-transfer.edit', ':id') }}", filteredProduct.id);
-                var deleteRouteUrl = generateRouteUrl("{{ route('stock-transfer.destroy', ':id') }}", filteredProduct.id);
-                var printRouteUrl = generateRouteUrl("{{ route('stock-transfer.invoice.print', ':id') }}", filteredProduct.id);
-                var csrfToken = "{{ csrf_token() }}";
-
-                var viewPermission = <?php echo hasUpdate('stock transfer') ? 'true' : 'false'; ?>;
-                var printPermission = <?php echo hasDelete('stock transfer') ? 'true' : 'false'; ?>;
-                var updatePermission = <?php echo hasUpdate('stock transfer') ? 'true' : 'false'; ?>;
-                var deletePermission = <?php echo hasDelete('stock transfer') ? 'true' : 'false'; ?>;
+<script>
 
 
-                var row = ` <tr>
-                                <!--begin::Checkbox-->
-                                <td>
-                                    <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="checkbox" value="2"/>
-                                    </div>
-                                </td>
-                                <!--end::Checkbox-->
-                                <!--begin::Action=-->
-                                <td class="text-center">
-                                    <div class="dropdown text-center">
-                                        <button class="btn btn-sm btn-light btn-active-light-primary" type="button" id="actionDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Actions
-                                            <span class="svg-icon svg-icon-5 m-0">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor"/>
-                                                </svg>
-                                            </span>
-                                        </button>
-
-                                        <div class="dropdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-150px py-4" aria-labelledby="actionDropDown" role="menu">
-                                            ${viewPermission ? `<div class="menu-item px-3">
-                                                <a href="${viewRouteUrl}" class="menu-link px-3">View</a>
-                                            </div>` : ''}
-
-
-                                             ${updatePermission ? `<div class="menu-item px-3">
-                                                <a href="${editRouteUrl}" class="menu-link px-3 ">Edit</a>
-                                            </div>`  : ''}
-                                            ${printPermission ? `<div class="menu-item px-3">
-                                                <a href="${printRouteUrl}" class="menu-link px-3 print-invoice">Print</a>
-                                            </div>` : ''}
-                                             ${deletePermission ? `<div class="menu-item px-3">
-
-                                                <a class="menu-link px-3" data-id='${filteredProduct.id}' data-transfer-voucher-no='${filteredProduct.transfer_voucher_no}' data-transfer-status='${filteredProduct.status}' data-kt-transferItem-table="delete_row">Delete</a>
-                                             </div>` : ''}
-                                        </div>
-                                   </div>
-                                </td>
-                                <!--end::Action=-->
-
-                                <td>
-                                    <a href="${viewRouteUrl}" class="text-gray-800 text-hover-primary mb-1">${filteredProduct.transfered_at}</a>
-                                </td>
-                                <td>
-                                    <a href="${viewRouteUrl}" class="text-gray-600 text-hover-primary mb-1">${filteredProduct.transfer_voucher_no}</a>
-                                </td>
-                                <td>
-                                    <a href="${viewRouteUrl}" class="text-gray-600 text-hover-primary mb-1">${filteredProduct.business_location_from.name}</a>
-                                </td>
-                                <td>
-                                    <a href="${viewRouteUrl}" class="text-gray-600 text-hover-primary mb-1">${filteredProduct.business_location_to.name}</a>
-                                </td>
-                                <td>
-                                   <div class="badge badge-light-${filteredProduct.status === 'completed' ? 'success' : filteredProduct.status === 'pending' ? 'warning' : 'primary'}">
-                                        ${filteredProduct.status}
-                                   </div>
-                                </td>
-
-                            </tr>`;
-
-                return row;
-            }
-
-            function generateRouteUrl(route, id) {
-                return route.replace(':id', id);
-            }
-
-
-
-
-            $(document).on('click', '#stocktransfer_table [data-kt-transferItem-table="delete_row"]', function (e) {
-                var id = $(this).data('id');
-                var voucherNo = $(this).data('transfer-voucher-no');
-                var status = $(this).data('transfer-status');
-
-                console.log('ID:', id);
-                console.log('Voucher No:', voucherNo);
-                e.preventDefault();
-
-                if(status == 'in_transit' || status == 'completed'){
-                    Swal.fire({
-                        text: "Are you sure you want to delete " + voucherNo + "?",
-                        icon: "warning",
-                        showCancelButton: true,
-                        buttonsStyling: false,
-                        confirmButtonText: "Yes, delete!",
-                        cancelButtonText: "No, cancel",
-                        customClass: {
-                            confirmButton: "btn fw-bold btn-danger",
-                            cancelButton: "btn fw-bold btn-active-light-primary"
-                        }
-                    }).then(function (result) {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                text: "Restore delivered stock or not?",
-                                icon: "question",
-                                showCancelButton: false,
-                                buttonsStyling: false,
-                                // cancelButtonText: "not restore",
-                                confirmButtonText: "restore",
-                                customClass: {
-                                    confirmButton: "btn fw-bold btn-danger",
-                                    // cancelButton: "btn fw-bold btn-active-light-primary"
-                                }
-                            }).then(function (result) {
-                                let url;
-                                if (result.isConfirmed) {
-                                    url = `/stock-transfer/${id}/delete?restore=true`;
-                                } else if (result.dismiss === 'cancel') {
-                                    url = `/stock-transfer/${id}/delete?restore=false`;
-                                } else {
-                                    url = `/stock-transfer/${id}/delete?restore=true`;
-                                }
-                                $.ajax({
-                                    url,
-                                    type: 'DELETE',
-                                    headers: {
-                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                    },
-                                    success: function (s) {
-                                        Swal.fire({
-                                            text: voucherNo + ' was successfully deleted. '+s.success,
-                                            icon: "success",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, got it!",
-                                            customClass: {
-                                                confirmButton: "btn fw-bold btn-primary",
-                                            }
-                                        }).then(function () {
-                                            var filterLocationsFromVal = filterLocationsFrom.val();
-                                            var filterLocationsToVal = filterLocationsTo.val();
-                                            var filterStockTransferpersonVal = filterStockTransferperson.val();
-                                            var filterStockReceivepersonVal = filterStockReceiveperson.val();
-                                            var filterStatusVal = filterStatus.val();
-                                            var filterDateVal = filterDate.val();
-
-                                            stocktransferTableBody.empty();
-                                            filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal);
-                                        });
-                                    }
-                                });
-                            });
-                        } else if (result.dismiss === 'cancel') {
-                            Swal.fire({
-                                text: voucherNo + " was not deleted.",
-                                icon: "error",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn fw-bold btn-primary",
-                                }
-                            });
-                        }
-                    });
-                }else{
-                    Swal.fire({
-                        text: "Are you sure you want to delete " + voucherNo + "?",
-                        icon: "warning",
-                        showCancelButton: true,
-                        buttonsStyling: false,
-                        confirmButtonText: "Yes, delete!",
-                        cancelButtonText: "No, cancel",
-                        customClass: {
-                            confirmButton: "btn fw-bold btn-danger",
-                            cancelButton: "btn fw-bold btn-active-light-primary"
-                        }
-                    }).then(function (result) {
-                        if (result.isConfirmed) {
-
-                                let url = `/stock-transfer/${id}/delete?restore=false`;
-
-                                $.ajax({
-                                    url,
-                                    type: 'DELETE',
-                                    headers: {
-                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                    },
-                                    success: function (s) {
-                                        Swal.fire({
-                                            text: s.success + voucherNo + "!",
-                                            icon: "success",
-                                            buttonsStyling: false,
-                                            confirmButtonText: "Ok, got it!",
-                                            customClass: {
-                                                confirmButton: "btn fw-bold btn-primary",
-                                            }
-                                        }).then(function () {
-                                            var filterLocationsFromVal = filterLocationsFrom.val();
-                                            var filterLocationsToVal = filterLocationsTo.val();
-                                            var filterStockTransferpersonVal = filterStockTransferperson.val();
-                                            var filterStockReceivepersonVal = filterStockReceiveperson.val();
-                                            var filterStatusVal = filterStatus.val();
-                                            var filterDateVal = filterDate.val();
-
-                                            stocktransferTableBody.empty();
-                                            filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal);
-                                        });
-                                    }
-                                });
-                        } else if (result.dismiss === 'cancel') {
-                            Swal.fire({
-                                text: voucherNo + " was not deleted.",
-                                icon: "error",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn fw-bold btn-primary",
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+    $(document).ready(function(){
+        let printId="{{session('print')}}";
+        if(printId){
+            let url=`transfer/print/${printId}/invoice`;
+            loadingOn();
+            ajaxPrint(url);
+        }
+        $(document).on('click', '.print-invoice', function(e) {
+            e.preventDefault();
+            loadingOn();
+            var url = $(this).data('href');
+            ajaxPrint(url);
 
         });
-    </script>
-    <script>
-
-        // print invoice
-        $(document).on('click', '.print-invoice', function (e) {
-            e.preventDefault();
-            var url = $(this).attr('href');
-            console.log(url);
+        function ajaxPrint(url){
             $.ajax({
                 url: url,
-                success: function (response) {
+                success: function(response) {
                     // Open a new window with the invoice HTML and styles
                     // Create a hidden iframe element and append it to the body
                     var iframe = $('<iframe>', {
@@ -804,7 +521,7 @@
                             'display': 'none'
                         }
                     }).appendTo('body')[0];
-                    console.log(response);
+                    console.log(response.html);
                     // Write the invoice HTML and styles to the iframe document
                     var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                     iframeDoc.open();
@@ -813,14 +530,368 @@
 
                     // Trigger the print dialog
                     iframe.contentWindow.focus();
+                    loadingOff();
                     setTimeout(() => {
+                        loadingOff();
                         iframe.contentWindow.print();
-                        console.log('hello');
                     }, 500);
                 }
             });
+        }
+        $(document).on('click', '.view_detail', function(){
+
+            loadingOn();
+            $url=$(this).data('href');
+            $('.adjustmentDetail').load($url, function() {
+                $(this).modal('show');
+                loadingOff();
+            });
         });
-    </script>
+    })
+</script>
+
+{{--    <script>--}}
+{{--        $(document).ready(function () {--}}
+
+{{--            var stocktransferTableBody = $('#stocktransfer_table tbody');--}}
+{{--            var filterCard = $('.filter-card');--}}
+{{--            var filterLocationsFrom = filterCard.find('.filter_locations_from');--}}
+{{--            var filterLocationsTo = filterCard.find('.filter_locations_to');--}}
+{{--            var filterStockTransferperson = filterCard.find('.filter_transferperosn');--}}
+{{--            var filterStockReceiveperson = filterCard.find('.filter_receiveperosn');--}}
+{{--            var filterStatus = filterCard.find('.filter_status');--}}
+{{--            var filterDate = filterCard.find('.filter_date');--}}
+
+{{--            $(document).on('change', '.filter-card select, .filter-card input', function () {--}}
+{{--                var filterLocationsFromVal = filterLocationsFrom.val();--}}
+{{--                var filterLocationsToVal = filterLocationsTo.val();--}}
+{{--                var filterStockTransferpersonVal = filterStockTransferperson.val();--}}
+{{--                var filterStockReceivepersonVal = filterStockReceiveperson.val();--}}
+{{--                var filterStatusVal = filterStatus.val();--}}
+{{--                var filterDateVal = filterDate.val();--}}
+
+{{--                stocktransferTableBody.empty();--}}
+{{--                filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal);--}}
+{{--            });--}}
+
+{{--            var filterDateVal = filterDate.val();--}}
+{{--            filterData(0, 0, 0, 0, 0, filterDateVal);--}}
+
+{{--            async function filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal) {--}}
+{{--                var data = {--}}
+{{--                    filter_locations_from: filterLocationsFromVal,--}}
+{{--                    filter_locations_to: filterLocationsToVal,--}}
+{{--                    filter_stocktransferperson: filterStockTransferpersonVal,--}}
+{{--                    filter_stockreceiveperson: filterStockReceivepersonVal,--}}
+{{--                    filter_status: filterStatusVal,--}}
+{{--                    filter_date: filterDateVal--}}
+{{--                };--}}
+{{--                try {--}}
+{{--                    $.ajax({--}}
+{{--                        url: '/stock-transfer/filter-list',--}}
+{{--                        type: 'POST',--}}
+{{--                        headers: {--}}
+{{--                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
+{{--                        },--}}
+{{--                        data: {--}}
+{{--                            data: data,--}}
+{{--                        },--}}
+{{--                        error: function (e) {--}}
+{{--                            var status = e.status;--}}
+{{--                            if (status === 405) {--}}
+{{--                                warning('Method Not Allowed!');--}}
+{{--                            } else if (status === 419) {--}}
+{{--                                error('Session Expired');--}}
+{{--                            } else {--}}
+{{--                                error('Something Went Wrong! Error Status: ' + status);--}}
+{{--                            }--}}
+{{--                        },--}}
+{{--                        success: function (results) {--}}
+{{--                            console.log(results);--}}
+{{--                            if (results.length > 0) {--}}
+{{--                                var rowsHTML = '';--}}
+{{--                                results.forEach(function (result) {--}}
+{{--                                    rowsHTML += createRow(result);--}}
+{{--                                });--}}
+{{--                                stocktransferTableBody.append(rowsHTML);--}}
+{{--                            }else {--}}
+{{--                                stocktransferTableBody.append('<tr><td colspan="7" class="text-center">{{__('transfer.no_data_table')}}</td></tr>');--}}
+{{--                            }--}}
+{{--                        },--}}
+{{--                    });--}}
+{{--                } catch (error) {--}}
+{{--                    console.error(error);--}}
+{{--                }--}}
+{{--            }--}}
+
+{{--            function createRow(filteredProduct) {--}}
+
+{{--                var viewRouteUrl = generateRouteUrl("{{ route('stock-transfer.show', ':id') }}", filteredProduct.id);--}}
+{{--                var editRouteUrl = generateRouteUrl("{{ route('stock-transfer.edit', ':id') }}", filteredProduct.id);--}}
+{{--                var deleteRouteUrl = generateRouteUrl("{{ route('stock-transfer.destroy', ':id') }}", filteredProduct.id);--}}
+{{--                var printRouteUrl = generateRouteUrl("{{ route('stock-transfer.invoice.print', ':id') }}", filteredProduct.id);--}}
+{{--                var csrfToken = "{{ csrf_token() }}";--}}
+
+{{--                var viewPermission = <?php echo hasUpdate('stock transfer') ? 'true' : 'false'; ?>;--}}
+{{--                var printPermission = <?php echo hasDelete('stock transfer') ? 'true' : 'false'; ?>;--}}
+{{--                var updatePermission = <?php echo hasUpdate('stock transfer') ? 'true' : 'false'; ?>;--}}
+{{--                var deletePermission = <?php echo hasDelete('stock transfer') ? 'true' : 'false'; ?>;--}}
+
+
+{{--                var row = ` <tr>--}}
+{{--                                <!--begin::Checkbox-->--}}
+{{--                                <td>--}}
+{{--                                    <div class="form-check form-check-sm form-check-custom form-check-solid">--}}
+{{--                                        <input class="form-check-input" type="checkbox" value="2"/>--}}
+{{--                                    </div>--}}
+{{--                                </td>--}}
+{{--                                <!--end::Checkbox-->--}}
+{{--                                <!--begin::Action=-->--}}
+{{--                                <td class="text-center">--}}
+{{--                                    <div class="dropdown text-center">--}}
+{{--                                        <button class="btn btn-sm btn-light btn-active-light-primary" type="button" id="actionDropDown" data-bs-toggle="dropdown" aria-expanded="false">--}}
+{{--                                        Actions--}}
+{{--                                            <span class="svg-icon svg-icon-5 m-0">--}}
+{{--                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">--}}
+{{--                                                    <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor"/>--}}
+{{--                                                </svg>--}}
+{{--                                            </span>--}}
+{{--                                        </button>--}}
+
+{{--                                        <div class="dropdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-150px py-4" aria-labelledby="actionDropDown" role="menu">--}}
+{{--                                            ${viewPermission ? `<div class="menu-item px-3">--}}
+{{--                                                <a href="${viewRouteUrl}" class="menu-link px-3">View</a>--}}
+{{--                                            </div>` : ''}--}}
+
+
+{{--                                             ${updatePermission ? `<div class="menu-item px-3">--}}
+{{--                                                <a href="${editRouteUrl}" class="menu-link px-3 ">Edit</a>--}}
+{{--                                            </div>`  : ''}--}}
+{{--                                            ${printPermission ? `<div class="menu-item px-3">--}}
+{{--                                                <a href="${printRouteUrl}" class="menu-link px-3 print-invoice">Print</a>--}}
+{{--                                            </div>` : ''}--}}
+{{--                                             ${deletePermission ? `<div class="menu-item px-3">--}}
+
+{{--                                                <a class="menu-link px-3" data-id='${filteredProduct.id}' data-transfer-voucher-no='${filteredProduct.transfer_voucher_no}' data-transfer-status='${filteredProduct.status}' data-kt-transferItem-table="delete_row">Delete</a>--}}
+{{--                                             </div>` : ''}--}}
+{{--                                        </div>--}}
+{{--                                   </div>--}}
+{{--                                </td>--}}
+{{--                                <!--end::Action=-->--}}
+
+{{--                                <td>--}}
+{{--                                    <a href="${viewRouteUrl}" class="text-gray-800 text-hover-primary mb-1">${filteredProduct.transfered_at}</a>--}}
+{{--                                </td>--}}
+{{--                                <td>--}}
+{{--                                    <a href="${viewRouteUrl}" class="text-gray-600 text-hover-primary mb-1">${filteredProduct.transfer_voucher_no}</a>--}}
+{{--                                </td>--}}
+{{--                                <td>--}}
+{{--                                    <a href="${viewRouteUrl}" class="text-gray-600 text-hover-primary mb-1">${filteredProduct.business_location_from.name}</a>--}}
+{{--                                </td>--}}
+{{--                                <td>--}}
+{{--                                    <a href="${viewRouteUrl}" class="text-gray-600 text-hover-primary mb-1">${filteredProduct.business_location_to.name}</a>--}}
+{{--                                </td>--}}
+{{--                                <td>--}}
+{{--                                   <div class="badge badge-light-${filteredProduct.status === 'completed' ? 'success' : filteredProduct.status === 'pending' ? 'warning' : 'primary'}">--}}
+{{--                                        ${filteredProduct.status}--}}
+{{--                                   </div>--}}
+{{--                                </td>--}}
+
+{{--                            </tr>`;--}}
+
+{{--                return row;--}}
+{{--            }--}}
+
+{{--            function generateRouteUrl(route, id) {--}}
+{{--                return route.replace(':id', id);--}}
+{{--            }--}}
+
+
+
+
+{{--            $(document).on('click', '#stocktransfer_table [data-kt-transferItem-table="delete_row"]', function (e) {--}}
+{{--                var id = $(this).data('id');--}}
+{{--                var voucherNo = $(this).data('transfer-voucher-no');--}}
+{{--                var status = $(this).data('transfer-status');--}}
+
+{{--                console.log('ID:', id);--}}
+{{--                console.log('Voucher No:', voucherNo);--}}
+{{--                e.preventDefault();--}}
+
+{{--                if(status == 'in_transit' || status == 'completed'){--}}
+{{--                    Swal.fire({--}}
+{{--                        text: "Are you sure you want to delete " + voucherNo + "?",--}}
+{{--                        icon: "warning",--}}
+{{--                        showCancelButton: true,--}}
+{{--                        buttonsStyling: false,--}}
+{{--                        confirmButtonText: "Yes, delete!",--}}
+{{--                        cancelButtonText: "No, cancel",--}}
+{{--                        customClass: {--}}
+{{--                            confirmButton: "btn fw-bold btn-danger",--}}
+{{--                            cancelButton: "btn fw-bold btn-active-light-primary"--}}
+{{--                        }--}}
+{{--                    }).then(function (result) {--}}
+{{--                        if (result.isConfirmed) {--}}
+{{--                            Swal.fire({--}}
+{{--                                text: "Restore delivered stock or not?",--}}
+{{--                                icon: "question",--}}
+{{--                                showCancelButton: false,--}}
+{{--                                buttonsStyling: false,--}}
+{{--                                // cancelButtonText: "not restore",--}}
+{{--                                confirmButtonText: "restore",--}}
+{{--                                customClass: {--}}
+{{--                                    confirmButton: "btn fw-bold btn-danger",--}}
+{{--                                    // cancelButton: "btn fw-bold btn-active-light-primary"--}}
+{{--                                }--}}
+{{--                            }).then(function (result) {--}}
+{{--                                let url;--}}
+{{--                                if (result.isConfirmed) {--}}
+{{--                                    url = `/stock-transfer/${id}/delete?restore=true`;--}}
+{{--                                } else if (result.dismiss === 'cancel') {--}}
+{{--                                    url = `/stock-transfer/${id}/delete?restore=false`;--}}
+{{--                                } else {--}}
+{{--                                    url = `/stock-transfer/${id}/delete?restore=true`;--}}
+{{--                                }--}}
+{{--                                $.ajax({--}}
+{{--                                    url,--}}
+{{--                                    type: 'DELETE',--}}
+{{--                                    headers: {--}}
+{{--                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
+{{--                                    },--}}
+{{--                                    success: function (s) {--}}
+{{--                                        Swal.fire({--}}
+{{--                                            text: voucherNo + ' was successfully deleted. '+s.success,--}}
+{{--                                            icon: "success",--}}
+{{--                                            buttonsStyling: false,--}}
+{{--                                            confirmButtonText: "Ok, got it!",--}}
+{{--                                            customClass: {--}}
+{{--                                                confirmButton: "btn fw-bold btn-primary",--}}
+{{--                                            }--}}
+{{--                                        }).then(function () {--}}
+{{--                                            var filterLocationsFromVal = filterLocationsFrom.val();--}}
+{{--                                            var filterLocationsToVal = filterLocationsTo.val();--}}
+{{--                                            var filterStockTransferpersonVal = filterStockTransferperson.val();--}}
+{{--                                            var filterStockReceivepersonVal = filterStockReceiveperson.val();--}}
+{{--                                            var filterStatusVal = filterStatus.val();--}}
+{{--                                            var filterDateVal = filterDate.val();--}}
+
+{{--                                            stocktransferTableBody.empty();--}}
+{{--                                            filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal);--}}
+{{--                                        });--}}
+{{--                                    }--}}
+{{--                                });--}}
+{{--                            });--}}
+{{--                        } else if (result.dismiss === 'cancel') {--}}
+{{--                            Swal.fire({--}}
+{{--                                text: voucherNo + " was not deleted.",--}}
+{{--                                icon: "error",--}}
+{{--                                buttonsStyling: false,--}}
+{{--                                confirmButtonText: "Ok, got it!",--}}
+{{--                                customClass: {--}}
+{{--                                    confirmButton: "btn fw-bold btn-primary",--}}
+{{--                                }--}}
+{{--                            });--}}
+{{--                        }--}}
+{{--                    });--}}
+{{--                }else{--}}
+{{--                    Swal.fire({--}}
+{{--                        text: "Are you sure you want to delete " + voucherNo + "?",--}}
+{{--                        icon: "warning",--}}
+{{--                        showCancelButton: true,--}}
+{{--                        buttonsStyling: false,--}}
+{{--                        confirmButtonText: "Yes, delete!",--}}
+{{--                        cancelButtonText: "No, cancel",--}}
+{{--                        customClass: {--}}
+{{--                            confirmButton: "btn fw-bold btn-danger",--}}
+{{--                            cancelButton: "btn fw-bold btn-active-light-primary"--}}
+{{--                        }--}}
+{{--                    }).then(function (result) {--}}
+{{--                        if (result.isConfirmed) {--}}
+
+{{--                                let url = `/stock-transfer/${id}/delete?restore=false`;--}}
+
+{{--                                $.ajax({--}}
+{{--                                    url,--}}
+{{--                                    type: 'DELETE',--}}
+{{--                                    headers: {--}}
+{{--                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
+{{--                                    },--}}
+{{--                                    success: function (s) {--}}
+{{--                                        Swal.fire({--}}
+{{--                                            text: s.success + voucherNo + "!",--}}
+{{--                                            icon: "success",--}}
+{{--                                            buttonsStyling: false,--}}
+{{--                                            confirmButtonText: "Ok, got it!",--}}
+{{--                                            customClass: {--}}
+{{--                                                confirmButton: "btn fw-bold btn-primary",--}}
+{{--                                            }--}}
+{{--                                        }).then(function () {--}}
+{{--                                            var filterLocationsFromVal = filterLocationsFrom.val();--}}
+{{--                                            var filterLocationsToVal = filterLocationsTo.val();--}}
+{{--                                            var filterStockTransferpersonVal = filterStockTransferperson.val();--}}
+{{--                                            var filterStockReceivepersonVal = filterStockReceiveperson.val();--}}
+{{--                                            var filterStatusVal = filterStatus.val();--}}
+{{--                                            var filterDateVal = filterDate.val();--}}
+
+{{--                                            stocktransferTableBody.empty();--}}
+{{--                                            filterData(filterLocationsFromVal, filterLocationsToVal, filterStockTransferpersonVal, filterStockReceivepersonVal, filterStatusVal, filterDateVal);--}}
+{{--                                        });--}}
+{{--                                    }--}}
+{{--                                });--}}
+{{--                        } else if (result.dismiss === 'cancel') {--}}
+{{--                            Swal.fire({--}}
+{{--                                text: voucherNo + " was not deleted.",--}}
+{{--                                icon: "error",--}}
+{{--                                buttonsStyling: false,--}}
+{{--                                confirmButtonText: "Ok, got it!",--}}
+{{--                                customClass: {--}}
+{{--                                    confirmButton: "btn fw-bold btn-primary",--}}
+{{--                                }--}}
+{{--                            });--}}
+{{--                        }--}}
+{{--                    });--}}
+{{--                }--}}
+{{--            });--}}
+
+{{--        });--}}
+{{--    </script>--}}
+{{--    <script>--}}
+
+{{--        // print invoice--}}
+{{--        $(document).on('click', '.print-invoice', function (e) {--}}
+{{--            e.preventDefault();--}}
+{{--            var url = $(this).attr('href');--}}
+{{--            console.log(url);--}}
+{{--            $.ajax({--}}
+{{--                url: url,--}}
+{{--                success: function (response) {--}}
+{{--                    // Open a new window with the invoice HTML and styles--}}
+{{--                    // Create a hidden iframe element and append it to the body--}}
+{{--                    var iframe = $('<iframe>', {--}}
+{{--                        'height': '0px',--}}
+{{--                        'width': '0px',--}}
+{{--                        'frameborder': '0',--}}
+{{--                        'css': {--}}
+{{--                            'display': 'none'--}}
+{{--                        }--}}
+{{--                    }).appendTo('body')[0];--}}
+{{--                    console.log(response);--}}
+{{--                    // Write the invoice HTML and styles to the iframe document--}}
+{{--                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;--}}
+{{--                    iframeDoc.open();--}}
+{{--                    iframeDoc.write(response.html);--}}
+{{--                    iframeDoc.close();--}}
+
+{{--                    // Trigger the print dialog--}}
+{{--                    iframe.contentWindow.focus();--}}
+{{--                    setTimeout(() => {--}}
+{{--                        iframe.contentWindow.print();--}}
+{{--                        console.log('hello');--}}
+{{--                    }, 500);--}}
+{{--                }--}}
+{{--            });--}}
+{{--        });--}}
+{{--    </script>--}}
 @endpush
 
 

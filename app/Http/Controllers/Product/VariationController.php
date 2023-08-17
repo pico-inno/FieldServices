@@ -121,47 +121,17 @@ class VariationController extends Controller
             $variation->updated_by = Auth::user()->id;
             $variation->save();
 
-            // ==> for Variation Template Value Name < ==
-            $values = $request->variation_values;
-
-            // if request values and original values are the same
-            $not_null_values = array_filter($values, function($n) {
-                return $n['id'] !== null;
-            });
-            if(count($not_null_values) !== 0){
-                foreach($not_null_values as $value){
-                    $valueToUpdate = VariationTemplateValues::find($value['id']);
-                    $valueToUpdate->name = $value['variation_values'];
-                    $valueToUpdate->updated_by = Auth::user()->id;
-                    $valueToUpdate->save();
-                }
-            }
-
-            // if request values are less than original values
-            $db_values = VariationTemplateValues::where('variation_template_id', $variation->id)->get()->pluck('id');
-            $request_ids = [];
-            foreach($values as $v){
-                $request_ids[] = $v['id'];
-            }
-            if(count($request->variation_values) < count($db_values)){
-                $to_delete_ids = array_diff($db_values->toArray(), $request_ids);
-                VariationTemplateValues::whereIn('id', $to_delete_ids)->update(['deleted_by' => Auth::user()->id]);
-                VariationTemplateValues::whereIn('id', $to_delete_ids)->update(['updated_by' => Auth::user()->id]);
-                VariationTemplateValues::destroy($to_delete_ids);
-            }
-
-            // if request values are grater than original values
-            $null_values = array_filter($values, function($n) {
-                return $n['id'] === null;
-            });
-            if(count($null_values) !== 0){
-                foreach($null_values as $val){
-                    DB::table('variation_template_values')->insert([
-                        'name' => $val['variation_values'],
-                        'updated_by' => Auth::user()->id,
-                        'variation_template_id' => $request->variation_template_id,
-                        'created_at' => now()
-                    ]);
+            foreach ($request->variation_values as $value) {
+                $data = [
+                    'name' => $value['variation_values'],
+                    'variation_template_id' => $variation->id,
+                    'updated_by' => auth()->id(),
+                ];
+            
+                if ($value['id'] === null) {
+                    VariationTemplateValues::create($data);
+                } else {
+                    VariationTemplateValues::where('id', $value['id'])->update($data);
                 }
             }
 

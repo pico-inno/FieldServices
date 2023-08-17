@@ -20,15 +20,25 @@
                                 id="name"
                                 value="{{$registeredPos->name}}"/>
                     </div>
+                    <div class="col-12 mb-5 p-3 user-select-none">
+                        <div class="form-check form-check-custom">
+                            <input type="checkbox" class="form-check-input form-check-sm border-gray-400 me-3" name="use_for_res" id="use_for_res" value="1" @checked($registeredPos->use_for_res==1)>
+                            <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_for_res">
+                                <span >Use For Restaurant</span>
+                            </label>
+                        </div>
+                    </div>
                     <div class="col-6 mb-5">
                         <label for="employeeTagify" class="required form-label">Employee</label>
                         <input class="form-control form-control-solid" name="employee_id" value="{{$employeeText}}"  id="employeeTagify"/>
 
                     </div>
+                    @if (isUsePaymnetAcc())
                     <div class="col-6 mb-5">
                         <label for="paymentAccTagify" class="required form-label">Payment Account</label>
                         <input class="form-control form-control-solid" name="payment_account_id"  id="paymentAccTagify" value="{{$accountText}}" />
                     </div>
+                    @endif
                     {{-- <div class="col-6 mb-5">
                         <label for="status" class="required form-label">Status</label>
                         <select name="status" id="status" class="form-select form-select-sm" data-control="select2">
@@ -37,7 +47,7 @@
                     </div> --}}
                     <div class="col-6 mb-5">
                         <label for="printer" class="required form-label">Printer Id</label>
-                        <select name="printer_id" id="printer" class="form-select form-select-sm" data-control="select2">
+                        <select name="printer_id" id="printer" class="form-select form-select-sm" data-control="select2" placeholder="Select Printer" data-placeholder="Select Printer">
                             @foreach ($printers as $printer)
                                 <option value="{{$printer->id}}">{{$printer->name}}</option>
                             @endforeach
@@ -60,6 +70,7 @@
 <script>
 
 (function () {
+    $('#printer').select2();
     var employeeInput = document.querySelector('#employeeTagify');
     let employee=@json($employee).map((e)=>{
         return {'value':e.username,'id':e.id};

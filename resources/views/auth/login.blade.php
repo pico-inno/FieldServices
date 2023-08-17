@@ -137,7 +137,9 @@
                             </div>
                             <!--begin::Submit button-->
                             <div class="d-grid mb-10">
-                                <button type="submit" id="kt_sign_in_submit" class="btn btn-primary g-recaptcha" data-sitekey="6LdmNcEmAAAAAMOl3ViA2vG7Mj7Mb3lfz2PSS-D0"
+                                <button type="submit" id="kt_sign_in_submit"
+                                        class="btn btn-primary g-recaptcha"
+                                        data-sitekey="{{config('services.recaptcha.site_key')}}"
                                         data-callback='onSubmit'
                                         data-action='submit'>
                                     <!--begin::Indicator label-->

@@ -51,7 +51,8 @@ class purchaseController extends Controller
     {
         $locations = businessLocation::all();
         $suppliers=Contact::where('type','Supplier')
-            ->select('id','company_name','first_name')
+            ->orWhere('type','Both')
+            ->select('id','company_name','prefix','first_name','last_name','middle_name')
             ->get();
         return view('App.purchase.listPurchase', compact('locations','suppliers'));
     }
@@ -61,14 +62,27 @@ class purchaseController extends Controller
         $locations=businessLocation::all();
         $currency=$this->currency;
         $suppliers=Contact::where('type','Supplier')
-                    ->select('id','company_name','first_name','address_line_1','address_line_2','zip_code','city','state','country')
+                    ->orWhere('type','Both')
+                    ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
                     ->get();
         $currencies=Currencies::get();
         $setting=$this->setting;
+
         return view('App.purchase.addPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
     }
 
-
+    public function purchase__new_add()
+    {
+        $locations=businessLocation::all();
+        $currency=$this->currency;
+        $suppliers=Contact::where('type','Supplier')
+                    ->orWhere('type','Both')
+                    ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
+                    ->get();
+        $currencies=Currencies::get();
+        $setting=$this->setting;
+        return view('App.purchase.addNewPurchase',compact('locations','suppliers','setting', 'currency','currencies'));
+    }
     public function store(Request $request)
     {
         Validator::make([
@@ -108,18 +122,26 @@ class purchaseController extends Controller
             }else{
                 return redirect()->route('purchase_list')->with(['success' => 'Successfully Created Purchase']);
             }
-        } catch (Exception $e) {
-            dd($e);
+        } catch (\Exception $e) {
+            $filePath = $e->getFile();
+            $fileName = basename($filePath);
             DB::rollBack();
-            return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse']);
+            if($fileName=='UomHelpers.php'){
+                return redirect()->back()->with(['error' => 'Something Wrong with UOM ! Check UOM category and UOM'])->withInput($request->toArray());
+            }
+            return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse'])->withInput();
         }
     }
-    public function listData()
+    public function listData(Request $request)
     {
 
         $purchases=purchases::where('is_delete',0)
             ->with('business_location_id','supplier')
-            ->OrderBy('id','desc')->get();
+            ->OrderBy('id','desc');
+            if($request->filled('form_data') && $request->filled('to_date')){
+                $purchases=$purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=',$request->to_date);
+            }
+            $purchases=$purchases->get();
         return DataTables::of($purchases)
             ->addColumn('checkbox',function($purchase){
                 return
@@ -134,17 +156,14 @@ class purchaseController extends Controller
             })
 
             ->editColumn('date',function($purchase){
-                $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$purchase->created_at);
-                $formattedDate = $dateTime->format("m-d-Y " );
-                $formattedTime = $dateTime->format(" h:i A " );
-                return $formattedDate.'<br>'.'('.$formattedTime.')';
+                return fDate($purchase->created_at,true);
             })
             ->editColumn('purchaseItems',function($purchase){
                 $purchaseDetails=$purchase->purchase_details;
                 $items='';
                 foreach ($purchaseDetails as $key => $pd) {
                     $variation=$pd->productVariation;
-                    $productName=$variation->product->name;
+                    $productName=$variation->product->name ?? '';
                     $sku=$variation->product->sku ?? '';
                     $variationName=$variation->variationTemplateValue->name ?? '';
                     $items.="$productName,$variationName,$sku ;";
@@ -168,7 +187,7 @@ class purchaseController extends Controller
                 // return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
             })
             ->editColumn('payment_status',function($e){
-                if($e->payment_status=='pending'){
+                if($e->payment_status=='due'){
                     return '<span class="badge badge-warning">Pending</span>';
                 }elseif($e->payment_status=='partial'){
                     return '<span class="badge badge-primary">Partial</span>';
@@ -218,7 +237,8 @@ class purchaseController extends Controller
         $locations = businessLocation::all();
         $currency = $this->currency;
         $suppliers=Contact::where('type','Supplier')
-                ->select('id','company_name','first_name','address_line_1','address_line_2','zip_code','city','state','country')
+                ->orWhere('type','Both')
+                ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
                 ->get();
         $purchase=purchases::where('id',$id)->first();
         $currencies=Currencies::get();
@@ -437,17 +457,19 @@ class purchaseController extends Controller
             $q->select('id','product_id','variation_template_value_id')
                 ->with([
                     'product'=>function($q){
-                     $q->select('id','name','product_type','uom_id');
+                     $q->select('id','name','has_variation','uom_id');
             },
             'variationTemplateValue'=>function($q){
                 $q->select('id','name');
             }]);
         },'product', 'purchaseUom','currency'])
         ->where('purchases_id',$id)->where('is_delete',0)->get();
+        $setting=$this->setting;
         return view('App.purchase.DetailView.purchaseDetail',compact(
             'purchase',
             'location',
-            'purchase_details'
+            'purchase_details',
+            'setting'
         ));
     }
 
@@ -544,7 +566,7 @@ class purchaseController extends Controller
     private function purchaseData($request)
     {
         if($request->paid_amount == 0){
-            $payment_status='pending';
+            $payment_status='due';
         }elseif($request->paid_amount >= $request->total_purchase_amount ){
             $payment_status='paid';
         }else{
@@ -621,7 +643,7 @@ class purchaseController extends Controller
     protected function getProductForPurchase(Request $request)
     {
         $q=$request->data;
-        $products = Product::select('id', 'name', 'product_code', 'sku', 'product_type','uom_id', 'purchase_uom_id')
+        $products = Product::select('id', 'name', 'product_code', 'sku', 'has_variation','uom_id', 'purchase_uom_id')
         ->where('can_purchase',1)
         ->where('name', 'like', '%' . $q . '%')
         ->orWhere('sku', 'like', '%' . $q . '%')
@@ -641,7 +663,7 @@ class purchaseController extends Controller
         ]
         )->get()->toArray();
         foreach ($products as $product) {
-            if ($product['product_type'] == 'variable') {
+            if ($product['has_variation'] == 'variable') {
                 $p = $product['product_variations'];
                 foreach ($p as $variation) {
                     $variation_product = [
@@ -652,7 +674,7 @@ class purchaseController extends Controller
                         'uom_id'=>$product['uom_id'],
                         'uom'=>$product['uom'],
                         'variation_id' => $variation['id'],
-                        'product_type' => 'sub_variable',
+                        'has_variation' => 'sub_variable',
                         'variation_name' => $variation['variation_template_value']['name'],
                         'default_purchase_price' => $variation['default_purchase_price'],
                         'default_selling_price' => $variation['default_selling_price']
@@ -661,6 +683,7 @@ class purchaseController extends Controller
                 }
             }
         }
+
         return response()->json($products, 200);
     }
 

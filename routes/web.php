@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Models\Manufacturer;
 
 use Illuminate\Http\Request;
@@ -105,6 +106,18 @@ Auth::routes();
 Route::get('/', [LoginController::class, 'showLoginForm']);
 //_End: Auth
 
+//Being: Dashboard
+Route::controller(DashboardController::class)->group(function () {
+    Route::get('/home', 'index')->name('home');
+
+    //Filter
+    Route::post('/dashboard/current-balance-filter','currentBalanceFilter');
+    Route::post('/dashboard/total-current-qty','totalCurrentBalanceQty');
+    Route::post('/dashboard/total-contacts-widget','totalContact');
+    Route::post('/dashboard/total-sale-purchase-order-widget','totalSaleAndPurchaseOrder');
+});
+//End: Dashboard
+
 //_Being: Users
 Route::resource('users', BusinessUserController::class);
 //_End: Users
@@ -162,6 +175,8 @@ Route::post('stock-transfer/filter-list', [StockTransferController::class, 'filt
 Route::get('stock-transfer/{id}/invoice-print',[StockTransferController::class, 'stocktransferInvoicePrint'])->name('stock-transfer.invoice.print');
 Route::resource('stock-transfer', StockTransferController::class)->except('destroy');
 Route::delete('stock-transfer/{id}/delete', [StockTransferController::class, 'softDelete']);
+Route::get('/transfer/tableData', [StockTransferController::class, 'listData']);
+Route::get('transfer/print/{id}/invoice', [StockTransferController::class, 'invoicePrint'])->name('transfer.print');
 //_End: Stock Transfer
 
 
@@ -170,14 +185,17 @@ Route::resource('stock-adjustment', StockAdjustmentController::class);
 Route::post('stock-adjustment/filter-list', [StockAdjustmentController::class, 'filterList']);
 Route::resource('stock-adjustment', StockAdjustmentController::class)->except('destroy');
 Route::delete('stock-adjustment/{id}/delete', [StockAdjustmentController::class, 'softDelete']);
+Route::get('/adjustment/tableData', [StockAdjustmentController::class, 'listData']);
+Route::get('adjustment/print/{id}/invoice', [StockAdjustmentController::class, 'invoicePrint'])->name('adjustment.print');
 //_End: Stock Adjustment
 
-Route::get('/stock/{id}/units', [StockInController::class, 'getUnits']);
-Route::get('/stock/{unit_id}/{uom_id}/values', [StockInController::class, 'getUOMVal']);
+//Route::get('/stock/{id}/units', [StockInController::class, 'getUnits']);
+//Route::get('/stock/{unit_id}/{uom_id}/values', [StockInController::class, 'getUOMVal']);
 Route::post('/stock/get-product', [StockTransferController::class, 'getProduct']);
 Route::post('/stock/get-product-edit', [StockTransferController::class, 'editGetProduct']);
 Route::get('/stock/get-stock', [StockTransferController::class, 'getStock']);
 Route::get('/stock/get-current-qty', [StockTransferController::class, 'getCurrentQtyOnUnit']);
+
 
 
 //============================ End: Stock - In, Out, Transfer, Adustment ===========================================
@@ -193,6 +211,32 @@ Route::controller(ReportController::class)->group(function () {
         //Stock in/out  details
 //        Route::get('/stock-details-report','stock_details_index')->name('report.stock.details.index');
 //        Route::post('stock-details/filter-list', 'stockDetailsFilter');
+
+        //Being: Sale
+        Route::get('/sales','saleIndex')->name('report.sale.index');
+        Route::post('/sales/filter-list', 'saleFilter');
+        Route::get('/sales-details','saleDetailsIndex')->name('report.sale.details.index');
+        Route::post('/sale-details/filter-list','saleDetailsFilter');
+        //End: Sale
+
+        //Being: Purchase
+        Route::get('/purchase','purchaseIndex')->name('report.purchase.index');
+        Route::post('/purchase/filter-list', 'purchaseFilter');
+        Route::get('/purchase-details','purchaseDetailsIndex')->name('report.purchase.details.index');
+        Route::post('/purchase-details/filter-list','purchaseDetailsFilter');
+        //End: Purchase
+
+        //Being: Qty Alert
+        Route::get('/alert-quantity', 'quantityAlert')->name('report.stockAlert.quantity');
+        Route::post('/alert-quantity/filter-list', 'quantityAlertFilter');
+        //End: Qty Alert
+
+        //Being: Expire Alert
+        Route::get('/alert-expire', 'expireAlert')->name('report.stockAlert.expire');
+        Route::post('/alert-expire/filter-list', 'expireAlertFilter');
+        //End: Expire Alert
+
+
 
         //Stock transfer summary
         Route::get('/stock-transfer-report','stock_transfer_index')->name('report.stocktransfer.index');
@@ -282,6 +326,7 @@ Route::prefix('purchase')->group(function () {
         Route::get('/list/data', 'listData');
 
         Route::get('/add', 'add')->name('purchase_add');
+        Route::get('/new/add', 'purchase__new_add')->name('purchase_new_add');
         Route::post('/store', 'store')->name('purchase_store');
 
         Route::get('{id}/edit', 'edit')->name('purchase_edit');
@@ -312,7 +357,7 @@ Route::get('purchase/list/return/add', fn () => view('App.purchase.addListPurcha
 //============================ Being: Sale  ==========================================
 Route::prefix('sell')->group(function () {
     Route::controller(saleController::class)->group(function () {
-        Route::get('all/sales', 'index')->name('all_sales');
+        Route::get('{saleType?}/sales', 'index')->name('all_sales');
         Route::get('view/{id}/detail', 'saleDetail')->name('saleDetail');
         Route::get('get/saleItem', 'saleItemsList');
         Route::get('create/page/', 'createPage')->name('add_sale');
@@ -320,7 +365,7 @@ Route::prefix('sell')->group(function () {
         Route::get('{id}/edit', 'saleEdit')->name('saleEdit');
 
         Route::post('create/', 'store')->name('crate_sale');
-        Route::post('${id}/update/', 'update')->name('update_sale');
+        Route::post('/${id}/update', 'update')->name('update_sale');
 
         Route::post('get/product', 'getProduct');
         Route::get('{id}/price/list', 'getpriceList');
@@ -336,6 +381,9 @@ Route::prefix('sell')->group(function () {
 
         Route::get('/registration/post/{id}/Folio', 'postToRegistrationFolio')->name('postToRegistrationFolio');
         Route::post('/registration/post/Folio', 'addToRegistrationFolio')->name('addToRegistrationFolio');
+
+
+        Route::post('/split/', 'saleSplitForPos')->name('saleSplitForPos');
 
 
 
@@ -697,6 +745,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product-datas', 'productDatas')->name('product.data');
     Route::get('/product', 'index')->name('products');
     Route::get('/product/add', 'add')->name('product.add');
+    Route::get('/product/quick-add', 'quickAdd')->name('product.quickAdd');
     Route::post('/product/create', 'create')->name('product.create');
     Route::get('/product/edit/{product}', 'edit')->name('product.edit');
     Route::put('/product/update/{product}', 'update')->name('product.update');
@@ -750,7 +799,7 @@ Route::controller(PriceListDetailController::class)->group(function () {
 });
 
 Route::controller(TestController::class)->group(function () {
-    Route::get('/home', 'index')->name('home');
+//    Route::get('/home', 'index')->name('home');
 
     // Print Labels
     Route::get('/printLabel', 'printLabel');
@@ -813,12 +862,19 @@ Route::controller(POSController::class)->group(function() {
     Route::get('/pos/create', 'create')->name('pos.create');
     Route::get('/pos/payment-print-layout', 'paymentPrintLayout')->name('pos.pryment-print-layout');
 
+    Route::get('/pos/{posRegisterId}/edit/', 'edit')->name('pos.edit');
+
+    Route::get('/pos/{id}/recent/sale/', 'recentSale')->name('pos.recentSale');
+    Route::get('/pos/{posRegisterId}/close/', 'closeSession')->name('pos.closeSession');
     // product
     Route::get('/pos/product-variations', 'productVariationsGet')->name('pos.product-variations');
 
     // check price list
     Route::get('/pos/pricelist-contact/{id}', 'checkByContact');
     Route::get('/pos/pricelist-location/{id}', 'checkByLocation');
+
+    // get sale product
+    Route::get('/pos/sold/{posId}', 'getSoldProduct');
 });
 
 Route::prefix('pos')->group(function () {
@@ -827,6 +883,7 @@ Route::prefix('pos')->group(function () {
         Route::get('{id}/session/check','sessionCheck')->name('pos.sessionCheck');
         Route::get('{id}/session/create','sessionCreate')->name('pos.sessionCreate');
         Route::post('{id}/session/store','sessionStore')->name('pos.sessionStore');
+        Route::post('{id}/session/destory','sessionDestory')->name('pos.sessionDestory');
     });
 });
 //============================ End: POS ==============================================

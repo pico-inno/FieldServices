@@ -19,11 +19,12 @@ class posRegistrationController extends Controller
     }
        // pos
     public function list(){
-        return view('App.restaurants.pos.list');
+        $usePaymentAccount=getSettingsValue('use_paymentAccount');
+        return view('App.restaurants.pos.list',compact('usePaymentAccount'));
     }
     public function dataForList(){
         $posRegisters=posRegisters::get();
-        return DataTables::of($posRegisters)
+        $dataTable= DataTables::of($posRegisters)
         ->addColumn('checkbox',function($posRegister){
             return
             '
@@ -42,39 +43,46 @@ class posRegistrationController extends Controller
                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="exchangeRateDropDown" role="menu">';
                     $html.='<a class="dropdown-item cursor-pointer" href="'.route('pos.sessionCheck',$posRegister->id).'">Open</a>';
                     $html.='<a class="dropdown-item cursor-pointer openModal" data-href="'.route('posEdit',$posRegister->id).'">Edit</a>';
-                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$posRegister->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('exchangeRate.destory',$posRegister->id).'">Delete</a>';
+                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$posRegister->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('posDestory',$posRegister->id).'">Delete</a>';
                     // $html .= $editBtn;
                 $html .= '</ul></div></div>';
                 return $html;
         })
         ->editColumn('employee',function($posRegister){
             $employee_ids=json_decode($posRegister->employee_id);
-            $employees=BusinessUser::whereIn('id',$employee_ids)->select('username')->get();
-            $employeeText='';
-            foreach ($employees as $key=>$employee) {
-                $seperator=$key!= 0 ?',':'';
-                $employeeText.=$seperator.$employee->username;
-            }
-            return $employeeText;
-        })
-        ->editColumn('paymentAccount',function($posRegister){
-            $paymentAccountIds=json_decode($posRegister->payment_account_id);
-            if($paymentAccountIds){
-                $paymentAccounts=paymentAccounts::whereIn('id',$paymentAccountIds)->select('name','account_number')->get();
-                $accountText='';
-                foreach ($paymentAccounts as $key=>$account) {
+            if($employee_ids){
+                $employees=BusinessUser::whereIn('id',$employee_ids)->select('username')->get();
+                $employeeText='';
+                foreach ($employees as $key=>$employee) {
                     $seperator=$key!= 0 ?',':'';
-                    $accountText.=$seperator.$account->name.'('.$account->account_number.')';
+                    $employeeText.=$seperator.$employee->username;
                 }
-                return $accountText;
+                return $employeeText;
             }
-            return "";
-
+            return '';
         })
+
         ->editColumn('printer',function($posRegister){
             return $posRegister->printer->name ?? '';
-        })
-        ->rawColumns(['checkbox','action'])
+        });
+        if (getSettingsValue('use_paymentAccount')){
+            $dataTable->editColumn('paymentAccount',function($posRegister){
+
+                    $paymentAccountIds=json_decode($posRegister->payment_account_id);
+                    if($paymentAccountIds){
+                        $paymentAccounts=paymentAccounts::whereIn('id',$paymentAccountIds)->select('name','account_number')->get();
+                        $accountText='';
+                        foreach ($paymentAccounts as $key=>$account) {
+                            $seperator=$key!= 0 ?',':'';
+                            $accountText.=$seperator.$account->name.'('.$account->account_number.')';
+                        }
+                        return $accountText;
+                    }
+                return "";
+
+            });
+        }
+        return  $dataTable->rawColumns(['checkbox','action'])
         ->make('true');
     }
     public function create() {
@@ -93,7 +101,7 @@ class posRegistrationController extends Controller
                 'name'=>$request->name,
                 'employee_id'=>$jsonEmloyeeId,
                 'payment_account_id'=>$jsonPaymentAccountId,
-                // 'status'=>$request->status,
+                'use_for_res'=>$request->use_for_res ? 1 :0,
                 'printer_id'=>$request->printer_id,
                 'description'=>$request->description,
             ]);
@@ -124,8 +132,9 @@ class posRegistrationController extends Controller
         $paymentAccountIds=json_decode($registeredPos->payment_account_id);
         $accountText='';
         if($paymentAccountIds){
-            $paymentAccountsQuery=paymentAccounts::whereIn('id',$paymentAccountIds)->exists();
-            if($paymentAccountsQuery){
+            $paymentAccountsQuery=paymentAccounts::whereIn('id',$paymentAccountIds);
+            $paymentAccountsCheck=$paymentAccountsQuery->exists();
+            if($paymentAccountsCheck){
                     $paymentAccountsById=$paymentAccountsQuery->get();
                     foreach ($paymentAccountsById as $key=>$a) {
                         $seperator=$key==0 ? '' :',';
@@ -146,6 +155,7 @@ class posRegistrationController extends Controller
                 'name'=>$request->name,
                 'employee_id'=>$jsonEmloyeeId,
                 'payment_account_id'=>$jsonPaymentAccountId,
+                'use_for_res'=>$request->use_for_res ? 1 :0,
             // 'status'=>$request->status,
                 'printer_id'=>$request->printer_id,
                 'description'=>$request->description,

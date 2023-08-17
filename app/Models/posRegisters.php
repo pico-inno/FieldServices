@@ -16,6 +16,7 @@ class posRegisters extends Model
         'business_id',
         'payment_account_id',
         'status',
+        'use_for_res',
         'printer_id',
     ];
     public function printer():HasOne{
