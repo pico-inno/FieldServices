@@ -7,10 +7,10 @@ tempusDominus.extend(tempusDominus.plugins.customDateFormat);
         }
     });
 
-    const individual = document.getElementById('individual');
-    const individualdivs = document.querySelectorAll('.individual-div');
-    const business = document.getElementById('business');
-    const businessdiv = document.querySelector('.business-div');
+    let individual = document.getElementById('individual');
+    let individualdivs = document.querySelectorAll('.individual-div');
+    let business = document.getElementById('business');
+    let businessdiv = document.querySelector('.business-div');
 
     // if(individual.checked){
     //     for(let i = 0; i < individualdivs.length; i++){
@@ -39,8 +39,8 @@ tempusDominus.extend(tempusDominus.plugins.customDateFormat);
     });
 
     const showMoreInfo = () => {
-        const moreInfo = document.querySelector("#more-info-fields");
-        const moreInfoBtn = document.querySelector(".moreBtn")
+        let moreInfo = document.querySelector("#more-info-fields");
+        let moreInfoBtn = document.querySelector(".moreBtn")
         if (moreInfo.style.display === "none") {
             moreInfo.style.display = "block";
             moreInfoBtn.innerHTML = `Less Informations <i class="fa-solid fa-chevron-up text-white ms-4"></i>`;
@@ -51,9 +51,9 @@ tempusDominus.extend(tempusDominus.plugins.customDateFormat);
     }
 
     // Get references to the select elements and divs
-    const contactTypeSelect = document.getElementById('contact-type');
-    const customerGroupDiv = document.querySelectorAll('.customer-group');
-    const creditLimitDiv = document.querySelector('.credit-limit');
+    let contactTypeSelect = document.getElementById('contact-type');
+    let customerGroupDiv = document.querySelectorAll('.customer-group');
+    let creditLimitDiv = document.querySelector('.credit-limit');
 
     const showCG = () => {
         if (contactTypeSelect.value === "Customer") {
