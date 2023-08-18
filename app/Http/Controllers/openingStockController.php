@@ -128,8 +128,7 @@ class openingStockController extends Controller
         } catch (\Throwable $e) {
             throw($e);
             DB::rollBack();
-            dd($e);
-            // return back()->with(['warning'=>'Something wrong while creating Opening Stock']);
+            return back()->with(['warning'=>'Something wrong while creating Opening Stock']);
         }
 
     }
