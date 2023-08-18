@@ -33,7 +33,7 @@ var reservation = function () {
             var roomType = $(this).data('room-type-id');
             var roomStatus = $(this).data('room-status');
 
-            if (roomType != selectedRoomType || roomStatus !== 'Available') {
+            if (roomType != selectedRoomType) {
                 $(this).remove();
             }
         });
