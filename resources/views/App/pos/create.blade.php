@@ -1015,7 +1015,7 @@
         $('form#quick_add_product_form').submit(function(e) {
             setTimeout(() => {
                 (()=>{getProductVariations()})();
-            }, 1500);
+            }, 700);
         })
         });
     });

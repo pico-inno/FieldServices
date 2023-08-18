@@ -113,7 +113,7 @@
         }
 
         let invoiceSidebar = (product) => {
-            console.log(product)
+            checkAndStoreSelectedProduct(product);
             let variation_value_and_name;
             // Get Variation Value and Variation Template Value Name
             if(product.variation_id){
@@ -133,7 +133,7 @@
             })
             // console.log(product)
             // getProducts(1, );
-            checkAndStoreSelectedProduct(product);
+            let stockBalanceText=product.product_type =="storable" ? `<span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">${product.uom.value * 1}</span> - <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">${product.uom.name}</span>` : ''
             return `
                 <tr class="fs-9 mb-3 invoiceRow invoice_row_${product.product_variations.id} cursor-pointer">
                     <input type="hidden" name="product_id" value="${product.id}" />
@@ -152,8 +152,7 @@
                         <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : ${product.sku}</span>
                         <br>
                         ${variation_value_and_name !== undefined ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">${variation_value_and_name}</span><br>` : ''}
-                        <span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">${product.uom.value * 1}</span> -
-                        <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">${product.uom.name}</span>
+                        ${stockBalanceText}
                     </td>
                     <td class="min-w-50px ps-0 pe-0 exclude-modal">
                         <input type="text" name="selling_price[]" class="form-control form-control-sm" value="${product.product_variations.default_selling_price * 1}">
@@ -420,11 +419,9 @@
                 'stock':newSelectedProduct.stock,
             };
             if(productsOnSelectData.length>0){
-                let fileterProduct = productsOnSelectData.filter(function(p){
-                    return p.product_id == newSelectedProduct.id && p.variation_id == newSelectedProduct.product_variations.id
-                })[0];
-                if(fileterProduct){
-                    return
+                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+                if(indexToReplace !== -1){
+                    productsOnSelectData[indexToReplace] = newProductData;
                 }else{
                     productsOnSelectData=[...productsOnSelectData,newProductData];
                 }
