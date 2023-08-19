@@ -274,6 +274,17 @@
 										<!--end::Nav link-->
 									</li>
 									<!--end::Nav item-->
+                                    <!--begin::Nav item-->
+									<li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" data-bs-dismiss="click" title="SMS">
+										<!--begin::Nav link-->
+										<a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('sms_active')" data-bs-toggle="tab" href="#kt_aside_nav_tab_sms">
+											<!--begin::Svg Icon | path: icons/duotune/general/gen048.svg-->
+											<i class="fa-solid fa-sms fs-6"></i>
+											<!--end::Svg Icon-->
+										</a>
+										<!--end::Nav link-->
+									</li>
+									<!--end::Nav item-->
 									<!--begin::Nav item-->
 									<li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" data-bs-dismiss="click" title="Settings">
 										<!--begin::Nav link-->
@@ -1853,6 +1864,133 @@
                                                             </span>
                                                             <span class="menu-title">Module</span>
                                                         </a>
+                                                </div>
+                                            </div>
+                                            <!--end::Wrapper-->
+                                        </div><!--begin::Tab pane-->
+                                        <div class="tab-pane fade @yield('setting_active_show')" id="kt_aside_nav_tab_sms" role="tabpanel">
+                                            <!--begin::Wrapper-->
+                                            <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
+                                                id="kt_aside_menu" data-kt-menu="true">
+                                                <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                                    <div class="menu-item pt-2">
+                                                        <!--begin:Menu content-->
+                                                        <div class="menu-content">
+                                                            <span class="menu-heading fw-bold text-uppercase fs-7">SMS </span>
+                                                        </div>
+                                                        <!--end:Menu content-->
+                                                    </div>
+                                                    <!--begin:Menu item-->
+                                                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('business_setting_here_show')">
+                                                        <!--begin:Menu link-->
+                                                        <span class="menu-link">
+                                                            <span class="menu-icon">
+                                                                <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                                                <i class="bi bi-gear fs-2"></i>
+                                                                <!--end::Svg Icon-->
+                                                            </span>
+                                                            <span class="menu-title">SMS Configuration</span>
+                                                            <span class="menu-arrow"></span>
+                                                        </span>
+                                                        <!--end:Menu link-->
+                                                        <!--begin:Menu sub-->
+                                                        <!--begin:Menu sub-->
+                                                        <div class="menu-sub menu-sub-accordion">
+                                                            <!--begin:Menu item-->
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('business_settings_nav')" href="{{route('business_settings')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title ">Business settings</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                        </div>
+                                                        <!--end:Menu sub-->
+                                                        <!--end:Menu sub-->
+                                                    </div>
+                                                    <!--end:Menu item-->
+                                                    <!--begin:Menu item-->
+                                                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion  @yield('location_here_show')">
+                                                        <!--begin:Menu link-->
+                                                        <span class="menu-link">
+                                                            <span class="menu-icon">
+                                                                <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                                                <i class="bi bi-geo-alt-fill fs-2"></i>
+                                                                <!--end::Svg Icon-->
+                                                            </span>
+                                                            <span class="menu-title ">Business Location</span>
+                                                            <span class="menu-arrow"></span>
+                                                        </span>
+                                                        <!--end:Menu link-->
+                                                        <!--begin:Menu sub-->
+                                                        <!--begin:Menu sub-->
+                                                        <div class="menu-sub menu-sub-accordion">
+                                                            <!--begin:Menu item-->
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('location_list_nav')" href="{{route('business_location')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title">Location List</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('location_add_nav')" href="{{route('location_add_form')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title">Add Location</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                            <!--end:Menu item-->
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="menu-item menu-accordion ">
+                                                        <!--begin:Menu link-->
+                                                        <!--begin:Menu link-->
+                                                        <a class="menu-link @yield('printers_list_active_show')" href="{{route('printerList')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="las la-print fs-2"></i>
+                                                            </span>
+                                                            <span class="menu-title">Printer List</span>
+                                                        </a>
+                                                    </div>
+                                                    <!--end:Menu item-->
+                                                    <div class="menu-item menu-accordion">
+                                                        <!--begin:Menu link-->
+                                                        <a class="menu-link @yield('building_active_show')" href="{{ route('building.index') }}">
+                                                            <span class=" menu-icon">
+                                                                <i class="fa-solid fa-hotel fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Building</span>
+                                                        </a>
+                                                        <!--end::Menu link-->
+                                                    </div>
+                                                    <div class="menu-item menu-accordion">
+                                                        <!--begin:Menu link-->
+                                                        <a class="menu-link @yield('floor_active_show')" href="{{route('floor.index')}}">
+                                                            <span class=" menu-icon">
+                                                                <i class="fa-solid fa-building fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Floor</span>
+                                                        </a>
+                                                        <!--end::Menu link-->
+                                                    </div>
                                                 </div>
                                             </div>
                                             <!--end::Wrapper-->

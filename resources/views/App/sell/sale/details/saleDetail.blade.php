@@ -24,13 +24,16 @@
                     <div class="row mb-10">
                         <div class="col-sm-4">
                             <h3 class="text-primary-emphasis fs-4">
-                                Supplier:
+                                Customer:
                             </h3>
                             @if ($sale['customer'])
                                 <address class="mt-3 fs-5">
                                     {{$sale['customer']['first_name']}} <br>
                                     Mobile:{{$sale['customer']['mobile']}}
                                 </address>
+                            @endif
+                            @if ($sale['table_id'] != null)
+                                <th class="min-w-100px">Table No</th>
                             @endif
                         </div>
                         <div class="col-sm-4">

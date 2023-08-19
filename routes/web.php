@@ -453,17 +453,17 @@ Route::prefix('stock-history')->group(function () {
 Route::prefix('deliver-channel')->group(function () {
     Route::controller(deliveryChannelController::class)->group(function () {
         Route::get('/list', 'index')->name('deliveryChannel.list');
-        Route::get('/create', 'create')->name('paymentAcc.create');
-        Route::post('/store', 'store')->name('paymentAcc.store');
+        // Route::get('/create', 'create')->name('paymentAcc.create');
+        // Route::post('/store', 'store')->name('paymentAcc.store');
 
-        Route::get('{id}/edit', 'edit')->name('paymentAcc.edit');
-        Route::post('{id}/update', 'update')->name('paymentAcc.update');
+        // Route::get('{id}/edit', 'edit')->name('paymentAcc.edit');
+        // Route::post('{id}/update', 'update')->name('paymentAcc.update');
 
-        Route::get('{id}/view', 'view')->name('paymentAcc.view');
-        Route::delete('/destory', 'destory')->name('paymentAcc.destory');
+        // Route::get('{id}/view', 'view')->name('paymentAcc.view');
+        // Route::delete('/destory', 'destory')->name('paymentAcc.destory');
 
-        Route::get('/get/list/', 'list');
-        Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
+        // Route::get('/get/list/', 'list');
+        // Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
     });
 });
 

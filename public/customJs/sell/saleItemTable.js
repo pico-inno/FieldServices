@@ -20,6 +20,63 @@
             });
 
             // Init datatable --- more info on datatables: https://datatables.net/manual/
+            let columns = [
+                {
+                    data: 'checkbox',
+                    name: 'checkbox',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    searchable: false,
+                    orderable: false,
+                },
+                {
+                    name: 'saleItems',
+                    data: 'saleItems',
+                },
+                {
+                    data: 'sales_voucher_no',
+                    name: 'sales_voucher_no'
+                },
+                {
+                    data: 'customer',
+                    name: 'customer'
+                }, {
+                    data: 'sale_amount',
+                    name: 'sale_amount'
+                },
+                {
+                    data: "business_location_id.name",
+                    name: "business_location_id.name"
+                },
+
+                {
+                    data: 'status',
+                    name: 'status'
+                },
+                {
+                    data: 'sold_at',
+                    name: 'sold_at'
+                },
+
+            ];
+            if (saleType == 'posSales') {
+                columns = [
+                    ...columns.slice(0, 4),
+                    {
+                        data: 'table_id',
+                        name: 'table_id',
+                        render: function (data) {
+                            return data ?? '-';
+                        }
+                    },
+                    ...columns.slice(4)
+                ];
+            }
+
             datatable = $(table).DataTable({
                 pageLength: 30,
                 lengthMenu: [10, 20, 30, 50,40,80],
@@ -44,49 +101,7 @@
                     }
                 },
 
-                columns: [
-                    {
-                        data: 'checkbox',
-                        name: 'checkbox',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        searchable: false ,
-                        orderable: false,
-                    },
-                    {
-                        name:'saleItems',
-                        data:'saleItems',
-                    },
-                    {
-                        data: 'sales_voucher_no',
-                        name: 'sales_voucher_no'
-                    },
-                    {
-                        data: 'customer',
-                        name: 'customer'
-                    },
-                    {
-                        data: 'sold_at',
-                        name: 'sold_at'
-                    },{
-                        data: 'sale_amount',
-                        name: 'sale_amount'
-                    },
-                    {
-                        data: "business_location_id.name",
-                        name: "business_location_id.name"
-                    },
-
-                    {
-                        data: 'status',
-                        name: 'status'
-                    }
-
-                ]
+                columns,
 
             });
 
