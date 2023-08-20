@@ -52,6 +52,7 @@
                                                     <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$sd->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     {{-- <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span> --}}
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $sd->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
+                                                    <span class="me-5 print-invoice" data-href="{{route('print_sale', $sd->id)}}">Post To Folio</span>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -102,6 +103,7 @@
                                                     <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$sdf->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     {{-- <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span> --}}
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $sdf->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
+                                                    <span class="me-5 print-invoice" data-href="{{route('print_sale', $sdf->id)}}">Post To Folio</span>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -161,6 +163,7 @@
                                                     <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$so->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     {{-- <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span> --}}
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $so->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
+                                                    <span class="me-5  badge badge-info cursor-pointer post-to-reservation" data-href="{{route('postToRegistrationFolio', $so->id)}}">Post To Folio</span>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -20,6 +20,12 @@ class businessSettingController extends Controller
         return view('App.businessSetting.businessSetting',compact('settingData', 'currencies'));
     }
     public function create(Request $request){
+        if($request->sms_service == 'smsPOH'){
+            $newEnv= $request->only([
+                'SMSPOH_SENDER', 'SMSPOH_AUTH_TOKEN'
+            ]);
+            updenv($newEnv);
+        };
         $data=[
             'name' => $request->name,
             'lot_control' => 'off',
@@ -32,6 +38,7 @@ class businessSettingController extends Controller
             'currency_symbol_placement'=>$request->currency_symbol_placement,
             'use_paymentAccount'=>$request->use_paymentAccount ? '1':'0',
         ];
+
         if(businessSettings::exists()){
             businessSettings::first()->update($data);
             return redirect()->back()->with(['success'=>'Successfully updated setting']);

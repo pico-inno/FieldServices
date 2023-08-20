@@ -78,6 +78,7 @@ use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
+use App\Http\Controllers\SMSController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
 
@@ -466,7 +467,13 @@ Route::prefix('deliver-channel')->group(function () {
         // Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
     });
 });
+Route::prefix('SMS')->group(function () {
+    Route::controller(SMSController::class)->group(function () {
+        // Route::get('/list', 'index')->name('deliveryChannel.list');
+        Route::get('/create', 'create')->name('sms.create');
 
+    });
+});
 
 
 Route::prefix('payment-account')->group(function () {

@@ -2055,12 +2055,13 @@
                                                         <span class="">{{__('business_settings.sms_service')}}</span>
                                                     </label>
                                                     <select name="sms_service" data-hide-search="true" id="sms_service"  class="form-select" data-control="select2" data-placeholder="">
+                                                        <option value="smsPOH" selected>SMS POH</option>
                                                         <option value="nexmo">Nexmo</option>
                                                         <option value="twilio" >Twilio</option>
-                                                        <option value="other" selected >other</option>
+                                                        <option value="other"  >other</option>
                                                     </select>
                                                 </div>
-                                                <div id="other-tab">
+                                                <div id="other-tab" class=" d-none">
                                                     <div class="row fv-row row-cols flex-wrap">
                                                         <div class="col-md-12 mb-7 col-lg-4">
                                                             <!--begin::Label-->
@@ -2352,6 +2353,38 @@
                                                             </div>
                                                         </form> --}}
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div id="smsPOH-tab" >
+
+                                                        <div class="row fv-row row-cols flex-wrap">
+                                                            <div class="col-md-12 mb-7 col-lg-12">
+                                                                <!--begin::Label-->
+                                                                <label class="fs-6 fw-semibold form-label mt-3" for="auth_token">
+                                                                    <span class="">SMS Poh Auth Key:</span>
+                                                                </label>
+                                                                <!--end::Label-->
+                                                                <input type="text" class="form-control form-control" id="sms_poh_auth_key" name="SMSPOH_AUTH_TOKEN" value=""
+                                                                    placeholder="Auth key" />
+                                                            </div>
+                                                            <div class="col-md-12  mb-7 col-lg-12">
+                                                                <!--begin::Label-->
+                                                                <label class="fs-6 fw-semibold form-label mt-3" for="smsPohSender">
+                                                                    <span class="">Sender:</span>
+                                                                </label>
+                                                                <!--end::Label-->
+                                                                <input type="text" class="form-control form-control" name="SMSPOH_SENDER" id="smsPohSender" value=""
+                                                                    placeholder="Nexmo Secret:" />
+                                                            </div>
+                                                        {{-- <div class="col-md-12 mb-7 col-lg-4">
+                                                            <!--begin::Label-->
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="nexmo_from">
+                                                                <span class="">{{__('business_settings.from')}}:</span>
+                                                            </label>
+                                                            <!--end::Label-->
+                                                            <input type="text" class="form-control form-control" name="nexmo_from" id="nexmo_from" value=""
+                                                                placeholder="from" />
+                                                        </div> --}}
                                                     </div>
                                                 </div>
                                                 <div id="nexmo-tab" class=" d-none">

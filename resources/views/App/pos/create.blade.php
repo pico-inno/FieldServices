@@ -102,10 +102,13 @@
     <body >
         <div style="height: 100vh; overflow: hidden; ">
             <div class="row bg-primary px-2 mh-80px ">
-                <div class=" d-flex  justify-content-between align-items-center ">
+                <div class=" d-flex flex-wrap  justify-content-between align-items-center ">
                     {{-- <button class="btn btn-sm p-2 btn-light">Home</button> --}}
                     <div class="d-flex">
                         <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
+                        <a href="{{ route('pos.selectPos')}}" class="btn btn-sm" title="POS Screen">
+                                        <i class="fa-solid fa-cash-register fs-3 text-white"></i>
+                                </a>
                         @if ($posRegister->use_for_res=='1')
                             <select name="table_id" id="table_nav_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light table_id tableSelect" data-control="select2" data-allow-clear="true">
                                 <option disabled selected>Select Table</option>
@@ -118,7 +121,7 @@
                             {{-- <a href="{{url('/restaurant/table/dashboard?pos_register_id='.encrypt($posRegisterId))}}" class="ms-0 btn btn-sm btn-info rounded-0"><< {{request('table_no')}}</a> --}}
                         @endif
                     </div>
-                    <a class="navbar-brand fw-bold fs-3 text-white" href="#"></a>
+                    <a class="navbar-brand fw-bold fs-3 text-white d-none d-md-block" href="#">{{$posRegister->name}}</a>
                     <div class="">
                         <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
                         <button class="btn btn-sm  btn-danger fw-bold  rounded-0"  data-href="{{route(
@@ -183,7 +186,7 @@
                             <!--begin::Pos product-->
                             <div class=" bg-transparent border-0 my-3 mb-10" style="height: 85%; overflow: scroll;">
                                 <!--begin::Nav-->
-                                <div class="row mb-10 p-5  flex-wrap" id="all_product_list">
+                                <div class="row mb-10 p-5 gap-5 gap-md-0  flex-wrap" id="all_product_list">
 
                                 </div>
                                 <!--end::Nav-->
@@ -324,6 +327,7 @@
 
                                         </div>
                                         <div class="col-5 btn-primary text-center " data-bs-toggle="modal" data-bs-target="#payment_info">
+                                            {{-- <input type="submit" class="btn btn-lg btn-primary d-block for_disable_btn mb-1" value="Cash" style="width: 100%; height: 35%;"> --}}
                                             <input type="submit" class="btn btn-lg btn-success d-block for_disable_btn " value="Payment" style="width: 100%; height: 70%;">
                                         </div>
 
@@ -935,6 +939,7 @@
         {{-- POS Sale Recent --}}
         <div class="modal fade" tabindex="-1" id="closeSessionModal"></div>
         <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
+<div class="modal modal-lg fade" tabindex="-1"  data-bs-focus="false"  id="reservationFolioPosting"></div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
@@ -1017,6 +1022,38 @@
                 (()=>{getProductVariations()})();
             }, 700);
         })
+        });
+    });
+
+        $(document).on('click', '.post-to-reservation', function(e){
+        loadingOn();
+        e.preventDefault();
+        $('#reservationFolioPosting').load($(this).data('href'), function() {
+            loadingOff();
+            $('.joinSelect').select2();
+            $(this).modal('show');
+            $('form#postToReservationFolio').submit(function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var data = form.serialize();
+                $.ajax({
+                    method: 'POST',
+                    url: $(this).attr('action'),
+                    dataType: 'json',
+                    data: data,
+                    success: function(result) {
+                        if (result.success == true) {
+                            $('#reservationFolioPosting').modal('hide');
+                            toastr.success(result.msg);
+                        } else {
+                            toastr.error(result.msg);
+                        }
+                    },
+                    error: function(result) {
+                        toastr.error(result.responseJSON.errors, 'Something went wrong');
+                    }
+                });
+            });
         });
     });
 })
