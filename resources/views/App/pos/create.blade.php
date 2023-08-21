@@ -102,13 +102,10 @@
     <body >
         <div style="height: 100vh; overflow: hidden; ">
             <div class="row bg-primary px-2 mh-80px ">
-                <div class=" d-flex flex-wrap  justify-content-between align-items-center ">
+                <div class=" d-flex  justify-content-between align-items-center ">
                     {{-- <button class="btn btn-sm p-2 btn-light">Home</button> --}}
                     <div class="d-flex">
                         <a href="{{ route('home') }}" class="btn btn-sm  rounded-0"> <i class="fa-solid fa-house text-light fs-3"></i></a>
-                        <a href="{{ route('pos.selectPos')}}" class="btn btn-sm" title="POS Screen">
-                                        <i class="fa-solid fa-cash-register fs-3 text-white"></i>
-                                </a>
                         @if ($posRegister->use_for_res=='1')
                             <select name="table_id" id="table_nav_id" autofocus="false" data-placeholder="Select Table" placeholder="Select Table" class="w-150px form-select form-select-sm form-select w-auto m-0 border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 text-light table_id tableSelect" data-control="select2" data-allow-clear="true">
                                 <option disabled selected>Select Table</option>
@@ -121,7 +118,7 @@
                             {{-- <a href="{{url('/restaurant/table/dashboard?pos_register_id='.encrypt($posRegisterId))}}" class="ms-0 btn btn-sm btn-info rounded-0"><< {{request('table_no')}}</a> --}}
                         @endif
                     </div>
-                    <a class="navbar-brand fw-bold fs-3 text-white d-none d-md-block" href="#">{{$posRegister->name}}</a>
+                    <a class="navbar-brand fw-bold fs-3 text-white" href="#"></a>
                     <div class="">
                         <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
                         <button class="btn btn-sm  btn-danger fw-bold  rounded-0"  data-href="{{route(
@@ -146,7 +143,7 @@
                 <div class="container-fluid  pe-1 h-100" id="kt_content_container">
                     <!--begin::Layout-->
 
-                    <div class="d-flex flex-column flex-lg-row ">
+                    <div class="d-flex flex-column flex-lg-row p-2">
                         <!--begin::Content-->
                         <div class="d-flex flex-column flex-row-fluid me-lg-9 mb-lg-0 me-xl-9 mb-10 mb-xl-0" style="height: 100vh;">
                             <div class="row mt-3" style="max-height: 5%">
@@ -186,7 +183,7 @@
                             <!--begin::Pos product-->
                             <div class=" bg-transparent border-0 my-3 mb-10" style="height: 85%; overflow: scroll;">
                                 <!--begin::Nav-->
-                                <div class="row mb-10 p-5 gap-5 gap-md-0  flex-wrap" id="all_product_list">
+                                <div class="row mb-10 p-5  flex-wrap" id="all_product_list">
 
                                 </div>
                                 <!--end::Nav-->
@@ -195,7 +192,7 @@
                         </div>
                         <!--end::Content-->
                         <!--begin::Sidebar-->
-                        <div class="flex-row-auto w-lg-550px w-xl-5500px p-3 ps-5  bg-light d-none d-md-none d-sm-none d-lg-block d-xl-block mb-5 " id="invoice_side_bar" style="height: 100vh;" >
+                        <div class="flex-row-auto w-lg-550px w-xl-5500px mt-3 d-none d-md-none d-sm-none d-lg-block d-xl-block mb-5 pe-3" id="invoice_side_bar" style="height: 100vh;" >
 
                             <div class="row mb-1" style="max-height: 5%;z-index: 200;">
                                 <div class="input-group input-group-solid flex-nowrap">
@@ -226,9 +223,9 @@
                             <div class="row position-relative " style="height: 95%">
                                 <div class="table-responsive position-absolute top-0" style="max-height: 60%; overflow: scroll;padding-bottom: 300px">
                                     <table id="kt_datatable_zero_configuration invoice_with_sidebar_table" class="table table-row-bordered w-100">
-                                        <thead class="table-layout-fixed bg-light " style="position: sticky; top: 0; z-index: 300;">
+                                        <thead class="table-layout-fixed bg-light" style="position: sticky; top: 0; z-index: 300;">
                                             <tr class="text-gray-700 fs-8 fw-bold text-uppercase p-3">
-                                                <th class="min-w-175px ps-2">Product</th>
+                                                <th class="min-w-175px">Product</th>
                                                 <th class="min-w-80px">Price</th>
                                                 <th class="min-w-130px">Quantity</th>
                                                 <th class="min-w-100px">Subtotal</th>
@@ -240,7 +237,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="position-absolute w-100" style="z-index: 600;bottom:20px" id="info_price_with_sidebar">
+                                <div class="position-absolute " style="z-index: 600;bottom:30px" id="info_price_with_sidebar">
                                     <div class="row bg-primary rounded-3 px-3 py-5 mb-3 justify-content-between align-items-center">
                                         <div class="col-6 d-flex justify-content-between   text-white">
                                             <div class="fs-7 fw-bold ">
@@ -280,54 +277,53 @@
                                     <div class="row  px-3 py-2 ">
                                         <div class="col-7">
                                             <div class="d-flex  flex-equal gap-5  justify-content-around px-0 mb-5" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
-                                                    <div class="row mb-3 g-1">
-                                                        <button class="for_disable_btn mb-3 btn  btn-sm   btn-color-gray-900  border-gray-300  border border-1 hover-elevate-up w-100 px-4" data-kt-button="true">
+                                                    <div class="row mb-3">
+                                                        <label class="for_disable_btn mb-3 btn  btn-sm bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
                                                             <!--begin::Input-->
                                                             <input class="btn-check" type="radio" name="method" value="0" />
                                                             <!--end::Input-->
                                                             <!--begin::Title-->
                                                             <span class="fs-7 fw-bold d-block sale_credit">Credit</span>
                                                             <!--end::Title-->
-                                                        </button>
+                                                        </label>
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
                                                         @if ($posRegister->use_for_res=='1')
-                                                            <button  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn  mb-3 btn  btn-sm  bg-light btn-color-gray-900 border-gray-300  border border-1 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
+                                                            <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
                                                                 <input class="btn-check" type="radio" name="method" value="1" />
-                                                                <span class=" text-dark fw-bold  rounded-0">Order</span>
-                                                            </button>
+                                                                <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                            </label>
                                                         @else
-                                                            <button class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border-gray-300  border border-1  hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
+                                                            <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
                                                                 <input class="btn-check" type="radio" name="method" value="1" />
-                                                                <span class=" text-dark fw-bold  rounded-0">Order</span>
-                                                            </button>
+                                                                <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                            </label>
                                                         @endif
 
                                                         <!--end::Radio-->
                                                     </div>
                                                     <div class="row mb-3">
                                                         <!--begin::Radio-->
-                                                        <button class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900 border-gray-300  border border-1  hover-elevate-up w-100 px-4 " data-kt-button="true">
+                                                        <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 " data-kt-button="true">
                                                             <!--begin::Input-->
                                                             <input class="btn-check" type="radio" name="method" value="3" />
                                                             <!--end::Input-->
                                                             <!--begin::Title-->
                                                             <span class="fs-7 fw-bold d-block sale_draft">Draft</span>
                                                             <!--end::Title-->
-                                                        </button>
+                                                        </label>
                                                         <!--end::Radio-->
-                                                        <button  class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900 border-gray-300  border border-1 hover-elevate-up w-100 text-center justify-content-center split_order_modal_btn_from_create" data-kt-button="true">
+                                                        <label  class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 split_order_modal_btn_from_create" data-kt-button="true">
                                                             <input class="btn-check" type="radio" name="method" value="1" />
-                                                            <span class="fw-bold  rounded-0">
+                                                            <button class="btn btn-sm   fw-bold  rounded-0">
                                                                  Split Voucher
-                                                            </span>
-                                                        </button>
+                                                            </button>
+                                                        </label>
                                                     </div>
                                             </div>
 
                                         </div>
                                         <div class="col-5 btn-primary text-center " data-bs-toggle="modal" data-bs-target="#payment_info">
-                                            {{-- <input type="submit" class="btn btn-lg btn-primary d-block for_disable_btn mb-1" value="Cash" style="width: 100%; height: 35%;"> --}}
                                             <input type="submit" class="btn btn-lg btn-success d-block for_disable_btn " value="Payment" style="width: 100%; height: 70%;">
                                         </div>
 
@@ -562,7 +558,17 @@
                                 <div id="payment_amount_repeater">
                                     <!--begin::Form group-->
                                     <div class="form-group">
+                                        <div class="form-group mb-3">
+                                            <label for="" class="form-label fw-bold">Post to Folio</label>
+                                            <select name="" id="" class="form-select form-select-sm" data-placeholder="Post To Folio" placeholder='Post To Folio' data-kt-select2="true" data-allow-clear="true">
+                                                <option value="">
 
+                                                </option>
+                                                <option value="">
+
+                                                </option>
+                                            </select>
+                                        </div>
                                         <div id="payment_row_body">
 
                                         </div>
@@ -939,7 +945,7 @@
         {{-- POS Sale Recent --}}
         <div class="modal fade" tabindex="-1" id="closeSessionModal"></div>
         <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
-<div class="modal modal-lg fade" tabindex="-1"  data-bs-focus="false"  id="reservationFolioPosting"></div>
+        <div class="modal modal-lg fade" tabindex="-1"  data-bs-focus="false"  id="reservationFolioPosting"></div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
@@ -1024,7 +1030,6 @@
         })
         });
     });
-
         $(document).on('click', '.post-to-reservation', function(e){
         loadingOn();
         e.preventDefault();
@@ -1032,6 +1037,7 @@
             loadingOff();
             $('.joinSelect').select2();
             $(this).modal('show');
+            $('#pos_sale_recent').modal('hide');
             $('form#postToReservationFolio').submit(function(e) {
                 e.preventDefault();
                 var form = $(this);

@@ -1,5 +1,5 @@
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
+<div class="modal-dialog w-sm-500px" role="document">
+    <div class="modal-content ">
         <div class="modal-header">
             <h3 class="modal-title fs-6">
                 <i class="fa-solid fa-paperclip text-primary pe-2"></i> {{$saleVoucher->sales_voucher_no}} To

@@ -16,5 +16,4 @@ use App\Models\settings\businessLocation;
 
 class restaurantController extends Controller
 {
-   
 }

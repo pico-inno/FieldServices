@@ -471,6 +471,8 @@ Route::prefix('SMS')->group(function () {
     Route::controller(SMSController::class)->group(function () {
         // Route::get('/list', 'index')->name('deliveryChannel.list');
         Route::get('/create', 'create')->name('sms.create');
+        Route::post('/send', 'send')->name('sms.send');
+
 
     });
 });

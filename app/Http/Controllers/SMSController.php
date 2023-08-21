@@ -19,28 +19,25 @@ class SMSController extends Controller
     }
     public function send(Request $request)
     {
-        $this->sendMessage($request);
-        return;
-    }
-    public function sendMessage($request){
-        $data = [
-            'to' => $request->sent_to,
-            'message' => $request->message,
-            'sender' => $this->sender,
-        ];
-        Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->AuthToken,
-            'Content-Type' => 'application/json',
-        ])->post('https://smspoh.com/api/v2/send', $data);
+        try {
+            $data = [
+                'to' => $request->sent_to,
+                'message' => $request->message,
+                'sender' => $this->sender,
+            ];
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->AuthToken,
+                'Content-Type' => 'application/json',
+            ])->post('https://smspoh.com/api/v2/send', $data);
 
-        // if ($response->successful()) {
-        //     dd('Successfully sended');
-        //     $responseData = $response->json();
-        // } else {
-        //     dd($response);
-        //     $errorCode = $response->status();
-        //     $errorMessage = $response->body();
-        // }
+            // return;
+            if ($response->successful()) {
+                return back()->with(['success' => 'Successfully Send Message']);
+            } else {
+                return back()->with(['error' => $response->status()]);
+            }
+        } catch (\Throwable $th) {
+            return back()->with(['error' => $th->getMessage()]);
+        }
     }
-
 }

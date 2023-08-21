@@ -81,7 +81,7 @@
                             @if (isUsePaymnetAcc())
                                 <div class="col-md-5 col-sm-5 col-5 ">
                                     <label class="form-label fw-bold">Payment Account:</label>
-                                    <select class="form-select mb-2 form-select-sm" name="payment_account" id="payment_account" data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
+                                    <select class="form-select mb-2 form-select-sm paymentRepeaterAccount payment_account" name="payment_account"  data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
                                         <option></option>
                                         @foreach ($paymentAcc as $acc)
                                             <option value="{{$acc->id}}">{{$acc->name}} ({{$acc->account_number}})</option>
@@ -641,7 +641,7 @@
                 balance_amount = total_sale_amount - paid_amount;
                 let paymentAmountRepeater=$('#payment_amount_repeater');
                 let paymentAmountFromRep=paymentAmountRepeater.find('input[name="pay_amount"]');
-                let paymentAccountFromRep=document.querySelectorAll('#payment_account');
+                let paymentAccountFromRep=paymentAmountRepeater.find('select[name="payment_account"]');
                 paymentAmountFromRep.each((i,p) => {
                     multiPayment=[...multiPayment,{
                         payment_amount:$(p).val(),
@@ -1257,7 +1257,7 @@
         // Form Repeater payment amount add
         $(document).on('click', '.add-payment-row', function(){
             $('#payment_row_body').append(paymentRow);
-            $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
+            $('.paymentRepeaterAccount').select2();
         })
 
         // Form Repeater payment amount remove

@@ -101,14 +101,13 @@ function updenv($newEnvVariables)
     foreach ($newEnvVariables as $key => $newValue) {
         // Update the environment variable
         $newValue='"'.$newValue.'"';
-        $currentValue = env($key);
-
+        $currentValue = '"'.env($key).'"';
         // Replace the existing value with the new value
         if ($currentValue !== false) {
-            $str = preg_replace("/$key=" . preg_quote($currentValue, '/') . "/", "$key=" . $newValue, $str);
+            $str = preg_replace("/$key=" . preg_quote($currentValue, '/') . "/", "$key=" .$newValue, $str);
         } else {
             // If the key doesn't exist, add it to the .env file
-            $str .= "\n$key=$newValue";
+            $str .= "\n$key=$newValue";dd('what');
         }
 
         // Refresh the environment variables

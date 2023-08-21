@@ -5,13 +5,13 @@
 @section('add_sales_active_show', 'active ')
 @section('title')
 <!--begin::Heading-->
-<h1 class="text-dark fw-bold my-0 fs-2">Add Sale</h1>
+<h1 class="text-dark fw-bold my-0 fs-2">Send SMS</h1>
 <!--end::Heading-->
 <!--begin::Breadcrumb-->
 <ul class="breadcrumb fw-semibold fs-base my-1">
-    <li class="breadcrumb-item text-muted">Sale</li>
+    <li class="breadcrumb-item text-muted">Send</li>
     {{-- <li class="breadcrumb-item text-muted">add</li> --}}
-    <li class="breadcrumb-item text-dark">add </li>
+    <li class="breadcrumb-item text-dark">SMS </li>
 </ul>
 <!--end::Breadcrumb-->
 @endsection
@@ -41,12 +41,13 @@
         <div class="card">
             <div class="card-header align-items-center">
                 <div class="card-title">
-                    <h2>Compose Message</h2>
+                    <h2>Send Message</h2>
                 </div>
             </div>
             <div class="card-body p-0">
                 <!--begin::Form-->
-                <form id="kt_inbox_compose_form">
+                <form id="kt_inbox_compose_form" action="{{route('sms.send')}}" method="POST">
+                    @csrf
                     <!--begin::Body-->
                     <div class="d-block">
                         <!--begin::To-->
@@ -84,11 +85,11 @@
                             <!--begin::Send-->
                             <div class="btn-group me-4 text-end">
                                 <!--begin::Submit-->
-                                <span class="btn btn-sm btn-primary fs-bold px-6" data-kt-inbox-form="send">
+                                <button type="submit" class="btn btn-sm btn-primary fs-bold px-6" data-kt-inbox-form="send">
                                     <span class="indicator-label">Send</span>
-                                    <span class="indicator-progress">Please wait...
-                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                </span>
+                                    {{-- <span class="indicator-progress">Please wait...
+                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span> --}}
+                                </button>
                                 <!--end::Submit-->
                             </div>
                         </div>
@@ -105,5 +106,5 @@
 @endsection
 
 @push('scripts')
-<script src="assets/js/custom/apps/inbox/compose.js"></script>
+{{-- <script src="assets/js/custom/apps/inbox/compose.js"></script> --}}
 @endpush
