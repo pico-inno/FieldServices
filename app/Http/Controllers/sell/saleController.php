@@ -336,7 +336,10 @@ class saleController extends Controller
                 'sold_by' => Auth::user()->id,
                 'created_by' => Auth::user()->id,
             ]);
-
+            if($request->reservation_id){
+                $request['sale_id']=$sale_data->id;
+                $this->addToReservationFolio($request,true);
+            }
             if ($request->paid_amount > 0) {
                 if($request->type=='pos'){
                     $multiPayment=$request->multiPayment;
@@ -424,118 +427,124 @@ class saleController extends Controller
 
     public function changeStockQty($requestQty, $business_location_id, $sale_detail, $current_stock = [])
     {
+        $product_id = $sale_detail['product_id'];
         $sale_detail_id = $sale_detail['id'];
         // check lot control from setting
-        $lot_control = businessSettings::select('lot_control')->first()->lot_control;
-        if ($lot_control == 'off') {
-            $product_id = $sale_detail['product_id'];
-            $variation_id = $sale_detail['variation_id'];
-            $totalStocks = CurrentStockBalance::select('id', 'current_stock_id')
-                ->where('product_id', $product_id)
-                ->where('variation_id', $variation_id)
-                ->where('business_location_id', $business_location_id)
-                ->where('current_quantity', '>', '0')
-                ->sum('current_quantity');
-
-            if ($requestQty > $totalStocks) {
-                return false;
-            } else {
-                $stocks = CurrentStockBalance::where('product_id', $product_id)
+        $product=Product::where('id',$product_id)->select('product_type')->first();
+        if($product->product_type=='storable'){
+            $lot_control = businessSettings::select('lot_control')->first()->lot_control;
+            if ($lot_control == 'off') {
+                $variation_id = $sale_detail['variation_id'];
+                $totalStocks = CurrentStockBalance::select('id', 'current_stock_id')
+                    ->where('product_id', $product_id)
                     ->where('variation_id', $variation_id)
                     ->where('business_location_id', $business_location_id)
-                    ->where('current_quantity', '>', '0');
-                if ($this->accounting_method == 'lifo') {
-                    $stocks = $stocks->orderBy('id', 'DESC')->get();
+                    ->where('current_quantity', '>', '0')
+                    ->sum('current_quantity');
+
+                if ($requestQty > $totalStocks) {
+                    return false;
                 } else {
-                    $stocks = $stocks->get();
+                    $stocks = CurrentStockBalance::where('product_id', $product_id)
+                        ->where('variation_id', $variation_id)
+                        ->where('business_location_id', $business_location_id)
+                        ->where('current_quantity', '>', '0');
+                    if ($this->accounting_method == 'lifo') {
+                        $stocks = $stocks->orderBy('id', 'DESC')->get();
+                    } else {
+                        $stocks = $stocks->get();
+                    }
+                    $qtyToRemove = $requestQty;
+                    // dd($requestQty);
+                    $data = [];
+                    foreach ($stocks as  $stock) {
+                        $stockQty = $stock->current_quantity;
+                        // prepare data for stock history
+                        $stock_history_data = [
+                            'business_location_id' => $stock['business_location_id'],
+                            'product_id' => $stock['product_id'],
+                            'variation_id' => $stock['variation_id'],
+                            'expired_date' => $stock['expired_date'],
+                            'transaction_type' => 'sale',
+                            'transaction_details_id' => $sale_detail_id,
+                            'increase_qty' => 0,
+                            'ref_uom_id' => $stock['ref_uom_id'],
+                        ];
+
+                        //remove qty from current stock
+                        if ($qtyToRemove > $stockQty) {
+                            $data[] = [
+                                'stockQty' => $stockQty,
+                                'batch_no' => $stock['batch_no'],
+                                'lot_serial_no' => $stock['lot_serial_no'],
+                                'ref_uom_id' => $stock->ref_uom_id,
+                                'stock_id' => $stock->id
+                            ];
+                            $qtyToRemove -= $stockQty;
+                            CurrentStockBalance::where('id', $stock->id)->first()->update([
+                                'current_quantity' => 0,
+                            ]);
+                            $stock_history_data['decrease_qty'] = $stockQty;
+                            stock_history::create($stock_history_data);
+                        } else {
+                            $leftStockQty = $stockQty - $qtyToRemove;
+                            $data[] = [
+                                'stockQty' => $qtyToRemove,
+                                'batch_no' => $stock['batch_no'],
+                                'lot_serial_no' => $stock['lot_serial_no'],
+                                'ref_uom_id' => $stock->ref_uom_id,
+                                'stock_id' => $stock->id
+                            ];
+                            $stock_history_data['decrease_qty'] = $qtyToRemove;
+                            $qtyToRemove = 0;
+                            CurrentStockBalance::where('id', $stock->id)->first()->update([
+                                'current_quantity' => $leftStockQty,
+                            ]);
+                            stock_history::create($stock_history_data);
+                            break;
+                        }
+                    };
+                    // dd($data);
+                    return $data;
                 }
-                $qtyToRemove = $requestQty;
-                // dd($requestQty);
-                $data = [];
-                foreach ($stocks as  $stock) {
-                    $stockQty = $stock->current_quantity;
-                    // prepare data for stock history
-                    $stock_history_data = [
-                        'business_location_id' => $stock['business_location_id'],
-                        'product_id' => $stock['product_id'],
-                        'variation_id' => $stock['variation_id'],
-                        'expired_date' => $stock['expired_date'],
+            } else {
+                $current_stock_id = $current_stock['id'];
+                $product_id = $current_stock['product_id'];
+                $variation_id = $current_stock['variation_id'];
+                $currentStock = CurrentStockBalance::where('business_location_id', $business_location_id)
+                    ->where('product_id', $product_id)
+                    ->where('variation_id', $variation_id)
+                    ->where('id', $current_stock_id);
+                // dd($currentStock->get()->toArray());
+                $current_stock_qty =  $currentStock->first()->current_quantity;
+                return abort(404, '');
+                if ($requestQty > $current_stock_qty) {
+                    return false;
+                } else {
+                    $left_qty = $current_stock_qty - $requestQty;
+                    $currentStock->update([
+                        'current_quantity' => $left_qty
+                    ]);
+                    $currentStockData = $currentStock->get()->first()->toArray();
+                    stock_history::create([
+                        'business_location_id' => $currentStockData['business_location_id'],
+                        'product_id' => $currentStockData['product_id'],
+                        'variation_id' => $currentStockData['variation_id'],
+                        'batch_no' => $currentStockData['batch_no'],
+                        'expired_date' => $currentStockData['expired_date'],
                         'transaction_type' => 'sale',
                         'transaction_details_id' => $sale_detail_id,
                         'increase_qty' => 0,
-                        'ref_uom_id' => $stock['ref_uom_id'],
-                    ];
-
-                    //remove qty from current stock
-                    if ($qtyToRemove > $stockQty) {
-                        $data[] = [
-                            'stockQty' => $stockQty,
-                            'batch_no' => $stock['batch_no'],
-                            'lot_serial_no' => $stock['lot_serial_no'],
-                            'ref_uom_id' => $stock->ref_uom_id,
-                            'stock_id' => $stock->id
-                        ];
-                        $qtyToRemove -= $stockQty;
-                        CurrentStockBalance::where('id', $stock->id)->first()->update([
-                            'current_quantity' => 0,
-                        ]);
-                        $stock_history_data['decrease_qty'] = $stockQty;
-                        stock_history::create($stock_history_data);
-                    } else {
-                        $leftStockQty = $stockQty - $qtyToRemove;
-                        $data[] = [
-                            'stockQty' => $qtyToRemove,
-                            'batch_no' => $stock['batch_no'],
-                            'lot_serial_no' => $stock['lot_serial_no'],
-                            'ref_uom_id' => $stock->ref_uom_id,
-                            'stock_id' => $stock->id
-                        ];
-                        $stock_history_data['decrease_qty'] = $qtyToRemove;
-                        $qtyToRemove = 0;
-                        CurrentStockBalance::where('id', $stock->id)->first()->update([
-                            'current_quantity' => $leftStockQty,
-                        ]);
-                        stock_history::create($stock_history_data);
-                        break;
-                    }
-                };
-                // dd($data);
-                return $data;
+                        'decrease_qty' => $requestQty,
+                        'ref_uom_id' => $currentStockData['ref_uom_id'],
+                    ]);
+                    return true;
+                }
             }
-        } else {
-            $current_stock_id = $current_stock['id'];
-            $product_id = $current_stock['product_id'];
-            $variation_id = $current_stock['variation_id'];
-            $currentStock = CurrentStockBalance::where('business_location_id', $business_location_id)
-                ->where('product_id', $product_id)
-                ->where('variation_id', $variation_id)
-                ->where('id', $current_stock_id);
-            // dd($currentStock->get()->toArray());
-            $current_stock_qty =  $currentStock->first()->current_quantity;
-            return abort(404, '');
-            if ($requestQty > $current_stock_qty) {
-                return false;
-            } else {
-                $left_qty = $current_stock_qty - $requestQty;
-                $currentStock->update([
-                    'current_quantity' => $left_qty
-                ]);
-                $currentStockData = $currentStock->get()->first()->toArray();
-                stock_history::create([
-                    'business_location_id' => $currentStockData['business_location_id'],
-                    'product_id' => $currentStockData['product_id'],
-                    'variation_id' => $currentStockData['variation_id'],
-                    'batch_no' => $currentStockData['batch_no'],
-                    'expired_date' => $currentStockData['expired_date'],
-                    'transaction_type' => 'sale',
-                    'transaction_details_id' => $sale_detail_id,
-                    'increase_qty' => 0,
-                    'decrease_qty' => $requestQty,
-                    'ref_uom_id' => $currentStockData['ref_uom_id'],
-                ]);
-                return true;
-            }
+        }else{
+            return false;
         }
+
     }
 
 
@@ -549,6 +558,9 @@ class saleController extends Controller
         $saleBeforeUpdate = sales::where('id', $id)->first();
         $sales = sales::where('id', $id)->first();
         DB::beginTransaction();
+        if ($request->type == 'pos') {
+            $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
+        }
         try {
             $saleData= [
                 'contact_id' => $request->contact_id,
@@ -572,8 +584,19 @@ class saleController extends Controller
                 if ($request->type == 'pos') {
                     $multiPayment = $request->multiPayment;
                     foreach ($multiPayment as $mp) {
-                        $payemntTransaction = $this->makePayment($sales, $mp['payment_account_id'] ?? null,true, $mp['payment_amount']);
-
+                        $data = [
+                            'payment_voucher_no' => generatorHelpers::paymentVoucher(),
+                            'payment_date' => now(),
+                            'transaction_type' => 'sale',
+                            'transaction_id' => $sales->id,
+                            'transaction_ref_no' => $sales->sales_voucher_no,
+                            'payment_method' => 'card',
+                            'payment_account_id' => $mp['payment_account_id'] ?? null,
+                            'payment_type' => 'debit',
+                            'payment_amount' => $mp['payment_amount'],
+                            'currency_id' => $sales->currency_id,
+                        ];
+                        $paymentTransaction = paymentsTransactions::create($data);
                         $pRSQry= posRegisterTransactions::where('transaction_type', 'sale')->where('transaction_id', $sales->id)->select('register_session_id')->first();
                         if($pRSQry){
                             $sessionId=$pRSQry->register_session_id ;
@@ -585,13 +608,24 @@ class saleController extends Controller
                             'transaction_id' => $sales->id,
                             'transaction_amount' =>  $mp['payment_amount'],
                             'currency_id' => $request->currency_id,
-                            'payment_transaction_id' => $payemntTransaction->id ?? null,
+                            'payment_transaction_id' => $paymentTransaction->id ?? null,
+                        ]);
+
+                        $suppliers = Contact::where('id', $sales->contact_id)->first();
+                        $suppliers_receivable = $suppliers->receivable_amount;
+                        logger(($suppliers_receivable - $saleBeforeUpdate->balance_amount) +  $sales->balance_amount);
+                        $suppliers->update([
+                            'receivable_amount' => ($suppliers_receivable- $saleBeforeUpdate->balance_amount) +  $sales->balance_amount
                         ]);
                     }
+                    $suppliers = Contact::where('id', $sales->contact_id)->first();
+                    $suppliers_receivable = $suppliers->receivable_amount;
+                    $suppliers->update([
+                        'receivable_amount' => ($suppliers_receivable - $sales->balance_amount) + $request->balance_amount,
+                    ]);
                 }
             }
             // $this->changeTransaction($saleBeforeUpdate, $sales, $request);
-
             // begin sale_detail_update
             if ($request_sale_details) {
                 //get old sale_details
@@ -629,144 +663,149 @@ class saleController extends Controller
 
                     $lotSerialCheck = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id)->exists();
                     $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
-                    if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
-                        $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
-                        if ($changeQtyStatus == false) {
-                            return redirect()->back()->withInput()->with(['warning' => "product Out of Stock"]);
+
+                    $product = Product::where('id', $request_old_sale['product_id'])->select('product_type')->first();
+
+                    if($product->product_type=='storable'){
+                        // stock adjustment
+                        if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
+                            $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
+                            if ($changeQtyStatus == false) {
+                                return redirect()->back()->withInput()->with(['warning' => "product Out of Stock"]);
+                            } else {
+                                if ($this->setting->lot_control == "off") {
+                                    $datas = $changeQtyStatus;
+                                    foreach ($datas as $data) {
+                                        // dd($datas);
+                                        $sale_uom_qty = UomHelper::changeQtyOnUom($data['ref_uom_id'], $request_old_sale['uom_id'], $data['stockQty']);
+                                        $bsd = lotSerialDetails::create([
+                                            'transaction_type' => 'sale',
+                                            'transaction_detail_id' => $sale_details->id,
+                                            'current_stock_balance_id' => $data['stock_id'],
+                                            'lot_serial_numbers' => $data['lot_serial_no'],
+                                            'uom_quantity' => $sale_uom_qty,
+                                            'uom_id' => $request_old_sale['uom_id'],
+                                        ]);
+                                    }
+                                }
+                            }
+                        } elseif ($saleBeforeUpdate->status == 'delivered' && $request->status != "delivered" && $businessLocation->allow_sale_order == 0) {
+                            $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id);
+                            if ($lotSerials->exists()) {
+                                $this->adjustStock($lotSerials->get());
+                                foreach ($lotSerials->get() as $lotSerial) {
+                                    $lotSerial->delete();
+                                }
+                            };
                         } else {
-                            if ($this->setting->lot_control == "off") {
-                                $datas = $changeQtyStatus;
-                                foreach ($datas as $data) {
-                                    // dd($datas);
-                                    $sale_uom_qty = UomHelper::changeQtyOnUom($data['ref_uom_id'], $request_old_sale['uom_id'], $data['stockQty']);
-                                    $bsd = lotSerialDetails::create([
-                                        'transaction_type' => 'sale',
-                                        'transaction_detail_id' => $sale_details->id,
-                                        'current_stock_balance_id' => $data['stock_id'],
-                                        'lot_serial_numbers' => $data['lot_serial_no'],
-                                        'uom_quantity' => $sale_uom_qty,
-                                        'uom_id' => $request_old_sale['uom_id'],
-                                    ]);
+                            $referecneQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_details->quantity, $sale_details->uom_id)['qtyByReferenceUom'];
+                            if ($request_old_sale['quantity'] > $sale_details->quantity) {
+                                $current_stock = CurrentStockBalance::where('product_id', $sale_details->product_id)
+                                    ->where('business_location_id', $businessLocation->id)
+                                    ->where('variation_id', $sale_details->variation_id)
+                                    ->where('current_quantity', '>', '0');
+                                $availableStocks = $current_stock->get();
+                                $availableQty = $current_stock->sum('current_quantity');
+                                $newQty = round($requestQty - $sale_detial_qty_from_db, 2);
+                                if ($newQty > $availableQty) {
+                                    return redirect()->route('all_sales', 'allSales')->with(['warning' => 'out of stock']);
                                 }
-                            }
-                        }
-                    } elseif ($saleBeforeUpdate->status == 'delivered' && $request->status != "delivered" && $businessLocation->allow_sale_order == 0) {
-                        $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id);
-                        if ($lotSerials->exists()) {
-                            $this->adjustStock($lotSerials->get());
-                            foreach ($lotSerials->get() as $lotSerial) {
-                                $lotSerial->delete();
-                            }
-                        };
-                    } else {
-                        $referecneQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_details->quantity, $sale_details->uom_id)['qtyByReferenceUom'];
-                        if ($request_old_sale['quantity'] > $sale_details->quantity) {
-                            $current_stock = CurrentStockBalance::where('product_id', $sale_details->product_id)
-                                ->where('business_location_id', $businessLocation->id)
-                                ->where('variation_id', $sale_details->variation_id)
-                                ->where('current_quantity', '>', '0');
-                            $availableStocks = $current_stock->get();
-                            $availableQty = $current_stock->sum('current_quantity');
-                            $newQty = round($requestQty - $sale_detial_qty_from_db, 2);
-                            if ($newQty > $availableQty) {
-                                return redirect()->route('all_sales', 'allSales')->with(['warning' => 'out of stock']);
-                            }
-                            $qtyToRemove = $request_old_sale['quantity'] - $sale_details->quantity;
+                                $qtyToRemove = $request_old_sale['quantity'] - $sale_details->quantity;
 
-                            foreach ($availableStocks as $stock) {
-                                $stockQty = round(UomHelper::changeQtyOnUom($stock->ref_uom_id, $sale_details->uom_id, $stock->current_quantity), 2);
-                                // $stockQty = UomHelper::getReferenceUomInfoByCurrentUnitQty( $stock->current_quantity, $stock->ref_uom_id)['qtyByReferenceUom'];
-                                // dd($qtyToRemove , $stockQty);
-                                if ($qtyToRemove >= $stockQty) {
-                                    CurrentStockBalance::where('id', $stock->id)->first()->update([
-                                        'current_quantity' => 0,
-                                    ]);
-
-                                    $lotSerialDetailsByStock = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details['id'])->where('current_stock_balance_id', $stock->id);
-                                    if ($lotSerialDetailsByStock->exists()) {
-                                        $sale_detial_qty = $lotSerialDetailsByStock->first()->uom_quantity;
-                                        $lotSerialDetailsByStock->update([
-                                            'uom_quantity' => $sale_detial_qty + $qtyToRemove,
+                                foreach ($availableStocks as $stock) {
+                                    $stockQty = round(UomHelper::changeQtyOnUom($stock->ref_uom_id, $sale_details->uom_id, $stock->current_quantity), 2);
+                                    // $stockQty = UomHelper::getReferenceUomInfoByCurrentUnitQty( $stock->current_quantity, $stock->ref_uom_id)['qtyByReferenceUom'];
+                                    // dd($qtyToRemove , $stockQty);
+                                    if ($qtyToRemove >= $stockQty) {
+                                        CurrentStockBalance::where('id', $stock->id)->first()->update([
+                                            'current_quantity' => 0,
                                         ]);
+
+                                        $lotSerialDetailsByStock = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details['id'])->where('current_stock_balance_id', $stock->id);
+                                        if ($lotSerialDetailsByStock->exists()) {
+                                            $sale_detial_qty = $lotSerialDetailsByStock->first()->uom_quantity;
+                                            $lotSerialDetailsByStock->update([
+                                                'uom_quantity' => $sale_detial_qty + $qtyToRemove,
+                                            ]);
+                                        } else {
+                                            lotSerialDetails::create([
+                                                'transaction_type' => 'sale',
+                                                'transaction_detail_id' => $sale_details['id'],
+                                                'current_stock_balance_id' =>  $stock->id,
+                                                'lot_serial_numbers' => $stock->lot_serial_no,
+                                                'uom_quantity' => $qtyToRemove,
+                                                'uom_id' => $request_old_sale['uom_id'],
+                                            ]);
+                                        }
+                                        $qtyToRemove -= $stockQty;
                                     } else {
-                                        lotSerialDetails::create([
-                                            'transaction_type' => 'sale',
-                                            'transaction_detail_id' => $sale_details['id'],
-                                            'current_stock_balance_id' =>  $stock->id,
-                                            'lot_serial_numbers' => $stock->lot_serial_no,
-                                            'uom_quantity' => $qtyToRemove,
-                                            'uom_id' => $request_old_sale['uom_id'],
+                                        $leftStockQty = $stockQty - $qtyToRemove;
+                                        $stock_for_update = CurrentStockBalance::where('id', $stock->id)->first();
+                                        $smallest_leftStockQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($leftStockQty, $sale_details->uom_id)['qtyByReferenceUom'];
+                                        $stock_for_update->update([
+                                            'current_quantity' => $smallest_leftStockQty,
                                         ]);
-                                    }
-                                    $qtyToRemove -= $stockQty;
-                                } else {
-                                    $leftStockQty = $stockQty - $qtyToRemove;
-                                    $stock_for_update = CurrentStockBalance::where('id', $stock->id)->first();
-                                    $smallest_leftStockQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($leftStockQty, $sale_details->uom_id)['qtyByReferenceUom'];
-                                    $stock_for_update->update([
-                                        'current_quantity' => $smallest_leftStockQty,
-                                    ]);
 
-                                    $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_detail_id)->where('current_stock_balance_id', $stock->id);
-                                    if ($lotSerialDetails->exists()) {
-                                        $sale_detial_qty = $lotSerialDetails->first()->uom_quantity;
-                                        $lotSerialDetails->update([
-                                            'uom_quantity' => $sale_detial_qty + $qtyToRemove,
-                                        ]);
-                                    } else {
-                                        lotSerialDetails::create([
-                                            'transaction_type' => 'sale',
-                                            'transaction_detail_id' =>  $sale_details['id'],
-                                            'current_stock_balance_id' => $stock->id,
-                                            'lot_serial_numbers' => $stock->lot_serial_no,
-                                            'uom_quantity' =>  $qtyToRemove,
-                                            'uom_id' => $request_old_sale['uom_id'],
-                                        ]);
-                                    }
-                                    $qtyToRemove = 0;
-                                    break;
-                                }
-                            }
-                        } elseif ($request_old_sale['quantity'] < $sale_details->quantity) {
-                            // dd('junk');
-                            $qty_to_replace = $sale_details->quantity - $request_old_sale['quantity'];
-                            $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id)->OrderBy('id', 'DESC')->get();
-                            foreach ($lotSerialDetails as $bsd) {
-                                // dd($bsd->toArray(), $qty_to_replace, $bsd->uom_quantity);
-                                if ($qty_to_replace > $bsd->uom_quantity) {
-                                    lotSerialDetails::where('id', $bsd->id)->first()->delete();
-                                    $referecneQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($bsd->uom_quantity, $bsd->uom_id)['qtyByReferenceUom'];
-                                    $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
-                                    $current_stock->update([
-                                        'current_quantity' =>  $current_stock->current_quantity + $referecneQty,
-                                    ]);
-                                    $qty_to_replace -= $bsd->uom_quantity;
-                                    if ($qty_to_replace <= 0) {
+                                        $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_detail_id)->where('current_stock_balance_id', $stock->id);
+                                        if ($lotSerialDetails->exists()) {
+                                            $sale_detial_qty = $lotSerialDetails->first()->uom_quantity;
+                                            $lotSerialDetails->update([
+                                                'uom_quantity' => $sale_detial_qty + $qtyToRemove,
+                                            ]);
+                                        } else {
+                                            lotSerialDetails::create([
+                                                'transaction_type' => 'sale',
+                                                'transaction_detail_id' =>  $sale_details['id'],
+                                                'current_stock_balance_id' => $stock->id,
+                                                'lot_serial_numbers' => $stock->lot_serial_no,
+                                                'uom_quantity' =>  $qtyToRemove,
+                                                'uom_id' => $request_old_sale['uom_id'],
+                                            ]);
+                                        }
+                                        $qtyToRemove = 0;
                                         break;
                                     }
-                                } elseif ($qty_to_replace <= $bsd->uom_quantity) {
-                                    $referenceUomToReplace = (int) UomHelper::getReferenceUomInfoByCurrentUnitQty($qty_to_replace, $bsd->uom_id)['qtyByReferenceUom'];
-                                    $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
-                                    $resultForBsd = $bsd->uom_quantity - $qty_to_replace;
-                                    if ($resultForBsd == 0) {
-                                        lotSerialDetails::where('id', $bsd->id)->first()->delete();
-                                    } else {
-                                        lotSerialDetails::where('id', $bsd->id)->first()->update([
-                                            'uom_quantity' => $resultForBsd,
-                                        ]);
-                                    }
-                                    $current_stock->update([
-                                        'current_quantity' =>  $current_stock->current_quantity + $referenceUomToReplace,
-                                    ]);
-                                    $qty_to_replace = 0;
-                                    break;
                                 }
+                            } elseif ($request_old_sale['quantity'] < $sale_details->quantity) {
+                                // dd('junk');
+                                $qty_to_replace = $sale_details->quantity - $request_old_sale['quantity'];
+                                $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id)->OrderBy('id', 'DESC')->get();
+                                foreach ($lotSerialDetails as $bsd) {
+                                    // dd($bsd->toArray(), $qty_to_replace, $bsd->uom_quantity);
+                                    if ($qty_to_replace > $bsd->uom_quantity) {
+                                        lotSerialDetails::where('id', $bsd->id)->first()->delete();
+                                        $referecneQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($bsd->uom_quantity, $bsd->uom_id)['qtyByReferenceUom'];
+                                        $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
+                                        $current_stock->update([
+                                            'current_quantity' =>  $current_stock->current_quantity + $referecneQty,
+                                        ]);
+                                        $qty_to_replace -= $bsd->uom_quantity;
+                                        if ($qty_to_replace <= 0) {
+                                            break;
+                                        }
+                                    } elseif ($qty_to_replace <= $bsd->uom_quantity) {
+                                        $referenceUomToReplace = (int) UomHelper::getReferenceUomInfoByCurrentUnitQty($qty_to_replace, $bsd->uom_id)['qtyByReferenceUom'];
+                                        $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
+                                        $resultForBsd = $bsd->uom_quantity - $qty_to_replace;
+                                        if ($resultForBsd == 0) {
+                                            lotSerialDetails::where('id', $bsd->id)->first()->delete();
+                                        } else {
+                                            lotSerialDetails::where('id', $bsd->id)->first()->update([
+                                                'uom_quantity' => $resultForBsd,
+                                            ]);
+                                        }
+                                        $current_stock->update([
+                                            'current_quantity' =>  $current_stock->current_quantity + $referenceUomToReplace,
+                                        ]);
+                                        $qty_to_replace = 0;
+                                        break;
+                                    }
+                                }
+
+                                // dd($saleDetailsByParent->toArray());
                             }
-
-                            // dd($saleDetailsByParent->toArray());
-                        }
-                    };
-
+                        };
+                    }
                     // dd($request_old_sale);
 
                     $request_sale_details_data = [
@@ -785,6 +824,7 @@ class saleController extends Controller
                     ];
                     // dd($request_sale_details_data);
                     // dd($request_sale_details_data);
+
                     if ($request_old_sale['quantity'] <= 0) {
                         $request_sale_details_data['is_delete']  = 1;
                         $request_sale_details_data['deleted_at']  = now();
@@ -1236,7 +1276,7 @@ class saleController extends Controller
         return view('App.sell.modal.joinToReservationFolioModal')->with(compact('saleVoucher', 'reservations', 'postedReservation'));
     }
 
-    public function addToReservationFolio(Request $request)
+    public function addToReservationFolio(Request $request,$notReturnToBlade=false)
     {
         try {
             $sale_id = $request->sale_id;
@@ -1262,6 +1302,9 @@ class saleController extends Controller
                     'transaction_type' => 'sale',
                     'transaction_id' => $sale_id,
                 ]);
+            }
+            if ($notReturnToBlade) {
+                return true;
             }
             return response()->json(['success' => true, 'msg' => ' Successfully Joined Reservation']);
         } catch (\Throwable $th) {
@@ -1300,7 +1343,7 @@ class saleController extends Controller
                 if ($sale->balance_amount > 0) {
                     $suppliers_receivable = $suppliers->receivable_amount;
                     $suppliers->update([
-                        'receivable_amount' => $suppliers_receivable + $sale->receivable_amount
+                        'receivable_amount' => $suppliers_receivable +  $sale->balance_amount
                     ]);
                 } else if ($sale->balance_amount < 0) {
                     $suppliers_payable = $suppliers->receivable_amount;

@@ -12,30 +12,33 @@ use Illuminate\Http\Request;
 use App\Models\Product\Brand;
 use App\Models\Product\UOMSet;
 use App\Models\Contact\Contact;
+use App\Models\paymentAccounts;
 use App\Models\Product\Generic;
 use App\Models\Product\Product;
 use App\Models\Product\Category;
+use App\Models\sale\sale_details;
 use App\Models\Product\PriceGroup;
 use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\paymentAccounts;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use Modules\Restaurant\Entities\table;
 use App\Models\posRegisterTransactions;
 use function PHPUnit\Framework\isEmpty;
-use Maatwebsite\Excel\Concerns\ToArray;
 
+use Maatwebsite\Excel\Concerns\ToArray;
 use App\Models\Product\ProductVariation;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Product\VariationTemplates;
+use Modules\Reservation\Entities\Reservation;
 use App\Models\posSession\posRegisterSessions;
+use Modules\Reservation\Entities\FolioInvoice;
 use App\Models\Product\ProductVariationsTemplates;
-use App\Models\sale\sale_details;
+use Modules\Reservation\Entities\FolioInvoiceDetail;
 
 class POSController extends Controller
 {
@@ -69,7 +72,6 @@ class POSController extends Controller
                     $paymentAcc=paymentAccounts::whereIn('id',$paymentAccIds)->get();
                 }
            } catch (\Throwable $th) {
-            dd($th);
                 return back()->with(['warning'=>'something went wrong']);
            }
         }else{
@@ -87,12 +89,17 @@ class POSController extends Controller
         $manufacturers = Manufacturer::all();
         $variations = VariationTemplates::all();
         $tables=null;
+
+
+        if (class_exists(FolioInvoiceDetail::class)){
+            $reservations = Reservation::with('contact', 'company')->where('is_delete', 0)->get();
+        }
         try {
             $tables=table::get();
         } catch (\Throwable $th) {
             $table=null;
         }
-        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables'));
+        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables', 'reservations'));
     }
     public function edit($posRegisterId)
     {
@@ -258,11 +265,13 @@ class POSController extends Controller
             // \DB::enableQueryLog();
             $default_price_list = Contact::with('pricelist')->find($id)->pricelist ?? null;
             $receivable_amount = Contact::whereId($id)->first()->receivable_amount;
+            $credit_limit = Contact::whereId($id)->first()->credit_limit ?? 0;
 
             return response()->json([
                 'status' => 200,
                 'default_price_list' => $default_price_list,
-                'receivable_amount' => $receivable_amount
+                'receivable_amount' => $receivable_amount,
+                'credit_limit'=> $credit_limit
             ]);
             // $queries = \DB::getQueryLog();
             // Log::error(count($queries));

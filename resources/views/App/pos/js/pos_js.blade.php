@@ -15,6 +15,8 @@
     var saleId=editSale ? editSale.id :'';
     var route=null;
     var getProductVariations;
+    var creditLimit=0;
+    var receiveAbleAmount=0;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -599,6 +601,11 @@
                                 $('#payment_info .print_change').text(0);
                                 $('#payment_info .print_balance').text(0);
                                 $('input[name="pay_amount"]').val(0);
+                                $('#payment_row_body').html('');
+                                $('#payment_row_body').append(paymentRow);
+                                $('.reservation_id').val('').trigger('change')
+                                $('#paymentForm')[0].reset();
+                                ajaxOnContactChange($(`#${contact_id}`).val());
                             });
                         }
 
@@ -621,7 +628,7 @@
             })
         }
 
-        let datasForSale = (status,onlySale=false,payment=false) => {
+        let datasForSale = (status,onlySale=false,payment=false,folio=false) => {
             let business_location_id = $('select[name="business_location_id"]').val();
             let table_id=$('.table_id').val();
             let contact_id = $("#invoice_side_bar").is(':hidden') ? $('#pos_customer').val() : $('#sb_pos_customer').val();
@@ -636,6 +643,7 @@
             let balance_amount = total_sale_amount;
             let currency_id = null;
             let multiPayment=[];
+            let reservation_id=null;
             if(payment){
                 paid_amount = $('.print_paid').text();
                 balance_amount = total_sale_amount - paid_amount;
@@ -649,7 +657,9 @@
                     }]
                 });
             }
-            console.log(multiPayment);
+            if(folio){
+                reservation_id=$(`select[name="reservation_id_from_${status}"]`).val();
+            }
 
             let sales ={
                     'saleId':saleId,
@@ -669,6 +679,7 @@
                     'services':services,
                     'sessionId':sessionId,
                     'multiPayment':multiPayment,
+                    'reservation_id':reservation_id,
                 }
             if(onlySale==true){
                 return sales;
@@ -719,7 +730,8 @@
         }
 
         let setReceivableAmount = (amount) => {
-            let price = isNullOrNan(amount)
+            let price = isNullOrNan(amount);
+            receiveAbleAmount=amount;
             $(document).find('.receivable-amount').text(price);
         }
 
@@ -1315,7 +1327,21 @@
         $(document).on('click', '.sale_credit', function() {
             if(checkContact()){
                 let dataForSale = datasForSale('delivered');
-                ajaxToStorePosData(dataForSale);
+                let total_sale_amount = isNullOrNan($(`#${infoPriceId} .sb-total-amount`).text());
+                let currentReceivieAbleAmt=total_sale_amount+isNullOrNan(receiveAbleAmount);
+                if(creditLimit < currentReceivieAbleAmt){
+                    Swal.fire({
+                        text: "Customer's Credit limit is reached.",
+                        icon: "warning",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary",
+                        }
+                    })
+                }else{
+                    ajaxToStorePosData(dataForSale);
+                }
             }
         })
         $(document).on('change','#services',function(){
@@ -1342,7 +1368,7 @@
             }
 
             if(checkContact()){
-                let dataForSale = datasForSale('order');
+                let dataForSale = datasForSale('order',false,false,true);
                 if(datasForSale('order').sale_details.length>0){
                     ajaxToStorePosData(dataForSale);
                     $('.tableSelect').removeClass('d-none');
@@ -1524,8 +1550,25 @@
         // Sale With Payment
         $(document).on('click', '.payment_save_btn', function() {
             if(checkContact()){
-                let dataForSale = datasForSale('delivered',false,true);
-                ajaxToStorePosData(dataForSale);
+                let dataForSale = datasForSale('delivered',false,true,true);
+
+                let total_sale_amount = isNullOrNan($(`#${infoPriceId} .sb-total-amount`).text());
+                let paid_amount = isNullOrNan($('.print_paid').text());
+                let currentReceiveAble=total_sale_amount-paid_amount;
+                let currentReceivieAbleAmt=currentReceiveAble+isNullOrNan(receiveAbleAmount);
+                if(creditLimit < currentReceivieAbleAmt){
+                    Swal.fire({
+                        text: "Customer's Credit limit is reached.",
+                        icon: "warning",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary",
+                        }
+                    })
+                }else{
+                    ajaxToStorePosData(dataForSale);
+                }
             }
         })
 
@@ -1655,6 +1698,9 @@
         // ============> CONTACT CHANGE PROCESS
         $(document).on('change', `#${contact_id}`, function() {
             let contact_id = $(this).val();
+            ajaxOnContactChange(contact_id);
+        })
+        let ajaxOnContactChange=(contact_id)=>{
             $.ajax({
                 url: `/pos/pricelist-contact/${contact_id}`,
                 type: 'GET',
@@ -1664,7 +1710,8 @@
                 success: function(results){
                     if(results.status === 200){
 
-                        setReceivableAmount(results.receivable_amount)
+                        setReceivableAmount(results.receivable_amount);
+                        creditLimit=results.credit_limit;
                         if(results.default_price_list){
                             customer_price_list = results.default_price_list.id;
                         }else{
@@ -1677,7 +1724,7 @@
                     console.log(e.responseJSON.error);
                 }
             });
-        })
+        }
         const ajaxToGetPriceList=(locationId)=>{
             $.ajax({
                 url: `/pos/pricelist-location/${locationId}`,

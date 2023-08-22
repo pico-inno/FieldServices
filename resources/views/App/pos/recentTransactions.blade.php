@@ -52,7 +52,24 @@
                                                     <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$sd->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     {{-- <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span> --}}
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $sd->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
-                                                    <span class="me-5 print-invoice" data-href="{{route('print_sale', $sd->id)}}">Post To Folio</span>
+                                                    @if (class_exists(Modules\Reservation\Entities\FolioInvoiceDetail::class))
+
+                                                        @php
+                                                        $isAttachedToFolio=Modules\Reservation\Entities\FolioInvoiceDetail::where('transaction_type','sale')->where('transaction_id',$sd->id)->exists();
+
+                                                        @endphp
+                                                        @if ($isAttachedToFolio)
+                                                            <span class="me-5  badge badge-primary cursor-pointer post-to-reservation"
+                                                                data-href="{{route('postToReservationFolio', $sd->id)}}">
+                                                                Edit Posted Folio
+                                                            </span>
+                                                        @else
+                                                            <span class="me-5  badge badge-info cursor-pointer post-to-reservation"
+                                                                data-href="{{route('postToReservationFolio', $sd->id)}}">
+                                                                Post To Folio
+                                                            </span>
+                                                        @endif
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -103,7 +120,23 @@
                                                     <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$sdf->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     {{-- <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span> --}}
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $sdf->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
-                                                    <span class="me-5 print-invoice" data-href="{{route('print_sale', $sdf->id)}}">Post To Folio</span>
+                                                    @if (class_exists(Modules\Reservation\Entities\FolioInvoiceDetail::class))
+
+                                                        @php
+                                                            $isAttachedToFolio=Modules\Reservation\Entities\FolioInvoiceDetail::where('transaction_type','sale')->where('transaction_id',$sdf->id)->exists();
+                                                        @endphp
+                                                        @if ($isAttachedToFolio)
+                                                            <span class="me-5  badge badge-primary cursor-pointer post-to-reservation"
+                                                                data-href="{{route('postToReservationFolio', $sdf->id)}}">
+                                                                Edit Posted Folio
+                                                            </span>
+                                                        @else
+                                                            <span class="me-5  badge badge-info cursor-pointer post-to-reservation"
+                                                                data-href="{{route('postToReservationFolio', $sdf->id)}}">
+                                                                Post To Folio
+                                                            </span>
+                                                        @endif
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
