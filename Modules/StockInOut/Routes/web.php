@@ -19,7 +19,9 @@ use Modules\StockInOut\Http\Controllers\StockOutController;
 //Route::prefix('stockinout')->group(function() {
 //    Route::get('/', 'StockInOutController@index');
 //});
-
+Route::get('stock_test/', function (){
+   return view('stockinout::test');
+});
 Route::resource('stock-in', StockInController::class);
 Route::get('stockin/upcoming', [StockInController::class, 'upcoming'])->name('stock-in.upcoming.index');
 Route::get('stock-in/receive/{stock_in}', [StockInController::class, 'receiveProduct'])->name('stock-in.receive');

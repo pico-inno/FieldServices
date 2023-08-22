@@ -12,6 +12,7 @@ use App\Models\Product\UOM;
 use App\Models\Product\UOMSet;
 use App\Models\purchases\purchase_details;
 use App\Models\purchases\purchases;
+use App\Models\settings\businessSettings;
 use App\Models\stock_history;
 use Exception;
 use Illuminate\Http\Request;
@@ -128,9 +129,8 @@ class StockInController extends Controller
         $suppliers = Contact::where('type', 'Supplier')
             ->whereIn('id', $contact_id_array)
             ->select('id', 'company_name')->get();
+        $setting = businessSettings::all()->first();
 
-
-//        return $suppliers;
         foreach ($purchases as $purchase) {
             $purchase->supplier_name = $purchase->supplier->company_name;
         }
@@ -138,6 +138,7 @@ class StockInController extends Controller
             'stockin_persons' => $stockin_persons,
             'locations' => $locations,
             'suppliers' => $suppliers,
+            'setting' => $setting,
         ]);
     }
 
@@ -147,6 +148,7 @@ class StockInController extends Controller
     public function store(StoreStockInRequest $request)
     {
 //return $request;
+
         $validatedData = $request->validate([
             'business_location_id' => 'required|exists:business_locations,id',
             'stockin_date' => 'required',
@@ -158,6 +160,8 @@ class StockInController extends Controller
             'stockin_person.required' => 'The stockin person is required.',
             'stockin_person.exists' => 'The selected stockin person is invalid.'
         ]);
+
+        $lotSerialContorl = businessSettings::all()->first()->lot_control;
 
         DB::transaction(function () use ($request){
             $stockin_details = $request->stockin_details;
@@ -179,13 +183,10 @@ class StockInController extends Controller
             ]);
 
             foreach ($stockin_details as $stockin_detail){
+
+                $lotSerialDetails = json_decode($stockin_detail['lot_sertial_details'], true);
                 $referencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty( $stockin_detail['in_quantity'],$stockin_detail['purchase_uom_id']);
-
-
                 $variation_id = $stockin_detail['variation_id'];
-
-
-
 
                 $stockinDetail = StockinDetail::create([
                     'stockin_id' => $stockin->id,
@@ -202,7 +203,6 @@ class StockInController extends Controller
 
                 $checkForBatch = StockinDetail::where('transaction_type', 'purchase')
                     ->where('transaction_detail_id',  $stockin_detail['purchase_detail_id'])->pluck('id');
-
 
                 $currentStockBalance_batchNo = CurrentStockBalance::where('transaction_type', 'stock_in')
                     ->whereIn('transaction_detail_id', $checkForBatch )
@@ -249,6 +249,9 @@ class StockInController extends Controller
                 $purchaseToUpdate[$stockin_detail['purchase_id']] = $calReceivedQty;
 
             }
+
+
+
 
             // ====== Being:: Data update to purchase and detail table ======
             foreach ($purchaseDetailsToUpdate as $purchaseId => $receivedQuantity) {
@@ -724,28 +727,40 @@ class StockInController extends Controller
         return $response;
     }
 
-    public function filterPurchaseOrderData(Request $request){
-
+    public function filterPurchaseOrderData(Request $request) {
         $purchase = purchases::where('id', $request->data)
             ->with('businessLocation:id,name')
             ->select('id', 'business_location_id')
             ->first();
 
+        $results = purchase_details::with([
+            'product:id,name,product_type',
+            'purchaseUom:id,name',
+            'productVariation' => function($query){
+                $query->select('id', 'variation_template_value_id')
+                    ->with('variationTemplateValue:id,name');
+            }
+        ])->where('purchases_id', $purchase->id)->get();
 
+        // Fetch all the necessary uom_data in advance
+        $uomDataMap = UOM::whereIn('id', $results->pluck('purchase_uom_id'))
+            ->with([
+                'unit_category' => function ($q) {
+                    $q->with('uomByCategory');
+                }
+            ])->get()
+            ->keyBy('id'); // Organize the data as a map for easy lookup
 
-
-        $results = purchase_details::with(['product:id,name,product_type', 'purchaseUom:id,name', 'productVariation' => function($query){
-            $query->select('id', 'variation_template_value_id')
-                ->with('variationTemplateValue:id,name');
-        }])->where('purchases_id', $purchase->id)->get();
-
-        $results->each(function ($result) use ($purchase) {
+        $results->each(function ($result) use ($purchase, $uomDataMap) {
             $result->business_location_id = $purchase->business_location_id ?? '';
             $result->business_location_name = $purchase->businessLocation->name ?? '';
+
+            $result->uom_data = $uomDataMap[$result->purchase_uom_id]->unit_category;
         });
 
-        return  $results;
+        return $results;
     }
+
 
     public function searchProduct(Request $request){
         $q=$request->data;

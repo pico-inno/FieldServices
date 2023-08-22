@@ -122,12 +122,7 @@
                                     </label>
                                     <textarea class="form-control form-control-sm" name="note" id="" cols="30" rows="1"></textarea>
                                 </div>
-{{--                                <div class="col-12 mb-7">--}}
-{{--                                    <label class="form-label fs-6">--}}
-{{--                                        {{__('stockinout::stockin.note')}}--}}
-{{--                                    </label>--}}
-{{--                                    <textarea class="form-control form-control-sm" name="note" id="" cols="30" rows="5"></textarea>--}}
-{{--                                </div>--}}
+
                             </div>
 
                             <div class="d-flex justify-content-center align-items-center my-10">
@@ -146,8 +141,12 @@
                                         {{--                                        <th class="min-w-35px">#</th>--}}
                                         <th class="min-w-200px">{{__('stockinout::stockin.product')}}</th>
                                         <th class="min-w-100px">{{__('stockinout::stockin.ordered')}}</th>
-                                        <th class="min-w-100px">{{__('stockinout::stockin.received')}}</th>
-                                        <th class="min-w-100px">{{__('stockinout::stockin.in')}}</th>
+                                        <th class="min-w-100px">{{__('stockinout::stockin.received')}}</th>                                   
+                                        <th class="min-w-100px">{{__('stockinout::stockin.in')}}
+                                        @if ($setting->lot_control == 'on')
+                                            (Lot/SN)
+                                        @endif
+                                        </th>
                                         <th class="min-w-125px">{{__('stockinout::stockin.uom')}}</th>
                                         <th class="min-w-200px">{{__('stockinout::stockin.remark')}}</th>
                                         <th class="text-center"><i class="fa-solid fa-trash text-primary"
@@ -165,53 +164,48 @@
 
                         </div>
                     </div>
-{{--                    <div class="card">--}}
-{{--                        <div class="card-body">--}}
-{{--                            <div class="table-responsive">--}}
-{{--                                <table class="table align-middle table-row-dashed fs-6 gy-5 mt-6" id="stockin_table">--}}
-{{--                                    <!--begin::Table head-->--}}
-{{--                                    <thead class="">--}}
-{{--                                    <!--begin::Table row-->--}}
-{{--                                    <tr class="text-start text-primary fw-bold fs-7 text-uppercase gs-0 ">--}}
-{{--                                        --}}{{--                                        <th class="min-w-35px">#</th>--}}
-{{--                                        <th class="min-w-200px">{{__('stockinout::stockin.product')}}</th>--}}
-{{--                                        <th class="min-w-100px">{{__('stockinout::stockin.ordered')}}</th>--}}
-{{--                                        <th class="min-w-100px">{{__('stockinout::stockin.received')}}</th>--}}
-{{--                                        <th class="min-w-100px">{{__('stockinout::stockin.in')}}</th>--}}
-{{--                                        <th class="min-w-125px">{{__('stockinout::stockin.uom')}}</th>--}}
-{{--                                        <th class="min-w-200px">{{__('stockinout::stockin.remark')}}</th>--}}
-{{--                                        <th class="text-center"><i class="fa-solid fa-trash text-primary"--}}
-{{--                                                                   type="button"></i></th>--}}
-{{--                                    </tr>--}}
-{{--                                    <!--end::Table row-->--}}
-{{--                                    </thead>--}}
-{{--                                    <!--end::Table head-->--}}
-{{--                                    <!--begin::Table body-->--}}
-{{--                                    <tbody class="fw-semibold text-gray-600">--}}
 
-{{--                                    </tbody>--}}
-{{--                                </table>--}}
-{{--                            </div>--}}
 
-{{--                        </div>--}}
-{{--                    </div>--}}
                     <div class="col-12 text-center mt-2 mb-5">
                         <button type="submit" class="btn btn-primary btn-lg save-btn">{{__('stockinout::stockin.save')}}</button>
                     </div>
                 </div>
             </form>
-
         </div>
         <!--end::Container-->
     </div>
+
+
+
+
+
+
 
     @include('App.purchase.contactAdd')
     @include('App.purchase.newProductAdd')
 @endsection
 
 @push('scripts')
+    <script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+    <script>
+
+    </script>
 
     <script>
+        // document.addEventListener("DOMContentLoaded", function () {
+        //
+        //     document.getElementById("clearAllBtn").addEventListener("click", function () {
+        //         var repeaterItems = repeaterContainer.querySelectorAll("tr[data-repeater-item]");
+        //         repeaterItems.forEach(function (item) {
+        //             item.remove();
+        //         });
+        //     });
+        // });
+    </script>
+
+
+    <script>
+
 
         $('[data-td-toggle="datetimepicker"]').flatpickr({
             dateFormat: "Y-m-d",
@@ -222,57 +216,16 @@
         let unique_name_id=1;
         const purchaseOrderList = [];
         var tagify;
+        let setting=@json($setting);
+        let lotControl=setting.lot_control;
 
-        // $("#business_location_id").change(function (){
-        //     var locationId = $(this).val();
-        //
-        //     removeRow();
-        //     $.ajax({
-        //         url:'/stockin/filter-supplier',
-        //         type:'POST',
-        //         headers: {
-        //             'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-        //         },
-        //         data: {
-        //             data: locationId
-        //         },
-        //         error: function (e){
-        //             status = e.status;
-        //             if (status == 405) {
-        //                 warning('Method Not Allow!');
-        //             } else if (status == 419) {
-        //                 error('Session Expired')
-        //             } else {
-        //                 error(' Something Went Wrong! Error Status: ' + status)
-        //             }
-        //         },
-        //         success: function (e){
-        //             console.log(e);
-        //             var selectElement = $("#supplierOption");
-        //
-        //             // Clear existing options
-        //             selectElement.empty();
-        //
-        //             // Add a default empty option
-        //             selectElement.append('<option selected></option>');
-        //
-        //             // Loop through the data and add options for each supplier
-        //             e.forEach(function(supplier) {
-        //                 selectElement.append('<option value="' + supplier.id + '">' + supplier.company_name + '</option>');
-        //             });
-        //
-        //
-        //         }
-        //     })
-        //
-        // });
+
+
 
 
 
         $("#supplierOption").change(function (){
             var supplierOptionVal = $(this).val();
-            // var locationId = $("#business_location_id").val();
-            // console.log(supplierOptionVal);
             removeRow();
             $.ajax({
                 url:'/stockin/filter-purchase-order',
@@ -379,7 +332,7 @@
                     .done(function(response) {
 
                         response.forEach(item => {
-                            append_row(item, unique_name_id, selectedTag);
+                            append_row(item, unique_name_id, selectedTag, lotControl);
                             // $('select[name="business_location_id"]').val(item.business_location_id).trigger('change');
                             unique_name_id+=1;
                         });
@@ -418,16 +371,43 @@
                 }
             });
         }
-
-        function append_row(item,unique_name_id,selectedTag) {
+        var uomsData =[];
+        function append_row(item,unique_name_id,selectedTag,lotControl) {
+            uomsData =[];
             console.log(item);
+            var unique_serial_id = 1;
+
+            uomByCategory= item.uom_data.uom_by_category;
+
+            try {uomByCategory.forEach(function(e){
+                    uomsData = [...uomsData,{'id':e.id,'text':e.name}]
+                })
+            } catch (e) {
+                error('400 : Product need to define UOM');
+                return;
+            }
             let variation = item.product.product_type === 'variable' ? item.product_variation.variation_template_value.name : '';
             let orderedQuantity = Number(item.quantity).toFixed(2);
             let demandQuantity = Number(item.quantity - item.received_quantity).toFixed(2);
             let receivedQuantity = item.received_quantity == null ? '0.00' : Number(item.received_quantity).toFixed(2);
 
+            let qtyInputField = '';
 
-            let newRow = `<tr class='cal-gp'>
+            if (lotControl === 'on') {
+                qtyInputField = `
+                    <td>
+                        <input type="text" class="in_quantity form-control form-control-sm" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#invoice_row_discount_${unique_name_id}" value="0.00" readonly>
+                    </td>`;
+            } else {
+                qtyInputField = `
+                    <td>
+                        <input type="text" class="in_quantity form-control form-control-sm" name="stockin_details[${unique_name_id}][in_quantity]" value="0.00">
+                    </td>`;
+            }
+
+
+
+            let newRow = `<tr class='cal-gp'  data-row-id="${unique_name_id}">
             <td class="d-none">
                 <span class='text-gray-800 mb-1'>${unique_name_id}</span>
                 <input type="hidden" value="${selectedTag}" id="selectedTag" name="stockin_details[${unique_name_id}][purchase_id]">
@@ -436,12 +416,12 @@
                 <input type="hidden" value="${item.variation_id}" name="stockin_details[${unique_name_id}][variation_id]">
                 <input type="hidden" value="${item.per_ref_uom_price}" name="stockin_details[${unique_name_id}][per_ref_uom_price]">
             </td>
-            <td class="ps-0">
+            <td class="ps-0 exclude-modal">
                 <span class="text-gray-600 mb-1 ">${item.product.name}</><br>
                 <span class="text-gray-500 fw-semibold fs-5">${variation}</span>
             </td>
             <td>
-                <span class="ordered_quantity_text">${orderedQuantity}</span>
+                <span class="ordered_quantity_text exclude-modal">${orderedQuantity}</span>
                 <input type="hidden" class="ordered_quantity" name="stockin_details[${unique_name_id}][ordered_quantity]" value="${orderedQuantity}">
             </td>
 
@@ -450,35 +430,206 @@
                 <input type="hidden" class="received_quantity" name="stockin_details[${unique_name_id}][received_quantity]" value="${receivedQuantity}">
             </td>
 
-            <td>
-                <input type="text" class="in_quantity form-control form-control-sm" name="stockin_details[${unique_name_id}][in_quantity]" value="0.00">
-            </td>
+            ${qtyInputField}
 
             <td>
-                <span class="text-gray-600">${item.purchase_uom.name}</span>
+                <select  name="stockin_details[${unique_name_id}][uom_id]" class="form-select form-select-sm unit_id uom-select" data-kt-repeater="uom_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true" data-placeholder="Select unit"   placeholder="select unit" required>
+                                    <option value="">Select UOM</option>
+                                </select>
+
                 <input type="hidden" value="${item.purchase_uom_id}" name="stockin_details[${unique_name_id}][purchase_uom_id]">
             </td>
             <td>
                 <input type="text" name="stockin_details[${unique_name_id}][remark]" class="form-control form-control-sm">
             </td>
+        
+        <input type="hidden" class="modal-data-input" name="stockin_details[${unique_name_id}][lot_sertial_details]" value="${item.product.name}">
             <th class="text-center"><i class="fa-solid fa-trash text-danger deleteRow btn" ></i></th>
         </tr>`;
 
+            let modalTemplate = `
+    <div class="modal fade" id="invoice_row_discount_${unique_name_id}" tabindex="-1"  tabindex="-1" aria-hidden="true">
+      	<div class="modal-dialog mw-800px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Lot/Serials Number for ${item.product.name}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
 
+                    <table class="table table-rounded table-striped border gy-7 gs-7" id="lotSerialTable_${unique_name_id}">
+
+    <thead>
+        <tr>
+            <th>Lot/Serial No</th>
+            <th>Expire Date</th>
+            <th>IN</th>
+            <th>UOM/label</th>
+            <th class="min-w-125px text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody class="lot_serial_body">
+        <tr class="lot_serial_details_row">
+            <td>
+                <input type="text" class="form-control  form-control-sm" name="lot_serials[]" placeholder="SN">
+            </td>
+            <td>
+
+ <input class="form-control form-control-sm datepicker-input"  name="expire_date[]" placeholder="Pick a date"
+                                               data-td-toggle="datetimepicker" id="kt_datepicker_2"
+                                               />
+            </td>
+            <td>
+                <input type="text" class="form-control  form-control-sm" name="number_of_in[]" placeholder="Quantity">
+            </td>
+            <td>
+
+   <select name="lot_uom_id[]" id="" class="form-select form-select-sm uom-select" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" required>
+
+                        </select>
+            </td>
+          <td class="text-center">
+
+                  <button class="btn btn-sm  btn-light-primary btn-add-row" type="button">
+                                <i class="ki-duotone ki-plus fs-5"></i>
+
+                            </button>
+            </td>
+
+        </tr>
+    </tbody>
+</table>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-save-changes">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
+
+
+           
             $('#stockin_table tbody').append(newRow);
+            $('body').append(modalTemplate);
+            initializeDatepickers();
+            initializeUomSelects(unique_name_id);
+            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(item.purchase_uom_id).trigger('change');
+
+          
+
         }
+
+
+        function initializeDatepickers() {
+            $(".datepicker-input").flatpickr();
+        }
+
+        function initializeUomSelects(unique_name_id) {
+            const rowData = uomsData.map(uom => ({ id: uom.id, text: uom.text }));
+            const selector = `.uom-select[data-kt-repeater="uom_select_${unique_name_id}"]`;
+
+            $(selector).select2({
+                minimumResultsForSearch: Infinity,
+                data: rowData,
+            });
+
+        }
+
+
+
+        $(document).ready(function() {
+
+            $(document).on('click', '.btn-add-row', function() {
+                            const newRow = `
+            <tr class="lot_serial_details_row">
+                         <td>
+                            <input type="text" class="form-control  form-control-sm" name="lot_serials[]" placeholder="SN">
+                        </td>
+                        <td>
+                             <input class="form-control form-control-sm datepicker-input"  name="expire_date[]" placeholder="Pick a date"
+                                               data-td-toggle="datetimepicker" id="kt_datepicker_2"
+                                               />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control  form-control-sm" name="number_of_in[]" placeholder="Quantity">
+                        </td>
+                        <td>
+                               <select name="lot_uom_id[]" id="" class="form-select form-select-sm uom-select" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" required>
+
+                        </select>
+                        </td>
+                        <td class="text-center">
+               <button class="btn btn-sm  btn-light-danger btn-remove-row">
+                                        <i class="ki-duotone ki-trash fs-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+
+                                    </button>
+                        </td>
+                    </tr>
+
+                    `;
+
+                $(this).closest('.lot_serial_body').append(newRow);
+                initializeDatepickers();
+                initializeUomSelects(unique_name_id);
+            });
+
+
+            $(document).on('click', '.btn-remove-row', function() {
+                $(this).closest('.lot_serial_details_row').remove();
+            });
+
+
+            $(document).on('click', '.btn-save-changes', function() {
+                const modalId = $(this).closest('.modal').attr('id');
+                const unique_name_id = modalId.substring("invoice_row_discount_".length);
+
+                const modalData = {};
+
+
+                $('#lotSerialTable_' + unique_name_id + ' tbody tr.lot_serial_details_row').each(function(index) {
+                    const rowInputs = $(this).find('input[name^="lot_serials"], input[name^="expire_date"], input[name^="number_of_in"], select[name^="lot_uom_id"]');
+                    const rowData = {};
+
+                    rowInputs.each(function() {
+                        const inputName = $(this).attr('name').replace('[]', '');
+                        rowData[inputName] = $(this).val();
+                    });
+
+                    modalData[index + 1] = rowData;
+                });
+
+                const parentRow = $('#stockin_table tbody').find(`[data-row-id="${unique_name_id}"]`);
+                const hiddenInput = parentRow.find('.modal-data-input'); // Find the hidden input element
+
+                const jsonString = `{${Object.keys(modalData).map(key => `"${key}":${JSON.stringify(modalData[key])}`).join(',')}}`;
+                hiddenInput.val(jsonString);
+
+                $('#' + modalId).modal('hide');
+            });
+
+        });
+
+
+
 
         function inputs(e) {
             let parent = $(e).closest('.cal-gp');
             let demand_quantity = parent.find('.demand_quantity');
             let demand_quantity_text = parent.find('.demand_quantity_text');
             let in_quantity = parent.find('.in_quantity');
+            let lot_data = parent.find('.lot_data_input');
 
             return {
                 parent,
                 demand_quantity,
                 demand_quantity_text,
-                in_quantity
+                in_quantity,
+                lot_data
             }
         }
 
@@ -524,7 +675,6 @@
                 }
             });
         });
-
 
 
 
