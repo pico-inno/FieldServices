@@ -467,11 +467,11 @@
                             <div class="row mb-9">
                                 <div class="col-md-3">
                                     <label for="" class="form-label">Date Range</label>
-                                    <input class="form-control" placeholder="Pick date rage" id="kt_daterangepicker_4" />
+                                    <input class="form-control form-control-sm fs-7" placeholder="Pick date rage" id="kt_daterangepicker_4" />
                                 </div>
                                 <div class="col-md-3">
                                     <label for="" class="form-label">Business Location</label>
-                                    <select class="form-select" data-control="select2" data-placeholder="Select an option">
+                                    <select class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="All locations">
                                         <option></option>
                                         @php
                                         $business_locations = \App\Models\settings\businessLocation::all();
@@ -484,8 +484,8 @@
                             </div>
                             <div class="row mb-9">
                                 <div class="col-md-6">
-                                    <h3 class="text-gray-700">Pico Innovation</h3>
-                                    <span class="text-gray-700">Mandalay, Mandalay , Mandalay, Myanmar, 0501</span>
+                                    <h4 class="text-gray-700">{{$business->name}}</h4>
+                                    {{-- <span class="text-gray-700">Mandalay, Mandalay , Mandalay, Myanmar, 0501</span> --}}
                                 </div>
                             </div>
                             <div class="row">
@@ -536,20 +536,38 @@
                                 <div class="col-md-6">
                                     <p class="bg-secondary fw-bold text-gray-700 fs-6 p-3">Account Summary:</p>
                                     <span class="text-gray-600 d-flex justify-content-end">30-5-2023 - 29-6-2023</span>
+                                    @php
+                                        $totalSaleAmount = 0;
+                                        $paidAmount = 0;
+
+                                        if(isset($data['sales'])) {
+                                            foreach($data['sales'] as $s) {
+                                                $totalSaleAmount += $s->total_sale_amount;
+                                                $paidAmount += $s->paid_amount;
+                                            }
+                                        }
+                                    @endphp
                                     <div class="table-responsive">
                                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_datatable_example">
                                             <tbody class="fw-semibold text-gray-600">
-                                                <tr>
+                                                {{-- <tr>
                                                     <td>Opening Balance</td>
                                                     <td>0.0000</td>
+                                                </tr> --}}
+                                                <tr>
+                                                    <td>Payable Amount</td>
+                                                    <td>{{ $contact->payable_amount }}</td>
+                                                </tr><tr>
+                                                    <td>Receivable Amount</td>
+                                                    <td>{{ $contact->receivable_amount }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total Invoice</td>
-                                                    <td>0.0000</td>
+                                                    <td>{{ number_format($totalSaleAmount, 4) }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total paid</td>
-                                                    <td>0.0000</td>
+                                                    <td>{{ number_format($paidAmount, 4) }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Advance Balance</td>

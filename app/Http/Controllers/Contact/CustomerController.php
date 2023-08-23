@@ -10,6 +10,7 @@ use App\Http\Controllers\Contact\ContactUtility;
 use App\Models\Contact\Contact;
 use App\Models\sale\sales;
 use App\Models\paymentsTransactions;
+use App\Models\settings\businessSettings;
 use Yajra\DataTables\Facades\DataTables;
 use DateTime;
 use Illuminate\Support\Facades\Route;
@@ -86,9 +87,13 @@ class CustomerController extends Controller
 
     public function show($id) {
         $contact= Contact::find($id);
+        $user = Auth::user();
+        // dd($user_id);
+        $business = businessSettings::where('id', $user->business_id)->first();
+        // dd($business);
         $data = $this->getSalesAndPurchases($id);
 
-        return view('App.contact_management.customers.show')->with(compact('contact', 'data'));
+        return view('App.contact_management.customers.show')->with(compact('contact', 'data', 'business'));
     }
 
     public function create(){
