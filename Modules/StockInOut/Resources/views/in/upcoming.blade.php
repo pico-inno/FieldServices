@@ -1,9 +1,10 @@
 @extends('App.main.navBar')
 
+@section('stock_icon', 'active')
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('stockin_here_show','here show')
-@section('upcoming_stockin_active_show', 'active ')
+@section('upcoming_stockin_active_show', 'active show')
 
 
 @section('styles')

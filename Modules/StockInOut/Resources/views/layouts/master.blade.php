@@ -156,6 +156,8 @@
     </div>
     <!--end:Menu item-->
 @endif
+
+
 @elseif($navbarType === 'report_link')
     <!--begin:Menu item-->
     @if((hasView('stockin') && hasExport('stockin')) || (hasView('stockout') && hasExport('stockin')))

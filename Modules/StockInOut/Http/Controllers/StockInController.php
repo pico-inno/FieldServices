@@ -105,11 +105,12 @@ class StockInController extends Controller
             ->select('id', 'purchase_voucher_no', 'business_location_id', 'contact_id', 'status', 'purchase_amount', 'total_line_discount', 'extra_discount_type', 'extra_discount_amount', 'total_discount_amount', 'purchase_expense', 'total_purchase_amount', 'paid_amount', 'balance_amount', 'purchased_at', 'purchased_by', 'confirm_at', 'confirm_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_delete', 'deleted_at', 'deleted_by')
             ->first();
 
-
+        $setting = businessSettings::all()->first();
         return view('stockinout::in.receiveProduct', [
             'stockin_persons' => $stockin_persons,
             'locations' => $locations,
-            'received_data' => $receivedData
+            'received_data' => $receivedData,
+            'setting' => $setting,
         ]);
 
     }
@@ -147,7 +148,7 @@ class StockInController extends Controller
      */
     public function store(StoreStockInRequest $request)
     {
-//return $request;
+        // return $r    equest;
 
         $validatedData = $request->validate([
             'business_location_id' => 'required|exists:business_locations,id',
@@ -161,9 +162,10 @@ class StockInController extends Controller
             'stockin_person.exists' => 'The selected stockin person is invalid.'
         ]);
 
-        $lotSerialContorl = businessSettings::all()->first()->lot_control;
+        
 
         DB::transaction(function () use ($request){
+            $lotSerialContorl = businessSettings::all()->first()->lot_control;
             $stockin_details = $request->stockin_details;
             $purchaseDetailsToUpdate = [];
             $stockin_date = date('Y-m-d', strtotime($request->stockin_date));
@@ -214,39 +216,74 @@ class StockInController extends Controller
                 }else{
                     $batch_no = $currentStockBalance_batchNo->batch_no;
                 }
+                if($lotSerialContorl == 'on'){
+                    foreach($lotSerialDetails as $lotSerialDetail){
 
-                $currentStockBalance = CurrentStockBalance::create([
-                    'business_location_id' => $request->business_location_id,
-                    'product_id' => $stockin_detail['product_id'],
-                    'variation_id' => $stockin_detail['variation_id'],
-                    'transaction_type' => 'stock_in',
-                    'transaction_detail_id' => $stockinDetail->id,
-                    'batch_no' => $batch_no,
-                    'lot_serial_no' => null,
-                    'expired_date' => null,
-                    'ref_uom_id' => $referencUomInfo['referenceUomId'],
-                    'ref_uom_quantity' => $referencUomInfo['qtyByReferenceUom'],
-                    'ref_uom_price' => $stockin_detail['per_ref_uom_price'],
-                    'current_quantity' => $referencUomInfo['qtyByReferenceUom'],
-                ]);
+                        $lotReferencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty( $lotSerialDetail['number_of_in'],$lotSerialDetail['lot_uom_id']);
 
-                $stockHistory = stock_history::create([
-                    'business_location_id' => $request->business_location_id,
-                    'product_id' => $stockin_detail['product_id'],
-                    'variation_id' => $stockin_detail['variation_id'],
-                    'lot_no' => null,
-                    'expired_date' => null,
-                    'transaction_type' => 'stock_in',
-                    'transaction_details_id' => $stockinDetail->id,
-                    'increase_qty' => $referencUomInfo['qtyByReferenceUom'],
-                    'decrease_qty' => 0,
-                    'ref_uom_id' => $referencUomInfo['referenceUomId'],
-                ]);
+                        $currentStockBalance = CurrentStockBalance::create([
+                            'business_location_id' => $request->business_location_id,
+                            'product_id' => $stockin_detail['product_id'],
+                            'variation_id' => $stockin_detail['variation_id'],
+                            'transaction_type' => 'stock_in',
+                            'transaction_detail_id' => $stockinDetail->id,
+                            'batch_no' => $batch_no,
+                            'lot_serial_no' => $lotSerialDetail['lot_serials'],
+                            'expired_date' => $lotSerialDetail['expire_date'],
+                            'ref_uom_id' => $lotReferencUomInfo['referenceUomId'],
+                            'ref_uom_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
+                            'ref_uom_price' => $stockin_detail['per_ref_uom_price'],
+                            'current_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
+                        ]);
+        
+                        $stockHistory = stock_history::create([
+                            'business_location_id' => $request->business_location_id,
+                            'product_id' => $stockin_detail['product_id'],
+                            'variation_id' => $stockin_detail['variation_id'],
+                            'lot_no' => $lotSerialDetail['lot_serials'],
+                            'expired_date' => $lotSerialDetail['expire_date'],
+                            'transaction_type' => 'stock_in',
+                            'transaction_details_id' => $stockinDetail->id,
+                            'increase_qty' => $lotReferencUomInfo['qtyByReferenceUom'],
+                            'decrease_qty' => 0,
+                            'ref_uom_id' => $lotReferencUomInfo['referenceUomId'],
+                        ]);
+                    }
+                    $calReceivedQty = $stockin_detail['in_quantity'] + $stockin_detail['received_quantity'];
+                    $purchaseDetailsToUpdate[$stockin_detail['purchase_detail_id']] = $calReceivedQty;
+                    $purchaseToUpdate[$stockin_detail['purchase_id']] = $calReceivedQty;
+                }else{
+                    $currentStockBalance = CurrentStockBalance::create([
+                        'business_location_id' => $request->business_location_id,
+                        'product_id' => $stockin_detail['product_id'],
+                        'variation_id' => $stockin_detail['variation_id'],
+                        'transaction_type' => 'stock_in',
+                        'transaction_detail_id' => $stockinDetail->id,
+                        'batch_no' => $batch_no,
+                        'lot_serial_no' => null,
+                        'expired_date' => null,
+                        'ref_uom_id' => $referencUomInfo['referenceUomId'],
+                        'ref_uom_quantity' => $referencUomInfo['qtyByReferenceUom'],
+                        'ref_uom_price' => $stockin_detail['per_ref_uom_price'],
+                        'current_quantity' => $referencUomInfo['qtyByReferenceUom'],
+                    ]);
 
-
-                $calReceivedQty = $stockin_detail['in_quantity'] + $stockin_detail['received_quantity'];
-                $purchaseDetailsToUpdate[$stockin_detail['purchase_detail_id']] = $calReceivedQty;
-                $purchaseToUpdate[$stockin_detail['purchase_id']] = $calReceivedQty;
+                    $stockHistory = stock_history::create([
+                        'business_location_id' => $request->business_location_id,
+                        'product_id' => $stockin_detail['product_id'],
+                        'variation_id' => $stockin_detail['variation_id'],
+                        'lot_no' => null,
+                        'expired_date' => null,
+                        'transaction_type' => 'stock_in',
+                        'transaction_details_id' => $stockinDetail->id,
+                        'increase_qty' => $referencUomInfo['qtyByReferenceUom'],
+                        'decrease_qty' => 0,
+                        'ref_uom_id' => $referencUomInfo['referenceUomId'],
+                    ]);
+                    $calReceivedQty = $stockin_detail['in_quantity'] + $stockin_detail['received_quantity'];
+                    $purchaseDetailsToUpdate[$stockin_detail['purchase_detail_id']] = $calReceivedQty;
+                    $purchaseToUpdate[$stockin_detail['purchase_id']] = $calReceivedQty;
+                }
 
             }
 
