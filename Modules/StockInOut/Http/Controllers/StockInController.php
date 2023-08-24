@@ -373,13 +373,17 @@ class StockInController extends Controller
             ->distinct()
             ->pluck('contact_id');
         $suppliers = Contact::whereIn('id', $contact_id_array)->select('id', 'company_name')->first();
+     
 
         $contactIds = [];
         $purchaseIds = [];
         foreach ($stockin_details as $detail){
             $purchase_detail = purchase_details::with('purchase')->findOrFail($detail->transaction_detail_id);
+            $currentStock = CurrentStockBalance::where('transaction_type', 'stock_in')
+            ->where('transaction_detail_id', $detail->id)->select('lot_serial_no', 'expired_date', 'ref_uom_id', 'ref_uom_quantity')->get();
 
             $detail->purchases_id = $purchase_detail->purchases_id;
+            $detail->current_banalce= $currentStock;
 
 
             if ($purchase_detail) {
@@ -400,7 +404,8 @@ class StockInController extends Controller
         if (count($contactIds) === 1) {
             $uniqueContactId = $contactIds[0];
         }
-
+        // return $stockin_details;
+        $setting = businessSettings::all()->first();
         return view('stockinout::in.edit', [
             'stockin' => $stockin,
             'stockin_details' => $stockin_details,
@@ -409,6 +414,7 @@ class StockInController extends Controller
             'locations' => $locations,
             'suppliers' => $suppliers,
             'purchaseIds' => $purchaseIds,
+            'setting' => $setting,
         ]);
 
     }
