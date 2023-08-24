@@ -141,7 +141,7 @@
                                         {{--                                        <th class="min-w-35px">#</th>--}}
                                         <th class="min-w-200px">{{__('stockinout::stockin.product')}}</th>
                                         <th class="min-w-100px">{{__('stockinout::stockin.ordered')}}</th>
-                                        <th class="min-w-100px">{{__('stockinout::stockin.received')}}</th>                                   
+                                        <th class="min-w-100px">{{__('stockinout::stockin.received')}}</th>
                                         <th class="min-w-100px">{{__('stockinout::stockin.in')}}
                                         @if ($setting->lot_control == 'on')
                                             (Lot/SN)
@@ -218,6 +218,7 @@
         var tagify;
         let setting=@json($setting);
         let lotControl=setting.lot_control;
+        var productsOnSelectData=[];
 
 
 
@@ -266,7 +267,31 @@
             })
         });
 
-
+        // add by wai yan
+        function checkAndStoreSelectedProduct(newSelectedProduct) {
+            let newProductData={
+                'purchase_detail_id':newSelectedProduct.id,
+                'product_id':newSelectedProduct.id,
+                // 'product_type':newSelectedProduct.product_type,
+                'variation_id':newSelectedProduct.product_variation.id,
+                // 'category_id':newSelectedProduct.category_id,
+                'uom':newSelectedProduct.uom_data.uom_by_category,
+                'purchase_uom_id':newSelectedProduct.purchase_uom_id,
+                'quantity':newSelectedProduct.quantity,
+            };
+            if(productsOnSelectData.length>0){
+                let fileterProduct=productsOnSelectData.filter(function(p){
+                    return p.purchase_detail_id==newSelectedProduct.id;
+                })[0];
+                if(fileterProduct){
+                    return
+                }else{
+                    productsOnSelectData=[...productsOnSelectData,newProductData];
+                }
+            }else{
+                productsOnSelectData=[...productsOnSelectData,newProductData];
+            }
+        }
         function initializeTagify() {
             function tagTemplate(tagData) {
                 return `
@@ -332,6 +357,7 @@
                     .done(function(response) {
 
                         response.forEach(item => {
+                            checkAndStoreSelectedProduct(item);
                             append_row(item, unique_name_id, selectedTag, lotControl);
                             // $('select[name="business_location_id"]').val(item.business_location_id).trigger('change');
                             unique_name_id+=1;
@@ -374,12 +400,13 @@
         var uomsData =[];
         var uomByCategory;
         function append_row(item,unique_name_id,selectedTag,lotControl) {
+            console.log(item,'items----------');
             uomsData =[];
             console.log(item);
             var unique_serial_id = 1;
 
             uomByCategory= item.uom_data.uom_by_category;
-           
+
 
             try {uomByCategory.forEach(function(e){
                     uomsData = [...uomsData,{'id':e.id,'text':e.name}]
@@ -414,9 +441,9 @@
             <td class="d-none">
                 <span class='text-gray-800 mb-1'>${unique_name_id}</span>
                 <input type="hidden" value="${selectedTag}" id="selectedTag" name="stockin_details[${unique_name_id}][purchase_id]">
-                <input type="hidden" value="${item.id}" name="stockin_details[${unique_name_id}][purchase_detail_id]">
-                <input type="hidden" value="${item.product_id}" name="stockin_details[${unique_name_id}][product_id]">
-                <input type="hidden" value="${item.variation_id}" name="stockin_details[${unique_name_id}][variation_id]">
+                <input type="hidden" value="${item.id}" class="purchase_detail_id" name="stockin_details[${unique_name_id}][purchase_detail_id]">
+                <input type="hidden" value="${item.product_id}" class="product_id" name="stockin_details[${unique_name_id}][product_id]">
+                <input type="hidden" value="${item.variation_id}" class="variation_id" name="stockin_details[${unique_name_id}][variation_id]">
                 <input type="hidden" value="${item.per_ref_uom_price}" name="stockin_details[${unique_name_id}][per_ref_uom_price]">
             </td>
             <td class="ps-0 exclude-modal">
@@ -445,13 +472,13 @@
             <td>
                 <input type="text" name="stockin_details[${unique_name_id}][remark]" class="form-control form-control-sm">
             </td>
-        
+
         <input type="hidden" class="modal-data-input" name="stockin_details[${unique_name_id}][lot_sertial_details]" value="${item.product.name}">
             <th class="text-center"><i class="fa-solid fa-trash text-danger deleteRow btn" ></i></th>
         </tr>`;
 
             let modalTemplate = `
-    <div class="modal fade" id="invoice_row_discount_${unique_name_id}" tabindex="-1"  tabindex="-1" aria-hidden="true">
+    <div class="modal fade lotSerModal" id="invoice_row_discount_${unique_name_id}" tabindex="-1"  tabindex="-1" aria-hidden="true">
       	<div class="modal-dialog mw-800px">
             <div class="modal-content">
                 <div class="modal-header">
@@ -461,9 +488,9 @@
                 <div class="modal-body">
 
                     <div class="row mb-5">
-                        <div class="col-md-5"> 
-                        <input type="text" class="form-control form-control-sm sn-input" placeholder="Serial Number / Lot"/>
-                        <span class="d-none order_qty_in_lot" id="order_lot_qty">${orderedQuantity}</span>
+                        <div class="col-md-5">
+                        <input type="text" class="form-control form-control-sm sn-input"  value="" placeholder="Serial Number / Lot"/>
+                        <input type="hidden" class="order_qty_in_lot" value="${orderedQuantity}" />
                         </div>
                         </div>
 
@@ -521,58 +548,120 @@
 `;
 
 
-           
+
             $('#stockin_table tbody').append(newRow);
             $('body').append(modalTemplate);
             initializeDatepickers();
             initializeUomSelects(unique_name_id);
             $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(item.purchase_uom_id).trigger('change');
 
-        
+
         }
 
-   
-         $(document).on('change','.uom-select',function(e){
-            e.preventDefault();
-            changeQtyOnUom($(this),$(this).val());
-        
+
+         $(document).on('change','.cal-gp .uom-select',function(){
+            // e.preventDefault();
+            let parent = $(this).closest('.cal-gp');
+            let unique_name_id=parent.attr('data-row-id');
+            let productId=parent.find('.product_id').val();
+            let variationId=parent.find('.variation_id').val();
+            let purchase_detail_id=parent.find('.purchase_detail_id').val();
+            let product=productsOnSelectData.filter(p=> p.purchase_detail_id == purchase_detail_id)[0];
+            console.log(product,'--------');
+            let resultQty=changeQtyOnUom2(product.purchase_uom_id,$(this).val(),product.quantity,product.uom);
+            parent.find('.ordered_quantity_text').text(resultQty);
+            // alert(resultQty);
+            let modalParent=$(`#invoice_row_discount_${unique_name_id}`);
+            console.log(modalParent);
+            console.log(modalParent.find('.testClass').val());
+            modalParent.find('.order_qty_in_lot').val(resultQty);
+
         });
-    
-        
-        function changeQtyOnUom(e,newUomId){
-     
-                let parent = e.closest('.cal-gp');
-                let orderQty = parent.find('.ordered_quantity').val();
+        // function changeQtyOnUom(e,newUomId){
 
-                const uoms=uomByCategory;
-                const newUomInfo = uoms.filter(function(nu){
-                    return nu.id==newUomId;
-                })[0];
-                const newUomType = newUomInfo.unit_type;
+        //         let parent = e.closest('.cal-gp');
+        //         let orderQty = parent.find('.ordered_quantity').val();
 
-                const referenceUom =uoms.filter(function ($u) {
-                    return $u.unit_type == "reference";
-                })[0];
-                const refUomType =referenceUom.unit_type;
-                const refUomId =referenceUom.id;
+        //         const uoms=uomByCategory;
+        //         const newUomInfo = uoms.filter(function(nu){
+        //             return nu.id==newUomId;
+        //         })[0];
+        //         const newUomType = newUomInfo.unit_type;
 
-                let result=0;
-                if (refUomType === 'reference' && newUomType === 'bigger') {
-                    result = orderQty / newUomInfo.value;
-                } else if (refUomType === 'reference' && newUomType === 'smaller') {
-                    result = orderQty * newUomInfo.value;
-                } else {
-                    result = orderQty;
-                }
-          
-                let rounded_amount=newUomInfo.rounded_amount ?? 2;
-                let roundedResult = floor(result, rounded_amount);
+        //         const referenceUom =uoms.filter(function ($u) {
+        //             return $u.unit_type == "reference";
+        //         })[0];
+        //         const refUomType =referenceUom.unit_type;
+        //         const refUomId =referenceUom.id;
 
-                // let roundedResult= floor(isNullOrNan(result),rounded_amount) ;
+        //         let result=0;
+        //         if (refUomType === 'reference' && newUomType === 'bigger') {
+        //             result = orderQty / newUomInfo.value;
+        //         } else if (refUomType === 'reference' && newUomType === 'smaller') {
+        //             result = orderQty * newUomInfo.value;
+        //         } else {
+        //             result = orderQty;
+        //         }
 
-                parent.find('.ordered_quantity_text').text(roundedResult);
-                  $('#order_lot_qty').text(roundedResult);
-    
+        //         let rounded_amount=newUomInfo.rounded_amount ?? 2;
+        //         let roundedResult = floor(result, rounded_amount);
+
+        //         // let roundedResult= floor(isNullOrNan(result),rounded_amount) ;
+
+        //         parent.find('.ordered_quantity_text').text(roundedResult);
+        //           $('#order_qty_in_lot').text(roundedResult);
+
+        // }
+
+
+        // Edit by wypa
+
+
+        function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms) {
+            let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
+            let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
+            let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
+            let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
+            let currentUomType = currentUomInfo.unit_type;
+            let newUomType = newUomInfo.unit_type;
+            let newUomRounded = newUomInfo.rounded_amount || 1;
+            let newUomValue=newUomInfo.value;
+            let currentUomValue=currentUomInfo.value;
+            let resultQty;
+            let resultPrice;
+
+            if ( newUomType == 'bigger') {
+                resultQty = currentRefQty / newUomInfo.value;
+            } else if (newUomType == 'smaller') {
+                resultQty = currentRefQty * newUomInfo.value;
+            } else {
+                resultQty = currentRefQty;
+            }
+
+            return resultQty;
+        }
+        function getReferenceUomInfoByCurrentUomQty(qty, currentUom, referenceUom) {
+            const currentUomType = currentUom.unit_type;
+            const currentUomValue = currentUom.value;
+            const referenceUomId = referenceUom.id;
+            const referenceRoundedAmount = isNullOrNan(referenceUom.rounded_amount,4) ;
+            const referenceValue = referenceUom.value;
+
+            let result;
+            if (currentUomType === 'reference') {
+                result = qty * referenceValue;
+            } else if (currentUomType === 'bigger') {
+                result = qty * currentUomValue;
+            } else if (currentUomType === 'smaller') {
+                result = qty / currentUomValue;
+            } else {
+                result = qty;
+            }
+            let roundedResult=result;
+            return {
+                qtyByReferenceUom: roundedResult,
+                referenceUomId: referenceUomId
+            };
         }
 
         function isNullOrNan(val){
@@ -609,12 +698,12 @@
                 if (event.which === 13) {
                 event.preventDefault();
                 const snInputVal = $(this).val();
-                
-                const rowContainer = $(this).closest('.modal-content'); 
+
+                const rowContainer = $(this).closest('.modal-content');
                 const lotSerialInput = rowContainer.find('[name="lot_serials[]"]').first();
-            
+
                 if (lotSerialInput.val().trim() === '') {
-                    lotSerialInput.val(snInputVal); 
+                    lotSerialInput.val(snInputVal);
                     rowContainer.find('[name="number_of_in[]"]').first().val(1);
                     updateAddButtonState();
                 } else {
@@ -692,7 +781,7 @@
                 $(this).closest('.lot_serial_body').append(newRow);
                 initializeDatepickers();
                 initializeUomSelects(unique_name_id);
-    
+
                 $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selectedUom).trigger('change');
                 updateAddButtonState();
             });
@@ -704,7 +793,7 @@
             });
 
             function updateAddButtonState() {
-                const orderedQuantity = parseInt($('.order_qty_in_lot').text()) || 0;
+                const orderedQuantity = parseInt($('.order_qty_in_lot').val()) || 0;
                 const totalQuantity = calculateTotalQuantity();
                 const $addButton = $('.btn-add-row');
                 const $snInput = $('.sn-input');
@@ -744,8 +833,8 @@
                         const inputName = $(this).attr('name').replace('[]', '');
 
                         if (inputName === 'number_of_in') {
-                            const quantity = parseFloat($(this).val() || 0); 
-                            totalQuantity += quantity; 
+                            const quantity = parseFloat($(this).val() || 0);
+                            totalQuantity += quantity;
                         }
 
                         rowData[inputName] = $(this).val();
@@ -814,7 +903,7 @@
 
         $(document).on('click', '#stockin_table .deleteRow', function (e) {
             e.preventDefault();
-        
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You want to remove it!",
