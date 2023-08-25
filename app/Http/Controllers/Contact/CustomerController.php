@@ -42,7 +42,7 @@ class CustomerController extends Controller
             ->editColumn('address_line_1', function($row){
                 return $row->getAddressAttribute();
             })
-            ->editColumn('pay_term_number', function($row){
+            ->editColumn('pay_term_value', function($row){
                 return $row->getPayTerm();
             })
             ->addColumn(
@@ -104,10 +104,10 @@ class CustomerController extends Controller
         try{
             // dd($request->all());
             $customer_data =  $request->only([
-                'type', 'pricelist_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
-                'email', 'contact_status', 'tax_number', 'city', 'state', 'country', 'address_line_1',
-                'address_line_2', 'zip_code', 'mobile', 'landline', 'alternate_number', 'pay_term_number',
-                'pay_term_type', 'receivable_amount', 'payable_amount', 'credit_limit', 'total_rp', 'total_rp_used', 'total_rp_expired', 'is_default',
+                'type', 'price_list_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
+                'email', 'is_active', 'tax_number', 'city', 'state', 'country', 'address_line_1',
+                'address_line_2', 'zip_code', 'mobile', 'landline', 'alternate_number', 'pay_term_value',
+                'pay_term_type', 'receivable_amount', 'payable_amount', 'credit_limit', 'is_default',
                 'shipping_address', 'customer_group_id', 'custom_field_1', 'custom_field_2', 'custom_field_3',
                 'custom_field_4', 'custom_field_5', 'custom_field_6', 'custom_field_7', 'custom_field_8',
                 'custom_field_9', 'custom_field_10'
@@ -163,10 +163,10 @@ class CustomerController extends Controller
         try{
             // dd($request->all());
             $customer_data =  $request->only([
-                'type', 'pricelist_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
-                'email', 'contact_status', 'tax_number', 'city', 'state', 'country', 'address_line_1',
-                'address_line_2', 'zip_code', 'mobile', 'landline', 'alternate_number', 'pay_term_number',
-                'pay_term_type', 'credit_limit', 'total_rp', 'total_rp_used', 'total_rp_expired', 'is_default',
+                'type', 'price_list_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
+                'email', 'is_active', 'tax_number', 'city', 'state', 'country', 'address_line_1',
+                'address_line_2', 'zip_code', 'mobile', 'landline', 'alternate_number', 'pay_term_value',
+                'pay_term_type', 'credit_limit', 'is_default',
                 'shipping_address', 'customer_group_id', 'custom_field_1', 'custom_field_2', 'custom_field_3',
                 'custom_field_4', 'custom_field_5', 'custom_field_6', 'custom_field_7', 'custom_field_8',
                 'custom_field_9', 'custom_field_10'
@@ -282,7 +282,7 @@ class CustomerController extends Controller
             $customer = Contact::find($id);
 
             $customer->type = $request['type'];
-            $customer->pricelist_id = $request['pricelist_id'];
+            $customer->price_list_id = $request['price_list_id'];
             $customer->company_name = $request['company_name'];
             $customer->prefix = $request['prefix'];
             $customer->first_name = $request['first_name'];
@@ -290,6 +290,7 @@ class CustomerController extends Controller
             $customer->last_name = $request['last_name'];
             $customer->email = $request['email'];
             $customer->contact_id = $request['contact_id'];
+            $customer->is_active = $request['is_active'];
             $customer->tax_number = $request['tax_number'];
             $customer->city = $request['city'];
             $customer->state = $request['state'];
@@ -300,7 +301,7 @@ class CustomerController extends Controller
             $customer->mobile = $request['mobile'];
             $customer->landline = $request['landline'];
             $customer->alternate_number = $request['alternate_number'];
-            $customer->pay_term_number = $request['pay_term_number'];
+            $customer->pay_term_value = $request['pay_term_value'];
             $customer->pay_term_type = $request['pay_term_type'];
             $customer->receivable_amount = $request['receivable_amount'];
             $customer->payable_amount = $request['payable_amount'];
@@ -321,7 +322,7 @@ class CustomerController extends Controller
             $date = DateTime::createFromFormat('d/m/Y', $dob);
             $customer->dob = !empty($dob) ? $date->format('Y-m-d') : null;
             $customer->business_id = 1;
-            $customer->created_by = Auth::user()->id;
+            $customer->updated_by = Auth::user()->id;
 
             $customer->update();
 
@@ -345,6 +346,8 @@ class CustomerController extends Controller
         $customer = Contact::find($id);
 
         if($customer){
+            $customer->is_delete = true;
+            $customer->save();
             $customer->delete();
 
             return back()->with('success','Contact Deleted Successfully');

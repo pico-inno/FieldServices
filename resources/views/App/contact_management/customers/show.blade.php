@@ -362,8 +362,8 @@
                                         <!--begin::Col-->
                                         <div class="col-lg-6">
                                             <span class="fw-bold fs-6 text-gray-800" id="reservation-code">
-                                                @if($contact->pay_term_number && $contact->pay_term_type)
-                                                {{$contact->pay_term_number}} {{$contact->pay_term_type}}
+                                                @if($contact->pay_term_value && $contact->pay_term_type)
+                                                {{$contact->pay_term_value}} {{$contact->pay_term_type}}
                                                 @else
                                                 -
                                                 @endif
@@ -380,6 +380,38 @@
                                             <span class="fw-bold fs-6 text-gray-800" id="reservation-code">
                                                 @if($contact->credit_limit)
                                                 {{$contact->credit_limit}}
+                                                @else
+                                                -
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <!--end::Col-->
+                                    </div>
+                                    <div class="row mb-7">
+                                        <!--begin::Label-->
+                                        <label class="col-lg-6 fw-semibold text-muted">Receivable Amount</label>
+                                        <!--end::Label-->
+                                        <!--begin::Col-->
+                                        <div class="col-lg-6">
+                                            <span class="fw-bold fs-6 text-gray-800" id="reservation-code">
+                                                @if($contact->receivable_amount)
+                                                {{$contact->receivable_amount}}
+                                                @else
+                                                -
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <!--end::Col-->
+                                    </div>
+                                    <div class="row mb-7">
+                                        <!--begin::Label-->
+                                        <label class="col-lg-6 fw-semibold text-muted">Payable Amount</label>
+                                        <!--end::Label-->
+                                        <!--begin::Col-->
+                                        <div class="col-lg-6">
+                                            <span class="fw-bold fs-6 text-gray-800" id="reservation-code">
+                                                @if($contact->payable_amount)
+                                                {{$contact->payable_amount}}
                                                 @else
                                                 -
                                                 @endif
@@ -471,7 +503,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label for="" class="form-label">Business Location</label>
-                                    <select class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="All locations">
+                                    <select name="business_location_id" id="business_location" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="All locations">
                                         <option></option>
                                         @php
                                         $business_locations = \App\Models\settings\businessLocation::all();
@@ -539,12 +571,16 @@
                                     @php
                                         $totalSaleAmount = 0;
                                         $paidAmount = 0;
+                                        $balanceAmount = 0;
+                                        $balanceDue = 0;
 
                                         if(isset($data['sales'])) {
                                             foreach($data['sales'] as $s) {
                                                 $totalSaleAmount += $s->total_sale_amount;
                                                 $paidAmount += $s->paid_amount;
                                             }
+                                            $balanceDue = ($contact->receivable_amount + $totalSaleAmount) - $paidAmount;
+
                                         }
                                     @endphp
                                     <div class="table-responsive">
@@ -575,13 +611,183 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Balance Due</td>
-                                                    <td>0.0000</td>
+                                                    <td>{{ number_format($balanceDue, 4) }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
+                            <table class="table align-middle rounded table-row-dashed fs-6 g-5" id="ledger_table">
+                                <!--begin::Table head-->
+                                <thead>
+                                    <!--begin::Table row-->
+                                    <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase">
+                                        <th class="min-w-125px">Date</th>
+                                        <th class="min-w-125px">Reference No.</th>
+                                        <th class="min-w-125px">Type</th>
+                                        <th class="min-w-125px">Location</th>
+                                        <th class="min-w-125px">Payment Status</th>
+                                        <th class="min-w-125px">Debit</th>
+                                        <th class="min-w-125px">Credit</th>
+                                        <th class="min-w-125px">Balance</th>
+                                        <th class="min-w-125px">Payment Method</th>
+                                        <th class="min-w-125px">Other</th>
+                                    </tr>
+                                    <!--end::Table row-->
+                                </thead>
+                                <!--end::Table head-->
+                                <!--begin::Table body-->
+                                @php
+                                    if(isset($data['payments'])) {
+                                        foreach($data['payments'] as $payment) {
+                                            foreach($payment as $payment_tran) {
+                                                $paymentType = $payment_tran->transaction_type;
+                                                $paymentAmount = $payment_tran->payment_amount;
+                                            }
+
+                                        }
+                                    }
+                                    
+                                @endphp
+                                <tbody class="fw-semibold text-gray-600">
+                                   {{-- @if(isset($data['sales']))
+                                    @foreach($data['sales'] as $s)
+                                    <tr>
+                                        <td>{{$s->sold_at}}</td>
+                                        <td>{{$s->sales_voucher_no}}</td>
+                                        <td>
+                                           {{$paymentType}}
+                                        </td>
+                                        <td>{{$s->businessLocation->name}}</td>
+                                        <td>
+                                            @if($s->payment_status == 'paid')
+                                            <span class="badge badge-success">{{$s->payment_status}}</span>
+                                            @elseif($s->payment_status == 'pending')
+                                            <span class="badge badge-warning">{{$s->payment_status}}</span>
+                                            @else
+                                            <span class="badge badge-primary">{{$s->payment_status}}</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $s->total_sale_amount }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    @endforeach
+                                    @endif
+
+                                    @if(isset($data['payments']))
+                                    @foreach($data['payments'] as $payment)
+                                    @foreach($payment as $payment_tran)
+                                    <tr>
+                                        <td>{{$payment_tran->payment_date}}</td>
+                                        <td>{{$payment_tran->payment_voucher_no}}</td>
+                                        <td>{{$paymentType}}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{$payment_tran->payment_amount}}</td>
+                                        <td></td>
+                                        <td>{{$payment_tran->payment_method}}</td>
+                                        <td>
+                                            {{$payment_tran->transaction_ref_no}} 
+                                            @if($payment_tran->transaction_type == 'sale') 
+                                            <span class="text-primary">(sale)</span>
+                                            @elseif($payment_tran->transaction_type == 'purchase')
+                                            <span class="text-primary">(purchase)</span>
+                                            @endif 
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @endforeach
+                                    @endif --}}
+
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>Opening Balance</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{ $contact->receivable_amount ?? 0}}</td>
+                                        <td></td>
+                                        <td>{{ $contact->receivable_amount ?? 0}}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+
+                                    @if(isset($data['sales']) && isset($data['payments']))
+                                        @php
+                                            $paymentIndex = 0;
+                                            $balance = $contact->receivable_amount;
+                                        @endphp
+
+                                        @foreach($data['sales'] as $s)
+                                        @php
+                                            $balance += $s->total_sale_amount;
+                                        @endphp
+                                        <tr>
+                                            <td>{{$s->sold_at}}</td>
+                                            <td>{{$s->sales_voucher_no}}</td>
+                                            <td>
+                                            {{$paymentType}}
+                                            </td>
+                                            <td>{{$s->businessLocation->name}}</td>
+                                            <td>
+                                                @if($s->payment_status == 'paid')
+                                                <span class="badge badge-success">{{$s->payment_status}}</span>
+                                                @elseif($s->payment_status == 'pending')
+                                                <span class="badge badge-warning">{{$s->payment_status}}</span>
+                                                @else
+                                                <span class="badge badge-primary">{{$s->payment_status}}</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $s->total_sale_amount }}</td>
+                                            <td></td>
+                                            <td>{{ number_format($balance, 4) }}</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        @if($paymentIndex < count($data['payments']))
+                                            @foreach($data['payments'] as $payment)
+                                            @foreach($payment as $payment_tran)
+                                            @if($payment_tran->transaction_id == $s->id)
+                                            @php
+                                                $balance -= $payment_tran->payment_amount;
+                                            @endphp
+                                            <tr>
+                                                <td>{{$payment_tran->payment_date}}</td>
+                                                <td>{{$payment_tran->payment_voucher_no}}</td>
+                                                <td>{{$paymentType}}</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>{{$payment_tran->payment_amount}}</td>
+                                                <td>{{ number_format($balance, 4)}}</td>
+                                                <td>{{$payment_tran->payment_method}}</td>
+                                                <td>
+                                                    {{$payment_tran->transaction_ref_no}} 
+                                                    @if($payment_tran->transaction_type == 'sale') 
+                                                    <span class="text-primary">(sale)</span>
+                                                    @elseif($payment_tran->transaction_type == 'purchase')
+                                                    <span class="text-primary">(purchase)</span>
+                                                    @endif 
+                                                </td>
+                                            </tr>
+                                            @endif
+                                            @endforeach
+                                            @endforeach
+                                            @php
+                                                $paymentIndex++;
+                                            @endphp
+                                        @endif
+
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                                <!--end::Table body-->
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1187,7 +1393,7 @@
 
     cb(start, end);
 
-    $("#document_and_note_table,#sales_table,#payment_table,#purchase_table").DataTable({
+    $("#document_and_note_table,#sales_table,#payment_table,#purchase_table,#ledger_table").DataTable({
         "order": false,
         "paging": false,
         "info": false,

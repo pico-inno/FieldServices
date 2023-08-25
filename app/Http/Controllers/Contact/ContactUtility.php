@@ -10,7 +10,7 @@ trait ContactUtility
 {
     public function getSalesAndPurchases($id)
     {
-        $sales = sales::where('contact_id', $id)->where('is_delete',0)->get();
+        $sales = sales::where('contact_id', $id)->where('is_delete',0)->orderBy('sold_at', 'asc')->get();
         $purchases = purchases::where('contact_id', $id)->where('is_delete',0)->get();
 
         $payments = [];
@@ -18,6 +18,7 @@ trait ContactUtility
             foreach ($sales as $sale) {
                 $payment = paymentsTransactions::where('transaction_id', $sale->id)
                     ->where('transaction_type', 'sale')
+                    ->orderBy('payment_date', 'asc')
                     ->get();
 
                 if ($payment) {
@@ -30,6 +31,7 @@ trait ContactUtility
             foreach ($purchases as $purchase) {
                 $payment = paymentsTransactions::where('transaction_id', $purchase->id)
                     ->where('transaction_type', 'purchase')
+                    ->orderBy('payment_date', 'asc')
                     ->get();
 
                 if ($payment) {

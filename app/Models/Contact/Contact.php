@@ -5,24 +5,29 @@ namespace App\Models\Contact;
 use App\Models\Product\PriceLists;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contact extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'business_id',
         'type',
-        'pricelist_id',
+        'contact_id',
+        'price_list_id',
         'company_name',
         'prefix',
         'first_name',
         'middle_name',
         'last_name',
         'email',
-        'contact_id',
-        'contact_status',
+        'is_active',
         'tax_number',
+        'township',
         'city',
         'state',
         'country',
@@ -33,15 +38,11 @@ class Contact extends Model
         'mobile',
         'landline',
         'alternate_number',
-        'pay_term_number',
+        'pay_term_value',
         'pay_term_type',
+        'credit_limit',
         'receivable_amount',
         'payable_amount',
-        'credit_limit',
-        'created_by',
-        'total_rp',
-        'total_rp_used',
-        'total_rp_expired',
         'is_default',
         'shipping_address',
         'customer_group_id',
@@ -54,7 +55,11 @@ class Contact extends Model
         'custom_field_7',
         'custom_field_8',
         'custom_field_9',
-        'custom_field_10'
+        'custom_field_10',
+        'created_by',
+        'updated_by',
+        'is_delete',
+        'deleted_at',
     ];
 
     public function getFullNameAttribute()
@@ -108,8 +113,8 @@ class Contact extends Model
     public function getPayTerm(){
         $payTerm = [];
 
-        if(!empty($this->pay_term_number)){
-            $payTerm[] = $this->pay_term_number;
+        if(!empty($this->pay_term_value)){
+            $payTerm[] = $this->pay_term_value;
         }
 
         if(!empty($this->pay_term_type)){
@@ -125,6 +130,6 @@ class Contact extends Model
 
     public function pricelist()
     {
-        return $this->belongsTo(PriceLists::class, 'pricelist_id');
+        return $this->belongsTo(PriceLists::class, 'price_list_id');
     }
 }

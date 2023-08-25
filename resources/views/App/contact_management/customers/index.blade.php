@@ -117,6 +117,7 @@
                             <th class="min-w-125px">Address</th>
                             <th class="min-w-125px">Payable Amount</th>
                             <th class="min-w-125px">Receivable Amount</th>
+                            <th class="min-w-125px">Credit Limit</th>
                             <th class="min-w-125px">Custom Field 1</th>
                             <th class="min-w-125px">Custom Field 2</th>
                             <th class="min-w-125px">Custom Field 3</th>
@@ -189,6 +190,7 @@
                     { data: 'address_line_1'},
                     { data: 'payable_amount'},
                     { data: 'receivable_amount'},
+                    { data: 'credit_limit'},
                     { data: 'custom_field_1'},
                     { data: 'custom_field_2'},
                     { data: 'custom_field_3'},

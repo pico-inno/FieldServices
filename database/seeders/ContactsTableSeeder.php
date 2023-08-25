@@ -18,6 +18,7 @@ class ContactsTableSeeder extends Seeder
             'type' => 'Customer',
             'first_name' => 'Walk-In Customer',
             'contact_id' => 'C0001',
+            'is_default' => 1,
             'created_by' => 1
         ]);
     }
