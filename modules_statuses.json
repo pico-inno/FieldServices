@@ -1,6 +1,5 @@
 {
     "ResOrderController": true,
     "Restaurant": true,
-    "OrderDisplay": true,
-    "StockInOut": true
+    "OrderDisplay": true
 }
