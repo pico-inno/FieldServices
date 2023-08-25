@@ -1,9 +1,11 @@
 @extends('App.main.navBar')
 
-
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
-@section('stock_in_active_show', 'active ')
+@section('inventory_show', 'active show')
+@section('stockin_here_show','here show')
+@section('stock_in_active_show', 'active show')
+
+
 @section('title')
     <!--begin::Heading-->
     <h1 class="text-dark fw-bold my-0 fs-2">{{__('stockinout::stockin.edit_stockin')}}</h1>
@@ -185,6 +187,7 @@
         var tagify;
         const purchaseOrderList = [];
         var unique_name_id = 1;
+        var productsOnSelectData=[];
 
         function sendAjaxRequest(url, data, successCallback, failureCallback) {
             $.ajax({
@@ -344,6 +347,8 @@
                             item.stockin_quantity = matchingTransaction.quantity;
                             item.remark = matchingTransaction.remark;
                             item.lot_details = matchingTransaction.current_banalce;
+                            item.stockin_uom_id = matchingTransaction.uom_id;
+                            checkAndStoreSelectedProduct(item);
                             append_row(item, unique_name_id, data);
                             unique_name_id += 1;
                         }
@@ -435,6 +440,34 @@ $("#supplierOption").change(function (){
         }
     })
 });
+
+
+        function checkAndStoreSelectedProduct(newSelectedProduct) {
+            let newProductData={
+                'purchase_detail_id':newSelectedProduct.id,
+                'product_id':newSelectedProduct.id,
+                // 'product_type':newSelectedProduct.product_type,
+                'variation_id':newSelectedProduct.product_variation.id,
+                // 'category_id':newSelectedProduct.category_id,
+                'uom':newSelectedProduct.uom_data.uom_by_category,
+                'purchase_uom_id':newSelectedProduct.purchase_uom_id,
+                'stockin_uom_id':newSelectedProduct.stockin_uom_id,
+                'quantity':newSelectedProduct.quantity,
+            };
+            if(productsOnSelectData.length>0){
+                let fileterProduct=productsOnSelectData.filter(function(p){
+                    return p.purchase_detail_id==newSelectedProduct.id;
+                })[0];
+                if(fileterProduct){
+                    return
+                }else{
+                    productsOnSelectData=[...productsOnSelectData,newProductData];
+                }
+            }else{
+                productsOnSelectData=[...productsOnSelectData,newProductData];
+            }
+        }
+
         function initializeTagify() {
             tagify = new Tagify(document.querySelector("#tagify_purchase_ordder"), {
                 whitelist: purchaseOrderList,
@@ -461,6 +494,7 @@ $("#supplierOption").change(function (){
 
                     console.log(response);
                     response.forEach(function (item) {
+
                         append_row(item, unique_name_id, selectedTag);
                         unique_name_id += 1;
                     });
@@ -491,9 +525,21 @@ $("#supplierOption").change(function (){
 
 
 
-
+        var uomsData =[];
+        var uomByCategory;
         function append_row(item,unique_name_id,selectedTag) {
-            console.log(item);
+            console.log(item,'item');
+            uomsData =[];
+            uomByCategory= item.uom_data.uom_by_category;
+
+
+            try {uomByCategory.forEach(function(e){
+                uomsData = [...uomsData,{'id':e.id,'text':e.name}]
+            })
+            } catch (e) {
+                error('400 : Product need to define UOM');
+                return;
+            }
             let variation = item.product.product_type === 'variable' ? item.product_variation.variation_template_value.name : '';
             let orderedQuantity = Number(item.quantity).toFixed(2);
             let stockinQuantity = Number(item.stockin_quantity ?? 0.00).toFixed(2);
@@ -501,6 +547,7 @@ $("#supplierOption").change(function (){
             let stockin_detail_row = item.stockin_detail_id ? `<input type="hidden" value="${item.stockin_detail_id}" name="stockin_details[${unique_name_id}][stockin_detail_id]">` : '';
 
             let qtyInputField = '';
+
 
             if (lotControl === 'on') {
                 qtyInputField = `
@@ -513,19 +560,25 @@ $("#supplierOption").change(function (){
                     <td>
                         <input type="hidden" name="stockin_details[${unique_name_id}][old_qty]" value="${stockinQuantity}">
                         <input type="text" class="in_quantity form-control form-control-sm" name="stockin_details[${unique_name_id}][in_quantity]" value="${stockinQuantity}">
-                    
+
                     </td>`;
             }
 
+            let uomSelectionField = `
+                    <select name="stockin_details[${unique_name_id}][uom_id]" class="form-select form-select-sm unit_id uom-select" data-kt-repeater="uom_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true" data-placeholder="Select unit" placeholder="select unit" ${item.lot_details ? 'disabled' : ''} required>
+                        <option value="">Select UOM</option>
+                    </select>`;
 
-                let newRow = `<tr class='cal-gp'>
+
+
+                let newRow = `<tr class='cal-gp' data-row-id="${unique_name_id}">
                 <td class="d-none">
                     <span class='text-gray-800 mb-1'>${unique_name_id}</span>
                     ${stockin_detail_row}
                     <input type="hidden" value="${selectedTag}" id="selectedTag" name="stockin_details[${unique_name_id}][purchase_id]">
-                    <input type="hidden" value="${item.id}" name="stockin_details[${unique_name_id}][purchase_detail_id]">
-                    <input type="hidden" value="${item.product_id}" name="stockin_details[${unique_name_id}][product_id]">
-                    <input type="hidden" value="${item.variation_id}" name="stockin_details[${unique_name_id}][variation_id]">
+                    <input type="hidden" value="${item.id}" class="purchase_detail_id" name="stockin_details[${unique_name_id}][purchase_detail_id]">
+                    <input type="hidden" value="${item.product_id}" class="product_id" name="stockin_details[${unique_name_id}][product_id]">
+                    <input type="hidden" value="${item.variation_id}"  class="variation_id" name="stockin_details[${unique_name_id}][variation_id]">
                     <input type="hidden" value="${item.per_ref_uom_price}" name="stockin_details[${unique_name_id}][per_ref_uom_price]">
                 </td>
                 <td class="ps-0">
@@ -542,18 +595,19 @@ $("#supplierOption").change(function (){
                 </td>
                 ${qtyInputField}
                 <td>
-                    <span class="text-gray-600">${item.purchase_uom.name}</span>
+                ${uomSelectionField}
                     <input type="hidden" value="${item.purchase_uom_id}" name="stockin_details[${unique_name_id}][purchase_uom_id]">
                 </td>
                 <td>
                     <input type="text" name="stockin_details[${unique_name_id}][remark]" class="form-control form-control-sm" value="${item.remark ?? ''}">
+                     <input type="hidden" class="modal-data-input" name="stockin_details[${unique_name_id}][lot_sertial_details]" value="update_lot">
                 </td>
                 <th class="text-center"><i class="fa-solid fa-trash text-danger deleteRow btn" ></i></th>
             </tr>`;
 
-        
-
-            let modalTemplate = `
+        var modalTemplate;
+            if(item.lot_details){
+                var modalTemplate = `
                         <div class="modal fade" id="lot_serial_modal${unique_name_id}" tabindex="-1"  tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog mw-800px">
                                 <div class="modal-content">
@@ -564,7 +618,7 @@ $("#supplierOption").change(function (){
                                     <div class="modal-body">
 
                                         <div class="row mb-5">
-                                            <div class="col-md-5"> 
+                                            <div class="col-md-5">
                                             <input type="text" class="form-control form-control-sm sn-input" placeholder="Serial Number / Lot"/>
                                             <span class="d-none order_qty_in_lot" id="order_lot_qty">${orderedQuantity}</span>
                                             </div>
@@ -582,32 +636,39 @@ $("#supplierOption").change(function (){
                             </tr>
                         </thead>
                         <tbody class="lot_serial_body">
-                            ${item.lot_details.map((lotDetail, index) => `
-                            <tr class="lot_serial_details_row">
+                ${item.lot_details.map((lotDetail, index) => {
+                    let product = productsOnSelectData.filter(p => p.purchase_detail_id == item.id)[0];
+                    console.log(lotDetail);
+                    const newQty = changeQtyOnUom2(item.ref_uom_id, product.stockin_uom_id, lotDetail.ref_uom_quantity, product.uom);
+
+                    return `<tr class="lot_serial_details_row">
                                 <td>
+                                    <input type="hidden" name="current_balance_id[]" value="${lotDetail.id}">
                                     <input type="text" class="form-control  form-control-sm" name="lot_serials[]" placeholder="SN" value="${lotDetail.lot_serial_no}">
                                 </td>
                                 <td>
 
-                    <input class="form-control form-control-sm datepicker-input"  name="expire_date[]" placeholder="Pick a date"
-                    value="${lotDetail.expired_date}"                      data-td-toggle="datetimepicker" id="kt_datepicker_2"/>
+                                <input class="form-control form-control-sm datepicker-input"  name="expire_date[]" placeholder="Pick a date"
+                                value="${lotDetail.expired_date}"                      data-td-toggle="datetimepicker" id="kt_datepicker_2"/>
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control  form-control-sm" name="number_of_in[]" placeholder="Quantity" value="${lotDetail.ref_uom_quantity}">
+                                    <input type="text" class="form-control  form-control-sm" name="number_of_in[]" placeholder="Quantity" value="${newQty}">
+                                    <input type="hidden" name="old_number_of_in[]" value="${newQty}">
                                 </td>
                                 <td>
 
-                    <select name="lot_uom_id[]" id="" class="form-select form-select-sm uom-select" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" required>
+                    <select name="lot_uom_id[]" id="" class="form-select form-select-sm uom-select" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" disabled required>
 
                                             </select>
                                 </td>
-                            <td class="text-center">
-                                ${index === 0 ? '<button class="btn btn-sm btn-light-primary btn-add-row" type="button"><i class="ki-duotone ki-plus fs-5"></i></button>' : ''}
+                      <td class="text-center">
+                            ${index === 0 ? '<button class="btn btn-sm btn-light-primary btn-add-row" type="button"><i class="ki-duotone ki-plus fs-5"></i></button>' : ''}
+                            ${index !== 0 ? '  <button class="btn btn-sm  btn-light-danger btn-remove-row"><i class="ki-duotone ki-trash fs-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i></button> ' : ''}
+                        </td>
 
-                                </td>
+                            </tr>`;
 
-                            </tr>
-                            `).join('')}
+                }).join('')}
                         </tbody>
                     </table>
 
@@ -621,11 +682,164 @@ $("#supplierOption").change(function (){
                         </div>
                     `;
 
+            }else{
+                var modalTemplate = `
+                                 <div class="modal fade" id="lot_serial_modal${unique_name_id}" tabindex="-1"  tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog mw-800px">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Lot/Serials Number for ${item.product.name}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <div class="row mb-5">
+                                                    <div class="col-md-5">
+                                                    <input type="text" class="form-control form-control-sm sn-input"  value="" placeholder="Serial Number / Lot"/>
+                                                    <input type="hidden" class="order_qty_in_lot" value="${orderedQuantity}" />
+                                                    </div>
+                                                    </div>
+
+                                                <table class="table table-rounded table-striped border gy-7 gs-7" id="lotSerialTable_${unique_name_id}">
+                                <thead>
+                                    <tr>
+                                        <th>Lot/Serial No</th>
+                                        <th>Expire Date</th>
+                                        <th>IN</th>
+                                        <th>UOM/label</th>
+                                        <th class="min-w-125px text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="lot_serial_body">
+                                    <tr class="lot_serial_details_row">
+                                        <td>
+                                            <input type="text" class="form-control  form-control-sm" name="lot_serials[]" placeholder="SN">
+                                        </td>
+                                        <td>
+
+                             <input class="form-control form-control-sm datepicker-input"  name="expire_date[]" placeholder="Pick a date"
+                                                                           data-td-toggle="datetimepicker" id="kt_datepicker_2"
+                                                                           />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control  form-control-sm" name="number_of_in[]" placeholder="Quantity">
+                                        </td>
+                                        <td>
+
+                               <select name="lot_uom_id[]" id="" class="form-select form-select-sm uom-select" data-modal-uom-selection="${unique_name_id}" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" required>
+
+                                                    </select>
+                                        </td>
+                                      <td class="text-center">
+
+                                              <button class="btn btn-sm  btn-light-primary btn-add-row" type="button">
+                                                            <i class="ki-duotone ki-plus fs-5"></i>
+
+                                                        </button>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary btn-save-changes">Save Changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+            }
+
 
             $('#stockin_table tbody').append(newRow);
             $('body').append(modalTemplate);
+            initializeDatepickers();
+            initializeUomSelects(unique_name_id);
+            // Assuming item is an object with properties stockin_uom_id and purchase_uom_id
+            var uomSelector = $(`[data-kt-repeater="uom_select_${unique_name_id}"]`);
+            var selectedValue = item.stockin_uom_id || item.purchase_uom_id;
+
+            uomSelector.val(selectedValue).trigger('change');
+
+
         }
 
+
+
+        function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms) {
+            let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
+            let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
+            let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
+            let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
+            let currentUomType = currentUomInfo.unit_type;
+            let newUomType = newUomInfo.unit_type;
+            let newUomRounded = newUomInfo.rounded_amount || 1;
+            let newUomValue=newUomInfo.value;
+            let currentUomValue=currentUomInfo.value;
+            let resultQty;
+            let resultPrice;
+
+            if ( newUomType == 'bigger') {
+                resultQty = currentRefQty / newUomInfo.value;
+            } else if (newUomType == 'smaller') {
+                resultQty = currentRefQty * newUomInfo.value;
+            } else {
+                resultQty = currentRefQty;
+            }
+
+            return resultQty;
+        }
+        function getReferenceUomInfoByCurrentUomQty(qty, currentUom, referenceUom) {
+            const currentUomType = currentUom.unit_type;
+            const currentUomValue = currentUom.value;
+            const referenceUomId = referenceUom.id;
+            const referenceRoundedAmount = isNullOrNan(referenceUom.rounded_amount,4) ;
+            const referenceValue = referenceUom.value;
+
+            let result;
+            if (currentUomType === 'reference') {
+                result = qty * referenceValue;
+            } else if (currentUomType === 'bigger') {
+                result = qty * currentUomValue;
+            } else if (currentUomType === 'smaller') {
+                result = qty / currentUomValue;
+            } else {
+                result = qty;
+            }
+            let roundedResult=result;
+            return {
+                qtyByReferenceUom: roundedResult,
+                referenceUomId: referenceUomId
+            };
+        }
+
+        function isNullOrNan(val){
+            let v=parseFloat(val);
+
+            if(v=='' || v==null || isNaN(v)){
+                return 0;
+            }else{
+                return v;
+            }
+        }
+
+        function initializeDatepickers() {
+            $(".datepicker-input").flatpickr();
+        }
+
+        function initializeUomSelects(unique_name_id) {
+            const rowData = uomsData.map(uom => ({ id: uom.id, text: uom.text }));
+            const selector = `.uom-select[data-kt-repeater="uom_select_${unique_name_id}"]`;
+
+            $(selector).select2({
+                minimumResultsForSearch: Infinity,
+                data: rowData,
+            });
+
+        }
 
         $(document).ready(function() {
             updateAddButtonState();
@@ -634,12 +848,12 @@ $("#supplierOption").change(function (){
                 if (event.which === 13) {
                 event.preventDefault();
                 const snInputVal = $(this).val();
-                
-                const rowContainer = $(this).closest('.modal-content'); 
+
+                const rowContainer = $(this).closest('.modal-content');
                 const lotSerialInput = rowContainer.find('[name="lot_serials[]"]').first();
-            
+
                 if (lotSerialInput.val().trim() === '') {
-                    lotSerialInput.val(snInputVal); 
+                    lotSerialInput.val(snInputVal);
                     rowContainer.find('[name="number_of_in[]"]').first().val(1);
                     updateAddButtonState();
                 } else {
@@ -664,7 +878,7 @@ $("#supplierOption").change(function (){
                                     <td>
                                         <select name="lot_uom_id[]" id="" class="form-select form-select-sm uom-select" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" required>
 
-                                    </select>
+                                        </select>
                                     </td>
                                     <td class="text-center">
                                         <button class="btn btn-sm  btn-light-danger btn-remove-row">
@@ -717,7 +931,7 @@ $("#supplierOption").change(function (){
                 $(this).closest('.lot_serial_body').append(newRow);
                 initializeDatepickers();
                 initializeUomSelects(unique_name_id);
-    
+
                 $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selectedUom).trigger('change');
                 updateAddButtonState();
             });
@@ -762,19 +976,24 @@ $("#supplierOption").change(function (){
 
 
                 $('#lotSerialTable_' + unique_name_id + ' tbody tr.lot_serial_details_row').each(function(index) {
-                    const rowInputs = $(this).find('input[name^="lot_serials"], input[name^="expire_date"], input[name^="number_of_in"], select[name^="lot_uom_id"]');
+                    // const rowInputs = $(this).find('input[name^="lot_serials"], input[name^="expire_date"], input[name^="number_of_in"], input[name^="old_number_of_in"], select[name^="lot_uom_id"]');
+                    const rowInputs = $(this).find('input[name^="lot_serials"], input[name^="expire_date"], input[name^="number_of_in"], input[name^="old_number_of_in"], select[name^="lot_uom_id"], input[name^="current_balance_id"]');
                     const rowData = {};
 
                     rowInputs.each(function() {
                         const inputName = $(this).attr('name').replace('[]', '');
 
                         if (inputName === 'number_of_in') {
-                            const quantity = parseFloat($(this).val() || 0); 
-                            totalQuantity += quantity; 
+                            const quantity = parseFloat($(this).val() || 0);
+                            totalQuantity += quantity;
                         }
 
                         rowData[inputName] = $(this).val();
                     });
+                    const currentBalanceInput = $(this).find('input[name^="current_balance_id"]');
+                    if (currentBalanceInput.length > 0) {
+                        rowData['current_balance_id'] = currentBalanceInput.val();
+                    }
 
                     modalData[index + 1] = rowData;
                 });

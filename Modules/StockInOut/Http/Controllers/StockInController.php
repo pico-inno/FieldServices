@@ -148,7 +148,7 @@ class StockInController extends Controller
      */
     public function store(StoreStockInRequest $request)
     {
-        // return $r    equest;
+//         return $request;
 
         $validatedData = $request->validate([
             'business_location_id' => 'required|exists:business_locations,id',
@@ -162,7 +162,7 @@ class StockInController extends Controller
             'stockin_person.exists' => 'The selected stockin person is invalid.'
         ]);
 
-        
+
 
         DB::transaction(function () use ($request){
             $lotSerialContorl = businessSettings::all()->first()->lot_control;
@@ -196,7 +196,7 @@ class StockInController extends Controller
                     'variation_id' => $stockin_detail['variation_id'],
                     'transaction_type' => 'purchase',
                     'transaction_detail_id' => $stockin_detail['purchase_detail_id'],
-                    'uom_id' => $stockin_detail['purchase_uom_id'],
+                    'uom_id' => $stockin_detail['uom_id'],
                     'quantity' => $stockin_detail['in_quantity'],
                     'remark' => $stockin_detail['remark'],
                     'created_at' => now(),
@@ -235,7 +235,7 @@ class StockInController extends Controller
                             'ref_uom_price' => $stockin_detail['per_ref_uom_price'],
                             'current_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
                         ]);
-        
+
                         $stockHistory = stock_history::create([
                             'business_location_id' => $request->business_location_id,
                             'product_id' => $stockin_detail['product_id'],
@@ -373,14 +373,14 @@ class StockInController extends Controller
             ->distinct()
             ->pluck('contact_id');
         $suppliers = Contact::whereIn('id', $contact_id_array)->select('id', 'company_name')->first();
-     
+
 
         $contactIds = [];
         $purchaseIds = [];
         foreach ($stockin_details as $detail){
             $purchase_detail = purchase_details::with('purchase')->findOrFail($detail->transaction_detail_id);
             $currentStock = CurrentStockBalance::where('transaction_type', 'stock_in')
-            ->where('transaction_detail_id', $detail->id)->select('lot_serial_no', 'expired_date', 'ref_uom_id', 'ref_uom_quantity')->get();
+            ->where('transaction_detail_id', $detail->id)->select('id','lot_serial_no', 'expired_date', 'ref_uom_id', 'ref_uom_quantity')->get();
 
             $detail->purchases_id = $purchase_detail->purchases_id;
             $detail->current_banalce= $currentStock;
@@ -428,8 +428,10 @@ class StockInController extends Controller
 
         $requestStockinDetails = $request->stockin_details;
         DB::beginTransaction();
+        $lotSerialContorl = businessSettings::all()->first()->lot_control;
         try {
             if ($requestStockinDetails) {
+
 
                 // Pre-added stockin data
                 $stockinDetailsWithStockinId = array_filter($requestStockinDetails, function ($item) {
@@ -455,8 +457,8 @@ class StockInController extends Controller
 
                 }
 
-                CurrentStockBalance::where('transaction_type', 'purchase')
-                    ->whereIn('transaction_detail_id', $transactionDetailIds)
+                CurrentStockBalance::where('transaction_type', 'stock_in')
+                    ->whereNotIn('transaction_detail_id', $oldStockinDetailsIds)
                     ->delete();
 
                 StockinDetail::where('stockin_id', $id)
@@ -468,138 +470,356 @@ class StockInController extends Controller
                     ->delete();
 
                 // End: remove pre-add details data
+                if($lotSerialContorl == 'on'){
+                    foreach ($stockinDetailsWithStockinId as $item) {
+
+                        //update existing data when changes
+                        if ($item['lot_sertial_details'] != 'update_lot'){
+
+                            $lotSerialDetails = json_decode($item['lot_sertial_details'], true);
+
+                            $stockinDetailId = $item['stockin_detail_id'];
+
+                            $transactionDetailId = StockinDetail::where('stockin_id', $id)
+                                ->where('id', $stockinDetailId)
+                                ->first()
+                                ->transaction_detail_id;
+
+
+                            if ($item['in_quantity'] > $item['old_qty']) {
+                                purchase_details::where('id', $transactionDetailId)
+                                    ->increment('received_quantity', $item['in_quantity'] - $item['old_qty']);
+                            }
+
+                            if ($item['in_quantity'] < $item['old_qty']) {
+                                purchase_details::where('id', $transactionDetailId)
+                                    ->decrement('received_quantity', $item['old_qty'] - $item['in_quantity']);
+                            }
+
+                            // Pre-added lot details data
+                            $lotDetailsWithCurrentId = array_filter($lotSerialDetails, function ($item) {
+                                return isset($item['current_balance_id']);
+                            });
+
+                            $oldLotDetailsIds = array_column($lotDetailsWithCurrentId, 'current_balance_id');
+
+                            // Remove pre-added lot serial details when user removes from current stock balance
+                           CurrentStockBalance::where('transaction_type', 'stock_in')
+                                            ->where('transaction_detail_id', $item['stockin_detail_id'])
+                                            ->whereNotIn('id', $oldLotDetailsIds)->delete();
+
+                            foreach ($lotDetailsWithCurrentId as $lotSerialDetail){
+
+                                $lotReferencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty( $lotSerialDetail['number_of_in'],$lotSerialDetail['lot_uom_id']);
+                                CurrentStockBalance::where('id', $lotSerialDetail['current_balance_id'])
+                                    ->update([
+                                        'lot_serial_no' => $lotSerialDetail['lot_serials'],
+                                        'expired_date' => $lotSerialDetail['expire_date'],
+                                        'ref_uom_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
+                                        'current_quantity' => $lotReferencUomInfo['qtyByReferenceUom']
+                                    ]);
+
+
+                            }
 
 
 
-                foreach ($stockinDetailsWithStockinId as $item){
-                    $referencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty($item['in_quantity'],$item['purchase_uom_id']);
-                    $stockinDetailId = $item['stockin_detail_id'];
+                            //Add new lot row
+                            $lotDetailsWithoutCurrentBalanceId = array_filter($lotSerialDetails, function ($item) {
+                                return !isset($item['current_balance_id']);
+                            });
 
-                    $transactionDetailId = StockinDetail::where('stockin_id', $id)
-                        ->where('id', $stockinDetailId)
-                        ->first()
-                        ->transaction_detail_id;
 
-//                    $purchase_update_qty = UomHelper::getReferenceUomInfoByCurrentUnitQty(abs($item['in_quantity'] - $item['old_qty']),$item['purchase_uom_id']);
-//                    purchase_details::where('id', $transactionDetailId)
-//                        ->increment('received_quantity', $purchase_update_qty['qtyByReferenceUom']);
-//                        ->update([
-//                            'received_quantity' => $item['in_quantity']
-//                        ]);
-                    if ($item['in_quantity'] > $item['old_qty']){
-                        purchase_details::where('id', $transactionDetailId)
-                            ->increment('received_quantity', $item['in_quantity'] - $item['old_qty']);
+                            foreach ($lotDetailsWithoutCurrentBalanceId as $lotSerialDetail){
+
+                                $lotReferencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty( $lotSerialDetail['number_of_in'],$lotSerialDetail['lot_uom_id']);
+
+                                $currentStockBalance = CurrentStockBalance::create([
+                                    'business_location_id' => $request->business_location_id,
+                                    'product_id' => $item['product_id'],
+                                    'variation_id' => $item['variation_id'],
+                                    'transaction_type' => 'stock_in',
+                                    'transaction_detail_id' => $item['stockin_detail_id'],
+                                    'batch_no' => null,
+                                    'lot_serial_no' => $lotSerialDetail['lot_serials'],
+                                    'expired_date' => $lotSerialDetail['expire_date'],
+                                    'ref_uom_id' => $lotReferencUomInfo['referenceUomId'],
+                                    'ref_uom_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
+                                    'ref_uom_price' => $item['per_ref_uom_price'],
+                                    'current_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
+                                ]);
+
+                                $stockHistory = stock_history::create([
+                                    'business_location_id' => $request->business_location_id,
+                                    'product_id' => $item['product_id'],
+                                    'variation_id' => $item['variation_id'],
+                                    'lot_no' => $lotSerialDetail['lot_serials'],
+                                    'expired_date' => $lotSerialDetail['expire_date'],
+                                    'transaction_type' => 'stock_in',
+                                    'transaction_details_id' => $item['stockin_detail_id'],
+                                    'increase_qty' => $lotReferencUomInfo['qtyByReferenceUom'],
+                                    'decrease_qty' => 0,
+                                    'ref_uom_id' => $lotReferencUomInfo['referenceUomId'],
+                                ]);
+
+                            }
+
+
+                            unset($item['stockin_detail_id']);
+
+
+                            StockinDetail::where('id', $stockinDetailId)
+                                ->where('stockin_id', $id)
+                                ->update([
+                                    'quantity' => $item['in_quantity'],
+                                    'remark' => $item['remark'],
+                                    'updated_by' => Auth::id(),
+                                ]);
+
+                            stock_history::where('transaction_type', 'stock_in')
+                                ->where('transaction_details_id', $stockinDetailId)
+                                ->update([
+                                    'increase_qty' => $lotReferencUomInfo['qtyByReferenceUom'],
+                                ]);
+                        }
                     }
 
-                    if($item['in_quantity'] < $item['old_qty']){
-                        purchase_details::where('id', $transactionDetailId)
-                            ->decrement('received_quantity', $item['old_qty'] - $item['in_quantity']);
+
+
+                    //
+                    $stockinDetailsWithoutStockinId = array_filter($requestStockinDetails, function ($item) {
+                        return !isset($item['stockin_detail_id']);
+                    });
+                    $purchaseDetailsToUpdate = [];
+
+                    foreach ($stockinDetailsWithoutStockinId as $item){
+                        $lotSerialDetails = json_decode($item['lot_sertial_details'], true);
+                        $stockinDetail = StockinDetail::create([
+                            'stockin_id' => $id,
+                            'product_id' => $item['product_id'],
+                            'variation_id' => $item['variation_id'],
+                            'transaction_type' => 'purchase',
+                            'transaction_detail_id' => $item['purchase_detail_id'],
+                            'uom_id' => $item['purchase_uom_id'],
+                            'quantity' => $item['in_quantity'],
+                            'remark' => $item['remark'],
+                            'created_at' => now(),
+                            'created_by' => Auth::id(),
+                        ]);
+
+                        $checkForBatch = StockinDetail::where('transaction_type', 'purchase')
+                            ->where('transaction_detail_id',  $stockinDetail['purchase_detail_id'])->pluck('id');
+
+                        $currentStockBalance_batchNo = CurrentStockBalance::where('transaction_type', 'stock_in')
+                            ->whereIn('transaction_detail_id', $checkForBatch )
+                            ->where('variation_id', $item['variation_id'])
+                            ->first();
+
+                        if ($currentStockBalance_batchNo == null){
+                            $batch_no = UomHelper::generateBatchNo($item['variation_id'], 'SI', 6);
+                        }else{
+                            $batch_no = $currentStockBalance_batchNo->batch_no;
+                        }
+
+                        foreach($lotSerialDetails as $lotSerialDetail){
+
+                            $lotReferencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty( $lotSerialDetail['number_of_in'],$lotSerialDetail['lot_uom_id']);
+
+                            $currentStockBalance = CurrentStockBalance::create([
+                                'business_location_id' => $request->business_location_id,
+                                'product_id' => $stockinDetail['product_id'],
+                                'variation_id' => $stockinDetail['variation_id'],
+                                'transaction_type' => 'stock_in',
+                                'transaction_detail_id' => $stockinDetail->id,
+                                'batch_no' => $batch_no,
+                                'lot_serial_no' => $lotSerialDetail['lot_serials'],
+                                'expired_date' => $lotSerialDetail['expire_date'],
+                                'ref_uom_id' => $lotReferencUomInfo['referenceUomId'],
+                                'ref_uom_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
+                                'ref_uom_price' => $stockinDetail['per_ref_uom_price'],
+                                'current_quantity' => $lotReferencUomInfo['qtyByReferenceUom'],
+                            ]);
+
+                            $stockHistory = stock_history::create([
+                                'business_location_id' => $request->business_location_id,
+                                'product_id' => $stockinDetail['product_id'],
+                                'variation_id' => $stockinDetail['variation_id'],
+                                'lot_no' => $lotSerialDetail['lot_serials'],
+                                'expired_date' => $lotSerialDetail['expire_date'],
+                                'transaction_type' => 'stock_in',
+                                'transaction_details_id' => $stockinDetail->id,
+                                'increase_qty' => $lotReferencUomInfo['qtyByReferenceUom'],
+                                'decrease_qty' => 0,
+                                'ref_uom_id' => $lotReferencUomInfo['referenceUomId'],
+                            ]);
+                        }
+
+
+                        $calReceivedQty = $item['in_quantity'] + $item['received_quantity'];
+                        $purchaseDetailsToUpdate[$item['purchase_detail_id']] = $calReceivedQty;
+                        $purchaseToUpdate[$item['purchase_id']] = $calReceivedQty;
+
+                        foreach ($purchaseDetailsToUpdate as $purchaseId => $receivedQuantity) {
+                            purchase_details::where('id', $purchaseId)->update(['received_quantity' => $receivedQuantity]);
+                        }
+
+                        $purchasesToUpdate = purchases::whereIn('id', array_keys($purchaseToUpdate))
+                            ->whereHas('purchase_details', function ($query) {
+                                $query->where('received_quantity', '<>', 'quantity');
+                            })
+                            ->get();
+
+                        foreach ($purchasesToUpdate as $purchase) {
+                            $details = $purchase->purchase_details;
+
+                            // Check received qty in all purchase details and update status
+                            $completed = $details->every(function ($detail) {
+                                return $detail->received_quantity === $detail->quantity;
+                            });
+
+
+                            $purchase->status = $completed ? 'received' : 'partial';
+                            $purchase->save();
+                        }
                     }
 
 
 
-                    CurrentStockBalance::where('transaction_type', 'stock_in')
-                        ->where('transaction_detail_id', $item['stockin_detail_id'])
-                        ->update([
+
+
+
+
+
+                }else {
+                    foreach ($stockinDetailsWithStockinId as $item) {
+
+                        $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($item['in_quantity'], $item['purchase_uom_id']);
+                        $stockinDetailId = $item['stockin_detail_id'];
+
+                        $transactionDetailId = StockinDetail::where('stockin_id', $id)
+                            ->where('id', $stockinDetailId)
+                            ->first()
+                            ->transaction_detail_id;
+
+
+                        if ($item['in_quantity'] > $item['old_qty']) {
+                            purchase_details::where('id', $transactionDetailId)
+                                ->increment('received_quantity', $item['in_quantity'] - $item['old_qty']);
+                        }
+
+                        if ($item['in_quantity'] < $item['old_qty']) {
+                            purchase_details::where('id', $transactionDetailId)
+                                ->decrement('received_quantity', $item['old_qty'] - $item['in_quantity']);
+                        }
+
+
+                        CurrentStockBalance::where('transaction_type', 'stock_in')
+                            ->where('transaction_detail_id', $item['stockin_detail_id'])
+                            ->update([
+                                'ref_uom_quantity' => $referencUomInfo['qtyByReferenceUom'],
+                                'current_quantity' => $referencUomInfo['qtyByReferenceUom']
+                            ]);
+
+                        unset($item['stockin_detail_id']);
+
+
+                        StockinDetail::where('id', $stockinDetailId)
+                            ->where('stockin_id', $id)
+                            ->update([
+                                'quantity' => $item['in_quantity'],
+                                'remark' => $item['remark'],
+                                'updated_by' => Auth::id(),
+                            ]);
+
+                        stock_history::where('transaction_type', 'stock_in')
+                            ->where('transaction_details_id', $stockinDetailId)
+                            ->update([
+                                'increase_qty' => $referencUomInfo['qtyByReferenceUom'],
+                            ]);
+
+                    }
+                    //End: update existed row details
+
+                    //Being: add new details
+                    $stockinDetailsWithoutStockinId = array_filter($requestStockinDetails, function ($item) {
+                        return !isset($item['stockin_detail_id']);
+                    });
+                    $purchaseDetailsToUpdate = [];
+
+                    foreach ($stockinDetailsWithoutStockinId as $item){
+                        $stockinDetail = StockinDetail::create([
+                            'stockin_id' => $id,
+                            'product_id' => $item['product_id'],
+                            'variation_id' => $item['variation_id'],
+                            'transaction_type' => 'purchase',
+                            'transaction_detail_id' => $item['purchase_detail_id'],
+                            'uom_id' => $item['purchase_uom_id'],
+                            'quantity' => $item['in_quantity'],
+                            'remark' => $item['remark'],
+                            'created_at' => now(),
+                            'created_by' => Auth::id(),
+                        ]);
+
+                        $referencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty( $item['in_quantity'],$item['purchase_uom_id']);
+                        $currentStockBalance = CurrentStockBalance::create([
+                            'business_location_id' => $request->business_location_id,
+                            'product_id' => $item['product_id'],
+                            'variation_id' => $item['variation_id'],
+                            'transaction_type' => 'stock_in',
+                            'transaction_detail_id' => $stockinDetail->id,
+                            'lot_serial_no' => null,
+                            'expired_date' => null,
+                            'ref_uom_id' => $referencUomInfo['referenceUomId'],
                             'ref_uom_quantity' => $referencUomInfo['qtyByReferenceUom'],
+                            'ref_uom_price' => $item['per_ref_uom_price'],
                             'current_quantity' => $referencUomInfo['qtyByReferenceUom']
                         ]);
 
-                    unset($item['stockin_detail_id']);
-
-
-                    StockinDetail::where('id', $stockinDetailId)
-                        ->where('stockin_id', $id)
-                        ->update([
-                            'quantity' => $item['in_quantity'],
-                            'remark' => $item['remark'],
-                            'updated_by' => Auth::id(),
-                        ]);
-
-                    stock_history::where('transaction_type', 'stock_in')
-                        ->where('transaction_details_id', $stockinDetailId)
-                        ->update([
+                        $stockHistory = stock_history::create([
+                            'business_location_id' => $request->business_location_id,
+                            'product_id' => $item['product_id'],
+                            'variation_id' => $item['variation_id'],
+                            'lot_no' => null,
+                            'expired_date' => null,
+                            'transaction_type' => 'stock_in',
+                            'transaction_details_id' => $stockinDetail->id,
                             'increase_qty' => $referencUomInfo['qtyByReferenceUom'],
+                            'decrease_qty' => 0,
+                            'ref_uom_id' => $referencUomInfo['referenceUomId'],
                         ]);
 
+
+                        $calReceivedQty = $item['in_quantity'] + $item['received_quantity'];
+                        $purchaseDetailsToUpdate[$item['purchase_detail_id']] = $calReceivedQty;
+                        $purchaseToUpdate[$item['purchase_id']] = $calReceivedQty;
+
+                        foreach ($purchaseDetailsToUpdate as $purchaseId => $receivedQuantity) {
+                            purchase_details::where('id', $purchaseId)->update(['received_quantity' => $receivedQuantity]);
+                        }
+
+                        $purchasesToUpdate = purchases::whereIn('id', array_keys($purchaseToUpdate))
+                            ->whereHas('purchase_details', function ($query) {
+                                $query->where('received_quantity', '<>', 'quantity');
+                            })
+                            ->get();
+
+                        foreach ($purchasesToUpdate as $purchase) {
+                            $details = $purchase->purchase_details;
+
+                            // Check received qty in all purchase details and update status
+                            $completed = $details->every(function ($detail) {
+                                return $detail->received_quantity === $detail->quantity;
+                            });
+
+
+                            $purchase->status = $completed ? 'received' : 'partial';
+                            $purchase->save();
+                        }
+                    }
                 }
                 //End: update pre-add details data
 
-                $stockinDetailsWithoutStockinId = array_filter($requestStockinDetails, function ($item) {
-                    return !isset($item['stockin_detail_id']);
-                });
-                $purchaseDetailsToUpdate = [];
 
-                foreach ($stockinDetailsWithoutStockinId as $item){
-                    $stockinDetail = StockinDetail::create([
-                        'stockin_id' => $id,
-                        'product_id' => $item['product_id'],
-                        'variation_id' => $item['variation_id'],
-                        'transaction_type' => 'purchase',
-                        'transaction_detail_id' => $item['purchase_detail_id'],
-                        'uom_id' => $item['purchase_uom_id'],
-                        'quantity' => $item['in_quantity'],
-                        'remark' => $item['remark'],
-                        'created_at' => now(),
-                        'created_by' => Auth::id(),
-                    ]);
-
-                    $referencUomInfo=UomHelper::getReferenceUomInfoByCurrentUnitQty( $item['in_quantity'],$item['purchase_uom_id']);
-                    $currentStockBalance = CurrentStockBalance::create([
-                        'business_location_id' => $request->business_location_id,
-                        'product_id' => $item['product_id'],
-                        'variation_id' => $item['variation_id'],
-                        'transaction_type' => 'stock_in',
-                        'transaction_detail_id' => $stockinDetail->id,
-                        'lot_serial_no' => null,
-                        'expired_date' => null,
-                        'ref_uom_id' => $referencUomInfo['referenceUomId'],
-                        'ref_uom_quantity' => $referencUomInfo['qtyByReferenceUom'],
-                        'ref_uom_price' => $item['per_ref_uom_price'],
-                        'current_quantity' => $referencUomInfo['qtyByReferenceUom']
-                    ]);
-
-                    $stockHistory = stock_history::create([
-                        'business_location_id' => $request->business_location_id,
-                        'product_id' => $item['product_id'],
-                        'variation_id' => $item['variation_id'],
-                        'lot_no' => null,
-                        'expired_date' => null,
-                        'transaction_type' => 'stock_in',
-                        'transaction_details_id' => $stockinDetail->id,
-                        'increase_qty' => $referencUomInfo['qtyByReferenceUom'],
-                        'decrease_qty' => 0,
-                        'ref_uom_id' => $referencUomInfo['referenceUomId'],
-                    ]);
-
-
-                    $calReceivedQty = $item['in_quantity'] + $item['received_quantity'];
-                    $purchaseDetailsToUpdate[$item['purchase_detail_id']] = $calReceivedQty;
-                    $purchaseToUpdate[$item['purchase_id']] = $calReceivedQty;
-
-                    foreach ($purchaseDetailsToUpdate as $purchaseId => $receivedQuantity) {
-                        purchase_details::where('id', $purchaseId)->update(['received_quantity' => $receivedQuantity]);
-                    }
-
-                    $purchasesToUpdate = purchases::whereIn('id', array_keys($purchaseToUpdate))
-                        ->whereHas('purchase_details', function ($query) {
-                            $query->where('received_quantity', '<>', 'quantity');
-                        })
-                        ->get();
-
-                    foreach ($purchasesToUpdate as $purchase) {
-                        $details = $purchase->purchase_details;
-
-                        // Check received qty in all purchase details and update status
-                        $completed = $details->every(function ($detail) {
-                            return $detail->received_quantity === $detail->quantity;
-                        });
-
-
-                        $purchase->status = $completed ? 'received' : 'partial';
-                        $purchase->save();
-                    }
-                }
 
             } else {
                 StockinDetail::where('stockin_id', $id)->delete();
