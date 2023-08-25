@@ -1,0 +1,11 @@
+{
+    "name": "StockInOut",
+    "alias": "stockinout",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\StockInOut\\Providers\\StockInOutServiceProvider"
+    ],
+    "files": []
+}

@@ -1352,9 +1352,11 @@
                                                     </div>
                                                     <!--end:Menu item-->
                                                     @endif
+
                                                     @if(hasModule('StockInOut') && isEnableModule('StockInOut'))
                                                         @include('stockinout::layouts.master', ['navbarType' => 'main_link'])
                                                     @endif
+                                                    
                                                     @if(hasAll('stock transfer'))
                                                         <!--begin:Menu item-->
                                                         <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('stock_transfer_here_show')">
