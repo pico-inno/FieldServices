@@ -14,24 +14,6 @@ class Test extends Seeder
      */
     public function run(): void
     {
-        $locations = [
-            [
-                'name' => 'Yangon Branch',
-                'allow_purchase_order' => 0,
-
-            ],
-            [
-                'name' => 'Mandalay Branch',
-                'allow_purchase_order' => 1,
-
-            ],
-            [
-                'name' => 'NayPyiTaw Branch',
-                'allow_purchase_order' => 1,
-
-            ],
-        ];
-        DB::table('business_locations')->insert($locations);
 
 
         DB::table('unit_categories')->insert(['name' => 'mass']);
@@ -59,59 +41,10 @@ class Test extends Seeder
 
         DB::table('uom')->insert($uomdata);
 
-        $brands = [
-            [
-                'name' => 'Nextron',
-            ],
-            [
-                'name' => 'Innovatech',
-            ],
-            [
-                'name' => 'SerenityHome',
-            ],
-            [
-                'name' => 'InfinityMobile',
-            ],
-            [
-                'name' => 'Samsung',
-            ],
-        ];
 
-        DB::table('brands')->insert($brands);
 
-        $categories = [
-            [
-                'name' => 'Home Product',
-                'short_code' => 001,
-            ],
-            [
-                'name' => 'Tech Product',
-                'short_code' => 002,
-            ],
-            [
-                'name' => 'Electric Product',
-                'short_code' => 003,
-            ]
-        ];
 
-        DB::table('categories')->insert($categories);
 
-        $suppliers = [
-          [
-              'business_id' => 1,
-              'type' => 'Supplier',
-              'company_name' => 'AliExpress',
-              'mobile' => '0912345678',
-          ],
-          [
-              'business_id' => 1,
-              'type' => 'Supplier',
-              'company_name' => 'Oracle',
-              'mobile' => '0912345678',
-          ]
-        ];
-
-        DB::table('contacts')->insert($suppliers);
 
         // $buildings = [
         //     [

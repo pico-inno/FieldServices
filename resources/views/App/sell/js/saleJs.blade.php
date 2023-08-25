@@ -967,7 +967,6 @@
         }
     }
     function priceSetting(priceStage,parentDom){
-
         let productId=parentDom.find('.product_id').val();
         let variationId=parentDom.find('.variation_id').val();
         let product=productsOnSelectData.filter(function(p){
@@ -1010,8 +1009,32 @@
     }
     function priceSettingToUi(priceStage,parentDom,product){
         let quantity=isNullOrNan(parentDom.find('.quantity').val());
-        let uomChange=getPriceByUOM(parentDom,product,priceStage.min_qty,priceStage.cal_value);
-        let qtyByPriceStage=uomChange.resultQty;
+        let price=priceStage.cal_value;
+        if(priceStage.cal_type == 'percentage'){
+            let basePriceLists=priceList.basePriceList;
+            let i = 0;
+            let finalBasePrice=null;//final base price means when current price is  percentage on base price, the loop reach the base price that is fix price;
+            while (i < basePriceLists.length) {
+                let bp = basePriceLists[i];
+                if(bp.cal_type!='percentage'){
+                   finalBasePrice=bp;
+                    break;
+                }
+                i++;
+            }
+            if(finalBasePrice !== null){
+                let fixPrice=finalBasePrice.cal_value;
+                percentagePrice=fixPrice * (priceStage.cal_value/100);
+                price=fixPrice-percentagePrice;
+            }else{
+                let refPrice=product.stock[0]? product.stock[0].ref_uom_price: '';
+                percentagePrice=refPrice * (priceStage.cal_value/100);
+                price=refPrice-percentagePrice;
+            }
+
+        }
+        let resultAfterUomChange=getPriceByUOM(parentDom,product,priceStage.min_qty,price);
+        let qtyByPriceStage=resultAfterUomChange.resultQty;
 
         const uoms=product.uom.unit_category.uom_by_category;
         let inputUomId=parentDom.find('.uom_select').val();
@@ -1019,22 +1042,12 @@
                 return $u.id ==inputUomId;
         })[0];
         if(quantity >= qtyByPriceStage){
-
-            parentDom.find('.uom_price').val(uomChange.resultPrice);
+            parentDom.find('.uom_price').val(resultAfterUomChange.resultPrice);
             parentDom.find('.price_list').val(priceStage.id).trigger('change');
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
-            // let productId=parentDom.find('.product_id').val();
-            // let variationId=parentDom.find('.variation_id').val();
-            // let product=productsOnSelectData.filter(function(p){
-            //     return p.product_id==productId && variationId == p.variation_id;
-            // })[0];
-            // parentDom.find('.uom_price').val(isNullOrNan(product.defaultSellingPrices));
-            // return true;
-
-
-            let refPrice=product.stock[0].ref_uom_price;
+            let refPrice=product.stock[0]? product.stock[0].ref_uom_price: '';
             let result=refPrice * isNullOrNan( inputUom.value);
             parentDom.find('.uom_price').val(result);
         }

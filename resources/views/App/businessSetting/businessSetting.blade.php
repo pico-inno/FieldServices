@@ -458,7 +458,7 @@
                 <!--begin::Container-->
                 <div class="flex-row-fluid  ms-2 ">
                     <!--begin::Card-->
-                    <form action="{{route('business_settings_create')}}" method="GET">
+                    <form action="{{route('business_settings_update')}}" method="GET">
                         <div class="card " style="min-height: 100vh;">
                             <!--begin::Card body-->
                             <div class="card-body py-8 px-4 px-sm-7 px-md-10">
@@ -492,7 +492,7 @@
                                                         <span class="required">{{__('business_settings.owner_name')}}</span>
                                                     </label>
                                                     <!--end::Label-->
-                                                    <input type="text" class="form-control form-control form-control form-control-sm" name="owner_id" id="owner" value="" />
+                                                    <input type="text" class="form-control form-control form-control form-control-sm" name="owner_id" id="owner" value="{{$settingData->owner? $settingData->owner->username :''}}" />
                                                 </div>
                                                 <div class="col-md-12  mb-7 col-lg-4">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="kt_datepicker_1">

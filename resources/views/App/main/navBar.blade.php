@@ -1954,14 +1954,14 @@
                                                     <div class="menu-item menu-accordion ">
                                                         <!--begin:Menu link-->
                                                         <!--begin:Menu link-->
-                                                        <a class="menu-link @yield('printers_list_active_show')" href="{{route('sms.create')}}">
+                                                        <a class="menu-link @yield('sms_active_show')" href="{{route('sms.create')}}">
                                                             <span class="menu-icon">
                                                                 <i class="fa-regular fa-comment fs-6"></i>
                                                             </span>
                                                             <span class="menu-title">Send SMS</span>
                                                         </a>
                                                     </div>
-                                                    <div class="menu-item menu-accordion ">
+                                                    <div class="menu-item menu-accordion d-none">
                                                         <!--begin:Menu link-->
                                                         <!--begin:Menu link-->
                                                         <a class="menu-link @yield('printers_list_active_show')" href="{{route('printerList')}}">
@@ -3047,7 +3047,7 @@
 
 
 		<script src={{asset('customJs/general.js')}}></script>
-        @include('App.alert.alert')
+
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
         @stack('scripts')
 	</body>

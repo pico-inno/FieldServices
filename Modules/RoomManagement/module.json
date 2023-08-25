@@ -1,0 +1,11 @@
+{
+    "name": "RoomManagement",
+    "alias": "roommanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\RoomManagement\\Providers\\RoomManagementServiceProvider"
+    ],
+    "files": []
+}

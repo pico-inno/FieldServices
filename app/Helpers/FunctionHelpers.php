@@ -116,3 +116,28 @@ function updenv($newEnvVariables)
 
     file_put_contents($envFile, $str);
 }
+
+function updenvWithoutQuote($newEnvVariables)
+{
+    $envFile = app()->environmentFilePath();
+    $str = file_get_contents($envFile);
+
+    foreach ($newEnvVariables as $key => $newValue) {
+        $newValue= str_replace(' ', '_', $newValue);
+        // Update the environment variable
+        $currentValue = env($key);
+        // Replace the existing value with the new value
+        if ($currentValue !== false) {
+            $str = preg_replace("/$key=" . preg_quote($currentValue, '/') . "/", "$key=" . $newValue, $str);
+        } else {
+            // If the key doesn't exist, add it to the .env file
+            $str .= "\n$key=$newValue";
+            dd('what');
+        }
+
+        // Refresh the environment variables
+        putenv("$key=$newValue");
+    }
+
+    file_put_contents($envFile, $str);
+}

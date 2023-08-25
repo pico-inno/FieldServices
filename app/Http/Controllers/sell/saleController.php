@@ -62,13 +62,14 @@ class saleController extends Controller
         $this->middleware('canCreate:sell')->only(['createPage', 'store']);
         $this->middleware('canUpdate:sell')->only(['saleEdit', 'update']);
         $this->middleware('canDelete:sell')->only('softDelete', 'softSelectedDelete');
-        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale')->with('currency')->first();
+        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale')
+                ->with('currency')->first();
         $this->setting = $settings;
-        $this->currency = $settings->currency;
-        $this->accounting_method = $settings->accounting_method;
+        $this->currency = $settings->currency ?? null;
+        $this->accounting_method = $settings->accounting_method ?? null;
     }
 
-    //
+
     public function index($saleType = 'allSales')
     {
         $locations = businessLocation::select('name', 'id')->get();
@@ -294,7 +295,7 @@ class saleController extends Controller
             $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
             $paymentAccountIds = json_decode($registeredPos->payment_account_id);
             $request['payment_account'] = $paymentAccountIds[0] ?? null;
-            $request['currency_id'] = $this->currency->id;
+            $request['currency_id'] = $this->currency->id ?? null;
         }
         DB::beginTransaction();
         Validator::make($request->toArray(), [
@@ -403,6 +404,7 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
+            logger($e);
             DB::rollBack();
             if ($request->type == 'pos') {
                 return response()->json([
@@ -1136,6 +1138,7 @@ class saleController extends Controller
                 ->where('variation_id', $sale_detail['variation_id'])
                 ->get()->first();
             $line_subtotal_discount = $sale_detail['line_subtotal_discount'] ?? 0;
+            $currency_id= $this->currency->id;
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
@@ -1147,7 +1150,7 @@ class saleController extends Controller
                 'discount_type' => $sale_detail['discount_type'],
                 'per_item_discount' => $sale_detail['per_item_discount'],
                 'subtotal_with_discount' => $request->type != 'pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'],
-                'currency_id' => $request->currency_id ?? $this->currency->id,
+                'currency_id' => $request->currency_id ?? $currency_id ,
                 'price_list_id' => $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
                 'tax_amount' => 0,
                 'per_item_tax' => 0,

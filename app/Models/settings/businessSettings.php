@@ -2,6 +2,7 @@
 
 namespace App\Models\settings;
 
+use App\Models\BusinessUser;
 use App\Models\Currencies;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -87,5 +88,9 @@ class businessSettings extends Model
 
     public function currency(){
         return $this->hasOne(Currencies::class,'id','currency_id');
+    }
+    public function owner()
+    {
+        return $this->hasOne(BusinessUser::class, 'id', 'owner_id');
     }
 }
