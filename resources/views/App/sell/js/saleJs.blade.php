@@ -864,7 +864,6 @@
 
     function isNullOrNan(val){
         let v=parseFloat(val);
-
         if(v=='' || v==null || isNaN(v)){
             return 0;
         }else{
@@ -1012,30 +1011,46 @@
         let price=priceStage.cal_value;
         if(priceStage.cal_type == 'percentage'){
             let basePriceLists=priceList.basePriceList;
+            let mainPriceList=priceList.mainPriceList;
             let i = 0;
             let finalBasePrice=null;//final base price means when current price is  percentage on base price, the loop reach the base price that is fix price;
+            let calPers=[];
             while (i < basePriceLists.length) {
                 let bp = basePriceLists[i];
-                if(bp.cal_type!='percentage'){
-                   finalBasePrice=bp;
+                i++;
+                if(bp.cal_type=='percentage'){
+                    if(bp.id==priceStage.id){
+                        calPers=[];
+                        // continue;
+                    }else{
+                        calPers=[bp.cal_value,...calPers];
+                    }
+                }else{
+                    if(calPers.length>0){
+                        let currentPrcie=bp.cal_value;
+                        calPers.forEach(per => {
+                            percentagePrice=currentPrcie * (per/100);
+                            currentPrcie=isNullOrNan(currentPrcie)+isNullOrNan(percentagePrice);
+                        });
+                       finalBasePrice= currentPrcie
+                    }else{
+                        finalBasePrice=bp.cal_value;
+                    }
                     break;
                 }
-                i++;
             }
             if(finalBasePrice !== null){
-                let fixPrice=finalBasePrice.cal_value;
-                percentagePrice=fixPrice * (priceStage.cal_value/100);
-                price=fixPrice-percentagePrice;
+                percentagePrice=finalBasePrice * (priceStage.cal_value/100);
+                console.log(finalBasePrice,percentagePrice,'percentagePrice',priceStage.cal_value);
+                price=isNullOrNan(finalBasePrice)+isNullOrNan(percentagePrice);
             }else{
                 let refPrice=product.stock[0]? product.stock[0].ref_uom_price: '';
                 percentagePrice=refPrice * (priceStage.cal_value/100);
-                price=refPrice-percentagePrice;
+                price=isNullOrNan(refPrice)+isNullOrNan(percentagePrice);
             }
-
         }
         let resultAfterUomChange=getPriceByUOM(parentDom,product,priceStage.min_qty,price);
         let qtyByPriceStage=resultAfterUomChange.resultQty;
-
         const uoms=product.uom.unit_category.uom_by_category;
         let inputUomId=parentDom.find('.uom_select').val();
         const inputUom =uoms.filter(function ($u) {

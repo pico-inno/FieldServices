@@ -337,14 +337,28 @@
                                             <!--end::Input-->
                                         </div>
                                         <div class="fv-row mb-10">
+                                            <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_payment_account">
+                                                <span>Finanical Year Start Month</span>
+                                            </label>
                                             <div class="form-check form-check-custom user-select-none">
-                                                <input type="checkbox" class="form-check-input border-gray-400 me-3" name="business[use_paymentAccount]" id="use_payment_account">
-                                                <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer"
-                                                    for="use_payment_account">
-                                                    <span>{{__('business_settings.use_payment_account')}}</span>
-                                                </label>
+                                                <select name="business[finanical_year_start_month]" class="form-select  form-select-sm" id="finanical_year_start_month" data-control="select2" data-placeholder="Select month">
+                                                    <option></option>
+                                                    <option value="january">January</option>
+                                                    <option value="february">February</option>
+                                                    <option value="march">March</option>
+                                                    <option value="april">April</option>
+                                                    <option value="may">May</option>
+                                                    <option value="june">June</option>
+                                                    <option value="july">July</option>
+                                                    <option value="august">August</option>
+                                                    <option value="september">September</option>
+                                                    <option value="october">October</option>
+                                                    <option value="november">November</option>
+                                                    <option value="december">December</option>
+                                                </select>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                                 <!--end::Step 2-->

@@ -1,8 +1,7 @@
 @extends('App.main.navBar')
 
-@section('sell_icon', 'active')
-@section('sell_show', 'active show')
-@section('add_sales_active_show', 'active ')
+@section('sms_active_show', 'active show')
+@section('sms_active', 'active ')
 @section('title')
 <!--begin::Heading-->
 <h1 class="text-dark fw-bold my-0 fs-2">Send SMS</h1>

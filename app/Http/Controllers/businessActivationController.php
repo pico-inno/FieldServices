@@ -31,7 +31,9 @@ class businessActivationController extends Controller
                 'start_date' =>DateTime::createFromFormat('d-m-Y', $businessData['start_date']),
                 'accounting_method' => $businessData['accounting_method'],
                 'use_paymentAccount' => isset($businessData['use_paymentAccount']) ? '1' : '0',
+                'use_paymentAccount' => '0',
                 'currency_id' =>  $businessData['currency'],
+                'finanical_year_start_month'=>$businessData['finanical_year_start_month'],
                 'logo'=> $logoPath,
             ]);
             $personalInfo=PersonalInfo::create([
@@ -51,9 +53,11 @@ class businessActivationController extends Controller
                 'email' => $businessUser['email'],
                 'password' => Hash::make($businessUser['password']),
             ]);
+
             $business->owner_id= $businessUser->id;
             $business->update();
             $this->currencyTableSeed($business->id);
+
             DB::commit();
             $logoPath= asset("/public/storage/logo/$business->logo");
             logger($logoPath);
@@ -88,7 +92,7 @@ class businessActivationController extends Controller
     }
 
 
-    public function currencyTableSeed($businessId){
+    public function currencyTableSeed($businessId,$create=true){
         $currencies = [
             [
                 'name' => 'Kyat',
@@ -114,17 +118,19 @@ class businessActivationController extends Controller
                 'symbol' => '¥',
             ]
         ];
-        foreach ($currencies as $c) {
-            Currencies::create([
-                'business_id' => $businessId,
-                'currency_type' => 'fiat',
-                'name' => $c['name'],
-                'country' => $c['country'],
-                'code' => $c['code'],
-                'symbol' => $c['symbol'],
-                'thoundsand_seprator' => 'comma',
-                // 'decimal_sepearator' => 'dot',
-            ]);
+        if($create){
+            foreach ($currencies as $c) {
+                Currencies::create([
+                    'business_id' => $businessId,
+                    'currency_type' => 'fiat',
+                    'name' => $c['name'],
+                    'country' => $c['country'],
+                    'code' => $c['code'],
+                    'symbol' => $c['symbol'],
+                    'thoundsand_seprator' => 'comma',
+                    // 'decimal_sepearator' => 'dot',
+                ]);
+            }
         }
     }
 }

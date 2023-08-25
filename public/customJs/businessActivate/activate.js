@@ -212,10 +212,10 @@ var KTCreateApp = function () {
 			form,
 			{
 				fields: {
-                    "business[]": {
+                    "business[finanical_year_start_month]": {
 						validators: {
 							notEmpty: {
-								message: 'App name is required'
+								message: 'Start Month For Finanical year is required'
 							}
 						}
                     }

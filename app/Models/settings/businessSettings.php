@@ -19,6 +19,7 @@ class businessSettings extends Model
         'currency_decimal_places',
         'quantity_decimal_places',
         'currency_symbol_placement',
+        'finanical_year_start_month',
         'owner_id',
         'time_zone',
         'fy_start_month',

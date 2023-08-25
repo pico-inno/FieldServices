@@ -62,8 +62,7 @@ class saleController extends Controller
         $this->middleware('canCreate:sell')->only(['createPage', 'store']);
         $this->middleware('canUpdate:sell')->only(['saleEdit', 'update']);
         $this->middleware('canDelete:sell')->only('softDelete', 'softSelectedDelete');
-        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale')
-                ->with('currency')->first();
+        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale')->with('currency')->first();
         $this->setting = $settings;
         $this->currency = $settings->currency ?? null;
         $this->accounting_method = $settings->accounting_method ?? null;
@@ -434,8 +433,8 @@ class saleController extends Controller
         // check lot control from setting
         $product=Product::where('id',$product_id)->select('product_type')->first();
         if($product->product_type=='storable'){
-            $lot_control = businessSettings::select('lot_control')->first()->lot_control;
-            if ($lot_control == 'off') {
+            // $lot_control = businessSettings::select('lot_control')->first()->lot_control;
+            // if ($lot_control == 'off') {
                 $variation_id = $sale_detail['variation_id'];
                 $totalStocks = CurrentStockBalance::select('id', 'current_stock_id')
                     ->where('product_id', $product_id)
@@ -543,9 +542,9 @@ class saleController extends Controller
                     return true;
                 }
             }
-        }else{
-            return false;
-        }
+        // }else{
+        //     return false;
+        // }
 
     }
 
@@ -554,7 +553,7 @@ class saleController extends Controller
     public function update($id, Request $request)
     {
         $request_sale_details = $request->sale_details;
-        $lot_control = $this->setting->lot_control;
+        // $lot_control = $this->setting->lot_control;
 
         // I fetch  sales data ,one for store as old data that fetch form database and one is to update data and after updated ,if you call slaes the will be updated!!
         $saleBeforeUpdate = sales::where('id', $id)->first();
@@ -675,7 +674,7 @@ class saleController extends Controller
                             if ($changeQtyStatus == false) {
                                 return redirect()->back()->withInput()->with(['warning' => "product Out of Stock"]);
                             } else {
-                                if ($this->setting->lot_control == "off") {
+                                // if ($this->setting->lot_control == "off") {
                                     $datas = $changeQtyStatus;
                                     foreach ($datas as $data) {
                                         // dd($datas);
@@ -689,7 +688,7 @@ class saleController extends Controller
                                             'uom_id' => $request_old_sale['uom_id'],
                                         ]);
                                     }
-                                }
+                                // }
                             }
                         } elseif ($saleBeforeUpdate->status == 'delivered' && $request->status != "delivered" && $businessLocation->allow_sale_order == 0) {
                             $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id);
@@ -1187,7 +1186,7 @@ class saleController extends Controller
                             return 'outOfStock';
                             // return redirect()->back()->withInput()->with(['warning' => "Out of Stock In " . $stock['product']['name']]);
                         } else {
-                            if ($this->setting->lot_control == "off") {
+                            // if ($this->setting->lot_control == "off") {
                                 $datas = $changeQtyStatus;
                                 foreach ($datas as $data) {
                                     // dd($datas);
@@ -1201,7 +1200,7 @@ class saleController extends Controller
                                         'uom_id' => $created_sale_details->uom_id,
                                     ]);
                                 }
-                            }
+                            // }
                         }
                     }
                 }

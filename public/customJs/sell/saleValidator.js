@@ -18,6 +18,12 @@
                                 notEmpty: { message: "* Customer is required" },
                             },
                         },
+
+                        business_location_id: {
+                            validators: {
+                                notEmpty: { message: "* Location Field is required" },
+                            },
+                        },
                     },
 
                     plugins: {
@@ -41,15 +47,30 @@
                     if (qtyValidate) {
                         e.preventDefault();
                          Swal.fire({
-                                    text: "Sorry, Some products are out of stock, please carefully check stock.",
-                                    icon: "error",
-                                    buttonsStyling: false,
-                                    confirmButtonText: "Ok, got it!",
-                                    customClass: {
-                                        confirmButton: "btn btn-primary"
-                                    }
-                                });
-                    } else {
+                                text: "Sorry, Some products are out of stock, please carefully check stock.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            });
+                    } else if ( $('#total_balance_amount').val() > credit_limit) {
+                        e.preventDefault();
+                        $('#credit_limit_message').removeClass('d-none');
+                            Swal.fire({
+                                text: "Customer's Credit limit is reached.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            });
+                    }
+                    else {
+
+                        $('#credit_limit_message').addClass('d-none');
                         if (validator) {
                             validator.validate().then(function (status) {
                                 console.log(status);

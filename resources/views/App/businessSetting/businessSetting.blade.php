@@ -505,23 +505,16 @@
                                                         <input class="form-control form-control form-control form-control-sm" name="start_date" placeholder="Pick a date"  id="kt_datepicker_1" value="{{date('d-m-Y')}}" />
                                                     </div>
                                                 </div>
-                                                {{-- <div class="col-md-12 mb-7 col-lg-4">
+                                                <div class="col-md-12 mb-7 col-lg-4">
                                                     <div class="form-check form-check-custom">
-                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="lot_control" id="lot_control" @checked($settingData['lot_control']=='on') disabled readonly>
+                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="lot_control" id="lot_control" @checked($settingData['lot_control']=='on') >
                                                         <label class="fs-6 fw-semibold form-label mt-3" for="lot_control">
                                                             <span >{{__('business_settings.lot_control')}}</span>
                                                         </label>
                                                     </div>
-                                                </div> --}}
-
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <div class="form-check form-check-custom">
-                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="use_paymentAccount" id="use_payment_account" @checked($settingData['use_paymentAccount']==1)  >
-                                                        <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_payment_account">
-                                                            <span >{{__('business_settings.use_payment_account')}}</span>
-                                                        </label>
-                                                    </div>
                                                 </div>
+
+
                                                 <div class="col-md-12  mb-7 col-lg-4">
                                                      <label class="fs-6 fw-semibold form-label mt-3" for="kt_datepicker_1">
                                                         <span class="required">{{__('business_settings.start_date')}}</span>
@@ -600,7 +593,6 @@
                                                         <div class="overflow-hidden flex-grow-1">
                                                             <select class="form-select rounded-start-0 form-select-sm" id="timezone" name="timezone" data-control="select2" data-placeholder="Select timezone">
                                                                 <option value="1">Asia/Yangon</option>
-                                                                <option value="2">Option 2</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -624,7 +616,7 @@
                                                 </div>
                                                 <div class="col-md-12  mb-7 col-lg-4">
                                                     <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="finanical_year_start_month">
+                                                    <label class="fs-6 fw-semibold form-label mt-3 required" for="finanical_year_start_month">
                                                         <span class="required">{{__('business_settings.financial_year_start_month')}}</span>
                                                         <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Starting month of the finanical year for your business."></i>
                                                     </label>
@@ -636,8 +628,18 @@
                                                         <div class="overflow-hidden flex-grow-1">
                                                             <select name="finanical_year_start_month" class="form-select rounded-start-0 form-select-sm" id="finanical_year_start_month" data-control="select2" data-placeholder="Select month">
                                                                 <option></option>
-                                                                <option value="1">Option 1</option>
-                                                                <option value="2">Option 2</option>
+                                                                <option value="january" @selected($settingData['finanical_year_start_month']==='january' )>January</option>
+                                                                <option value="february" @selected($settingData['finanical_year_start_month']==='february' )>February</option>
+                                                                <option value="march" @selected($settingData['finanical_year_start_month']==='march' )>March</option>
+                                                                <option value="april" @selected($settingData['finanical_year_start_month']==='april' )>April</option>
+                                                                <option value="may" @selected($settingData['finanical_year_start_month']==='may' )>May</option>
+                                                                <option value="june" @selected($settingData['finanical_year_start_month']==='june' )>June</option>
+                                                                <option value="july" @selected($settingData['finanical_year_start_month']==='july' )>July</option>
+                                                                <option value="august" @selected($settingData['finanical_year_start_month']==='august' )>August</option>
+                                                                <option value="september" @selected($settingData['finanical_year_start_month']==='september' )>September</option>
+                                                                <option value="october" @selected($settingData['finanical_year_start_month']==='october' )>October</option>
+                                                                <option value="november" @selected($settingData['finanical_year_start_month']==='november' )>November</option>
+                                                                <option value="december" @selected($settingData['finanical_year_start_month']==='december' )>December</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -1675,9 +1677,17 @@
                                      {{-- payment-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_payment" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.payment')}}</h2>
+                                         <div class="row mb-7">
+                                            <div class="col-12 p-3">
+                                                <h2>{{__('business_settings.payment')}}</h2>
+                                            </div>
+                                        </div>
+                                            <div class="col-md-12 mb-7 col-lg-4">
+                                                <div class="form-check form-check-custom">
+                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="use_paymentAccount" id="use_payment_account" @checked($settingData['use_paymentAccount']==1)  >
+                                                    <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_payment_account">
+                                                        <span >{{__('business_settings.use_payment_account')}}</span>
+                                                    </label>
                                                 </div>
                                             </div>
                                             <div class="row fv-row row-cols flex-wrap">

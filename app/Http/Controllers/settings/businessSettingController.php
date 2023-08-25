@@ -29,7 +29,7 @@ class businessSettingController extends Controller
         };
         $data=[
             'name' => $request->name,
-            'lot_control' => 'off',
+            'lot_control' =>$request->lot_control ? 1 : 0,
             'currency_id'=>$request->currency_id,
             'currency_decimal_places'=>$request->currency_decimal_places,
             'quantity_decimal_places'=>$request->quantity_decimal_places,
@@ -38,6 +38,8 @@ class businessSettingController extends Controller
             'enable_line_discount_for_sale'=>$request->enable_line_discount_for_sale ? '1':'0',
             'currency_symbol_placement'=>$request->currency_symbol_placement,
             'use_paymentAccount'=>$request->use_paymentAccount ? '1':'0',
+            'finanical_year_start_month'=>$request->finanical_year_start_month,
+
         ];
 
         if(businessSettings::exists()){
@@ -52,7 +54,7 @@ class businessSettingController extends Controller
     {
         $data = [
             'name' => $request->name,
-            'lot_control' => 'off',
+            'lot_control' => $request->lot_control ? 1 : 0,
             'currency_id' => $request->currency_id,
             'currency_decimal_places' => $request->currency_decimal_places,
             'quantity_decimal_places' => $request->quantity_decimal_places,
@@ -61,6 +63,7 @@ class businessSettingController extends Controller
             'enable_line_discount_for_sale' => $request->enable_line_discount_for_sale ? '1' : '0',
             'currency_symbol_placement' => $request->currency_symbol_placement,
             'use_paymentAccount' => $request->use_paymentAccount ? '1' : '0',
+            'finanical_year_start_month' => $request->finanical_year_start_month,
         ];
 
         businessSettings::where('id',Auth::user()->business_id)->first()->update($data);
