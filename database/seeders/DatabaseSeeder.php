@@ -12,6 +12,7 @@ use Database\Seeders\UsersTableSeeder;
 use Database\Seeders\SettingTableSeeder;
 use Database\Seeders\ContactsTableSeeder;
 use Database\Seeders\CurrenciesTableSeeder;
+use Database\Seeders\ContactWalkInTableSeeder;
 use Modules\StockInOut\Database\Seeders\StockInOutDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -34,7 +35,12 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesTableSeeder::class);
         $this->call(SettingTableSeeder::class);
         $this->call(ContactsTableSeeder::class);
+        $this->call(ContactWalkInTableSeeder::class);
         $this->call(CurrenciesTableSeeder::class);
+        $this->call(LocationTableSeeder::class);
+        $this->call(BrandTableSeeder::class);
+        $this->call(CategoryTableSeeder::class);
+        // $this->call(UoMSeeder::class);
         $this->call(Test::class);
         $this->call(UoMSeeder::class);
 //        $this->call(StockInOutDatabaseSeeder::class);

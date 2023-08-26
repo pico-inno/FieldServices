@@ -15,6 +15,8 @@
     var saleId=editSale ? editSale.id :'';
     var route=null;
     var getProductVariations;
+    var creditLimit=0;
+    var receiveAbleAmount=0;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -81,7 +83,7 @@
                             @if (isUsePaymnetAcc())
                                 <div class="col-md-5 col-sm-5 col-5 ">
                                     <label class="form-label fw-bold">Payment Account:</label>
-                                    <select class="form-select mb-2 form-select-sm" name="payment_account" id="payment_account" data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
+                                    <select class="form-select mb-2 form-select-sm paymentRepeaterAccount payment_account" name="payment_account"  data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
                                         <option></option>
                                         @foreach ($paymentAcc as $acc)
                                             <option value="{{$acc->id}}">{{$acc->name}} ({{$acc->account_number}})</option>
@@ -599,6 +601,11 @@
                                 $('#payment_info .print_change').text(0);
                                 $('#payment_info .print_balance').text(0);
                                 $('input[name="pay_amount"]').val(0);
+                                $('#payment_row_body').html('');
+                                $('#payment_row_body').append(paymentRow);
+                                $('.reservation_id').val('').trigger('change')
+                                $('#paymentForm')[0].reset();
+                                ajaxOnContactChange($(`#${contact_id}`).val());
                             });
                         }
 
@@ -621,7 +628,7 @@
             })
         }
 
-        let datasForSale = (status,onlySale=false,payment=false) => {
+        let datasForSale = (status,onlySale=false,payment=false,folio=false) => {
             let business_location_id = $('select[name="business_location_id"]').val();
             let table_id=$('.table_id').val();
             let contact_id = $("#invoice_side_bar").is(':hidden') ? $('#pos_customer').val() : $('#sb_pos_customer').val();
@@ -636,12 +643,13 @@
             let balance_amount = total_sale_amount;
             let currency_id = null;
             let multiPayment=[];
+            let reservation_id=null;
             if(payment){
-                paid_amount = $('.print_paid').text();
+                paid_amount = isNullOrNan($('.print_paid').text());
                 balance_amount = total_sale_amount - paid_amount;
                 let paymentAmountRepeater=$('#payment_amount_repeater');
                 let paymentAmountFromRep=paymentAmountRepeater.find('input[name="pay_amount"]');
-                let paymentAccountFromRep=document.querySelectorAll('#payment_account');
+                let paymentAccountFromRep=paymentAmountRepeater.find('select[name="payment_account"]');
                 paymentAmountFromRep.each((i,p) => {
                     multiPayment=[...multiPayment,{
                         payment_amount:$(p).val(),
@@ -649,7 +657,9 @@
                     }]
                 });
             }
-            console.log(multiPayment);
+            if(folio){
+                reservation_id=$(`select[name="reservation_id_from_${status}"]`).val();
+            }
 
             let sales ={
                     'saleId':saleId,
@@ -669,6 +679,7 @@
                     'services':services,
                     'sessionId':sessionId,
                     'multiPayment':multiPayment,
+                    'reservation_id':reservation_id,
                 }
             if(onlySale==true){
                 return sales;
@@ -719,7 +730,8 @@
         }
 
         let setReceivableAmount = (amount) => {
-            let price = isNullOrNan(amount)
+            let price = isNullOrNan(amount);
+            receiveAbleAmount=amount;
             $(document).find('.receivable-amount').text(price);
         }
 
@@ -1190,66 +1202,87 @@
                 let totalPriceAndOtherData = {total, discount, paid, balance, change, business_location, customer_name, customer_mobile};
 
                 let dataForSale = datasForSale('delivered',false,true);
-                $.ajax({
-                    url: `/sell/create`,
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: dataForSale,
-                    success: function(results){
-                        if(results.status==200){
-                            let invoice_no = results.data;
-                            $(`#${tableBodyId} tr`).remove();
-                            totalSubtotalAmountCalculate();
-                            totalDisPrice();
-                            $('#payment_info .print_paid').text(0);
-                            $('#payment_info .print_change').text(0);
-                            $('#payment_info .print_balance').text(0);
-                            $('input[name="pay_amount"]').val(0);
 
-                            let data = { invoice_row_data, totalPriceAndOtherData , invoice_no };
-                            $.ajax({
-                                url: '/pos/payment-print-layout',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                data: data,
-                                success: function(response){
-                                    var iframe = $('<iframe>', {
-                                        'height': '0px',
-                                        'width': '0px',
-                                        'frameborder': '0',
-                                        'css': {
-                                            'display': 'none'
-                                        }
-                                    }).appendTo('body')[0];
-                                    // Write the invoice HTML and styles to the iframe document
-                                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                    iframeDoc.open();
-                                    iframeDoc.write(response.html);
-                                    iframeDoc.close();
 
-                                    // Trigger the print dialogre
-                                    iframe.contentWindow.focus();
-                                    setTimeout(() => {
-                                        iframe.contentWindow.print();
-                                    }, 500);
-                                }
-                            })
+
+
+                let total_sale_amount = isNullOrNan($(`#${infoPriceId} .sb-total-amount`).text());
+                let paid_amount = isNullOrNan($('.print_paid').text());
+                let currentReceiveAble=total_sale_amount-paid_amount;
+                let currentReceivieAbleAmt=currentReceiveAble+isNullOrNan(receiveAbleAmount);
+                balance_amount = total_sale_amount - paid_amount;
+                if(creditLimit < currentReceivieAbleAmt && balance_amount != 0){
+                    Swal.fire({
+                        text: "Customer's Credit limit is reached.",
+                        icon: "warning",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary",
                         }
-                    },
-                    error:function(e){
-                        status=e.status;
-                        if(status==405){
-                            warning('Method Not Allow!');
-                        }else if(status==419){
-                            error('Session Expired')
-                        }else{
-                            error(' Something Went Wrong! Error Status: '+status )
-                        };
-                    },
-                })
+                    })
+                }else{
+                    $.ajax({
+                        url: `/sell/create`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: dataForSale,
+                        success: function(results){
+                            if(results.status==200){
+                                let invoice_no = results.data;
+                                $(`#${tableBodyId} tr`).remove();
+                                totalSubtotalAmountCalculate();
+                                totalDisPrice();
+                                $('#payment_info .print_paid').text(0);
+                                $('#payment_info .print_change').text(0);
+                                $('#payment_info .print_balance').text(0);
+                                $('input[name="pay_amount"]').val(0);
+
+                                let data = { invoice_row_data, totalPriceAndOtherData , invoice_no };
+                                $.ajax({
+                                    url: '/pos/payment-print-layout',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    },
+                                    data: data,
+                                    success: function(response){
+                                        var iframe = $('<iframe>', {
+                                            'height': '0px',
+                                            'width': '0px',
+                                            'frameborder': '0',
+                                            'css': {
+                                                'display': 'none'
+                                            }
+                                        }).appendTo('body')[0];
+                                        // Write the invoice HTML and styles to the iframe document
+                                        var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                        iframeDoc.open();
+                                        iframeDoc.write(response.html);
+                                        iframeDoc.close();
+
+                                        // Trigger the print dialogre
+                                        iframe.contentWindow.focus();
+                                        setTimeout(() => {
+                                            iframe.contentWindow.print();
+                                        }, 500);
+                                    }
+                                })
+                            }
+                        },
+                        error:function(e){
+                            status=e.status;
+                            if(status==405){
+                                warning('Method Not Allow!');
+                            }else if(status==419){
+                                error('Session Expired')
+                            }else{
+                                error(' Something Went Wrong! Error Status: '+status )
+                            };
+                        },
+                    })
+                }
             }
         })
 
@@ -1257,7 +1290,7 @@
         // Form Repeater payment amount add
         $(document).on('click', '.add-payment-row', function(){
             $('#payment_row_body').append(paymentRow);
-            $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
+            $('.paymentRepeaterAccount').select2();
         })
 
         // Form Repeater payment amount remove
@@ -1315,7 +1348,21 @@
         $(document).on('click', '.sale_credit', function() {
             if(checkContact()){
                 let dataForSale = datasForSale('delivered');
-                ajaxToStorePosData(dataForSale);
+                let total_sale_amount = isNullOrNan($(`#${infoPriceId} .sb-total-amount`).text());
+                let currentReceivieAbleAmt=total_sale_amount+isNullOrNan(receiveAbleAmount);
+                if(creditLimit < currentReceivieAbleAmt){
+                    Swal.fire({
+                        text: "Customer's Credit limit is reached.",
+                        icon: "warning",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary",
+                        }
+                    })
+                }else{
+                    ajaxToStorePosData(dataForSale);
+                }
             }
         })
         $(document).on('change','#services',function(){
@@ -1342,7 +1389,7 @@
             }
 
             if(checkContact()){
-                let dataForSale = datasForSale('order');
+                let dataForSale = datasForSale('order',false,false,true);
                 if(datasForSale('order').sale_details.length>0){
                     ajaxToStorePosData(dataForSale);
                     $('.tableSelect').removeClass('d-none');
@@ -1524,8 +1571,26 @@
         // Sale With Payment
         $(document).on('click', '.payment_save_btn', function() {
             if(checkContact()){
-                let dataForSale = datasForSale('delivered',false,true);
-                ajaxToStorePosData(dataForSale);
+                let dataForSale = datasForSale('delivered',false,true,true);
+
+                let total_sale_amount = isNullOrNan($(`#${infoPriceId} .sb-total-amount`).text());
+                let paid_amount = isNullOrNan($('.print_paid').text());
+                let currentReceiveAble=total_sale_amount-paid_amount;
+                let currentReceivieAbleAmt=currentReceiveAble+isNullOrNan(receiveAbleAmount);
+                balance_amount = total_sale_amount - paid_amount;
+                if(creditLimit < currentReceivieAbleAmt && balance_amount != 0){
+                    Swal.fire({
+                        text: "Customer's Credit limit is reached.",
+                        icon: "warning",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary",
+                        }
+                    })
+                }else{
+                    ajaxToStorePosData(dataForSale);
+                }
             }
         })
 
@@ -1655,6 +1720,9 @@
         // ============> CONTACT CHANGE PROCESS
         $(document).on('change', `#${contact_id}`, function() {
             let contact_id = $(this).val();
+            ajaxOnContactChange(contact_id);
+        })
+        let ajaxOnContactChange=(contact_id)=>{
             $.ajax({
                 url: `/pos/pricelist-contact/${contact_id}`,
                 type: 'GET',
@@ -1664,7 +1732,8 @@
                 success: function(results){
                     if(results.status === 200){
 
-                        setReceivableAmount(results.receivable_amount)
+                        setReceivableAmount(results.receivable_amount);
+                        creditLimit=results.credit_limit;
                         if(results.default_price_list){
                             customer_price_list = results.default_price_list.id;
                         }else{
@@ -1677,7 +1746,7 @@
                     console.log(e.responseJSON.error);
                 }
             });
-        })
+        }
         const ajaxToGetPriceList=(locationId)=>{
             $.ajax({
                 url: `/pos/pricelist-location/${locationId}`,

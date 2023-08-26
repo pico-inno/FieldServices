@@ -308,7 +308,7 @@ const totalCountDiscount = (pricelist, product_vari_id, quantity) => {
     // end တဖြတ်
     if(base_price_arr[0] == 0){
         let product = productsOnSelectData.find( item => item.variation_id == product_vari_id);
-        price = product.stock[0].ref_uom_price;
+        price = product.stock[0]?ref_uom_price.roduct.stock[0]:0;
     }
 
     for (const element of base_price_arr) {
@@ -327,7 +327,7 @@ const totalCountDiscount = (pricelist, product_vari_id, quantity) => {
             let type = filterProduct[0].cal_type;
             if ((filterProduct.length != 0 && filterProduct[0].base_price == 0) || type == 'fixed') {
                 let product = productsOnSelectData.find( item => item.variation_id == product_vari_id);
-                price = product.stock[0].ref_uom_price;
+                price = product.stock[0]?product.stock[0].ref_uom_price:'';
                 break;
             }
         }

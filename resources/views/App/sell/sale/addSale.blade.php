@@ -38,17 +38,23 @@
     <div class="container-xl" id="sale_container">
         <form action={{route('crate_sale')}} method="POST" id="sale_form">
             @csrf
-            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-5 mb-5" >
-                <div class="col-12 my-2 input-group flex-nowrap">
-                    <div class="input-group-text"><i class="fa-solid fa-location-dot"></i></div>
-                    <select name="business_location_id" id="business_location_id" class="form-select rounded-0" data-kt-select2="true"  data-placeholder="Select locations">
-                        @foreach ($locations as $l)
-                            <option value="{{$l->id}}">{{$l->name}}</option>
-                        @endforeach
-                    </select>
-                    <button type="button" class="input-group-text "  data-bs-toggle="tooltip" data-bs-custom-class="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-primary-emphasis'>Business location from where you went to sell </span>">
-                        <i class="fa-solid fa-circle-info text-primary"></i>
-                    </button>
+            <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-5 mb-5 " >
+                <div class="col-12 my-2 fv-row" >
+                    <div class="input-group col-12">
+                        <div class="input-group-text"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="overflow-hidden  flex-grow-1">
+                            <select name="business_location_id" id="business_location_id" class="form-select rounded-0" data-kt-select2="true"  data-placeholder="Select locations">
+                                @foreach ($locations as $l)
+                                    <option value="{{$l->id}}">{{$l->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="button" class="input-group-text " data-bs-toggle="tooltip" data-bs-custom-class="tooltip"
+                            data-bs-placement="top" data-bs-html="true"
+                            title="<span class='text-primary-emphasis'>Business location from where you went to sell </span>">
+                            <i class="fa-solid fa-circle-info text-primary"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="card">
                     <div class="card-body  px-5">
@@ -77,7 +83,7 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
-                                        <select class="form-select form-select-sm  fw-bold rounded-0"  name="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select customer name" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
+                                        <select class="form-select form-select-sm  fw-bold rounded-start-0"  name="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select customer name" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
                                             <option value=""></option>
                                             {{-- <option value="2">Aung Aung</option> --}}
                                             @foreach ($customers as $customer)
@@ -85,11 +91,13 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <button class="input-group-text  add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
+                                    {{-- <button class="input-group-text  add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
-                                    </button>
+                                    </button> --}}
 
                                 </div>
+                                <div class="text-gray-600 ms-2 fw-semibold mt-3">Credit Limit : <span class="credit_limit_txt">0</span></div>
+                                <input type="hidden" name="" id="credit_limit" value="0">
                                 @error('contact_id')
                                     <div class="p-2 text-danger">* {{$message}}</div>
                                 @enderror
@@ -281,12 +289,18 @@
                         </div>
 
                         <div class="row justify-content-end">
-                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
+                            <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-cente fv-row">
                                 <span class="min-w-200px pe-2" for="">
                                     Balance Amount:(=)Ks
                                 </span>
-                                <input type="text" name="balance_amount" class="form-control form-control-sm input_number max-w-100px balance_amount_input" id="total_balance_amount" value="">
-                            </div>
+                                <div class="w-100">
+                                    <input type="text" name="balance_amount"
+                                        class="form-control form-control-sm input_number max-w-100px balance_amount_input" id="total_balance_amount"
+                                        value="">
+                                    <div class="text-danger ps-2 d-none" id="credit_limit_message" for="">
+                                        Reached credit limit.
+                                    </div>
+                                </div>
                         </div>
 
                     </div>
@@ -305,38 +319,19 @@
 <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
 @include('App.purchase.contactAdd')
 @include('App.purchase.newProductAdd')
-@include('App.sell.sale.subscribeModel')
 @endsection
 
 @push('scripts')
 
-    <script>
-
-        $('#subscribe').change(function() {
-            // If the checkbox is checked, show the modal box
-            if ($(this).is(':checked')) {
-                $('#subscribe_models').modal('show');
-            } else {
-                // If the checkbox is unchecked, hide the modal box
-                $('#subscribe_models').modal('hide');
-            }
-            });
-
-        var quill = new Quill('#kt_docs_quill_basic', {
-            modules: {
-                toolbar: [
-                    [{
-                        header: [1, 2, false]
-                    }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            },
-            placeholder: 'Type your text here...',
-            theme: 'snow' // or 'bubble'
-        });
-    </script>
 <script>
+    let contacts=@json($customers ?? []);
+    var credit_limit=0;
+    $(document).on('change','[name="contact_id"]',function(){
+        let contact_id=contacts.find(c=>c.id==$(this).val());
+        credit_limit=parseFloat(contact_id.credit_limit ?? 0) ;
+        $('.credit_limit_txt').text(credit_limit.toFixed(2));
+        $('credit_limit').val(credit_limit);
+    })
     $("#kt_datepicker_1").flatpickr({
         dateFormat: "d-m-Y",
     });
@@ -346,112 +341,9 @@
     $("#kt_datepicker_3").flatpickr({
         dateFormat: "d-m-Y",
     });
-    // $("#kt_datepicker_2").flatpickr({
-    //     dateFormat: "d-m-Y",
-    // });
-    // $("#kt_datepicker_3").flatpickr({
-    //     dateFormat: "d-m-Y",
-    // });
-    // Init select2
-    // $('[data-kt-repeater="select2"]').select2();
-
-    // // Init flatpickr
-    // $('[data-kt-repeater="datepicker"]').flatpickr();
 
 
-var inputElm = document.querySelector('#kt_tagify_users');
 
-const usersList = [
-    { value: 1, name: 'Emma Smith', avatar: 'avatars/300-6.jpg', email: 'e.smith@kpmg.com.au' },
-    { value: 2, name: 'Max Smith', avatar: 'avatars/300-1.jpg', email: 'max@kt.com' },
-    { value: 3, name: 'Sean Bean', avatar: 'avatars/300-5.jpg', email: 'sean@dellito.com' },
-    { value: 4, name: 'Brian Cox', avatar: 'avatars/300-25.jpg', email: 'brian@exchange.com' },
-    { value: 5, name: 'Francis Mitcham', avatar: 'avatars/300-9.jpg', email: 'f.mitcham@kpmg.com.au' },
-    { value: 6, name: 'Dan Wilson', avatar: 'avatars/300-23.jpg', email: 'dam@consilting.com' },
-    { value: 7, name: 'Ana Crown', avatar: 'avatars/300-12.jpg', email: 'ana.cf@limtel.com' },
-    { value: 8, name: 'John Miller', avatar: 'avatars/300-13.jpg', email: 'miller@mapple.com' }
-];
-
-            function tagTemplate(tagData) {
-                return `
-                    <tag title="${(tagData.title || tagData.email)}"
-                            contenteditable='false'
-                            spellcheck='false'
-                            tabIndex="-1"
-                            class="${this.settings.classNames.tag} ${tagData.class ? tagData.class : ""}"
-                            ${this.getAttributes(tagData)}>
-                        <x title='' class='tagify__tag__removeBtn' role='button' aria-label='remove tag'></x>
-                        <div class="d-flex align-items-center">
-                            <span class='tagify__tag-text'>${tagData.name}</span>
-                        </div>
-                    </tag>
-                `
-            }
-
-        function suggestionItemTemplate(tagData) {
-            return `
-                <div ${this.getAttributes(tagData)}
-                    class='tagify__dropdown__item d-flex align-items-center ${tagData.class ? tagData.class : ""}'
-                    tabindex="0"
-                    role="option">
-                    <div class="d-flex flex-column">
-                        <strong>${tagData.name}</strong>
-                    </div>
-                </div>
-            `
-        }
-
-    // initialize Tagify on the above input node reference
-    var tagify = new Tagify(inputElm, {
-        tagTextProp: 'name', // very important since a custom template is used with this property as text. allows typing a "value" or a "name" to match input with whitelist
-        enforceWhitelist: true,
-        skipInvalid: true, // do not remporarily add invalid tags
-        dropdown: {
-            closeOnSelect: false,
-            enabled: 0,
-            classname: 'users-list',
-            searchKeys: ['name', 'email']  // very important to set by which keys to search for suggesttions when typing
-        },
-        templates: {
-            tag: tagTemplate,
-            dropdownItem: suggestionItemTemplate
-        },
-        whitelist: usersList
-    })
-
-    tagify.on('dropdown:show dropdown:updated', onDropdownShow)
-    tagify.on('dropdown:select', onSelectSuggestion)
-
-    var addAllSuggestionsElm;
-
-    function onDropdownShow(e) {
-        var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
-
-        if (tagify.suggestedListItems.length > 1) {
-            addAllSuggestionsElm = getAddAllSuggestionsElm();
-
-            // insert "addAllSuggestionsElm" as the first element in the suggestions list
-            dropdownContentElm.insertBefore(addAllSuggestionsElm, dropdownContentElm.firstChild)
-        }
-    }
-
-    function onSelectSuggestion(e) {
-        if (e.detail.elm == addAllSuggestionsElm)
-            tagify.dropdown.selectAll.call(tagify);
-    }
-
-    // create a "add all" custom suggestion element every time the dropdown changes
-    function getAddAllSuggestionsElm() {
-        // suggestions items should be based on "dropdownItem" template
-        return tagify.parseTemplate('dropdownItem', [{
-            class: "addAll",
-            name: "Add all",
-            email: tagify.settings.whitelist.reduce(function (remainingSuggestions, item) {
-                return tagify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
-            }, 0) + " Members"
-        }]
-        )
-    }
     $(document).on('click', '.productQuickAdd', function(){
         $url=$(this).data('href');
 

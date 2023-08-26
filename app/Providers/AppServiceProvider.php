@@ -32,11 +32,14 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         view()->composer('*', function($view) {
-            if (Auth::check()) {
-                $user = Auth::user();
-                app()->setLocale($user->language ?? 'en');
+            try {
+                if (Auth::check()) {
+                    $user = Auth::user();
+                    app()->setLocale($user->language ?? 'en');
+                }
+            } catch (\Throwable $th) {
             }
         });
-        
+
     }
 }

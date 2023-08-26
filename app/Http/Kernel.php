@@ -2,11 +2,14 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\activateBusinessCheckMiddleware;
 use App\Http\Middleware\CreatePermission;
 use App\Http\Middleware\DeletePermission;
 use App\Http\Middleware\UpdatePermission;
 use App\Http\Middleware\ViewPermission;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use App\Http\Middleware\businessActivate;
+use App\Http\Middleware\install;
 
 class Kernel extends HttpKernel
 {
@@ -72,6 +75,9 @@ class Kernel extends HttpKernel
         'canCreate' => \App\Http\Middleware\CreatePermission::class,
         'canUpdate' => \App\Http\Middleware\UpdatePermission::class,
         'canDelete' => \App\Http\Middleware\DeletePermission::class,
+        'businessActivate' => businessActivate::class,
+        'activateBusinessCheckMiddleware' => activateBusinessCheckMiddleware::class,
+        'install' => install::class,
 
     ];
 }

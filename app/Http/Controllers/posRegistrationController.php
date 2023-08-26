@@ -63,6 +63,9 @@ class posRegistrationController extends Controller
         })
 
         ->editColumn('printer',function($posRegister){
+            if($posRegister->printer_id == 0){
+                return  'Browser Base Printing' ;
+            }
             return $posRegister->printer->name ?? '';
         });
         if (getSettingsValue('use_paymentAccount')){
@@ -88,7 +91,7 @@ class posRegistrationController extends Controller
     public function create() {
         $employee=BusinessUser::where('is_active',1)->get();
         $paymentAccounts=paymentAccounts::get();
-        $printers=printers::get();
+        $printers=printers::all();
         return view('App.restaurants.pos.create',compact('employee','paymentAccounts','printers'));
     }
     public function store(Request $request){

@@ -241,11 +241,14 @@
                             <th class="min-w-100px text-center">Actions</th>
                             <th class="text-start min-w-100px">saleItem</th>
                             <th class="min-w-100px">Sale Voucher No</th>
+                            @if ($saleType == 'posSales')
+                                <th class="min-w-100px">Table No</th>
+                            @endif
                             <th class="min-w-100px">Customer</th>
-                            <th class="min-w-100px">Date</th>
                             <th class="min-w-100px text-end">Sale Amount</th>
                             <th class="min-w-100px">location</th>
                             <th class="min-w-100px">status</th>
+                            <th class="min-w-100px">Date</th>
                         </tr>
                         <!--end::Table row-->
                     </thead>
@@ -382,6 +385,9 @@
 @endsection
 
 @push('scripts')
+        <script>
+            var saleType=@json($saleType ?? '')
+        </script>
         <script src="{{asset('customJs/sell/saleItemTable.js')}}"></script>
         <script src="{{asset('customJs/sell/payment/payment.js')}}"></script>
 		<script src={{asset('customJs/print/print.js')}}></script>

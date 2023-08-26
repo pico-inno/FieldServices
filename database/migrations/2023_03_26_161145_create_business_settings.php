@@ -21,6 +21,10 @@ return new class extends Migration
             $table->boolean('use_paymentAccount')->nullable()->default(true);
             $table->date('start_date')->nullable(true);
             $table->double('default_profit_percent', 5, 2)->default(0.00)->nullable(true);
+            $table->enum('finanical_year_start_month', [
+                "january", "february", "march", "april", "may", "june",
+                "july", "august", "september", "october", "november", "december"
+            ])->nullable(true);
             $table->unsignedBigInteger('owner_id')->nullable(true);
             $table->string('time_zone', 191)->default('Asia/Kolkata')->nullable(true);
             $table->tinyInteger('fy_start_month')->default(1)->nullable(true);

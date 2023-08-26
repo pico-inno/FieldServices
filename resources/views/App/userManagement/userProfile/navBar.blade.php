@@ -17,7 +17,7 @@
                         <!--begin: Pic-->
                         <div class="me-7 mb-4">
                             <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                                <img src="{{$current_user->personal_info->profile_photo === null ? asset('assets/media/svg/avatars/blank.svg') : $current_user->personal_info->profile_photo }}" alt="image" />
+                                <img src="{{$current_user->personal_info->profile_photo === null ? asset('assets/media/svg/avatars/blank.svg') : asset($current_user->personal_info->profile_photo) }}" alt="image" />
                                 <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-body h-20px w-20px"></div>
                             </div>
                         </div>

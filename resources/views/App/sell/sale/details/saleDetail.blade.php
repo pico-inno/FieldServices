@@ -24,12 +24,15 @@
                     <div class="row mb-10">
                         <div class="col-sm-4">
                             <h3 class="text-primary-emphasis fs-4">
-                                Supplier:
+                                Customer:
                             </h3>
                             @if ($sale['customer'])
-                                <address class="mt-3 fs-5">
+                                <address class="mt-3 fs-5 fw-semibold">
+                                    @if ($sale['pos_register_id'])
+                                        <div class="fw-semibold fs-5 d-inline-block">Table No : <span class="ms-1 mb-1 fs-7 badge badge-primary">{{$sale['table']? $sale['table']['table_no'] : ''}}</span></div><br>
+                                    @endif
                                     {{$sale['customer']['first_name']}} <br>
-                                    Mobile:{{$sale['customer']['mobile']}}
+                                    Mobile:{{$sale['customer']['mobile']}}<br>
                                 </address>
                             @endif
                         </div>

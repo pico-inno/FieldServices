@@ -458,7 +458,8 @@
                 <!--begin::Container-->
                 <div class="flex-row-fluid  ms-2 ">
                     <!--begin::Card-->
-                    <form action="{{route('business_settings_create')}}" method="GET">
+                    <form action="{{route('business_settings_update')}}" method="POST" enctype="multipart/form-data">
+                        @csrf
                         <div class="card " style="min-height: 100vh;">
                             <!--begin::Card body-->
                             <div class="card-body py-8 px-4 px-sm-7 px-md-10">
@@ -492,7 +493,7 @@
                                                         <span class="required">{{__('business_settings.owner_name')}}</span>
                                                     </label>
                                                     <!--end::Label-->
-                                                    <input type="text" class="form-control form-control form-control form-control-sm" name="owner_id" id="owner" value="" />
+                                                    <input type="text" class="form-control form-control form-control form-control-sm" name="owner_id" id="owner" value="{{$settingData->owner? $settingData->owner->username :''}}" />
                                                 </div>
                                                 <div class="col-md-12  mb-7 col-lg-4">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="kt_datepicker_1">
@@ -505,23 +506,16 @@
                                                         <input class="form-control form-control form-control form-control-sm" name="start_date" placeholder="Pick a date"  id="kt_datepicker_1" value="{{date('d-m-Y')}}" />
                                                     </div>
                                                 </div>
-                                                {{-- <div class="col-md-12 mb-7 col-lg-4">
+                                                <div class="col-md-12 mb-7 col-lg-4">
                                                     <div class="form-check form-check-custom">
-                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="lot_control" id="lot_control" @checked($settingData['lot_control']=='on') disabled readonly>
+                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="lot_control" id="lot_control" @checked($settingData['lot_control']=='on') >
                                                         <label class="fs-6 fw-semibold form-label mt-3" for="lot_control">
                                                             <span >{{__('business_settings.lot_control')}}</span>
                                                         </label>
                                                     </div>
-                                                </div> --}}
-
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <div class="form-check form-check-custom">
-                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="use_paymentAccount" id="use_payment_account" @checked($settingData['use_paymentAccount']==1)  >
-                                                        <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_payment_account">
-                                                            <span >{{__('business_settings.use_payment_account')}}</span>
-                                                        </label>
-                                                    </div>
                                                 </div>
+
+
                                                 <div class="col-md-12  mb-7 col-lg-4">
                                                      <label class="fs-6 fw-semibold form-label mt-3" for="kt_datepicker_1">
                                                         <span class="required">{{__('business_settings.start_date')}}</span>
@@ -600,7 +594,6 @@
                                                         <div class="overflow-hidden flex-grow-1">
                                                             <select class="form-select rounded-start-0 form-select-sm" id="timezone" name="timezone" data-control="select2" data-placeholder="Select timezone">
                                                                 <option value="1">Asia/Yangon</option>
-                                                                <option value="2">Option 2</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -614,7 +607,7 @@
                                                         <span class="required">{{__('business_settings.upload_logo')}}</span>
                                                     </label>
                                                     <div class="input-group browseLogo input-group-sm">
-                                                        <input type="file" class="form-control form-control form-control form-control-sm" id="update_logo" name="update_logo">
+                                                        <input type="file" class="form-control form-control form-control form-control-sm" id="update_logo" name="logo" value="">
                                                         <button type="button" class="btn btn-sm btn-danger d-none" id="removeFileBtn"><i class="fa-solid fa-trash"></i></button>
                                                         <label class="input-group-text btn btn-primary rounded-end" for="update_logo">
                                                             {{__('business_settings.browses')}}
@@ -624,7 +617,7 @@
                                                 </div>
                                                 <div class="col-md-12  mb-7 col-lg-4">
                                                     <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="finanical_year_start_month">
+                                                    <label class="fs-6 fw-semibold form-label mt-3 required" for="finanical_year_start_month">
                                                         <span class="required">{{__('business_settings.financial_year_start_month')}}</span>
                                                         <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Starting month of the finanical year for your business."></i>
                                                     </label>
@@ -636,8 +629,18 @@
                                                         <div class="overflow-hidden flex-grow-1">
                                                             <select name="finanical_year_start_month" class="form-select rounded-start-0 form-select-sm" id="finanical_year_start_month" data-control="select2" data-placeholder="Select month">
                                                                 <option></option>
-                                                                <option value="1">Option 1</option>
-                                                                <option value="2">Option 2</option>
+                                                                <option value="january" @selected($settingData['finanical_year_start_month']==='january' )>January</option>
+                                                                <option value="february" @selected($settingData['finanical_year_start_month']==='february' )>February</option>
+                                                                <option value="march" @selected($settingData['finanical_year_start_month']==='march' )>March</option>
+                                                                <option value="april" @selected($settingData['finanical_year_start_month']==='april' )>April</option>
+                                                                <option value="may" @selected($settingData['finanical_year_start_month']==='may' )>May</option>
+                                                                <option value="june" @selected($settingData['finanical_year_start_month']==='june' )>June</option>
+                                                                <option value="july" @selected($settingData['finanical_year_start_month']==='july' )>July</option>
+                                                                <option value="august" @selected($settingData['finanical_year_start_month']==='august' )>August</option>
+                                                                <option value="september" @selected($settingData['finanical_year_start_month']==='september' )>September</option>
+                                                                <option value="october" @selected($settingData['finanical_year_start_month']==='october' )>October</option>
+                                                                <option value="november" @selected($settingData['finanical_year_start_month']==='november' )>November</option>
+                                                                <option value="december" @selected($settingData['finanical_year_start_month']==='december' )>December</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -1675,9 +1678,17 @@
                                      {{-- payment-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_payment" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.payment')}}</h2>
+                                         <div class="row mb-7">
+                                            <div class="col-12 p-3">
+                                                <h2>{{__('business_settings.payment')}}</h2>
+                                            </div>
+                                        </div>
+                                            <div class="col-md-12 mb-7 col-lg-4">
+                                                <div class="form-check form-check-custom">
+                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="use_paymentAccount" id="use_payment_account" @checked($settingData['use_paymentAccount']==1)  >
+                                                    <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_payment_account">
+                                                        <span >{{__('business_settings.use_payment_account')}}</span>
+                                                    </label>
                                                 </div>
                                             </div>
                                             <div class="row fv-row row-cols flex-wrap">
@@ -2055,12 +2066,13 @@
                                                         <span class="">{{__('business_settings.sms_service')}}</span>
                                                     </label>
                                                     <select name="sms_service" data-hide-search="true" id="sms_service"  class="form-select" data-control="select2" data-placeholder="">
+                                                        <option value="smsPOH" selected>SMS POH</option>
                                                         <option value="nexmo">Nexmo</option>
                                                         <option value="twilio" >Twilio</option>
-                                                        <option value="other" selected >other</option>
+                                                        <option value="other"  >other</option>
                                                     </select>
                                                 </div>
-                                                <div id="other-tab">
+                                                <div id="other-tab" class=" d-none">
                                                     <div class="row fv-row row-cols flex-wrap">
                                                         <div class="col-md-12 mb-7 col-lg-4">
                                                             <!--begin::Label-->
@@ -2352,6 +2364,38 @@
                                                             </div>
                                                         </form> --}}
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div id="smsPOH-tab" >
+
+                                                        <div class="row fv-row row-cols flex-wrap">
+                                                            <div class="col-md-12 mb-7 col-lg-12">
+                                                                <!--begin::Label-->
+                                                                <label class="fs-6 fw-semibold form-label mt-3" for="auth_token">
+                                                                    <span class="">SMS Poh Auth Key:</span>
+                                                                </label>
+                                                                <!--end::Label-->
+                                                                <input type="text" class="form-control form-control" id="sms_poh_auth_key" name="SMSPOH_AUTH_TOKEN" value=""
+                                                                    placeholder="Auth key" />
+                                                            </div>
+                                                            <div class="col-md-12  mb-7 col-lg-12">
+                                                                <!--begin::Label-->
+                                                                <label class="fs-6 fw-semibold form-label mt-3" for="smsPohSender">
+                                                                    <span class="">Sender:</span>
+                                                                </label>
+                                                                <!--end::Label-->
+                                                                <input type="text" class="form-control form-control" name="SMSPOH_SENDER" id="smsPohSender" value=""
+                                                                    placeholder="Nexmo Secret:" />
+                                                            </div>
+                                                        {{-- <div class="col-md-12 mb-7 col-lg-4">
+                                                            <!--begin::Label-->
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="nexmo_from">
+                                                                <span class="">{{__('business_settings.from')}}:</span>
+                                                            </label>
+                                                            <!--end::Label-->
+                                                            <input type="text" class="form-control form-control" name="nexmo_from" id="nexmo_from" value=""
+                                                                placeholder="from" />
+                                                        </div> --}}
                                                     </div>
                                                 </div>
                                                 <div id="nexmo-tab" class=" d-none">

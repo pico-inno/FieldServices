@@ -344,8 +344,8 @@
                                     <div class="row  px-3 py-2 ">
                                         <div class="col-7">
                                             <div class="d-flex  flex-equal gap-5  justify-content-around px-0 mb-5" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
-                                                    <div class="row mb-3">
-                                                        <label class="for_disable_btn mb-3 btn  btn-sm bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+                                                    <div class="row mb-3 g-1">
+                                                        <label class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 hover-elevate-up w-100 px-4" data-kt-button="true">
                                                             <!--begin::Input-->
                                                             <input class="btn-check" type="radio" name="method" value="0" />
                                                             <!--end::Input-->
@@ -356,34 +356,35 @@
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
                                                         @if ($posRegister->use_for_res=='1')
-                                                            <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn  btn-sm  {{$sale->status=='order'?'bg-primary' : 'bg-light'}} rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
+                                                            <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
                                                                 <input class="btn-check" type="radio" name="method" value="1" />
-                                                                <button class="btn btn-sm   {{$sale->status=='order'?'text-white' : 'text-dark'}} fw-bold  rounded-0">
-                                                                    {{$sale->status!='order'?'update to' : ''}}    Order
-                                                                </button>
+                                                                <span class="  text-dark fw-bold  rounded-0">Order</span>
                                                             </label>
                                                         @else
-                                                            <label class="for_disable_btn mb-3 btn  btn-sm  bg-light btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
+                                                            <label class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
                                                                 <input class="btn-check" type="radio" name="method" value="1" />
-                                                                <button class="btn btn-sm  text-dark fw-bold  rounded-0">Order</button>
+                                                                <span class=" text-dark fw-bold  rounded-0">Order</span>
                                                             </label>
                                                         @endif
 
                                                         <!--end::Radio-->
                                                     </div>
-                                                    <div class="row mb-3">
+                                                    <div class="row mb-3 g-1">
                                                         <!--begin::Radio-->
-                                                        <label class="for_disable_btn mb-3 btn  btn-sm  {{$sale->status=='draft'?'bg-primary' : 'bg-light'}} btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 " data-kt-button="true">
-                                                            <!--begin::Input-->
+                                                        <label class="for_disable_btn mb-3 btn  btn-sm  {{$sale->status=='draft'?'bg-primary' : 'bg-light'}} btn-color-gray-900  border border-1 border-gray-600  hover-elevate-up w-100 px-4 " data-kt-button="true">
                                                             <input class="btn-check" type="radio" name="method" value="3" />
-                                                            <!--end::Input-->
-                                                            <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block sale_draft  {{$sale->status=='draft'?'text-white' : 'text-dark'}}">Draft</span>
-                                                            <!--end::Title-->
+                                                            <span class="fs-7 text-dark fw-bold d-block sale_draft">Draft</span>
                                                         </label>
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
-                                                        {{-- <label class="for_disable_btn mb-3 btn  btn-sm {{$sale->status=='card'?'bg-primary' : 'bg-light'}} btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4" data-kt-button="true">
+                                                        <label  data-bs-toggle="modal"  class="for_disable_btn mb-3 btn  btn-sm  rounded rounded-1 btn-color-gray-900  border border-1 border-gray-600 hover-elevate-up w-100 px-4 split_order_modal_btn" data-bs-target="#splitOrderModal" data-kt-button="true">
+                                                            <input class="btn-check" type="radio" name="method" value="1" />
+                                                            <span class="fs-7 text-dark fw-bold d-block">Split Voucher</button>
+                                                        </label>
+
+                                                        {{-- <label
+                                                            class="for_disable_btn mb-3 btn  btn-sm {{$sale->status=='card'?'bg-primary' : 'bg-light'}} btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4"
+                                                            data-kt-button="true">
                                                             <!--begin::Input-->
                                                             <input class="btn-check " type="radio" name="method" value="4" />
                                                             <!--end::Input-->
@@ -391,13 +392,6 @@
                                                             <span class="fs-7 fw-bold d-block  {{$sale->status=='card'?'text-white' : 'text-dark'}}">card</span>
                                                             <!--end::Title-->
                                                         </label> --}}
-
-                                                        <label  data-bs-toggle="modal" data-bs-target="#splitOrderModal" class="for_disable_btn mb-3 btn  btn-sm   rounded rounded-1 btn-color-gray-900  border border-3 border-gray-100 hover-elevate-up w-100 px-4 split_order_modal_btn" data-kt-button="true">
-                                                            <input class="btn-check" type="radio" name="method" value="1" />
-                                                            <button class="btn btn-sm   fw-bold  rounded-0">
-                                                                 Split Voucher
-                                                            </button>
-                                                        </label>
                                                     </div>
                                             </div>
 

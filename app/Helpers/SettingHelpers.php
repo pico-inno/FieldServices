@@ -21,12 +21,12 @@ class SettingHelpers
         return static::$SettingHelpers;
     }
     public function getSettingsValue($selector='*'){
-        if($this->settings){
-            return $this->settings;
-        }else{
+        // if($this->settings){
+        //     return $this->settings;
+        // }else{
             $this->settings=businessSettings::select($selector)->first();
             return $this->settings;
-        }
+        // }
     }
 
 }

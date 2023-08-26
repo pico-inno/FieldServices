@@ -1,5 +1,7 @@
 {
     "ResOrderController": true,
     "Restaurant": true,
-    "OrderDisplay": true
+    "OrderDisplay": true,
+    "Reservation": true,
+    "RoomManagement": true
 }

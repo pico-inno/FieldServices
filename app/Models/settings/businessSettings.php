@@ -2,6 +2,7 @@
 
 namespace App\Models\settings;
 
+use App\Models\BusinessUser;
 use App\Models\Currencies;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,7 @@ class businessSettings extends Model
         'currency_decimal_places',
         'quantity_decimal_places',
         'currency_symbol_placement',
+        'finanical_year_start_month',
         'owner_id',
         'time_zone',
         'fy_start_month',
@@ -87,5 +89,9 @@ class businessSettings extends Model
 
     public function currency(){
         return $this->hasOne(Currencies::class,'id','currency_id');
+    }
+    public function owner()
+    {
+        return $this->hasOne(BusinessUser::class, 'id', 'owner_id');
     }
 }

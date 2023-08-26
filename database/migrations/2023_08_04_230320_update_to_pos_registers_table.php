@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pos_registers', function (Blueprint $table) {
-            $table->dropColumn('use_for_res',[0,1]);
+            $table->dropColumn('use_for_res');
         });
     }
 };

@@ -14,9 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\openingStocks\Import;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SMSController;
 use App\Http\Controllers\TestController;
 use App\Models\Product\PriceListDetails;
 use App\Http\Controllers\tableController;
+use App\Http\Middleware\businessActivate;
 use App\Models\settings\businessSettings;
 use App\Models\purchases\purchase_details;
 use App\Http\Controllers\expenseController;
@@ -32,16 +34,16 @@ use App\Http\Controllers\Product\UoMController;
 use App\Http\Controllers\exchangeRateController;
 use App\Http\Controllers\openingStockController;
 use App\Http\Controllers\orderDisplayController;
-use App\Http\Controllers\Product\UnitController;
-use App\Http\Controllers\stockHistoryController;
 // use App\Http\Controllers\ContactController\CustomerGroupController;
 // use App\Http\Controllers\ContactController\ImportContactsController;
+use App\Http\Controllers\Product\UnitController;
+use App\Http\Controllers\stockHistoryController;
 use App\Http\Controllers\expenseReportController;
 use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
+//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Stock\StockInController;
-//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\settings\FloorController;
 use App\Http\Controllers\Stock\StockOutController;
 use App\Http\Controllers\deliveryChannelController;
@@ -52,12 +54,13 @@ use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Service\ServiceController;
 use App\Http\Controllers\Contact\CustomerController;
 use App\Http\Controllers\Contact\SupplierController;
+// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\PriceListController;
-// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Product\VariationController;
 use App\Http\Controllers\purchase\purchaseController;
 use App\Http\Controllers\settings\BuildingController;
+use App\Http\Controllers\businessActivationController;
 use App\Http\Controllers\importOpeningStockController;
 use App\Http\Controllers\Service\ServiceTypeController;
 use App\Http\Controllers\Stock\StockTransferController;
@@ -68,12 +71,13 @@ use App\Http\Controllers\Product\UnitCategoryController;
 use App\Http\Controllers\Service\ServiceSalesController;
 use App\Http\Controllers\Contact\CustomerGroupController;
 use App\Http\Controllers\hospitalFolioInvoicesController;
+// use App\Http\Controllers\Product\UOMSellingPriceController;
 use App\Http\Controllers\hospitalRegistrationsController;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Controllers\Product\ImportProductController;
-// use App\Http\Controllers\Product\UOMSellingPriceController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
+use App\Http\Controllers\configurationController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
@@ -94,6 +98,13 @@ use App\Http\Controllers\userManagement\users\BusinessUserController;
 |
 */
 
+Route::get('/create/business', [businessActivationController::class, 'activationForm'])->name('activationForm')->middleware('businessActivate');
+Route::post('/store/business', [businessActivationController::class, 'store'])->name('businessActivation.store')->middleware('businessActivate');
+Route::get('/install', [configurationController::class, 'envConfigure'])->name('envConfigure')->middleware('install');
+Route::post('/intall/store', [configurationController::class, 'store'])->name('envConfigure.store')->middleware('install');
+Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
+Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
+Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('envConfigure.dataSeed');
 // Route::get('/', function () {
 //     return view('App.dashboard');
 // });
@@ -112,10 +123,10 @@ Route::controller(DashboardController::class)->group(function () {
     Route::get('/home', 'index')->name('home');
 
     //Filter
-    Route::post('/dashboard/current-balance-filter','currentBalanceFilter');
-    Route::post('/dashboard/total-current-qty','totalCurrentBalanceQty');
-    Route::post('/dashboard/total-contacts-widget','totalContact');
-    Route::post('/dashboard/total-sale-purchase-order-widget','totalSaleAndPurchaseOrder');
+    Route::post('/dashboard/current-balance-filter', 'currentBalanceFilter');
+    Route::post('/dashboard/total-current-qty', 'totalCurrentBalanceQty');
+    Route::post('/dashboard/total-contacts-widget', 'totalContact');
+    Route::post('/dashboard/total-sale-purchase-order-widget', 'totalSaleAndPurchaseOrder');
 });
 //End: Dashboard
 
@@ -173,7 +184,7 @@ Route::controller(UserProfileController::class)->group(function () {
 //_Being: Stock Transfer
 Route::resource('stock-transfer', StockTransferController::class);
 Route::post('stock-transfer/filter-list', [StockTransferController::class, 'filterList']);
-Route::get('stock-transfer/{id}/invoice-print',[StockTransferController::class, 'stocktransferInvoicePrint'])->name('stock-transfer.invoice.print');
+Route::get('stock-transfer/{id}/invoice-print', [StockTransferController::class, 'stocktransferInvoicePrint'])->name('stock-transfer.invoice.print');
 Route::resource('stock-transfer', StockTransferController::class)->except('destroy');
 Route::delete('stock-transfer/{id}/delete', [StockTransferController::class, 'softDelete']);
 Route::get('/transfer/tableData', [StockTransferController::class, 'listData']);
@@ -207,24 +218,24 @@ Route::controller(ReportController::class)->group(function () {
     Route::prefix('reports')->group(function () {
         //=================================Being: Inventory Reports ========================
         //Stock in/out summary
-//        Route::get('/stock-report','stock_index')->name('report.stock.index');
-//        Route::post('stock-report/filter-list', 'stockFilter');
+        //        Route::get('/stock-report','stock_index')->name('report.stock.index');
+        //        Route::post('stock-report/filter-list', 'stockFilter');
         //Stock in/out  details
-//        Route::get('/stock-details-report','stock_details_index')->name('report.stock.details.index');
-//        Route::post('stock-details/filter-list', 'stockDetailsFilter');
+        //        Route::get('/stock-details-report','stock_details_index')->name('report.stock.details.index');
+        //        Route::post('stock-details/filter-list', 'stockDetailsFilter');
 
         //Being: Sale
-        Route::get('/sales','saleIndex')->name('report.sale.index');
+        Route::get('/sales', 'saleIndex')->name('report.sale.index');
         Route::post('/sales/filter-list', 'saleFilter');
-        Route::get('/sales-details','saleDetailsIndex')->name('report.sale.details.index');
-        Route::post('/sale-details/filter-list','saleDetailsFilter');
+        Route::get('/sales-details', 'saleDetailsIndex')->name('report.sale.details.index');
+        Route::post('/sale-details/filter-list', 'saleDetailsFilter');
         //End: Sale
 
         //Being: Purchase
-        Route::get('/purchase','purchaseIndex')->name('report.purchase.index');
+        Route::get('/purchase', 'purchaseIndex')->name('report.purchase.index');
         Route::post('/purchase/filter-list', 'purchaseFilter');
-        Route::get('/purchase-details','purchaseDetailsIndex')->name('report.purchase.details.index');
-        Route::post('/purchase-details/filter-list','purchaseDetailsFilter');
+        Route::get('/purchase-details', 'purchaseDetailsIndex')->name('report.purchase.details.index');
+        Route::post('/purchase-details/filter-list', 'purchaseDetailsFilter');
         //End: Purchase
 
         //Being: Qty Alert
@@ -240,21 +251,20 @@ Route::controller(ReportController::class)->group(function () {
 
 
         //Stock transfer summary
-        Route::get('/stock-transfer-report','stock_transfer_index')->name('report.stocktransfer.index');
+        Route::get('/stock-transfer-report', 'stock_transfer_index')->name('report.stocktransfer.index');
         Route::post('/transfer-report/filter-list', 'transferFilter');
         //Stock transfer details
-        Route::get('/transfer-details-report','transfer_details_index')->name('report.transfer.details.index');
-        Route::post('/transfer-details/filter-list','transferDetailsFilter');
+        Route::get('/transfer-details-report', 'transfer_details_index')->name('report.transfer.details.index');
+        Route::post('/transfer-details/filter-list', 'transferDetailsFilter');
 
         //Current Stock Balance
         Route::get('/current-stock-balance', 'currentStockBalanceIndex')->name('report.currentstockbalance.index');
-        Route::post('/current-stock-balance/filter-list','currentStockBalanceFilter');
+        Route::post('/current-stock-balance/filter-list', 'currentStockBalanceFilter');
 
         //=================================End: Inventory Reports ========================
 
 
     });
-
 });
 //============================ End: Reports ===========================================
 
@@ -276,7 +286,8 @@ Route::controller(ReportController::class)->group(function () {
 Route::controller(businessSettingController::class)->group(function () {
     Route::prefix('settings')->group(function () {
         Route::get('/business', 'index')->name('business_settings');
-        Route::get('create/business', 'create')->name('business_settings_create');
+        Route::post('update/business', 'update')->name('business_settings_update');
+        Route::post('create/business', 'create')->name('business_settings_create');
     });
 });
 
@@ -385,9 +396,6 @@ Route::prefix('sell')->group(function () {
 
 
         Route::post('/split/', 'saleSplitForPos')->name('saleSplitForPos');
-
-
-
     });
 });
 
@@ -441,8 +449,8 @@ Route::controller(importOpeningStockController::class)->group(function () {
 //============================ End::Opening Stock ============================================
 Route::prefix('stock-history')->group(function () {
     Route::controller(stockHistoryController::class)->group(function () {
-        Route::get('/list','index')->name('stockHistory_list');
-        Route::get('/get/list/','historyList');
+        Route::get('/list', 'index')->name('stockHistory_list');
+        Route::get('/get/list/', 'historyList');
     });
 });
 
@@ -453,6 +461,31 @@ Route::prefix('stock-history')->group(function () {
 Route::prefix('deliver-channel')->group(function () {
     Route::controller(deliveryChannelController::class)->group(function () {
         Route::get('/list', 'index')->name('deliveryChannel.list');
+        // Route::get('/create', 'create')->name('paymentAcc.create');
+        // Route::post('/store', 'store')->name('paymentAcc.store');
+
+        // Route::get('{id}/edit', 'edit')->name('paymentAcc.edit');
+        // Route::post('{id}/update', 'update')->name('paymentAcc.update');
+
+        // Route::get('{id}/view', 'view')->name('paymentAcc.view');
+        // Route::delete('/destory', 'destory')->name('paymentAcc.destory');
+
+        // Route::get('/get/list/', 'list');
+        // Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
+    });
+});
+Route::prefix('SMS')->group(function () {
+    Route::controller(SMSController::class)->group(function () {
+        // Route::get('/list', 'index')->name('deliveryChannel.list');
+        Route::get('/create', 'create')->name('sms.create');
+        Route::post('/send', 'send')->name('sms.send');
+    });
+});
+
+
+Route::prefix('payment-account')->group(function () {
+    Route::controller(paymentAccountsController::class)->group(function () {
+        Route::get('/list', 'index')->name('paymentAcc.list');
         Route::get('/create', 'create')->name('paymentAcc.create');
         Route::post('/store', 'store')->name('paymentAcc.store');
 
@@ -466,71 +499,52 @@ Route::prefix('deliver-channel')->group(function () {
         Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
     });
 });
-
-
-
-Route::prefix('payment-account')->group(function () {
-    Route::controller(paymentAccountsController::class)->group(function () {
-        Route::get('/list','index')->name('paymentAcc.list');
-        Route::get('/create','create')->name('paymentAcc.create');
-        Route::post('/store','store')->name('paymentAcc.store');
-
-        Route::get('{id}/edit','edit')->name('paymentAcc.edit');
-        Route::post('{id}/update','update')->name('paymentAcc.update');
-
-        Route::get('{id}/view','view')->name('paymentAcc.view');
-        Route::delete('/destory','destory')->name('paymentAcc.destory');
-
-        Route::get('/get/list/','list');
-        Route::get('/get/{currency_id}','getByCurrency')->name('paymetAcc.getByCurrency');
-    });
-});
 Route::prefix('currency')->group(function () {
     Route::controller(currencyController::class)->group(function () {
-        Route::get('/get/{id}/payment-account','paymentAccountByCurrency');
+        Route::get('/get/{id}/payment-account', 'paymentAccountByCurrency');
     });
 });
 
 Route::prefix('payment-transactions')->group(function () {
     Route::controller(paymentsTransactionsController::class)->group(function () {
-        Route::get('{id}/get/list','list')->name('paymentTransaction.list');
+        Route::get('{id}/get/list', 'list')->name('paymentTransaction.list');
 
         // withdrawl
-        Route::get('{id}/withdrawl','withdrawl')->name('paymentTransaction.withdrawl');
-        Route::post('{id}/withdrawl','storeWithdrawl')->name('paymentTransaction.storeWithdrawl');
+        Route::get('{id}/withdrawl', 'withdrawl')->name('paymentTransaction.withdrawl');
+        Route::post('{id}/withdrawl', 'storeWithdrawl')->name('paymentTransaction.storeWithdrawl');
 
-        Route::get('{id}/transfer','transferUi')->name('paymentTransaction.transfer');
-        Route::post('{id}/transfer','makeTransfer')->name('paymentTransaction.makeTransfer');
+        Route::get('{id}/transfer', 'transferUi')->name('paymentTransaction.transfer');
+        Route::post('{id}/transfer', 'makeTransfer')->name('paymentTransaction.makeTransfer');
 
         // deposite
-        Route::get('{id}/deposit','deposit')->name('paymentTransaction.deposit');
-        Route::post('{id}/deposit','depositStore')->name('paymentTransaction.depositStore');
+        Route::get('{id}/deposit', 'deposit')->name('paymentTransaction.deposit');
+        Route::post('{id}/deposit', 'depositStore')->name('paymentTransaction.depositStore');
 
         // crud
-        Route::post('/store','store')->name('paymentTransaction.store');
-        Route::get('{id}/edit','edit')->name('paymentTransaction.edit');
+        Route::post('/store', 'store')->name('paymentTransaction.store');
+        Route::get('{id}/edit', 'edit')->name('paymentTransaction.edit');
 
-        Route::post('{id}/update','update')->name('paymentTransaction.update');
-        Route::get('{id}/view','view')->name('paymentTransaction.view');
-        Route::delete('/destory','destory')->name('paymentTransaction.destory');
+        Route::post('{id}/update', 'update')->name('paymentTransaction.update');
+        Route::get('{id}/view', 'view')->name('paymentTransaction.view');
+        Route::delete('/destory', 'destory')->name('paymentTransaction.destory');
 
 
         // ===================================================== Create & Store =======================================================
         // expense
-        Route::get('/create/{id}/expense/','createForExpense')->name('paymentTransaction.createForExpense');
-        Route::post('/store/{id}/expense/report','storeForExpense')->name('paymentTransaction.storeForExpense');
+        Route::get('/create/{id}/expense/', 'createForExpense')->name('paymentTransaction.createForExpense');
+        Route::post('/store/{id}/expense/report', 'storeForExpense')->name('paymentTransaction.storeForExpense');
         //purchase
-        Route::get('/create/{id}/purchase/','createForPurchase')->name('paymentTransaction.createForPurchase');
-        Route::post('/store/{id}/purchase','storeForPurchase')->name('paymentTransaction.storeForPurchase');
+        Route::get('/create/{id}/purchase/', 'createForPurchase')->name('paymentTransaction.createForPurchase');
+        Route::post('/store/{id}/purchase', 'storeForPurchase')->name('paymentTransaction.storeForPurchase');
         //Sale
-        Route::get('/create/{id}/sale/','createForSale')->name('paymentTransaction.createForSale');
-        Route::post('/store/{id}/sale','storeForSale')->name('paymentTransaction.storeForSale');
+        Route::get('/create/{id}/sale/', 'createForSale')->name('paymentTransaction.createForSale');
+        Route::post('/store/{id}/sale', 'storeForSale')->name('paymentTransaction.storeForSale');
 
 
 
         // ===================================================== View =======================================================
         // expense
-        Route::get('/view/{id}/expense/report','viewForExpense')->name('paymentTransaction.viewForExpense');
+        Route::get('/view/{id}/expense/report', 'viewForExpense')->name('paymentTransaction.viewForExpense');
         // purchase
         Route::get('/view/{id}/purchase', 'viewForPurchase')->name('paymentTransaction.viewForPurchase');
         // sell
@@ -539,41 +553,41 @@ Route::prefix('payment-transactions')->group(function () {
 
         // ===================================================== Edit & Update =======================================================
         //expense
-        Route::get('/edit/{id}/expense/report','editForExpense')->name('paymentTransaction.editForExpense');
-        Route::post('/update/{id}/{transaction_type}/report','updatetTransaction')->name('paymentTransaction.updatetForExpense');
+        Route::get('/edit/{id}/expense/report', 'editForExpense')->name('paymentTransaction.editForExpense');
+        Route::post('/update/{id}/{transaction_type}/report', 'updatetTransaction')->name('paymentTransaction.updatetForExpense');
         //purchase
-        Route::get('/edit/{id}/purchase/','editForPurchase')->name('paymentTransaction.editForPurchase');
-        Route::post('/update/{id}/{transaction_type}/purchase','updatetTransaction')->name('paymentTransaction.updatetForPurchase');
+        Route::get('/edit/{id}/purchase/', 'editForPurchase')->name('paymentTransaction.editForPurchase');
+        Route::post('/update/{id}/{transaction_type}/purchase', 'updatetTransaction')->name('paymentTransaction.updatetForPurchase');
         //sale
-        Route::get('/edit/{id}/sale/','editForSale')->name('paymentTransaction.editForSale');
-        Route::post('/update/{id}/{transaction_type}/sale','updatetTransaction')->name('paymentTransaction.updatetForSale');
+        Route::get('/edit/{id}/sale/', 'editForSale')->name('paymentTransaction.editForSale');
+        Route::post('/update/{id}/{transaction_type}/sale', 'updatetTransaction')->name('paymentTransaction.updatetForSale');
 
         // ===================================================== Remove =======================================================
-        Route::delete('/remove/{id}/expense/report/','removeForExpense')->name('paymentTransaction.removeForExpense');
-        Route::delete('/remove/{id}/sale/','removeForSale')->name('paymentTransaction.removeForSale');
-        Route::delete('/remove/{id}/purchase/','removeForPurchase')->name('paymentTransaction.removeForPurchase');
+        Route::delete('/remove/{id}/expense/report/', 'removeForExpense')->name('paymentTransaction.removeForExpense');
+        Route::delete('/remove/{id}/sale/', 'removeForSale')->name('paymentTransaction.removeForSale');
+        Route::delete('/remove/{id}/purchase/', 'removeForPurchase')->name('paymentTransaction.removeForPurchase');
     });
 });
 
 
 Route::prefix('expense')->group(function () {
     Route::controller(expenseController::class)->group(function () {
-        Route::get('/create/','create')->name('expense.create');
+        Route::get('/create/', 'create')->name('expense.create');
 
-        Route::post('/create/','store')->name('expense.store');
+        Route::post('/create/', 'store')->name('expense.store');
 
-        Route::get('{id}/edit/','edit')->name('expense.edit');
-        Route::post('{id}/update/','update')->name('expense.update');
-        Route::post('/update/report','updateFromReport')->name('expense.updateFromReport');
+        Route::get('{id}/edit/', 'edit')->name('expense.edit');
+        Route::post('{id}/update/', 'update')->name('expense.update');
+        Route::post('/update/report', 'updateFromReport')->name('expense.updateFromReport');
 
-        Route::delete('/destory','destory');
+        Route::delete('/destory', 'destory');
 
-        Route::get('/product/','expenseProduct')->name('expense.product');
+        Route::get('/product/', 'expenseProduct')->name('expense.product');
 
-        Route::get('{id}/view/','view')->name('expense.view');
+        Route::get('{id}/view/', 'view')->name('expense.view');
 
-        Route::get('/list/','index')->name('expense.list');
-        Route::get('/list/data','dataForList')->name('expense.listData');
+        Route::get('/list/', 'index')->name('expense.list');
+        Route::get('/list/data', 'dataForList')->name('expense.listData');
     });
 });
 //============================ End::exchange Rate ============================================
@@ -581,28 +595,26 @@ Route::prefix('expense-report')->group(function () {
     Route::controller(expenseReportController::class)->group(function () {
         // Route::get('/list/','index')->name('expenseReport.list');
 
-        Route::get('/list','index')->name('expenseReport.list');
-        Route::get('/list/data','dataForList')->name('expenseReport.listData');
+        Route::get('/list', 'index')->name('expenseReport.list');
+        Route::get('/list/data', 'dataForList')->name('expenseReport.listData');
 
-        Route::get('/create','create')->name('expenseReport.create');
-        Route::post('/store','store')->name('expenseReport.store');
-
-
-        Route::get('{id}/edit','edit')->name('expenseReport.edit');
-        Route::post('{id}/update','update')->name('expenseReport.update');
-
-        Route::get('{id}/view/','view')->name('expenseReport.view');
-
-        Route::get('{id}/list/expense','expenseData')->name('expenseReport.expenseData');
-
-        Route::delete('/destory','destory');
-
-        Route::delete('{id}/remove/','removeFromReport')->name('expenseReport.removeFromReport');
+        Route::get('/create', 'create')->name('expenseReport.create');
+        Route::post('/store', 'store')->name('expenseReport.store');
 
 
-        Route::post('/paid/all','paidAll')->name('expenseReport.paidAll');
+        Route::get('{id}/edit', 'edit')->name('expenseReport.edit');
+        Route::post('{id}/update', 'update')->name('expenseReport.update');
+
+        Route::get('{id}/view/', 'view')->name('expenseReport.view');
+
+        Route::get('{id}/list/expense', 'expenseData')->name('expenseReport.expenseData');
+
+        Route::delete('/destory', 'destory');
+
+        Route::delete('{id}/remove/', 'removeFromReport')->name('expenseReport.removeFromReport');
 
 
+        Route::post('/paid/all', 'paidAll')->name('expenseReport.paidAll');
     });
 });
 
@@ -620,39 +632,39 @@ Route::prefix('expense-report')->group(function () {
 // });
 
 
-    Route::controller(posRegistrationController::class)->group(function () {
-        // pos
-        Route::get('/pos/register/list','list')->name('posList');
-        Route::get('/pos/register/data','dataForList')->name('posDataForList');
-        Route::get('/pos/register/create','create')->name('posCreate');
-        Route::post('/pos/register/store','store')->name('posStore');
+Route::controller(posRegistrationController::class)->group(function () {
+    // pos
+    Route::get('/pos/register/list', 'list')->name('posList');
+    Route::get('/pos/register/data', 'dataForList')->name('posDataForList');
+    Route::get('/pos/register/create', 'create')->name('posCreate');
+    Route::post('/pos/register/store', 'store')->name('posStore');
 
 
-        Route::get('/pos/register/{id}/edit','edit')->name('posEdit');
-        Route::post('/pos/register/{id}/update','update')->name('posUpdate');
-        Route::delete('/pos/register/destory','destory')->name('posDestory');
+    Route::get('/pos/register/{id}/edit', 'edit')->name('posEdit');
+    Route::post('/pos/register/{id}/update', 'update')->name('posUpdate');
+    Route::delete('/pos/register/destory', 'destory')->name('posDestory');
+});
+Route::controller(printerController::class)->group(function () {
+    // printer
+    Route::get('/printer/list', 'index')->name('printerList');
+    Route::get('/printer/list/data', 'DataForList')->name('DataForList');
+    Route::get('/printer/create', 'create')->name('printerCreate');
+    Route::post('/printer/store', 'store')->name('printerStore');
+
+
+    Route::get('/printer/{id}/edit', 'edit')->name('printerEdit');
+    Route::post('/printer/{id}/update', 'update')->name('printerUpdate');
+    Route::delete('/printer/destory', 'printerDestory')->name('printerDestory');
+});
+Route::prefix('/module')->group(function () {
+    Route::controller(moduleController::class)->group(function () {
+        Route::get('/list', 'index')->name('module.index');
+        Route::post('/upload', 'uploadModule')->name('module.upload');
+        Route::get('/install', 'install')->name('module.install');
+        Route::get('/uninstall', 'uninstall')->name('module.uninstall');
+        Route::delete('/delete', 'delete')->name('module.delete');
     });
-    Route::controller(printerController::class)->group(function () {
-        // printer
-        Route::get('/printer/list','index')->name('printerList');
-        Route::get('/printer/list/data','DataForList')->name('DataForList');
-        Route::get('/printer/create','create')->name('printerCreate');
-        Route::post('/printer/store','store')->name('printerStore');
-
-
-        Route::get('/printer/{id}/edit','edit')->name('printerEdit');
-        Route::post('/printer/{id}/update','update')->name('printerUpdate');
-        Route::delete('/printer/destory','printerDestory')->name('printerDestory');
-    });
-    Route::prefix('/module')->group(function(){
-        Route::controller(moduleController::class)->group(function(){
-            Route::get('/list','index')->name('module.index');
-            Route::post('/upload','uploadModule')->name('module.upload');
-            Route::get('/install','install')->name('module.install');
-            Route::get('/uninstall','uninstall')->name('module.uninstall');
-            Route::delete('/delete','delete')->name('module.delete');
-        });
-    });
+});
 
 
 
@@ -719,7 +731,7 @@ Route::controller(ManufacturerController::class)->group(function () {
 });
 
 // ====>    Unit Category
-Route::controller(UnitCategoryController::class)->group(function() {
+Route::controller(UnitCategoryController::class)->group(function () {
     Route::get('/unit-category/datas', 'unitCategoryDatas')->name('unit-category.data');
     Route::get('/unit-category/uom-datas', 'uomDatas')->name('unit-category.uomDatas');
 
@@ -732,7 +744,7 @@ Route::controller(UnitCategoryController::class)->group(function() {
 });
 
 // ====>    UoM
-Route::controller(UoMController::class)->group(function() {
+Route::controller(UoMController::class)->group(function () {
     Route::get('/uom', 'index')->name('uom');
     Route::get('/uom/add', 'add')->name('uom.add');
     Route::post('/uom/create', 'create')->name('uom.create');
@@ -815,7 +827,7 @@ Route::controller(PriceListDetailController::class)->group(function () {
 });
 
 Route::controller(TestController::class)->group(function () {
-//    Route::get('/home', 'index')->name('home');
+    //    Route::get('/home', 'index')->name('home');
 
     // Print Labels
     Route::get('/printLabel', 'printLabel');
@@ -868,7 +880,7 @@ Route::post('/registration/post/Folio', [saleController::class, 'addToReservatio
 
 //============================ Begin: POS ==============================================
 
-Route::controller(POSController::class)->group(function() {
+Route::controller(POSController::class)->group(function () {
     // contact
     Route::get('/pos/contacts', 'contactGet')->name('pos.contact.get');
     Route::get('/pos/contact/add', 'contactAdd')->name('pos.contact.add');
@@ -895,11 +907,11 @@ Route::controller(POSController::class)->group(function() {
 
 Route::prefix('pos')->group(function () {
     Route::controller(posSessionController::class)->group(function () {
-        Route::get('/select/','selectPos')->name('pos.selectPos');
-        Route::get('{id}/session/check','sessionCheck')->name('pos.sessionCheck');
-        Route::get('{id}/session/create','sessionCreate')->name('pos.sessionCreate');
-        Route::post('{id}/session/store','sessionStore')->name('pos.sessionStore');
-        Route::post('{id}/session/destory','sessionDestory')->name('pos.sessionDestory');
+        Route::get('/select/', 'selectPos')->name('pos.selectPos');
+        Route::get('{id}/session/check', 'sessionCheck')->name('pos.sessionCheck');
+        Route::get('{id}/session/create', 'sessionCreate')->name('pos.sessionCreate');
+        Route::post('{id}/session/store', 'sessionStore')->name('pos.sessionStore');
+        Route::post('{id}/session/destory', 'sessionDestory')->name('pos.sessionDestory');
     });
 });
 //============================ End: POS ==============================================

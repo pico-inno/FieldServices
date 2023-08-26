@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('business_id')->nullable();
             $table->string('location_id')->nullable();
+            $table->string('location_code')->nullable();
             $table->string('name', 256)->nullable();
             $table->boolean('allow_purchase_order')->default(0);
             $table->boolean('allow_sale_order')->default(0);

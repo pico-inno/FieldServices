@@ -566,9 +566,7 @@
                                 }
                             }).then(function () {
                                 //sth
-
                                 window.history.back();
-
                             });
                         }else{
                             Swal.fire({
