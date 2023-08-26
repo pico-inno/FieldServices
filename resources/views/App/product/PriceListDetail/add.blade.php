@@ -47,6 +47,10 @@
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
+
+                           {{-- being: hidden price list type --}}
+                           <input type="hidden" name="price_list_type" value="product">
+                           {{-- end: hidden price list type --}}
                         </div>
                         <div class="col-md-4 col-sm-12 mb-8">
                             <label class="form-label required">{{ __('product/pricelist.base_price') }}</label>

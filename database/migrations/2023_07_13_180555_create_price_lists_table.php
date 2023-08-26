@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('price_lists', function (Blueprint $table) {
             $table->id();
+            $table->enum('price_list_type', ['product', 'room']);
             $table->unsignedBigInteger('business_id')->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->string('name')->nullable();
