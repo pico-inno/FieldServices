@@ -61,10 +61,12 @@ class PriceListDetailController extends Controller
 
     public function create(PriceListCreateRequest $request)
     {
+        
         DB::beginTransaction();
         try{
             $business_id = businessSettings::first()->id;
             $price_list_id = PriceLists::create([
+                'price_list_type' => $request->price_list_type,
                 'business_id' => $business_id,
                 'currency_id' => $request->currency_id,
                 'name' => $request->name,

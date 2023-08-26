@@ -15,6 +15,7 @@ class PriceLists extends Model
     use HasFactory;
 
     protected $fillable = [
+        'price_list_type',
         'business_id',
         'business_location_id',
         'currency_id',
