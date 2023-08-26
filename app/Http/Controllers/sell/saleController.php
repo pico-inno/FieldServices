@@ -189,7 +189,7 @@ class saleController extends Controller
     public function saleDetail($id)
     {
 
-        $sale = sales::with('business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
+        $sale = sales::with('business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency', 'table')->where('id', $id)->first()->toArray();
 
         $location = $sale['business_location_id'];
         $setting = $this->setting;

@@ -283,7 +283,7 @@
                                                             <input class="btn-check" type="radio" name="method" value="0" />
                                                             <!--end::Input-->
                                                             <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block sale_credit">Credit</span>
+                                                            <span class="fs-7 text-dark fw-bold d-block sale_credit">Credit</span>
                                                             <!--end::Title-->
                                                         </label>
                                                         <!--end::Radio-->
@@ -296,7 +296,7 @@
                                                         @else
                                                             <label class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
                                                                 <input class="btn-check" type="radio" name="method" value="1" />
-                                                                <span class="  text-dark fw-bold  rounded-0">Order</span>
+                                                                <span class=" text-dark fw-bold  rounded-0">Order</span>
                                                             </label>
                                                         @endif
 
@@ -309,13 +309,13 @@
                                                             <input class="btn-check" type="radio" name="method" value="3" />
                                                             <!--end::Input-->
                                                             <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block sale_draft">Draft</span>
+                                                            <span class="fs-7 text-dark fw-bold d-block sale_draft">Draft</span>
                                                             <!--end::Title-->
                                                         </label>
                                                         <!--end::Radio-->
                                                         <label  class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600  rounded rounded-1 hover-elevate-up w-100 px-4 split_order_modal_btn_from_create" data-kt-button="true">
                                                             <input class="btn-check" type="radio" name="method" value="1" />
-                                                            <span class="fs-7 fw-bold d-block">Split Voucher</button>
+                                                            <span class="fs-7 text-dark fw-bold d-block">Split Voucher</button>
                                                         </label>
                                                     </div>
                                             </div>

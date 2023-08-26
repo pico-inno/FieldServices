@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\BusinessUser;
-use App\Models\settings\businessSettings;
 use Closure;
+use App\Models\BusinessUser;
 use Illuminate\Http\Request;
+use App\Models\settings\businessSettings;
 use Symfony\Component\HttpFoundation\Response;
 
-class businessActivate
+class activateBusinessCheckMiddleware
 {
     /**
      * Handle an incoming request.
@@ -21,12 +21,13 @@ class businessActivate
             $businessUserCount = BusinessUser::count();
             $businessCount = businessSettings::count();
             if ($businessUserCount == 0 && $businessCount == 0) {
-                return $next($request);
+                return redirect()->route('activationForm');
             } else {
-                return redirect()->route('/home');
+                return $next($request);
             };
         } catch (\Throwable $th) {
             return redirect()->route('envConfigure');
         }
+        return $next($request);
     }
 }

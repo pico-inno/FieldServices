@@ -52,9 +52,9 @@
                                         <div class="text-muted fw-bold">
                                             <a href="#">PICO SBS</a>
                                             <span class="mx-3">|</span>
-                                            <a href="#">File Manager</a>
+                                            {{-- <a href="#">File Manager</a>
                                             <span class="mx-3">|</span>2.6 GB
-                                            <span class="mx-3">|</span>758 items
+                                            <span class="mx-3">|</span>758 items --}}
                                         </div>
                                     </div>
                                     <!--end::Title-->

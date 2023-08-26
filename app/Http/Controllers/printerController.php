@@ -42,7 +42,7 @@ class printerController extends Controller
                     <div class="z-3">
                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="exchangeRateDropDown" role="menu">';
                     $html.='<a class="dropdown-item cursor-pointer openModal" data-href="'.route('printerEdit',$printer->id).'">Edit</a>';
-                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$printer->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('exchangeRate.destory',$printer->id).'">Delete</a>';
+                    $html.='<a class="dropdown-item cursor-pointer" id="delete" data-id="'.$printer->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('printerStore',$printer->id).'">Delete</a>';
                     // $html .= $editBtn;
                 $html .= '</ul></div></div>';
                 return $html;

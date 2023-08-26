@@ -53,8 +53,7 @@ class LoginController extends Controller
     }
     public function __construct()
     {
-
-        $this->middleware('businessActivate');
+        $this->middleware('activateBusinessCheckMiddleware');
         $this->middleware('guest')->except('logout');
     }
 }

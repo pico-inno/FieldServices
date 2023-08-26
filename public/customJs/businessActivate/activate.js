@@ -103,7 +103,7 @@ var KTCreateApp = function () {
                         data:formData,
                         processData: false,
                         contentType: false,
-                        url:'/businessActivate/store',
+                        url:'/store/business',
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -645,7 +645,7 @@
             let multiPayment=[];
             let reservation_id=null;
             if(payment){
-                paid_amount = $('.print_paid').text();
+                paid_amount = isNullOrNan($('.print_paid').text());
                 balance_amount = total_sale_amount - paid_amount;
                 let paymentAmountRepeater=$('#payment_amount_repeater');
                 let paymentAmountFromRep=paymentAmountRepeater.find('input[name="pay_amount"]');
@@ -1202,66 +1202,87 @@
                 let totalPriceAndOtherData = {total, discount, paid, balance, change, business_location, customer_name, customer_mobile};
 
                 let dataForSale = datasForSale('delivered',false,true);
-                $.ajax({
-                    url: `/sell/create`,
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: dataForSale,
-                    success: function(results){
-                        if(results.status==200){
-                            let invoice_no = results.data;
-                            $(`#${tableBodyId} tr`).remove();
-                            totalSubtotalAmountCalculate();
-                            totalDisPrice();
-                            $('#payment_info .print_paid').text(0);
-                            $('#payment_info .print_change').text(0);
-                            $('#payment_info .print_balance').text(0);
-                            $('input[name="pay_amount"]').val(0);
 
-                            let data = { invoice_row_data, totalPriceAndOtherData , invoice_no };
-                            $.ajax({
-                                url: '/pos/payment-print-layout',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                data: data,
-                                success: function(response){
-                                    var iframe = $('<iframe>', {
-                                        'height': '0px',
-                                        'width': '0px',
-                                        'frameborder': '0',
-                                        'css': {
-                                            'display': 'none'
-                                        }
-                                    }).appendTo('body')[0];
-                                    // Write the invoice HTML and styles to the iframe document
-                                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                    iframeDoc.open();
-                                    iframeDoc.write(response.html);
-                                    iframeDoc.close();
 
-                                    // Trigger the print dialogre
-                                    iframe.contentWindow.focus();
-                                    setTimeout(() => {
-                                        iframe.contentWindow.print();
-                                    }, 500);
-                                }
-                            })
+
+
+                let total_sale_amount = isNullOrNan($(`#${infoPriceId} .sb-total-amount`).text());
+                let paid_amount = isNullOrNan($('.print_paid').text());
+                let currentReceiveAble=total_sale_amount-paid_amount;
+                let currentReceivieAbleAmt=currentReceiveAble+isNullOrNan(receiveAbleAmount);
+                balance_amount = total_sale_amount - paid_amount;
+                if(creditLimit < currentReceivieAbleAmt && balance_amount != 0){
+                    Swal.fire({
+                        text: "Customer's Credit limit is reached.",
+                        icon: "warning",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary",
                         }
-                    },
-                    error:function(e){
-                        status=e.status;
-                        if(status==405){
-                            warning('Method Not Allow!');
-                        }else if(status==419){
-                            error('Session Expired')
-                        }else{
-                            error(' Something Went Wrong! Error Status: '+status )
-                        };
-                    },
-                })
+                    })
+                }else{
+                    $.ajax({
+                        url: `/sell/create`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: dataForSale,
+                        success: function(results){
+                            if(results.status==200){
+                                let invoice_no = results.data;
+                                $(`#${tableBodyId} tr`).remove();
+                                totalSubtotalAmountCalculate();
+                                totalDisPrice();
+                                $('#payment_info .print_paid').text(0);
+                                $('#payment_info .print_change').text(0);
+                                $('#payment_info .print_balance').text(0);
+                                $('input[name="pay_amount"]').val(0);
+
+                                let data = { invoice_row_data, totalPriceAndOtherData , invoice_no };
+                                $.ajax({
+                                    url: '/pos/payment-print-layout',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                    },
+                                    data: data,
+                                    success: function(response){
+                                        var iframe = $('<iframe>', {
+                                            'height': '0px',
+                                            'width': '0px',
+                                            'frameborder': '0',
+                                            'css': {
+                                                'display': 'none'
+                                            }
+                                        }).appendTo('body')[0];
+                                        // Write the invoice HTML and styles to the iframe document
+                                        var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                        iframeDoc.open();
+                                        iframeDoc.write(response.html);
+                                        iframeDoc.close();
+
+                                        // Trigger the print dialogre
+                                        iframe.contentWindow.focus();
+                                        setTimeout(() => {
+                                            iframe.contentWindow.print();
+                                        }, 500);
+                                    }
+                                })
+                            }
+                        },
+                        error:function(e){
+                            status=e.status;
+                            if(status==405){
+                                warning('Method Not Allow!');
+                            }else if(status==419){
+                                error('Session Expired')
+                            }else{
+                                error(' Something Went Wrong! Error Status: '+status )
+                            };
+                        },
+                    })
+                }
             }
         })
 
@@ -1556,7 +1577,8 @@
                 let paid_amount = isNullOrNan($('.print_paid').text());
                 let currentReceiveAble=total_sale_amount-paid_amount;
                 let currentReceivieAbleAmt=currentReceiveAble+isNullOrNan(receiveAbleAmount);
-                if(creditLimit < currentReceivieAbleAmt){
+                balance_amount = total_sale_amount - paid_amount;
+                if(creditLimit < currentReceivieAbleAmt && balance_amount != 0){
                     Swal.fire({
                         text: "Customer's Credit limit is reached.",
                         icon: "warning",

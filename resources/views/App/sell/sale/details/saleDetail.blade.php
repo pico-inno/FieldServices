@@ -27,13 +27,13 @@
                                 Customer:
                             </h3>
                             @if ($sale['customer'])
-                                <address class="mt-3 fs-5">
+                                <address class="mt-3 fs-5 fw-semibold">
+                                    @if ($sale['pos_register_id'])
+                                        <div class="fw-semibold fs-5 d-inline-block">Table No : <span class="ms-1 mb-1 fs-7 badge badge-primary">{{$sale['table']? $sale['table']['table_no'] : ''}}</span></div><br>
+                                    @endif
                                     {{$sale['customer']['first_name']}} <br>
-                                    Mobile:{{$sale['customer']['mobile']}}
+                                    Mobile:{{$sale['customer']['mobile']}}<br>
                                 </address>
-                            @endif
-                            @if ($sale['table_id'] != null)
-                                <th class="min-w-100px">Table No</th>
                             @endif
                         </div>
                         <div class="col-sm-4">

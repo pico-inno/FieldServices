@@ -2,13 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\BusinessUser;
-use App\Models\settings\businessSettings;
 use Closure;
+use App\Models\BusinessUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use App\Models\settings\businessSettings;
 use Symfony\Component\HttpFoundation\Response;
 
-class businessActivate
+class install
 {
     /**
      * Handle an incoming request.
@@ -18,12 +19,10 @@ class businessActivate
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            $businessUserCount = BusinessUser::count();
-            $businessCount = businessSettings::count();
-            if ($businessUserCount == 0 && $businessCount == 0) {
-                return $next($request);
+            if (Schema::hasTable('business_users') && Schema::hasTable('permissions') && Schema::hasTable('role_permissions')) {
+                return redirect()->route('activationForm');
             } else {
-                return redirect()->route('/home');
+                return $next($request);
             };
         } catch (\Throwable $th) {
             return redirect()->route('envConfigure');

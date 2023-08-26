@@ -98,10 +98,10 @@ use App\Http\Controllers\userManagement\users\BusinessUserController;
 |
 */
 
-Route::get('/businessActivateForm', [businessActivationController::class, 'activationForm'])->name('activationForm');
-Route::post('/businessActivate/store', [businessActivationController::class, 'store'])->name('businessActivation.store');
-Route::get('/envConfigure', [configurationController::class, 'envConfigure'])->name('envConfigure');
-Route::post('/envConfigure/store', [configurationController::class, 'store'])->name('envConfigure.store');
+Route::get('/create/business', [businessActivationController::class, 'activationForm'])->name('activationForm')->middleware('businessActivate');
+Route::post('/store/business', [businessActivationController::class, 'store'])->name('businessActivation.store')->middleware('businessActivate');
+Route::get('/install', [configurationController::class, 'envConfigure'])->name('envConfigure')->middleware('install');
+Route::post('/intall/store', [configurationController::class, 'store'])->name('envConfigure.store')->middleware('install');
 Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
 Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
 Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('envConfigure.dataSeed');
@@ -286,8 +286,8 @@ Route::controller(ReportController::class)->group(function () {
 Route::controller(businessSettingController::class)->group(function () {
     Route::prefix('settings')->group(function () {
         Route::get('/business', 'index')->name('business_settings');
-        Route::get('update/business', 'update')->name('business_settings_update');
-        Route::get('create/business', 'create')->name('business_settings_create');
+        Route::post('update/business', 'update')->name('business_settings_update');
+        Route::post('create/business', 'create')->name('business_settings_create');
     });
 });
 

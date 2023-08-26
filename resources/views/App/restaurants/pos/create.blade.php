@@ -49,7 +49,7 @@
                     <div class="col-6 mb-5">
                         <label for="printer" class="required form-label">Printer Id</label>
                         <select name="printer_id" id="printer" class="form-select form-select-sm" data-control="select2" placeholder="Select Printer" data-placeholder="Select Printer">
-
+                            <option value="0">Browser Base Printing</option>
                             @foreach ($printers as $printer)
                                 <option value="{{$printer->id}}">{{$printer->name}}</option>
                             @endforeach

@@ -44,8 +44,15 @@
 					<div class="aside-primary d-flex flex-column align-items-lg-center flex-row-auto">
 						<!--begin::Logo-->
 						<div class="aside-logo d-none d-lg-flex flex-column align-items-center flex-column-auto py-10" id="kt_aside_logo">
-							<a href="../../demo7/dist/index.html">
-								<img alt="Logo" src={{asset("assets/media/logos/demo7.svg")}} class="h-24px w-35px" />
+							<a href="/">
+                                @php
+                                    $logo=getSettingsValue('logo');
+                                @endphp
+                                @if ($logo)
+                                    <img alt="Logo" src="{{asset('storage/logo/'.$logo)}}" class="h-24px w-35px" />
+                                @else
+                                    <img alt="Logo" src="https://picosbs.com/img/logo.png" class="h-24px w-35px" />
+                                @endif
 							</a>
 						</div>
 						<!--end::Logo-->

@@ -8,6 +8,7 @@ use App\Models\Currencies;
 use App\Models\BusinessUser;
 use App\Models\PersonalInfo;
 use Illuminate\Http\Request;
+use Database\Seeders\UoMSeeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Artisan;
@@ -58,9 +59,9 @@ class businessActivationController extends Controller
             $business->update();
             $this->currencyTableSeed($business->id);
 
+
             DB::commit();
-            $logoPath= asset("/public/storage/logo/$business->logo");
-            logger($logoPath);
+            $logoPath= asset("/storage/logo/$business->logo");
             return response()->json(['success' => 'Successfully Activated Your Business', 'business'=>$business,'businessLogo'=> $logoPath], 200);
         } catch (\Throwable $e) {
             logger($e);
@@ -82,7 +83,7 @@ class businessActivationController extends Controller
 
             return $img_name;
         } else {
-            if ($request->avatar_remove == 1 && $existingImagePath) {
+            if ($request->logo == 1 && $existingImagePath) {
                 Storage::delete('logo/' . $existingImagePath);
                 return null;
             } else {

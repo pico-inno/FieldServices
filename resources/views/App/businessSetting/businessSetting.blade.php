@@ -458,7 +458,8 @@
                 <!--begin::Container-->
                 <div class="flex-row-fluid  ms-2 ">
                     <!--begin::Card-->
-                    <form action="{{route('business_settings_update')}}" method="GET">
+                    <form action="{{route('business_settings_update')}}" method="POST" enctype="multipart/form-data">
+                        @csrf
                         <div class="card " style="min-height: 100vh;">
                             <!--begin::Card body-->
                             <div class="card-body py-8 px-4 px-sm-7 px-md-10">
@@ -606,7 +607,7 @@
                                                         <span class="required">{{__('business_settings.upload_logo')}}</span>
                                                     </label>
                                                     <div class="input-group browseLogo input-group-sm">
-                                                        <input type="file" class="form-control form-control form-control form-control-sm" id="update_logo" name="update_logo">
+                                                        <input type="file" class="form-control form-control form-control form-control-sm" id="update_logo" name="logo" value="">
                                                         <button type="button" class="btn btn-sm btn-danger d-none" id="removeFileBtn"><i class="fa-solid fa-trash"></i></button>
                                                         <label class="input-group-text btn btn-primary rounded-end" for="update_logo">
                                                             {{__('business_settings.browses')}}

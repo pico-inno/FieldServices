@@ -4,7 +4,7 @@
         <form action="{{route('posUpdate',$registeredPos->id)}}" method="POST" id="add_exchange_rates">
             @csrf
             <div class="modal-header">
-                <h3 class="modal-title">Edot regoistered Pos</h3>
+                <h3 class="modal-title">Edit regoistered Pos</h3>
 
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
@@ -48,8 +48,9 @@
                     <div class="col-6 mb-5">
                         <label for="printer" class="required form-label">Printer Id</label>
                         <select name="printer_id" id="printer" class="form-select form-select-sm" data-control="select2" placeholder="Select Printer" data-placeholder="Select Printer">
+                            <option value="0">Browser Base Printing</option>
                             @foreach ($printers as $printer)
-                                <option value="{{$printer->id}}">{{$printer->name}}</option>
+                                <option value="{{$printer->id}}" @selected($printer->id==$registeredPos->printer_id)>{{$printer->name}}</option>
                             @endforeach
                         </select>
                     </div>

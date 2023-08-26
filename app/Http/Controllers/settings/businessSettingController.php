@@ -6,6 +6,7 @@ use App\Models\Currencies;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\settings\businessSettings;
 
 class businessSettingController extends Controller
@@ -54,7 +55,7 @@ class businessSettingController extends Controller
     {
         $data = [
             'name' => $request->name,
-            'lot_control' => $request->lot_control ? 1 : 0,
+            'lot_control' => $request->lot_control ? 'on' : 'off',
             'currency_id' => $request->currency_id,
             'currency_decimal_places' => $request->currency_decimal_places,
             'quantity_decimal_places' => $request->quantity_decimal_places,
@@ -66,7 +67,10 @@ class businessSettingController extends Controller
             'finanical_year_start_month' => $request->finanical_year_start_month,
         ];
 
-        businessSettings::where('id',Auth::user()->business_id)->first()->update($data);
+        $oldData=businessSettings::where('id',Auth::user()->business_id)->first();
+        $logoPath=$this->saveLogo($request, $oldData->logo);
+        $data['logo']= $logoPath;
+        $oldData->update($data);
         if ($request->sms_service == 'smsPOH') {
             $newEnv = $request->only([
                 'SMSPOH_SENDER', 'SMSPOH_AUTH_TOKEN'
@@ -78,5 +82,27 @@ class businessSettingController extends Controller
         };
         return redirect()->back()->with(['success' => 'Successfully updated setting']);
 
+    }
+
+    private function saveLogo($request, $existingImagePath = null)
+    {
+        if ($request->hasFile('logo')) {
+            if ($existingImagePath) {
+                Storage::delete('logo/' . $existingImagePath);
+            }
+
+            $file = $request->file('logo');
+            $img_name = time() . '_' . $file->getClientOriginalName();
+            Storage::put('logo/' . $img_name, file_get_contents($file));
+
+            return $img_name;
+        } else {
+            if (!$request->logo && $existingImagePath) {
+                Storage::delete('logo/' . $existingImagePath);
+                return null;
+            } else {
+                return $existingImagePath;
+            }
+        }
     }
 }
