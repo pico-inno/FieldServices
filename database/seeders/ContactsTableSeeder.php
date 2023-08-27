@@ -14,6 +14,14 @@ class ContactsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        Contact::create([
+            'business_id' => 1,
+            'type' => 'Customer',
+            'first_name' => 'Walk-In Customer',
+            'contact_id' => 'C0001',
+            'is_default' => 1,
+            'created_by' => 1
+        ]);
         $suppliers = [
             [
                 'business_id' => 1,

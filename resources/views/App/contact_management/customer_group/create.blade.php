@@ -1,5 +1,5 @@
 <style>
-    .percentage.hide, .selling-price-group.hide{
+    .percentage.hide, .price-list.hide{
         display: none;
     }
 </style>
@@ -29,25 +29,29 @@
                     <div class="row mb-6">
                         <div class="col-12">
                             <label for="price_calculation_type" class="form-label">Price Calculation Type</label>
-                            <select name="price_calculation_type" id="price_calculation_type" class="form-select form-select-sm fs-7" aria-label="Select example">
+                            <select name="price_calculation_type" id="price_calculation_type" class="form-select form-select-sm fs-7">
                                 <option value="percentage" selected>Percentage</option>
-                                <option value="selling_price_group">Selling Price Group</option>
+                                <option value="price_list">Price List</option>
                             </select>    
                         </div>
                     </div>
                     <div class="row percentage mb-6">
                         <div class="col-12">
                             <label for="" class="form-label">Calculation Percentage(%)</label>
-                            <input type="number" class="form-control form-control-sm fs-7" placeholder="Calculation Percentage(%)" />
+                            <input type="text" name="amount" class="form-control form-control-sm fs-7" placeholder="Calculation Percentage(%)" />
                         </div>
                     </div>
-                    <div class="row selling-price-group hide">
+                    <div class="row price-list hide">
                         <div class="col-12">
-                            <label for="selling_price_group_id" class="form-label">Selling Price Group</label>
-                            <select id="selling_price_group_id" class="form-select form-select-sm fs-7" aria-label="Select example">
-                                <option value="" selected disabled>Please select</option>
-                                <option value="10pcs">10pcs price</option>
-                                <option value="50pcs">50pcs price</option>
+                            <label for="price_list_id" class="form-label">Price List</label>
+                            @php
+                                $price_lists = \App\Models\Product\PriceLists::all();
+                            @endphp                            
+                            <select name="price_list_id" id="price_list_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select" data-dropdown-parent="#add_customer_group_modal" data-allow-clear="true">
+                                <option></option>
+                                @foreach($price_lists as $price_list)
+                                <option value="{{ $price_list->id }}">{{ $price_list->name }}</option>
+                                @endforeach
                             </select>    
                         </div>
                     </div>
@@ -65,14 +69,14 @@
 <script type="text/javascript">
     const priceCalculation = document.getElementById('price_calculation_type');
     const percentage = document.querySelector('.percentage');
-    const sellingPriceGroup = document.querySelector('.selling-price-group');
+    const priceList = document.querySelector('.price-list');
 
     priceCalculation.addEventListener('change', () => {
-        if(priceCalculation.value == 'selling_price_group'){
-            sellingPriceGroup.classList.remove('hide');
+        if(priceCalculation.value == 'price_list'){
+            priceList.classList.remove('hide');
             percentage.classList.add('hide');
         }else {
-            sellingPriceGroup.classList.add('hide');
+            priceList.classList.add('hide');
             percentage.classList.remove('hide');
         }
     })

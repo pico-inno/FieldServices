@@ -30,14 +30,6 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::Container-->
     <div class="container-xxl" id="kt_content_container">
-        @if(session('error'))
-        <div class="alert alert-dismissible bg-light-danger d-flex align-items-center flex-sm-row p-5 mb-10">
-            <span class="text-danger">{{ session('error') }}</span>
-            <button type="button" class="position-absolute position-sm-relative m-2 m-sm-0 top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
-                <i class="fa-solid fa-times"></i>
-            </button>
-        </div>
-        @endif
         <!--begin::Card-->
         <div class="card card-p-4 card-flush">
             <div class="card-header py-5 gap-2 gap-md-5 d-flex flex-column">
@@ -123,7 +115,7 @@
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase">
                             <th class="min-w-125px">Customer Group Name</th>
                             <th class="min-w-125px">Calculation Percentage(%)</th>
-                            <th class="min-w-125px">Selling Price Group</th>
+                            <th class="min-w-125px">Price List</th>
                             <th class="min-w-125px">Actions</th>
                         </tr>
                         <!--end::Table row-->
@@ -189,7 +181,7 @@
                 columns: [
                     { data: 'name'},
                     { data: 'amount'},
-                    { data: 'selling_price_group_id'},
+                    { data: 'price_list_id'},
                     { data: 'action'},
                 ],
             });

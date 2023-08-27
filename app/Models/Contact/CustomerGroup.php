@@ -14,7 +14,7 @@ class CustomerGroup extends Model
         'name',
         'amount',
         'price_calculation_type',
-        'selling_price_group_id',
+        'price_list_id',
         'created_by'
     ];
 }

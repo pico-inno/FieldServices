@@ -16,8 +16,8 @@ return new class extends Migration
             $table->integer('business_id');
             $table->string('name');
             $table->double('amount', 5, 2)->nullable();
-            $table->enum('price_calculation_type', ['percentage', 'selling_price_group'])->nullable();
-            $table->integer('selling_price_group_id')->nullable();
+            $table->enum('price_calculation_type', ['percentage', 'price_list'])->nullable();
+            $table->integer('price_list_id')->nullable();
             $table->integer('created_by')->nullable();
             $table->timestamps();
         });

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Contact\ContactUtility;
 use App\Models\Contact\Contact;
+use App\Models\settings\businessSettings;
 use App\Models\paymentsTransactions;
 use App\Models\purchases\purchases;
 use Yajra\DataTables\Facades\DataTables;
@@ -38,7 +39,7 @@ class SupplierController extends Controller
                 ->editColumn('address_line_1', function($row){
                     return $row->getAddressAttribute();
                 })
-                ->editColumn('pay_term_number', function($row){
+                ->editColumn('pay_term_value', function($row){
                     return $row->getPayTerm();
                 })
                 ->addColumn(
@@ -88,9 +89,12 @@ class SupplierController extends Controller
     public function show($id)
     {
         $contact = Contact::find($id);
+        $user = Auth::user();
+        $business = businessSettings::where('id', $user->business_id)->first();
+
         $data = $this->getSalesAndPurchases($id);
 
-        return view('App.contact_management.customers.show')->with(compact('contact', 'data'));
+        return view('App.contact_management.customers.show')->with(compact('contact', 'data', 'business'));
     }
 
     public function create()
@@ -103,10 +107,10 @@ class SupplierController extends Controller
         try{
             // dd($request->all());
             $supplier_data = $request->only([
-                'type', 'pricelist_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
-                'email', 'contact_status', 'tax_number', 'city', 'state', 'country', 'address_line_1',
-                'address_line_2', 'zip_code', 'mobile', 'landline', 'alternate_number', 'pay_term_number',
-                'pay_term_type', 'receivable_amount', 'payable_amount', 'credit_limit', 'total_rp', 'total_rp_used', 'total_rp_expired', 'is_default',
+                'type', 'price_list_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
+                'email', 'is_active', 'tax_number', 'township', 'city', 'state', 'country', 'address_line_1',
+                'address_line_2', 'zip_code', 'mobile', 'landline', 'alternate_number', 'pay_term_value',
+                'pay_term_type', 'receivable_amount', 'payable_amount', 'credit_limit', 'is_default',
                 'shipping_address', 'customer_group_id', 'custom_field_1', 'custom_field_2', 'custom_field_3',
                 'custom_field_4', 'custom_field_5', 'custom_field_6', 'custom_field_7', 'custom_field_8',
                 'custom_field_9', 'custom_field_10'
@@ -167,7 +171,7 @@ class SupplierController extends Controller
             $supplier = Contact::find($id);
 
             $supplier->type = $request['type'];
-            $supplier->pricelist_id = $request['pricelist_id'];
+            $supplier->price_list_id = $request['price_list_id'];
             $supplier->company_name = $request['company_name'];
             $supplier->prefix = $request['prefix'];
             $supplier->first_name = $request['first_name'];
@@ -185,7 +189,7 @@ class SupplierController extends Controller
             $supplier->mobile = $request['mobile'];
             $supplier->landline = $request['landline'];
             $supplier->alternate_number = $request['alternate_number'];
-            $supplier->pay_term_number = $request['pay_term_number'];
+            $supplier->pay_term_value = $request['pay_term_value'];
             $supplier->pay_term_type = $request['pay_term_type'];
             $supplier->receivable_amount = $request['receivable_amount'];
             $supplier->payable_amount = $request['payable_amount'];
@@ -206,7 +210,7 @@ class SupplierController extends Controller
             $date = DateTime::createFromFormat('d/m/Y', $dob);
             $supplier->dob = !empty($dob) ? $date->format('Y-m-d') : null;
             $supplier->business_id = 1;
-            $supplier->created_by = Auth::user()->id;
+            $supplier->updated_by = Auth::user()->id;
 
             $supplier->update();
 
@@ -221,6 +225,8 @@ class SupplierController extends Controller
         $supplier = Contact::find($id);
 
         if($supplier){
+            $supplier->is_delete = true;
+            $supplier->save();
             $supplier->delete();
 
             return back()->with('success','Contact Deleted Successfully');

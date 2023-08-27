@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Contact;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact\CustomerGroup;
+use App\Models\Product\PriceLists;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,6 +24,14 @@ class CustomerGroupController extends Controller
             $customer_groups = CustomerGroup::all();
 
             return DataTables::of($customer_groups)
+                ->editColumn('price_list_id', function ($customer_group) {
+                    $price_list = PriceLists::find($customer_group->price_list_id);
+                    if ($price_list) {
+                        $priceList = $price_list->name;
+                        return $priceList;
+                    }
+                    return '';
+                })
                 ->addColumn('action', function($row){
                     $html =  '
                         <div class="dropdown">
@@ -73,7 +82,7 @@ class CustomerGroupController extends Controller
 
     public function store(Request $request){
         try{
-            $customer_group = $request->only(['name', 'amount', 'price_calculation_type', 'selling_price_group_id']);
+            $customer_group = $request->only(['name', 'amount', 'price_calculation_type', 'price_list_id']);
             $customer_group['business_id'] = 1;
             $customer_group['created_by'] = Auth::user()->id;
             // dd($customer_group);
@@ -97,7 +106,8 @@ class CustomerGroupController extends Controller
 
                 $customer_group->name = $request['name'];
                 $customer_group->price_calculation_type = $request['price_calculation_type'];
-
+                $customer_group->amount = $request['amount'];
+                $customer_group->price_list_id = $request['price_list_id'];
                 $customer_group->update();
 
                 return response()->json(['success' => true, 'msg' => 'Customer Group Updated Successfully']);

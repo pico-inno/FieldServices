@@ -86,7 +86,7 @@
                             @php
                             $customer_groups = \App\Models\Contact\CustomerGroup::all();
                             @endphp
-                            <select name="customer_group_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="None" data-hide-search="true">
+                            <select name="customer_group_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="None" data-allow-clear="true">
                                 <option></option>
                                 @foreach($customer_groups as $customer_group)
                                 <option value="{{$customer_group->id}}" {{ old('customer_group_id', $customer->customer_group_id) == $customer_group->id ? 'selected' : ''}}>
@@ -100,10 +100,10 @@
                             @php
                             $price_lists = \App\Models\Product\PriceLists::all();
                             @endphp
-                            <select name="pricelist_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="None" data-hide-search="true">
+                            <select name="price_list_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="None" data-allow-clear="true">
                                 <option></option>
                                 @foreach($price_lists as $price_list)
-                                <option value="{{$price_list->id}}" {{ old('pricelist_id', $customer->pricelist_id) == $price_list->id ? 'selected' : ''}}>
+                                <option value="{{$price_list->id}}" {{ old('price_list_id', $customer->price_list_id) == $price_list->id ? 'selected' : ''}}>
                                     {{$price_list->name}}
                                 </option>
                                 @endforeach
@@ -407,10 +407,6 @@
                             <label for="dob" class="form-label">Date of birth</label>
                             <input type="text" name="dob" id="dob" value="{{ old('dob', !empty($customer->dob) ? date('d/m/Y', strtotime($customer->dob)) : null) }}" class="form-control form-control-sm fs-7" placeholder="Date of birth" autocomplete="off" />
                         </div>
-                        <div class="col-md-3 col-sm-12 mb-8">
-                            <label for="" class="form-label">Assigned to</label>
-                            <input type="text" class="form-control form-control-sm fs-7" placeholder="" />
-                        </div>
                     </div>
                     <div class="form-group text-center mt-5">
                         <button type="button" onclick="showMoreInfo()" class="btn btn-primary btn-sm moreBtn rounded text-white">More Informations <i class="fa-solid fa-chevron-down text-white ms-4"></i></button>
@@ -422,9 +418,9 @@
                                 <input type="text" name="tax_number" id="tax_number" value="{{old('tax_number',$customer->tax_number)}}" class="form-control form-control-sm fs-7" placeholder="Tax Number">
                             </div>
                             <div class="col-md-3 col-sm-12 mb-8">
-                                <label for="pay_term_number" class="form-label">Pay Term</label>
+                                <label for="pay_term_value" class="form-label">Pay Term</label>
                                 <div class="input-group">
-                                    <input type="number" name="pay_term_number" id="pay_term_number" value="{{old('pay_term_number',$customer->pay_term_number)}}" class="form-control form-control-sm rounded-end-0 fs-7">
+                                    <input type="number" name="pay_term_value" id="pay_term_value" value="{{old('pay_term_value',$customer->pay_term_value)}}" class="form-control form-control-sm rounded-end-0 fs-7">
                                     <div class="overflow-hidden flex-grow-1">
                                         <select name="pay_term_type" class="form-select form-select-sm rounded-start-0 fs-7" data-control="select2" data-placeholder="Please select">
                                             <option></option>
