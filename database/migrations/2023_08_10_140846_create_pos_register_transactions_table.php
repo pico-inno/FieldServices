@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('payment_account_id')->nullable();
             $table->enum('transaction_type',['opening_amount','sale'])->nullable();
             $table->unsignedBigInteger('transaction_id')->nullable();
-            $table->decimal('transaction_amount')->nullable();
+            $table->decimal('transaction_amount',22,2)->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->unsignedBigInteger('payment_transaction_id')->nullable();
         });

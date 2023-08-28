@@ -11,15 +11,6 @@
 
     <title>POS Sell Payment</title>
     <style>
-        /* Custom styles for printing */
-        /* @media print {
-          body {
-            visibility: hidden;
-          }
-          .print-content {
-            visibility: visible;
-          }
-        } */
         .sperator {
             content: " ";
             height: 5px;

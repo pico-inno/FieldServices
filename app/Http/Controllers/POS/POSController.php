@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\networkPrinterController;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use Modules\Restaurant\Entities\table;
@@ -89,9 +90,9 @@ class POSController extends Controller
         $manufacturers = Manufacturer::all();
         $variations = VariationTemplates::all();
         $tables=null;
+        $reservations = [];
 
-
-        if (class_exists(FolioInvoiceDetail::class)){
+        if (class_exists('FolioInvoiceDetail')){
             $reservations = Reservation::with('contact', 'company')->where('is_delete', 0)->get();
         }
         try {
@@ -221,7 +222,13 @@ class POSController extends Controller
         $invoice_row = $request->invoice_row_data;
         $invoice_no = $request->invoice_no;
         $totalPriceAndOtherData = $request->totalPriceAndOtherData;
-
+        $posRegisterId=$totalPriceAndOtherData['posRegisterId'];
+        $printerInfo=posRegisters::where('id', $posRegisterId)->select('printer_id')->with('printer')->first()->printer;
+        if($printerInfo->printer_type=='network'){
+            $networkPrinter=new networkPrinterController();
+            $status=$networkPrinter->print($printerInfo,[...$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, $invoice_no]);
+            return response()->json([...$status,'type'=>'network']);
+        }
         $html = view('App.pos.print.payment', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no'))->render();
 
         return response()->json(['html' => $html]);

@@ -1,7 +1,12 @@
 function ajaxPrint(url){
     $.ajax({
         url: url,
-        success: function(response) {
+        success: function (response) {
+            console.log(response,'helllllllllll');
+            if (response.type == 'network') {
+                success(response.success);
+                return;
+            }
             // Open a new window with the invoice HTML and styles
                     // Create a hidden iframe element and append it to the body
             var iframe = $('<iframe>', {

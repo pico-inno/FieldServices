@@ -14,6 +14,7 @@ class printers extends Model
         'name',
         'printer_type',
         'ip_address',
+        'port',
         'product_category_id',
     ];
     public function category(){

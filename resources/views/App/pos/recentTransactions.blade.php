@@ -52,7 +52,7 @@
                                                     <a class="me-5 editRecent" href="{{route('pos.edit',['posRegisterId'=>$posRegisterId,'saleId'=>$sd->id])}}"><i class="fas fa-edit fs-5 text-warning cursor-pointer"></i></a>
                                                     {{-- <span class="me-5"><i class="fas fa-trash fs-5 text-danger cursor-pointer"></i></span> --}}
                                                     <span class="me-5 print-invoice" data-href="{{route('print_sale', $sd->id)}}"><i class="fas fa-print fs-5 text-primary cursor-pointer"></i></span>
-                                                    @if (class_exists(Modules\Reservation\Entities\FolioInvoiceDetail::class))
+                                                    @if (class_exists('FolioInvoiceDetail'))
 
                                                         @php
                                                         $isAttachedToFolio=Modules\Reservation\Entities\FolioInvoiceDetail::where('transaction_type','sale')->where('transaction_id',$sd->id)->exists();

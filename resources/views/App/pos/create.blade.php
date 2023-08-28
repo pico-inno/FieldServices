@@ -557,6 +557,7 @@
                                     <!--begin::Form group-->
                                     <div class="form-group">
                                         <form action="" id="paymentForm">
+                                            @if (count($reservations) > 0)
                                             <div class="folio-Form mb-5">
                                                 <div class="form-group">
                                                     <label for="" class="form-label fw-bold">Post to Folio</label>
@@ -567,6 +568,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            @endif
                                             <div id="payment_row_body">
 
                                             </div>
@@ -870,16 +872,19 @@
                     <h4 class="modal-title"> (<span id="table-text"></span>) Order Preview </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div class="folio-Form p-5">
-                        <div class="form-group">
-                            <label for="" class="form-label fw-bold">Post to Folio</label>
-                            <select name="reservation_id_from_order"  class="form-select form-select-sm reservation_id"
-                                data-placeholder="Select Reservation" placeholder='Select Reservation' data-kt-select2="true"
-                                data-allow-clear="true" data-dropdown-parent="#order_confirm_modal" autofocus="false">
+                    @if (count($reservations) > 0)
+                        <div class="folio-Form p-5">
+                            <div class="form-group">
+                                <label for="" class="form-label fw-bold">Post to Folio</label>
+                                <select name="reservation_id_from_order"  class="form-select form-select-sm reservation_id"
+                                    data-placeholder="Select Reservation" placeholder='Select Reservation' data-kt-select2="true"
+                                    data-allow-clear="true" data-dropdown-parent="#order_confirm_modal" autofocus="false">
 
-                            </select>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+
+                    @endif
                   <div class="p-5 pt-0">
                     <label for="" class="form-label">Sevices:</label>
                     <select name="services" class="form-select form-select-sm" id="services" placeholder="Services" data-placeholder="Services" data-kt-select2="true" data-hide-search="true">

@@ -1178,7 +1178,7 @@
                     let product_name = current_row.find('.product-name').text();
                     let variation = current_row.find('.variation_value_and_name').text();
                     let quantity = current_row.find('input[name="quantity[]"]').val();
-                    let uomName = uoms.filter(uom => uom.id == current_uom_id)[0].name;
+                    let uomName = uoms.filter(uom => uom.id == current_uom_id)[0].short_name;
                     let price = current_row.find('input[name="selling_price[]"]').val();
                     let subtotal = current_row.find('.subtotal_price').text();
 
@@ -1199,7 +1199,7 @@
                 let filtered_customer = customers.filter( customer => customer.id === parseInt(customer_id))[0];
                 let customer_mobile = filtered_customer.mobile ? filtered_customer.mobile : '';
 
-                let totalPriceAndOtherData = {total, discount, paid, balance, change, business_location, customer_name, customer_mobile};
+                let totalPriceAndOtherData = {total, discount, paid, balance, change, business_location, customer_name, customer_mobile,posRegisterId};
 
                 let dataForSale = datasForSale('delivered',false,true);
 
@@ -1723,29 +1723,31 @@
             ajaxOnContactChange(contact_id);
         })
         let ajaxOnContactChange=(contact_id)=>{
-            $.ajax({
+            if(contact_id){
+                $.ajax({
                 url: `/pos/pricelist-contact/${contact_id}`,
                 type: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                success: function(results){
-                    if(results.status === 200){
+                    success: function(results){
+                        if(results.status === 200){
 
-                        setReceivableAmount(results.receivable_amount);
-                        creditLimit=results.credit_limit;
-                        if(results.default_price_list){
-                            customer_price_list = results.default_price_list.id;
-                        }else{
-                            customer_price_list = null;
+                            setReceivableAmount(results.receivable_amount);
+                            creditLimit=results.credit_limit;
+                            if(results.default_price_list){
+                                customer_price_list = results.default_price_list.id;
+                            }else{
+                                customer_price_list = null;
+                            }
+                            false ? getPriceByEachRow() : getPrice();
                         }
-                        false ? getPriceByEachRow() : getPrice();
+                    },
+                    error: function(e){
+                        console.log(e.responseJSON.error);
                     }
-                },
-                error: function(e){
-                    console.log(e.responseJSON.error);
-                }
-            });
+                });
+            }
         }
         const ajaxToGetPriceList=(locationId)=>{
             $.ajax({
