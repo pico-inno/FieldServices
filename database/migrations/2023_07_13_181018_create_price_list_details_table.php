@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('price_list_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('pricelist_id')->nullable();
-            $table->enum('applied_type', ['All', 'Category', 'Product', 'Variation'])->nullable();
+            $table->enum('applied_type', ['All', 'Category', 'Product', 'Variation', 'Room_Type', 'Room'])->nullable();
             $table->integer('applied_value')->nullable();
             $table->decimal('min_qty', 22, 4)->nullable();
             $table->date('from_date')->nullable();
