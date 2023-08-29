@@ -40,7 +40,7 @@ var reservation = function () {
 
         roomSelect.val('');
 
-        $('select[name="room_rate_id[]"]').eq(rowIndex).find('option').each(function () {
+        $('select[name="price_list_id[]"]').eq(rowIndex).find('option').each(function () {
             var roomType = $(this).data('room-type-id');
         
             if (selectedRoomType === "" || roomType == selectedRoomType) {
@@ -52,7 +52,7 @@ var reservation = function () {
     });
 
 
-    $(document).on('select2:select', '#room_added_table select[name="room_rate_id[]"]', function () {
+    $(document).on('select2:select', '#room_added_table select[name="price_list_id[]"]', function () {
         var currentRow = $(this).closest('tr');
         var rateAmountBefInput = currentRow.find('input[name="before_discount_amount[]"]');
         var rateAmountAfterInput = currentRow.find('input[name="after_discount_amount[]"]');
