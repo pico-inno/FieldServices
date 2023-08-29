@@ -307,8 +307,8 @@ const totalCountDiscount = (pricelist, product_vari_id, quantity) => {
     count += parseInt(pricelist.cal_value);
     // end တဖြတ်
     if(base_price_arr[0] == 0){
-        let product = productsOnSelectData.find( item => item.variation_id == product_vari_id);
-        price = product.stock[0]?ref_uom_price.roduct.stock[0]:0;
+        let product = productsOnSelectData.find(item => item.variation_id == product_vari_id);
+        price = product.stock[0]?product.stock[0].ref_uom_price:0;
     }
 
     for (const element of base_price_arr) {

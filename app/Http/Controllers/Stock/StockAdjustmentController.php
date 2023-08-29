@@ -350,7 +350,7 @@ class StockAdjustmentController extends Controller
                     },
                     'variationTemplateValue' => function ($q) {
                         $q->select('id', 'name');
-                    }, 'uomSellingPrice'
+                    }
                 ]);
         },
             'stock'=>function($q) use($business_location_id) {

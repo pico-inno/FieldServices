@@ -32,7 +32,6 @@ use App\Http\Controllers\Controller;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\hospitalRoomSaleDetails;
-use App\Models\Product\UOMSellingprice;
 use App\Models\Product\PriceListDetails;
 use App\Models\Product\ProductVariation;
 use Yajra\DataTables\Facades\DataTables;
@@ -260,7 +259,7 @@ class saleController extends Controller
                         },
                         'variationTemplateValue' => function ($q) {
                             $q->select('id', 'name');
-                        }, 'uomSellingPrice'
+                        }
                     ]);
             },
             'stock' => function ($q) use ($business_location_id) {
@@ -1007,7 +1006,7 @@ class saleController extends Controller
                         })
                         ->with(['variationTemplateValue' => function ($query) {
                             $query->select('id', 'name');
-                        }, 'uomSellingPrice']);
+                        }]);
                 },
                 'stock' => function ($query) use ($business_location_id) {
                     $query->where('current_quantity', '>', 0)

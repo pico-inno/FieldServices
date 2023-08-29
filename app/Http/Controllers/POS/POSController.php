@@ -90,8 +90,8 @@ class POSController extends Controller
         $variations = VariationTemplates::all();
         $tables=null;
 
-
-        if (class_exists(FolioInvoiceDetail::class)){
+        $reservations=[];
+        if (class_exists('FolioInvoiceDetail')){
             $reservations = Reservation::with('contact', 'company')->where('is_delete', 0)->get();
         }
         try {
@@ -134,7 +134,7 @@ class POSController extends Controller
                     },
                     'variationTemplateValue' => function ($q) {
                         $q->select('id', 'name');
-                    }, 'uomSellingPrice'
+                    }
                 ]);
             },
             'stock' => function ($q) use ($business_location_id) {

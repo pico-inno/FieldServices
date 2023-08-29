@@ -71,7 +71,6 @@ use App\Http\Controllers\Product\UnitCategoryController;
 use App\Http\Controllers\Service\ServiceSalesController;
 use App\Http\Controllers\Contact\CustomerGroupController;
 use App\Http\Controllers\hospitalFolioInvoicesController;
-// use App\Http\Controllers\Product\UOMSellingPriceController;
 use App\Http\Controllers\hospitalRegistrationsController;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Controllers\Product\ImportProductController;
