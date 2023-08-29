@@ -28,7 +28,7 @@ class configurationController extends Controller
     public function migrationForm()
     {
         try {
-            Artisan::call('migrate');
+            Artisan::call('migrate:fresh');
             Artisan::call('db:seed --class=RolesTableSeeder');
             // Artisan::call('db:seed', ["--class=CurrenciesTableSeeder"]);
             Artisan::call('db:seed --class=UoMSeeder');

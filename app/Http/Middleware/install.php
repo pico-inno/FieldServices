@@ -25,7 +25,7 @@ class install
                 return $next($request);
             };
         } catch (\Throwable $th) {
-            return redirect()->route('envConfigure');
+            return $next($request);
         }
     }
 }

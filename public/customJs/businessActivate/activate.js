@@ -124,7 +124,7 @@ var KTCreateApp = function () {
                                     $('.image').html(`<img src="${results.businessLogo}" alt="" width="100px" height="100px">`)
                                 }
                                 setTimeout(() => {
-                                    window.location.replace("/");
+                                    window.location.replace("/home");
                                 }, 2000);
                             } else if (results.error) {
                                 error(results.error);
