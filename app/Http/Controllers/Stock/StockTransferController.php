@@ -307,7 +307,7 @@ class StockTransferController extends Controller
                                 },
                                 'variationTemplateValue' => function ($q) {
                                     $q->select('id', 'name');
-                                }, 'uomSellingPrice'
+                                }
                             ]);
                     },
                     'stock'=>function($q) use($business_location_id) {
@@ -358,7 +358,7 @@ class StockTransferController extends Controller
                             },
                             'variationTemplateValue' => function ($q) {
                                 $q->select('id', 'name');
-                            }, 'uomSellingPrice'
+                            }
                         ]);
                 },
                 'stock'=>function($q) use($business_location_id) {
@@ -1295,7 +1295,7 @@ class StockTransferController extends Controller
                         })
                         ->with(['variationTemplateValue' => function ($query) {
                             $query->select('id', 'name');
-                        }, 'uomSellingPrice']);
+                        }]);
                 },
                 'stock' => function ($query) use ($business_location_id) {
                     $query->where('current_quantity', '>', 0)

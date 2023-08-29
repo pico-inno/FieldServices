@@ -16,7 +16,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Product\Manufacturer;
 use App\Models\Product\UnitCategory;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Product\UOMSellingprice;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product\ProductVariation;
 use Yajra\DataTables\Facades\DataTables;
@@ -252,9 +251,9 @@ class ProductController extends Controller
             ProductVariation::destroy($productVariationIds);
 
             // to UOMSellingPrice
-            $toDeleteUomSelling = UOMSellingprice::byProductVariationIds($productVariationIds)->get()->pluck('id');
-            UOMSellingprice::byId($toDeleteUomSelling)->update(['deleted_by' => Auth::user()->id]);
-            UOMSellingprice::destroy($toDeleteUomSelling);
+            // $toDeleteUomSelling = UOMSellingprice::byProductVariationIds($productVariationIds)->get()->pluck('id');
+            // UOMSellingprice::byId($toDeleteUomSelling)->update(['deleted_by' => Auth::user()->id]);
+            // UOMSellingprice::destroy($toDeleteUomSelling);
 
             DB::commit();
             return response()->json(['message' => 'Deleted Sucessfully Product']);
@@ -275,8 +274,8 @@ class ProductController extends Controller
             $productVariation->delete();
 
             // to UOMSellingPrice
-            UOMSellingprice::where('product_variation_id', $id)->update(['deleted_by' => Auth::user()->id]);
-            UOMSellingprice::where('product_variation_id', $id)->delete();
+            // UOMSellingprice::where('product_variation_id', $id)->update(['deleted_by' => Auth::user()->id]);
+            // UOMSellingprice::where('product_variation_id', $id)->delete();
 
             DB::commit();
             return response()->json(['message' => 'Deleted Sucessfully Product variation']);

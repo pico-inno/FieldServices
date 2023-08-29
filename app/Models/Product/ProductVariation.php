@@ -3,7 +3,6 @@
 namespace App\Models\Product;
 
 use App\Models\Product\Product;
-use App\Models\Product\UOMSellingprice;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
