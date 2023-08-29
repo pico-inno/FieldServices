@@ -1535,7 +1535,7 @@ class StockTransferController extends Controller
         $lot_no = $request->lotNo;
         $data = CurrentStockBalance::where('lot_no', $lot_no)
             ->with(['uomSet' => function ($q) {
-                $q->with('units', 'uom_sellingprices')->select('id', 'uomset_name');
+                $q->with('units')->select('id', 'uomset_name');
             }, 'smallest_unit' => function ($q) {
                 $q->select('id', 'name');
             }])
