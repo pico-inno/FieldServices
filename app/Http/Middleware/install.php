@@ -19,8 +19,14 @@ class install
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            if (Schema::hasTable('business_users') && Schema::hasTable('permissions') && Schema::hasTable('role_permissions')) {
-                return redirect()->route('activationForm');
+            if (Schema::hasTable('business_users') && Schema::hasTable('permissions') && Schema::hasTable('role_permissions') && Schema::hasTable('business_settings')) {
+                $businessUserCount = BusinessUser::count();
+                $businessCount = businessSettings::count();
+                if ($businessUserCount == 0 && $businessCount == 0) {
+                    return redirect()->route('activationForm');
+                } else {
+                    return redirect('/');
+                };
             } else {
                 return $next($request);
             };

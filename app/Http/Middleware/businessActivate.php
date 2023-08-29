@@ -23,7 +23,7 @@ class businessActivate
             if ($businessUserCount == 0 && $businessCount == 0) {
                 return $next($request);
             } else {
-                return redirect()->route('/home');
+                return redirect('/home');
             };
         } catch (\Throwable $th) {
             return redirect()->route('envConfigure');
