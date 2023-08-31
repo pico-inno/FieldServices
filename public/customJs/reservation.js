@@ -8,8 +8,17 @@ var reservation = function () {
         roomSelect.data('original-options', originalOptions);
     }
 
+    function storeOriginalRateOptions(roomRateSelect) {
+        var originalRateOptions = roomRateSelect.html();
+        roomRateSelect.data('original-options', originalRateOptions);
+    }
+
     $('#room_added_table select[name="room_id[]"]').each(function () {
         storeOriginalOptions($(this));
+    });
+
+    $('#room_added_table select[name="price_list_id[]"]').each(function () {
+        storeOriginalRateOptions($(this));
     });
 
     // Add event listener to handle dynamically added rows
@@ -17,7 +26,9 @@ var reservation = function () {
         if ($(e.target).is('tr') && $(e.target).parents('#room_added_table').length) {
             var newRow = $(e.target);
             var roomSelect = newRow.find('select[name="room_id[]"]');
+            var roomRateSelect = newRow.find('select[name="price_list_id[]"]');
             storeOriginalOptions(roomSelect);
+            storeOriginalRateOptions(roomRateSelect);
         }
     });
 
@@ -25,7 +36,9 @@ var reservation = function () {
         var selectedRoomType = $(this).val();
         var rowIndex = $(this).closest('tr').index();
         var roomSelect = $('select[name="room_id[]"]').eq(rowIndex);
+        var roomRateSelect = $('select[name="price_list_id[]"]').eq(rowIndex);
         var originalOptions = roomSelect.data('original-options');
+        var originalRateOptions = roomRateSelect.data('original-options');
 
         roomSelect.html(originalOptions);
 
@@ -40,15 +53,22 @@ var reservation = function () {
 
         roomSelect.val('');
 
-        $('select[name="price_list_id[]"]').eq(rowIndex).find('option').each(function () {
+        roomRateSelect.html(originalRateOptions);
+
+        roomRateSelect.find('option').each(function () {
             var roomType = $(this).data('room-type-id');
-        
-            if (selectedRoomType === "" || roomType == selectedRoomType) {
-                $(this).prop('disabled', false);
-            } else {
-                $(this).prop('disabled', true);
+
+            if(roomType != selectedRoomType) {
+                $(this).remove();
             }
+        
+            // if (selectedRoomType === "" || roomType == selectedRoomType) {
+            //     $(this).prop('disabled', false);
+            // } else {
+            //     $(this).prop('disabled', true);
+            // }
         });
+        roomRateSelect.val('');
     });
 
 
