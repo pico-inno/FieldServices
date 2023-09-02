@@ -57,15 +57,13 @@
                                         <select name="contact_id" class="form-select form-select-sm fw-bold rounded-start-0" id="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
                                             <option></option>
                                             @foreach($suppliers as $supplier)
-
                                                 <option value="{{$supplier->id}}" @selected(old('contact_id')==$supplier->id)>{{$supplier->company_name ?? $supplier->getFullNameAttribute() }}</option>
-
                                             @endforeach
                                         </select>
                                     </div>
-                                    {{-- <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
+                                    <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
                                        <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
-                                    </button> --}}
+                                    </button>
                                     {{-- <a class="input-group-text "  href="{{route('suppliers.create')}}" target="_blanck">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
                                     </a> --}}
@@ -356,12 +354,11 @@
 
 @push('scripts')
 {{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
-
+@include('App.purchase.contactAdd')
 <script>
 
 
 $(document).ready(function(){
-
     $('[data-td-toggle="datetimepicker"]').flatpickr({
              enableTime: true,
             dateFormat: "Y-m-d H:i",
@@ -409,6 +406,36 @@ $(document).ready(function(){
             loadingOff();
         });
     });
+    $('form#add_contact_form').submit(function(event) {
+        event.preventDefault();
+
+        var formData = $(this).serialize();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            success: function(response){
+                console.log(response);
+                if (response.success == true) {
+                    $('#contact_add_modal').modal('hide');
+                    success(response.msg);
+                    // Clear the input fields in the modal form
+                    $('#add_contact_form')[0].reset();
+                    // $('.contact_id').select2();
+                    // Create a new option element
+                    var newOption = new Option(response.new_contact_name, response.new_contact_id);
+
+                    // Append the new option to the select2 dropdown
+                    $('#contact_id').append(newOption).trigger('change');
+                    $('#contact_id').val(response.new_contact_id).trigger('change');
+                }
+            },
+            error: function(result) {
+                error(result.responseJSON.errors, 'Something went wrong');
+            }
+        })
+    })
 </script>
 
 @endpush

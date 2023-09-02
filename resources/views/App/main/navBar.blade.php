@@ -3056,6 +3056,7 @@
 		<script src={{asset('customJs/general.js')}}></script>
 
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
+        <script src={{asset('customJs/toastrAlert/alert.js')}}></script>
         @stack('scripts')
 	</body>
 	<!--end::Body-->

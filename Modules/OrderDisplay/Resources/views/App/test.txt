@@ -1,0 +1,232 @@
+
+    @for ($i = 0; $i < 100; $i++)
+    <div class="col-lg-3 col-md-4 col-sm-6 res_order_card " data-table="Table-{{($i*3) +1}}">
+        <!--begin::Card-->
+        <div class="card card-flush h-md-100 cursor-pointer bg-hover-light" >
+            <!--begin::Card header-->
+            <div class="card-header ribbon ribbon-top ribbon-vertical">
+                <div class="ribbon-label  bg-success">
+                    <i class="fa-regular fa-circle-check fs-4 me-3 text-white"></i>
+                    <i class="fa-solid fa-utensils fs-4 text-white"></i>
+                    {{-- <i class="fa-solid fa-utensils fs-3 text-white"></i> --}}
+                </div>
+                <div class="card-title mt-5 fw-bold mb-2">Table-000{{($i*3) +1}}</div>
+
+                <div class="w-100  d-flex justify-content-between mt-5">
+                    <h6 class="fw-bold fs-6">10:00</h6>
+
+                    <h6 class="fw-bold fs-6">Johny</h6>
+                </div>
+                <div class="w-100  d-flex justify-content-between mt-1 mb-10">
+                    <h6 class="fw-bold fs-7">#R-001</h6>
+
+                    <h6 class="fw-bold">T-0001</h6>
+                </div>
+            </div>
+            {{-- <div class="card-header">
+                <div class="ribbon-label bg-success">
+                    <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
+                </div>
+                <div class="m-auto d-flex mt-5 justify-content-center align-items-center rounded-circle w-50px h-50px icon-process">
+                    <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
+                </div>
+                <div class="w-100  text-center mt-5">
+                    <h4 class="fw-bold">T-0001</h4>
+                </div>
+
+                <div class="w-100  d-flex justify-content-between">
+                    <h4 class="fw-bold">T-0001</h4>
+                </div>
+            </div> --}}
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-1">
+                <!--begin::Users-->
+                {{-- <div class="fw-bold text-gray-600 mb-3">Total Order Item: 11</div> --}}
+                <!--end::Users-->
+                <!--begin::Permissions-->
+                <div class="d-flex flex-column text-gray-800">
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Chese Burgar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Moh Hingar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Milk Tea</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Noodle Burgar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class='d-flex align-items-center py-3 pt-5'>
+                        <span class='bullet bg-primary me-3'></span>
+                        <em>and 7 more...</em>
+                    </div>
+                </div>
+                <!--end::Permissions-->
+            </div>
+            <!--end::Card body-->
+            <!--begin::Card footer-->
+
+        </div>
+        <!--end::Card-->
+    </div>
+    <!--end::Col-->
+
+    <div class="col-lg-3 col-md-4  col-sm-6  res_order_card"  data-table="Table-{{($i*3) +2}}">
+
+        <div class="card card-flush h-md-100  cursor-pointer  bg-hover-light">
+            <div class="card-header ribbon ribbon-top ribbon-vertical">
+                <div class="ribbon-label  bg-primary">
+                    <i class="fa-regular fa-hourglass-half fs-6 me-3 text-white"></i>
+                    <i class="fa-solid fa-bag-shopping fs-6 text-white"></i>
+                </div>
+                <div class="card-title mt-5 fw-bold mb-2">Table-000{{($i*3) +2}}</div>
+
+                <div class="w-100  d-flex justify-content-between mt-5">
+                    <h6 class="fw-bold fs-6">10:00</h6>
+
+                    <h6 class="fw-bold fs-6">Johny</h6>
+                </div>
+                <div class="w-100  d-flex justify-content-between mt-1 mb-10">
+                    <h6 class="fw-bold fs-7">#R-001</h6>
+
+                    <h6 class="fw-bold">T-0001</h6>
+                </div>
+            </div>
+            {{-- <div class="card-header">
+                <div class="ribbon-label bg-success">
+                    <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
+                </div>
+                <div class="m-auto d-flex mt-5 justify-content-center align-items-center rounded-circle w-50px h-50px icon-process">
+                    <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
+                </div>
+                <div class="w-100  text-center mt-5">
+                    <h4 class="fw-bold">T-0001</h4>
+                </div>
+
+                <div class="w-100  d-flex justify-content-between">
+                    <h4 class="fw-bold">T-0001</h4>
+                </div>
+            </div> --}}
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-1">
+                <!--begin::Users-->
+                {{-- <div class="fw-bold text-gray-600 mb-3">Total Order Item: 11</div> --}}
+                <!--end::Users-->
+                <!--begin::Permissions-->
+                <div class="d-flex flex-column text-gray-800">
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Chese Burgar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Moh Hingar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Milk Tea</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Noodle Burgar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class='d-flex align-items-center py-3 pt-5'>
+                        <span class='bullet bg-primary me-3'></span>
+                        <em>and 7 more...</em>
+                    </div>
+                </div>
+                <!--end::Permissions-->
+            </div>
+            <!--end::Card body-->
+            <!--begin::Card footer-->
+
+        </div>
+        <!--end::Card-->
+    </div>
+
+    <div class="col-lg-3 col-md-4  col-sm-6  res_order_card"  data-table="Table-{{($i*3) +3}}">
+        <!--begin::Card-->
+        <div class="card card-flush h-md-100  cursor-pointer  bg-hover-light">
+            <!--begin::Card header-->
+            <div class="card-header ribbon ribbon-top ribbon-vertical">
+                <div class="ribbon-label  bg-warning">
+                    <i class="fa-solid fa-clock-rotate-left  fs-4 me-2 text-white"></i>
+                    <i class="fa-solid fa-truck-fast fs-4 text-white"></i>
+                    {{-- <i class="fa-regular fa-hourglass-half"></i> --}}
+                    {{-- <i class="fa-regular fa-circle-check fs-3 text-white"></i> --}}
+                    {{-- <i class="fa-solid fa-utensils fs-3 text-white"></i> --}}
+                </div>
+                <div class="card-title mt-5 fw-bold mb-2">Table-000{{($i*3) +3}}</div>
+
+                <div class="w-100  d-flex justify-content-between mt-5">
+                    <h6 class="fw-bold fs-6">10:00</h6>
+
+                    <h6 class="fw-bold fs-6">Johny</h6>
+                </div>
+                <div class="w-100  d-flex justify-content-between mt-1 mb-10">
+                    <h6 class="fw-bold fs-7">#R-001</h6>
+
+                    <h6 class="fw-bold">T-0001</h6>
+                </div>
+            </div>
+            {{-- <div class="card-header">
+                <div class="ribbon-label bg-success">
+                    <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
+                </div>
+                <div class="m-auto d-flex mt-5 justify-content-center align-items-center rounded-circle w-50px h-50px icon-process">
+                    <i class="fa-regular fa-hourglass fs-3 text-warning"></i>
+                </div>
+                <div class="w-100  text-center mt-5">
+                    <h4 class="fw-bold">T-0001</h4>
+                </div>
+
+                <div class="w-100  d-flex justify-content-between">
+                    <h4 class="fw-bold">T-0001</h4>
+                </div>
+            </div> --}}
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-1">
+                <!--begin::Users-->
+                {{-- <div class="fw-bold text-gray-600 mb-3">Total Order Item: 11</div> --}}
+                <!--end::Users-->
+                <!--begin::Permissions-->
+                <div class="d-flex flex-column text-gray-800">
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Chese Burgar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Moh Hingar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Milk Tea</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="fw-semibold">Noodle Burgar</span>
+                        <span class="fw-bold">x 10</span>
+                    </div>
+                    <div class='d-flex align-items-center py-3 pt-5'>
+                        <span class='bullet bg-primary me-3'></span>
+                        <em>and 7 more...</em>
+                    </div>
+                </div>
+                <!--end::Permissions-->
+            </div>
+            <!--end::Card body-->
+            <!--begin::Card footer-->
+
+        </div>
+        <!--end::Card-->
+    </div>
+    <!--end::Col-->
+    @endfor

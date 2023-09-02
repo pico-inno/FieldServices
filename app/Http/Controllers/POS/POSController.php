@@ -226,8 +226,13 @@ class POSController extends Controller
         $printerInfo=posRegisters::where('id', $posRegisterId)->select('printer_id')->with('printer')->first()->printer;
         if($printerInfo->printer_type=='network'){
             $networkPrinter=new networkPrinterController();
-            $status=$networkPrinter->print($printerInfo,[...$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, $invoice_no]);
-            return response()->json([...$status,'type'=>'network']);
+            $status=$networkPrinter->print($printerInfo,['voucherData'=>$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, 'invoice_no'=> $invoice_no]);
+
+            $voucherData = $totalPriceAndOtherData;
+            $invoice_row = $invoice_row;
+            // dd($invoice_row);
+            // return view('App.pos.print.payment', compact('invoice_row', 'invoice_no','voucherData'));
+            return response()->json([$status,'type'=>'network']);
         }
         $html = view('App.pos.print.payment', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no'))->render();
 
