@@ -33,6 +33,10 @@
                         <input type="text" name="ip_address" class="form-control form-control-sm" value="" placeholder="192.168.00.00">
                     </div>
                     <div class="col-6 mb-5">
+                        <label for="location" class=" form-label">Port</label>
+                        <input type="text" name="port" class="form-control form-control-sm" value="9300" placeholder="">
+                    </div>
+                    <div class="col-6 mb-5">
                         <label for="location" class=" form-label">Product Category</label>
                         <select name="product_category_id" id="location" class="form-select form-select-sm" data-control="select2">
                             @foreach ($categories as $c)

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->enum('printer_type',['network'])->nullable();
             $table->string('ip_address')->nullable();
+            $table->string('port')->default('9300')->nullable();
             $table->integer('product_category_id')->nullable();
         });
     }

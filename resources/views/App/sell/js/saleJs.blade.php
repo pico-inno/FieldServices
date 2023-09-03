@@ -1044,7 +1044,8 @@
                 console.log(finalBasePrice,percentagePrice,'percentagePrice',priceStage.cal_value);
                 price=isNullOrNan(finalBasePrice)+isNullOrNan(percentagePrice);
             }else{
-                let refPrice=product.stock[0]? product.stock[0].ref_uom_price: '';
+                let lastIndexOfStock=product.stock.length-1;
+                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
                 percentagePrice=refPrice * (priceStage.cal_value/100);
                 price=isNullOrNan(refPrice)+isNullOrNan(percentagePrice);
             }
@@ -1062,7 +1063,8 @@
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
-            let refPrice=product.stock[0]? product.stock[0].ref_uom_price: '';
+            let lastIndexOfStock=product.stock.length-1;
+            let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
             let result=refPrice * isNullOrNan( inputUom.value);
             parentDom.find('.uom_price').val(result);
         }
@@ -1114,7 +1116,7 @@
         }else if (currentUomType == 'reference' && newUomType == 'bigger') {
             resultPrice = currentUomPrice * newUomValue;
         }else if (currentUomType == 'bigger' && newUomType == 'reference') {
-            resultPrice = currentUomPrice / currentUomPrice;
+            resultPrice = currentUomPrice / currentUomValue;
         }else if (currentUomType == 'bigger' && newUomType == 'bigger') {
             resultPrice = currentUomPrice *( newUomInfo / currentUomValue);
         }else if (currentUomType == 'smaller' && newUomType == 'bigger') {

@@ -1,8 +1,7 @@
 @extends('App.main.navBar')
 
-
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('opening_stock_here_show','here show')
 @section('add_opening_stock_active_show', 'active ')
 @section('title')
@@ -113,7 +112,7 @@
                                         <div class="input-group-text">
                                             <i class="fa-solid fa-magnifying-glass"></i>
                                         </div>
-                                        <input type="text" class="form-control rounded-start-0" id="searchInput"
+                                        <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput"
                                                placeholder="Search...">
                                         <div
                                             class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
@@ -121,11 +120,9 @@
                                             style="max-height: 300px;z-index: 100;"></div>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-3 btn-light-primary btn add_new_product_modal my-5 my-lg-0"
-                                     data-bs-toggle="modal" type="button"
-                                     {{--  data-bs-target="#add_new_product_modal" --}} data-href="{{ url('purchase/add/supplier')}}">
+                                <a class="col-12 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0 productQuickAdd"   data-href="{{route('product.quickAdd')}}"  >
                                     <i class="fa-solid fa-plus me-2 "></i> Add new product
-                                </div>
+                                </a>
                             </div>
                             <div class="table-responsive">
                                 <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="openingStockTable">
@@ -179,6 +176,7 @@
         </div>
         <!--end::Container-->
     </div>
+    <div class="modal modal-lg fade " tabindex="-1" data-bs-focus="false" id="quick_add_product_modal"></div>
 
 @endsection
 
@@ -195,7 +193,15 @@
             dateFormat: "Y-m-d",
         });
 
+    $(document).on('click', '.productQuickAdd', function(){
+        $url=$(this).data('href');
 
+        loadingOn();
+        $('#quick_add_product_modal').load($url, function() {
+            $(this).modal('show');
+            loadingOff();
+        });
+    });
 
 
 

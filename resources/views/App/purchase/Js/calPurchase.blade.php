@@ -4,6 +4,8 @@ $(document).ready(function() {
     var suppliers=@json($suppliers);
     let setting=@json($setting);
     let currency=@json($currency);
+    let currentCurrencySymbol=currency.symbol;
+    let currencies=@json($currencies);
     let lotControl=setting.lot_control;
     let purchaseDetails=@json($purchase_detail?? []) ;
     if(purchaseDetails.length>0){
@@ -29,6 +31,11 @@ $(document).ready(function() {
             ${supplier.city? supplier.city+',' :''}${supplier.state? supplier.state+',' :''}${supplier.country? supplier.country+',' :''}<br>
             ${ supplier.zip_code? supplier.zip_code+',' :''}`)
         }
+    })
+    $('#currency_id').change(function(e){
+        let selectedCurrency=currencies.find(c=>c.id==$(this).val());
+        currentCurrencySymbol=selectedCurrency.symbol;
+        $('.currencySymbol').text(currentCurrencySymbol);
     })
 
     let unique_name_id=1;
@@ -158,9 +165,12 @@ $(document).ready(function() {
         if(selected_product.has_variation=='single'){
             default_purchase_price=selected_product.product_variations[0].default_purchase_price;
             variation_id=selected_product.product_variations[0].id;
+            lastPurchasePrice=selected_product.lastPurchasePrice;
         }else if(selected_product.has_variation=='sub_variable'){
             default_purchase_price=selected_product.default_purchase_price;
             variation_id=selected_product.variation_id;
+            lastPurchasePrice=selected_product.lastPurchasePrice;
+
         }
         let lot_serial_no_input=lotControl=="on" ? `
             <td>
@@ -169,14 +179,14 @@ $(document).ready(function() {
             '';
         let newRow = `<tr class='cal-gp'>
             <td class="d-none">
-                <a href='' class='text-gray-800 text-hover-primary mb-1'>${unique_name_id}</a>
+                <a href='#' class='text-gray-800 text-hover-primary mb-1'>${unique_name_id}</a>
                 <input type="hidden" class="input_number " value="${selected_product.id}" name="purchase_details[${unique_name_id}][product_id]">
             </td>
             <td class="d-none">
                 <input type="hidden" class="input_number" value="${variation_id}" name="purchase_details[${unique_name_id}][variation_id]">
             </td>
             <td>
-                <a href="#" class="text-gray-600 text-hover-primary mb-1 ">${selected_product.name}</a><br>
+                <span  class="text-gray-600 text-hover-primary mb-1 ">${selected_product.name}</span><br>
                 <span class="text-gray-500 fw-semibold fs-5">${selected_product.variation_name??''}</span>
             </td>
             <td class="fv-row">
@@ -188,7 +198,11 @@ $(document).ready(function() {
                 </select>
             </td>
             <td>
-                <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[${unique_name_id}][uom_price]" id="numberonly"  value="${default_purchase_price ?? 0}">
+                <div class="input-group input-group-sm">
+
+                    <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[${unique_name_id}][uom_price]" id="numberonly"  value="${lastPurchasePrice?? (default_purchase_price ?? 0)}">
+                    <span class="input-group-text currencySymbol">${currentCurrencySymbol}</span>
+                </div>
             </td>
             <td class="${setting.enable_line_discount_for_purchase == 1 ? '' :'d-none'}">
                 <select  name="purchase_details[${unique_name_id}][discount_type]" class="form-select form-select-sm discount_type" data-kt-repeater="select2" data-hide-search="true" data-placeholder="Discount Type">

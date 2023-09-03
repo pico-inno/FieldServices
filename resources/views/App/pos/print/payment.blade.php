@@ -1,149 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <link href={{ asset("assets/plugins/global/plugins.bundle.css") }} rel="stylesheet" type="text/css" />
-    <link href={{ asset("assets/css/style.bundle.css") }} rel="stylesheet" type="text/css" />
-    <title>POS Sell Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles for printing */
-        @media print {
-          body {
-            visibility: hidden;
-          }
-          .print-content {
-            visibility: visible;
-          }
+        body {
+            font-family: Padauk, Arial, sans-serif;
         }
 
+        table {
+            width: 100%;
+        }
+
+        table tr th {
+            font-size: 30px;
+        }
+
+        table tr td {
+            font-size: 27px;
+            font-weight: normal;
+        }
+
+        .itemsTable th {
+            text-align: left;
+            margin-bottom: 5px;
+            border-bottom: 3px dashed #000;
+            /* Add a dotted border under th elements */
+        }
+
+        td {
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .itemsTable td:last-child {
+            text-align: right;
+        }
+
+        .vocuherInfo {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .subInfo {
+            margin-top: 40px;
+        }
+
+        .subInfo tr td {
+            text-align: right;
+        }
+
+        .subInfo tr td {
+            font-size: 26px;
+            font-weight: normal;
+        }
+
+        .vocuherInfo tr th {
+            font-size: 26px;
+            font-weight: normal;
+        }
+
+        .itemsTable tr:last-child {
+            margin-bottom: 5px;
+            border-bottom: 3px dashed #000;
+            /* Add a dotted border under th elements */
+        }
     </style>
 </head>
+
 <body>
-    <div class="container print-content">
-        <div class="">
-            <div class="">
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <div class="fs-3 text-gray-500">Business :</div>
-                        <div class="fs-3 fw-bold">{{ $business_name }}</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="fs-3 fw-bold text-gray-500">Location :</div>
-                        <div class="fs-3 fw-bold">{{ $totalPriceAndOtherData['business_location'] }}</div>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <div class="fs-3 fw-bold text-gray-500">User :</div>
-                        <div class="fs-3 fw-bold">{{ $user_name }}</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="fs-3 fw-bold"><span class="text-gray-500">Customer :</span> {{ $totalPriceAndOtherData['customer_name'] }}</div>
-                        <div class="fs-3 fw-bold"><span class="text-gray-500">Mobile: </span> {{ $totalPriceAndOtherData['customer_mobile'] }}</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="fs-1 fw-bold text-gray-500">Sale Invoice No :</div>
-                        <div class="fs-1 fw-bold">{{ $invoice_no }}</div>
-                    </div>
-                    <div class="col-6"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="border-top"></div>
-
-        <div class="">
-            <table class="table table-bordered">
-                <thead>
-                    <tr class="text-gray-500">
-                        <th>No. </th>
-                        <th>Product Variation</th>
-                        <th>Ref UoM</th>
-                        <th>Qty</th>
-                        <th>UoM</th>
-                        <th>Price</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($invoice_row as $index => $item)
-                        <tr class="text-gray-500">
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $item['product_name'] }} - {{ $item['variation'] ?? 'single product'}}</td>
-                            <td>{{ $item['referenceUom'] }}</td>
-                            <td>{{ $item['quantity'] }}</td>
-                            <td>{{ $item['uomName'] }}</td>
-                            <td>{{ $item['price'] }}</td>
-                            <td>{{ $item['subtotal'] }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <div class="border-top"></div>
-
-        <div class="">
-            <div class="">
-                <div class="d-flex justify-content-end mb-3 text-gray-800">
-                    <h1 class="me-5 text-gray-500">Total</h1>
-                    <span class="fs-3 me-5 text-gray-500">{{ $totalPriceAndOtherData['total'] }}</span>
-                </div>
-                <div class="d-flex justify-content-end mb-3 text-gray-800">
-                    <h1 class="me-5 text-gray-500">Discount</h1>
-                    <span class="fs-3 me-5 text-gray-500">{{ $totalPriceAndOtherData['discount'] }}</span>
-                </div>
-                <div class="d-flex justify-content-end mb-3 text-gray-800">
-                    <h1 class="me-5 text-gray-500">Paid</h1>
-                    <span class="fs-3 me-5 text-gray-500">{{ $totalPriceAndOtherData['paid'] ?? '0' }}</span>
-                </div>
-                <div class="d-flex justify-content-end mb-3 text-gray-800">
-                    <h1 class="me-5 text-gray-500">Balance</h1>
-                    <span class="fs-3 me-5 text-gray-500">{{ $totalPriceAndOtherData['balance'] ?? '0' }}</span>
-                </div>
-                <div class="d-flex justify-content-end mb-3 text-gray-800">
-                    <h1 class="me-5 text-gray-500">Change</h1>
-                    <span class="fs-3 me-5 text-gray-500">{{ $totalPriceAndOtherData['change'] ?? '0' }}</span>
-                </div>
-            </div>
-        </div>
-        {{-- <div class="border-top mt-3"></div> --}}
-        {{-- <div class="card">
-            <div class="card-body">
-                <div class="row mb-4">
-                    <div class="col-6">
-                        <div class="fs-1">Amount</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="fs-1">Payment Method</div>
-                    </div>
-                </div>
-                <div class="row mb-5">
-                    <div class="col-6">
-                        <div class="fs-1">225.6</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="fs-1">Card</div>
-                    </div>
-                </div>
-                <div class="row mb-5">
-                    <div class="col-6">
-                        <div class="fs-1">225.6</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="fs-1">Bank</div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-    </div>
-
-    <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
-    <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
+    <table class="vocuherInfo">
+        <tr>
+            <th style="width: 40%">Voucher No </th>
+            <th style="width: 60%">: {{$invoice_no}}</th>
+        </tr>
+        <tr>
+            <th style="width: 40%">Casher </th>
+            <th style="width: 60%">: {{Auth::user()->username}}</th>
+        </tr>
+        <tr>
+            <th style="width: 40%">Customer </th>
+            <th style="width: 60%">: Walk-In Customer</th>
+        </tr>
+    </table>
+    <table class="itemsTable">
+        <tr>
+            <th style="width: 50%">Product</th>
+            <th style="width: 25%">Qty</th>
+            <th style="width: 25% ;text-align: right">Price</th>
+        </tr>
+        @foreach ($invoice_row as $index => $item)
+        <tr style="margin-top: 5px">
+            <td style="word-wrap: break-word;line-break: anywhere;max-width: 350px;">{{ $item['product_name'] }} {{
+                $item['variation']?"<br>".'('.$item['variation'].')':''}}</td>
+            <td>{{ $item['quantity'] }} {{ $item['uomName'] }}</td>
+            <td>{{ $item['price'] }}</td>
+        </tr>
+        @endforeach
+    </table>
+    <table class="subInfo">
+        <tr>
+            <td style="width:60%">Total Amount:</td>
+            <td style="width: 40%"> {{$voucherData['total']}}</td>
+        </tr>
+        <tr>
+            <td style="width: 60%">Discount Amount: </td>
+            <td style="width: 40%"> {{$voucherData['discount']}}</td>
+        </tr>
+        <tr>
+            <td style="width: 60%">Paid Amount:</td>
+            <td style="width: 40%"> {{$voucherData['paid']}}</td>
+        </tr>
+    </table>
 </body>
+
 </html>

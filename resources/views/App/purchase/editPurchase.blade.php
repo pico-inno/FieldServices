@@ -324,7 +324,12 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[{{$key}}][uom_price]" id="numberonly"  value="{{$uom_price}}">
+
+                                                <div class="input-group input-group-sm">
+
+                                                    <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[{{$key}}][uom_price]" id="numberonly"  value="{{$uom_price}}">
+                                                    <span class="input-group-text currencySymbol">{{$currency['symbol']}}</span>
+                                                </div>
                                             </td>
                                             <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}"">
                                                 <select  name="purchase_details[{{$key}}][discount_type]" class="form-select form-select-sm mb-1 discount_type" data-kt-repeater="select2" data-hide-search="true" data-placeholder="Discount Type">
@@ -335,7 +340,7 @@
                                             <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}"">
 
                                                 <input type="text" class="form-control form-control-sm sum discount_amount per_item_discount input_number" name="purchase_details[{{$key}}][per_item_discount]" value="{{$per_item_discount}}">
-                                                <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>{{$currency['symbol']}}</div>
+                                                <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span><span class="currencySymbol">{{$currency['symbol']}}</span></div>
                                                 <input type="hidden" class="form-control form-control-sm sum line_discount"  value="0">
                                                 <input type="hidden" class="subtotal_with_discount input_number" name="purchase_details[{{$key}}][subtotal_with_discount]"  value="{{$subtotal_with_discount}}">
                                             </td>
@@ -347,7 +352,7 @@
                                             </td>
 
                                             <td class="d-none">
-                                            <span class="subtotal_with_tax ms-2">{{$subtotal_with_tax_text}}</span> {{$currency['symbol']}}
+                                            <span class="subtotal_with_tax ms-2">{{$subtotal_with_tax_text}}</span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                             </td>
 
                                             <input type="hidden" class="form-control form-control-sm sum  input_number subtotal_with_tax_input" name="purchase_details[{{$key}}][subtotal_with_tax]" value="{{$subtotal_with_tax}}">
@@ -371,14 +376,14 @@
                                     <tr class="mb-2 d-none">
                                         <th class="fw-semibold"> Total Line Discount :</th>
                                             <td class="rowSum text-left  fs-6 fw-semibold text-end" >
-                                                <span class="total_line_discount">{{$total_line_discount}} </span> {{$currency['symbol']}}
+                                                <span class="total_line_discount">{{$total_line_discount}} </span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                             </td>
                                             <input type="hidden" name="total_line_discount" class="total_line_discount_input input_number" id="" class="" value="{{$total_line_discount}}">
                                         </tr>
                                     <tr class="mb-2">
                                         <th class=" fw-semibold">Net Total Purchase Amount :</th>
                                         <td class="rowSum text-left fs-6 fw-semibold text-end" id=''>
-                                            <span class="net_purchase_total_amount_text"> {{$purchase_amount_for_txt}} </span> {{$currency['symbol']}}
+                                            <span class="net_purchase_total_amount_text"> {{$purchase_amount_for_txt}} </span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                         </td>
                                         <input type="hidden" name="purchase_amount" class="net_purchase_total_amount input_number" id="" class="" value="{{$purchase_amount}}">
                                     </tr>
@@ -405,14 +410,14 @@
                                 </label>
                                 <input type="text" class="form-control input_number form-select-sm extra_discount_amount"   id="extra_discount_amount" name="extra_discount_amount" value="{{$extra_discount_amount}}">
                                 <input type="hidden" class="extra_discount" id="extra_discount">
-                                <div class='mt-2'>Discount : <span class="extra_discount_txt">0</span> {{$currency['symbol']}}</div>
+                                <div class='mt-2'>Discount : <span class="extra_discount_txt">0</span> <span class="currencySymbol">{{$currency['symbol']}}</span></div>
                             </div>
                             <div class="mb-7 col-12 col-md-4 fw-semibold fs-6  d-flex justify-content-between align-items-end">
                                 <span >
                                     Discount:(-)
                                 </span>
                                 <div class="">
-                                    <span class="extra_discount_txt"></span>{{$currency['symbol']}}
+                                    <span class="extra_discount_txt"></span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                                 <input type="hidden" class="form-control input_number form-select-sm" id="total_discount_amount"  name="total_discount_amount" value="{{$total_discount_amount}}">
                             </div>
@@ -429,7 +434,7 @@
                                         Purchase Expense:(+)
                                 </span>
                                 <div class="">
-                                    <span id="purchase_expense_txt">{{$purchase_expense_text}}</span>{{$currency['symbol']}}
+                                    <span id="purchase_expense_txt">{{$purchase_expense_text}}</span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                             </div>
                         </div>
@@ -439,7 +444,7 @@
                                         total Purchase Amount:(=)
                                 </span>
                                 <div class="">
-                                    <span id="total_purchase_amount_txt">{{$total_purchase_amount_text}}</span>{{$currency['symbol']}}
+                                    <span id="total_purchase_amount_txt">{{$total_purchase_amount_text}}</span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                             </div>
                             <input type="hidden" name="total_purchase_amount" id="total_purchase_amount" value="{{$total_purchase_amount}}">
@@ -456,7 +461,7 @@
                                         Paid Amount:(-)
                                 </span>
                                 <div class="">
-                                    <span id="paid_amount_txt">{{$paid_amount_text}}</span>{{$currency['symbol']}}
+                                    <span id="paid_amount_txt">{{$paid_amount_text}}</span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                             </div>
                         </div>
@@ -466,7 +471,7 @@
                                         Balance Amount:(=)
                                 </span>
                                 <div class="">
-                                    <span id="balance_amount_txt">{{$balance_amount_text}}</span> {{$currency['symbol']}}
+                                    <span id="balance_amount_txt">{{$balance_amount_text}}</span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                                 <input type="hidden" class="form-control input_number" name="balance_amount form-select-sm" id="balance_amount" value="{{$balance_amount}}">
                             </div>

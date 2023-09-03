@@ -4,7 +4,7 @@
  {{-- css file for this page --}}
 @endsection
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('opening_stock_here_show','here show')
 @section('import_opening_stock_menu_link', 'active ')
 

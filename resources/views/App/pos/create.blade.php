@@ -557,6 +557,7 @@
                                     <!--begin::Form group-->
                                     <div class="form-group">
                                         <form action="" id="paymentForm">
+                                            @if (count($reservations) > 0)
                                             <div class="folio-Form mb-5">
                                                 <div class="form-group">
                                                     <label for="" class="form-label fw-bold">Post to Folio</label>
@@ -567,6 +568,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            @endif
                                             <div id="payment_row_body">
 
                                             </div>
@@ -833,7 +835,7 @@
                                 <label for="" class="fs-5">Discount Type</label>
                                 <select class="form-select mb-2 form-select-sm rounded-0" name="invoice_row_discount_type" data-control="select2" data-hide-search="true">
                                     <option value="fixed">Fixed</option>
-                                    <option value="percentage">Percentage</option>
+                                    <option value="percentage" selected>Percentage</option>
                                 </select>
                             </div>
                             <div class="col-6">
@@ -856,7 +858,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Save</button>
                     </div>
                 </div>
             </div>
@@ -870,16 +872,19 @@
                     <h4 class="modal-title"> (<span id="table-text"></span>) Order Preview </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div class="folio-Form p-5">
-                        <div class="form-group">
-                            <label for="" class="form-label fw-bold">Post to Folio</label>
-                            <select name="reservation_id_from_order"  class="form-select form-select-sm reservation_id"
-                                data-placeholder="Select Reservation" placeholder='Select Reservation' data-kt-select2="true"
-                                data-allow-clear="true" data-dropdown-parent="#order_confirm_modal" autofocus="false">
+                    @if (count($reservations) > 0)
+                        <div class="folio-Form p-5">
+                            <div class="form-group">
+                                <label for="" class="form-label fw-bold">Post to Folio</label>
+                                <select name="reservation_id_from_order"  class="form-select form-select-sm reservation_id"
+                                    data-placeholder="Select Reservation" placeholder='Select Reservation' data-kt-select2="true"
+                                    data-allow-clear="true" data-dropdown-parent="#order_confirm_modal" autofocus="false">
 
-                            </select>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+
+                    @endif
                   <div class="p-5 pt-0">
                     <label for="" class="form-label">Sevices:</label>
                     <select name="services" class="form-select form-select-sm" id="services" placeholder="Services" data-placeholder="Services" data-kt-select2="true" data-hide-search="true">

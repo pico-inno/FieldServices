@@ -141,3 +141,41 @@ function updenvWithoutQuote($newEnvVariables)
 
     file_put_contents($envFile, $str);
 }
+
+
+/**
+ *
+ *
+ * @param mixed $currentUOMId
+ *  @param mixed $currentUomPrice
+ * @param mixed $newUOMID
+ *  @return mixed $resultPrice
+ *
+ */
+function priceChangeByUom($currentUOMId, $currentUomPrice,$newUOMID) {
+        $newUomInfo = UOM::where('id', $newUOMID)->first();
+        $newUomValue=$newUomInfo->value;
+        $newUomType = $newUomInfo->unit_type;
+        $currentUomInfo = UOM::where('id', $currentUOMId)->first();
+        $currentUomType=$currentUomInfo->unit_type;
+        $currentUomValue= $currentUomInfo->value;
+        $resultPrice=0;
+        if ($currentUomType == 'reference' && $newUomType == 'smaller') {
+            $resultPrice = $currentUomPrice /($newUomInfo->value * $currentUomInfo->value);
+        }else if ($currentUomType == 'reference' && $newUomType == 'bigger') {
+            $resultPrice = $currentUomPrice * $newUomValue;
+        }else if ($currentUomType == 'bigger' && $newUomType == 'reference') {
+            $resultPrice = $currentUomPrice / $currentUomValue;
+        }else if ($currentUomType == 'bigger' && $newUomType == 'bigger') {
+            $resultPrice = $currentUomPrice *( $newUomInfo / $currentUomValue);
+        }else if ($currentUomType == 'smaller' && $newUomType == 'bigger') {
+            $resultPrice = $currentUomPrice * ($currentUomValue * $newUomValue) ;
+        }else if ($currentUomType == 'smaller' && $newUomType == 'smaller') {
+            $resultPrice = $currentUomPrice / $newUomValue;
+        }else if ($currentUomType == 'smaller' && $newUomType == 'reference') {
+            $resultPrice = $currentUomPrice * $currentUomValue ;
+        }else{
+            $resultPrice = $currentUomPrice  ;
+        }
+        return $resultPrice;
+}

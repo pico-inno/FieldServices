@@ -57,15 +57,13 @@
                                         <select name="contact_id" class="form-select form-select-sm fw-bold rounded-start-0" id="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
                                             <option></option>
                                             @foreach($suppliers as $supplier)
-
                                                 <option value="{{$supplier->id}}" @selected(old('contact_id')==$supplier->id)>{{$supplier->company_name ?? $supplier->getFullNameAttribute() }}</option>
-
                                             @endforeach
                                         </select>
                                     </div>
-                                    {{-- <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
+                                    <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
                                        <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
-                                    </button> --}}
+                                    </button>
                                     {{-- <a class="input-group-text "  href="{{route('suppliers.create')}}" target="_blanck">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
                                     </a> --}}
@@ -195,14 +193,14 @@
                                     <tr class="mb-2 d-none">
                                         <th class="fw-semibold"> Total Line Discount :</th>
                                         <td class="rowSum text-left  fs-6 fw-semibold text-end" >
-                                            <span class="total_line_discount fw-bold">0 </span> {{$currency['symbol']}}
+                                            <span class="total_line_discount fw-bold">0 </span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                         </td>
                                     </tr>
                                     <input type="hidden" name="total_line_discount" class="total_line_discount_input input_number" id="" class="" value="{{old('purchase_amount',0)}}">
                                     <tr class="mb-2">
                                         <th class=" fw-semibold">Net Total Purchase Amount :</th>
                                         <td class="rowSum text-left fs-6 fw-semibold text-end" id=''>
-                                            <span class="net_purchase_total_amount_text"> 0 </span> {{$currency['symbol']}}
+                                            <span class="net_purchase_total_amount_text"> 0 </span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                         </td>
                                         <input type="hidden" name="purchase_amount" class="net_purchase_total_amount input_number" id="" class="" value="{{old('purchase_amount',0)}}">
                                     </tr>
@@ -229,14 +227,14 @@
                                 </label>
                                 <input type="text" class="form-control input_number form-select-sm extra_discount_amount"   id="extra_discount_amount" name="extra_discount_amount" value="{{old('total_discount',0)}}">
                                 <input type="hidden" class="extra_discount" id="extra_discount">
-                                <div class='mt-2'>Discount : <span class="extra_discount_txt">0</span> {{$currency['symbol']}}</div>
+                                <div class='mt-2'>Discount : <span class="extra_discount_txt">0</span> <span class="currencySymbol">{{$currency['symbol']}}</span></div>
                             </div>
                             <div class="mb-7 col-12 col-md-4 fw-semibold fs-6  d-flex justify-content-between align-items-center">
                                 <span >
                                        Extra Discount:(-)
                                 </span>
                                 <div class="">
-                                    <span class="extra_discount_txt">0</span>{{$currency['symbol']}}
+                                    <span class="extra_discount_txt">0</span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                                 <input type="hidden" class="form-control input_number form-select-sm" id="total_discount_amount"  name="total_discount_amount" value="{{old('total_discount_amount',0)}}">
                             </div>
@@ -253,7 +251,7 @@
                                         Purchase Expense:(+)
                                 </span>
                                 <div class="">
-                                    <span id="purchase_expense_txt">{{old('purchase_expense',0)}}</span>{{$currency['symbol']}}
+                                    <span id="purchase_expense_txt">{{old('purchase_expense',0)}}</span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                             </div>
                         </div>
@@ -263,7 +261,7 @@
                                         total Purchase Amount:(=)
                                 </span>
                                 <div class="">
-                                    <span id="total_purchase_amount_txt">{{old('total_purchase_amount',0)}}</span>{{$currency['symbol']}}
+                                    <span id="total_purchase_amount_txt">{{old('total_purchase_amount',0)}}</span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                             </div>
                             <input type="hidden" name="total_purchase_amount" id="total_purchase_amount" value="{{old('total_purchase_amount',0)}}">
@@ -280,7 +278,7 @@
                                          Paid Amount:(-)
                                 </span>
                                 <div class="">
-                                    <span id="paid_amount_txt">{{old('paid_amount',0)}}</span>{{$currency['symbol']}}
+                                    <span id="paid_amount_txt">{{old('paid_amount',0)}}</span><span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                             </div>
                         </div>
@@ -290,7 +288,7 @@
                                          Balance Amount:(=)
                                 </span>
                                 <div class="">
-                                    <span id="balance_amount_txt">{{old('balance_amount',0)}}</span> {{$currency['symbol']}}
+                                    <span id="balance_amount_txt">{{old('balance_amount',0)}}</span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                                 <input type="hidden" class="form-control input_number" name="balance_amount form-select-sm" id="balance_amount" value="{{old('balance_amount',0)}}">
                             </div>
@@ -322,7 +320,7 @@
                                 </span>
                                 <div class="fv-row">
                                     <input type="text" class="form-control input_number form-select-sm" name="paid_amount" id="paid_amount" value="{{old('paid_amount',0)}}">
-                                    {{-- <span id="paid_amount_txt">{{old('paid_amount',0)}}</span>{{$currency['symbol']}} --}}
+                                    {{-- <span id="paid_amount_txt">{{old('paid_amount',0)}}</span><span class="currencySymbol">{{$currency['symbol']}}</span> --}}
                                 </div>
                             </div>
                         </div>
@@ -332,7 +330,7 @@
                                          Balance Amount:(=)
                                 </span>
                                 <div class="">
-                                    <span id="balance_amount_txt">{{old('balance_amount',0)}}</span> {{$currency['symbol']}}
+                                    <span id="balance_amount_txt">{{old('balance_amount',0)}}</span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                 </div>
                                 <input type="hidden" class="form-control input_number form-select-sm" name="balance_amount" id="balance_amount" value="{{old('balance_amount',0)}}">
                             </div>
@@ -356,12 +354,11 @@
 
 @push('scripts')
 {{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
-
+@include('App.purchase.contactAdd')
 <script>
 
 
 $(document).ready(function(){
-
     $('[data-td-toggle="datetimepicker"]').flatpickr({
              enableTime: true,
             dateFormat: "Y-m-d H:i",
@@ -409,6 +406,37 @@ $(document).ready(function(){
             loadingOff();
         });
     });
+    $('form#add_contact_form').submit(function(event) {
+        event.preventDefault();
+
+        var formData = $(this).serialize();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            success: function(response){
+                console.log(response);
+                if (response.success == true) {
+                    $('#contact_add_modal').modal('hide');
+                    success(response.msg);
+                    // Clear the input fields in the modal form
+                    $('#add_contact_form')[0].reset();
+                    // $('.contact_id').select2();
+                    // Create a new option element
+
+                    var newOption = new Option(response.new_contact_name, response.new_contact_id);
+
+                    // Append the new option to the select2 dropdown
+                    $('#contact_id').append(newOption).trigger('change');
+                    $('#contact_id').val(response.new_contact_id).trigger('change');
+                }
+            },
+            error: function(result) {
+                error(result.responseJSON.errors, 'Something went wrong');
+            }
+        })
+    })
 </script>
 
 @endpush
