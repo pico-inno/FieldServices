@@ -228,8 +228,8 @@ class POSController extends Controller
             $networkPrinter=new networkPrinterController();
             $status=$networkPrinter->print($printerInfo,['voucherData'=>$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, 'invoice_no'=> $invoice_no]);
 
-            $voucherData = $totalPriceAndOtherData;
-            $invoice_row = $invoice_row;
+            // $voucherData = $totalPriceAndOtherData;
+            // $invoice_row = $invoice_row;
             // dd($invoice_row);
             // return view('App.pos.print.payment', compact('invoice_row', 'invoice_no','voucherData'));
             return response()->json([$status,'type'=>'network']);

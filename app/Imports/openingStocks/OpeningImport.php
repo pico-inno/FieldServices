@@ -58,7 +58,7 @@ class OpeningImport implements ToModel,WithHeadingRow
 
             // get product_id
             $product_name=$row['product_name'];
-            $product= Product::where('name', $product_name)->select('id', 'product_type','uom_id')->first();
+            $product= Product::where('name', $product_name)->select('id', 'has_variation','uom_id')->first();
             $product_id = $product->id;
             $unitCategoryId=$product->uom->unit_category->id;
             // custom validation for custom rule
@@ -73,7 +73,7 @@ class OpeningImport implements ToModel,WithHeadingRow
             ], [
                 'uom_id' => [$customUnitRule],
                 'variation_value' => [
-                    Rule::requiredIf($product->product_type == "variable"),
+                    Rule::requiredIf($product->has_variation == "variable"),
                 ],
             ],[
                 'uom_id.exists'=> 'Make sure units are must be same category that defined in product!'
@@ -81,7 +81,7 @@ class OpeningImport implements ToModel,WithHeadingRow
 
 
             // get product_variation_id
-            if($product->product_type!="single"){
+            if($product->has_variation!="single"){
                 $variation_value=$row['variation_value'];
                 $variation_value_id=VariationTemplateValues::where('name', $variation_value)->first()->id;
                 $variation_id=ProductVariation::where('product_id',$product_id)->where('variation_template_value_id',$variation_value_id)->first()->id;

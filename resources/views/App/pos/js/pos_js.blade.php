@@ -239,10 +239,16 @@
             let quantity = $element.closest('tr').find('input[name="quantity[]"]').val();
             let default_price = $element.closest('tr').find('input[name="selling_price[]"]').val();
             let perItemDis = $element.closest('tr').find('input[name="per_item_discount"]').val();
+            let disType = $element.closest('tr').find('input[name="discount_type"]').val();
             let total_price = default_price * quantity;
             let perItemDiscounts=isNullOrNan(perItemDis) * isNullOrNan(quantity);
-
-            $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - perItemDiscounts);
+            if(disType === "fixed"){
+                $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - perItemDiscounts);
+            }
+            if(disType === "percentage"){
+                let dis_amount_with_price = default_price * (perItemDiscounts / 100);
+                $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - dis_amount_with_price);
+            }
             $element.closest('tr').find('.subtotal_price').text(total_price);
         }
 
@@ -1072,8 +1078,8 @@
             // let filtered_product = productsOnSelectData.filter( item => item.product_id == product_id && item.variation_id == variation_id);
 
 
-            $('#invoice_row_discount').find('input[name="discount_amount"]').val(per_item_dis);
-            $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').val(subtotal_with_dis);
+            $('#invoice_row_discount').find('input[name="discount_amount"]').val(per_item_dis!='' ?per_item_dis: 0);
+            $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').val(subtotal_with_dis !='' ?subtotal_with_dis: price);
             $('#invoice_row_discount').find('.modal-title').text(`${product_name} - ${product_sku}`);
             $('#invoice_row_discount').find('select[name="each_selling_price"]').val(each_selling_price).trigger('change');
             $('#invoice_row_discount').find('input[name="modal_price_without_dis"]').val(price);
@@ -1248,25 +1254,30 @@
                                     },
                                     data: data,
                                     success: function(response){
-                                        var iframe = $('<iframe>', {
-                                            'height': '0px',
-                                            'width': '0px',
-                                            'frameborder': '0',
-                                            'css': {
-                                                'display': 'none'
-                                            }
-                                        }).appendTo('body')[0];
-                                        // Write the invoice HTML and styles to the iframe document
-                                        var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                        iframeDoc.open();
-                                        iframeDoc.write(response.html);
-                                        iframeDoc.close();
 
-                                        // Trigger the print dialogre
-                                        iframe.contentWindow.focus();
-                                        setTimeout(() => {
-                                            iframe.contentWindow.print();
-                                        }, 500);
+                                        if(response.type=='network'){
+                                            success('successfully sell and print!')
+                                        }else{
+                                            var iframe = $('<iframe>', {
+                                                    'height': '0px',
+                                                    'width': '0px',
+                                                    'frameborder': '0',
+                                                    'css': {
+                                                        'display': 'none'
+                                                    }
+                                                }).appendTo('body')[0];
+                                                // Write the invoice HTML and styles to the iframe document
+                                                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                                iframeDoc.open();
+                                                iframeDoc.write(response.html);
+                                                iframeDoc.close();
+
+                                                // Trigger the print dialogre
+                                                iframe.contentWindow.focus();
+                                                setTimeout(() => {
+                                                    iframe.contentWindow.print();
+                                                }, 500);
+                                        }
                                     }
                                 })
                             }

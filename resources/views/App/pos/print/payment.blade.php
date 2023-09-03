@@ -34,29 +34,41 @@
         }
 
         td {
+            vertical-align: top;
             text-align: left;
         }
 
         .itemsTable td:last-child {
             text-align: right;
         }
-        .vocuherInfo{
+
+        .vocuherInfo {
             text-align: left;
             margin-bottom: 10px;
         }
-        .subInfo{
+
+        .subInfo {
             margin-top: 40px;
         }
-        .subInfo tr td{
+
+        .subInfo tr td {
             text-align: right;
         }
-        .subInfo tr td{
-            font-size: 20px;
-            font-weight: bold;
+
+        .subInfo tr td {
+            font-size: 26px;
+            font-weight: normal;
         }
-        .vocuherInfo tr th{
-            font-size: 20px;
-            font-weight: bold;
+
+        .vocuherInfo tr th {
+            font-size: 26px;
+            font-weight: normal;
+        }
+
+        .itemsTable tr:last-child {
+            margin-bottom: 5px;
+            border-bottom: 3px dashed #000;
+            /* Add a dotted border under th elements */
         }
     </style>
 </head>
@@ -84,7 +96,8 @@
         </tr>
         @foreach ($invoice_row as $index => $item)
         <tr style="margin-top: 5px">
-            <td>{{ $item['product_name'] }} {{ $item['variation']?"<br>".'('.$item['variation'].')':''}}</td>
+            <td style="word-wrap: break-word;line-break: anywhere;max-width: 350px;">{{ $item['product_name'] }} {{
+                $item['variation']?"<br>".'('.$item['variation'].')':''}}</td>
             <td>{{ $item['quantity'] }} {{ $item['uomName'] }}</td>
             <td>{{ $item['price'] }}</td>
         </tr>

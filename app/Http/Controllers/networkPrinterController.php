@@ -90,7 +90,7 @@ class networkPrinterController extends Controller
             unlink($dest);
             /* Print it */
             // $printer -> bitImage($img); // bitImage() seems to allow larger images than graphics() on the TM-T20. bitImageColumnFormat() is another option.
-            // $printer -> cut();
+            $printer -> cut();
         } catch (Exception $e) {
             echo $e->getMessage();
         } finally {
@@ -241,99 +241,99 @@ class networkPrinterController extends Controller
     // }
 
 
-    // public function printForOD($dataForPrint)
-    // {
-    //     // dd($printerData->ip_address);
-    //     $data = $dataForPrint;
-    //     $sale_details=$data['sale_detail'];
-    //     try {
-    //         // $connector = new NetworkPrintConnector($printerData->ip_address, 9100);
-    //         $connector = new NetworkPrintConnector('192.168.123.100', 9100);
-    //     } catch (\Throwable $th) {
-    //         //throw $th;
+    public function printForOD($dataForPrint)
+    {
+        // dd($printerData->ip_address);
+        $data = $dataForPrint;
+        $sale_details=$data['sale_detail'];
+        try {
+            // $connector = new NetworkPrintConnector($printerData->ip_address, 9100);
+            $connector = new NetworkPrintConnector('192.168.123.100', 9100);
+        } catch (\Throwable $th) {
+            //throw $th;
 
-    //         return ['error' => 'Something Wrong With Printed'];
-    //     }
-    //     try {
-    //         $businessName = businessSettings::where('id', Auth::user()->business_id)->first()->name;
-    //         $printer = new Printer($connector);
-    //         $printer->setEmphasis(true);
-    //         // Center-align the store name
-    //         $printer->setJustification(Printer::JUSTIFY_CENTER);
-    //         $printer->text($businessName . "\n\n\n");
-    //         $printer->setJustification(Printer::JUSTIFY_LEFT);
-
-
-    //         $printer->text("Order Voucher No   :".$data['order_voucher_no'] ."\n");
-    //         $printer->text("Service   :" . $data['services']."\n");
-    //         $printer->text("\n\n");
-    //         $printer->setEmphasis(false);
-    //         $productName = "Item";
-    //         $quantity = "Qty";
-
-    //         $text = $this->printFormatForOd($productName, $quantity);
-    //         $printer->text($text);
-    //         $printer->setEmphasis(false);
-
-    //         $printer->text("-----------------------------------------------\n\n");
-    //         $printer->setEmphasis(false);
-    //         foreach ($sale_details as $sd) {
-    //             $variation = $sd['product_variation']['variation_template_value'] ? '(' . $sd['product_variation']['variation_template_value']['name']. ')' : '';
-    //             $productName= $sd['product']['name']. $variation;
-    //             $quantity = number_format($sd['quantity'], 2) . $sd['uom']['short_name'];
+            return ['error' => 'Something Wrong With Printed'];
+        }
+        try {
+            $businessName = businessSettings::where('id', Auth::user()->business_id)->first()->name;
+            $printer = new Printer($connector);
+            $printer->setEmphasis(true);
+            // Center-align the store name
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text($businessName . "\n\n\n");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
 
 
-    //             $text = $this->printFormatForOd($productName, $quantity);
-    //             $printer->text($text);
-    //         }
+            $printer->text("Order Voucher No   :".$data['order_voucher_no'] ."\n");
+            $printer->text("Service   :" . $data['services']."\n");
+            $printer->text("\n\n");
+            $printer->setEmphasis(false);
+            $productName = "Item";
+            $quantity = "Qty";
+
+            $text = $this->printFormatForOd($productName, $quantity);
+            $printer->text($text);
+            $printer->setEmphasis(false);
+
+            $printer->text("-----------------------------------------------\n\n");
+            $printer->setEmphasis(false);
+            foreach ($sale_details as $sd) {
+                $variation = $sd['product_variation']['variation_template_value'] ? '(' . $sd['product_variation']['variation_template_value']['name']. ')' : '';
+                $productName= $sd['product']['name']. $variation;
+                $quantity = number_format($sd['quantity'], 2) . $sd['uom']['short_name'];
 
 
-    //         $printer->text("-----------------------------------------------\n");
+                $text = $this->printFormatForOd($productName, $quantity);
+                $printer->text($text);
+            }
 
-    //         $printer->text("\n\n");
 
-    //         // $printer->text("-----------------------------------------------\n\n");
-    //         $printer->setJustification(Printer::JUSTIFY_CENTER);
-    //         $printer->text("Thank you for Ordering!\n\n");
-    //         $printer->cut();
-    //         return ['success' => 'Successfully Printed'];
-    //     } catch (\Throwable $e) {
-    //         logger($e);
-    //         return ['error' => 'Something Wrong With Printer'];
-    //     } finally {
-    //         $printer->close();
-    //     }
-    //     return ['success' => 'Successfully Printed'];
-    // }
+            $printer->text("-----------------------------------------------\n");
 
-    // function printFormatForOd($productName, $quantity)
-    // {
-    //     $columnWidthName = 24;
-    //     $columnWidthQuantity = 23;
+            $printer->text("\n\n");
 
-    //     $formattedName = str_split($productName, $columnWidthName);
-    //     $formattedQuantity = str_split($quantity, $columnWidthQuantity);
+            // $printer->text("-----------------------------------------------\n\n");
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Thank you for Ordering!\n\n");
+            $printer->cut();
+            return ['success' => 'Successfully Printed'];
+        } catch (\Throwable $e) {
+            logger($e);
+            return ['error' => 'Something Wrong With Printer'];
+        } finally {
+            $printer->close();
+        }
+        return ['success' => 'Successfully Printed'];
+    }
 
-    //     $lengths = [
-    //         'formattedName' => count($formattedName),
-    //         'formattedQuantity' => count($formattedQuantity),
-    //     ];
+    function printFormatForOd($productName, $quantity)
+    {
+        $columnWidthName = 24;
+        $columnWidthQuantity = 23;
 
-    //     $longestArrayName = '';
-    //     $longestArrayLength = 0;
+        $formattedName = str_split($productName, $columnWidthName);
+        $formattedQuantity = str_split($quantity, $columnWidthQuantity);
 
-    //     foreach ($lengths as $arrayName => $arrayLength) {
-    //         if ($arrayLength > $longestArrayLength) {
-    //             $longestArrayName = $arrayName;
-    //             $longestArrayLength = $arrayLength;
-    //         }
-    //     }
-    //     $str = "";
-    //     foreach ($$longestArrayName as $index => $la) {
-    //         $forName = isset($formattedName[$index]) ? str_pad($formattedName[$index], $columnWidthName, " ") : str_pad(" ", $columnWidthName, " ");
-    //         $forQty = isset($formattedQuantity[$index]) ? str_pad($formattedQuantity[$index], $columnWidthQuantity + 1, " ", STR_PAD_RIGHT) : str_pad(" ", $columnWidthQuantity + 1, " ", STR_PAD_LEFT);
-    //         $str .= $forName . $forQty  . "\n";
-    //     }
-    //     return $str;
-    // }
+        $lengths = [
+            'formattedName' => count($formattedName),
+            'formattedQuantity' => count($formattedQuantity),
+        ];
+
+        $longestArrayName = '';
+        $longestArrayLength = 0;
+
+        foreach ($lengths as $arrayName => $arrayLength) {
+            if ($arrayLength > $longestArrayLength) {
+                $longestArrayName = $arrayName;
+                $longestArrayLength = $arrayLength;
+            }
+        }
+        $str = "";
+        foreach ($$longestArrayName as $index => $la) {
+            $forName = isset($formattedName[$index]) ? str_pad($formattedName[$index], $columnWidthName, " ") : str_pad(" ", $columnWidthName, " ");
+            $forQty = isset($formattedQuantity[$index]) ? str_pad($formattedQuantity[$index], $columnWidthQuantity + 1, " ", STR_PAD_RIGHT) : str_pad(" ", $columnWidthQuantity + 1, " ", STR_PAD_LEFT);
+            $str .= $forName . $forQty  . "\n";
+        }
+        return $str;
+    }
 }

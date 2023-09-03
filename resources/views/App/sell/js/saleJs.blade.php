@@ -1116,7 +1116,7 @@
         }else if (currentUomType == 'reference' && newUomType == 'bigger') {
             resultPrice = currentUomPrice * newUomValue;
         }else if (currentUomType == 'bigger' && newUomType == 'reference') {
-            resultPrice = currentUomPrice / currentUomPrice;
+            resultPrice = currentUomPrice / currentUomValue;
         }else if (currentUomType == 'bigger' && newUomType == 'bigger') {
             resultPrice = currentUomPrice *( newUomInfo / currentUomValue);
         }else if (currentUomType == 'smaller' && newUomType == 'bigger') {

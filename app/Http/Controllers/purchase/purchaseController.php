@@ -217,7 +217,7 @@ class purchaseController extends Controller
                             if (hasUpdate('purchase')){
                                 $html .= $editBtn;
                             }
-                            if($purchase->balance_amount>0){
+                            if($purchase->balance_amount!=0){
                                 $html.='<a class="dropdown-item p-2 cursor-pointer " id="paymentCreate"   data-href="'.route('paymentTransaction.createForPurchase',['id' => $purchase->id,'currency_id'=>$purchase->currency_id]).'">Add Payment</a>';
                             }
                             $html.='<a class="dropdown-item p-2 cursor-pointer " id="viewPayment"   data-href="'.route('paymentTransaction.viewForPurchase',$purchase->id).'">View Payment</a>';
@@ -541,7 +541,7 @@ class purchaseController extends Controller
             $pd['currency_id'] = $purchase->currency_id;
             $pd['expense'] = $pd['per_item_expense'] * $pd['quantity'];
             $pd['ref_uom_id'] = $referencteUom['referenceUomId'];
-            $pd['per_ref_uom_price'] =$pd['uom_price'] ?? 0 /$referencteUom['qtyByReferenceUom'] ?? 0;
+            $pd['per_ref_uom_price'] =($pd['uom_price'] ?? 0) /($referencteUom['qtyByReferenceUom'] ?? 0);
             $pd['batch_no'] = UomHelper::generateBatchNo($pd['variation_id']);
             $pd['per_item_tax']=0;
             $pd['tax_amount'] =0;
@@ -662,28 +662,46 @@ class purchaseController extends Controller
             }
         ]
         )->get()->toArray();
-        foreach ($products as $product) {
-            if ($product['has_variation'] == 'variable') {
-                $p = $product['product_variations'];
-                foreach ($p as $variation) {
-                    $variation_product = [
-                        'id' => $product['id'],
-                        'name' => $product['name'],
-                        'sku' => $product['sku'],
-                        'purchase_uom_id'=>$product['purchase_uom_id'],
-                        'uom_id'=>$product['uom_id'],
-                        'uom'=>$product['uom'],
-                        'variation_id' => $variation['id'],
-                        'has_variation' => 'sub_variable',
-                        'variation_name' => $variation['variation_template_value']['name'],
-                        'default_purchase_price' => $variation['default_purchase_price'],
-                        'default_selling_price' => $variation['default_selling_price']
-                    ];
-                    array_push($products, $variation_product);
+        if(count($products)>0){
+            foreach ($products as $i => $product) {
+                if ($product['has_variation'] == 'variable') {
+                    $p = $product['product_variations'];
+                    foreach ($p as $variation) {
+                        $variation_id = $variation['id'];
+                        $lastPurchase = purchase_details::where('per_ref_uom_price', '!=', '0')
+                                        ->where('variation_id', $variation_id)
+                                        ->orderBy('id', 'DESC')
+                                        ->first();
+                        if($lastPurchase){
+                            $lastPurchasePrice = priceChangeByUom($lastPurchase->ref_uom_id, $lastPurchase->per_ref_uom_price, $product['purchase_uom_id']);
+                            // logger($lastPurchasePrice);
+                        }
+                        $variation_product = [
+                            'id' => $product['id'],
+                            'name' => $product['name'],
+                            'sku' => $product['sku'],
+                            'purchase_uom_id' => $product['purchase_uom_id'],
+                            'uom_id' => $product['uom_id'],
+                            'uom' => $product['uom'],
+                            'variation_id' => $variation['id'],
+                            'has_variation' => 'sub_variable',
+                            'variation_name' => $variation['variation_template_value']['name'],
+                            'default_purchase_price' => $variation['default_purchase_price'],
+                            'default_selling_price' => $variation['default_selling_price'],
+                            'lastPurchasePrice' => $lastPurchase ? $lastPurchasePrice: 0,
+                        ];
+                        array_push($products, $variation_product);
+                    }
+                }else{
+                    $variation_id= $product['product_variations'][0]['id'];
+                    $lastPurchase=purchase_details::where('per_ref_uom_price','!=','0')->where('variation_id',$variation_id)->orderBy('id','DESC')->first();
+                    if($lastPurchase){
+                        $lastPurchasePrice = priceChangeByUom($lastPurchase->ref_uom_id, $lastPurchase->per_ref_uom_price, $product['purchase_uom_id']);
+                        $products[$i]['lastPurchasePrice'] = $lastPurchasePrice;
+                    }
                 }
             }
         }
-
         return response()->json($products, 200);
     }
 

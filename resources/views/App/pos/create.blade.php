@@ -835,7 +835,7 @@
                                 <label for="" class="fs-5">Discount Type</label>
                                 <select class="form-select mb-2 form-select-sm rounded-0" name="invoice_row_discount_type" data-control="select2" data-hide-search="true">
                                     <option value="fixed">Fixed</option>
-                                    <option value="percentage">Percentage</option>
+                                    <option value="percentage" selected>Percentage</option>
                                 </select>
                             </div>
                             <div class="col-6">
