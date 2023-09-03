@@ -1059,7 +1059,7 @@
         })[0];
         if(quantity >= qtyByPriceStage){
             parentDom.find('.uom_price').val(resultAfterUomChange.resultPrice);
-            parentDom.find('.price_list').val(priceStage.id).trigger('change');
+            parentDom.find('.price_list').val(priceStage.pricelist_id).trigger('change');
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{

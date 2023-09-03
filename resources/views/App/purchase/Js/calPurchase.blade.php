@@ -220,7 +220,11 @@ $(document).ready(function() {
                 <input type="text" class="form-control form-control-sm sum per_item_expense input_number" name="purchase_details[${unique_name_id}][per_item_expense]" value="0">
             </td>
             <td>
+                <div class="input-group input-group-sm">
+
                 <input type="text" class="form-control form-control-sm sum subtotal_with_expense  input_number" name="purchase_details[${unique_name_id}][subtotal_with_expense]" value="0">
+                    <span class="input-group-text currencySymbol">${currentCurrencySymbol}</span>
+                </div>
             </td>
 
             <td class='d-none'>

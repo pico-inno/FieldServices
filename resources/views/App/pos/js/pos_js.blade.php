@@ -290,6 +290,7 @@
                 let datas = { pricelist_id, product_variation_id, quantity, uom_id };
                 // getProducts2(datas);
                 let price_info = getProducts(datas);
+                console.log(price_info);
                 let result_pricelist_id, price;
                 if(price_info == undefined){
                     let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
