@@ -84,6 +84,7 @@
                             <th class="text-start pe-3 min-w-100px">Reference</th>
                             <th class="text-end pe-3 min-w-100px">Increase Qty</th>
                             <th class="text-end pe-3 min-w-100px">Decrease Qty</th>
+                            <th class="text-end pe-3 min-w-100px">Balance</th>
                             <th class="text-center pe-3 min-w-100px">UOM</th>
                             {{-- <th class="text-end pe-0 min-w-25px">Qty</th> --}}
                         </tr>
@@ -374,6 +375,10 @@ var KTCustomersList = function () {
                 {
                     data: 'decrease_qty',
                     name: 'decrease_qty'
+                },
+                {
+                  data: 'balance_quantity',
+                  name: 'balance_quantity',
                 },
                 {
                     data:'uom',

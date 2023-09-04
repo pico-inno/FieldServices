@@ -90,6 +90,9 @@ class stockHistoryController extends Controller
                 // return "<span class='badge badge-danger'>". $history->decrease_qty  . "</span>";
                 return $history->decrease_qty >0 ? "<span class='text-danger fw-bold'>". number_format($history->decrease_qty,$quantityDp) ."</span>":'-' ;
             })
+            ->editColumn('balance_quantity', function ($history) use($quantityDp){
+                return $history->balance_quantity >0 ? "<span class='fw-bold'>". number_format($history->balance_quantity, $quantityDp) ."</span>":'-' ;
+            })
 
             ->editColumn('uom', function ($history) {
                 $uom=$history->uom->short_name;
@@ -157,7 +160,7 @@ class stockHistoryController extends Controller
             //     return $html;
             //     // return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
             // })
-            ->rawColumns(['increase_qty','decrease_qty','transaction_type','uom','date','reference'])
+            ->rawColumns(['increase_qty','decrease_qty','transaction_type','uom','date','reference', 'balance_quantity'])
             ->make(true);
 
     }
