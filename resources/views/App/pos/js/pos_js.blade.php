@@ -1,11 +1,6 @@
-<script src="{{ asset('customJs/debounce.js') }}"></script>
-{{-- <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script> --}}
-<script src="{{ asset('customJs/pos/calc_pos.js') }}"></script>
-{{-- <script src="{{ asset('customJs/pos/sale.js') }}"></script> --}}
-<script src="{{ asset('customJs/pos/recent.js') }}"></script>
-<script src="{{ asset('customJs/pos/filter_products.js') }}"></script>
-
 <script>
+    let locations=@json($locations);
+
     var price_lists_with_location = [];
     var uoms = @json($uoms ?? null);
     var posRegisterId=@json($posRegisterId);
@@ -21,6 +16,41 @@
         route="{{route('update_sale',$sale->id)}}"
     @endif
     let productsOnSelectData=[];
+</script>
+<script src="{{ asset('customJs/debounce.js') }}"></script>
+{{-- <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script> --}}
+{{-- <script src="{{ asset('customJs/pos/calc_pos.js') }}"></script> --}}
+<script src="{{ asset('customJs/pos/priceStageCal.js') }}"></script>
+{{-- <script src="{{ asset('customJs/pos/sale.js') }}"></script> --}}
+<script src="{{ asset('customJs/pos/recent.js') }}"></script>
+<script src="{{ asset('customJs/pos/filter_products.js') }}"></script>
+
+<script>
+
+
+        let getReferenceUomInfoByCurrentUomQty = (qty, currentUom, referenceUom) => {
+            const currentUomType = currentUom.unit_type;
+            const currentUomValue = currentUom.value;
+            const referenceUomId = referenceUom.id;
+            const referenceRoundedAmount = referenceUom.rounded_amount || 4;
+            const referenceValue = referenceUom.value;
+
+            let result;
+            if (currentUomType === 'reference') {
+                result = qty * referenceValue;
+            } else if (currentUomType === 'bigger') {
+                result = qty * currentUomValue;
+            } else if (currentUomType === 'smaller') {
+                result = qty / currentUomValue;
+            } else {
+                result = qty;
+            }
+
+            return {
+                qtyByReferenceUom: result,
+                referenceUomId: referenceUomId
+            };
+        }
     $(document).ready(function() {
         var editSaleDetails=@json($saleDetails ?? []) ?? [];
         let tableBodyId = $("#invoice_side_bar").is(':hidden') ? 'invoice_with_modal' : 'invoice_with_sidebar';
@@ -213,27 +243,9 @@
             return result;
         }
 
-        // to delete
-        let getSmallestUnitQuantity = (numbers) => {
-            let output = numbers.reduce((accumulator, currentValue) => accumulator * currentValue);
-            return output;
-        }
 
-        // to delete
-        let allowInOrDeQty = ($element) => {
-            // အကြီးဆုံး unit ဖြစ်မှ increas or decrease ခွင့်ပြု
-            let biggest_unit_id = $element.closest('tr').find('input[name="biggest_unit_id"]').val();
-            let selected_unit_id = $element.closest('tr').find('.invoice_unit_select').val();
-            var selectedValue = $('#selling_price_group').val();
 
-            if( selectedValue === 'default_selling_price' && biggest_unit_id === selected_unit_id){
-                $element.closest('tr').find('.show_unit_error').addClass('d-none')
-                return true;
-            }else{
-                $element.closest('tr').find('.show_unit_error').removeClass('d-none');
-                return false;
-            }
-        }
+
 
         let calPrice = ($element) => {
             let quantity = $element.closest('tr').find('input[name="quantity[]"]').val();
@@ -264,118 +276,117 @@
             $(`#${infoPriceId} .sb-total`).text(totalSum);
         }
 
-        let getPrice = () => {
-            // console.log(productsOnSelectData)
-            let contact_pricelist_id = customer_price_list;
-            let all_pricelist_id = $('#selling_price_group option:selected').val();
+        // let getPrice = () => {
+        //     // console.log(productsOnSelectData)
+        //     let contact_pricelist_id = customer_price_list;
+        //     let all_pricelist_id = $('#selling_price_group option:selected').val();
 
-            let pricelist_id = contact_pricelist_id ? contact_pricelist_id : all_pricelist_id;
-            $(`#${tableBodyId} tr`).each(function() {
-                let parent_row = $(this).closest('tr');
-                let product_variation_id = parent_row.find('input[name="variation_id"]').val();
-                let uom_id = parent_row.find('.invoice_unit_select option:selected').val();
+        //     let pricelist_id = contact_pricelist_id ? contact_pricelist_id : all_pricelist_id;
+        //     $(`#${tableBodyId} tr`).each(function() {
+        //         let parent_row = $(this).closest('tr');
+        //         let product_variation_id = parent_row.find('input[name="variation_id"]').val();
+        //         let uom_id = parent_row.find('.invoice_unit_select option:selected').val();
 
-                parent_row.find('input[name="each_selling_price"]').val(pricelist_id);
+        //         parent_row.find('input[name="each_selling_price"]').val(pricelist_id);
 
-                let quantity = 0;
-                $(`#${tableBodyId} tr`).each(function() {
-                    let each_uom_id = $(this).closest('tr').find('.invoice_unit_select option:selected').val();
-                    let variation_id = $(this).closest('tr').find('input[name="variation_id"]').val();
+        //         let quantity = 0;
+        //         $(`#${tableBodyId} tr`).each(function() {
+        //             let each_uom_id = $(this).closest('tr').find('.invoice_unit_select option:selected').val();
+        //             let variation_id = $(this).closest('tr').find('input[name="variation_id"]').val();
 
-                    if(variation_id == product_variation_id && each_uom_id == uom_id){
-                        let qty = $(this).closest('tr').find('input[name="quantity[]"]').val();
-                        quantity += qtyByReferenceUom(each_uom_id, qty);
-                    }
-                });
-                let datas = { pricelist_id, product_variation_id, quantity, uom_id };
-                // getProducts2(datas);
-                let price_info = getProducts(datas);
-                console.log(price_info);
-                let result_pricelist_id, price;
-                if(price_info == undefined){
-                    let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
-                    result_pricelist_id = pricelist_id;
-                    price = default_sell_price * 1;
-                }else{
-                    let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
-                    result_pricelist_id = price_info.price_id;
-                    price = isNaN(price_info.price) ? default_sell_price * 1 : price_info.price;
-                }
+        //             if(variation_id == product_variation_id && each_uom_id == uom_id){
+        //                 let qty = $(this).closest('tr').find('input[name="quantity[]"]').val();
+        //                 quantity += qtyByReferenceUom(each_uom_id, qty);
+        //             }
+        //         });
+        //         let datas = { pricelist_id, product_variation_id, quantity, uom_id };
+        //         // getProducts2(datas);
+        //         // let price_info = getProducts(datas);
+        //         let result_pricelist_id, price;
+        //         if(price_info == undefined){
+        //             let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
+        //             result_pricelist_id = pricelist_id;
+        //             price = default_sell_price * 1;
+        //         }else{
+        //             let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
+        //             result_pricelist_id = price_info.price_id;
+        //             price = isNaN(price_info.price) ? default_sell_price * 1 : price_info.price;
+        //         }
 
-                if(price === undefined){
-                    let cost_price = parent_row.find('input[name="cost_price"]').val();
-                    let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
-                    if(all_pricelist_id == 'default_selling_price'){
-                        parent_row.find('input[name="selling_price[]"]').val(default_sell_price * 1);
-                        calPrice(parent_row);
-                    }else {
-                        parent_row.find('input[name="selling_price[]"]').val(cost_price * 1);
-                        calPrice(parent_row);
-                    }
-                }
+        //         if(price === undefined){
+        //             let cost_price = parent_row.find('input[name="cost_price"]').val();
+        //             let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
+        //             if(all_pricelist_id == 'default_selling_price'){
+        //                 parent_row.find('input[name="selling_price[]"]').val(default_sell_price * 1);
+        //                 calPrice(parent_row);
+        //             }else {
+        //                 parent_row.find('input[name="selling_price[]"]').val(cost_price * 1);
+        //                 calPrice(parent_row);
+        //             }
+        //         }
 
-                if(price !== undefined && !isNaN(price)){
-                    parent_row.find('input[name="each_selling_price"]').val(result_pricelist_id);
-                    $(`#${tableBodyId} tr`).each(()=>{
-                        let each_uom_id = $(this).closest('tr').find('.invoice_unit_select option:selected').val();
-                        let variation_id = $(this).closest('tr').find('input[name="variation_id"]').val();
-                        if(price==0){
-                           price=isNullOrNan($(this).closest('tr').find('input[name="selling_price[]"]').val());
-                        }
-                        if(variation_id == product_variation_id && each_uom_id == uom_id){
-                            $(this).closest('tr').find('input[name="selling_price[]"]').val(price * 1);
-                        }
-                        calPrice($(this));
-                    });
-                }
-            })
-        }
+        //         if(price !== undefined && !isNaN(price)){
+        //             parent_row.find('input[name="each_selling_price"]').val(result_pricelist_id);
+        //             $(`#${tableBodyId} tr`).each(()=>{
+        //                 let each_uom_id = $(this).closest('tr').find('.invoice_unit_select option:selected').val();
+        //                 let variation_id = $(this).closest('tr').find('input[name="variation_id"]').val();
+        //                 if(price==0){
+        //                    price=isNullOrNan($(this).closest('tr').find('input[name="selling_price[]"]').val());
+        //                 }
+        //                 if(variation_id == product_variation_id && each_uom_id == uom_id){
+        //                     $(this).closest('tr').find('input[name="selling_price[]"]').val(price * 1);
+        //                 }
+        //                 calPrice($(this));
+        //             });
+        //         }
+        //     })
+        // }
 
-        let getPriceByEachRow = () => {
-            let contact_pricelist_id = customer_price_list;
-            let all_pricelist_id = $('#selling_price_group option:selected').val();
-            let pricelist_id = contact_pricelist_id ? contact_pricelist_id : all_pricelist_id;
+        // let getPriceByEachRow = () => {
+        //     let contact_pricelist_id = customer_price_list;
+        //     let all_pricelist_id = $('#selling_price_group option:selected').val();
+        //     let pricelist_id = contact_pricelist_id ? contact_pricelist_id : all_pricelist_id;
 
-            $(`#${tableBodyId} tr`).each(function() {
-                let parent_row = $(this).closest('tr');
-                let product_variation_id = parent_row.find('input[name="variation_id"]').val();
-                let uom_id = parent_row.find('.invoice_unit_select option:selected').val();
-                let raw_quantity = parent_row.find('input[name="quantity[]"]').val();
-                let quantity = qtyByReferenceUom(uom_id, raw_quantity);
+        //     $(`#${tableBodyId} tr`).each(function() {
+        //         let parent_row = $(this).closest('tr');
+        //         let product_variation_id = parent_row.find('input[name="variation_id"]').val();
+        //         let uom_id = parent_row.find('.invoice_unit_select option:selected').val();
+        //         let raw_quantity = parent_row.find('input[name="quantity[]"]').val();
+        //         let quantity = qtyByReferenceUom(uom_id, raw_quantity);
 
-                parent_row.find('input[name="each_selling_price"]').val(pricelist_id);
+        //         parent_row.find('input[name="each_selling_price"]').val(pricelist_id);
 
-                let datas = { pricelist_id, product_variation_id, quantity, uom_id };
-                let price_info = getProducts(datas);
-                let result_pricelist_id, price;
-                if(price_info == undefined){
-                    let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
-                    result_pricelist_id = pricelist_id;
-                    price = default_sell_price * 1;
-                }else{
-                    result_pricelist_id = price_info.price_id;
-                    price = price_info.price;
-                }
+        //         let datas = { pricelist_id, product_variation_id, quantity, uom_id };
+        //         // let price_info = getProducts(datas);
+        //         let result_pricelist_id, price;
+        //         if(price_info == undefined){
+        //             let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
+        //             result_pricelist_id = pricelist_id;
+        //             price = default_sell_price * 1;
+        //         }else{
+        //             result_pricelist_id = price_info.price_id;
+        //             price = price_info.price;
+        //         }
 
-                if(price === undefined){
-                    let cost_price = parent_row.find('input[name="cost_price"]').val();
-                    let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
-                    if(all_pricelist_id == 'default_selling_price'){
-                        parent_row.find('input[name="selling_price[]"]').val(default_sell_price * 1);
-                        calPrice(parent_row);
-                    }else {
-                        parent_row.find('input[name="selling_price[]"]').val(cost_price * 1);
-                        calPrice(parent_row);
-                    }
-                }
+        //         if(price === undefined){
+        //             let cost_price = parent_row.find('input[name="cost_price"]').val();
+        //             let default_sell_price = parent_row.find('input[name="_default_sell_price"]').val();
+        //             if(all_pricelist_id == 'default_selling_price'){
+        //                 parent_row.find('input[name="selling_price[]"]').val(default_sell_price * 1);
+        //                 calPrice(parent_row);
+        //             }else {
+        //                 parent_row.find('input[name="selling_price[]"]').val(cost_price * 1);
+        //                 calPrice(parent_row);
+        //             }
+        //         }
 
-                if(price !== undefined && !isNaN(price)){
-                    parent_row.find('input[name="each_selling_price"]').val(result_pricelist_id);
-                    parent_row.find('input[name="selling_price[]"]').val(price * 1);
-                    calPrice(parent_row);
-                }
-            })
-        }
+        //         if(price !== undefined && !isNaN(price)){
+        //             parent_row.find('input[name="each_selling_price"]').val(result_pricelist_id);
+        //             parent_row.find('input[name="selling_price[]"]').val(price * 1);
+        //             calPrice(parent_row);
+        //         }
+        //     })
+        // }
 
         let changeQtyOnUom = (e,newUomId) => {
             let parent = $(`#${tableBodyId}`).find(e).closest(`.invoiceRow`);
@@ -407,14 +418,16 @@
 
             parent.find('.stock_quantity_unit').text(result);
             parent.find('.stock_quantity_name').text(newUomInfo.name);
+            getPrice($(`#${tableBodyId}`));
 
-            false ? getPriceByEachRow() : getPrice();
+            // false ? getPriceByEachRow() : getPrice();
         }
 
         let checkAndStoreSelectedProduct = (newSelectedProduct) => {
             let newProductData={
                 'product_id':newSelectedProduct.id,
                 'product_type':newSelectedProduct.product_type,
+                'cateogry_id':newSelectedProduct.cateogry_id,
                 'product_name':newSelectedProduct.name,
                 'variation_name':newSelectedProduct.variation_name,
                 'variation_id':newSelectedProduct.product_variations.id,
@@ -439,29 +452,6 @@
             }
         }
 
-        let getReferenceUomInfoByCurrentUomQty = (qty, currentUom, referenceUom) => {
-            const currentUomType = currentUom.unit_type;
-            const currentUomValue = currentUom.value;
-            const referenceUomId = referenceUom.id;
-            const referenceRoundedAmount = referenceUom.rounded_amount || 4;
-            const referenceValue = referenceUom.value;
-
-            let result;
-            if (currentUomType === 'reference') {
-                result = qty * referenceValue;
-            } else if (currentUomType === 'bigger') {
-                result = qty * currentUomValue;
-            } else if (currentUomType === 'smaller') {
-                result = qty / currentUomValue;
-            } else {
-                result = qty;
-            }
-
-            return {
-                qtyByReferenceUom: result,
-                referenceUomId: referenceUomId
-            };
-        }
 
         let checkStock = (e) => {
             let tr_parent = $(e).closest('.invoiceRow');
@@ -1021,7 +1011,8 @@
             let incVal = parent.find('input[name="quantity[]"]');
             let value = parseInt(incVal.val()) + 1;
             incVal.val(value);
-            false ? getPriceByEachRow() : getPrice();
+            getPrice($(this));
+            // false ? getPriceByEachRow() : getPrice();
             calPrice($(this));
             totalSubtotalAmountCalculate();
             checkStock($(this));
@@ -1031,6 +1022,7 @@
         $(document).on('change', '.quantity_input', function() {
             calPrice($(this));
             totalSubtotalAmountCalculate();
+            getPrice($(this));
             checkStock($(this));
             hideCalDisPrice($(this));
             totalDisPrice();
@@ -1038,26 +1030,32 @@
         $(document).on('click', '#decrease', function() {
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
             let decVal = parent.find('input[name="quantity[]"]');
+            getPrice($(this));
             let value = parseInt(decVal.val()) - 1;
             decVal.val(value >= 1 ? value : 1);
-            false ? getPriceByEachRow() : getPrice();
+            // false ? getPriceByEachRow() : getPrice();
+            getPrice($(this));
             calPrice($(this));
             totalSubtotalAmountCalculate();
             checkStock($(this));
             hideCalDisPrice($(this));
             totalDisPrice();
         })
-
-        // change price list
-        $(document).on('change', '#selling_price_group', function() {
+        function processTableRows() {
             $(`#${tableBodyId} tr`).each(function() {
                 let parent = $(this).closest('tr');
-                false ? getPriceByEachRow() : getPrice();
+            getPrice($(this));
                 calPrice(parent);
                 totalSubtotalAmountCalculate();
                 totalDisPrice();
-            })
+            });
+        }
+        // change price list
+        $(document).on('change', '#selling_price_group', function() {
+            getPriceList($(this).val(),processTableRows);
         })
+
+
 
         // Begin::Discount Modal
         let current_tr;
@@ -1752,7 +1750,8 @@
                             }else{
                                 customer_price_list = null;
                             }
-                            false ? getPriceByEachRow() : getPrice();
+                            getPrice($(`#${tableBodyId}`));
+                            // false ? getPriceByEachRow() : getPrice();
                         }
                     },
                     error: function(e){
@@ -1851,6 +1850,7 @@
                             'product_id':saleDetail.product.id,
                             'product_type':saleDetail.product.product_type,
                             'product_name':saleDetail.product.name,
+                            'cateogry_id':saleDetail.product.cateogry_id,
                             'variation_id':saleDetail.product_variation.id,
                             'category_id':saleDetail.product.category_id,
                             'defaultSellingPrices':saleDetail.product_variation.default_selling_price,

@@ -2,8 +2,9 @@
 
 namespace App\Models\Product;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Product\PriceLists;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PriceListDetails extends Model
 {
@@ -37,5 +38,9 @@ class PriceListDetails extends Model
         public function base_price_data()
         {
             return $this->belongsTo(PriceListDetails::class, 'base_price');
+        }
+        public function base_price_list()
+        {
+            return $this->belongsTo(PriceLists::class, 'base_price','id');
         }
 }

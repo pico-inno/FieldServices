@@ -317,7 +317,7 @@
 </div>
 
 <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
-{{-- @include('App.purchase.contactAdd') --}}
+{{-- @include('App.purchase.contactAdd')o --}}
 @include('App.purchase.newProductAdd')
 @endsection
 

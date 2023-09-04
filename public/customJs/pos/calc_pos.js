@@ -357,3 +357,4 @@ const isPercent = (pricelist, product_vari_id, quantity) => {
     // console.log(result)
     return result;
 }
+

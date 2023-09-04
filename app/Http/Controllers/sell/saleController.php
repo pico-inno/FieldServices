@@ -1416,26 +1416,29 @@ class saleController extends Controller
 
     public function getPriceList($id)
     {
-        $data = PriceListDetails::where('pricelist_id', $id)->first();
-        $priceData = [
-            'mainPriceList' => $data ? $data->toArray() : '',
-            'basePriceList' => $this->getBasePrice($data)->toArray()
-        ];
-        // dd($priceData);
+        $datas = PriceListDetails::where('pricelist_id', $id)->get();
+        $priceData=[];
+        if(count($datas)>0){
+            $priceData = [
+                'mainPriceList' => $datas ? $datas->toArray() : '',
+                'basePriceList' => $this->getBasePrice($datas[0] ? $datas[0]->base_price : null)
+            ];
+        }
         return response()->json($priceData, 200);
     }
 
-    private function getBasePrice($data)
+    private function getBasePrice($base_price_id)
     {
-        $descendants = collect([]);
-        if ($data !== null) {
-            if ($data->base_price_data != null) {
-                unset($data['base_price_data']);
-                $descendants->push($data->base_price_data);
+       if($base_price_id){
+            $data=PriceListDetails::where('pricelist_id',$base_price_id)->get();
+            $descendants = collect([]);
+            if ($data !== null) {
+                $descendants->push($data);
+                $descendants = $descendants->merge($this->getBasePrice($data[0] ? $data[0]->base_price : null));
             }
-            $descendants = $descendants->merge($this->getBasePrice($data->base_price_data));
-        }
-        return $descendants;
+            return $descendants->toArray();
+       }
+       return collect([]);
     }
 
     public function saleSplitForPos(Request $request)

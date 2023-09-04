@@ -931,17 +931,30 @@
     }
     function getPrice(e){
         if(priceList){
-            let parent = e.closest('.sale_row');
-            let mainPriceList=priceList.mainPriceList;
+            let parent = e.closest('tr');
+            let mainPriceLists = priceList.mainPriceList;
+            let mainPriceStatus=false;
+            mainPriceLists.forEach((mainPriceList) => {
+                if (mainPriceStatus == true) {
+                    return;
+                }
+                mainPriceStatus = priceSetting(mainPriceList, parent);
+            })
+
             let basePriceLists=priceList.basePriceList;
-            let mainPriceStatus=priceSetting(mainPriceList,parent);
             if(!mainPriceStatus){
                 if(basePriceLists.length > 0){
                     let i = 0;
                     while (i < basePriceLists.length) {
-                        let bp = basePriceLists[i];
-                        let priceStatus = priceSetting(bp, parent);
-                        if(priceStatus){
+                        let basePriceList = basePriceLists[i];
+                        let priceStatus = false;
+                        basePriceList.forEach((bp) => {
+                            if (priceStatus == true) {
+                                return;
+                            }
+                            priceStatus = priceSetting(bp, parent);
+                        })
+                        if (priceStatus) {
                             break;
                         }
                         i++;
@@ -1007,47 +1020,77 @@
         }
     }
     function priceSettingToUi(priceStage,parentDom,product){
+        let checkDate=checkAvailableDate(priceStage);
+        if(!checkDate){
+            return false;
+        }
         let quantity=isNullOrNan(parentDom.find('.quantity').val());
         let price=priceStage.cal_value;
-        if(priceStage.cal_type == 'percentage'){
+        if (priceStage.cal_type == 'percentage') {
             let basePriceLists=priceList.basePriceList;
-            let mainPriceList=priceList.mainPriceList;
             let i = 0;
             let finalBasePrice=null;//final base price means when current price is  percentage on base price, the loop reach the base price that is fix price;
             let calPers=[];
             while (i < basePriceLists.length) {
-                let bp = basePriceLists[i];
+                let bps = basePriceLists[i];//base prices
                 i++;
-                if(bp.cal_type=='percentage'){
-                    if(bp.id==priceStage.id){
-                        calPers=[];
-                        // continue;
-                    }else{
-                        calPers=[bp.cal_value,...calPers];
+                let bp = null;
+                bps.forEach(basePrice => {
+                    if (basePrice.applied_type == 'All') {
+                        bp = basePrice;
+                        return;
+                    } else if (basePrice.applied_type == 'Category') {
+                        let categoryId=product.category_id;
+                        if (basePrice.applied_value == categoryId) {
+                            bp = basePrice;
+                            return;
+                        }
+                    } else if (basePrice.applied_type == 'Product') {
+                        let productId=product.product_id;
+                        if (basePrice.applied_value == productId) {
+                            bp = basePrice;
+                            return;
+                        }
+                    } else if (basePrice.applied_type == 'Variation') {
+                        let variationId=product.variation_id;
+                        if (basePrice.applied_value == variationId) {
+                            bp = basePrice;
+                            return;
+                        }
                     }
-                }else{
-                    if(calPers.length>0){
-                        let currentPrcie=bp.cal_value;
-                        calPers.forEach(per => {
-                            percentagePrice=currentPrcie * (per/100);
-                            currentPrcie=isNullOrNan(currentPrcie)+isNullOrNan(percentagePrice);
-                        });
-                       finalBasePrice= currentPrcie
+                });
+                if(bp){
+
+                    if(bp.cal_type=='percentage'){
+                        if(bp.id==priceStage.id){
+                            calPers=[];
+                        }else{
+                            calPers=[bp.cal_value,...calPers];
+                        }
                     }else{
-                        finalBasePrice=bp.cal_value;
+                        if(calPers.length>0){
+                            let currentPrcie=bp.cal_value;
+                            calPers.forEach(per => {
+                                percentagePrice=currentPrcie * (per/100);
+                                currentPrcie=isNullOrNan(currentPrcie)+isNullOrNan(percentagePrice);
+                            });
+                        finalBasePrice= currentPrcie
+                        }else{
+                            finalBasePrice=bp.cal_value;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
             if(finalBasePrice !== null){
                 percentagePrice=finalBasePrice * (priceStage.cal_value/100);
-                console.log(finalBasePrice,percentagePrice,'percentagePrice',priceStage.cal_value);
-                price=isNullOrNan(finalBasePrice)+isNullOrNan(percentagePrice);
+                price = isNullOrNan(finalBasePrice) + isNullOrNan(percentagePrice);
+
             }else{
                 let lastIndexOfStock=product.stock.length-1;
                 let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
                 percentagePrice=refPrice * (priceStage.cal_value/100);
-                price=isNullOrNan(refPrice)+isNullOrNan(percentagePrice);
+                price = isNullOrNan(refPrice) + isNullOrNan(percentagePrice);
             }
         }
         let resultAfterUomChange=getPriceByUOM(parentDom,product,priceStage.min_qty,price);
@@ -1130,7 +1173,24 @@
         }
         return {resultQty,resultPrice};
     }
-
+    const checkAvailableDate = (pricelist) => {
+        let availableDate = false;
+        const from_date = pricelist.from_date === null ? null : new Date(pricelist.from_date);
+        const to_date = pricelist.to_date === null ? null : new Date(pricelist.to_date);
+        const current_date = new Date();
+        if (current_date >= from_date && current_date <= to_date) {
+            availableDate = true;
+        } else if(from_date === null && to_date === null){
+            availableDate = true;
+        }else if(from_date === null && current_date <= to_date){
+            availableDate = true;
+        }else if(current_date >= from_date && to_date === null){
+            availableDate = true;
+        }else {
+            availableDate = false;
+        }
+        return availableDate;
+    }
   });
 </script>
 
