@@ -52,7 +52,7 @@ return [
     'purchase_uom' => 'Purchase UoM',
     'profit_margin' => 'Profit Margin',
     'print_label' => 'Print Label',
-
+    'alert_quantity' => 'Alert Quantity',
     'stock_report' => 'Stock Report',
     'sku' => 'SKU',
     'sell_price' => 'Selling Price',

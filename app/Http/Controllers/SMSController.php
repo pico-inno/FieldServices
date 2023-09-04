@@ -11,6 +11,7 @@ class SMSController extends Controller
     private $sender;
     public function __construct()
     {
+        $this->middleware(['auth', 'isActive']);
         $this->AuthToken= env('SMSPOH_AUTH_TOKEN');
         $this->sender=env('SMSPOH_SENDER');
     }
