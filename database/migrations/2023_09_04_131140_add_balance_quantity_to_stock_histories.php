@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('stock_histories', function (Blueprint $table) {
-            $table->integer('balance_quantity')->nullable();
+            $table->decimal('balance_quantity',22,4)->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('stock_histories', function (Blueprint $table) {
-            $table->integer('balance_quantity');
+            $table->decimal('balance_quantity',22,4);
         });
     }
 };
