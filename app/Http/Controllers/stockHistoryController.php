@@ -49,7 +49,7 @@ class stockHistoryController extends Controller
             $openingBalances[$product_id][$variation_id] = $balance_qty;
 
 
-             $history->balance_qty = $balance_qty;
+            $history->balance_qty = $balance_qty;
 
         }
 
@@ -71,7 +71,7 @@ class stockHistoryController extends Controller
                 if($history->transaction_type=='sale'){
                     $created_at=  $history->saleDetail->sale->created_at;
                 }else if($history->transaction_type=='purchase'){
-                      $created_at=  $history->purchaseDetail->created_at;
+                    $created_at=  $history->purchaseDetail->created_at;
                 }else if($history->transaction_type=='stock_out'){
                     $created_at=  $history->StockoutDetail->created_at;
                 }else if($history->transaction_type=='stock_in'){
@@ -105,8 +105,8 @@ class stockHistoryController extends Controller
             })
             ->editColumn('to',function($history){
                 if($history->transaction_type=='sale' ){
-                        $customer=$history->saleDetail->sale->customer;
-                        return  $customer ? $customer['first_name'] : '';
+                    $customer=$history->saleDetail->sale->customer;
+                    return  $customer ? $customer['first_name'] : '';
                 }else{
                     if($history->transaction_type=='purchase' || $history->transaction_type=='stock_in'){
                         return $history->business_location->name;

@@ -35,6 +35,7 @@ class stock_history extends Model
             'increase_qty',
             'decrease_qty',
             'ref_uom_id',
+            'balance_quantity',
     ];
     public function business_location()
     {
