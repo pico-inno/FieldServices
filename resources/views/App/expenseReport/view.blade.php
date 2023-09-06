@@ -270,11 +270,11 @@
                                             </div>
                                             {{-- <input type="hidden" name="editPayment[{{$key}}][expense_amount]"  class="form-control form-control-sm edit_input" value="{{$e->expense_amount}}"> --}}
                                         </td>
-                                        {{-- <td>
+                                        <td>
                                             <div class="change_mod_input"  >
                                                 {{$e->paid_amount}}
                                             </div>
-                                            <div class="change_mod_input" style="display: none;" >
+                                            {{-- <div class="change_mod_input" style="display: none;" >
                                                 @php
                                                     $accounts=App\Models\paymentAccounts::where('currency_id',$e->currency_id)->get();
                                                     $paymentTransaction=App\Models\paymentsTransactions::where('transaction_id',$e->id)->where('transaction_type','expense')->select('payment_account_id')->first();
@@ -286,8 +286,8 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <input type="hidden" name="editPayment[{{$key}}][paid_amount]" class="form-control form-control-sm edit_input" value="{{$e->paid_amount}}">
-                                        </td> --}}
+                                            <input type="hidden" name="editPayment[{{$key}}][paid_amount]" class="form-control form-control-sm edit_input" value="{{$e->paid_amount}}"> --}}
+                                        </td>
                                         <td> {{$e->note}}</td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-light-danger btn-sm" data-id="{{$e->id}}" data-table="delete_row">
@@ -635,7 +635,7 @@ $(document).on('click', '#expenseReportEdit', function(e){
         $(this).modal('show');
         loadingOff();
     });
-});expenseReportEdit
+});
 </script>
 @endpush
 

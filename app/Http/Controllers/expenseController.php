@@ -5,16 +5,23 @@ namespace App\Http\Controllers;
 use DateTime;
 use Carbon\Traits\Date;
 use App\Models\Currencies;
+use App\Models\Product\UOM;
 use Illuminate\Http\Request;
+use App\Models\Product\Brand;
 use App\Models\expenseReports;
 use App\Models\paymentAccounts;
+use App\Models\Product\Generic;
 use App\Models\Product\Product;
+use App\Models\Product\Category;
 use App\Helpers\generatorHelpers;
 use Illuminate\Support\Facades\DB;
 use App\Models\expenseTransactions;
 use App\Models\paymentsTransactions;
+use App\Models\Product\Manufacturer;
+use App\Models\Product\UnitCategory;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Product\VariationTemplates;
 
 class expenseController extends Controller
 {
@@ -52,6 +59,17 @@ class expenseController extends Controller
         )->get()->toArray();
         return response()->json($products, 200);
     }
+    public function productCreate(){
+        $brands = Brand::all();
+        $categories = Category::with('parentCategory', 'childCategory')->get();
+        $manufacturers = Manufacturer::all();
+        $generics = Generic::all();
+        $uoms = UOM::all();
+        $variations = VariationTemplates::all();
+        $unitCategories = UnitCategory::all();
+
+        return view('App.expense.expenseProductCreate', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations'));
+    }
     public function report(){
         return view('App.expense.reportList');
     }
@@ -82,6 +100,7 @@ class expenseController extends Controller
         }
         $data['created_by']=Auth::user()->id;
         $data['updated_at']=null;
+        // dd($data);
         $expense=expenseTransactions::create($data);
         $this->makePayment($expense,$request->toArray());
         return back()->with(['success'=>'successfully created']);

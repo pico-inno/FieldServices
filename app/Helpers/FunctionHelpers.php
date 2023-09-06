@@ -4,6 +4,8 @@ use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Helpers\SettingHelpers;
 use Nwidart\Modules\Facades\Module;
+use Illuminate\Support\Facades\Auth;
+use App\Models\settings\businessSettings;
 
 
 
@@ -62,11 +64,12 @@ function price($price,$currencyId='default'){
 }
 
 function fprice($price){
-    $loadSetting=SettingHelpers::load();
-    $setting=$loadSetting->getSettingsValue();
+    // $loadSetting=SettingHelpers::load();
+    $setting=getSettings();
     $formattedPrice=number_format($price,$setting->currency_decimal_places,'.','');
     return $formattedPrice;
 }
+
 function fDate($date,$br=false)
 {
     $dateTime =date_create($date);
@@ -87,6 +90,21 @@ function isUsePaymnetAcc(){
     return getSettingsValue('use_paymentAccount')==1 ? true :false;
 }
 
+
+/**
+ *
+ * @param  $newEnvVariable ($key => $value)
+ * @return collection
+ */
+function getSettings()
+{
+    return businessSettings::where('id',Auth::user()->business_id)
+        ->select(
+            'currency_decimal_places',
+            'quantity_decimal_places'
+        )
+        ->first();
+}
 
 /**
  *

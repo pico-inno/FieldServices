@@ -86,7 +86,8 @@
 
     var paymentInput = document.querySelector('#paymentAccTagify');
     let paymentAccounts=@json($paymentAccounts).map((pa)=>{
-        return {'value':pa.name +"("+pa.account_number+")",'id':pa.id};
+            let accountNumber=pa.account_number ?"("+pa.account_number+")":'';
+            return {'value':pa.name+accountNumber,'id':pa.id};
     })
     // Init Tagify script on the above inputs
     tagify = new Tagify(paymentInput, {

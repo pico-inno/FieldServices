@@ -291,7 +291,7 @@
                             <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
                                 <i class="fa-solid fa-minus fs-2"></i>
                             </button>
-                            <input type="text" class="form-control form-control-sm quantity form-control-sm quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="1" data-kt-dialer-control="input"/>
+                            <input type="text" class="form-control form-control-sm quantity input_number form-control-sm quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="1" data-kt-dialer-control="input"/>
                             <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
                                 <i class="fa-solid fa-plus fs-2"></i>
                             </button>
@@ -312,10 +312,10 @@
                         <input type="hidden" class="price_list_id" name="sale_details[${unique_name_id}][price_list_id]" value='default_selling_price'/>
                     </td>
                     <td class=" fv-row">
-                        <input type="text" class="form-control form-control-sm uom_price" value="0" name="sale_details[${unique_name_id}][uom_price]">
+                        <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]">
                     </td>
                     <td>
-                       <input type="text" class="subtotal form-control form-control-sm" name="sale_details[${unique_name_id}][subtotal]" readonly >
+                       <input type="text" class="subtotal form-control form-control-sm input_number" name="sale_details[${unique_name_id}][subtotal]" readonly >
                     </td>
                     <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                         <select name="sale_details[${unique_name_id}][discount_type]" id="" class="form-select form-select-sm discount_type" data-kt-repeater="select2"  data-hide-search="true">
@@ -338,6 +338,7 @@
             $('.dataTables_empty').addClass('d-none');
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
+            numberOnly();
             $('#searchInput').val('');
             console.log(selected_product,'----------------sp----------------------');
             checkAndStoreSelectedProduct(selected_product);
@@ -932,7 +933,7 @@
     function getPrice(e){
         if(priceList){
             let parent = e.closest('tr');
-            let mainPriceLists = priceList.mainPriceList;
+            let mainPriceLists = priceList.mainPriceList ?? [];
             let mainPriceStatus=false;
             mainPriceLists.forEach((mainPriceList) => {
                 if (mainPriceStatus == true) {
@@ -941,7 +942,7 @@
                 mainPriceStatus = priceSetting(mainPriceList, parent);
             })
 
-            let basePriceLists=priceList.basePriceList;
+            let basePriceLists=priceList.basePriceList ?? [];
             if(!mainPriceStatus){
                 if(basePriceLists.length > 0){
                     let i = 0;

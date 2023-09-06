@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('expense_amount',22,4)->nullable();
             $table->decimal('paid_amount',22,4)->nullable();
             $table->decimal('balance_amount',22,4)->nullable();
-            $table->enum('payment_status',['due','partial','pending'])->nullable();
+            $table->enum('payment_status',['due','partial','paid'])->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->string('note')->nullable();
             $table->string('documents')->nullable();

@@ -448,11 +448,11 @@ console.log(e);
             percentAmount=uom_price* (per_item_discount/100);
             price_after_discount=(uom_price - percentAmount)*quantity
         }
-        i.line_discount.val(percentAmount);
-        i.line_discount_txt.text(percentAmount);
-        i.subtotal_with_discount.val(price_after_discount);
+        i.line_discount.val(pDecimal(percentAmount));
+        i.line_discount_txt.text(pDecimal(percentAmount));
+        i.subtotal_with_discount.val(pDecimal(price_after_discount));
 
-        result=price_after_discount+(per_item_expense*quantity);
+        result=pDecimal(price_after_discount+(per_item_expense*quantity));
 
         i.subtotal_with_tax.text(result);
         i.subtotal_with_tax_input.val(result)
@@ -486,8 +486,8 @@ console.log(e);
                 total += value;
             });
             // console.log('pt',$('.purchase_price_inc_tax'));
-            $('.net_purchase_total_amount_text').text(total);
-            $('.net_purchase_total_amount').val(total);
+            $('.net_purchase_total_amount_text').text(pDecimal(total));
+            $('.net_purchase_total_amount').val(pDecimal(total));
             totalLineDiscount()
         }, 100);
     }
@@ -505,7 +505,7 @@ console.log(e);
             });
             // console.log('pt',$('.purchase_price_inc_tax'));
             // $('.total_line_discount').text(total );
-            $('.total_line_discount_input ').val(total );
+            $('.total_line_discount_input ').val(pDecimal(total));
         }, 100);
     }
 
@@ -532,32 +532,32 @@ console.log(e);
             let price_after_discount;
 
 
-            let purchaseExpense=isNullOrNan($('#purchase_expense').val());
+            let purchaseExpense=pDecimal(isNullOrNan($('#purchase_expense').val()));
             $('#purchase_expense_txt').text(purchaseExpense);
 
             let net_purchase_total_amount=isNullOrNan($('.net_purchase_total_amount').val());
 
 
             if(extra_discount_type == 'fixed'){
-                $('.extra_discount_txt').text(extra_discount_amount);
-                $('.extra_discount').val(extra_discount_amount);
-                $('#total_discount_amount_txt').text(total_line_discount_val+extra_discount_amount);
-                $('#total_discount_amount').val(total_line_discount_val+extra_discount_amount);
-                price_after_discount=net_purchase_total_amount - extra_discount_amount;
+                $('.extra_discount_txt').text(pDecimal(extra_discount_amount));
+                $('.extra_discount').val(pDecimal(extra_discount_amount));
+                $('#total_discount_amount_txt').text(pDecimal(total_line_discount_val+extra_discount_amount));
+                $('#total_discount_amount').val(pDecimal(total_line_discount_val+extra_discount_amount));
+                price_after_discount=pDecimal(net_purchase_total_amount - extra_discount_amount);
 
 
             }else if(extra_discount_type=='percentage'){
-                percentage_amount=net_purchase_total_amount* (extra_discount_amount/100);
+                percentage_amount=pDecimal(net_purchase_total_amount* (extra_discount_amount/100));
                 $('.extra_discount_txt').text(percentage_amount);
                 $('.extra_discount').val(percentage_amount);
-                $('#total_discount_amount_txt').text(total_line_discount_val+percentage_amount);
-                $('#total_discount_amount').val(total_line_discount_val+percentage_amount);
-                price_after_discount=(net_purchase_total_amount - percentage_amount);
+                $('#total_discount_amount_txt').text(pDecimal(total_line_discount_val+percentage_amount));
+                $('#total_discount_amount').val(pDecimal(total_line_discount_val+percentage_amount));
+                price_after_discount=(pDecimal(net_purchase_total_amount - percentage_amount));
 
             }
             result=price_after_discount+purchaseExpense;
-            $('#total_purchase_amount').val(result);
-            $('#total_purchase_amount_txt').text(result);
+            $('#total_purchase_amount').val(pDecimal(result));
+            $('#total_purchase_amount_txt').text(pDecimal(result));
 
 
         }, 100);
@@ -571,25 +571,20 @@ console.log(e);
         let paid_amount=isNullOrNan($('#paid_amount').val());
         $('#paid_amount_txt').text(paid_amount);
 
-        let result=total_purchase_amount-paid_amount;
+        let result=pDecimal(total_purchase_amount-paid_amount);
 
         $('#balance_amount_txt').text(result);
         $('#balance_amount').val(result);
         }, 700)
     }
     function numberOnly() {
-    $(".input_number").keypress(function(event) {
-        var charCode = (event.which) ? event.which : event.keyCode;
-        if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
-            event.preventDefault();
-        }
-    });
-
-
-
-
-
-}
+        $(".input_number").keypress(function(event) {
+            var charCode = (event.which) ? event.which : event.keyCode;
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                event.preventDefault();
+            }
+        });
+    }
 
 
 });

@@ -140,8 +140,9 @@ class posRegistrationController extends Controller
             if($paymentAccountsCheck){
                     $paymentAccountsById=$paymentAccountsQuery->get();
                     foreach ($paymentAccountsById as $key=>$a) {
+                        $accountNumber= $a->account_number ?'('. $a->account_number. ')' : "";
                         $seperator=$key==0 ? '' :',';
-                        $accountText.=$seperator.$a->name.'('.$a->account_number.')';
+                        $accountText.=$seperator.$a->name.$accountNumber;
                     }
             }
         }

@@ -52,7 +52,7 @@
                     @if (isUsePaymnetAcc())
                         <div class="col-md-4 mb-5 fv-row">
                             <label for="payment_account" class="form-label fs-7 mb-2">Payment Account</label>
-                            <select name="payment_account_id" id="payment_account" data-control="select2-acc" class="form-select form-select-sm" data-dropdown-parent="#paymentEditModal" >
+                            <select name="payment_account_id" id="payment_account" data-control="select2" class="form-select form-select-sm" data-dropdown-parent="#payemntEdit" >
                                 <option value="" disabled selected>Please Select Payment Account</option>
                                 @foreach ($paymentAccounts as $p)
                                     <option value="{{$p->id}}" @selected($data->payment_account_id==$p->id)>{{$p->name}} ({{$p->account_number}})</option>

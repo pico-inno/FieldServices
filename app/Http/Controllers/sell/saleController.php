@@ -187,8 +187,11 @@ class saleController extends Controller
 
     public function saleDetail($id)
     {
-
-        $sale = sales::with('business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency', 'table')->where('id', $id)->first()->toArray();
+        $relations=[
+            'business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
+        ];
+        class_exists('Modules\Restaurant\Entities\table') ? $relations[]='table' : '';
+        $sale = sales::with(...$relations)->where('id', $id)->first()->toArray();
 
         $location = $sale['business_location_id'];
         $setting = $this->setting;

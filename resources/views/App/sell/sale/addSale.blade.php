@@ -231,7 +231,7 @@
                                 <label class="form-label fs-7 fw-semibold" for="">
                                   Extra Discount Amount
                                 </label>
-                                 <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount">
+                                 <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount input_number">
                             </div>
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center mb-5 mb-md-0">
                                 <span class="min-w-200px pe-2" for="">

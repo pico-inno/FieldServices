@@ -1,3 +1,22 @@
+
+    numberOnly();
+    function numberOnly() {
+        $(".input_number").off('keypress').keypress(function(event) {
+            var charCode = (event.which) ? event.which : event.keyCode;
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                event.preventDefault();
+            }
+        });
+        $(".input_number").on('change', function() {
+            var inputValue = $(this).val();
+            var numericValue = parseFloat(inputValue);
+            if (isNaN(numericValue)) {
+                $(this).val(0); // Clear the input value or take appropriate action
+            } else {
+                 $(this).val(numericValue);
+            }
+        });
+    }
     function floor(number, roundAmount) {
 
         let decimalPlaces = roundAmount == 0 ? 1 :roundAmount;

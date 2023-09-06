@@ -1,4 +1,4 @@
-<div class="modal-dialog " id="payment_container">
+<div class="modal-dialog " id="payment_container"  data-bs-focus="false">
     <div class="modal-content">
         <form action="{{route('paymentTransaction.storeForExpense',$data->id)}}" method="POST" id="add_payment_acounts">
             @csrf
@@ -57,7 +57,7 @@
                                 <span class="input-group-text">
                                     <i class="fas fa-calendar"></i>
                                 </span>
-                                <input class="form-control form-control-sm" name="payment_date" placeholder="Pick a date"
+                                <input class="form-control form-control-sm" name="payment_date" placeholder="Pick a date" ata-dropdown-parent="#add_payment_acounts" data-bs-focus="false"
                                     data-datepicker="datepicker" id="payment_date"
                                     value="{{old('payment_date',date('Y-m-d'))}}"/>
                         </div>
@@ -68,7 +68,7 @@
                     </div> --}}
                     <div class="col-md-4 mb-5 fv-row">
                         <label for="payment_account" class="form-label fs-7 mb-2">Payment Account</label>
-                        <select name="payment_account_id" id="payment_account" data-control="select2-acc" class="form-select form-select-sm" data-dropdown-parent="#payment_container" >
+                        <select name="payment_account_id" id="payment_account" data-control="select2"  class="form-select form-select-sm" tabindex="-1" data-dropdown-parent="#add_payment_acounts" >
                             <option value="" disabled selected>Please Select Payment Account</option>
                             @foreach ($paymentAccounts as $p)
                                 <option value="{{$p->id}}">{{$p->name}} ({{$p->account_number}})</option>

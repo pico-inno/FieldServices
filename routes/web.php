@@ -581,7 +581,8 @@ Route::prefix('expense')->group(function () {
 
         Route::delete('/destory', 'destory');
 
-        Route::get('/product/', 'expenseProduct')->name('expense.product');
+        Route::get('/product', 'expenseProduct')->name('expense.product');
+        Route::get('/product/create', 'productCreate')->name('expense.productCreate');
 
         Route::get('{id}/view/', 'view')->name('expense.view');
 

@@ -1,17 +1,8 @@
     var priceList;
-        let isNullOrNan = (val) => {
-            let v=parseFloat(val);
-
-            if(v === '' || v === null || isNaN(v)){
-                return 0;
-            }else{
-                return v;
-            }
-        }
     function getPriceList(priceListId,callBack=null) {
         if (priceListId === 'default_selling_price') {
             priceList = null;
-          return;
+            return;
         }
         $.ajax({
             url: `/sell/${priceListId}/price/list`,
@@ -37,7 +28,7 @@
     function getPrice(e){
         if(priceList){
             let parent = e.closest('tr');
-            let mainPriceLists = priceList.mainPriceList;
+            let mainPriceLists = priceList.mainPriceList ?? [];
             let mainPriceStatus=false;
             mainPriceLists.forEach((mainPriceList) => {
                 if (mainPriceStatus == true) {
@@ -46,7 +37,7 @@
                 mainPriceStatus = priceSetting(mainPriceList, parent);
             })
 
-            let basePriceLists=priceList.basePriceList;
+            let basePriceLists=priceList.basePriceList ?? [];
             if(!mainPriceStatus){
                 if(basePriceLists.length > 0){
                     let i = 0;
@@ -70,14 +61,16 @@
                     let product=productsOnSelectData.filter(function(p){
                         return p.product_id==productId && variationId == p.variation_id;
                     })[0];
-                    let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices);
+                    let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices ?? 0);
                     let price=isNullOrNan(result.resultPrice);
                     if(price == 0){
                         let uomPirce=parent.find('input[name="selling_price[]"]').val();
-                        parent.find('input[name="selling_price[]"]').val(uomPirce ?? 0);
+                        parent.find('input[name="selling_price[]"]').val(pDecimal(uomPirce ?? 0));
+                        parent.find('.subtotal_price').text(pDecimal(uomPirce?? 0) );
 
                     }else{
-                        parent.find('input[name="selling_price[]"]').val(price);
+                        parent.find('input[name="selling_price[]"]').val(pDecimal(price));
+                        parent.find('.subtotal_price').text(pDecimal(price) );
                     }
                 }
             }
@@ -126,8 +119,6 @@
     }
     function priceSettingToUi(priceStage,parentDom,product){
         let checkDate = checkAvailableDate(priceStage);
-        console.log('here');
-        console.log(checkDate);
         if(!checkDate){
             return false;
         }
@@ -154,7 +145,6 @@
                             return;
                         }
                     } else if (basePrice.applied_type == 'Product') {
-                        console.log(product);
                         let productId=product.product_id;
                         if (basePrice.applied_value == productId) {
                             bp = basePrice;
@@ -209,7 +199,9 @@
                 return $u.id ==inputUomId;
         })[0];
         if (quantity >= qtyByPriceStage) {
-            parentDom.find('input[name="selling_price[]"]').val(resultAfterUomChange.resultPrice);
+
+            parentDom.find('.subtotal_price').text(pDecimal(resultAfterUomChange.resultPrice) );
+            parentDom.find('input[name="selling_price[]"]').val(pDecimal(resultAfterUomChange.resultPrice));
             console.log(resultAfterUomChange.resultPrice);
             parentDom.find('input[name="each_selling_price"]').val(priceStage.pricelist_id);
             parentDom.find('.price_list_id').val(priceStage.id);
@@ -217,7 +209,7 @@
         }else{
             let lastIndexOfStock=product.stock.length-1;
             let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
-            let result=refPrice * isNullOrNan( inputUom.value);
+            let result=pDecimal(refPrice * isNullOrNan( inputUom.value));
             parentDom.find('.uom_price').val(result);
         }
         return false;

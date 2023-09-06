@@ -28,7 +28,7 @@
                             </h3>
                             @if ($sale['customer'])
                                 <address class="mt-3 fs-5 fw-semibold">
-                                    @if ($sale['pos_register_id'])
+                                    @if ($sale['pos_register_id'] && isset($sale['table']))
                                         <div class="fw-semibold fs-5 d-inline-block">Table No : <span class="ms-1 mb-1 fs-7 badge badge-primary">{{$sale['table']? $sale['table']['table_no'] : ''}}</span></div><br>
                                     @endif
                                     {{$sale['customer']['first_name']}} <br>

@@ -272,26 +272,27 @@
                                         </tr>
                                     @foreach ($purchase_detail as $key=>$pd)
                                     @php
+                                        $pDecimal=$setting->currency_decimal_places;
                                         $product=$pd->product;
                                         $product_variation=$pd->toArray()['product_variation'];
 
                                         $per_item_discount=$pd->per_item_discount;
-                                        $per_item_discount_text=number_format($pd->per_item_discount,2);
+                                        $per_item_discount_text=number_format($pd->per_item_discount,$pDecimal);
 
 
                                         $subtotal_with_discount=$pd->subtotal_with_discount;
-                                        $subtotal_with_discount_text=number_format($subtotal_with_discount,2);
+                                        $subtotal_with_discount_text=number_format($subtotal_with_discount,$pDecimal);
 
                                         $uom_price=$pd->uom_price;
 
                                         $per_item_expense=$pd->per_item_expense;
-                                        $per_item_expense_text=number_format($per_item_expense,2);
+                                        $per_item_expense_text=number_format($per_item_expense,$pDecimal);
 
                                         $subtotal_with_expense=$pd->subtotal_with_expense;
-                                        $subtotal_with_expense_text=number_format($pd->subtotal_with_expense,2);
+                                        $subtotal_with_expense_text=number_format($pd->subtotal_with_expense,$pDecimal);
 
                                         $subtotal_with_tax=$pd->subtotal_with_tax;
-                                        $subtotal_with_tax_text=number_format($pd->subtotal_with_tax,2);
+                                        $subtotal_with_tax_text=number_format($pd->subtotal_with_tax,$pDecimal);
                                     @endphp
                                         <tr class='cal-gp'>
                                             <td class="d-none">
@@ -327,7 +328,7 @@
 
                                                 <div class="input-group input-group-sm">
 
-                                                    <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[{{$key}}][uom_price]" id="numberonly"  value="{{$uom_price}}">
+                                                    <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[{{$key}}][uom_price]" id="numberonly"  value="{{fprice($uom_price)}}">
                                                     <span class="input-group-text currencySymbol"> {{$currency['symbol']}}</span>
                                                 </div>
                                             </td>
@@ -339,17 +340,17 @@
                                             </td>
                                             <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}"">
 
-                                                <input type="text" class="form-control form-control-sm sum discount_amount per_item_discount input_number" name="purchase_details[{{$key}}][per_item_discount]" value="{{$per_item_discount}}">
+                                                <input type="text" class="form-control form-control-sm sum discount_amount per_item_discount input_number" name="purchase_details[{{$key}}][per_item_discount]" value="{{fprice($per_item_discount)}}">
                                                 <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span><span class="currencySymbol"> {{$currency['symbol']}}</span></div>
                                                 <input type="hidden" class="form-control form-control-sm sum line_discount"  value="0">
                                                 <input type="hidden" class="subtotal_with_discount input_number" name="purchase_details[{{$key}}][subtotal_with_discount]"  value="{{$subtotal_with_discount}}">
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control form-control-sm sum per_item_expense input_number" name="purchase_details[{{$key}}][per_item_expense]" value="{{$per_item_expense}}">
+                                                <input type="text" class="form-control form-control-sm sum per_item_expense input_number" name="purchase_details[{{$key}}][per_item_expense]" value="{{fprice($per_item_expense)}}">
                                             </td>
                                             <td>
                                                 <div class="input-group input-group-sm">
-                                                <input type="text" class="form-control form-control-sm sum subtotal_with_expense  input_number" name="purchase_details[{{$key}}][subtotal_with_expense]" value="{{$subtotal_with_expense}}">
+                                                <input type="text" class="form-control form-control-sm sum subtotal_with_expense  input_number" name="purchase_details[{{$key}}][subtotal_with_expense]" value="{{fprice($subtotal_with_expense)}}">
                                                     <span class="input-group-text currencySymbol"> {{$currency['symbol']}}</span>
                                                 </div>
                                             </td>
@@ -358,7 +359,7 @@
                                             <span class="subtotal_with_tax ms-2">{{$subtotal_with_tax_text}}</span> <span class="currencySymbol"> {{$currency['symbol']}}</span>
                                             </td>
 
-                                            <input type="hidden" class="form-control form-control-sm sum  input_number subtotal_with_tax_input" name="purchase_details[{{$key}}][subtotal_with_tax]" value="{{$subtotal_with_tax}}">
+                                            <input type="hidden" class="form-control form-control-sm sum  input_number subtotal_with_tax_input" name="purchase_details[{{$key}}][subtotal_with_tax]" value="{{fprice($subtotal_with_tax)}}">
                                             <th><i class="fa-solid fa-trash text-danger deleteRow btn" ></i></th>
                                         </tr>
                                     @endforeach
@@ -411,7 +412,7 @@
                                 <label class="form-label fs-6 fw-semibold" for="">
                                     Discount Amount
                                 </label>
-                                <input type="text" class="form-control input_number form-select-sm extra_discount_amount"   id="extra_discount_amount" name="extra_discount_amount" value="{{$extra_discount_amount}}">
+                                <input type="text" class="form-control input_number form-select-sm extra_discount_amount"   id="extra_discount_amount" name="extra_discount_amount" value="{{fprice($extra_discount_amount)}}">
                                 <input type="hidden" class="extra_discount" id="extra_discount">
                                 <div class='mt-2'>Discount : <span class="extra_discount_txt">0</span> <span class="currencySymbol"> {{$currency['symbol']}}</span></div>
                             </div>
@@ -430,7 +431,7 @@
                                 <label class="form-label fs-6 fw-semibold" for="">
                                     Purchase Expense
                                 </label>
-                                <input type="text" class="form-control input_number form-select-sm" id="purchase_expense" name="purchase_expense" value="{{$purchase_expense}}">
+                                <input type="text" class="form-control input_number form-select-sm" id="purchase_expense" name="purchase_expense" value="{{fprice($purchase_expense)}}">
                             </div>
                             <div class="mb-7 col-12 fw-semibold fs-6 col-md-4 offset-md-4 d-flex justify-content-between align-items-end">
                                 <span class="" for="">

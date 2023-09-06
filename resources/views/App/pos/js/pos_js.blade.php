@@ -273,7 +273,7 @@
             });
 
             $(`#${infoPriceId} .sb-item-quantity`).text(itemCount);
-            $(`#${infoPriceId} .sb-total`).text(totalSum);
+            $(`#${infoPriceId} .sb-total`).text(pDecimal(totalSum));
         }
 
         // let getPrice = () => {
@@ -418,7 +418,7 @@
 
             parent.find('.stock_quantity_unit').text(result);
             parent.find('.stock_quantity_name').text(newUomInfo.name);
-            getPrice($(`#${tableBodyId}`));
+            getPrice(e);
 
             // false ? getPriceByEachRow() : getPrice();
         }
@@ -542,8 +542,8 @@
             })
 
             let total_amount = subTotalPrice - totalDisPrice;
-            $(`#${infoPriceId} .sb-discount`).text(totalDisPrice);
-            $(`#${infoPriceId} .sb-total-amount`).text(total_amount);
+            $(`#${infoPriceId} .sb-discount`).text(pDecimal(totalDisPrice));
+            $(`#${infoPriceId} .sb-total-amount`).text(pDecimal(total_amount));
         }
 
         let ajaxToStorePosData = (dataForSale) => {
@@ -594,10 +594,10 @@
                                 $(`#${tableBodyId} tr`).remove();
                                 totalSubtotalAmountCalculate();
                                 totalDisPrice();
-                                $('#payment_info .print_paid').text(0);
-                                $('#payment_info .print_change').text(0);
-                                $('#payment_info .print_balance').text(0);
-                                $('input[name="pay_amount"]').val(0);
+                                $('#payment_info .print_paid').text(pDecimal(0));
+                                $('#payment_info .print_change').text(pDecimal(0));
+                                $('#payment_info .print_balance').text(pDecimal(0));
+                                $('input[name="pay_amount"]').val(pDecimal(0));
                                 $('#payment_row_body').html('');
                                 $('#payment_row_body').append(paymentRow);
                                 $('.reservation_id').val('').trigger('change')
@@ -729,7 +729,7 @@
         let setReceivableAmount = (amount) => {
             let price = isNullOrNan(amount);
             receiveAbleAmount=amount;
-            $(document).find('.receivable-amount').text(price);
+            $(document).find('.receivable-amount').text(pDecimal(price));
         }
 
         let getContacts = (id = null) => {
@@ -742,20 +742,23 @@
                     let selectedElement = $(`#${contact_id}`);
                     // Clear existing options
                     selectedElement.empty();
-
                     $.each(result, function(index, item) {
                         var option = $("<option>")
                             .val(item.id)
                             .text(item.full_name);
-
                         selectedElement.append(option);
                     });
-
                     selectedElement.val(id).trigger("change");
                 },
                 error: function(error) {
                     //
                 }
+            }).then(()=>{
+                setTimeout(() => {
+                    let currentCustomer=customers.find(c=>c.id==id) ?? '';
+                    let priceListId=currentCustomer.price_list_id;
+                    $('#selling_price_group').val(priceListId).trigger('change');
+                }, 500);
             });
         }
 
@@ -1138,7 +1141,7 @@
             let dis_amount = $(this).find('input[name="discount_amount"]').val();
             let subtotal_with_dis = $(this).find('input[name="subtotal_with_discount"]').val();
 
-            current_tr.find('input[name="selling_price[]"]').val(uom_price);
+            current_tr.find('input[name="selling_price[]"]').val(pDecimal(uom_price));
             // current_tr.find('input[name="each_selling_price"]').val(selling_price_group);
             current_tr.find('input[name="discount_type"]').val(dis_type);
             current_tr.find('input[name="per_item_discount"]').val(dis_amount);
@@ -1317,9 +1320,9 @@
             })
 
             let change = Math.abs(isNullOrNan(payable_amount) - pay_amount);
-            $('#payment_info .print_paid').text(isNullOrNan(pay_amount));
-            $('#payment_info .print_change').text(isNullOrNan(change));
-            $('#payment_info .print_balance').text(isNullOrNan(balance));
+            $('#payment_info .print_paid').text(pDecimal(isNullOrNan(pay_amount)));
+            $('#payment_info .print_change').text(pDecimal(isNullOrNan(change)));
+            $('#payment_info .print_balance').text(pDecimal(isNullOrNan(balance)));
         })
 
         // when opening payment info modal box
@@ -1346,12 +1349,12 @@
                 pay_amount=pay_amount+ paidAmount;
                 let change = isNullOrNan(payable_amount) < pay_amount ? pay_amount - isNullOrNan(payable_amount) : '0';
                 let balance = isNullOrNan(payable_amount) > pay_amount ? isNullOrNan(payable_amount) - pay_amount : '0';
-                $('#payment_info .print_paid').text(pay_amount );
-                $('#payment_info .print_change').text(change);
-                $('#payment_info .print_balance').text(balance);
+                $('#payment_info .print_paid').text(pDecimal(pay_amount) );
+                $('#payment_info .print_change').text(pDecimal(change));
+                $('#payment_info .print_balance').text(pDecimal(balance));
             })
 
-            $('#payment_info .print_payable_amount').text(payable_amount);
+            $('#payment_info .print_payable_amount').text(pDecimal(payable_amount));
         })
 
         // Sale With Credit
@@ -1731,6 +1734,9 @@
         $(document).on('change', `#${contact_id}`, function() {
             let contact_id = $(this).val();
             ajaxOnContactChange(contact_id);
+            let currentCustomer=customers.find(c=>c.id==contact_id) ?? '';
+            let priceListId=currentCustomer.price_list_id;
+            $('#selling_price_group').val(priceListId).trigger('change');
         })
         let ajaxOnContactChange=(contact_id)=>{
             if(contact_id){
@@ -1750,7 +1756,7 @@
                             }else{
                                 customer_price_list = null;
                             }
-                            getPrice($(`#${tableBodyId}`));
+                            // getPrice($(`#${tableBodyId}`));
                             // false ? getPriceByEachRow() : getPrice();
                         }
                     },
