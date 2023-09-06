@@ -32,21 +32,22 @@ class stockHistoryController extends Controller
         foreach ($histories as $history) {
             $product_id = $history->product_id;
             $variation_id = $history->variation_id;
+            $location_id = $history->business_location_id;
 
 
-            if (!isset($openingBalances[$product_id][$variation_id])) {
+            if (!isset($openingBalances[$product_id][$variation_id][$location_id])) {
 
-                $openingBalances[$product_id][$variation_id] = 0;
+                $openingBalances[$product_id][$variation_id][$location_id] = 0;
             }
 
             $increase_qty = $history->increase_qty ?? 0;
             $decrease_qty = $history->decrease_qty ?? 0;
 
-            $increaseAble = $openingBalances[$product_id][$variation_id] + $increase_qty;
+            $increaseAble = $openingBalances[$product_id][$variation_id][$location_id] + $increase_qty;
             $balance_qty = $increaseAble - $decrease_qty;
 
 
-            $openingBalances[$product_id][$variation_id] = $balance_qty;
+            $openingBalances[$product_id][$variation_id][$location_id] = $balance_qty;
 
 
             $history->balance_qty = $balance_qty;
@@ -109,7 +110,7 @@ class stockHistoryController extends Controller
                     return  $customer ? $customer['first_name'] : '';
                 }else{
                     if($history->transaction_type=='purchase' || $history->transaction_type=='stock_in'){
-                        return $history->business_location->name;
+                            return $history->business_location->name;
                     }
                 }
                 return $history->business_location->name;
