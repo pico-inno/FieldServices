@@ -13,6 +13,10 @@ use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 class networkPrinterController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isActive']);
+    }
     public function print($printerData, $dataForPrint)
     {
 

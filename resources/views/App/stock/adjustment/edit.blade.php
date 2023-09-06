@@ -5,9 +5,9 @@
 @endsection
 
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('stock_adjustment_here_show', 'here show')
-@section('stock_adjustment_active_show', 'active ')
+@section('stock_adjustment_active_show', 'active show')
 
 @section('styles')
     <link href="{{asset("assets/plugins/global/plugins.bundle.css")}}" rel="stylesheet" type="text/css"/>

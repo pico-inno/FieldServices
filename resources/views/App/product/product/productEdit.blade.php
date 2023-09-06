@@ -341,6 +341,18 @@
                                                         <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                                <div class="col md-4 mb-5">
+
+                                                    <div id="single_alert_qty_ui"  class="fv-row">
+                                                        <label class="form-label">
+                                                            {{ __('product/product.alert_quantity') }}
+                                                        </label>
+
+                                                        <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+
+                                                    </div>
+
+                                                </div>
                                             </div>
                                             <div class="row advance-toggle-class">
                                                 <div class="col-md-4 mb-5">
@@ -479,6 +491,7 @@
                                                                                     Default Selling Price <br/>
                                                                                     <i>Exc. Tax</i>
                                                                                 </th>
+                                                                                <th class="min-w-100px">Alert Quantity</th>
                                                                                 <th class="min-w-200px">Variation Images</th>
                                                                                 <th class=" min-w-50px">
                                                                                     <span id="child-repeater" name="add" data-repeater-create class="svg-icon svg-icon-primary svg-icon-4 cursor-pointer add-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -655,10 +668,18 @@
         const singleBox = document.getElementById("single_box");
         const variableBox = document.getElementById("variable_box");
 
+            // $(document).ready(function() {
+            //     $("#single_alert_qty_ui").css("display", "block");
+            // });
+
+
         if(selectBox.value === "variable"){
             variableBox.style.display = "block";
+        $("#single_alert_qty_ui").addClass("d-none");
+
         }else{
             singleBox.style.display = "block";
+
         }
 
         selectBox.addEventListener("change", () => {
@@ -689,6 +710,7 @@
         let singleInc = $('[name="single_inc"]');
         let singleProfit = $('[name="single_profit"]');
         let singleSelling = $('[name="single_selling"]');
+        let singleAlertQty = $('[name="single_alert_quantity"]');
 
         let anotherPurchase = $('input[name="purchase_price_for_single"]');
         let anotherProfit = $('input[name="profit_margin_for_single"]');
@@ -698,7 +720,7 @@
 
         let oldSingleSellingPrice;
         if(oldSingleValue.length !== 0){
-            oldSingleSellingPrice = profitPercentage( oldSingleValue[0].default_selling_price, oldSingleValue[0].default_purchase_price );
+            oldSingleSellingPrice = profitPercentage( oldSingleValue[0].default_selling_price, oldSingleValue[0].default_purchase_price, );
         }
 
         let singleProductType = (@json($product)).has_variation;
@@ -714,6 +736,7 @@
             singleInc.val(oldSingleValue[0].default_purchase_price);
             singleProfit.val(oldSingleSellingPrice);
             singleSelling.val(oldSingleValue[0].default_selling_price);
+            singleAlertQty.val(oldSingleValue[0].alert_quantity);
 
             anotherPurchase.val(oldSingleValue[0].default_purchase_price)
             anotherProfit.val(oldSingleSellingPrice)
@@ -824,6 +847,9 @@
                 <td>
                     <input type="text" class="form-control form-control-sm" placeholder="Exc. tax" name="selling_price[]">
                 </td>
+  <td>
+     <input type="text" name="alert_quantity[]" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+                </td>
                 <td>
                     <input type="file" class="form-control form-control-sm" name="variation_image[]">
                 </td>
@@ -930,6 +956,7 @@
                         cloneRow.find('input[name="inc_purchase[]"]').val(item.default_purchase_price)
                         cloneRow.find('input[name="profit_percentage[]"]').val(profit_percent)
                         cloneRow.find('input[name="selling_price[]"]').val(item.default_selling_price)
+                        cloneRow.find('input[name="alert_quantity[]"]').val(item.alert_quantity)
                         cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
                         $('#variation-row').append(cloneRow);
                     })

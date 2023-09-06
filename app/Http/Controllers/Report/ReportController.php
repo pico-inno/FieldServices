@@ -365,8 +365,7 @@ class ReportController extends Controller
         $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $endDate)->endOfDay();
 
         $query = CurrentStockBalance::with(['uom', 'location:id,name'])
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('current_quantity', '<=', 10);
+            ->whereBetween('created_at', [$startDate, $endDate]);
 
         if ($request->data['filter_locations'] != 0) {
             $query->where('business_location_id', $request->data['filter_locations']);
@@ -381,7 +380,7 @@ class ReportController extends Controller
                 'category:id,name',
                 'brand:id,name',
                 'productVariations' => function ($query) {
-                    $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
+                    $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku', 'alert_quantity')
                         ->with(['variationTemplateValue.variationTemplate:id,name']);
                 },
                 'uom'
@@ -424,26 +423,32 @@ class ReportController extends Controller
                 if ($product['id'] == $currentStock['product_id']) {
                     $variations = $product['product_variations'];
 
+
                     foreach ($variations as $variation) {
-                        if ($variation['id'] == $currentStock['variation_id']) {
-                            $variationProduct = [
-                                'id' => $product['id'],
-                                'name' => $product['name'],
-                                'sku' => $product['sku'],
-                                'product_type' => $product['product_type'],
-                                'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
-                                'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
-                                'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
-                                'location_name' => $currentStock['location']['name'],
-                                'category_name' => $product['category']['name'] ?? '',
-                                'brand_name' => $product['brand']['name'] ?? '',
-                                'ref_uom_name' => $currentStock['uom']['name'],
-                                'ref_uom_short_name' => $currentStock['uom']['short_name'],
-                                'purchase_qty' => $currentStock['ref_uom_quantity'],
-                                'current_qty' => $currentStock['current_quantity'],
-                            ];
-                            $result[] = $variationProduct;
-                        }
+                        $alertQty = $variation['alert_quantity'];
+
+                       if ($currentStock['current_quantity'] <= $alertQty){
+                           if ($variation['id'] == $currentStock['variation_id']) {
+                               $variationProduct = [
+                                   'id' => $product['id'],
+                                   'name' => $product['name'],
+                                   'sku' => $product['sku'],
+                                   'product_type' => $product['product_type'],
+                                   'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
+                                   'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
+                                   'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
+                                   'location_name' => $currentStock['location']['name'],
+                                   'category_name' => $product['category']['name'] ?? '',
+                                   'brand_name' => $product['brand']['name'] ?? '',
+                                   'ref_uom_name' => $currentStock['uom']['name'],
+                                   'ref_uom_short_name' => $currentStock['uom']['short_name'],
+                                   'purchase_qty' => $currentStock['ref_uom_quantity'],
+                                   'current_qty' => $currentStock['current_quantity'],
+                                   'alert_qty' => $alertQty,
+                               ];
+                               $result[] = $variationProduct;
+                           }
+                       }
                     }
                 }
             }

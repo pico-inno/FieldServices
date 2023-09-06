@@ -202,11 +202,13 @@ class ProductController extends Controller
         $variations = VariationTemplates::all();
         $productVariation = ProductVariation::with('product', 'variationTemplateValue')->where('product_id', $product->id)->get();
 
+//        return $productVariation;
         return view('App.product.product.productEdit', compact('product', 'brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation'));
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
+//        return $request;
         DB::beginTransaction();
         try{
             // Update Product
@@ -402,6 +404,7 @@ class ProductController extends Controller
                     'default_purchase_price' => $request->exc_purchase[$index],
                     'profit_percent' => $request->profit_percentage[$index],
                     'default_selling_price' => $request->selling_price[$index],
+                    'alert_quantity' => $request->alert_quantity[$index],
                 ];
 
                 if ($isCreating) {
@@ -433,6 +436,7 @@ class ProductController extends Controller
                 'default_purchase_price' => $request->single_exc,
                 'profit_percent' => $request->single_profit,
                 'default_selling_price' => $request->single_selling,
+                'alert_quantity' => $request->single_alert_quantity,
             ];
 
             if($isCreating){

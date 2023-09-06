@@ -73,7 +73,7 @@
                             item.name ,
                             item.sku ?? '',
                             item.location_name ?? '-',
-                            '<span class="text-danger">' +parseFloat(item.current_qty).toFixed(2)+ (item.ref_uom_short_name ? '(' + item.ref_uom_short_name + ')' : '(' + item.ref_uom_name + ')') + '</span>',
+                            '<span class="text-danger">' +parseFloat(item.current_qty).toFixed(2)+ (item.ref_uom_short_name ? '(' + item.ref_uom_short_name + ')' : '(' + item.ref_uom_name + ')') + ' remains</span>',
 
 
                             // item.sale_data.supplier.company_name ?? '-',
