@@ -33,7 +33,7 @@ class RolesTableSeeder extends Seeder
     {
         // Default role creation
         $defaultRole = Role::create(['name' => 'Administrator']);
-        $catcherRole = Role::create(['name' => 'Catcher']);
+        $catcherRole = Role::create(['name' => 'Cashier']);
         $storeKeeperRole = Role::create(['name' => 'Store Keeper']);
 
 

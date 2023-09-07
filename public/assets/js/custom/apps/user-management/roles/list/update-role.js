@@ -121,25 +121,55 @@ var KTUsersUpdatePermissions = function () {
 
     // Select all handler
     const handleSelectAll = () => {
-        // Define variables
         const selectAll = form.querySelector('#kt_roles_select_all');
         const allCheckboxes = form.querySelectorAll('[type="checkbox"]');
 
-        // Handle check state
         selectAll.addEventListener('change', e => {
 
-            // Apply check state to all checkboxes
             allCheckboxes.forEach(c => {
                 c.checked = e.target.checked;
             });
         });
     }
 
+
+    const handleFeatureSelectAll = () => {
+
+        const featureSelectAllCheckboxes = form.querySelectorAll('.feature-select-all');
+
+        featureSelectAllCheckboxes.forEach(featureSelectAll => {
+            const featureName = featureSelectAll.value; // Get the feature name
+            const featureCheckboxes = form.querySelectorAll(`[name^="${featureName}_"]`);
+
+
+            const isAllFeatureCheckboxesSelected = () => {
+                return [...featureCheckboxes].every(c => c.checked);
+            };
+
+            featureSelectAll.checked = isAllFeatureCheckboxesSelected();
+
+            // Handle click event for feature checkboxes
+            featureCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    featureSelectAll.checked = isAllFeatureCheckboxesSelected();
+                });
+            });
+
+            // Handle click event for the "Select All" checkbox
+            featureSelectAll.addEventListener('change', e => {
+                featureCheckboxes.forEach(checkbox => {
+                    checkbox.checked = e.target.checked;
+                });
+            });
+        });
+    };
+
     return {
         // Public functions
         init: function () {
             initUpdatePermissions();
             handleSelectAll();
+            handleFeatureSelectAll();
         }
     };
 }();
