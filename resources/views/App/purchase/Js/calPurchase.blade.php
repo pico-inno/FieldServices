@@ -272,6 +272,7 @@ $(document).ready(function() {
          $('[data-kt-repeater="datepicker"]').flatpickr();
 
         // init_functions
+        $('#searchInput').focus();
         numberOnly();
         totalItem();
         net_purchase_total_amount_cal();
