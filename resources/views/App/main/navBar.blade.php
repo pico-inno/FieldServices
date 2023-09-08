@@ -927,7 +927,7 @@
                                                                 </div>
                                                             @endif
                                                             @if(hasImport('opening stock'))
-                                                                <div class="menu-item">
+                                                                {{-- <div class="menu-item">
                                                                     <!--begin:Menu link-->
                                                                     <a class="menu-link @yield('import_opening_stock_menu_link')" href="{{ url('/import-opening-stock') }}">
                                                                         <span class="menu-icon">
@@ -936,7 +936,7 @@
                                                                         <span class="menu-title  fs-6">{{ __('product/product.import_opening_stock') }}</span>
                                                                     </a>
                                                                     <!--end:Menu link-->
-                                                                </div>
+                                                                </div> --}}
                                                             @endif
                                                             {{-- @if(hasView('selling price groups') || hasImport('selling price groups') || hasExport('selling price groups'))
                                                                 <div class="menu-item">

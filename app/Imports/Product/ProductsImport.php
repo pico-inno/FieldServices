@@ -52,43 +52,45 @@ class ProductsImport implements
 
     public function __construct()
     {
-        $this->brands = Brand::select('id', 'name')->get();
-        $this->categories = Category::select('id', 'name', 'parent_id')->get();
-        $this->generics = Generic::select('id', 'name')->get();
-        $this->manufacturers = Manufacturer::select('id', 'name')->get();
-        $this->unit_category = UnitCategory::get();
-        $this->uom = UOM::get();
-        $this->variations = VariationTemplates::select('id', 'name')->get();
-        $this->variation_values = VariationTemplateValues::select('id', 'name', 'variation_template_id')->get();
+        $this->brands = Brand::select('id', 'name');
+        $this->categories = Category::select('id', 'name', 'parent_id');
+        $this->generics = Generic::select('id', 'name');
+        $this->manufacturers = Manufacturer::select('id', 'name');
+        $this->unit_category = new UnitCategory;
+        $this->uom = new UOM;
+        $this->variations = VariationTemplates::select('id', 'name');
+        $this->variation_values = VariationTemplateValues::select('id', 'name', 'variation_template_id');
     }
 
     private function createOrGetRecord($model, $query, $field1, $value1, $field2 = null){
-        if(array_key_exists($value1, $this->realtionId) ){
-            $id = $this->realtionId[$value1];
-            return $id;
-        }else{
-            if(!$field2){
-                $raw_query = $query->where($field1, $value1)->first();
-                if($raw_query){
-                    $this->realtionId[$value1] = $raw_query->id;
-                    return $raw_query->id;
+        if($value1){
+            if (array_key_exists($value1, $this->realtionId)) {
+                $id = $this->realtionId[$value1];
+                return $id;
+            } else {
+                if (!$field2) {
+                    $raw_query = $query->where($field1, $value1)->first();
+                    if ($raw_query) {
+                        $this->realtionId[$value1] = $raw_query->id;
+                        return $raw_query->id;
+                    }
                 }
-            }
-            if($field2){
-                $raw_query = $query->where($field1, $value1)->whereNull($field2)->first();
-                if($raw_query){
-                    $this->realtionId[$value1] = $raw_query->id;
-                    return $raw_query->id;
+                if ($field2) {
+                    $raw_query = $query->where($field1, $value1)->whereNull($field2)->first();
+                    if ($raw_query) {
+                        $this->realtionId[$value1] = $raw_query->id;
+                        return $raw_query->id;
+                    }
                 }
-            }
 
-            $newData = $model::create([
-                $field1 => $value1,
-                'created_by' => auth()->id()
-            ])->id;
-            if($newData){
-                $this->realtionId[$value1] = $newData;
-                return $newData;
+                $newData = $model::create([
+                    $field1 => $value1,
+                    'created_by' => auth()->id()
+                ])->id;
+                if ($newData) {
+                    $this->realtionId[$value1] = $newData;
+                    return $newData;
+                }
             }
         }
     }
@@ -99,13 +101,12 @@ class ProductsImport implements
         foreach($variation_values as $key => $value){
             $variation_value_query = $this->variation_values->where('variation_template_id', $variation_id);
             $vari_val_query_lowercase = $variation_value_query->pluck('name')->map(fn($v) => strtolower($v));
-
             $variation_template_value_id = null;
             if(!$vari_val_query_lowercase->contains(strtolower($value))){
                 $variation_template_value_id = VariationTemplateValues::create(['name' => $value,'variation_template_id' => $variation_id, 'created_by' => auth()->id()])->id;
             }
             if($vari_val_query_lowercase->contains(strtolower($value))){
-                foreach($variation_value_query as $v){
+                foreach($variation_value_query->get() as $v){
                     if(strtolower($v->name) === strtolower($value)){
                         $variation_template_value_id = $v->id;
                     }
@@ -136,7 +137,6 @@ class ProductsImport implements
         $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
         $uomId = $this->uom->where('name', $uomName)->where('unit_category_id', $unitCategoryId)->pluck('id')->first();
         $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $unitCategoryId)->pluck('id')->first();
-
         if(!$uomId){
             throw new \Exception("UoM doesn't exist");
         }
@@ -154,6 +154,7 @@ class ProductsImport implements
 
     public function collection(Collection $rows)
     {
+        // dd($rows->toArray());
         DB::beginTransaction();
         try{
             // begin: for image
@@ -219,7 +220,8 @@ class ProductsImport implements
                     "name" => $row["name"],
                     "product_code" => $row["product_code"],
                     "sku" => $sku,
-                    "product_type" => $row["product_type_single_or_variable"],
+                    "product_type" => $row["product_type_consumeable_or_storable_or_service"],
+                    "has_variation"=>$row["has_variation_single_or_variable"],
                     "brand_id" => $brand_id,
                     "category_id" => $category_id,
                     "manufacturer_id" => $manufacturer_id,
@@ -247,8 +249,8 @@ class ProductsImport implements
                 ]);
 
                 // for product variation
-                $product_type = $row['product_type_single_or_variable'];
-                if(trim($product_type) === "variable"){
+                $hasVariation = $row['has_variation_single_or_variable'];
+                if(trim($hasVariation) === "variable"){
                     $raw_variation_value = $row['variation_values_seperated_values_blank_if_product_type_if_single'];
                     $variation_value_array = array_map(fn($value) => trim($value), explode("|", $raw_variation_value));
 
@@ -258,7 +260,7 @@ class ProductsImport implements
                     ProductVariation::insert($insert_data);
                 }
 
-                if(trim($product_type) === "single"){
+                if(trim($hasVariation) === "single"){
                     ProductVariation::create([
                         'product_id' => $product_id,
                         'default_purchase_price' => $row['purchase_price'],

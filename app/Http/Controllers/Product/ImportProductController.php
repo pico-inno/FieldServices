@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use Illuminate\Http\Request;
-use App\Models\Product\Brand; 
+use App\Models\Product\Brand;
 use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -34,5 +34,19 @@ class ImportProductController extends Controller
         $import->import($file);
 
         return back();
+    }
+    public function dowloadDemoExcel()
+    {
+        $path = public_path('Excel/import_products_csv_template.xls');
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="import_products_csv_template.xls"',
+        ];
+
+        return response()->download($path, 'import_products_csv_template.xls', $headers);
     }
 }
