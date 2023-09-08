@@ -14,6 +14,11 @@ class moduleController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
+        $this->middleware('canView:Module')->only(['index']);
+        $this->middleware('canUpload:Module')->only(['uploadModule']);
+        $this->middleware('canInstall:Module')->only(['install']);
+        $this->middleware('canUninstall:Module')->only(['uninstall']);
+        $this->middleware('canDelete:Module')->only('delete');
     }
     public function index(){
         $modules=Module::toCollection();

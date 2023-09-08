@@ -63,11 +63,13 @@
                 <!--begin::Actions-->
                 <div class="card-toolbar">
                     <div class="d-flex flex-stack flex-wrap gap-4" data-kt-exchangeRate-table-toolbar="base">
+                        @if(hasCreate('Cash & Payment'))
                         <button type="button" class="btn btn-primary btn-sm "
                          data-bs-toggle="modal"
                         data-bs-target="#add_payment_acounts_modal" >
                         Add
                         </button>
+                        @endif
                         {{-- <a href="#" class="btn btn-primary btn-sm">Add</a> --}}
                     </div>
                     <div class="d-flex justify-content-end align-items-center d-none" data-kt-exchangeRate-table-toolbar="selected">

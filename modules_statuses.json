@@ -3,5 +3,6 @@
     "Restaurant": true,
     "OrderDisplay": true,
     "Reservation": true,
-    "RoomManagement": true
+    "RoomManagement": true,
+    "StockInOut": true
 }

@@ -261,16 +261,19 @@
                                             <!--end::Nav link-->
                                         </li>
                                         <!--end::Nav item-->
+                                @if(hasView('Cash & Payment'))
                                         <!--begin::Nav item-->
-									<li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" data-bs-dismiss="click" title="Cash & Payment">
-										<!--begin::Nav link-->
-										<a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('fa_active')" data-bs-toggle="tab" href="#kt_aside_nav_tab_fa">
-											<!--begin::Svg Icon | path: icons/duotune/general/gen048.svg-->
-											<i class="fa-solid fa-money-check fs-6"></i>
-											<!--end::Svg Icon-->
-										</a>
-										<!--end::Nav link-->
-									</li>
+                                        <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" data-bs-dismiss="click" title="Cash & Payment">
+                                            <!--begin::Nav link-->
+                                            <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('fa_active')" data-bs-toggle="tab" href="#kt_aside_nav_tab_fa">
+                                                <!--begin::Svg Icon | path: icons/duotune/general/gen048.svg-->
+                                                <i class="fa-solid fa-money-check fs-6"></i>
+                                                <!--end::Svg Icon-->
+                                            </a>
+                                            <!--end::Nav link-->
+                                        </li>
+                                @endif
+                                @if(hasView('Expense'))
                                     <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" data-bs-dismiss="click" title="{{__('expense.expense')}}">
 										<!--begin::Nav link-->
 										<a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('expense_active')" data-bs-toggle="tab" href="#kt_aside_nav_tab_expense">
@@ -280,6 +283,7 @@
 										</a>
 										<!--end::Nav link-->
 									</li>
+                                    @endif
 									<!--end::Nav item-->
                                     <!--begin::Nav item-->
 									<li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" data-bs-dismiss="click" title="SMS">
@@ -303,6 +307,7 @@
 										<!--end::Nav link-->
 									</li>
 									<!--end::Nav item-->
+                                    @if(hasView('Module'))
                                     <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" data-bs-dismiss="click" title="Modules">
 										<!--begin::Nav link-->
 										<a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('module_active')" data-bs-toggle="tab" href="#kt_aside_nav_tab_modules">
@@ -313,7 +318,7 @@
 										<!--end::Nav link-->
 									</li>
 									<!--end:-->
-
+                                    @endif
                                     <!--begin::Tab pane-->
 
                                     @if(hasModule('Service') && isEnableModule('Service'))
@@ -1374,7 +1379,7 @@
                                                     @if(hasModule('StockInOut') && isEnableModule('StockInOut'))
                                                         @include('stockinout::layouts.master', ['navbarType' => 'main_link'])
                                                     @endif
-                                                    
+
                                                     @if(hasAll('stock transfer'))
                                                         <!--begin:Menu item-->
                                                         <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('stock_transfer_here_show')">
@@ -1865,7 +1870,7 @@
                                                         <!--end:Menu content-->
                                                     </div>
                                                 </div>
-
+                                                @if(hasView('Module'))
                                                 <div  class="menu-item menu-accordion ">
                                                         <a class="menu-link @yield('modules_list_active')" href="{{route('module.index')}}">
                                                             <span class="menu-icon">
@@ -1874,6 +1879,7 @@
                                                             <span class="menu-title">Module</span>
                                                         </a>
                                                 </div>
+                                                @endif
                                             </div>
                                             <!--end::Wrapper-->
                                         </div><!--begin::Tab pane-->
@@ -2139,9 +2145,11 @@
 												<div id="kt_aside_menu_wrapper" class="menu-fit">
 													<div class="menu-item pt-2">
 														<!--begin:Menu content-->
+                                                        @if(hasView('Cash & Payment'))
 														<div class="menu-content">
 															<span class="menu-heading fw-bold text-uppercase fs-7">Cash & Payment</span>
 														</div>
+                                                        @endif
 														<!--end:Menu content-->
 													</div>
 
@@ -2267,6 +2275,7 @@
 														</div>
 														<!--end:Menu content-->
 													</div>
+                                                    @if(hasView('Expense'))
                                                     <div  class="menu-item menu-accordion ">
                                                         <!--begin:Menu link-->
                                                             <!--begin:Menu link-->
@@ -2277,6 +2286,7 @@
                                                                 <span class="menu-title">{{__('expense.expense_report_list')}}</span>
                                                             </a>
                                                     </div>
+                                                    @endif
                                                     {{-- <div  class="menu-item menu-accordion ">
                                                         <!--begin:Menu link-->
                                                             <!--begin:Menu link-->
@@ -2287,6 +2297,7 @@
                                                                 <span class="menu-title">{{__('expense.create_expense')}}</span>
                                                             </a>
                                                     </div> --}}
+                                                    @if(hasView('Expense'))
                                                     <div  class="menu-item menu-accordion ">
                                                         <!--begin:Menu link-->
                                                             <!--begin:Menu link-->
@@ -2297,6 +2308,7 @@
                                                                 <span class="menu-title">{{__('expense.expense_list')}}</span>
                                                             </a>
                                                     </div>
+                                                    @endif
 												</div>
 											</div>
 											<!--end::Wrapper-->

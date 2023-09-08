@@ -110,6 +110,7 @@
 
                         <!--end::Export-->
                         <!--begin::Add customer-->
+                        @if(hasUpload('Module'))
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_upload">
                         <!--begin::Svg Icon | path: icons/duotune/files/fil018.svg-->
                         <span class="svg-icon svg-icon-2">
@@ -120,6 +121,7 @@
                             </svg>
                         </span>
                         <!--end::Svg Icon-->Upload Files</button>
+                        @endif
                         <!--end::Add customer-->
                     </div>
                     <!--end::Toolbar-->
@@ -176,16 +178,22 @@
                             <!--begin::Actions-->
                             <td class="text-end" >
                                 @if (isEnableModule($m))
+                                    @if(hasUninstall('Module'))
                                     <a class="btn btn-warning btn-sm p-2 fs-9" href="{{route('module.uninstall',['module_name'=>encrypt($m->getName())])}}">
                                         Uninstall
                                     </a>
+                                    @endif
                                 @else
+                                    @if(hasInstall('Module'))
                                     <a class="btn btn-primary btn-sm p-2 fs-9" href="{{route('module.install',['module_name'=>encrypt($m->getName())])}}" >
                                         Install
                                     </a>
+                                    @endif
                                 @endif
                             </td>
+
                             <td class="text-start">
+                                @if(hasDelete('Module'))
                                 <form action="{{route('module.delete',['module_name'=>encrypt($m->getName())])}}" method="POST">
                                     @method('delete')
                                     @csrf
@@ -193,6 +201,7 @@
                                         <i class="fa-solid fa-trash text-danger"></i>
                                     </button>
                                 </form>
+                                @endif
                             </td>
                             <!--end::Actions-->
                         </tr>
@@ -210,7 +219,7 @@
 		<div class="modal fade" id="kt_modal_upload" tabindex="-1" aria-hidden="true">
 			<!--begin::Modal dialog-->
 			<div class="modal-dialog modal-dialog-centered mw-650px">
-				<!--begin::Modal content--> 
+				<!--begin::Modal content-->
 				<div class="modal-content">
 					<!--begin::Form-->
 					{{-- <form class="form" action="none" id="kt_modal_upload_form"> --}}
