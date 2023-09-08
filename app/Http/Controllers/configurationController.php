@@ -12,6 +12,10 @@ use Database\Seeders\CategoryTableSeeder;
 class configurationController extends Controller
 {
 
+    public function __construct()
+    {
+        
+    }
     public function envConfigure()
     {
         return view('App.business.envConfigurationForm');

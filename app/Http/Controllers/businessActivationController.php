@@ -17,6 +17,10 @@ use App\Models\settings\businessSettings;
 
 class businessActivationController extends Controller
 {
+    public function __construct()
+    {
+        
+    }
     public function activationForm(){
         return view('App.business.activationForm');
     }

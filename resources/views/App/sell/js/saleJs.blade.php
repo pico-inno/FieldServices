@@ -219,6 +219,7 @@
             }
             append_row(selected_product,unique_name_id);
             unique_name_id+=1;
+            $('#searchInput').focus();
 
 
         });
