@@ -1,7 +1,7 @@
 @extends('App.main.navBar')
 @section('styles')
 <style>
-    
+
 </style>
 @endsection
 @section('room_management_icon','active')
@@ -44,8 +44,8 @@
                         </div>
                         <div class="col-md-4 col-sm-12 mb-8">
                             <label class="form-label required">{{ __('product/pricelist.base_price') }}</label>
-                            <select name="base_price" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Select Location">
-                                <option></option> 
+                            <select name="base_price" id="base_price" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Select Location">
+                                <option></option>
                                 <option value="0" @selected(0 == $priceList->priceListDetails[0]->base_price)>{{ __('product/pricelist.cost') }}</option>
                                 @foreach($price_lists as $price_list)
                                     <option value="{{ $price_list->id }}" @selected($price_list->id === $priceList->priceListDetails[0]->base_price)>{{ $price_list->name }}</option>
@@ -54,10 +54,10 @@
                             @error('base_price')
                                 <div class="text-danger my-2">{{ $message }}</div>
                             @enderror
-                        </div>                        
+                        </div>
                         <div class="col-md-4 col-sm-12 mb-8 ">
                             <label for="" class="form-label required">{{ __('product/pricelist.currency') }}</label>
-                            <select name="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
+                            <select name="currency_id" id="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
                                 <option></option>
                                 @foreach($currencies as $currency)
                                     <option value="{{ $currency->id }}" @selected($currency->id === $priceList->currency_id)>{{ $currency->name }}</option>
@@ -99,7 +99,7 @@
                             <!--begin::Table body-->
                             <tbody class="fw-semibold text-gray-700 x" id="price_list_body">
                                 @if ($price_list_details)
-                                    @foreach ($price_list_details as $item)                                    
+                                    @foreach ($price_list_details as $item)
                                         <tr class="price_list_row">
                                             <input type="hidden" name="price_list_detail_id[]" value="{{ $item->id }}">
                                             <td>
@@ -113,9 +113,9 @@
                                             </td>
                                             <td>
                                                 <select name="apply_value[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="false" data-placeholder="Please select">
-                                                    
+
                                                 </select>
-                                            </td> 
+                                            </td>
                                             <td>
                                                 <input type="text" class="form-control form-control-sm rounded-0" name="min_qty[]" value="{{old('min_qty[]',$item->min_qty * 1)}}">
                                             </td>
@@ -152,7 +152,7 @@
                 </div>
                 <div class="card-footer d-flex justify-content-end">
                     <a href="{{ route('price-list-detail') }}"  class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>
-                    <button type="submit" class="btn btn-primary">{{ __('product/product.save') }}</button>
+                    <button type="submit" class="btn btn-primary" id="submit">{{ __('product/product.save') }}</button>
                 </div>
             </div>
             <!--end::Card-->
@@ -165,7 +165,7 @@
 
 @push('scripts')
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
-    
+
     @if ($errors->any())
         @foreach ($errors->all() as $error)
             <script>

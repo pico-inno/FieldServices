@@ -45,6 +45,7 @@ use Modules\Reservation\Entities\FolioInvoice;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Models\posRegisterTransactions;
+use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -229,13 +230,17 @@ class saleController extends Controller
         $locations = businessLocation::all();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
-        $priceLists = PriceLists::select('id', 'name', 'description')->get();
+        $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
         $paymentAccounts = paymentAccounts::get();
         $setting = businessSettings::first();
         $defaultCurrency = $this->currency;
         $currencies = Currencies::get();
         $locations = businessLocation::all();
-        return view('App.sell.sale.addSale', compact('locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies'));
+        $exchangeRates=[];
+        if(class_exists('Modules\ExchangeRate\Entities\exchangeRates')){
+            $exchangeRates=exchangeRates::get();
+        }
+        return view('App.sell.sale.addSale', compact('locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
     }
     // for edit page
     public function saleEdit($id)
@@ -249,6 +254,10 @@ class saleController extends Controller
         $setting = businessSettings::first();
         $currency = $this->currency;
 
+        $exchangeRates = [];
+        if (class_exists('exchangeRates')) {
+            $exchangeRates = exchangeRates::get();
+        }
 
         $sale = sales::with('currency')->where('id', $id)->get()->first();
         $business_location_id = $sale->business_location_id;
@@ -286,7 +295,7 @@ class saleController extends Controller
         $defaultCurrency = $this->currency;
         // $child_sale_details = $sale_details_query->whereNotNull('parent_sale_details_id', '!=', null)->get();
         // dd($sale_details->toArray());
-        return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations'));
+        return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
     }
     // sale store
     public function store(Request $request)

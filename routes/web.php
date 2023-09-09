@@ -824,6 +824,9 @@ Route::controller(PriceListDetailController::class)->group(function () {
 
     // search applied_value
     Route::get('/price-list-detail/search', 'searchAppliedValue');
+
+    //getPriceListByCurrency
+    Route::get('/price-list/{currency_id}', 'getPriceListByCurrency');
 });
 
 Route::controller(TestController::class)->group(function () {

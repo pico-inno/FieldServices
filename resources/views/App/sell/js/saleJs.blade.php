@@ -8,9 +8,18 @@
         let productQty=[];
         let setting=@json($setting);
         let currency=@json($defaultCurrency);
+        let currencies=@json($currencies);
         let locations=@json($locations);
         let lotControl=setting.lot_control;
-
+        let priceLists=@json($priceLists);
+        let exchangeRates=@json($exchangeRates ?? []);
+        let currentPriceList;
+        var currentCurrency=@json($defaultCurrency);
+        $('#currency_id').change(function(e){
+            currentCurrency=currencies.find(c=>c.id==$(this).val());
+            currentCurrencySymbol=currentCurrency.symbol;
+            $('.currencySymbol').text(currentCurrencySymbol);
+        })
 
         let editSaleDetails=@json($sale_details ?? []);
         let editSale=@json($sale ?? []);
@@ -49,7 +58,7 @@
             })
             let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
             getPriceList(CurrentPriceListId);
-            $('.price_group').val(CurrentPriceListId).trigger('change');
+            $('.price_list_input').val(CurrentPriceListId).trigger('change');
             editSaleDetails.forEach(function(sale,index){
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
                 uom.select2();
@@ -266,7 +275,7 @@
             var newRow = `
                 <tr class="sale_row mt-2">
                     <td>
-                        <div class="my-">
+                        <div class="">
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
@@ -312,10 +321,16 @@
                         <input type="hidden" class="price_list_id" name="sale_details[${unique_name_id}][price_list_id]" value='default_selling_price'/>
                     </td>
                     <td class=" fv-row">
-                        <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]">
+                            <span class="input-group-text currencySymbol">${currentCurrency.symbol}</span>
+                        </div>
                     </td>
                     <td>
-                       <input type="text" class="subtotal form-control form-control-sm input_number" name="sale_details[${unique_name_id}][subtotal]" readonly >
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="subtotal form-control form-control-sm input_number" name="sale_details[${unique_name_id}][subtotal]" readonly >
+                            <span class="input-group-text currencySymbol">${currentCurrency.symbol}</span>
+                        </div>
                     </td>
                     <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                         <select name="sale_details[${unique_name_id}][discount_type]" id="" class="form-select form-select-sm discount_type" data-kt-repeater="select2"  data-hide-search="true">
@@ -325,7 +340,7 @@
                     </td>
                     <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                         <input type="text" class="form-control form-control-sm per_item_discount" value="0" name="sale_details[${unique_name_id}][per_item_discount]" placeholder="Discount amount">
-                        <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>${currency['symbol']}</div>
+                        <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>${currentCurrency.symbol}</div>
                         <input type="hidden" class="line_subtotal_discount" name="sale_details[${unique_name_id}][line_subtotal_discount]" value="0">
                         <input type="hidden" class="currency_id" name="sale_details[${unique_name_id}][currency_id]" value="0">
                     </td>
@@ -876,6 +891,9 @@
 
     $('[name="business_location_id"]').on('change',function(){
         limitStatusBylocation($(this).val());
+        let CurrentPriceListId=locations.find((location)=>location.id==$(this).val()).price_lists_id;
+        $('[name="price_list"]').val(CurrentPriceListId).trigger('change');
+        getPriceList(CurrentPriceListId);
     });
 
     function limitStatusBylocation($id) {
@@ -901,6 +919,9 @@
     getPriceList(locations[0].price_lists_id);
     $('[name="price_list"]').val(locations[0].price_lists_id).trigger('change');
     $('[name="price_list"]').change(function(){
+        currentPriceList=priceLists.find((p)=>{
+            return p.id == $(this).val();
+        });
         getPriceList($(this).val());
     })
     $('[name="contact_id"]').change(function(){
@@ -1101,8 +1122,19 @@
         const inputUom =uoms.filter(function ($u) {
                 return $u.id ==inputUomId;
         })[0];
+        let resultPrice=resultAfterUomChange.resultPrice;
         if(quantity >= qtyByPriceStage){
-            parentDom.find('.uom_price').val(resultAfterUomChange.resultPrice);
+            if(currentPriceList.currency_id != currentCurrency.id){
+                let fromCurrency=exchangeRates.find(xr=>xr.currency_id==currentPriceList.currency_id);
+                let toCurrency=exchangeRates.find(xr=>xr.currency_id==currentCurrency.id);
+                if(fromCurrency !=null && toCurrency != null){
+                    let adjustCurrency = price / fromCurrency.rate;
+                    let convertedAmount = adjustCurrency * toCurrency.rate ;
+                    resultPrice = convertedAmount;
+                }
+            console.log(fromCurrency,toCurrency);
+            }
+            parentDom.find('.uom_price').val(pDecimal(resultPrice));
             parentDom.find('.price_list').val(priceStage.pricelist_id).trigger('change');
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;

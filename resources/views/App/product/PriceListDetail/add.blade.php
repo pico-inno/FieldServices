@@ -2,7 +2,7 @@
 @section('styles')
 <style>
     /* .custom-select2 {
-        width: 135px; 
+        width: 135px;
     }
 
     #delete_room_row {
@@ -54,7 +54,7 @@
                         </div>
                         <div class="col-md-4 col-sm-12 mb-8">
                             <label class="form-label required">{{ __('product/pricelist.base_price') }}</label>
-                            <select name="base_price" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Select Base Price">
+                            <select name="base_price" class="form-select form-select-sm fs-7" id="base_price" data-control="select2" data-placeholder="Select Base Price">
                                 <option></option>
                                 <option value="0">{{ __('product/pricelist.cost') }}</option>
                                 @foreach($price_lists as $price_list)
@@ -64,13 +64,13 @@
                             @error('base_price')
                                 <div class="text-danger my-2">{{ $message }}</div>
                             @enderror
-                        </div>                       
+                        </div>
                         <div class="col-md-4 col-sm-12 mb-8 ">
                             <label for="" class="form-label required">{{ __('product/pricelist.currency') }}</label>
-                            <select name="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
+                            <select name="currency_id" id="currency_id"  class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
                                 <option></option>
                                 @foreach($currencies as $currency)
-                                    <option value="{{ $currency->id }}">{{ $currency->name }}</option>
+                                    <option value="{{ $currency->id }}" @selected($currency->id== $businessSetting->currency_id)>{{ $currency->name }}</option>
                                 @endforeach
                             </select>
                             @error('currency_id')
@@ -120,7 +120,7 @@
                                     </td>
                                     <td>
                                         <select name="apply_value[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="false" data-placeholder="Please select">
-                                            
+
                                         </select>
                                     </td>
                                     <td>
@@ -158,7 +158,7 @@
                 </div>
                 <div class="card-footer d-flex justify-content-end">
                     <a href="{{ route('price-list-detail') }}"  class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>
-                    <button type="submit" class="btn btn-primary">{{ __('product/product.save') }}</button>
+                    <button type="submit" class="btn btn-primary" id="submit">{{ __('product/product.save') }}</button>
                 </div>
             </div>
             <!--end::Card-->
@@ -171,7 +171,7 @@
 
 @push('scripts')
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
-    
+
     @if ($errors->any())
         @foreach ($errors->all() as $error)
             <script>

@@ -100,6 +100,7 @@ function getSettings()
 {
     return businessSettings::where('id',Auth::user()->business_id)
         ->select(
+            'currency_id',
             'currency_decimal_places',
             'quantity_decimal_places'
         )

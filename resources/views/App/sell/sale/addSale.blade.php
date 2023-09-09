@@ -69,7 +69,7 @@
                                 <label class="form-label fs-7 mb-3 fw-semibold" for="">
                                     Default Selling Price
                                 </label>
-                                <select name="price_list"  class="form-select form-select-sm price_group priceList " data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price">
+                                <select name="price_list"  class="form-select form-select-sm price_group priceList price_list_input" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price">
                                     <option value="default_selling_price">defalut selling price</option>
                                     @foreach ($priceLists as $PriceList)
                                         <option value="{{$PriceList->id}}">{{$PriceList->name}}</option>
@@ -173,7 +173,7 @@
                                 </thead>
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
-                                <tbody class="fw-semibold text-gray-600 fs-6 data-table-body">
+                                <tbody class="fw-semibold text-gray-600 fs-6 data-table-body saleDetailItems">
                                     <tr class="dataTables_empty text-center">
                                         <td colspan="8 " >There is no data to show</td>
                                     </tr>
@@ -204,17 +204,23 @@
                         <div class="row justify-content-end mb-2">
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
-                                    Sale Amount:(=)Ks
+                                    Sale Amount:(=)
                                 </span>
-                                <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm" value="0" >
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm" value="0" >
+                                    <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="row justify-content-end  {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
-                                    Total Item Discount:(-)Ks
+                                    Total Item Discount:(-)
                                 </span>
-                                <input type="number" name="total_item_discount"  id="total_item_discount" class="form-control form-control-sm fs-7 total_item_discount" value="" placeholder="0" readonly />
+                                <div class="input-group input-group-sm">
+                                    <input type="number" name="total_item_discount"  id="total_item_discount" class="form-control form-control-sm fs-7 total_item_discount" value="" placeholder="0" readonly />
+                                    <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -231,21 +237,30 @@
                                 <label class="form-label fs-7 fw-semibold" for="">
                                   Extra Discount Amount
                                 </label>
-                                 <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount input_number">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount input_number">
+                                    <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                </div>
                             </div>
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center mb-5 mb-md-0">
                                 <span class="min-w-200px pe-2" for="">
-                                    Discount :(-)Ks
+                                    Discount :(-)
                                 </span>
-                                <input type="text" class="form-control form-control-sm input_number max-w-100px extra_discount" id="extra_discount" disabled>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm input_number max-w-100px extra_discount" id="extra_discount" disabled>
+                                    <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="row justify-content-end">
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
-                                    Total Sale Amount:(=)Ks
+                                    Total Sale Amount:(=)
                                 </span>
-                                <input type="text" name="total_sale_amount" class="form-control form-control-sm input_number max-w-100px total_sale_amount" value="">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="total_sale_amount" class="form-control form-control-sm input_number max-w-100px total_sale_amount" value="">
+                                    <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                </div>
                             </div>
                         </div>
                         {{-- <div class="row justify-content-end">
@@ -282,21 +297,27 @@
                             </div>
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-center">
                                 <span class="min-w-200px pe-2" for="">
-                                    Paid Amount:(=)Ks
+                                    Paid Amount:(=)
                                 </span>
-                                <input type="text" name="paid_amount" class="form-control form-control-sm input_number max-w-100px paid_amount_input" id="total_paid_amount" value="0">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="paid_amount" class="form-control form-control-sm input_number max-w-100px paid_amount_input" id="total_paid_amount" value="0">
+                                    <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row justify-content-end">
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-between align-items-cente fv-row">
                                 <span class="min-w-200px pe-2" for="">
-                                    Balance Amount:(=)Ks
+                                    Balance Amount:(=)
                                 </span>
                                 <div class="w-100">
-                                    <input type="text" name="balance_amount"
-                                        class="form-control form-control-sm input_number max-w-100px balance_amount_input" id="total_balance_amount"
-                                        value="">
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="balance_amount"
+                                            class="form-control form-control-sm input_number max-w-100px balance_amount_input" id="total_balance_amount"
+                                            value="">
+                                        <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                    </div>
                                     <div class="text-danger ps-2 d-none" id="credit_limit_message" for="">
                                         Reached credit limit.
                                     </div>
