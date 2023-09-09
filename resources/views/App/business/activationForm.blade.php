@@ -281,7 +281,7 @@
                                         <div class="fv-row mb-10">
                                             <!--begin::Label-->
                                             <label class="d-flex align-items-center fs-5 fw-semibold mb-4">
-                                                <span class="required">Curreny</span>
+                                                <span class="required">Currency</span>
                                                 <span class="ms-1" data-bs-toggle="tooltip"
                                                     title="Select your app category">
                                                     <i class="ki-outline ki-information-5 text-gray-500 fs-6"></i>
@@ -337,7 +337,7 @@
                                             <!--end::Input-->
                                         </div>
                                         <div class="fv-row mb-10">
-                                            <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer" for="use_payment_account">
+                                            <label class="fs-6 fw-semibold form-label mt-3 cursor-pointer required" for="use_payment_account">
                                                 <span>Finanical Year Start Month</span>
                                             </label>
                                             <div class="form-check form-check-custom user-select-none">

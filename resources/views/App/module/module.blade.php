@@ -254,7 +254,7 @@
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <i class="ki-duotone ki-file-up fs-3x text-primary"><span class="path1"></span><span class="path2"></span></i>
                                                 <div class="ms-4">
-                                                    <h3 class="fs-5 fw-bold text-gray-900 mb-1"> click to upload.</h3>
+                                                    <h3 class="fs-5 fw-bold text-gray-900 mb-1" id="fileText"> click to upload.</h3>
                                                 </div>
                                             </div>
                                         </label>
@@ -310,9 +310,19 @@ $(document).ready(function(){
             }
         });
     })
+    $('#module_zip').change((event) => {
+        if(event.target.files[0]){
+            var fileName = event.target.files[0].name;
+            $('#fileText').text(fileName);
+
+        }else{
+            $('#fileText').text('click to upload.');
+
+        }
+    });
 })
 </script>
-<script src={{asset("assets/js/custom/apps/file-manager/list.js")}}></script>
+{{-- <script src={{asset("assets/js/custom/apps/file-manager/list.js")}}></script> --}}
 @endpush
 
 

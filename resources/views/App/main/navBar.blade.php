@@ -3100,6 +3100,7 @@
 
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
         <script src={{asset('customJs/toastrAlert/alert.js')}}></script>
+        @include('App.alert.alert');
         @stack('scripts')
 	</body>
 	<!--end::Body-->
