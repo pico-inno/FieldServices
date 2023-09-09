@@ -3,6 +3,5 @@
     "Restaurant": true,
     "OrderDisplay": true,
     "Reservation": true,
-    "RoomManagement": true,
-    "ExchangeRate": true
+    "RoomManagement": true
 }
