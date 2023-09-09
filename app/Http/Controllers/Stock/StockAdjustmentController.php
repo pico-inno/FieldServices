@@ -21,6 +21,7 @@ use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class StockAdjustmentController extends Controller
@@ -76,7 +77,11 @@ class StockAdjustmentController extends Controller
      */
     public function store(Request $request)
     {
-
+        Validator::make([
+            'details'=>$request->adjustment_details,
+        ],[
+            'details'=>'required',
+        ])->validate();
         $adjustmentDetails = $request->adjustment_details;
         $settings = businessSettings::all()->first();
 
