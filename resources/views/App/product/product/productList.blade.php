@@ -178,7 +178,7 @@
                                                     @if(hasExport('product'))
                                                     <!--begin::Export dropdown-->
                                                     <button type="button" class="btn btn-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                        Export Report
+                                                        Export Products List
                                                     </button>
                                                     <!--begin::Menu-->
                                                     <div id="kt_datatable_example_export_menu" class="btn-sm menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
@@ -317,7 +317,7 @@
                                                                 <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
                                                             </svg>
                                                         </span>
-                                                        <input type="text" data-kt-filter="search-stock" class="form-control form-control-solid w-250px ps-14" placeholder="Search Report" />
+                                                        <input type="text" data-kt-filter="search-stock" class="form-control form-control-solid w-250px ps-14" placeholder="Search Product" />
                                                     </div>
                                                     <!--end::Search-->
                                                     <!--begin::Export buttons-->
@@ -547,9 +547,8 @@
                     },
                     {
                         data: 'product',
-                        name: 'product',
+                        name: 'product.name',
                         render: function(data, type, full, meta) {
-
                             return `
                             <div class="d-flex align-items-center">
                                 <div class="symbol symbol-50px">
@@ -795,7 +794,7 @@
                             <td class="text-start w-150px text-gray-500"></td>
                         </tr>
                     </table>
-                    `
+                    `;
             }
         });
 

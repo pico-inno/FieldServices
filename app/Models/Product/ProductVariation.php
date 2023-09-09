@@ -19,6 +19,7 @@ class ProductVariation extends Model
         'variation_template_value_id',
         'default_purchase_price',
         'profit_percent',
+        'alert_quantity',
         'default_selling_price',
         'created_by',
         'updated_by'

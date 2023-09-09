@@ -110,6 +110,7 @@
 
                         <!--end::Export-->
                         <!--begin::Add customer-->
+                        @if(hasUpload('Module'))
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_upload">
                         <!--begin::Svg Icon | path: icons/duotune/files/fil018.svg-->
                         <span class="svg-icon svg-icon-2">
@@ -120,6 +121,7 @@
                             </svg>
                         </span>
                         <!--end::Svg Icon-->Upload Files</button>
+                        @endif
                         <!--end::Add customer-->
                     </div>
                     <!--end::Toolbar-->
@@ -176,16 +178,22 @@
                             <!--begin::Actions-->
                             <td class="text-end" >
                                 @if (isEnableModule($m))
+                                    @if(hasUninstall('Module'))
                                     <a class="btn btn-warning btn-sm p-2 fs-9" href="{{route('module.uninstall',['module_name'=>encrypt($m->getName())])}}">
                                         Uninstall
                                     </a>
+                                    @endif
                                 @else
+                                    @if(hasInstall('Module'))
                                     <a class="btn btn-primary btn-sm p-2 fs-9" href="{{route('module.install',['module_name'=>encrypt($m->getName())])}}" >
                                         Install
                                     </a>
+                                    @endif
                                 @endif
                             </td>
+
                             <td class="text-start">
+                                @if(hasDelete('Module'))
                                 <form action="{{route('module.delete',['module_name'=>encrypt($m->getName())])}}" method="POST">
                                     @method('delete')
                                     @csrf
@@ -193,6 +201,7 @@
                                         <i class="fa-solid fa-trash text-danger"></i>
                                     </button>
                                 </form>
+                                @endif
                             </td>
                             <!--end::Actions-->
                         </tr>
@@ -210,7 +219,7 @@
 		<div class="modal fade" id="kt_modal_upload" tabindex="-1" aria-hidden="true">
 			<!--begin::Modal dialog-->
 			<div class="modal-dialog modal-dialog-centered mw-650px">
-				<!--begin::Modal content--> 
+				<!--begin::Modal content-->
 				<div class="modal-content">
 					<!--begin::Form-->
 					{{-- <form class="form" action="none" id="kt_modal_upload_form"> --}}
@@ -245,7 +254,7 @@
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <i class="ki-duotone ki-file-up fs-3x text-primary"><span class="path1"></span><span class="path2"></span></i>
                                                 <div class="ms-4">
-                                                    <h3 class="fs-5 fw-bold text-gray-900 mb-1"> click to upload.</h3>
+                                                    <h3 class="fs-5 fw-bold text-gray-900 mb-1" id="fileText"> click to upload.</h3>
                                                 </div>
                                             </div>
                                         </label>
@@ -301,9 +310,19 @@ $(document).ready(function(){
             }
         });
     })
+    $('#module_zip').change((event) => {
+        if(event.target.files[0]){
+            var fileName = event.target.files[0].name;
+            $('#fileText').text(fileName);
+
+        }else{
+            $('#fileText').text('click to upload.');
+
+        }
+    });
 })
 </script>
-<script src={{asset("assets/js/custom/apps/file-manager/list.js")}}></script>
+{{-- <script src={{asset("assets/js/custom/apps/file-manager/list.js")}}></script> --}}
 @endpush
 
 

@@ -306,6 +306,16 @@
                                             @enderror
                                         </div>
                                         <div class="col md-4 mb-5">
+
+                                            <div id="single_alert_qty_ui"  class="fv-row">
+                                                <label class="form-label">
+                                                    {{ __('product/product.alert_quantity') }}
+                                                </label>
+
+                                                <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+
+                                            </div>
+
                                         </div>
                                     </div>
                                     <div class="row advance-toggle-class">
@@ -461,6 +471,7 @@
                                                                             Default Selling Price <br />
                                                                             <i>Exc. Tax</i>
                                                                         </th>
+                                                                        <th class="min-w-100px">Alert Quantity</th>
                                                                         <th class="min-w-200px">Variation Images</th>
                                                                         <th class=" min-w-50px">
                                                                             <span id="child-repeater" name="add"
@@ -860,7 +871,7 @@
 
                 selectBox.addEventListener("change", () => {
                     const selectedValue = selectBox.value;
-
+                    $('#single_alert_qty_ui').toggleClass('d-none');
                     // Hide all contact boxes
                     singleBox.style.display = "none";
                     variableBox.style.display = "none";
@@ -974,6 +985,9 @@
                         <td>
                             <input type="text" class="form-control form-control-sm" placeholder="Exc. tax" name="selling_price[]">
                         </td>
+  <td>
+     <input type="text" name="alert_quantity[]" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+                </td>
                         <td>
                             <input type="file" class="form-control form-control-sm" name="variation_image[]">
                         </td>

@@ -94,11 +94,14 @@
 
                                                     <!--begin::Wrapper-->
                                                     <div class="d-flex user-select-none">
+                                                        <label class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-10 mb-4">
+                                                            <input class="form-check-input feature-select-all" type="checkbox" value="{{$feature->name}}" />
+                                                            <span class="form-check-label">Select all</span>
+                                                        </label>
                                                         @foreach ($feature->permissions as $permission)
                                                         <!--begin::Checkbox-->
                                                         <label class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-10 mb-4">
                                                             <input class="form-check-input" @checked(old($feature->name.'_'.$permission->name)==$permission->id) type="checkbox" value="{{$permission->id}}" name="{{$feature->name}}_{{$permission->name}}" />
-{{--                                                            <span class="form-check-label">{{ucwords($permission->name)}} {{ucwords($feature->name)}}</span>--}}
                                                             <span class="form-check-label">{{ucwords($permission->name)}}</span>
                                                         </label>
                                                         <!--end::Checkbox-->
@@ -144,4 +147,5 @@
 @endsection
 @push('scripts')
     <script src="assets/js/custom/apps/user-management/roles/list/add.js"></script>
+
 @endpush

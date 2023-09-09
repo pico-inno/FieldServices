@@ -31,7 +31,11 @@ class Product extends Model
         'lot_count',
         'uom_id',
         'purchase_uom_id',
-
+        'can_sale',
+        'can_purchase',
+        'can_expense',
+        'can_expense',
+        'is_recurring',
         'product_custom_field1',
         'product_custom_field2',
         'product_custom_field3',

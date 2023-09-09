@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CurrentStockBalance;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use DateTime;
@@ -24,7 +25,39 @@ class stockHistoryController extends Controller
     {
         $currencyDp=getSettingValue('currency_decimal_places');
         $quantityDp=getSettingValue('quantity_decimal_places');
-        $histories = stock_history::orderByDesc('id')->with('productVariation')->get();
+        $histories = stock_history::with('productVariation')->get();
+
+        $openingBalances = [];
+
+        foreach ($histories as $history) {
+            $product_id = $history->product_id;
+            $variation_id = $history->variation_id;
+            $location_id = $history->business_location_id;
+
+
+            if (!isset($openingBalances[$product_id][$variation_id][$location_id])) {
+
+                $openingBalances[$product_id][$variation_id][$location_id] = 0;
+            }
+
+            $increase_qty = $history->increase_qty ?? 0;
+            $decrease_qty = $history->decrease_qty ?? 0;
+
+            $increaseAble = $openingBalances[$product_id][$variation_id][$location_id] + $increase_qty;
+            $balance_qty = $increaseAble - $decrease_qty;
+
+
+            $openingBalances[$product_id][$variation_id][$location_id] = $balance_qty;
+
+
+            $history->balance_qty = $balance_qty;
+
+        }
+
+
+
+
+
         return DataTables::of($histories)
             ->editColumn('location',function($history) {
                 return $history->business_location->name;
@@ -39,7 +72,7 @@ class stockHistoryController extends Controller
                 if($history->transaction_type=='sale'){
                     $created_at=  $history->saleDetail->sale->created_at;
                 }else if($history->transaction_type=='purchase'){
-                      $created_at=  $history->purchaseDetail->created_at;
+                    $created_at=  $history->purchaseDetail->created_at;
                 }else if($history->transaction_type=='stock_out'){
                     $created_at=  $history->StockoutDetail->created_at;
                 }else if($history->transaction_type=='stock_in'){
@@ -66,18 +99,18 @@ class stockHistoryController extends Controller
                     if($history->transaction_type=='purchase'){
                         return  $history->purchaseDetail->purchase->supplier->company_name;
                     }else if($history->transaction_type=='stock_in'){
-                        // return  $history->stockInDetail->stockin->stockin_voucher_no;
+                        return  $history->stockInDetail->purchaseDetail->purchase->supplier->company_name;
                     }
                 }
                 return $history->business_location->name;
             })
             ->editColumn('to',function($history){
                 if($history->transaction_type=='sale' ){
-                        $customer=$history->saleDetail->sale->customer;
-                        return  $customer ? $customer['first_name'] : '';
+                    $customer=$history->saleDetail->sale->customer;
+                    return  $customer ? $customer['first_name'] : '';
                 }else{
                     if($history->transaction_type=='purchase' || $history->transaction_type=='stock_in'){
-                        return $history->business_location->name;
+                            return $history->business_location->name;
                     }
                 }
                 return $history->business_location->name;
@@ -90,7 +123,9 @@ class stockHistoryController extends Controller
                 // return "<span class='badge badge-danger'>". $history->decrease_qty  . "</span>";
                 return $history->decrease_qty >0 ? "<span class='text-danger fw-bold'>". number_format($history->decrease_qty,$quantityDp) ."</span>":'-' ;
             })
-
+            ->editColumn('balance_qty', function ($history) {
+                return $history->balance_qty;
+            })
             ->editColumn('uom', function ($history) {
                 $uom=$history->uom->short_name;
                 return "<span class='pe-3'>$uom</span>";
@@ -157,7 +192,7 @@ class stockHistoryController extends Controller
             //     return $html;
             //     // return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
             // })
-            ->rawColumns(['increase_qty','decrease_qty','transaction_type','uom','date','reference'])
+            ->rawColumns(['increase_qty','decrease_qty','transaction_type','uom','date','reference','balance_qty'])
             ->make(true);
 
     }

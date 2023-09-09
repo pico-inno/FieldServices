@@ -47,6 +47,7 @@ class ProductController extends Controller
         return DataTables::of($products)
         ->addColumn('product', function($product) {
             return ['image' => $product->image, 'name' => $product->name];
+            // return ['image' => $product->image, 'name' => $product->name];
         })
         ->addColumn('purchase_price', function($product) {
             $purchase_price = null;
@@ -155,11 +156,9 @@ class ProductController extends Controller
         try{
             $img_name = $this->saveProductImage($request);
             $productData = $this->prepareProductData($request, $img_name);
-
-            $nextProductId = DB::table('products')->insertGetId($productData);
-
-            $this->insertProductVariations($request, $nextProductId);
-
+            $nextProduct=Product::create($productData);
+            $nextProductId = $nextProduct->id;
+            $this->insertProductVariations($request, $nextProduct);
             DB::table('product_variations_tmplates')->insert([
                 'product_id' => $nextProductId,
                 'variation_template_id' => $request->variation_name,
@@ -202,11 +201,13 @@ class ProductController extends Controller
         $variations = VariationTemplates::all();
         $productVariation = ProductVariation::with('product', 'variationTemplateValue')->where('product_id', $product->id)->get();
 
+//        return $productVariation;
         return view('App.product.product.productEdit', compact('product', 'brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation'));
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
+//        return $request;
         DB::beginTransaction();
         try{
             // Update Product
@@ -341,12 +342,12 @@ class ProductController extends Controller
         } else {
             $productData['updated_by'] = Auth::user()->id;
         }
-
         return $productData;
     }
 
-    private function insertProductVariations($request, $nextProductId, $isCreating = true)
+    private function insertProductVariations($request, $nextProduct, $isCreating = true)
     {
+        $nextProductId = $nextProduct->id;
         $has_variation = $isCreating ? $request->has_variation : $request->has_variation_hidden;
         $variation_template_id = $isCreating ? $request->variation_name : $request->variation_template_id_hidden;
 
@@ -393,15 +394,15 @@ class ProductController extends Controller
                         'created_by' => auth()->id(),
                     ])->id;
                 }
-                $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
-
+                // $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
                 $variationData = [
                     'product_id' => $nextProductId,
-                    'variation_sku' => $productVariationSku,
+                    'variation_sku' => $nextProduct['sku'].'-0'.$index,
                     'variation_template_value_id' => $variationTemplateValueId,
                     'default_purchase_price' => $request->exc_purchase[$index],
                     'profit_percent' => $request->profit_percentage[$index],
                     'default_selling_price' => $request->selling_price[$index],
+                    'alert_quantity' => $request->alert_quantity[$index],
                 ];
 
                 if ($isCreating) {
@@ -429,10 +430,11 @@ class ProductController extends Controller
         if ($has_variation === "single") {
             $productSingle = [
                 'product_id' => $nextProductId,
-                'variation_template_value_id' => null,
+                'variation_template_value_id' => $nextProduct['sku'],
                 'default_purchase_price' => $request->single_exc,
                 'profit_percent' => $request->single_profit,
                 'default_selling_price' => $request->single_selling,
+                'alert_quantity' => $request->single_alert_quantity,
             ];
 
             if($isCreating){

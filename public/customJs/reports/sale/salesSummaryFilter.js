@@ -86,7 +86,9 @@
                         warning('Method Not Allowed!');
                     } else if (status === 419) {
                         error('Session Expired');
-                    } else {
+                    }else if (status == 200) {
+                       console.log('success');
+                    }else {
                         error('Something Went Wrong! Error Status: ' + status);
                     }
                 },

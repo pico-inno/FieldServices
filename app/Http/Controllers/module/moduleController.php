@@ -14,6 +14,11 @@ class moduleController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
+        $this->middleware('canView:Module')->only(['index']);
+        $this->middleware('canUpload:Module')->only(['uploadModule']);
+        $this->middleware('canInstall:Module')->only(['install']);
+        $this->middleware('canUninstall:Module')->only(['uninstall']);
+        $this->middleware('canDelete:Module')->only('delete');
     }
     public function index(){
         $modules=Module::toCollection();
@@ -25,8 +30,7 @@ class moduleController extends Controller
 
         $module = Module::find($ucModuleName);
         $module->enable();
-        Artisan::call('module:migrate', ['module' => $decryptName]);
-        Artisan::call('module:seed', ['module' => $decryptName]);
+
         return back()->with(['success'=>'Successfully Install']);
     }
     public function uninstall(Request $request){

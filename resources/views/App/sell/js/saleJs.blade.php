@@ -114,7 +114,7 @@
                 business_location_id,
                 query //text from search bar
             }
-            if (query.length >= 3) {
+            if (query.length >= 2) {
                 $('.quick-search-results').removeClass('d-none');
                 $('.quick-search-results').html(`
                 <div class="quick-search-result result cursor-pointer">
@@ -203,7 +203,10 @@
                 $('.quick-search-results').empty();
             }
         });
-
+        $('input').off('focus').on('focus', function() {
+            // Select the text in the input field
+            $(this).select();
+        });
         $('#autocomplete').on('click', '.result', function() {
             let id = $(this).attr('data-id');
             let selected_product= products[id];
@@ -228,6 +231,7 @@
             }
             append_row(selected_product,unique_name_id);
             unique_name_id+=1;
+            $('#searchInput').focus();
 
 
         });
@@ -428,7 +432,10 @@
                 });
             }
             $('.price_group').select2({minimumResultsForSearch: Infinity});
-
+            $('input').off('focus').on('focus', function() {
+                // Select the text in the input field
+                $(this).select();
+                });
         }
 
 

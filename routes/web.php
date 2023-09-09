@@ -809,6 +809,7 @@ Route::controller(ProductController::class)->group(function () {
 Route::controller(ImportProductController::class)->group(function () {
     Route::get('/import-product', 'index')->name('import-product');
     Route::post('/import-product/create', 'create')->name('import-product.create');
+    Route::get('/import-product/demo/excel', 'dowloadDemoExcel')->name('download-importProductExcel');
 });
 
 // ====>    PRICE LISTS DETAILS

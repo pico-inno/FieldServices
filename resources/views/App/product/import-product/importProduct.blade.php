@@ -52,12 +52,12 @@
                         <div class="card-body pt-0">
                             <div class="row mb-5">
                                 <div class="col-md-6 col-md-offset-3">
-                                    <div class="">                                     
+                                    <div class="">
                                         <label class=" form-label" for="formFileSm">{{ __('product/import-product.file_to_import') }}</label>
-                                     
+
                                         <input class="form-control form-control-sm" id="formFileSm" type="file" name="import-products"/>
                                         @error('import-products')
-                                            
+
                                         @enderror
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                                 <button type="submit" class="btn btn-success btn-sm">{{ __('product/import-product.submit') }}</button>
                             </div>
                             <div class="mt-5">
-                                <a href="{{ asset('storage/import-product/import_products_csv_template.xls') }}" download class="btn btn-light-primary btn-sm">
+                                <a href="{{route('download-importProductExcel')}}" download class="btn btn-light-primary btn-sm">
                                     <i class="fas fa-download"></i>{{ __('product/import-product.download_template_file') }}
                                 </a>
                             </div>

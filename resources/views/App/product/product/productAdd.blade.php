@@ -147,6 +147,7 @@
                                                 </div>
 
 
+
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4 mb-5">
@@ -296,6 +297,16 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col md-4 mb-5">
+
+                                                        <div id="single_alert_qty_ui"  class="fv-row">
+                                                            <label class="form-label">
+                                                                {{ __('product/product.alert_quantity') }}
+                                                            </label>
+
+                                                                    <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+
+                                                        </div>
+
                                                 </div>
                                             </div>
                                             <div class="row advance-toggle-class">
@@ -426,7 +437,9 @@
                                                                                     Default Selling Price <br/>
                                                                                     <i>Exc. Tax</i>
                                                                                 </th>
+                                                                                <th class="min-w-100px">Alert Quantity</th>
                                                                                 <th class="min-w-200px">Variation Images</th>
+
                                                                                 <th class=" min-w-50px">
                                                                                     <span id="child-repeater" name="add" data-repeater-create class="svg-icon svg-icon-primary svg-icon-4 cursor-pointer add-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                                         <path opacity="0.3" d="M11 13H7C6.4 13 6 12.6 6 12C6 11.4 6.4 11 7 11H11V13ZM17 11H13V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z" fill="currentColor"/>
@@ -588,7 +601,7 @@
 
         selectBox.on("change", function () {
             const selectedValue = selectBox.val();
-
+            $('#single_alert_qty_ui').toggleClass('d-none');
             // Hide all contact boxes
             singleBox.hide();
             variableBox.hide();
@@ -720,9 +733,13 @@
                 <td>
                     <input type="text" class="form-control form-control-sm rounded-0" placeholder="Exc. tax" name="selling_price[]">
                 </td>
+  <td>
+     <input type="text" name="alert_quantity[]" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+                </td>
                 <td>
                     <input type="file" class="form-control form-control-sm rounded-0" name="variation_image[]">
                 </td>
+
                 <td class="min-w-50px " >
                     <span id="delete-variation" data-repeater-delete name="delete" class="deleteButton svg-icon svg-icon-danger svg-icon-4 cursor-pointer d-flex align-items-center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12ZM18 12C18 11.4 17.6 11 17 11H7C6.4 11 6 11.4 6 12C6 12.6 6.4 13 7 13H17C17.6 13 18 12.6 18 12Z" fill="currentColor"/>
@@ -984,6 +1001,7 @@
                             value: brand.id,
                             text: brand.name
                         }));
+                        $('select[name="brand"]').val(brand.id).trigger('change');
                     });
 
                     $('#kt_modal_brand').modal('hide');
@@ -1020,8 +1038,8 @@
                             value: generic.id,
                             text: generic.name
                         }));
+                    $('select[name="generic"]').val(generic.id).trigger('change');
                     });
-
                     $('#kt_modal_generic').modal('hide');
                 },
                 error: function(error) {
@@ -1056,6 +1074,7 @@
                             value: manufacturer.id,
                             text: manufacturer.name
                         }));
+                        $('select[name="manufacturer"]').val(manufacturer.id).trigger('change');
                     });
 
                     $('#kt_modal_manufacturer').modal('hide');
