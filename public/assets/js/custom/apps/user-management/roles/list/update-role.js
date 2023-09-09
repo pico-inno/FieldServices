@@ -68,7 +68,7 @@ var KTUsersUpdatePermissions = function () {
             // Validate form before submit
             if (validator) {
                 validator.validate().then(function (status) {
-                    console.log('validated!');
+                    // console.log(status);
 
                     if (status == 'Valid') {
                         // Show loading indication
@@ -76,32 +76,8 @@ var KTUsersUpdatePermissions = function () {
 
                         // Disable button to avoid multiple click
                         submitButton.disabled = true;
+                        form.submit();
 
-                        // Simulate form submission. For more info check the plugin's official documentation: https://sweetalert2.github.io/
-                        setTimeout(function () {
-                            // Remove loading indication
-                            submitButton.removeAttribute('data-kt-indicator');
-
-                            // Enable button
-                            submitButton.disabled = false;
-
-                            // Show popup confirmation
-                            Swal.fire({
-                                text: "Form has been successfully submitted!",
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                }
-                            }).then(function (result) {
-                                if (result.isConfirmed) {
-                                    modal.hide();
-                                }
-                            });
-
-                            //form.submit(); // Submit form
-                        }, 2000);
                     } else {
                         // Show popup warning. For more info check the plugin's official documentation: https://sweetalert2.github.io/
                         Swal.fire({
@@ -121,25 +97,55 @@ var KTUsersUpdatePermissions = function () {
 
     // Select all handler
     const handleSelectAll = () => {
-        // Define variables
         const selectAll = form.querySelector('#kt_roles_select_all');
         const allCheckboxes = form.querySelectorAll('[type="checkbox"]');
 
-        // Handle check state
         selectAll.addEventListener('change', e => {
 
-            // Apply check state to all checkboxes
             allCheckboxes.forEach(c => {
                 c.checked = e.target.checked;
             });
         });
     }
 
+
+    const handleFeatureSelectAll = () => {
+
+        const featureSelectAllCheckboxes = form.querySelectorAll('.feature-select-all');
+
+        featureSelectAllCheckboxes.forEach(featureSelectAll => {
+            const featureName = featureSelectAll.value; // Get the feature name
+            const featureCheckboxes = form.querySelectorAll(`[name^="${featureName}_"]`);
+
+
+            const isAllFeatureCheckboxesSelected = () => {
+                return [...featureCheckboxes].every(c => c.checked);
+            };
+
+            featureSelectAll.checked = isAllFeatureCheckboxesSelected();
+
+            // Handle click event for feature checkboxes
+            featureCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    featureSelectAll.checked = isAllFeatureCheckboxesSelected();
+                });
+            });
+
+            // Handle click event for the "Select All" checkbox
+            featureSelectAll.addEventListener('change', e => {
+                featureCheckboxes.forEach(checkbox => {
+                    checkbox.checked = e.target.checked;
+                });
+            });
+        });
+    };
+
     return {
         // Public functions
         init: function () {
             initUpdatePermissions();
             handleSelectAll();
+            handleFeatureSelectAll();
         }
     };
 }();

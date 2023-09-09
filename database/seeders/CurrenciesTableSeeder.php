@@ -55,8 +55,8 @@ class CurrenciesTableSeeder extends Seeder
                 'country' => $c['country'],
                 'code' => $c['code'],
                 'symbol' => $c['symbol'],
-                'thoundsand_seprator' => 'comma',
-                // 'decimal_sepearator' => 'dot',
+                'thoundsand_seprator' => ',',
+                // 'decimal_sepearator' => '.',
             ]);
         }
         return redirect()->back()->with(['success' => 'Successfully activate setting']);

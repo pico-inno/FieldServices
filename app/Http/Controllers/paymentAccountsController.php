@@ -14,6 +14,10 @@ class paymentAccountsController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
+        $this->middleware('canView:Cash & Payment')->only(['index']);
+        $this->middleware('canCreate:Cash & Payment')->only(['create', 'store']);
+        $this->middleware('canUpdate:Cash & Payment')->only(['edit', 'update']);
+        $this->middleware('canDelete:Cash & Payment')->only(['destory']);
     }
     public function index(){
         return view('App.paymentAccounts.index');
@@ -32,6 +36,10 @@ class paymentAccountsController extends Controller
             ';
         })
         ->addColumn('action', function ($accouunt) {
+            $viewPer = hasView('Cash & Payment');
+            $editPer  = hasUpdate('Cash & Payment');
+            $deletePer = hasDelete('Cash & Payment');
+            $transferPer = hasTransfer('Cash & Payment');
             // $editBtn= '<a href=" ' . route('exchangeRate_edit', $accouunt->id) . ' " class="dropdown-item cursor-pointer" >Edit</a>';
             $html = '
                 <div class="dropdown ">
@@ -40,12 +48,12 @@ class paymentAccountsController extends Controller
                     </button>
                     <div class="z-3">
                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="exchangeRateDropDown" role="menu">';
-                    $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="view"   href="'.route('paymentAcc.view',$accouunt->id).'">View</a>';
-                    $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="edit"   data-href="'.route('paymentAcc.edit',$accouunt->id).'">Edit</a>';
-                    $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="transfer"   data-href="'.route('paymentTransaction.transfer',$accouunt->id).'">Transfer</a>';
+                    if ($viewPer){ $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="view"   href="'.route('paymentAcc.view',$accouunt->id).'">View</a>'; }
+                    if ($editPer){ $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="edit"   data-href="'.route('paymentAcc.edit',$accouunt->id).'">Edit</a>';}
+                    if ($transferPer){ $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="transfer"   data-href="'.route('paymentTransaction.transfer',$accouunt->id).'">Transfer</a>';}
                     $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="deposit"   data-href="'.route('paymentTransaction.deposit',$accouunt->id).'">Deposit</a>';
                     $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="withdrawl"   data-href="'.route('paymentTransaction.withdrawl',$accouunt->id).'">Withdrawl</a>';
-                    $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="delete" data-id="'.$accouunt->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('paymentAcc.destory',$accouunt->id).'">Delete</a>';
+                    if ($deletePer) {$html.='<a class="dropdown-item cursor-pointer fw-semibold" id="delete" data-id="'.$accouunt->id.'"  data-kt-exchangeRate-table="delete_row" data-href="'.route('paymentAcc.destory',$accouunt->id).'">Delete</a>';}
                     // $html .= $editBtn;
                 $html .= '</ul></div></div>';
                 return $html;

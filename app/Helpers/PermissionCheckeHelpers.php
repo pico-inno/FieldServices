@@ -21,7 +21,7 @@ if ($id!=1 && $name!=\App\Models\Role::find(1)->name){
 
 function multiHasAll($features)
 {
-    $permissions = array('create', 'view', 'update', 'delete', 'import', 'export', 'print');
+    $permissions = array('create', 'view', 'update', 'delete', 'import', 'export', 'print', 'install', 'uninstall', 'upload');
 
     foreach ($features as $feature){
         foreach ($permissions as $permission) {
@@ -72,4 +72,23 @@ function hasExport($feature)
 function hasPrint($feature)
 {
     return  checkPermission($feature, 'print');
+}
+
+function hasInstall($feature)
+{
+    return  checkPermission($feature, 'install');
+}
+
+function hasUninstall($feature)
+{
+    return  checkPermission($feature, 'uninstall');
+}
+
+function hasUpload($feature)
+{
+    return  checkPermission($feature, 'upload');
+}
+
+function hasTransfer($feature){
+    return checkPermission($feature, 'transfer');
 }

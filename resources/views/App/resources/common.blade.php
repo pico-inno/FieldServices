@@ -8,7 +8,6 @@
 @endphp
 <script>
     let settings=@json(getSettings());
-    console.log(settings);
     function isNullOrNan(val){
         let v=parseFloat(val);
 
@@ -24,4 +23,24 @@
     const qDecimal=(price)=>{
         return isNullOrNan(price).toFixed(settings.quantity_decimal_places);
     }
+    const fpDecimal=(number,reqs)=>{
+        let decimalSeparator;
+        let thousandsSeparator=reqs['thoundsand_seprator'];
+        return formatNumber(isNullOrNan(number),decimalSeparator,thousandsSeparator);
+    }
+
+    function formatNumber(number, decimalSeparator='.', thousandsSeparator=',') {
+        if (typeof number !== 'number') {
+            throw new Error('Input must be a valid number');
+        }
+        const options = {
+            minimumFractionDigits: settings.currency_decimal_places,
+            maximumFractionDigits: settings.currency_decimal_places,
+            useGrouping: true,
+            decimalSeparator,
+            thousandsSeparator,
+        };
+        return number.toLocaleString(undefined, options);
+    }
+
 </script>

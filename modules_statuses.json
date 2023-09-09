@@ -4,5 +4,6 @@
     "OrderDisplay": true,
     "Reservation": true,
     "RoomManagement": true,
-    "ExchangeRate": true
+    "ExchangeRate": true,
+    "StockInOut": true
 }

@@ -342,7 +342,6 @@ class ProductController extends Controller
         } else {
             $productData['updated_by'] = Auth::user()->id;
         }
-
         return $productData;
     }
 

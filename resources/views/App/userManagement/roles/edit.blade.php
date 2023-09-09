@@ -88,6 +88,10 @@
 
                                                     <!--begin::Wrapper-->
                                                     <div class="d-flex user-select-none">
+                                                        <label class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-10 mb-4">
+                                                            <input class="form-check-input feature-select-all" type="checkbox" value="{{$feature->name}}" />
+                                                            <span class="form-check-label">Select all</span>
+                                                        </label>
                                                         @foreach ($feature->permissions as $permission)
                                                             <!--begin::Checkbox-->
                                                             <label class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-10 mb-4">
@@ -143,5 +147,6 @@
 @endsection
 
 @push('scripts')
-    <script src="assets/js/custom/apps/user-management/roles/list/update-role.js"></script>
+
+<script src="{{asset('assets/js/custom/apps/user-management/roles/list/update-role.js')}}"></script>
 @endpush

@@ -4,6 +4,8 @@ $(document).ready(function() {
     var suppliers=@json($suppliers);
     let setting=@json($setting);
     let currency=@json($currency);
+    let currentCurrency=currency;
+    console.log(currentCurrency);
     let currentCurrencySymbol=currency.symbol;
     let currencies=@json($currencies);
     let lotControl=setting.lot_control;
@@ -34,9 +36,14 @@ $(document).ready(function() {
     })
     $('#currency_id').change(function(e){
         let selectedCurrency=currencies.find(c=>c.id==$(this).val());
+        currentCurrency=selectedCurrency;
         currentCurrencySymbol=selectedCurrency.symbol;
         $('.currencySymbol').text(currentCurrencySymbol);
     })
+    $('input').off('focus').on('focus', function() {
+    // Select the text in the input field
+        $(this).select();
+    });
 
     let unique_name_id=1;
     let products_length=$('#purchase_table tbody tr').length-1;
@@ -278,6 +285,10 @@ $(document).ready(function() {
         net_purchase_total_amount_cal();
         total_purchase_amount_cal() ;
         total_balance_amount_cal();
+        $('input').off('focus').on('focus', function() {
+        // Select the text in the input field
+            $(this).select();
+        });
         // getUomByUnit(selected_product.unit_id,selected_product.uomset_id,$(`[name="purchase_details[${unique_name_id}][uomset_id]"]`));
         // purchaseValidator.init();
     }
@@ -438,7 +449,6 @@ $(document).ready(function() {
         const per_item_expense=isNullOrNan(i.per_item_expense.val());
         const exp_date=i.exp_date.val();
         let result,price_after_discount,percentAmount;
-console.log(e);
         if(discount_type == 'fixed'){
             let subtotal_amount=(quantity*uom_price);
             percentAmount=per_item_discount;
@@ -450,7 +460,7 @@ console.log(e);
             price_after_discount=(uom_price - percentAmount)*quantity
         }
         i.line_discount.val(pDecimal(percentAmount));
-        i.line_discount_txt.text(pDecimal(percentAmount));
+        i.line_discount_txt.text(fpDecimal(percentAmount,currentCurrency));
         i.subtotal_with_discount.val(pDecimal(price_after_discount));
 
         result=pDecimal(price_after_discount+(per_item_expense*quantity));
@@ -487,7 +497,7 @@ console.log(e);
                 total += value;
             });
             // console.log('pt',$('.purchase_price_inc_tax'));
-            $('.net_purchase_total_amount_text').text(pDecimal(total));
+            $('.net_purchase_total_amount_text').text(fpDecimal(total,currentCurrency));
             $('.net_purchase_total_amount').val(pDecimal(total));
             totalLineDiscount()
         }, 100);
@@ -534,15 +544,15 @@ console.log(e);
 
 
             let purchaseExpense=pDecimal(isNullOrNan($('#purchase_expense').val()));
-            $('#purchase_expense_txt').text(purchaseExpense);
+            $('#purchase_expense_txt').text(fpDecimal(purchaseExpense,currentCurrency) );
 
             let net_purchase_total_amount=isNullOrNan($('.net_purchase_total_amount').val());
 
 
             if(extra_discount_type == 'fixed'){
-                $('.extra_discount_txt').text(pDecimal(extra_discount_amount));
+                $('.extra_discount_txt').text(fpDecimal(extra_discount_amount,currentCurrency));
                 $('.extra_discount').val(pDecimal(extra_discount_amount));
-                $('#total_discount_amount_txt').text(pDecimal(total_line_discount_val+extra_discount_amount));
+                $('#total_discount_amount_txt').text(fpDecimal(total_line_discount_val+extra_discount_amount,currentCurrency));
                 $('#total_discount_amount').val(pDecimal(total_line_discount_val+extra_discount_amount));
                 price_after_discount=pDecimal(net_purchase_total_amount - extra_discount_amount);
 
@@ -551,14 +561,14 @@ console.log(e);
                 percentage_amount=pDecimal(net_purchase_total_amount* (extra_discount_amount/100));
                 $('.extra_discount_txt').text(percentage_amount);
                 $('.extra_discount').val(percentage_amount);
-                $('#total_discount_amount_txt').text(pDecimal(total_line_discount_val+percentage_amount));
+                $('#total_discount_amount_txt').text(fpDecimal(total_line_discount_val+percentage_amount,currentCurrency));
                 $('#total_discount_amount').val(pDecimal(total_line_discount_val+percentage_amount));
                 price_after_discount=(pDecimal(net_purchase_total_amount - percentage_amount));
 
             }
             result=price_after_discount+purchaseExpense;
             $('#total_purchase_amount').val(pDecimal(result));
-            $('#total_purchase_amount_txt').text(pDecimal(result));
+            $('#total_purchase_amount_txt').text(fpDecimal(result,currentCurrency));
 
 
         }, 100);
@@ -574,7 +584,7 @@ console.log(e);
 
         let result=pDecimal(total_purchase_amount-paid_amount);
 
-        $('#balance_amount_txt').text(result);
+        $('#balance_amount_txt').text(fpDecimal(result,currentCurrency));
         $('#balance_amount').val(result);
         }, 700)
     }

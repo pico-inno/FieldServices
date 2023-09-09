@@ -194,7 +194,10 @@
                 $('.quick-search-results').empty();
             }
         });
-
+        $('input').off('focus').on('focus', function() {
+            // Select the text in the input field
+            $(this).select();
+        });
         $('#autocomplete').on('click', '.result', function() {
             let id = $(this).attr('data-id');
             let selected_product= products[id];
@@ -414,7 +417,10 @@
                 });
             }
             $('.price_group').select2({minimumResultsForSearch: Infinity});
-
+            $('input').off('focus').on('focus', function() {
+                // Select the text in the input field
+                $(this).select();
+                });
         }
 
 

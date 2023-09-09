@@ -118,8 +118,10 @@
                         <!--end::Filter-->
                         <!--end::Export-->
                         <!--begin::Add customer-->
+                        @if(hasCreate('Expense'))
                         <button  class="btn btn-primary btn-sm" data-href={{route('expense.create')}} id="add"  data-bs-toggle="modal"
                         data-bs-target="#addModal">Add</button>
+                        @endif
                         <!--end::Add customer-->
                     </div>
                     <!--end::Toolbar-->

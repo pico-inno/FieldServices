@@ -28,6 +28,10 @@ class expenseController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
+        $this->middleware('canView:Expense')->only(['index']);
+        $this->middleware('canCreate:Expense')->only(['create', 'store']);
+        $this->middleware('canUpdate:Expense')->only(['edit', 'update']);
+        $this->middleware('canDelete:Expense')->only(['destory']);
     }
     public function index(){
         return view('App.expense.list');
@@ -240,6 +244,9 @@ class expenseController extends Controller
         return redirect()->back()->with(['success'=>'successfully updated']);
     }
     public function dataForList(){
+
+
+
         $expenses=expenseTransactions::with('variationProduct','createdBy')->whereNull('expense_report_id')->orderBy('id','DESC')->get();
         // dd($datas->toArray());
         return DataTables::of($expenses)
@@ -279,6 +286,9 @@ class expenseController extends Controller
             return $e->createdBy->username ?? '';
         })
         ->addColumn('action', function ($e) {
+            $viewPer = hasView('Expense');
+            $deletePer = hasDelete('Expense');
+            $editPer  = hasUpdate('Expense');
             // $editBtn= '<a href=" ' . route('exchangeRate_edit', $e->id) . ' " class="dropdown-item cursor-pointer" >Edit</a>';
             $html = '
                 <div class="dropdown ">
@@ -287,14 +297,14 @@ class expenseController extends Controller
                     </button>
                     <div class="z-3">
                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="exchangeRateDropDown" role="menu">';
-                    $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="view"   data-href="'.route('expense.view',$e->id).'">View</a>';
-                    $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="edit"   data-href="'.route('expense.edit',$e->id).'">Edit</a>';
+                    if ($viewPer){ $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="view"   data-href="'.route('expense.view',$e->id).'">View</a>'; }
+                    if ($editPer) {$html.='<a class="dropdown-item cursor-pointer fw-semibold" id="edit"   data-href="'.route('expense.edit',$e->id).'">Edit</a>'; }
                     if($e->balance_amount>0){
                         $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="paymentCreate"   data-href="'.route('paymentTransaction.createForExpense',['id' => $e->id,'currency_id'=>$e->currency_id]).'">Add Payment</a>';
                     }
                     $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="viewPayment"   data-href="'.route('paymentTransaction.viewForExpense',$e->id).'">View Payment</a>';
                     // $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="edit"   data-href="'.route('expense.edit',$e->id).'"></a>';
-                    $html.='<a class="dropdown-item cursor-pointer fw-semibold" id="delete" data-id="'.$e->id.'"  data-kt-expense-table="delete_row" data-href="'.route('paymentAcc.destory',$e->id).'">Delete</a>';
+                    if ($deletePer) {$html.='<a class="dropdown-item cursor-pointer fw-semibold" id="delete" data-id="'.$e->id.'"  data-kt-expense-table="delete_row" data-href="'.route('paymentAcc.destory',$e->id).'">Delete</a>';}
                     // $html .= $editBtn;
                 $html .= '</ul></div></div>';
                 return $html;
