@@ -105,7 +105,7 @@
                 business_location_id,
                 query //text from search bar
             }
-            if (query.length >= 3) {
+            if (query.length >= 2) {
                 $('.quick-search-results').removeClass('d-none');
                 $('.quick-search-results').html(`
                 <div class="quick-search-result result cursor-pointer">

@@ -41,7 +41,7 @@ $(document).ready(function() {
 
     $('.quick-search-form input').on('input', function() {
         var query = $(this).val().trim();
-        if (query.length >= 3) {
+        if (query.length >= 2) {
             $('.quick-search-results').removeClass('d-none');
             $('.quick-search-results').html(`<div class="quick-search-result result cursor-pointer p-2 ps-10 fw-senubold fs-5">
                 <span><span class="spinner-border spinner-border-sm align-middle me-2"></span>Loading</span>
