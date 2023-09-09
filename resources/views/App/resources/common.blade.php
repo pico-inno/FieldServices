@@ -8,7 +8,7 @@
 @endphp
 <script>
     let settings=@json(getSettings());
-
+    console.log(settings);
     function isNullOrNan(val){
         let v=parseFloat(val);
 

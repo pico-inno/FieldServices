@@ -1001,6 +1001,7 @@
                             value: brand.id,
                             text: brand.name
                         }));
+                        $('select[name="brand"]').val(brand.id).trigger('change');
                     });
 
                     $('#kt_modal_brand').modal('hide');
@@ -1037,8 +1038,8 @@
                             value: generic.id,
                             text: generic.name
                         }));
+                    $('select[name="generic"]').val(generic.id).trigger('change');
                     });
-
                     $('#kt_modal_generic').modal('hide');
                 },
                 error: function(error) {
@@ -1073,6 +1074,7 @@
                             value: manufacturer.id,
                             text: manufacturer.name
                         }));
+                        $('select[name="manufacturer"]').val(manufacturer.id).trigger('change');
                     });
 
                     $('#kt_modal_manufacturer').modal('hide');

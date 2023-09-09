@@ -55,11 +55,15 @@
     var status = e.status;
     if (status === 405) {
     warning('Method Not Allowed!');
-} else if (status === 419) {
-    error('Session Expired');
-} else {
-    error('Something Went Wrong! Error Status: ' + status);
-}
+    } else if (status === 419) {
+        error('Session Expired');
+    }
+    else if (status == 200) {
+            console.log('success');
+    }
+    else {
+        error('Something Went Wrong! Error Status: ' + status);
+    }
 },
     success: function (results) {
     console.log(results);

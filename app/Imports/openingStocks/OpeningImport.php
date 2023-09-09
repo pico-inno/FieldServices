@@ -38,27 +38,29 @@ class OpeningImport implements ToModel,WithHeadingRow
     }
     public function model(Array $row)
     {
-        if($row['product_name'] || $row['variation_value'] || $row['expired_date'] || $row['quantity']  || $row['price'] || $row['remark']  ){
+        // dd($row);
+        if($row['product_name'] ||$row['variation_name'] || $row['product_variation_sku'] || $row['expired_date'] || $row['quantity']|| $row['unit_uom_name'] || $row['price'] || $row['remark']  ){
             Validator::make($row,[
-                'product_name'=>'required|exists:products,name',
+                'product_variation_sku'=> 'required|exists:product_variations,variation_sku',
                 'quantity'=>'required|numeric',
                 'price'=>'required|numeric',
-                'uom_name' => 'required|exists:uom,name',
+                'unit_uom_name' => 'required|exists:uom,name',
                 'variation_value' => 'nullable|exists:variation_template_values,name',
             ],[
-                'product_name.exists'=>'Imported product is not exists in products list',
-                'uom_name.exists' => 'Imported UOM [:value] is not exists in uom set list',
+                'product_variation_sku.exists'=>'Imported product is not exists in products list',
+                'unit_uom_name.exists' => "Imported UOM [:value] is not exists in uom set list",
                 'variation_value.exists' => 'Imported variation value is not exists in variation value list'
             ])->validate();
-
             // get uom_set_id
-            $uom_name = $row['uom_name'];
+            $uom_name = $row['unit_uom_name'];
             $uom=UOM::where('name',$uom_name)->get()->first();
             $uom_id=$uom->id;
 
+                // 'product_name' => 'required|exists:products,name',
             // get product_id
             $product_name=$row['product_name'];
-            $product= Product::where('name', $product_name)->select('id', 'has_variation','uom_id')->first();
+            $sku = $row['product_variation_sku'];
+            $product= Product::where('sku', $sku)->select('id', 'has_variation', 'uom_id')->first();
             $product_id = $product->id;
             $unitCategoryId=$product->uom->unit_category->id;
             // custom validation for custom rule
@@ -69,10 +71,10 @@ class OpeningImport implements ToModel,WithHeadingRow
             // second_match_validator
             Validator::make([
                 'uom_id'=>$uom_id,
-                'variation_value'=>$row['variation_value']
+                'variation_name'=>$row['variation_name']
             ], [
                 'uom_id' => [$customUnitRule],
-                'variation_value' => [
+                'variation_name' => [
                     Rule::requiredIf($product->has_variation == "variable"),
                 ],
             ],[
@@ -82,8 +84,8 @@ class OpeningImport implements ToModel,WithHeadingRow
 
             // get product_variation_id
             if($product->has_variation!="single"){
-                $variation_value=$row['variation_value'];
-                $variation_value_id=VariationTemplateValues::where('name', $variation_value)->first()->id;
+                $variation_name=$row['variation_name'];
+                $variation_value_id=VariationTemplateValues::where('name', $variation_name)->first()->id;
                 $variation_id=ProductVariation::where('product_id',$product_id)->where('variation_template_value_id',$variation_value_id)->first()->id;
 
                 $customVariationRule = Rule::exists('product_variation', 'variation_template_value_id')->where(function ($query) use ($product_id) {

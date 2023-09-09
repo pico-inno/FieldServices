@@ -396,6 +396,7 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr class="bg-secondary fw-bold fs-6 text-gray-800 text-center">
+                                                            {{-- <th>Variation SKU</th> --}}
                                                             <th>Default Purchase Price</th>
                                                             <th>
                                                                 x Margin(%) <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
@@ -949,6 +950,7 @@
                         let profit_percent = profitPercentage(item.default_selling_price, item.default_purchase_price);
 
                         let cloneRow = $(newVariation).clone();
+                        cloneRow.find('input[name="variation_sku[]"]').val(item.variation_sku)
                         cloneRow.find('input[name="variation_value[]"]').val(item.variation_template_value.name)
                         cloneRow.find('input[name="variation_id[]"]').val(item.variation_template_value.id)
                         cloneRow.find('input[name="product_variation_id[]"]').val(item.id)

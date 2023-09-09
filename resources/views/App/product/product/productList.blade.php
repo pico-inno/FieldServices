@@ -178,7 +178,7 @@
                                                     @if(hasExport('product'))
                                                     <!--begin::Export dropdown-->
                                                     <button type="button" class="btn btn-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                        Export Report
+                                                        Export Products List
                                                     </button>
                                                     <!--begin::Menu-->
                                                     <div id="kt_datatable_example_export_menu" class="btn-sm menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
@@ -547,9 +547,8 @@
                     },
                     {
                         data: 'product',
-                        name: 'product',
+                        name: 'product.name',
                         render: function(data, type, full, meta) {
-
                             return `
                             <div class="d-flex align-items-center">
                                 <div class="symbol symbol-50px">
@@ -795,7 +794,7 @@
                             <td class="text-start w-150px text-gray-500"></td>
                         </tr>
                     </table>
-                    `
+                    `;
             }
         });
 

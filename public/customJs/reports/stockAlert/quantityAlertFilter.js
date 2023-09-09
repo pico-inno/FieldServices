@@ -94,7 +94,9 @@
                     var status = e.status;
                     if (status === 405) {
                         warning('Method Not Allowed!');
-                    }else {
+                    }else if (status === 200) {
+                        console.log('success');
+                    }else{
                         error('Something Went Wrong! Error Status: ' + status);
                     }
                 },
