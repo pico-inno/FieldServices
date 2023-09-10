@@ -119,10 +119,21 @@
 
                             <!--begin::Input group-->
                             <div class="mb-10 col-6 col-md-3 pt-md-12">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="allBatchMergeCheck" />
+                                    <label class="form-check-label" for="allBatchMergeCheck">
+                                        All Batch Marge
+                                    </label>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="mb-10 col-6 col-md-3 pt-md-12">
                             <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="flexCheckDefault" />
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Lot Details
+                                <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="batchDetailsCheck" />
+                                <label class="form-check-label" for="batchDetailsCheck">
+                                    Batch Details
                                 </label>
                             </div>
                             </div>
@@ -216,6 +227,7 @@
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
                             <th>SKU</th>
                             <th>Product & Variation</th>
+                            <th>Batch No</th>
                             <th>Lot No</th>
                             <th>Location</th>
                             <th>Category</th>
