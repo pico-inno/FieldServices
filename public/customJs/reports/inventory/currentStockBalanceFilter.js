@@ -9,7 +9,8 @@
     var filterCategory = filterCard.find('.filter_category');
     var filterBrand = filterCard.find('.filter_brand');
     var filterDate = filterCard.find('.filter_date');
-    var filterLotVal = 1;
+    var filterBatchDetails = 1;
+    var filterAllBatchMerge = 1;
 
 
      var handleSearchDatatable = () => {
@@ -23,9 +24,11 @@
      }
 
      handleSearchDatatable();
-    $('#kt_daterangepicker_5, #flexCheckDefault, .filter-card select, .filter-card input').on('change', function() {
-        var checkbox = $('#flexCheckDefault');
-        filterLotVal = checkbox.prop('checked') ? 0 : 1;
+    $('#kt_daterangepicker_5, #batchDetailsCheck, #allBatchMergeCheck, .filter-card select, .filter-card input').on('change', function() {
+        var batchDetails = $('#batchDetailsCheck');
+        var allBatchMerge = $('#allBatchMergeCheck');
+        filterBatchDetails = batchDetails.prop('checked') ? 0 : 1;
+        filterAllBatchMerge = allBatchMerge.prop('checked') ? 0 :1;
 
 
 
@@ -35,21 +38,22 @@
         var filterBrandVal = filterBrand.val();
         var filterDateVal = filterDate.val();
         stockReportsTableBody.empty();
-        filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterLotVal);
+        filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterAllBatchMerge, filterBatchDetails);
     });
 
 
     var filterDateVal = filterDate.val();
-    filterData( 0, 0, 0, 0, filterDateVal, filterLotVal);
+    filterData( 0, 0, 0, 0, filterDateVal, filterAllBatchMerge, filterBatchDetails);
 
-    async function filterData( filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterLotVal) {
+    async function filterData( filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterAllBatchMerge, filterBatchDetails) {
         var data = {
             filter_locations: filterLocations,
             filter_product: filterProductVal,
             filter_category: filterCategoryVal,
             filter_brand: filterBrandVal,
             filter_date: filterDate,
-            filter_lot:filterLotVal,
+            filter_batch_details: filterBatchDetails,
+            filter_all_batch_merge: filterAllBatchMerge,
         };
         try {
             $.ajax({
@@ -83,6 +87,7 @@
                         var rowData = [
                             item.variation_sku ? item.variation_sku : item.sku,
                             item.name+'<br><span class="fs-7 text-muted">'+item.variation_template_name+' -    '+item.variation_value_name+'</span>',
+                            item.batch_no,
                             item.lot_no,
                             item.location_name,
                             item.category_name ? item.category_name : '-',

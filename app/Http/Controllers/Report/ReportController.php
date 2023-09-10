@@ -959,7 +959,7 @@ class ReportController extends Controller
 
 
     public function currentStockBalanceFilter(Request $request){
-        $filterLot = $request->data['filter_lot'];
+        $filterBatchDetils = $request->data['filter_batch_details'];
         $filterProduct = $request->data['filter_product'];
         $filterCategory = $request->data['filter_category'];
         $filterBrand = $request->data['filter_brand'];
@@ -1006,7 +1006,7 @@ class ReportController extends Controller
 
         $finalProduct = $finalProduct->get()->toArray();
 
-        if ($filterLot == 1) {
+        if ($filterBatchDetils == 1) {
             $mergedStocks = [];
             $mergedBatchCount = 0;
 
@@ -1072,8 +1072,8 @@ class ReportController extends Controller
                                 'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
-                                'lot_no' => $filterLot ? $currentStock['marged_batch'] : $currentStock['batch_no'],
-//                                'lot_no' => $filterLot ? $currentStock['marged_batch_count'] : 'lot ' . $lotCounts[$key],
+                                'batch_no' => $filterBatchDetils ? $currentStock['marged_batch'] : $currentStock['batch_no'],
+                                'lot_no' => $currentStock['lot_serial_no'] ?? '',
                                 'location_name' => $currentStock['location']['name'],
                                 'category_id' => $product['category']['id'] ?? '',
                                 'category_name' => $product['category']['name'] ?? '',

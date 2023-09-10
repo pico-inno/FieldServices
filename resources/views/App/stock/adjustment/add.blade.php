@@ -30,10 +30,10 @@
 @endsection
 @section('content')
     <!--begin::Content-->
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="content d-flex flex-column flex-column-fluid" id="adjustment_content">
         <!--begin::Container-->
         <div class="container-xxl" id="kt_content_container">
-            <form action="{{route('stock-adjustment.store')}}" method="POST">
+            <form action="{{route('stock-adjustment.store')}}" method="POST" id="adjustment_add_form">
                 @csrf
                 <!--begin::Main column-->
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
@@ -42,12 +42,13 @@
 
                                             <div class="card-body pt-0">
                                                 <div class="row mt-3">
-                                                    <div class="col-md-9">
+                                                    <div class="col-md-9 fv-row">
                                                         <label class="form-label required" for="business_location">
                                                             {{__('adjustment.location')}}
                                                         </label>
-                                                        <div class="input-group flex-nowrap">
+                                                        <div class="input-group">
                                                             <div class="input-group-text"><i class="fa-solid fa-location-dot"></i></div>
+                                                            <div class="overflow-hidden flex-grow-1">
                                                             <select name="business_location" id="business_location_id"
                                                                     class="form-select fw-bold rounded-0 form-select-sm"
                                                                     data-kt-select2="true" data-hide-search="false"
@@ -55,9 +56,10 @@
                                                                     data-kt-user-table-filter="role" data-hide-search="true">
                                                                 <option></option>
                                                                 @foreach ($locations as $location)
-                                                                    <option {{$location->id == \Illuminate\Support\Facades\Auth::user()->default_location_id ? 'selected' : ''}} value="{{$location->id}}">{{$location->name}}</option>
+                                                                    <option @selected(old('business_location', \Illuminate\Support\Facades\Auth::user()->default_location_id)==$location->id) value="{{$location->id}}">{{$location->name}}</option>
                                                                 @endforeach
                                                             </select>
+                                                            </div>
                                                             <button type="button" class="input-group-text "  data-bs-toggle="tooltip" data-bs-custom-class="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-primary-emphasis'>{{__('adjustment.location_tip')}}</span>">
                                                                 <i class="fa-solid fa-circle-info text-primary"></i>
                                                             </button>
@@ -67,15 +69,15 @@
                                                         <label class="form-label required" for="status">
                                                            {{__('adjustment.status')}}
                                                         </label>
-                                                        <div class="input-group flex-nowrap">
+                                                        <div class="fv-row">
                                                             <select name="status" class="form-select form-select-sm fw-bold "
                                                                     data-kt-select2="true"
                                                                     data-hide-search="true" data-placeholder="Status"
                                                                     data-allow-clear="true" data-kt-user-table-filter="role"
                                                                     data-hide-search="true">
                                                                 <option></option>
-                                                                <option value="prepared" selected>Prepared</option>
-                                                                <option value="completed">Completed</option>
+                                                                <option value="prepared" @selected(old('status') == 'prepared') selected>Prepared</option>
+                                                                <option value="completed" @selected(old('status') == 'completed')>Completed</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -86,6 +88,12 @@
                     <!--end::General options-->
                     <div class="card">
                         <div class="card-body">
+
+                            @error('details')
+                            <div class="alert-danger alert">
+                                At least one item is required to complete adjustment!
+                            </div>
+                            @enderror
                             <div class="row align-items-center mb-8">
 
                                 <div class="col-12">
@@ -101,11 +109,6 @@
                                             style="max-height: 300px;z-index: 100;"></div>
                                     </div>
                                 </div>
-                                {{--                                <div class="col-6 col-md-3 btn-light-primary btn add_new_product_modal my-5 my-lg-0"--}}
-                                {{--                                     data-bs-toggle="modal" type="button"--}}
-                                {{--                                     --}}{{--  data-bs-target="#add_new_product_modal" --}}{{-- data-href="{{ url('purchase/add/supplier')}}">--}}
-                                {{--                                    <i class="fa-solid fa-plus me-2 "></i> Add new product--}}
-                                {{--                                </div>--}}
                             </div>
                             <div class="table-responsive">
                                 <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="adjustment_table">
@@ -128,27 +131,12 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {{--                            <div class="separator my-5"></div>--}}
-                            {{--                            <div class="col-4 float-end mt-3">--}}
-                            {{--                                <table class="col-12 ">--}}
-                            {{--                                    <tbody>--}}
-                            {{--                                    <tr>--}}
-                            {{--                                        <th>Total Item:</th>--}}
-                            {{--                                        <td class="rowcount text-left fs-4" id="total_item">0</td>--}}
-                            {{--                                    </tr>--}}
-                            {{--                                    <tr>--}}
-                            {{--                                        <th>Net Total Amount</th>--}}
-                            {{--                                        <td class="rowSum text-left fs-4 net_purchase_total_amount_text" id=''>0</td>--}}
-                            {{--                                    </tr>--}}
-                            {{--                                    </tbody>--}}
-                            {{--                                </table>--}}
-                            {{--                            </div>--}}
 
                         </div>
                     </div>
 
                     <div class="col-12 text-center mt-2 mb-5">
-                        <button type="submit" class="btn btn-primary btn-lg save_btn">{{__('adjustment.save')}}</button>
+                        <button type="submit" data-adjustment-create-action="submit" value="save" name="save" class="btn btn-primary btn-lg save_btn">{{__('adjustment.save')}}</button>
                     </div>
                 </div>
                 <!--end::Main column-->
@@ -194,4 +182,5 @@
 
     </script>
     @include('App.stock.adjustment.include.quickSearchProducts')
+    <script src={{asset('customJs/stock/validation/adjustmentAdd.js')}}></script>
 @endpush
