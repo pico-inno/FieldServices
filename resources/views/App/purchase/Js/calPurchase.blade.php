@@ -73,7 +73,7 @@ $(document).ready(function() {
                 $.ajax({
                     url: `/purchase/get/product`,
                     type: 'POST',
-                    delay: 300,
+                    delay: 150,
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
