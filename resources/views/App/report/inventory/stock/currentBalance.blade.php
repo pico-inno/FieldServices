@@ -122,7 +122,7 @@
                                 <div class="form-check form-check-custom form-check-solid">
                                     <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="allBatchMergeCheck" />
                                     <label class="form-check-label" for="allBatchMergeCheck">
-                                        All Batch Marge
+                                       All Batch
                                     </label>
                                 </div>
                             </div>

@@ -136,7 +136,7 @@ class StockAdjustmentController extends Controller
 
 
                     if ($request->status == 'completed' && $adjustQty != 0){
-                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                         CurrentStockBalance::create([
                             'business_location_id' => $request->business_location,
@@ -456,7 +456,7 @@ class StockAdjustmentController extends Controller
                         $updateToAdjustmentDetail->save();
 
 
-                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                         CurrentStockBalance::create([
                             'business_location_id' => $request->business_location,
@@ -731,7 +731,7 @@ class StockAdjustmentController extends Controller
                                     ->latest()
                                     ->first();
 
-                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                                 CurrentStockBalance::create([
                                     'business_location_id' => $request->business_location,
@@ -934,7 +934,7 @@ class StockAdjustmentController extends Controller
                                     ->first();
 
 
-                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                                 CurrentStockBalance::create([
                                     'business_location_id' => $request->business_location,
@@ -1039,7 +1039,7 @@ class StockAdjustmentController extends Controller
 
 
                     if ($request->status == 'completed' && $adjustQty != 0){
-                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                         CurrentStockBalance::create([
                             'business_location_id' => $request->business_location,

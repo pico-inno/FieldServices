@@ -960,6 +960,7 @@ class ReportController extends Controller
 
     public function currentStockBalanceFilter(Request $request){
         $filterBatchDetils = $request->data['filter_batch_details'];
+        $filterAllBatchMerge = $request->data['filter_all_batch_merge'];
         $filterProduct = $request->data['filter_product'];
         $filterCategory = $request->data['filter_category'];
         $filterBrand = $request->data['filter_brand'];
@@ -1006,43 +1007,69 @@ class ReportController extends Controller
 
         $finalProduct = $finalProduct->get()->toArray();
 
-        if ($filterBatchDetils == 1) {
-            $mergedStocks = [];
-            $mergedBatchCount = 0;
+        if($filterAllBatchMerge == 1){
+            $mergeAllBatchs = [];
 
-            foreach ($currentStocks as $currentStock) {
-                // $productId = $currentStock['product_id'];
+            foreach($currentStocks as $currentStock){
                 $variationId = $currentStock['variation_id'];
                 $locationId = $currentStock['location']['id'];
 
-                // $batchNo = $currentStock['batch_no']
+                $key = $variationId . '_' . $locationId;
 
+                if (!isset($mergeAllBatchs[$key])) {
+                    $mergeAllBatchs[$key] = $currentStock;
+                    $mergeAllBatchs[$key]['marged_all_batch'] =  $currentStock['batch_no'];
 
-                $key = $currentStock['batch_no'] . '_' . $variationId . '_' . $locationId;
-                // $key = $currentStock['batch_no'];
-
-
-                if (!isset($mergedStocks[$key])) {
-                    $mergedStocks[$key] = $currentStock;
-                    $mergedStocks[$key]['marged_batch'] =  $currentStock['batch_no'];
+                
                 } else {
-                    $mergedBatchCount++;
-                    $mergedStocks[$key]['marged_batch'] =  'Batch merged';
-                    $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                    $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+               
+                    $mergeAllBatchs[$key]['marged_all_batch'] =  'All Batch Merged';
+                    $mergeAllBatchs[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
+                    $mergeAllBatchs[$key]['current_quantity'] += $currentStock['current_quantity'];
 
                 }
+
+            }
+            $mergeAllBatchStocks = $mergeAllBatchs;
+        } else {
+
+            if ($filterBatchDetils == 1) {
+                $mergedStocks = [];
+                $mergedBatchCount = 0;
+    
+                foreach ($currentStocks as $currentStock) {
+                    // $productId = $currentStock['product_id'];
+                    $variationId = $currentStock['variation_id'];
+                    $locationId = $currentStock['location']['id'];
+    
+    
+                    $key = $currentStock['batch_no'] . '_' . $variationId . '_' . $locationId;
+                
+    
+                    if (!isset($mergedStocks[$key])) {
+                        $mergedStocks[$key] = $currentStock;
+                        $mergedStocks[$key]['marged_batch'] =  $currentStock['batch_no'];
+                    } else {
+                        $mergedBatchCount++;
+                        $mergedStocks[$key]['marged_batch'] =  $currentStock['batch_no']. '(merged)';
+                        $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
+                        $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+    
+                    }
+                }
+    
+                $mergeAllBatchStocks = $mergedStocks;
+            } else {
+                $mergeAllBatchStocks = $currentStocks;
             }
 
-            $stocks = $mergedStocks;
-        } else {
-            $stocks = $currentStocks;
         }
+   
 
         $lotCounts = [];
         $result = [];
 
-        foreach ($stocks as $currentStock) {
+        foreach ($mergeAllBatchStocks as $currentStock) {
             $productId = $currentStock['product_id'];
             $variationId = $currentStock['variation_id'];
             $locationId = $currentStock['location']['id'];
@@ -1063,6 +1090,28 @@ class ReportController extends Controller
 
                     foreach ($variations as $variation) {
                         if ($variation['id'] == $variationId) {
+                            $batchNo = '';
+                            if($filterAllBatchMerge == 1){
+                                if($filterBatchDetils ==1){
+                                    $batchNo = $currentStock['marged_all_batch']; 
+                                    
+                                }else{
+                                    
+                                    $batchNo = $currentStock['marged_all_batch']; 
+                                   
+                                }
+                            }else{
+                               
+
+                                if($filterBatchDetils ==1){
+                                    
+                                    $batchNo = $currentStock['marged_batch']; 
+                                    
+                                }else{
+                                    
+                                    $batchNo = $currentStock['batch_no'];
+                                }
+                            }
                             $variationProduct = [
                                 'id' => $product['id'],
                                 'name' => $product['name'],
@@ -1072,7 +1121,7 @@ class ReportController extends Controller
                                 'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
-                                'batch_no' => $filterBatchDetils ? $currentStock['marged_batch'] : $currentStock['batch_no'],
+                                'batch_no' => $batchNo,
                                 'lot_no' => $currentStock['lot_serial_no'] ?? '',
                                 'location_name' => $currentStock['location']['name'],
                                 'category_id' => $product['category']['id'] ?? '',
