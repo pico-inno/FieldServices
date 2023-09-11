@@ -8,17 +8,19 @@ return [
     'business_name' => 'Business Name',
     'start_date' => 'Start Date',
     'default_profit_percent' => 'Default Profit Percent',
-    'currency' => 'Currency',
-    'currency_symbol_placement' => 'Currency Symbol Placement',
+    'default_currency' => 'Default Currency',
+    'currency_symbol_placement' => 'Currency Symbol Position',
     'time_zone' => 'Time Zone',
     'update_logo' => 'Update Logo',
-    'financial_year_start_month' => 'Finanical year start month',
-    'stock_accounting_method' => 'Stock Accounting Method',
+    'financial_year_start_month' => 'Initial Financial Month',
+    'stock_accounting_method' => 'Inventory Valuation',
     'transaction_edit_days' => 'Transaction Edit Days',
     'date_format' => 'Date Format',
     'time_format' => 'Time Format',
-    'currency_position' => 'Currency Position',
-    'quantity_precision' => 'Quantity precision',
+    'currency_position' => 'Currency Decimal Places',
+    'quantity_precision' => 'Quantity Decimal Places',
+    'currency_rounded_method' => 'Currency Rounded Method',
+    'quantity_rounded_method' => 'Quantity Rounded Method',
 
 
     //tax
@@ -34,7 +36,9 @@ return [
     'enable_product_expiry' => 'Enable Product Expiry',
     'enable_brands' => 'Enable Brands',
     'enable_categories' => 'Enable Categories',
-    'default_units' => 'Default Units',
+    'default_purchase_uom' => 'Default Purchase Units',
+    'default_sale_uom' => 'Default Sale Units',
+    'day' => 'Day',
     'enable_sub_unit' => 'Enable Sub Unit',
     'enable_racks' => 'Enable Racks',
     'enable_position' => 'Enable Position',
@@ -43,6 +47,7 @@ return [
 
     //Contact
     'default_credit_limit' => 'Default credit limit',
+    'default_pay_term'=>'Default Pay Term',
 
     //Sale
     'enable_line_discount_for_sale' => 'Enable Line Discount For sale',
@@ -288,7 +293,7 @@ return [
     'add_item_expiry' => 'Add Item Expiry',
     'add_manufacturing_date_and_expiry_period' => 'Add Manufacturing date & expiry period',
     'on_product_expiry' => 'On Product Expiry',
-    'keep_selling' => 'Keep Selling',
+    'keep_selling' => 'Enable Keep Selling',
     'stop_selling_n_day_before' => 'Stop Selling n day before',
     'enable_sub_categories' => 'Enable Sub Categories',
     'enable_price_and_tax_info' => 'Enable Price & Tax info',

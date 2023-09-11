@@ -21,19 +21,19 @@
             enableCategory();
 
             //enableProductExpiry
-            function enableProductExCk() {
-                if(enableProductExpiry.checked){
-                    productExpiry.disabled=false;
-                    addSellExpiry.disabled=false;
-                    sellExpiry.classList.remove('d-none');
-                }else{
-                    productExpiry.disabled=true;
-                    addSellExpiry.disabled=true;
-                    n_day.disabled=true;
-                    sellExpiry.classList.add('d-none');
+            // function enableProductExCk() {
+            //     if(enableProductExpiry.checked){
+            //         productExpiry.disabled=false;
+            //         addSellExpiry.disabled=false;
+            //         sellExpiry.classList.remove('d-none');
+            //     }else{
+            //         productExpiry.disabled=true;
+            //         addSellExpiry.disabled=true;
+            //         n_day.disabled=true;
+            //         sellExpiry.classList.add('d-none');
 
-                }
-            }
+            //     }
+            // }
 
             //expiray Day check
             function expirayDayCk(){

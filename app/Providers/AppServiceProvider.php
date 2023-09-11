@@ -34,8 +34,9 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('*', function($view) {
             try {
                 if (Auth::check()) {
-                    $user = Auth::user();
-                    app()->setLocale($user->language ?? 'en');
+                    $user = Auth::user()->personal_info;
+                    $language=$user->language =='mm' ? 'my' : $user->language;
+                    app()->setLocale($language ?? 'en');
                 }
             } catch (\Throwable $th) {
             }

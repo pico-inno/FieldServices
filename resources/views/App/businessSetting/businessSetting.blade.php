@@ -37,9 +37,10 @@
                         <option></option>
                         {{-- business --}}
                         <option value="business_name">{{__('business_settings.business_name')}}</option>
+                        <option value="owner">{{__('business_settings.owner_name')}}</option>
                         <option value="kt_datepicker_1">{{__('business_settings.start_date')}}</option>
                         <option value="default_profit_percent">{{__('business_settings.default_profit_percent')}}</option>
-                        <option value="currency">{{__('business_settings.currency')}}</option>
+                        <option value="default_currency">{{__('business_settings.default_currency')}}</option>
                         <option value="use_payment_account">{{__('business_settings.use_payment_account')}}</option>
                         <option value="currency_symbol_placement">{{__('business_settings.currency_symbol_placement')}}</option>
                         <option value="timezone">{{__('business_settings.time_zone')}}</option>
@@ -51,6 +52,8 @@
                         <option value="time_format">{{__('business_settings.time_format')}}</option>
                         <option value="currency_position">{{__('business_settings.currency_position')}}</option>
                         <option value="quantity_precision">{{__('business_settings.quantity_precision')}}</option>
+                        <option value="currency_rounded_method">{{__('business_settings.currency_rounded_method')}}</option>
+                        <option value="quantity_rounded_method">{{__('business_settings.quantity_rounded_method')}}</option>
                         <option value=""></option>
 
                         {{-- tax --}}
@@ -337,14 +340,14 @@
                                         </span>
                                         <!--end::Marked-->
                                     </div>
-                                    <div class="menu-item mb-3 d-block">
+                                    {{-- <div class="menu-item mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_tax"  data-bs-target="#business_setting_tax" >
                                             <span class="menu-title fw-bold">{{__('business_settings.tax')}}</span>
                                             <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Registered Tax Number For Your Business."></i>
                                         </span>
                                         <!--end::Marked-->
-                                    </div>
+                                    </div> --}}
                                     <div class="menu-item  mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_product"  data-bs-target="#business_setting_product" >
@@ -489,13 +492,29 @@
 
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
+                                                    <label class="fs-6 fw-semibold form-label mt-3" for="owner">
                                                         <span class="required">{{__('business_settings.owner_name')}}</span>
                                                     </label>
                                                     <!--end::Label-->
                                                     <input type="text" class="form-control form-control form-control form-control-sm" name="owner_id" id="owner" value="{{$settingData->owner? $settingData->owner->username :''}}" />
                                                 </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
+                                                <div class="col-md-12 mb-7 col-lg-4 browseLogo">
+                                                    <label class="fs-6 fw-semibold form-label mt-3" for="update_logo">
+                                                        <span class="required">{{__('business_settings.upload_logo')}}</span>
+                                                    </label>
+                                                    <div class="input-group browseLogo input-group-sm">
+
+                                                        <input type="file" class="form-control form-control form-control form-control-sm" id="update_logo" name="logo"
+                                                            value="">
+                                                        <button type="button" class="btn btn-sm btn-danger d-none" id="removeFileBtn"><i
+                                                                class="fa-solid fa-trash"></i></button>
+                                                        <label class="input-group-text btn btn-primary rounded-end" for="update_logo">
+                                                            {{__('business_settings.browses')}}
+                                                            <i class="fa-regular fa-folder-open"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                {{-- <div class="col-md-12  mb-7 col-lg-4">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="kt_datepicker_1">
                                                         <span class="required">{{__('business_settings.start_date')}}</span>
                                                     </label>
@@ -505,15 +524,7 @@
                                                         </span>
                                                         <input class="form-control form-control form-control form-control-sm" name="start_date" placeholder="Pick a date"  id="kt_datepicker_1" value="{{date('d-m-Y')}}" />
                                                     </div>
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <div class="form-check form-check-custom">
-                                                    <input type="checkbox" class="form-check-input border-gray-400 me-3" name="lot_control" id="lot_control" @checked($settingData['lot_control']=='on') >
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="lot_control">
-                                                            <span >{{__('business_settings.lot_control')}}</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
+                                                </div> --}}
 
 
                                                 <div class="col-md-12  mb-7 col-lg-4">
@@ -543,31 +554,33 @@
                                                     </div>
                                                     <!--end::Input-->
                                                 </div>
-                                            </div>
-
-
-                                            <div class="row fv-row row-cols ">
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="currency">
-                                                        <span class="required">{{__('business_settings.currency')}}</span>
+                                                    <label class="fs-6 fw-semibold form-label mt-3" for="default_currency">
+                                                        <span class="required">{{__('business_settings.default_currency')}}</span>
                                                     </label>
                                                     <!--end::Label-->
                                                     <div class="input-group flex-nowrap">
-                                                        <span class="input-group-text" >
+                                                        <span class="input-group-text">
                                                             <i class="fa-solid fa-money-bill-1"></i>
                                                         </span>
                                                         <div class="overflow-hidden flex-grow-1">
-                                                            <select name="currency_id" class="form-select rounded-start-0 form-select-sm" id="currency" data-control="select2" data-placeholder="Select Currency">
+                                                            <select name="currency_id" class="form-select rounded-start-0 form-select-sm" id="currency"
+                                                                data-control="select2" data-placeholder="Select Currency">
                                                                 <option></option>
                                                                 @foreach ($currencies as $c)
-                                                                    <option value="{{$c->id}}" @selected($settingData['currency_id']==$c->id)>{{$c->name}} ({{$c->symbol}})</option>
+                                                                <option value="{{$c->id}}" @selected($settingData['currency_id']==$c->id)>{{$c->name}} ({{$c->symbol}})
+                                                                </option>
                                                                 @endforeach
 
                                                             </select>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+
+
+                                            <div class="row fv-row row-cols ">
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Input-->
                                                     <!--begin::Label-->
@@ -596,23 +609,6 @@
                                                                 <option value="1">Asia/Yangon</option>
                                                             </select>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="row fv-row row-cols ">
-                                                <div class="col-md-12 mb-7 col-lg-4 browseLogo">
-                                                     <label class="fs-6 fw-semibold form-label mt-3" for="update_logo">
-                                                        <span class="required">{{__('business_settings.upload_logo')}}</span>
-                                                    </label>
-                                                    <div class="input-group browseLogo input-group-sm">
-                                                        <input type="file" class="form-control form-control form-control form-control-sm" id="update_logo" name="logo" value="">
-                                                        <button type="button" class="btn btn-sm btn-danger d-none" id="removeFileBtn"><i class="fa-solid fa-trash"></i></button>
-                                                        <label class="input-group-text btn btn-primary rounded-end" for="update_logo">
-                                                            {{__('business_settings.browses')}}
-                                                            <i class="fa-regular fa-folder-open"></i>
-                                                        </label>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12  mb-7 col-lg-4">
@@ -666,9 +662,6 @@
                                                     </div>
                                                     <!--end::Input-->
                                                 </div>
-                                            </div>
-
-                                            <div class="row fv-row row-cols ">
                                                 <div class="col-md-12  mb-7  col-lg-4">
                                                     <!--begin::Label-->
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="transaction_edit_days">
@@ -718,9 +711,6 @@
                                                             </div>
                                                         </div>
                                                 </div>
-                                            </div>
-
-                                            <div class="row fv-row row-cols ">
                                                 <div class="col-md-12  mb-7 col-lg-4">
                                                     <!--begin::Label-->
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="currency_position">
@@ -751,6 +741,42 @@
                                                         <option value="2" @selected($settingData['quantity_decimal_places'] == 2)>2</option>
                                                         <option value="3" @selected($settingData['quantity_decimal_places'] == 3)>3</option>
                                                         <option value="4" @selected($settingData['quantity_decimal_places'] == 4)>4</option>
+                                                    </select>
+
+                                                </div>
+                                                <div class="col-md-12  mb-7 col-lg-4">
+                                                    <!--begin::Label-->
+                                                    <label class="fs-6 fw-semibold form-label mt-3" for="currency_rounded_method">
+                                                        <span class="required">{{__('business_settings.currency_rounded_method')}}</span>
+                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
+                                                            title="Number of digits after decimal point for quantity value.Example:0.00 for value 2, 0.000 for value 3, 0.0000 for value 4"></i>
+                                                    </label>
+                                                    <!--end::Label-->
+                                                    <select name="quantity_decimal_places" id="currency_rounded_method" class="form-select form-select-sm"
+                                                        data-control="select2" data-placeholder="Select month">
+                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>0</option>
+                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>1</option>
+                                                        <option value="2" @selected($settingData['quantity_decimal_places']==2)>2</option>
+                                                        <option value="3" @selected($settingData['quantity_decimal_places']==3)>3</option>
+                                                        <option value="4" @selected($settingData['quantity_decimal_places']==4)>4</option>
+                                                    </select>
+
+                                                </div>
+                                                <div class="col-md-12  mb-7 col-lg-4">
+                                                    <!--begin::Label-->
+                                                    <label class="fs-6 fw-semibold form-label mt-3" for="quantity_rounded_method">
+                                                        <span class="required">{{__('business_settings.quantity_rounded_method')}}</span>
+                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
+                                                            title="Number of digits after decimal point for quantity value.Example:0.00 for value 2, 0.000 for value 3, 0.0000 for value 4"></i>
+                                                    </label>
+                                                    <!--end::Label-->
+                                                    <select name="quantity_decimal_places" id="quantity_rounded_method" class="form-select form-select-sm"
+                                                        data-control="select2" data-placeholder="Select month">
+                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>0</option>
+                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>1</option>
+                                                        <option value="2" @selected($settingData['quantity_decimal_places']==2)>2</option>
+                                                        <option value="3" @selected($settingData['quantity_decimal_places']==3)>3</option>
+                                                        <option value="4" @selected($settingData['quantity_decimal_places']==4)>4</option>
                                                     </select>
 
                                                 </div>
@@ -826,15 +852,15 @@
                                             <!--end::Heading-->
 
                                             <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-7 col-lg-4">
+                                                {{-- <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Label-->
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="sku_prefix">
                                                         <span class="required">{{__('business_settings.sku_prefix')}}</span>
                                                     </label>
                                                     <!--end::Label-->
                                                     <input type="text" class="form-control form-control form-control form-control-sm" id="sku_prefix" name="sku" value="" placeholder="GST/VAT/OTHER" />
-                                                </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
+                                                </div> --}}
+                                                {{-- <div class="col-md-12  mb-7 col-lg-4">
                                                         <!--begin::Label-->
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="enable_product_expiry_check">
                                                         <span class="required">{{__('business_settings.enable_product_expiry')}}</span>
@@ -852,14 +878,14 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4 d-none" id="sell_expiry">
+                                                </div> --}}
+                                                <div class="col-md-12 mb-7 col-lg-4 mt-5" id="sell_expiry">
                                                     <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3">
+                                                    {{-- <label class="fs-6 fw-semibold form-label mt-3">
                                                         <span class="required">{{__('business_settings.on_product_expiry')}}</span>
-                                                    </label>
+                                                    </label> --}}
                                                     {{-- <!--end::Label-->data-control="select2" --}}
-                                                   <div class="input-group flex-nowrap">
+                                                   {{-- <div class="input-group flex-nowrap">
                                                         <div class="overflow-hidden flex-grow-1">
                                                             <select name="stop_selling_before" disabled data-hide-search="true" data-control="select2" id="add_sell_expriy" class="form-select rounded-end-0 min-w-125px "  data-placeholder="">
                                                                 <option value="keep_sell">{{__('business_settings.keep_selling')}}</option>
@@ -867,74 +893,60 @@
                                                             </select>
                                                         </div>
                                                         <input type="text" disabled value="0" id="n_day" name="form-control form-control" class="form-control form-control min-w-125px" id="check_product_ex">
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="row fv-row row-cols ">
-                                                <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center">
-                                                    <div class="form-check form-check-custom ">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_brands" id="enable_brands">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_brands">
-                                                            <span >{{__('business_settings.enable_brands')}}</span>
-                                                        </label>
+                                                    </div> --}}
+                                                    <div class="form-check form-switch ">
+                                                        <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="flexSwitchCheckDefault" >
+                                                        <label class="form-check-label" for="flexSwitchCheckDefault">{{__('business_settings.keep_selling')}}</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center">
-                                                    <div class="form-check form-check-custom ">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_categories" id="enable_categories">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_categories">
-                                                            <span >{{__('business_settings.enable_categories')}}</span>
-                                                        </label>
-                                                    </div>
+                                                <div class="col-md-12 mb-7 col-lg-4">
+                                                    <label class="fs-6 fw-semibold form-label">
+                                                        <span class="required">{{__('business_settings.stop_selling_n_day_before')}}</span>
+                                                    </label>
+                                                    <div class="input-group input-group-sm flex-nowrap">
+                                                            <input type="text" class="form-control form-control-sm">
+                                                            <div class="input-group-text">
+                                                                Day
+                                                            </div>
+                                                        </div>
                                                 </div>
-                                                <div class="col-md-12 mb-7 col-lg-4 d-none" id="enable_sub_cat_div">
-                                                    <div class="form-check form-check-custom   d-flex align-items-center">
-                                                        <input type="checkbox" checked class="form-check-input border-gray-400 me-3" name="enable_sub_categories" id="enable_sub_categories">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_sub_categories">
-                                                            <span >{{__('business_settings.enable_sub_categories')}}</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
+
                                             </div>
                                             <div class="row row-cols">
-                                                <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
-                                                    <div class="form-check form-check-custom">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_price_and_tax_info" id="enable_price_and_tax_info">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_price_and_tax_info">
-                                                            <span >{{__('business_settings.enable_price_and_tax_info')}}</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
                                                 <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="default_units">
-                                                            <span class="required">{{__('business_settings.default_units')}}</span>
+                                                      <label class="fs-6 fw-semibold form-label mt-3" for="default_purchase_units">
+                                                            <span class="required">{{__('business_settings.default_purchase_uom')}}</span>
                                                         </label>
-                                                        <div class="input-group flex-nowrap">
+                                                        <div class="input-group input-group-sm flex-nowrap">
                                                             <span class="input-group-text" >
                                                               <i class="fa-solid fa-scale-balanced"></i>
                                                             </span>
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="default_units" id="default_units" data-hide-search="true" class="form-select rounded-start-0" data-control="select2" data-placeholder="">
-                                                                    <option value="1">{{__('business_settings.please_select')}}</option>
+                                                                <select name="default_purchase_units" id="default_purchase_units" data-hide-search="true" class="form-select form-select-sm rounded-start-0" data-control="select2" data-kt-select2="true" data-placeholder="">
+                                                                    <option value=" ">{{__('business_settings.please_select')}}</option>
                                                                     <option value="2">Kg</option>
                                                                 </select>
                                                             </div>
                                                         </div>
                                                 </div>
-                                                <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
-                                                    <div class="form-check form-check-custom">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_sub_unit" id="enable_sub_unit">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_sub_unit">
-                                                            <span >{{__('business_settings.enable_sub_units')}}</span>
+                                                <div class="col-md-12  mb-7  col-lg-4">
+                                                      <label class="fs-6 fw-semibold form-label mt-3" for="default_sale_uom">
+                                                            <span class="required">{{__('business_settings.default_sale_uom')}}</span>
                                                         </label>
-                                                    </div>
+                                                        <div class="input-group input-group-sm flex-nowrap">
+                                                            <span class="input-group-text" >
+                                                              <i class="fa-solid fa-scale-balanced"></i>
+                                                            </span>
+                                                            <div class="overflow-hidden flex-grow-1">
+                                                                <select name="default_sale_uom" id="default_sale_uom" data-hide-search="true" class="form-select form-select-sm rounded-start-0" data-kt-select2="true" data-control="select2" data-placeholder="">
+                                                                    <option value=" ">{{__('business_settings.please_select')}}</option>
+                                                                    <option value="2">Kg</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                 </div>
                                             </div>
-                                            <div class="row row-cols">
+                                            {{-- <div class="row row-cols">
                                                 <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
                                                     <div class="form-check form-check-custom">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_racks" id="enable_racks">
@@ -977,7 +989,7 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                     </div>
 
@@ -996,9 +1008,25 @@
                                                         <span class="required" >{{__('business_settings.default_credit_limit')}}</span>
                                                     </label>
                                                     <!--end::Label-->
-                                                      <input type="text" class="form-control form-control" id="default_credit_limit" placeholder="Default credit limit">
+                                                      <input type="text" class="form-control form-control-sm" id="default_credit_limit" placeholder="Default credit limit">
                                                 </div>
-
+                                                <div class="col-md-12 mb-7 col-lg-4">
+                                                    <!--begin::Label-->
+                                                    <label class="fs-6 fw-semibold form-label mt-3" for="default_credit_limit">
+                                                        <span class="required" >{{__('business_settings.default_pay_term')}}</span>
+                                                    </label>
+                                                    <!--end::Label-->
+                                                    <div class="input-group" tabindex="-1">
+                                                        <input type="text" class="form-control form-control-sm">
+                                                        <div class="overflow-hidden flex-grow-1">
+                                                            <select class="form-select form-select-sm rounded-start-0" data-control="select2" data-placeholder="type">
+                                                                <option></option>
+                                                                <option value="1">Day</option>
+                                                                <option value="1">Month</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
 
@@ -1013,36 +1041,6 @@
                                                 </div>
                                             </div>
                                             <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="default_sale_discount">
-                                                        <span class="required">{{__('business_settings.default_sale_discount')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Number of days from Transaction Date till which a transaction can be edited."></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <div class="input-group">
-                                                        <span class="input-group-text" >
-                                                            <i class="fa-solid fa-percent"></i>
-                                                        </span>
-                                                        <input type="number" class="form-control form-control input-number" id="default_sale_discount" aria-invalid="false" name="default_sale_discount">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="default_sale_tax">
-                                                            <span class="required">{{__('business_settings.default_sale_tax')}}</span>
-                                                        </label>
-                                                        <div class="input-group flex-nowrap">
-                                                            <span class="input-group-text">
-                                                              <i class="fa-solid fa-info"></i>
-                                                            </span>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                                <select name="default_sale_tax" id="default_sale_tax" data-hide-search="true" class="form-select rounded-start-0" data-control="select2" data-placeholder="">
-                                                                    <option value="1">{{__('business_settings.default_sale_tax')}}</option>
-                                                                    <option value="2" selected>{{__('business_settings.none')}}</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                </div>
                                                  <div class="col-md-12  mb-7  col-lg-4">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="sales_item_addition_method">
                                                         <span class="required">Sales Item Addition Method:</span>
@@ -1620,15 +1618,25 @@
                                                     <h2>{{__('business_settings.purchases')}}</h2>
                                                 </div>
                                             </div>
+
                                             <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-13 col-lg-6  d-flex align-items-center">
+                                                <div class="col-md-12 mb-7 col-lg-4">
+                                                    <div class="form-check form-check-custom">
+                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="lot_control" id="lot_control"
+                                                            @checked($settingData['lot_control']=='on' )>
+                                                        <label class="fs-6 fw-semibold form-label mt-3" for="lot_control">
+                                                            <span>{{__('business_settings.lot_control')}}</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input @checked($settingData['enable_line_discount_for_purchase']=='1')  type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_line_discount_for_purchase" id="enable_line_discount_for_purchase" value="1">
                                                         <label class="fs-6 fw-semibold form-label mt-3" for="enable_line_discount_for_purchase">
                                                         <span>{{__('business_settings.enable_line_discount')}}</span>
                                                     </div>
                                                 </div>
-                                               <div class="col-md-12 mb-13 col-lg-6  d-flex align-items-center">
+                                               <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input checked type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_editing_product_price_from_purchase_screen" id="enable_editing_product_price_from_purchase_screen">
                                                         <label class="fs-6 fw-semibold form-label mt-3" for="enable_editing_product_price_from_purchase_screen">
