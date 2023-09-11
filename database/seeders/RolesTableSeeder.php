@@ -47,9 +47,9 @@ class RolesTableSeeder extends Seeder
         $productFeatures = ['product', 'variation', 'selling price groups', 'unit', 'uom', 'category', 'brand', 'warranty', 'manufacture', 'generic'];
         $tradeFeatures = ['pos', 'purchase', 'sell'];
         $inventoryFeatures = ['stock transfer', 'stock adjustment', 'opening stock'];
-        // $billingFeatures1 = ['Cash & Payment'];
-        // $billingFeatures2 = ['Expense'];
-        // $system = ['Module'];
+        $billingFeatures1 = ['Cash & Payment'];
+        $billingFeatures2 = ['Expense'];
+        $system = ['Module'];
 
 
         $this->createFeatureAndPermissions($this->basic_feature, $this->basic_permissions);
@@ -57,9 +57,9 @@ class RolesTableSeeder extends Seeder
         $this->createFeatureAndPermissions($productFeatures, $this->basic_permissions);
         $this->createFeatureAndPermissions($tradeFeatures, $this->basic_permissions);
         $this->createFeatureAndPermissions($inventoryFeatures, $this->basic_permissions);
-        // $this->createFeatureAndPermissions($billingFeatures1, $billingPermissions);
-        // $this->createFeatureAndPermissions($billingFeatures2, $this->basic_permissions);
-        // $this->createFeatureAndPermissions($system, $vds_permissions);
+        $this->createFeatureAndPermissions($billingFeatures1, $billingPermissions);
+        $this->createFeatureAndPermissions($billingFeatures2, $this->basic_permissions);
+        $this->createFeatureAndPermissions($system, $vds_permissions);
 //        $this->createFeatureAndPermissions($system, $systemPermissions);
 
         // Associate permissions with the default role
