@@ -1,10 +1,9 @@
 @extends('App.main.navBar')
 
-@section('inventory_icon', 'active')
-@section('inventory_show', 'active show')
-@section('current_stock_reports_active_show', 'active show')
+@section('reports_active', 'active')
+@section('reports_active_show', 'active show')
 @section('inventory_reports_here_show', 'here show')
-
+@section('stock_summary_active_show', 'active show')
 
 
 @section('styles')
@@ -12,13 +11,13 @@
 @endsection
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">Current Stock Balance Report</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('stockinout::stockinoutreport.stockinout_summary')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Reports</li>
-        <li class="breadcrumb-item text-muted">Inventory Reports</li>
-        <li class="breadcrumb-item text-dark">Current Stock Balance</li>
+        <li class="breadcrumb-item text-muted">{{__('stockinout::stockinoutreport.reports')}}</li>
+        <li class="breadcrumb-item text-muted">{{__('stockinout::stockinoutreport.inventory_reports')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('stockinout::stockinoutreport.summary')}}</li>
     </ul>
     <!--end::Breadcrumb-->
 @endsection
@@ -32,110 +31,61 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <h2>Filters</h2>
+                            <h2>{{__('stockinout::stockinoutreport.filters')}}</h2>
                         </div>
                     </div>
                     <div class="card-body filter-card">
                         <div class="row mb-5 flex-wrap">
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Business Location</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('stockinout::stockinoutreport.stock_reports_type')}}</label>
+                                <select class="form-select form-select-sm  fw-bold filter_type" data-kt-select2="true"
+                                        data-placeholder="{{__('stockinout::stockinoutreport.placeholder_select_option')}}" data-allow-clear="true" data-hide-search="true">
+                                    <option></option>
+                                    <option selected value="1">Stock In</option>
+                                    <option value="2">Stock Out</option>
+                                </select>
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-5 col-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold">{{__('stockinout::stockinoutreport.business_location')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_locations" data-kt-select2="true"
-                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
+                                        data-placeholder="{{__('stockinout::stockinoutreport.placeholder_select_option')}}" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
                                     @if(count($locations) > 0)
-                                        <option selected value="0">All Locations</option>
+                                        <option selected value="0">All</option>
                                         @foreach($locations as $location)
                                             <option value="{{$location->id}}">{{$location->name}}</option>
                                         @endforeach
                                     @else
-                                        <option selected disabled value="null">No locations</option>
+                                        <option selected disabled value="null">{{__('stockinout::stockinoutreport.no_locations')}}</option>
+                                    @endif
+                                </select>
+                            </div>
+                            <!--end::Input group-->
+                             <!--begin::Input group-->
+                             <div class="mb-5 col-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold">{{__('stockinout::stockinoutreport.stock_person')}}</label>
+                                <select class="form-select form-select-sm  fw-bold filter_person" data-kt-select2="true"
+                                        data-placeholder="{{__('stockinout::stockinoutreport.placeholder_select_option')}}" data-allow-clear="true" data-hide-search="true">
+                                    <option></option>
+                                    @if(count($stocksperson) > 0)
+                                        <option selected value="0">All</option>
+                                        @foreach($stocksperson as $stockperson)
+                                            <option value="{{$stockperson->id}}">{{$stockperson->username}}</option>
+                                        @endforeach
+                                    @else
+                                        <option selected disabled value="null">{{__('stockinout::stockinoutreport.no_person')}}</option>
                                     @endif
                                 </select>
                             </div>
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Product</label>
-                                <select class="form-select form-select-sm  fw-bold filter_product" data-kt-select2="true"
-                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">
-                                    <option></option>
-                                    @if(count($products) > 0)
-                                        <option selected value="0">All Products</option>
-                                        @foreach($products as $product)
-                                            <option value="{{$product->id}}">{{$product->name}}</option>
-                                        @endforeach
-                                    @else
-                                        <option selected disabled value="null">No Product</option>
-                                    @endif
-                                </select>
-                            </div>
-                            <!--end::Input group-->
-                            <!--begin::Input group-->
-                            <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Category</label>
-                                <select class="form-select form-select-sm  fw-bold filter_category" data-kt-select2="true"
-                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
-                                    <option></option>
-                                    @if(count($categories) > 0)
-                                        <option selected value="0">All Categories</option>
-                                        @foreach($categories as $category)
-                                            <option value="{{$category->id}}">{{$category->name}}</option>
-                                        @endforeach
-                                    @else
-                                        <option selected disabled value="null">No Category</option>
-                                    @endif
-                                </select>
-                            </div>
-                            <!--end::Input group-->
-                            <!--begin::Input group-->
-                            <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Brand</label>
-                                <select class="form-select form-select-sm  fw-bold filter_brand" data-kt-select2="true"
-                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
-                                    <option></option>
-                                    @if(count($brands) > 0)
-                                        <option selected value="0">All Brands</option>
-                                        @foreach($brands as $brand)
-                                            <option value="{{$brand->id}}">{{$brand->name}}</option>
-                                        @endforeach
-                                    @else
-                                        <option selected disabled value="null">No Brand</option>
-                                    @endif
-                                </select>
-                            </div>
-                            <!--end::Input group-->
-                        </div>
-                        <div class="row mb-5">
-
-
-                            <!--begin::Input group-->
-                            <div class="mb-10 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Date</label>
-                                <input class="form-control form-control-sm form-control filter_date" placeholder="Pick date rage"
+                                <label class="form-label fs-6 fw-semibold">{{__('stockinout::stockinoutreport.date')}}</label>
+                                <input class="form-control form-control-sm filter_date" placeholder="Pick date rage"
                                        id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
-                            </div>
-                            <!--end::Input group-->
-
-                            <!--begin::Input group-->
-                            <div class="mb-10 col-6 col-md-3 pt-md-12">
-                                <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="allBatchMergeCheck" />
-                                    <label class="form-check-label" for="allBatchMergeCheck">
-                                       All Batch
-                                    </label>
-                                </div>
-                            </div>
-                            <!--end::Input group-->
-
-                            <!--begin::Input group-->
-                            <div class="mb-10 col-6 col-md-3 pt-md-12">
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="batchDetailsCheck" />
-                                <label class="form-check-label" for="batchDetailsCheck">
-                                    Batch Details
-                                </label>
-                            </div>
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -164,9 +114,9 @@
                             </svg>
                         </span>
                             <!--end::Svg Icon-->
-                            <input type="text" data-kt-customer-table-filter="search"
-                                   class="form-control form-control w-250px ps-15"
-                                   placeholder="Search" data-current-balance-report="search"/>
+                            <input type="text" data-kt-customer-table-filter="search" id="search_input"
+                                   class="form-control form-control-solid w-250px ps-15"
+                                   placeholder="{{__('stockinout::stockinoutreport.search')}}"/>
                         </div>
                         <!--end::Search-->
                     </div>
@@ -193,7 +143,7 @@
                                       fill="currentColor"/>
                             </svg>
                         </span>
-                                    <!--end::Svg Icon-->Export
+                                    <!--end::Svg Icon-->{{__('stockinout::stockinoutreport.export')}}
                                 </button>
                                 <!--end::Export-->
 
@@ -220,38 +170,28 @@
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
                     <!--begin::Table-->
-                    <table class="table align-middle table-row-dashed fs-6 gy-3" id="current_stock_balance_reports_table">
+                    <table class="table align-middle table-row-dashed fs-6 gy-5" id="stock_reports_table">
                         <!--begin::Table head-->
                         <thead>
                         <!--begin::Table row-->
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                            <th>SKU</th>
-                            <th>Product & Variation</th>
-                            <th>Batch No</th>
-                            <th>Lot No</th>
-                            <th>Location</th>
-                            <th>Category</th>
-                            <th>Brand</th>
-
-                            <th>
-                                <span id="stock-qty-header">
-                                    Purchase Qty
+                            <th class="min-w-125px">{{__('stockinout::stockinoutreport.date')}}</th>
+                            <th class="min-w-125px">{{__('stockinout::stockinoutreport.voucher_no')}}</th>
+                            <th class="min-w-125px">{{__('stockinout::stockinoutreport.location')}}</th>
+                            <th class="min-w-125px">
+                                <span id="stock-person-header">
+                                    {{__('stockinout::stockinoutreport.stock_person')}}
                                 </span>
                             </th>
-                            <th class="text-center">
-{{--                                 <span id="stock-qty-header1">--}}
-                                    Current Qty
-{{--                                </span>--}}
-                            </th>
-                            <th>UOM</th>
-
+                            {{-- <th class="min-w-125px">Status</th> --}}
+                            <th class="min-w-125px">{{__('stockinout::stockinoutreport.added_by')}}</th>
                         </tr>
                         <!--end::Table row-->
                         </thead>
                         <!--end::Table head-->
                         <!--begin::Table body-->
                         <tbody class="fw-semibold text-gray-600" id="reports-data">
-{{--                        <tbody class="fw-bold text-gray-600 text-end" id="reports-data">--}}
+
                         </tbody>
                         <!--end::Table body-->
                     </table>
@@ -271,7 +211,7 @@
                         <!--begin::Modal header-->
                         <div class="modal-header">
                             <!--begin::Modal title-->
-                            <h2 class="fw-bold">Export Customers</h2>
+                            <h2 class="fw-bold">{{__('stockinout::stockinoutreport.export_summary')}}</h2>
                             <!--end::Modal title-->
                             <!--begin::Close-->
                             <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">
@@ -297,7 +237,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Select Export Format:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('stockinout::stockinoutreport.select_export_format')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <div id="exportOptions" style="visibility: hidden;" class="w-1px h-1px"></div>
@@ -314,7 +254,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Select Date Range:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('stockinout::stockinoutreport.select_date_range')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
@@ -327,28 +267,28 @@
                                 <!--begin::Row-->
                                 <div class="row fv-row mb-15">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Export Column:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('stockinout::stockinoutreport.export_column')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Radio group-->
                                     <div class="d-flex flex-column column_checkboxes">
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox" id="chkAllColumns" checked="checked"/>
-                                            <span class="form-check-label text-gray-600 fw-semibold">All</span>
+                                            <span class="form-check-label text-gray-600 fw-semibold">{{__('stockinout::stockinoutreport.all')}}</span>
                                         </label>
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox" checked="checked"
                                                    id="chkColumn0"/>
-                                            <span class="form-check-label text-gray-600 fw-semibold">SKU</span>
+                                            <span class="form-check-label text-gray-600 fw-semibold">{{__('stockinout::stockinoutreport.date')}}</span>
                                         </label>
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox" checked="checked"
                                                    id="chkColumn1"/>
-                                            <span class="form-check-label text-gray-600 fw-semibold">Product & Variation</span>
+                                            <span class="form-check-label text-gray-600 fw-semibold">{{__('stockinout::stockinoutreport.voucher_no')}}</span>
                                         </label>
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
@@ -356,7 +296,7 @@
                                             <input class="form-check-input" type="checkbox" checked="checked"
                                                    id="chkColumn2"/>
                                             <span
-                                                class="form-check-label text-gray-600 fw-semibold">Lot No</span>
+                                                class="form-check-label text-gray-600 fw-semibold">{{__('stockinout::stockinoutreport.location')}}</span>
                                         </label>
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
@@ -364,48 +304,23 @@
                                             <input class="form-check-input" type="checkbox"  checked="checked"
                                                    id="chkColumn3"/>
                                             <span
-                                                class="form-check-label text-gray-600 fw-semibold">Location</span>
+                                                class="form-check-label text-gray-600 fw-semibold"><span id="stock-person-header-filter">{{__('stockinout::stockinoutreport.stock_person')}}</span></span>
                                         </label>
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
-                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
+                                        {{-- <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox"  checked="checked"
                                                    id="chkColumn4"/>
                                             <span
-                                                class="form-check-label text-gray-600 fw-semibold">Category</span>
-                                        </label>
+                                                class="form-check-label text-gray-600 fw-semibold">Status</span>
+                                        </label> --}}
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox"  checked="checked"
                                                    id="chkColumn5"/>
                                             <span
-                                                class="form-check-label text-gray-600 fw-semibold">Brand</span>
-                                        </label>
-                                        <!--end::Radio button-->
-
-                                        <!--begin::Radio button-->
-                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
-                                            <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn7"/>
-                                            <span
-                                                class="form-check-label text-gray-600 fw-semibold">Purchase Qty</span>
-                                        </label>
-                                        <!--end::Radio button-->
-                                        <!--begin::Radio button-->
-                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
-                                            <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn8"/>
-                                            <span
-                                                class="form-check-label text-gray-600 fw-semibold">Current Qty</span>
-                                        </label>
-                                        <!--end::Radio button-->
-                                        <!--begin::Radio button-->
-                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
-                                            <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn6"/>
-                                            <span
-                                                class="form-check-label text-gray-600 fw-semibold">UOM</span>
+                                                class="form-check-label text-gray-600 fw-semibold">{{__('stockinout::stockinoutreport.added_by')}}</span>
                                         </label>
                                         <!--end::Radio button-->
                                     </div>
@@ -415,11 +330,11 @@
                                 <!--begin::Actions-->
                                 <div class="text-center">
                                     <button type="reset" id="kt_customers_export_cancel" class="btn btn-light me-3">
-                                        Discard
+                                        {{__('stockinout::stockinoutreport.discard')}}
                                     </button>
                                     <button type="submit" id="kt_customers_export_submit" class="btn btn-primary">
-                                        <span class="indicator-label">Submit</span>
-                                        <span class="indicator-progress">Please wait...
+                                        <span class="indicator-label">{{__('stockinout::stockinoutreport.submit')}}</span>
+                                        <span class="indicator-progress">{{__('stockinout::stockinoutreport.please_wait')}}
                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                     </button>
                                 </div>
@@ -445,7 +360,24 @@
 @endsection
 
 @push('scripts')
-    <script src="customJs/reports/inventory/currentStockBalanceExport.js"></script>
-    <script src="customJs/reports/inventory/currentStockBalanceFilter.js"></script>
+    <script src="customJs/reports/inventory/stockSummaryExport.js"></script>
+    <script src="customJs/reports/inventory/stockSummaryFilter.js"></script>
     <script src="customJs/toaster.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                var stockQtyHeader = $('#stock-person-header, #stock-person-header-filter');
+
+                function updateStockQtyHeader() {
+                    var selectedValue = $('.filter_type').val();
+                    stockQtyHeader.text(selectedValue === '1' ? 'Stockin Person' : 'Stockout Person');
+                }
+
+                $('.filter_type').change(updateStockQtyHeader);
+
+                updateStockQtyHeader(); // Set initial value on page load
+            });
+
+        </script>
+
 @endpush
