@@ -127,7 +127,20 @@
                             </div>
                             <div class="card-body pt-0">
                                 <!--begin::Input group-->
+                                <div class="row gap-10">
+                                    <div class="col-sm-3 row align-items-center mb-13">
+                                        <a href="{{route('download-excel')}}" class="btn btn-primary btn-sm ">
+                                            <i class="fas fa-download"></i>Download template file
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-3 row align-items-center mb-13">
+                                        <a href="{{route('exprotOpeningStockWithProduct')}}" class="btn btn-info btn-sm ">
+                                            <i class="fas fa-download"></i>Download template file with preset data
+                                        </a>
+                                    </div>
+                                </div>
                                 <div class="row mb-5 align-items-center ">
+                                    <!--begin::Input-->
                                     <div class="col-sm-6 ">
                                         <!--begin::Label-->
                                         <label class="form-label  col-12 mb-5 fs-3 d-block" for="formFileSm">
@@ -135,14 +148,9 @@
                                             <i class="fas fa-info-circle ms-1 fs-7 text-success cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
                                             title="This feature is used to import opening stock of already added products. If the products are not added in the system then it is advisable to use import products for adding product details with opening stock."></i>
                                         </label>
+
                                         <input class="form-control col-3 " id="formFileSm" name="ImportedFile" type="file"  />
                                         <!--end::Label-->
-                                    </div>
-                                    <!--begin::Input-->
-                                    <div class="col-sm-3 row align-items-center mt-13">
-                                        <a href="{{route('download-excel')}}"  class="btn btn-primary btn-sm ">
-                                            <i class="fas fa-download"></i>Download template file
-                                        </a>
                                     </div>
                                 </div>
                             </div>

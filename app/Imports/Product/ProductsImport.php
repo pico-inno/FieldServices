@@ -114,9 +114,11 @@ class ProductsImport implements
                     }
                 }
             }
-
-            $vari_sku = $variation_sku[$key] ?? $product_sku . '-' . $key + 1;
-
+            if(trim($variation_sku[$key]) == '') {
+                $vari_sku =$product_sku . '-' . $key + 1;
+            }else {
+                $vari_sku = $variation_sku[$key];
+            };
             $format_data[] = [
                 'product_id' => $product_id,
                 'variation_sku' => $vari_sku,
@@ -247,6 +249,7 @@ class ProductsImport implements
                 ]);
                 $product->save();
                 $product_id = $product->fresh()->id;
+                $createdProduct=$product->fresh();
 
                 ProductVariationsTemplates::create([
                     'product_id' => $product_id,
@@ -269,6 +272,7 @@ class ProductsImport implements
                 if (trim($hasVariation) === "single") {
                     ProductVariation::create([
                         'product_id' => $product_id,
+                        'variation_sku'=>$createdProduct->sku,
                         'default_purchase_price' => $row['purchase_price'],
                         'profit_percent' => $row['profit_margin'],
                         'default_selling_price' => $row['selling_price'],

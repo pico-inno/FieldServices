@@ -90,6 +90,10 @@ class Product extends Model
     {
         return $this->belongsTo(UOM::class);
     }
+    public function purchaseUOM(): BelongsTo
+    {
+        return $this->belongsTo(UOM::class, 'purchase_uom_id','id');
+    }
 
     public function stock()
     {

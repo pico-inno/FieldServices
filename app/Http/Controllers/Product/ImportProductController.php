@@ -33,7 +33,7 @@ class ImportProductController extends Controller
         $import = new ProductsImport;
         $import->import($file);
 
-        return back();
+        return back()->with(['success'=>'Successfully Imported']);
     }
     public function dowloadDemoExcel()
     {

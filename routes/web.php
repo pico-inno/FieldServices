@@ -77,6 +77,7 @@ use App\Http\Controllers\Product\ImportProductController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
 use App\Http\Controllers\configurationController;
+use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
@@ -444,7 +445,9 @@ Route::controller(importOpeningStockController::class)->group(function () {
     Route::post('/opening/import', 'import')->name('importOpeningStock');
     Route::get('/download/demo/excel', 'dowloadDemoExcel')->name('download-excel');
 });
-
+Route::controller(ExportController::class)->group(function () {
+    Route::get('/opening/export/product', 'export')->name('exprotOpeningStockWithProduct');
+});
 //============================ End::Opening Stock ============================================
 Route::prefix('stock-history')->group(function () {
     Route::controller(stockHistoryController::class)->group(function () {
