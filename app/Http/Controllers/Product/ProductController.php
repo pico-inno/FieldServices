@@ -430,6 +430,7 @@ class ProductController extends Controller
         if ($has_variation === "single") {
             $productSingle = [
                 'product_id' => $nextProductId,
+                'variation_sku' => $nextProduct['sku'],
                 'variation_template_value_id' => $nextProduct['sku'],
                 'default_purchase_price' => $request->single_exc,
                 'profit_percent' => $request->single_profit,
