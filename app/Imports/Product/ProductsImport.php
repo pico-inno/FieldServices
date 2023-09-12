@@ -128,6 +128,33 @@ class ProductsImport implements
 
         return $format_data;
     }
+    private function UoMID($query1, $query2, $data1, $data2){
+        if ($data1 && $data2) {
+            $raw_query1 = $query1->where('name', $data1)->first();
+            if ($raw_query1) {
+                 $raw_data = $query2->where('name', $data2)->where('unit_category_id',  $raw_query1->id)->first();
+
+                 if(!$raw_data){
+                    throw new \Exception("UoM doesn't exist");
+                }
+                 return $raw_data->id;
+            }
+        }
+    }
+
+    private function PurchaseUoMID($query1, $query2, $data1, $data2){
+        if ($data1 && $data2) {
+            $raw_query1 = $query1->where('name', $data1)->first();
+            if ($raw_query1) {
+                 $raw_data = $query2->where('name', $data2)->where('unit_category_id', $raw_query1->id)->first();
+
+                 if(!$raw_data){
+                    throw new \Exception("UoM doesn't exist");
+                }
+                 return $raw_data->id;
+            }
+        }
+    }               
 
     private function processUoM($rowData){
         $unitCategoryName = $rowData['unit_category'];
@@ -209,7 +236,9 @@ class ProductsImport implements
                 $category_id = $this->createOrGetRecord(Category::class, $this->categories, 'name', $row['category'], 'parent_id');
                 $generic_id = $this->createOrGetRecord(Generic::class, $this->generics, 'name', $row['generic']);
                 $manufacturer_id = $this->createOrGetRecord(Manufacturer::class, $this->manufacturers, 'name', $row['manufacturer']);
-                $uom = $this->processUoM($row);
+                // $uom = $this->processUoM($row);
+                $uom_id = $this->UoMID($this->unit_category, $this->uom, $row['unit_category'], $row['uom']);
+                $purchase_uom_id = $this->PurchaseUoMID($this->unit_category, $this->uom, $row['unit_category'], $row['purchase_uom']);
                 $variation_name = $row['variation_name_keep_blank_if_product_type_is_single'];
                 $variation_id = $variation_name ? $this->createOrGetRecord(VariationTemplates::class, $this->variations, 'name', $variation_name) : null;
 
@@ -229,8 +258,8 @@ class ProductsImport implements
                     "can_sale" => $row['can_sale_0_or_1'],
                     "can_purchase" => $row['can_purchase_0_or_1'],
                     "can_expense" => $row['can_expense_0_or_1'],
-                    "uom_id" => $uom['uom_id'],
-                    "purchase_uom_id" => $uom['purchaseUoM_id'],
+                    "uom_id" => $uom_id,
+                    "purchase_uom_id" => $purchase_uom_id,
                     "product_custom_field1" => $row["custom_field_1"],
                     "product_custom_field2" => $row["custom_field_2"],
                     "product_custom_field3" => $row["custom_field_2"],
