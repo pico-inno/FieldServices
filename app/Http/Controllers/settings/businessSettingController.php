@@ -66,7 +66,11 @@ class businessSettingController extends Controller
             'currency_symbol_placement' => $request->currency_symbol_placement,
             'use_paymentAccount' => $request->use_paymentAccount ? '1' : '0',
             'finanical_year_start_month' => $request->finanical_year_start_month,
+            'enable_row'=>$request->enable_row ?? 0,
+            'date_format' => $request->date_format ,
+            'time_format' => $request->time_format ,
         ];
+        // dd($data);
 
         $oldData=businessSettings::where('id',Auth::user()->business_id)->first();
         $logoPath=$this->saveLogo($request, $oldData->logo);

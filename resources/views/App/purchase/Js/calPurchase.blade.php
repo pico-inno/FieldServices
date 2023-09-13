@@ -5,7 +5,6 @@ $(document).ready(function() {
     let setting=@json($setting);
     let currency=@json($currency);
     let currentCurrency=currency;
-    console.log(currentCurrency);
     let currentCurrencySymbol=currency.symbol;
     let currencies=@json($currencies);
     let lotControl=setting.lot_control;

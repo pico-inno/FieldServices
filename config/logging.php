@@ -123,7 +123,7 @@ return [
             'url' => env('SLACK_WEBHOOK_URL'),
             'channel' => '#logs',
             'username' => 'Pico SBS',
-            'emoji' => ':heart:', // Customize the emoji as needed
+            'emoji' => ':bomb:', // Customize the emoji as needed
             'level' => 'error',
         ],
     ],

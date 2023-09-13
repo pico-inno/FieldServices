@@ -73,8 +73,14 @@ function fprice($price){
 function fDate($date,$br=false)
 {
     $dateTime =date_create($date);
-    $formattedDate = $dateTime->format("d-M-Y " );
-    $formattedTime = $dateTime->format(" h:i A " );
+    $setting = getSettings();
+    $formattedDate = $dateTime->format("$setting->date_format" );
+    // dd($setting->time_format);
+    if($setting->time_format=='12'){
+        $formattedTime = $dateTime->format(" h:i A " );
+    }else {
+        $formattedTime = $dateTime->format(" H:i A ");
+    }
     if($br){
         return $formattedDate.'<br>'.'('.$formattedTime.')';
     }else{
@@ -102,7 +108,9 @@ function getSettings()
         ->select(
             'currency_id',
             'currency_decimal_places',
-            'quantity_decimal_places'
+            'quantity_decimal_places',
+            'date_format',
+            'time_format'
         )
         ->first();
 }

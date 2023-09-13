@@ -238,6 +238,18 @@
 
         //append table row for product to sell
         function append_row(selected_product,unique_name_id) {
+            if(setting.enable_row == 0){
+               let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
+               if(checkProduct){
+                    // let ParentRow=$(`[data-product=${selected_product.product_variations.id}]`);
+                    let selectQtyInput=document.querySelectorAll(`.quantity-${selected_product.product_variations.id}`);
+                    let qtyInput=selectQtyInput[selectQtyInput.length-1];
+                    let val=isNullOrNan(qtyInput.value);
+                    qtyInput.value=val+1;
+                    checkAndStoreSelectedProduct(selected_product);
+                    return;
+               }
+            }
             let default_purchase_price,variation_id;
             let isStorable=selected_product.product_type=="storable";
             // let uomSetOption=""
@@ -277,9 +289,9 @@
                 }
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
             var newRow = `
-                <tr class="sale_row mt-2">
+                <tr class="sale_row mt-2" data-product="${selected_product.product_variations.id}">
                     <td>
-                        <div class="">
+                        <div class="w-250px">
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
@@ -300,7 +312,7 @@
                     </td>
                     <td>
                         <span class="text-danger-emphasis  stock_alert_${selected_product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
-                        <div class="input-group sale_dialer_${unique_name_id}" >
+                        <div class="input-group sale_dialer_${unique_name_id} w-200px" >
                             <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
                                 <i class="fa-solid fa-minus fs-2"></i>
                             </button>
@@ -348,9 +360,15 @@
                         <input type="hidden" class="line_subtotal_discount" name="sale_details[${unique_name_id}][line_subtotal_discount]" value="0">
                         <input type="hidden" class="currency_id" name="sale_details[${unique_name_id}][currency_id]" value="0">
                     </td>
-                    <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
+                    <th class="text-end">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <i class="fa-solid fa-arrows-split-up-and-left fa-rotate-270 text-success p-2 pe-5 fs-6 pe-5 splitNewRow" type="button"></i>
+                            <i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
+                        </div>
+                    </th>
                 </tr>
             `;
+
 
             // new row append
             $('#sale_table tbody').prepend(newRow);
@@ -358,8 +376,12 @@
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
             numberOnly();
+                $('.splitNewRow').click(function () {
+                    let parent = $(this).closest('.sale_row');
+                    parent.clone().appendTo(".saleDetailItems");
+                    console.log(parent);
+                });
             $('#searchInput').val('');
-            console.log(selected_product,'----------------sp----------------------');
             checkAndStoreSelectedProduct(selected_product);
             let rowCount = $('#sale_table tbody tr').length;
 

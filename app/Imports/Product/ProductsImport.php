@@ -131,6 +131,9 @@ class ProductsImport implements
 
     private function processUoM($rowData){
         $unitCategoryName = $rowData['unit_category'];
+        if (!$unitCategoryName) {
+            throw new \Exception("Unit Category Required");
+        }
         $uomName = $rowData['uom'];
         $purchaseUoMName = $rowData['purchase_uom'];
 
@@ -226,9 +229,9 @@ class ProductsImport implements
                     "category_id" => $category_id,
                     "manufacturer_id" => $manufacturer_id,
                     "generic_id" => $generic_id,
-                    "can_sale" => $row['can_sale_0_or_1'],
-                    "can_purchase" => $row['can_purchase_0_or_1'],
-                    "can_expense" => $row['can_expense_0_or_1'],
+                    "can_sale" => $row['can_sale_0_or_1'] ?? 0,
+                    "can_purchase" => $row['can_purchase_0_or_1'] ?? 0,
+                    "can_expense" => $row['can_expense_0_or_1'] ?? 0,
                     "uom_id" => $uom['uom_id'],
                     "purchase_uom_id" => $uom['purchaseUoM_id'],
                     "product_custom_field1" => $row["custom_field_1"],

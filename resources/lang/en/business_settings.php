@@ -50,6 +50,8 @@ return [
     'default_pay_term'=>'Default Pay Term',
 
     //Sale
+    'allow_overselling'=> 'Allow Overselling',
+    'enable_sale_item_in_new_row'=> 'Enable Sale Item In New Row',
     'enable_line_discount_for_sale' => 'Enable Line Discount For sale',
     'default_sale_discount' => 'Default Sale Discount',
     'default_sale_tax' => 'Default Sale Tax',
@@ -293,7 +295,7 @@ return [
     'add_item_expiry' => 'Add Item Expiry',
     'add_manufacturing_date_and_expiry_period' => 'Add Manufacturing date & expiry period',
     'on_product_expiry' => 'On Product Expiry',
-    'keep_selling' => 'Enable Keep Selling',
+    'keep_selling_on_expired' => 'Enable Keep Selling On Expired',
     'stop_selling_n_day_before' => 'Stop Selling n day before',
     'enable_sub_categories' => 'Enable Sub Categories',
     'enable_price_and_tax_info' => 'Enable Price & Tax info',

@@ -390,13 +390,13 @@
                                         </span>
                                         <!--end::Marked-->
                                     </div>
-                                    <div class="menu-item  mb-3 d-block">
+                                    {{-- <div class="menu-item  mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_dashboard"  data-bs-target="#business_setting_dashboard" >
                                             <span class="menu-title fw-bold">{{__('business_settings.dashboard')}}</span>
                                         </span>
                                         <!--end::Marked-->
-                                    </div>
+                                    </div> --}}
                                     <div class="menu-item  mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_system"  data-bs-target="#business_setting_system" >
@@ -411,20 +411,20 @@
                                         </span>
                                         <!--end::Marked-->
                                     </div>
-                                    <div class="menu-item  mb-3 d-block">
+                                    {{-- <div class="menu-item  mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_emailSetting"  data-bs-target="#business_setting_emailSetting" >
                                             <span class="menu-title fw-bold">{{__('business_settings.email_setting')}}</span>
                                         </span>
                                         <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
+                                    </div> --}}
+                                    {{-- <div class="menu-item  mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_sms"  data-bs-target="#business_setting_sms" >
                                             <span class="menu-title fw-bold">{{__('business_settings.sms_setting')}}</span>
                                         </span>
                                         <!--end::Marked-->
-                                    </div>
+                                    </div> --}}
                                     <div class="menu-item  mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_reward_point_setting"  data-bs-target="#business_setting_reward_point_setting" >
@@ -439,13 +439,13 @@
                                         </span>
                                         <!--end::Marked-->
                                     </div>
-                                    <div class="menu-item  mb-3 d-block">
+                                    {{-- <div class="menu-item  mb-3 d-block">
                                         <!--begin::Marked-->
                                         <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_custom_labels"  data-bs-target="#business_setting_custom_labels" >
                                             <span class="menu-title fw-bold">{{__('business_settings.customs_label')}}</span>
                                         </span>
                                         <!--end::Marked-->
-                                    </div>
+                                    </div> --}}
 
                             </div>
                         </div>
@@ -686,11 +686,10 @@
                                                             </span>
                                                             <div class="overflow-hidden flex-grow-1">
                                                                 <select name="date_format" id="date_format" data-hide-search="true" class="form-select rounded-start-0 form-select-sm" data-control="select2" data-placeholder="">
-                                                                    <option value="1">dd-mm-yyyy</option>
-                                                                    <option value="2">mm-dd-yyyy</option>
-                                                                    <option value="2">dd/mm/yyyy</option>
-                                                                    <option value="2">mm/dd/yyyy</option>
-
+                                                                    <option value="d-m-y">dd-mm-yyyy</option>
+                                                                    <option value="m-d-y">mm-dd-yyyy</option>
+                                                                    <option value="d/m/y">dd/mm/yyyy</option>
+                                                                    <option value="m/d/y">mm/dd/yyyy</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -705,8 +704,8 @@
                                                             </span>
                                                             <div class="overflow-hidden flex-grow-1">
                                                                 <select name="time_format" id="time_format" data-hide-search="true" class="form-select rounded-start-0 form-select-sm" data-control="select2" data-placeholder="">
-                                                                    <option value="1">24 hours</option>
-                                                                    <option value="2">12 hours</option>
+                                                                    <option value="24">24 hours</option>
+                                                                    <option value="12">12 hours</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -754,11 +753,8 @@
                                                     <!--end::Label-->
                                                     <select name="quantity_decimal_places" id="currency_rounded_method" class="form-select form-select-sm"
                                                         data-control="select2" data-placeholder="Select month">
-                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>0</option>
-                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>1</option>
-                                                        <option value="2" @selected($settingData['quantity_decimal_places']==2)>2</option>
-                                                        <option value="3" @selected($settingData['quantity_decimal_places']==3)>3</option>
-                                                        <option value="4" @selected($settingData['quantity_decimal_places']==4)>4</option>
+                                                        <option value="0" @selected($settingData['quantity_decimal_places'] == 0)>RoundUp</option>
+                                                        <option value="1" @selected($settingData['quantity_decimal_places'] == 1)>RoundDown</option>
                                                     </select>
 
                                                 </div>
@@ -772,11 +768,8 @@
                                                     <!--end::Label-->
                                                     <select name="quantity_decimal_places" id="quantity_rounded_method" class="form-select form-select-sm"
                                                         data-control="select2" data-placeholder="Select month">
-                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>0</option>
-                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>1</option>
-                                                        <option value="2" @selected($settingData['quantity_decimal_places']==2)>2</option>
-                                                        <option value="3" @selected($settingData['quantity_decimal_places']==3)>3</option>
-                                                        <option value="4" @selected($settingData['quantity_decimal_places']==4)>4</option>
+                                                        <option value="0" @selected($settingData['quantity_decimal_places'] == 0)>RoundUp</option>
+                                                        <option value="1" @selected($settingData['quantity_decimal_places'] == 1)>RoundDown</option>
                                                     </select>
 
                                                 </div>
@@ -896,7 +889,7 @@
                                                     </div> --}}
                                                     <div class="form-check form-switch ">
                                                         <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="flexSwitchCheckDefault" >
-                                                        <label class="form-check-label" for="flexSwitchCheckDefault">{{__('business_settings.keep_selling')}}</label>
+                                                        <label class="form-check-label" for="flexSwitchCheckDefault">{{__('business_settings.keep_selling_on_expired')}}</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-7 col-lg-4">
@@ -1041,54 +1034,20 @@
                                                 </div>
                                             </div>
                                             <div class="row fv-row row-cols flex-wrap">
-                                                 <div class="col-md-12  mb-7  col-lg-4">
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="sales_item_addition_method">
-                                                        <span class="required">Sales Item Addition Method:</span>
-                                                    </label>
-                                                    <div class="overflow-hidden flex-grow-1">
-                                                        <select name="sales_item_addition_method" id="sales_item_addition_method" data-hide-search="true" class="form-select rounded-start-0" data-control="select2" data-placeholder="">
-                                                            <option value="1">{{__('business_settings.add_item_in_new_row')}}</option>
-                                                            <option value="2" selected>{{__('business_settings.increase_item_quantity_if_it_already_exists')}}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row row-cols">
                                                 <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="amount_rounding_method">
-                                                            <span class="required">{{__('business_settings.amount_rounding_method')}}</span>
-                                                        </label>
-                                                        <select name="amount_rounding_method" id="amount_rounding_method" data-hide-search="true" class="form-select" data-control="select2" data-placeholder="">
-                                                            <option value="1">{{__('business_settings.none')}}</option>
-                                                            <option value="2" selected>{{__('business_settings.round_to_nearest_whole_number')}}</option>
-                                                        </select>
-                                                </div>
-                                                 <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
-                                                    <div class="form-check form-check-custom">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="minimun_selling_price" id="minimun_selling_price">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="minimun_selling_price">
-                                                            <span >{{__('business_settings.sales_price_is_minimum_selling_price')}}</span>
-                                                        </label>
+                                                    <div class="form-check form-switch ">
+                                                        <input class="form-check-input cursor-pointer" type="checkbox" name="enable_row" value="1" role="switch" id="enable_row" @checked($settingData['enable_row']) >
+                                                        <label class="form-check-label text-gray-800" for="enable_row">{{__('business_settings.enable_sale_item_in_new_row')}}</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
-                                                    <div class="form-check form-check-custom">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="allow_overselling" id="allow_overselling">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="allow_overselling">
-                                                            <span >{{__('business_settings.allow_overselling')}}</span>
-                                                        </label>
+                                                <div class="col-md-12  mb-7  col-lg-4">
+                                                    <div class="form-check form-switch ">
+                                                        <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                                        <label class="form-check-label text-gray-800" for="flexSwitchCheckDefault">{{__('business_settings.allow_overselling')}}</label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row row-cols">
-                                                {{-- <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
-                                                    <div class="form-check form-check-custom">
-                                                        <input type="checkbox" class="form-check-input me-3 border-gray-400" name="enable_sale_order" id="enable_sale_order">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_sale_order">
-                                                            <span > Enable Sales Order</span>
-                                                        </label>
-                                                    </div>
-                                                </div> --}}
                                                 <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input @checked($settingData['enable_line_discount_for_sale']=='1')  type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_line_discount_for_sale" id="enable_line_discount_for_sale" value="1">
@@ -1103,115 +1062,6 @@
                                                             <span >{{__('business_settings.is_pay_term_required')}}</span>
                                                         </label>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="separator border-gray-600 my-4"></div>
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="row mb-7">
-                                                    <div class="col-md-9 p-3">
-                                                        <h2 class="text-primary">{{__('business_settings.commission_agent')}}</h2>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="sales_commission_agent">
-                                                        <span class="required">{{__('business_settings.sales_commission_agent')}}</span>
-                                                    </label>
-                                                        <div class="input-group flex-nowrap">
-                                                            <span class="input-group-text">
-                                                              <i class="fa-solid fa-info"></i>
-                                                            </span>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                                <select name="sales_commission_agent" id="sales_commission_agent" data-hide-search="true" class="form-select rounded-start-0" data-control="select2" data-placeholder="sales_commission_agent">
-                                                                    <option value="1">{{__('business_settings.disabled')}}</option>
-                                                                    <option value="2" selected>{{__('business_settings.logged_in_user')}}</option>
-                                                                    <option value="2" selected>{{__('business_settings.select_from_user_list')}}</option>
-                                                                    <option value="2" selected>{{__('business_settings.select_from_commission_agent_list')}}</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="commission_calc_type">
-                                                            <span class="required">{{__('business_settings.commission_calculation_type')}}</span>
-                                                        </label>
-                                                        <div class="input-group flex-nowrap">
-                                                            <span class="input-group-text" >
-                                                              <i class="fa-solid fa-info"></i>
-                                                            </span>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                                <select name="commission_calc_type" id="commission_calc_type" data-hide-search="true" class="form-select rounded-start-0" data-control="select2" data-placeholder="">
-                                                                    <option value="1">{{__('business_settings.invoice_value')}}</option>
-                                                                    <option value="2" selected>{{__('business_settings.payment_received')}}</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
-                                                    <div class="form-check form-check-custom">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="commission_agent_required" id="commission_agent_required">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="commission_agent_required">
-                                                            <span >{{__('business_settings.is_commission_agent_required')}}</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="separator border-gray-600 my-4"></div>
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="row mb-7">
-                                                    <div class="col-md-9 p-3">
-                                                        <h2 class="d-inline text-primary">{{__('business_settings.payment_link')}}</h2>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="By enabling users can pay invoice using payment link."></i>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12  d-flex align-items-center py-3">
-                                                    <div class="form-check form-check-custom">
-                                                        <input type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_payment_link" id="enable_payment_link">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_payment_link">
-                                                            <span >{{__('business_settings.enable_payment_link')}}</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="row mt-4 mb-1">
-                                                    <div class="col-md-9 p-3">
-                                                        <h2 class="d-inline text-primary">{{__('business_settings.razorpay')}}</h2>
-                                                        <span class="text-muted">{{__('business_settings.for_inr_india')}}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="razorpay_key_id">
-                                                        <span class="required">{{__('business_settings.key_id')}}</span>
-                                                    </label>
-                                                    <input type="text" name="razorpay_key_id" id="razorpay_key_id" class="form-control form-control">
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="razorpay_key_secret">
-                                                            <span class="required">{{__('business_settings.key_secret')}}</span>
-                                                        </label>
-                                                        <input type="text" name="razorpay_key_secret" id="razorpay_key_secret" class="form-control form-control">
-                                                </div>
-                                            </div>
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="row mt-4 mb-1">
-                                                    <div class="col-md-9 p-3">
-                                                        <h2 class="d-inline">{{__('business_settings.stripe')}}</h2>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="stripe_public_key">
-                                                        <span class="required">{{__('business_settings.stripe_public_key')}}</span>
-                                                    </label>
-                                                    <input type="text" name="stripe_public_key" id="stripe_public_key" class="form-control form-control">
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="stripe_secret_key">
-                                                            <span class="required">{{__('business_settings.stripe_secret_key')}}</span>
-                                                        </label>
-                                                        <input type="text" name="stripe_secret_key" id="stripe_secret_key" class="form-control form-control">
                                                 </div>
                                             </div>
 
@@ -1230,10 +1080,13 @@
                                                     <h3 class="fw-lighter fs-2 text-primary">
                                                         {{__('business_settings.add_keyboard_shortcuts')}}
                                                     </h3>
-                                                    <p class="text-gray-600 py-2 fs-6">
+                                                    <h2 class="text-gray-600 mt-5 text-center">
+                                                        Comming Soon......
+                                                    </h2>
+                                                    <p class="text-gray-600 py-2 fs-6 d-none">
                                                         {{__('business_settings.shortcut_should_be_the_names_of_the_keys_separated_by')}} <b>'+'</b>; {{__('business_settings.example')}}: <b>ctrl+shift+b, ctrl+h</b>
                                                     </p>
-                                                    <div class="help-class ">
+                                                    <div class="help-class d-none">
                                                         <h4 class=" text-gray-600 d-block fs-3">{{__('business_settings.available_key_names_are')}}:</h4>
                                                         <p class="fs-6 text-gray-600">
                                                             shift, ctrl, alt, backspace, tab, enter, return, capslock, esc, escape, space, pageup, pagedown, end, home,
@@ -1241,7 +1094,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row  flex-wrap mt-4 mb-7">
+                                            <div class="row  flex-wrap mt-4 mb-7 d-none">
                                                 {{-- left setting --}}
                                                 <div class="col-12 col-lg-6 px-5">
                                                     <div class="row mb-7 row-cols flex-wrap">
@@ -1384,12 +1237,12 @@
                                                 </div>
                                             </div>
                                              <!--begin::Heading-->
-                                            <div class="row mb-7">
+                                            <div class="row mb-7 d-none">
                                                 <div class="col-md-9 p-3">
                                                     <h2  class="text-primary">{{__('business_settings.pos_settings')}}:</h2>
                                                 </div>
                                             </div>
-                                            <div class="row fv-row row-cols flex-wrap">
+                                            <div class="row fv-row row-cols flex-wrap d-none">
                                                 <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="disable_mulitple_pay" id="disable_mulitple_pay">
@@ -1415,7 +1268,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row fv-row row-cols flex-wrap">
+                                            <div class="row fv-row row-cols flex-wrap d-none">
                                                <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="show_product_suggestion" id="show_product_suggestion">
@@ -1441,7 +1294,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row fv-row row-cols flex-wrap">
+                                            <div class="row fv-row row-cols flex-wrap  d-none">
                                                 <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="disable_order_tax" id="disable_order_tax">
@@ -1467,7 +1320,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row fv-row row-cols flex-wrap">
+                                            <div class="row fv-row row-cols flex-wrap  d-none">
                                                <div class="col-md-12 mb-13 col-lg-6  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_transaction_date_on_pos_screen" id="enable_transaction_date_on_pos_screen">
@@ -1484,7 +1337,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row fv-row row-cols flex-wrap">
+                                            <div class="row fv-row row-cols flex-wrap  d-none">
                                                 <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="service_staff_required" id="service_staff_required">
@@ -1510,7 +1363,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row fv-row row-cols flex-wrap">
+                                            <div class="row fv-row row-cols flex-wrap  d-none">
                                                 <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="show_invoice_scheme" id="show_invoice_scheme">
@@ -1536,7 +1389,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row mb-7 row-cols flex-wrap">
+                                            <div class="row mb-7 row-cols flex-wrap  d-none">
                                                 <div class="col-12 d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" name="procing_on_product_suggestion_tooltip" id="procing_on_product_suggestion_tooltip">
@@ -1547,9 +1400,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="separator border-gray-600 my-7"></div>
+                                            <div class="separator border-gray-600 my-7 d-none"></div>
 
-                                            <div class="row row-cols">
+                                            <div class="row row-cols d-none">
                                                 <div class="col-12">
                                                     <h3 class="fw-lighter fs-2 text-primary">
                                                         {{__('business_settings.weighing_sale_barcode_setting')}}:
@@ -1559,7 +1412,7 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="row row-cols">
+                                            <div class="row row-cols d-none">
                                                 <div class="col-md-12  mb-7  col-lg-4">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="barcode_perfix">
                                                         <span class="required">{{__('business_settings.prefix')}}:</span>
@@ -1595,7 +1448,7 @@
                                                         </select>
                                                 </div>
                                             </div>
-                                            <div class="row row-cols">
+                                            <div class="row row-cols d-none">
                                                 <div class="col-md-12  mb-7  col-lg-4">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="quantity_fractional_part_length">
                                                         <span class="">{{__('business_settings.quantity_fractional_part_length')}}:</span>
@@ -1634,15 +1487,6 @@
                                                         <input @checked($settingData['enable_line_discount_for_purchase']=='1')  type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_line_discount_for_purchase" id="enable_line_discount_for_purchase" value="1">
                                                         <label class="fs-6 fw-semibold form-label mt-3" for="enable_line_discount_for_purchase">
                                                         <span>{{__('business_settings.enable_line_discount')}}</span>
-                                                    </div>
-                                                </div>
-                                               <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
-                                                    <div class="form-check form-check-custom ">
-                                                        <input checked type="checkbox" class="form-check-input border-gray-400 me-3" name="enable_editing_product_price_from_purchase_screen" id="enable_editing_product_price_from_purchase_screen">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="enable_editing_product_price_from_purchase_screen">
-                                                        <span>{{__('business_settings.enable_editing_product_price_from_purchase_screen')}}
-                                                            <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="If enable product purchase price and selling price will be updated after a purchase is added or updated"></i>
-                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-13 col-lg-6  d-flex align-items-center">
@@ -1699,7 +1543,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="row fv-row row-cols flex-wrap">
+                                            {{-- <div class="row fv-row row-cols flex-wrap">
                                                <div class="col-12">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="cash_denominations">
                                                         <span class="">{{__('business_settings.cash_denominations')}}:</span>
@@ -1746,10 +1590,10 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                     </div>
                                     {{-- dashobard-tab --}}
-                                    <div class="tab-pane setting-tab fade" id="business_setting_dashboard" role="tabpanel">
+                                    <div class="tab-pane setting-tab fade d-none" id="business_setting_dashboard" role="tabpanel">
                                          <!--begin::Heading-->
                                             <div class="row mb-7">
                                                 <div class="col-12 p-3">
@@ -1783,7 +1627,7 @@
                                                 </div>
                                             </div>
                                             <div class="row row-cols">
-                                                <div class="col-md-12  mb-7  col-lg-6">
+                                                {{-- <div class="col-md-12  mb-7  col-lg-6">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="theme_color">
                                                         <span class="">{{__('business_settings.theme_color')}}</span>
                                                     </label>
@@ -1791,7 +1635,7 @@
                                                         <option value="1">Blue</option>
                                                         <option value="2" ></option>
                                                     </select>
-                                                </div>
+                                                </div> --}}
                                                 <div class="col-md-12  mb-7  col-lg-6">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="default_page_entries">
                                                         <span class="">{{__('business_settings.default_datatable_page_entries')}}</span>
@@ -1806,7 +1650,7 @@
                                                 </div>
 
                                             </div>
-                                            <div class="row row-cols">
+                                            {{-- <div class="row row-cols">
                                                 <div class="col-md-12 mb-13 col-lg-6  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
                                                         <input type="checkbox" class="form-check-input border-gray-400 me-3" id="show_help_text" name="show_help_text">
@@ -1816,7 +1660,7 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                     </div>
 
                                     {{-- prefix-tab --}}
