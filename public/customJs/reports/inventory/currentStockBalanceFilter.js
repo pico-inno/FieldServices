@@ -9,8 +9,7 @@
     var filterCategory = filterCard.find('.filter_category');
     var filterBrand = filterCard.find('.filter_brand');
     var filterDate = filterCard.find('.filter_date');
-    var filterBatchDetails = 1;
-    var filterAllBatchMerge = 1;
+    var filterView = filterCard.find('.filter_view');
 
 
      var handleSearchDatatable = () => {
@@ -24,36 +23,30 @@
      }
 
      handleSearchDatatable();
-    $('#kt_daterangepicker_5, #batchDetailsCheck, #allBatchMergeCheck, .filter-card select, .filter-card input').on('change', function() {
-        var batchDetails = $('#batchDetailsCheck');
-        var allBatchMerge = $('#allBatchMergeCheck');
-        filterBatchDetails = batchDetails.prop('checked') ? 0 : 1;
-        filterAllBatchMerge = allBatchMerge.prop('checked') ? 0 :1;
-
-
+    $('#kt_daterangepicker_5, .filter-card select, .filter-card input').on('change', function() {
 
         var filterLocationsVal = filterLocations.val();
         var filterProductVal = filterProduct.val();
         var filterCategoryVal = filterCategory.val();
         var filterBrandVal = filterBrand.val();
         var filterDateVal = filterDate.val();
+        var filterViewVal = filterView.val();
         stockReportsTableBody.empty();
-        filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterAllBatchMerge, filterBatchDetails);
+        filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal);
     });
 
 
     var filterDateVal = filterDate.val();
-    filterData( 0, 0, 0, 0, filterDateVal, filterAllBatchMerge, filterBatchDetails);
+    filterData( 0, 0, 0, 0, filterDateVal, 0);
 
-    async function filterData( filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterAllBatchMerge, filterBatchDetails) {
+    async function filterData( filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterViewVal) {
         var data = {
             filter_locations: filterLocations,
             filter_product: filterProductVal,
             filter_category: filterCategoryVal,
             filter_brand: filterBrandVal,
             filter_date: filterDate,
-            filter_batch_details: filterBatchDetails,
-            filter_all_batch_merge: filterAllBatchMerge,
+            filter_view: filterViewVal,
         };
         try {
             $.ajax({
@@ -96,7 +89,9 @@
                             Number(item.current_qty).toFixed(2)+' '+item.ref_uom_short_name ?? '',
                             item.ref_uom_name ?? '',
                         ];
-
+                        // if (filterViewVal == 3) {
+                        //     rowData.splice(3, 0, item.lot_no);
+                        // }
 
                         dataTable.row.add(rowData);
 
@@ -113,5 +108,19 @@
         }
     }
 
+
+function enableLotSerialColumn(showLotSerial){
+    var tableHeader = document.getElementById("current_stock_balance_reports_table").getElementsByTagName("thead")[0];
+    var lotSerialTh = tableHeader.querySelector("th:nth-child(4)"); 
+
+    if (showLotSerial) {
+       
+        lotSerialTh.style.display = "table-cell";
+    } else {
+        
+        lotSerialTh.style.display = "none";
+    }
+
+}
 
 });

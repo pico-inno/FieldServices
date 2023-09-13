@@ -116,26 +116,16 @@
                                        id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
                             </div>
                             <!--end::Input group-->
-
-                            <!--begin::Input group-->
-                            <div class="mb-10 col-6 col-md-3 pt-md-12">
-                                <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="allBatchMergeCheck" />
-                                    <label class="form-check-label" for="allBatchMergeCheck">
-                                       All Batch
-                                    </label>
-                                </div>
-                            </div>
-                            <!--end::Input group-->
-
-                            <!--begin::Input group-->
-                            <div class="mb-10 col-6 col-md-3 pt-md-12">
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input form-check-sm filter_lot" type="checkbox" value="1" id="batchDetailsCheck" />
-                                <label class="form-check-label" for="batchDetailsCheck">
-                                    Batch Details
-                                </label>
-                            </div>
+                                     <!--begin::Input group-->
+                                     <div class="mb-5 col-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold">View By</label>
+                                <select class="form-select form-select-sm  fw-bold filter_view" data-kt-select2="true"
+                                        data-placeholder="Select View Option" data-allow-clear="true" data-hide-search="true">
+                                    <option></option>
+                                    <option value="1">Batch</option>
+                                    <option value="2">Batch Details</option>
+                                    <option @if($enableLotSerial == 'off') disabled @endif value="3">Lot/Serial</option>
+                                </select>
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -228,7 +218,7 @@
                             <th>SKU</th>
                             <th>Product & Variation</th>
                             <th>Batch No</th>
-                            <th>Lot No</th>
+                            <th>Lot/Serial</th>
                             <th>Location</th>
                             <th>Category</th>
                             <th>Brand</th>
@@ -445,6 +435,7 @@
 @endsection
 
 @push('scripts')
+
     <script src="customJs/reports/inventory/currentStockBalanceExport.js"></script>
     <script src="customJs/reports/inventory/currentStockBalanceFilter.js"></script>
     <script src="customJs/toaster.js"></script>

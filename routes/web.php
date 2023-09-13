@@ -150,7 +150,6 @@ Route::controller(UserProfileController::class)->group(function () {
 
 //============================ End: User Management ============================================
 
-
 //============================ Being: Stock - In, Out, Transfer, Adjustment ===========================================
 
 //_Being: Stock In
@@ -702,7 +701,7 @@ Route::controller(CategoryController::class)->group(function () {
     Route::get('/category/sub-category/{id}', 'subCategory')->name('sub.category');
     Route::get('/category', 'index')->name('categories');
     Route::get('/category/add', 'add')->name('category.add');
-    Route::post('category/create', 'create')->name('category.create');
+    Route::post('/category/create', 'create')->name('category.create');
     Route::get('/category/edit/{category}', 'edit')->name('category.edit');
     Route::put('/category/update/{category}', 'update')->name('category.update');
     Route::delete('/category/delete/{category}', 'delete')->name('category.delete');

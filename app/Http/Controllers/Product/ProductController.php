@@ -207,7 +207,7 @@ class ProductController extends Controller
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
-//        return $request;
+    //    return $request;
         DB::beginTransaction();
         try{
             // Update Product
@@ -216,7 +216,7 @@ class ProductController extends Controller
             DB::table('products')->where('id', $product->id)->update($productData);
 
             // Update Product Variationn
-            $this->insertProductVariations($request, $product->id, false);
+            $this->insertProductVariations($request, $product, false);
 
             // Update Product Variation Template
             ProductVariationsTemplates::where('product_id', $product->id)->update([

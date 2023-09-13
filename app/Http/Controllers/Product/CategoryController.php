@@ -65,7 +65,21 @@ class CategoryController extends Controller
 
         $category->save();
 
-        return redirect('/category')->with('message', 'Created sucessfully category');
+
+        $categories = Category::all();
+
+        if($request->form_type === "from_product"){
+            return response()->json([
+                'message' => 'Category created sucessfully',
+                'categories' => $categories,
+            ]);
+        }
+        
+        if($request->save === "save"){
+            return redirect('/category')->with('message', 'Created sucessfully category');
+        }
+
+       
     }
 
     public function edit(Category $category)
