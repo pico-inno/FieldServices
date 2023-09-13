@@ -195,10 +195,17 @@
                                 </tr>
                                 <tr>
                                     <td>2</td>
-                                    <td>Variation Values
+                                    <td>Variation Name
                                         <span class="text-muted">(Required if product type is variable)</span>
                                     </td>
                                     <td>Values for the variation (Eg: Red|Blue|Green)</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Product Variation SKU
+                                        <span class="required"></span>
+                                    </td>
+                                    <td>Sku from product variation(if product is variable sku must from variation)</td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
@@ -212,7 +219,7 @@
                                 </tr>
                                 <tr>
                                     <td>4</td>
-                                    <td>UOM Name
+                                    <td>unit (uom name)
                                         <span class="text-muted">(Require)</span>
                                     </td>
                                     <td></td>
@@ -226,10 +233,10 @@
                                 </tr>
                                  <tr>
                                     <td>6</td>
-                                    <td>Per Item Price
+                                    <td> Price
                                         <span class="text-muted">(Require)</span>
                                     </td>
-                                    <td></td>
+                                    <td>Per Item Price</td>
                                 </tr>
                                 <tr>
                                     <td>7</td>
