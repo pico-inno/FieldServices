@@ -22,8 +22,6 @@ class ImportProductController extends Controller
 
     public function index()
     {
-
-
         return view('App.product.import-product.importProduct');
     }
 

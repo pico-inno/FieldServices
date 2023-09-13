@@ -104,11 +104,11 @@
                                                 'instruction' => 'Name of the brand ',
                                                 'note'=>'If not found new brand with the given name will be created'
                                             ],
-                                            [
-                                                'name' => 'Unit Category',
-                                                'is_req' => true,
-                                                'instruction' => 'Unit Category (eg . mass, unit, weight,...)',
-                                            ],
+                                            // [
+                                            //     'name' => 'Unit Category',
+                                            //     'is_req' => true,
+                                            //     'instruction' => 'Unit Category (eg . mass, unit, weight,...)',
+                                            // ],
                                             [
                                                 'name' => 'UoM',
                                                 'is_req' => true,

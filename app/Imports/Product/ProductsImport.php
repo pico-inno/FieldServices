@@ -135,16 +135,21 @@ class ProductsImport implements
 
     private function processUoM($rowData)
     {
-        $unitCategoryName = $rowData['unit_category'];
-        if (!$unitCategoryName) {
-            throw new \Exception("Unit Category Required");
-        }
+        // $unitCategoryName = $rowData['unit_category'];
+        // if (!$unitCategoryName) {
+        //     throw new \Exception("Unit Category Required");
+        // }
         $uomName = $rowData['uom'];
         $purchaseUoMName = $rowData['purchase_uom'];
 
-        $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
-        $uomId = $this->uom->where('name', $uomName)->where('unit_category_id', $unitCategoryId)->pluck('id')->first();
-        $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $unitCategoryId)->pluck('id')->first();
+        // $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
+        $uom = $this->uom->where('name', $uomName)->select('id', 'unit_category_id')->first();
+        $uomId=$uom->id;
+        $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $uom->unit_category_id)->pluck('id')->first();
+        // dd($purchaseUoMId);
+        if(($uomId && !$purchaseUoMId) || (!$uomId && $purchaseUoMId) || (!$uomId && !$purchaseUoMId)) {
+            throw new \Exception("UOM and Purchase uom do not match cateogry.");
+        }
         if (!$uomId) {
             throw new \Exception("UoM doesn't exist");
         }
