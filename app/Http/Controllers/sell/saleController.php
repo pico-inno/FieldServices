@@ -397,7 +397,7 @@ class saleController extends Controller
             } else {
                 if ($request->save == 'save_&_print') {
                     return redirect()->route('all_sales', 'allSales')->with([
-                        'success' => 'Successfully Created Purchase',
+                        'success' => 'Successfully Created Sale',
                         'print' => $sale_data->id,
                     ]);
                 } else {
