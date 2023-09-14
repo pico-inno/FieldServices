@@ -1,4 +1,5 @@
 {
     "ObjectStorage": true,
-    "OrderDisplay": true
+    "OrderDisplay": true,
+    "StockInOut": true
 }
