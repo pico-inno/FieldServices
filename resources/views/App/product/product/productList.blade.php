@@ -186,32 +186,32 @@
                                                     <!--begin::Menu-->
                                                     <div id="kt_datatable_example_export_menu" class="btn-sm menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
                                                         <!--begin::Menu item-->
-                                                        <div class="menu-item px-3">
+                                                        {{-- <div class="menu-item px-3">
                                                             <a href="#" class="menu-link px-3" data-kt-export="copy">
                                                             Copy to clipboard
                                                             </a>
-                                                        </div>
+                                                        </div> --}}
                                                         <!--end::Menu item-->
                                                         <!--begin::Menu item-->
                                                         <div class="menu-item px-3">
-                                                            <a href="#" class="menu-link px-3" data-kt-export="excel">
+                                                            <a href="{{ route('export-productlist') }}" class="menu-link px-3" data-kt-export="excel">
                                                             Export as Excel
                                                             </a>
                                                         </div>
                                                         <!--end::Menu item-->
                                                         <!--begin::Menu item-->
-                                                        <div class="menu-item px-3">
+                                                        {{-- <div class="menu-item px-3">
                                                             <a href="#" class="menu-link px-3" data-kt-export="csv">
                                                             Export as CSV
                                                             </a>
-                                                        </div>
+                                                        </div> --}}
                                                         <!--end::Menu item-->
                                                         <!--begin::Menu item-->
-                                                        <div class="menu-item px-3">
+                                                        {{-- <div class="menu-item px-3">
                                                             <a href="#" class="menu-link px-3" data-kt-export="pdf">
                                                             Export as PDF
                                                             </a>
-                                                        </div>
+                                                        </div> --}}
                                                         <!--end::Menu item-->
                                                     </div>
                                                     <!--end::Menu-->
@@ -468,9 +468,25 @@
         // };
         var table;
         $(document).ready(function () {
+
+
+            function disablePagination() {
+    // Store the current pagination state
+    var currentPage = table.page();
+
+    // Disable pagination
+    table.page('all').draw('page');
+
+    // Revert to the original page after the export is complete
+    table.one('draw.dt', function () {
+        table.page(currentPage).draw('page');
+    });
+}
+
             var initDatatable = function (){
                 table = $('.Datatable-tb').DataTable({
                 processing: true,
+                paging:true,
                 serverSide: true,
                 ajax: {
                     url: '/product-datas',
@@ -611,6 +627,8 @@
 
                 ]
             });
+
+            disablePagination();
             };
 
             initDatatable();
@@ -771,19 +789,7 @@
                     </table>
                     `;
             }
-// Add a flag to track if pagination is currently enabled
-var isPaginationEnabled = true;
 
-// Function to disable pagination
-function disablePagination() {
-    isPaginationEnabled = table.page.info().paging;
-    table.page.len(-1).draw(); // Disable pagination by setting page length to -1
-}
-
-// Function to re-enable pagination
-function enablePagination() {
-    table.page.len(isPaginationEnabled ? table.page.len() : 10).draw(); // Restore the previous page length
-}
 
             var exportButtons = () => {
                         const documentTitle = 'Product List';
@@ -796,28 +802,20 @@ function enablePagination() {
                                     extend: 'copyHtml5',
                                     title: documentTitle,
                                     exportOptions: {
-                    page: 'all', // Export all pages
-                    search: 'none' // Exclude search filter from export
-                },
-                action: function (e, dt, button, config) {
-                    disablePagination(); // Disable pagination before exporting
-                    $.fn.dataTable.ext.buttons.copyHtml5.action.call(this, e, dt, button, config);
-                    enablePagination(); // Re-enable pagination after exporting
-                }
+                                        page: 'all', // Export all pages
+                                        search: 'none' // Exclude search filter from export
+                                    },
+                
 
                                 },
                                 {
                                     extend: 'excelHtml5',
                                     title: documentTitle,
                                     exportOptions: {
-                    page: 'all', // Export all pages
-                    search: 'none' // Exclude search filter from export
-                },
-                action: function (e, dt, button, config) {
-                    disablePagination(); // Disable pagination before exporting
-                    $.fn.dataTable.ext.buttons.excelHtml5.action.call(this, e, dt, button, config);
-                    enablePagination(); // Re-enable pagination after exporting
-                }
+                                        page: 'all', // Export all pages
+                                        search: 'none' // Exclude search filter from export
+                                    },
+                    
                                 },
                                 {
                                     extend: 'csvHtml5',
@@ -844,16 +842,16 @@ function enablePagination() {
                         }).container().appendTo($('#kt_datatable_example_buttons'));
 
                         const exportButtons = document.querySelectorAll('#kt_datatable_example_export_menu [data-kt-export]');
-                        exportButtons.forEach(exportButton => {
-                            exportButton.addEventListener('click', e => {
-                                console.log('work');
-                                e.preventDefault();
+                        // exportButtons.forEach(exportButton => {
+                        //     exportButton.addEventListener('click', e => {
+                        //         console.log('work');
+                        //         e.preventDefault();
 
-                                const exportValue = e.target.getAttribute('data-kt-export');
-                                const target = document.querySelector('.dt-buttons .buttons-' + exportValue);
-                                target.click();
-                            });
-                        });
+                        //         const exportValue = e.target.getAttribute('data-kt-export');
+                        //         const target = document.querySelector('.dt-buttons .buttons-' + exportValue);
+                        //         target.click();
+                        //     });
+                        // });
              }
              exportButtons();
         });

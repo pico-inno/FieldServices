@@ -446,6 +446,7 @@ Route::controller(importOpeningStockController::class)->group(function () {
 });
 Route::controller(ExportController::class)->group(function () {
     Route::get('/opening/export/product', 'export')->name('exprotOpeningStockWithProduct');
+    Route::get('/product/export/productlist', 'productListExport')->name('export-productlist');
 });
 //============================ End::Opening Stock ============================================
 Route::prefix('stock-history')->group(function () {
