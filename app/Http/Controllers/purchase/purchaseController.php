@@ -234,13 +234,18 @@ class purchaseController extends Controller
 
     public function edit($id)
     {
+        $purchase=purchases::where('id',$id)->first();
+        if(!checkTxEditable($purchase->created_at)){
+            return back()->with([
+                'error'=> 'This transaction is not editable.'
+            ]);
+        };
         $locations = businessLocation::all();
         $currency = $this->currency;
         $suppliers=Contact::where('type','Supplier')
                 ->orWhere('type','Both')
                 ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
                 ->get();
-        $purchase=purchases::where('id',$id)->first();
         $currencies=Currencies::get();
         $purchase_detail=purchase_details::with([
                 'productVariation'=>function($q){
@@ -261,7 +266,6 @@ class purchaseController extends Controller
                     ]);
                 }
         ])->where('purchases_id',$id)->where('is_delete',0)->get();
-        // dd($purchase_detail->toArray());
 
         $setting = $this->setting;
         return view('App.purchase.editPurchase', compact('purchase','locations', 'purchase_detail','suppliers','setting','currency','currencies'));

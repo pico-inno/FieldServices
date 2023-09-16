@@ -987,9 +987,11 @@
             let mainPriceStatus=false;
             mainPriceLists.forEach((mainPriceList) => {
                 if (mainPriceStatus == true) {
-                    return;
+                    priceSetting(mainPriceList, parent,false);
+                }else{
+
+                mainPriceStatus = priceSetting(mainPriceList, parent,true);
                 }
-                mainPriceStatus = priceSetting(mainPriceList, parent);
             })
 
             let basePriceLists=priceList.basePriceList ?? [];
@@ -1001,9 +1003,10 @@
                         let priceStatus = false;
                         basePriceList.forEach((bp) => {
                             if (priceStatus == true) {
+                                priceSetting(bp, parent,false);
                                 return;
                             }
-                            priceStatus = priceSetting(bp, parent);
+                            priceStatus = priceSetting(bp, parent,true);
                         })
                         if (priceStatus) {
                             break;
@@ -1029,14 +1032,14 @@
             }
         }
     }
-    function priceSetting(priceStage,parentDom){
+    function priceSetting(priceStage,parentDom,dfs){
         let productId=parentDom.find('.product_id').val();
         let variationId=parentDom.find('.variation_id').val();
         let product=productsOnSelectData.filter(function(p){
             return p.product_id==productId && variationId == p.variation_id;
         })[0];
         if(priceStage.applied_type=='All'){
-            if(!priceSettingToUi(priceStage,parentDom,product)){
+            if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                 return false
             }else{
                 return true;
@@ -1044,7 +1047,7 @@
         }else if(priceStage.applied_type=='Category'){
             let categoryId=product.category_id;
             if(priceStage.applied_value==categoryId){
-                if(!priceSettingToUi(priceStage,parentDom,product)){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                     return false
                 }else{
                     return true;
@@ -1052,7 +1055,7 @@
             }
         }else if(priceStage.applied_type=='Product'){
             if(priceStage.applied_value==productId){
-                if(!priceSettingToUi(priceStage,parentDom,product)){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                     return false
                 }else{
                 return true;
@@ -1060,7 +1063,7 @@
             }
         }else if(priceStage.applied_type=='Variation'){
             if(priceStage.applied_value==variationId){
-                if(!priceSettingToUi(priceStage,parentDom,product)){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                     return false
                 }else{
                     return true;
@@ -1070,7 +1073,7 @@
             return false;
         }
     }
-    function priceSettingToUi(priceStage,parentDom,product){
+    function priceSettingToUi(priceStage,parentDom,product,dfs=true){
         let checkDate=checkAvailableDate(priceStage);
         if(!checkDate){
             return false;
@@ -1168,10 +1171,13 @@
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
-            let lastIndexOfStock=product.stock.length-1;
-            let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
-            let result=refPrice * isNullOrNan( inputUom.value);
-            parentDom.find('.uom_price').val(result);
+            console.log(dfs);
+            if(dfs){
+                let lastIndexOfStock=product.stock.length-1;
+                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
+                let result=refPrice * isNullOrNan( inputUom.value);
+                parentDom.find('.uom_price').val(result);
+            }
         }
         return false;
     }

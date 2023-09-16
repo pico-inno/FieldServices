@@ -70,7 +70,7 @@ function fprice($price){
     return $formattedPrice;
 }
 
-function fDate($date,$br=false)
+function fDate($date,$br=false,$time=true)
 {
     $dateTime =date_create($date);
     $setting = getSettings();
@@ -81,11 +81,16 @@ function fDate($date,$br=false)
     }else {
         $formattedTime = $dateTime->format(" H:i A ");
     }
-    if($br){
-        return $formattedDate.'<br>'.'('.$formattedTime.')';
+    if($time){
+        if($br){
+            return $formattedDate.'<br>'.'('.$formattedTime.')';
+        }else{
+        return $formattedDate.' '.'('.$formattedTime.')';
+        }
     }else{
-     return $formattedDate.' '.'('.$formattedTime.')';
+        return $formattedDate;
     }
+
 }
 
 function getSettingsValue($selector){
@@ -205,4 +210,17 @@ function priceChangeByUom($currentUOMId, $currentUomPrice,$newUOMID) {
             $resultPrice = $currentUomPrice  ;
         }
         return $resultPrice;
+}
+
+
+// applied transaction edit day
+function checkTxEditable($startDate){
+    $start_date = new DateTime($startDate);
+    $since_start = $start_date->diff(now());
+    $transaction_edit_days=getSettingValue('transaction_edit_days');
+    if($since_start->d >= $transaction_edit_days){
+        return false;
+    }else{
+        return true;
+    }
 }

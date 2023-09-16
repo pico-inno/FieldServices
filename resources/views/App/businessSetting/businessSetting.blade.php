@@ -27,439 +27,172 @@
     <!--begin::Container-->
     <div class="container-fluid " id="kt_content_container">
         <!--begin::Inbox App - Compose -->
-        <div class="col-md-10 offset-md-2 my-5 col-12">
-            <div class="input-group flex-nowrap">
-                <span class="input-group-text" >
-                   <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <div class="overflow-hidden flex-grow-1">
-                    <select class="form-select rounded-start-0" name="search-bar" id="search-bar" data-control="select2" data-allow-clear="true" data-placeholder='Serach' >
-                        <option></option>
-                        {{-- business --}}
-                        <option value="business_name">{{__('business_settings.business_name')}}</option>
-                        <option value="owner">{{__('business_settings.owner_name')}}</option>
-                        <option value="kt_datepicker_1">{{__('business_settings.start_date')}}</option>
-                        <option value="default_profit_percent">{{__('business_settings.default_profit_percent')}}</option>
-                        <option value="default_currency">{{__('business_settings.default_currency')}}</option>
-                        <option value="use_payment_account">{{__('business_settings.use_payment_account')}}</option>
-                        <option value="currency_symbol_placement">{{__('business_settings.currency_symbol_placement')}}</option>
-                        <option value="timezone">{{__('business_settings.time_zone')}}</option>
-                        <option value="update_logo">{{__('business_settings.update_logo')}}</option>
-                        <option value="finanical_year_start_month">{{__('business_settings.financial_year_start_month')}}</option>
-                        <option value="stock_accounting_method">{{__('business_settings.stock_accounting_method')}}</option>
-                        <option value="transaction_edit_days">{{__('business_settings.transaction_edit_days')}}</option>
-                        <option value="date_format">{{__('business_settings.date_format')}}</option>
-                        <option value="time_format">{{__('business_settings.time_format')}}</option>
-                        <option value="currency_position">{{__('business_settings.currency_position')}}</option>
-                        <option value="quantity_precision">{{__('business_settings.quantity_precision')}}</option>
-                        <option value="currency_rounded_method">{{__('business_settings.currency_rounded_method')}}</option>
-                        <option value="quantity_rounded_method">{{__('business_settings.quantity_rounded_method')}}</option>
-                        <option value=""></option>
-
-                        {{-- tax --}}
-                        <option value="tax_1_name">{{__('business_settings.tax_1_name')}}</option>
-                        <option value="tax_1_no">{{__('business_settings.tax_1_no')}}</option>
-                        <option value="tax_2_name">{{__('business_settings.tax_2_name')}}</option>
-                        <option value="tax_2_no">{{__('business_settings.tax_2_no')}}</option>
-                        <option value="enable_inline_tax_in_purchase_and_sell">{{__('business_settings.enable_inline_tax_in_purchase_and_sell')}}</option>
-
-                        {{-- Product --}}
-
-                        <option value="sku_prefix">{{__('business_settings.sku_prefix')}}</option>
-                        <option value=""></option>
-                        <option value="enable_product_expiry_check">{{__('business_settings.enable_product_expiry')}}</option>
-                        <option value="enable_brands">{{__('business_settings.enable_brands')}}</option>
-                        <option value="enable_categories">{{__('business_settings.enable_categories')}}</option>
-                        <option value="enable_price_and_tax_info">{{__('business_settings.enable_categories')}}</option>
-                        <option value="default_units">{{__('business_settings.default_units')}}</option>
-                        <option value="enable_sub_unit">{{__('business_settings.enable_sub_unit')}}</option>
-                        <option value="enable_racks">{{__('business_settings.enable_racks')}}</option>
-                        <option value="enable_position">{{__('business_settings.enable_position')}}</option>
-                        <option value="enable_warranty">{{__('business_settings.enable_warranty')}}</option>
-                        <option value="enable_secondary_unit">{{__('business_settings.enable_secondary_unit')}}</option>
-
-                        {{-- CONTACT --}}
-                        <option value="default_credit_limit">{{__('business_settings.default_credit_limit')}}</option>
-
-                        {{-- sale --}}
-                        <option value="enable_line_discount_for_sale">{{__('business_settings.enable_line_discount_for_sale')}}</option>
-                        <option value="default_sale_discount">{{__('business_settings.default_sale_discount')}}</option>
-                        <option value="default_sale_tax">{{__('business_settings.default_sale_tax')}}</option>
-                        <option value="sales_item_addition_method">{{__('business_settings.sales_item_addition_method')}}</option>
-                        <option value="amount_rounding_method">{{__('business_settings.amount_rounding_method')}}</option>
-                        <option value="minimun_selling_price">{{__('business_settings.sales_price_is_minimum_selling_price')}}</option>
-                        <option value="allow_overselling">{{__('business_settings.allow_overselling')}}</option>
-                        <option value="enable_sale_order">{{__('business_settings.enable_sales_order')}}</option>
-                        <option value="pay_required">{{__('business_settings.is_pay_term_required')}}</option>
-                        <option value="sales_commission_agent">{{__('business_settings.sales_commission_agent')}}</option>
-                        <option value="commission_calc_type">{{__('business_settings.commission_calculation_type')}}</option>
-                        <option value="commission_agent_required">{{__('business_settings.is_commission_agent_required')}}</option>
-                        <option value="enable_payment_link">{{__('business_settings.enable_payment_link')}}</option>
-                        <option value="razorpay_key_id">{{__('business_settings.razorpay_key_id')}}</option>
-                        <option value="razorpay_key_secret">{{__('business_settings.razorapay_key_secret')}}</option>
-                        <option value="stripe_public_key">{{__('business_settings.stripe_public_key')}}</option>
-                        <option value="stripe_secret_key">{{__('business_settings.stripe_secret_key')}}</option>
-
-
-                        {{-- pos --}}
-                        <option value="express_checkout">{{__('business_settings.express_checkout')}}</option>
-                        <option value="pay_checkout">{{__('business_settings.pay_and_checkout')}}</option>
-                        <option value="draft">{{__('business_settings.pos_draft')}}</option>
-                        <option value="cancle">{{__('business_settings.cancel')}}</option>
-                        <option value="go_product_qt">{{__('business_settings.go_to_product_quantity')}}</option>
-                        <option value="weighing_scale">{{__('business_settings.weighing_scale')}}</option>
-                        <option value="edit_order_tax">{{__('business_settings.edit_order_tax')}}</option>
-                        <option value="add_payment_row">{{__('business_settings.add_payment_row')}}</option>
-                        <option value="finalize_payment">{{__('business_settings.finalize_payment')}}</option>
-                        <option value="add_new_product">{{__('business_settings.add_new_product')}}</option>
-                        <option value="disable_mulitple_pay">{{__('business_settings.disable_multiple_pay')}}</option>
-                        <option value="disable_draft">{{__('business_settings.display_draft')}}</option>
-                        <option value="disable_express_checkout">{{__('business_settings.display_express_checkout')}}</option>
-                        <option value="show_product_suggestion">{{__('business_settings.dont_show_product_suggestion')}}</option>
-                        <option value="recent_transactions">{{__('business_settings.dont_show_recent_transactions')}}</option>
-                        <option value="disable_discount">{{__('business_settings.disable_discount')}}</option>
-                        <option value="disable_order_tax">{{__('business_settings.disable_order_tax')}}</option>
-                        <option value="subtotal_editable">{{__('business_settings.subtotal_editable')}}</option>
-                        <option value="disable_suspend_sale">{{__('business_settings.disable_suspend_sale')}}</option>
-                        <option value="enable_transaction_date_on_pos_screen">{{__('business_settings.enable_transaction_date_on_pos_screen')}}</option>
-                        <option value="enable_serviece_staff_in_product_line">{{__('business_settings.enable_service_staff_in_product_line')}}</option>
-                        <option value="service_staff_required">{{__('business_settings.is_service_staff_required')}}</option>
-                        <option value="disable_credit_sale_btn">{{__('business_settings.disable_credit_sale_button')}}</option>
-                        <option value="enable_weighting_scale">{{__('business_settings.enable_weighing_scale')}}</option>
-                        <option value="show_invoice_scheme">{{__('business_settings.show_invoice_scheme')}}</option>
-                        <option value="show_invoice_layout_dropdown">{{__('business_settings.show_invoice_layout_dropdown')}}</option>
-                        <option value="print_invoice_on_suspend">{{__('business_settings.print_invoice_on_suspend')}}</option>
-                        <option value="procing_on_product_suggestion_tooltip">{{__('business_settings.show_pricing_on_product_suggestion_tooltip')}}</option>
-                        <option value="barcode_perfix">{{__('business_settings.barcode_prefix')}}</option>
-                        <option value="product_sku_length">{{__('business_settings.barcode_product_sku_length')}}</option>
-                        <option value="quantity_interger_part_length">{{__('business_settings.quantity_integer_part_length')}}</option>
-                        <option value="quantity_fractional_part_length">{{__('business_settings.quantity_fractional_part_length')}}</option>
-                        <option value="enable_line_discount_for_purchase">{{__('business_settings.enable_line_discount')}}</option>
-                        <option value="enable_editing_product_price_from_purchase_screen">{{__('business_settings.enable_editing_product_price_from_purchase_screen')}}</option>
-                        <option value="enable_pruchase_status">{{__('business_settings.enable_purchase_status')}}</option>
-                        <option value="enable_lot_number">{{__('business_settings.enable_lot_number')}}</option>
-                        <option value="enable_purchase_order">{{__('business_settings.enable_purchase_order')}}</option>
-
-
-                        {{-- payment Tab --}}
-                        <option value="cash_denominations">{{__('business_settings.enable_cash_denomination_on')}}</option>
-                        <option value="enable_cash_denomination_for_payment_methods">{{__('business_settings.enable_cash_denomination_for_payment_methods')}}</option>
-                        <option value="strict_check">{{__('business_settings.strict_check')}}</option>
-
-                        {{-- dahsboard --}}
-                        <option value="view_storck_expiry_alert_for">{{__('business_settings.view_stock_expiry_alert_for')}}</option>
-                        {{-- system --}}
-                        <option value="theme_color">{{__('business_settings.theme_color')}}</option>
-                        <option value="default_page_entries">{{__('business_settings.default_datatable_page_entries')}}</option>
-                        <option value="show_help_text">{{__('business_settings.show_help_text')}}</option>
-
-
-                        {{-- prefix --}}
-                        <option value="purchase_return">{{__('business_settings.purchase_return')}}</option>
-                        <option value="purchase_order">{{__('business_settings.purchase_order')}}</option>
-                        <option value="stock_transfer">{{__('business_settings.stock_transfer')}}</option>
-                        <option value="stock_adjustment">{{__('business_settings.stock_adjustment')}}</option>
-                        <option value="sell_return">{{__('business_settings.sell_return')}}</option>
-                        <option value="expenses">{{__('business_settings.expenses')}}</option>
-                        <option value="contacts">{{__('business_settings.contacts')}}</option>
-                        <option value="purchase_payment">{{__('business_settings.purchase_payment')}}</option>
-                        <option value="sell_payment">{{__('business_settings.sell_payment')}}</option>
-                        <option value="expense_payment">{{__('business_settings.expense_payment')}}</option>
-                        <option value="business_location">{{__('business_settings.business_location')}}</option>
-                        <option value="perfixes_username">{{__('business_settings.prefix_username')}}</option>
-                        <option value="subscription_no">{{__('business_settings.subscription_no')}}</option>
-                        <option value="perfixes_draft">{{__('business_settings.prefix_draft')}}</option>
-                        <option value="sales_order">{{__('business_settings.sales_order')}}</option>
-
-
-                        {{-- email setting --}}
-
-                        <option value="mail_driver">{{__('business_settings.mail_driver')}}</option>
-                        <option value="mail_host">{{__('business_settings.mail_host')}}</option>
-                        <option value="mail_port">{{__('business_settings.mail_port')}}</option>
-                        <option value="mail_username">{{__('business_settings.mail_username')}}</option>
-                        <option value="mail_password">{{__('business_settings.mail_password')}}</option>
-                        <option value="mail_encryption">{{__('business_settings.mail_encryption')}}</option>
-                        <option value="mail_form_address">{{__('business_settings.mail_address_from')}}</option>
-                        <option value="mail_from_name">{{__('business_settings.mail_name_from')}}</option>
-
-
-                        {{-- sms --}}
-
-                        <option value="sms_service">{{__('business_settings.sms_service')}}</option>
-                        <option value="sms_url">{{__('business_settings.sms_url')}}</option>
-                        <option value="parameter_name">{{__('business_settings.send_to_parameter_name')}}</option>
-                        <option value="message_para_name">{{__('business_settings.message_parameter_name')}}</option>
-                        <option value="request_method">{{__('business_settings.request_method_for_sms')}}</option>
-                        <option value="header_1_key">{{__('business_settings.header_1_key')}}</option>
-                        <option value="header_1_value">{{__('business_settings.header_1_value')}}</option>
-                        <option value="header_2_key">{{__('business_settings.header_2_key')}}</option>
-                        <option value="header_2_value">{{__('business_settings.header_2_value')}}</option>
-                        <option value="header_3_key">{{__('business_settings.header_3_key')}}</option>
-                        <option value="header_3_value">{{__('business_settings.header_3_value')}}</option>
-
-                        <option value="parameter_1_value">{{__('business_settings.parameter_1_value')}}</option>
-                        <option value="parameter_1_key">{{__('business_settings.parameter_1_key')}}</option>
-
-                        <option value="parameter_2_value">{{__('business_settings.parameter_2_value')}}</option>
-                        <option value="parameter_2_key">{{__('business_settings.parameter_2_key')}}</option>
-
-                        <option value="parameter_3_value">{{__('business_settings.parameter_3_value')}}</option>
-                        <option value="parameter_3_key">{{__('business_settings.parameter_3_key')}}</option>
-
-                        <option value="parameter_4_value">{{__('business_settings.parameter_4_value')}}</option>
-                        <option value="parameter_4_key">{{__('business_settings.parameter_4_key')}}</option>
-
-                        <option value="parameter_5_value">{{__('business_settings.parameter_5_value')}}</option>
-                        <option value="parameter_5_key">{{__('business_settings.parameter_5_key')}}</option>
-
-                        <option value="parameter_6_value">{{__('business_settings.parameter_6_value')}}</option>
-                        <option value="parameter_6_key">{{__('business_settings.parameter_6_key')}}</option>
-
-                        <option value="parameter_7_value">{{__('business_settings.parameter_7_value')}}</option>
-                        <option value="parameter_7_key">{{__('business_settings.parameter_7_key')}}</option>
-
-                        <option value="parameter_8_value">{{__('business_settings.parameter_8_value')}}</option>
-                        <option value="parameter_8_key">{{__('business_settings.parameter_8_key')}}</option>
-
-                        <option value="parameter_9_value">{{__('business_settings.parameter_9_value')}}</option>
-                        <option value="parameter_9_key">{{__('business_settings.parameter_9_key')}}</option>
-
-                        <option value="parameter_10_value">{{__('business_settings.parameter_10_value')}}</option>
-                        <option value="parameter_10_key">{{__('business_settings.parameter_10_key')}}</option>
-
-                        <option value="nexmo_key">{{__('business_settings.nexmo_key')}}</option>
-                        <option value="nexmo_secret">{{__('business_settings.nexmo_secret')}}</option>
-                        <option value="nexmo_from">{{__('business_settings.from_nexmo')}}</option>
-
-                        <option value="twilio_key">{{__('business_settings.twilio_key')}}</option>
-                        <option value="twilio_secret">{{__('business_settings.twilio_secret')}}</option>
-                        <option value="twilio_from">{{__('business_settings.from_twilio')}}</option>
-
-
-                        {{-- reward Point --}}
-
-                        <option value="enable_reward_point">{{__('business_settings.enable_reward_point')}}</option>
-                        <option value="reward_point_display_name">{{__('business_settings.reward_point_display_name')}}</option>
-                        <option value="amount_spend_for_unit_point">{{__('business_settings.amount_spend_for_unit_point')}}</option>
-                        <option value="minimun_order_total_to_earn_reward">{{__('business_settings.minimum_order_total_to_earn_reward')}}</option>
-                        <option value="maximum_points_per_order">{{__('business_settings.maximum_points_per_order')}}</option>
-
-                        <option value="redeem_amount_per_unit_point">{{__('business_settings.redeem_amount_per_unit_point')}}</option>
-                        <option value="minimun_order_total_to_redeem_reward">{{__('business_settings.minimum_order_total_to_redeem_points')}}</option>
-                        <option value="minium_redeem_point">{{__('business_settings.minimum_redeem_point')}}</option>
-                        <option value="maximum_redeem_point_per_order">{{__('business_settings.maximum_redeem_point_per_order')}}</option>
-                        <option value="reward_point_expiry_period">{{__('business_settings.reward_point_expiry_period')}}</option>
-
-                        <option value="module_purchases">{{__('business_settings.purchases')}}</option>
-                        <option value="module_add_sale">{{__('business_settings.add_sale')}}</option>
-                        <option value="module_pos">{{__('business_settings.pos')}}</option>
-                        <option value="module_stock_transfers">{{__('business_settings.stock_transfers')}}</option>
-                        <option value="modulse_stock_adjustment">{{__('business_settings.stock_adjustment')}}</option>
-                        <option value="module_expenses">{{__('business_settings.expenses_module')}}</option>
-                        <option value="module_account">{{__('business_settings.account')}}</option>
-                        <option value="module_table">{{__('business_settings.table')}}</option>
-                        <option value="module_modifiers">{{__('business_settings.modifiers')}}</option>
-                        <option value="module_service_staff">{{__('business_settings.service_staff')}}</option>
-                        <option value="modulse_enable_bookings">{{__('business_settings.enable_bookings')}}</option>
-                        <option value="module_order_display_restaurants">{{__('business_settings.order_for_restaurants')}}</option>
-                        <option value="module_enable_subscription">{{__('business_settings.enable_subscription')}}</option>
-                        <option value="module_type_of_service">{{__('business_settings.types_of_service')}}</option>
-
-                        {{-- custom label --}}
-                        <option value="custom_payment_1">{{__('business_settings.custom_payment_1')}}</option>
-                        <option value="custom_payment_2">{{__('business_settings.custom_payment_2')}}</option>
-                        <option value="custom_payment_3">{{__('business_settings.custom_payment_3')}}</option>
-                        <option value="custom_payment_4">{{__('business_settings.custom_payment_4')}}</option>
-                        <option value="custom_payment_5">{{__('business_settings.custom_payment_5')}}</option>
-                        <option value="custom_payment_6">{{__('business_settings.custom_payment_6')}}</option>
-                        <option value="custom_payment_7">{{__('business_settings.custom_payment_7')}}</option>
-
-                        <option value="contact_custom_field_1">{{__('business_settings.contact_custom_field_1')}}</option>
-                        <option value="contact_custom_field_2">{{__('business_settings.contact_custom_field_2')}}</option>
-                        <option value="contact_custom_field_3">{{__('business_settings.contact_custom_field_3')}}</option>
-                        <option value="contact_custom_field_4">{{__('business_settings.contact_custom_field_4')}}</option>
-                        <option value="contact_custom_field_5">{{__('business_settings.contact_custom_field_5')}}</option>
-                        <option value="contact_custom_field_6">{{__('business_settings.contact_custom_field_6')}}</option>
-                        <option value="contact_custom_field_7">{{__('business_settings.contact_custom_field_7')}}</option>
-                        <option value="contact_custom_field_8">{{__('business_settings.contact_custom_field_8')}}</option>
-                        <option value="contact_custom_field_9">{{__('business_settings.contact_custom_field_9')}}</option>
-                        <option value="contact_custom_field_10">{{__('business_settings.contact_custom_field_10')}}</option>
-
-                        <option value="product_custom_field_1">{{__('business_settings.product_custom_field_1')}}</option>
-                        <option value="product_custom_field_2">{{__('business_settings.product_custom_field_2')}}</option>
-                        <option value="product_custom_field_3">{{__('business_settings.product_custom_field_3')}}</option>
-                        <option value="product_custom_field_4">{{__('business_settings.product_custom_field_4')}}</option>
-
-
-                        <option value="location_custom_field_1">{{__('business_settings.location_custom_field_1')}}</option>
-                        <option value="location_custom_field_2">{{__('business_settings.location_custom_field_2')}}</option>
-                        <option value="location_custom_field_3">{{__('business_settings.location_custom_field_3')}}</option>
-                        <option value="location_custom_field_4">{{__('business_settings.location_custom_field_4')}}</option>
-
-                        <option value="purchase_shipping_customer_field_1">{{__('business_settings.purchase_shipping_custom_field_1')}}</option>
-                        <option value="purchase_shipping_customer_field_2">{{__('business_settings.purchase_shipping_custom_field_2')}}</option>
-                        <option value="purchase_shipping_customer_field_3">{{__('business_settings.purchase_shipping_custom_field_3')}}</option>
-                        <option value="purchase_shipping_customer_field_4">{{__('business_settings.purchase_shipping_custom_field_4')}}</option>
-                        <option value="purchase_shipping_customer_field_5">{{__('business_settings.purchase_shipping_custom_field_5')}}</option>
-
-                        <option value="sell_custom_field_1">{{__('business_settings.sell_custom_field_1')}}</option>
-                        <option value="sell_custom_field_2">{{__('business_settings.sell_custom_field_2')}}</option>
-                        <option value="sell_custom_field_3">{{__('business_settings.sell_custom_field_3')}}</option>
-                        <option value="sell_custom_field_4">{{__('business_settings.sell_custom_field_4')}}</option>
-
-                        <option value="sale_shipping_custom_field_1">{{__('business_settings.sale_shipping_custom_field_1')}}</option>
-                        <option value="sale_shipping_custom_field_2">{{__('business_settings.sale_shipping_custom_field_2')}}</option>
-                        <option value="sale_shipping_custom_field_3">{{__('business_settings.sale_shipping_custom_field_3')}}</option>
-                        <option value="sale_shipping_custom_field_4">{{__('business_settings.sale_shipping_custom_field_4')}}</option>
-                        <option value="sale_shipping_custom_field_5">{{__('business_settings.sale_shipping_custom_field_5')}}</option>
-
-                        <option value="types_of_service_custom_1">{{__('business_settings.service_custom_payment_1')}}</option>
-                        <option value="types_of_service_custom_2">{{__('business_settings.service_custom_payment_2')}}</option>
-                        <option value="types_of_service_custom_3">{{__('business_settings.service_custom_payment_3')}}</option>
-                        <option value="types_of_service_custom_4">{{__('business_settings.service_custom_payment_4')}}</option>
-                        <option value="types_of_service_custom_5">{{__('business_settings.service_custom_payment_5')}}</option>
-                        <option value="types_of_service_custom_6">{{__('business_settings.service_custom_payment_6')}}</option>
-                    </select>
+        <div class="card mb-9">
+            <div class="card-body pt-9 pb-0">
+                <!--begin::Details-->
+                <div class="d-flex flex-wrap flex-sm-nowrap mb-6">
+                    <!--begin::Image-->
+                    <div class="d-flex flex-center flex-shrink-0 bg-light rounded w-100px h-100px w-lg-75px h-lg-75px me-7 mb-4">
+                        @if ($settingData['logo'])
+                            <img alt="Logo" src="{{asset('storage/logo/'.$settingData['logo'])}}" class="mw-25px mw-lg-35px" />
+                        @else
+                            <img class="mw-25px mw-lg-35px" src="https://picosbs.com/img/logo.png" alt="image" />
+                        @endif
+                    </div>
+                    <!--end::Image-->
+                    <!--begin::Wrapper-->
+                    <div class="flex-grow-1">
+                        <!--begin::Head-->
+                        <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                            <!--begin::Details-->
+                            <div class="d-flex flex-column">
+                                <!--begin::Status-->
+                                <div class="d-flex align-items-center mb-1">
+                                    <a href="#" class="text-gray-800 text-hover-primary fs-3 fw-bold me-3">{{$settingData['name']}}</a>
+                                    {{-- <span class="badge badge-light-success me-auto">In Progress</span> --}}
+                                </div>
+                                <!--end::Status-->
+                                <!--begin::Description-->
+                                <div class="d-flex flex-wrap fw-semibold mb-4 fs-7 text-gray-400">
+                                    <span>Started Date </span> : {{fDate($settingData['start_date'],false,false)}}
+                                </div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Details-->
+                        </div>
+                        <!--end::Head-->
+                    </div>
+                    <!--end::Wrapper-->
                 </div>
+                <!--end::Details-->
+                <div class="separator"></div>
+                <!--begin::Nav-->
+                <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold cursor-pointer">
+                    <!--begin::Nav item-->
+                    <li class="nav-item   d-block " data-title="{{__('business_settings.business')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link active "  data-bs-toggle="tab" href="#business_setting_business" data-bs-target="#business_setting_business" >
+                            <span class="menu-title fw-bold">{{__('business_settings.business')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    {{-- <div class="nav-item  d-block">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_tax"  data-bs-target="#business_setting_tax" >
+                            <span class="menu-title fw-bold">{{__('business_settings.tax')}}</span>
+                            <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Registered Tax Number For Your Business."></i>
+                        </span>
+                        <!--end::Marked-->
+                    </div> --}}
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.product')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_product"  data-bs-target="#business_setting_product" >
+                            <span class="menu-title fw-bold">{{__('business_settings.product')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.contact')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_contact"  data-bs-target="#business_setting_contact" >
+                            <span class="menu-title fw-bold">{{__('business_settings.contact')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.sale')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_sale"  data-bs-target="#business_setting_sale" >
+                            <span class="menu-title fw-bold">{{__('business_settings.sale')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.pos')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_pos"  data-bs-target="#business_setting_pos" >
+                            <span class="menu-title fw-bold">{{__('business_settings.pos')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item  d-block" data-title="{{__('business_settings.purchases')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_purchases"  data-bs-target="#business_setting_purchases" >
+                            <span class="menu-title fw-bold">{{__('business_settings.purchases')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.payment')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_payment"  data-bs-target="#business_setting_payment" >
+                            <span class="menu-title fw-bold">{{__('business_settings.payment')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    {{-- <div class="nav-item   d-block">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_dashboard"  data-bs-target="#business_setting_dashboard" >
+                            <span class="menu-title fw-bold">{{__('business_settings.dashboard')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </div> --}}
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.system')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_system"  data-bs-target="#business_setting_system" >
+                            <span class="menu-title fw-bold">{{__('business_settings.system')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.prefix')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_prefix"  data-bs-target="#business_setting_prefix" >
+                            <span class="menu-title fw-bold">{{__('business_settings.prefix')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    {{-- <div class="nav-item   d-block">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_emailSetting"  data-bs-target="#business_setting_emailSetting" >
+                            <span class="menu-title fw-bold">{{__('business_settings.email_setting')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </div> --}}
+                    {{-- <div class="nav-item   d-block">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_sms"  data-bs-target="#business_setting_sms" >
+                            <span class="menu-title fw-bold">{{__('business_settings.sms_setting')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </div> --}}
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.reward_point_setting')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_reward_point_setting"  data-bs-target="#business_setting_reward_point_setting" >
+                            <span class="menu-title fw-bold">{{__('business_settings.reward_point_setting')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.modules')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_reward_point_modules"  data-bs-target="#business_setting_reward_point_modules" >
+                            <span class="menu-title fw-bold">{{__('business_settings.modules')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    {{-- <div class="nav-item  mb-3 d-block">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_custom_labels"  data-bs-target="#business_setting_custom_labels" >
+                            <span class="menu-title fw-bold">{{__('business_settings.customs_label')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </div> --}}
+
+                </ul>
+                <!--end::Nav-->
             </div>
         </div>
         <div class="d-flex flex-row flex-lg-row mt-5">
-            <!--begin::Sidebar-->
-            <div class="d-flex " style="height: 100%">
-                <!--begin::Sticky aside-->
-                <div class="card card-flush mb-0" >
-                    <!--begin::Aside content-->
-                    <div class="card-body px-3">
-                        <div class="menu menu-column menu-rounded menu-state-bg menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary mb-5">
-                            <div class="nav w-125 flex-column">
-                                    <div class="menu-item  mb-3 d-block ">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link active "  data-bs-toggle="tab" href="#business_setting_business" data-bs-target="#business_setting_business" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.business')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    {{-- <div class="menu-item mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_tax"  data-bs-target="#business_setting_tax" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.tax')}}</span>
-                                            <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Registered Tax Number For Your Business."></i>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div> --}}
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_product"  data-bs-target="#business_setting_product" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.product')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_contact"  data-bs-target="#business_setting_contact" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.contact')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_sale"  data-bs-target="#business_setting_sale" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.sale')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_pos"  data-bs-target="#business_setting_pos" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.pos')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_purchases"  data-bs-target="#business_setting_purchases" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.purchases')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_payment"  data-bs-target="#business_setting_payment" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.payment')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    {{-- <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_dashboard"  data-bs-target="#business_setting_dashboard" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.dashboard')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div> --}}
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_system"  data-bs-target="#business_setting_system" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.system')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_prefix"  data-bs-target="#business_setting_prefix" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.prefix')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    {{-- <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_emailSetting"  data-bs-target="#business_setting_emailSetting" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.email_setting')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div> --}}
-                                    {{-- <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_sms"  data-bs-target="#business_setting_sms" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.sms_setting')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div> --}}
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_reward_point_setting"  data-bs-target="#business_setting_reward_point_setting" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.reward_point_setting')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_reward_point_modules"  data-bs-target="#business_setting_reward_point_modules" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.modules')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div>
-                                    {{-- <div class="menu-item  mb-3 d-block">
-                                        <!--begin::Marked-->
-                                        <span class="menu-link setting-link "  data-bs-toggle="tab" href="#business_setting_custom_labels"  data-bs-target="#business_setting_custom_labels" >
-                                            <span class="menu-title fw-bold">{{__('business_settings.customs_label')}}</span>
-                                        </span>
-                                        <!--end::Marked-->
-                                    </div> --}}
-
-                            </div>
-                        </div>
-                        <!--end::Menu-->
-                    </div>
-                    <!--end::Aside content-->
-                </div>
-                <!--end::Sticky aside-->
-            </div>
-            <!--end::Sidebar-->
             <!--begin::Content-->
-            <div class="flex-row-fluid ms-lg-1 ms-xl-10 " id="kt_content" >
+            <div class="flex-row-fluid " id="kt_content" >
                 <!--begin::Container-->
-                <div class="flex-row-fluid  ms-2 ">
+
+                <div class="flex-row-fluid  ">
                     <!--begin::Card-->
                     <form action="{{route('business_settings_update')}}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -467,17 +200,348 @@
                             <!--begin::Card body-->
                             <div class="card-body py-8 px-4 px-sm-7 px-md-10">
                                 <!--begin:::Tab content-->
+                                <div class="row mb-7 justify-content-between">
+                                    <div class="col-4 p-3">
+                                        <h2 class="" id="tab-title">{{__('business_settings.business')}}</h2>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="input-group input-group-sm flex-nowrap">
+                                            <span class="input-group-text">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                            </span>
+                                            <div class="overflow-hidden flex-grow-1">
+                                                <select class="form-select form-select-sm rounded-start-0" name="search-bar" id="search-bar"
+                                                    data-control="select2" data-allow-clear="true" data-placeholder='Serach'>
+                                                    <option></option>
+                                                    {{-- business --}}
+                                                    <option value="business_name">{{__('business_settings.business_name')}}</option>
+                                                    <option value="owner">{{__('business_settings.owner_name')}}</option>
+                                                    <option value="kt_datepicker_1">{{__('business_settings.start_date')}}</option>
+                                                    <option value="default_profit_percent">{{__('business_settings.default_profit_percent')}}</option>
+                                                    <option value="default_currency">{{__('business_settings.default_currency')}}</option>
+                                                    <option value="use_payment_account">{{__('business_settings.use_payment_account')}}</option>
+                                                    <option value="currency_symbol_placement">{{__('business_settings.currency_symbol_placement')}}</option>
+                                                    <option value="timezone">{{__('business_settings.time_zone')}}</option>
+                                                    <option value="update_logo">{{__('business_settings.update_logo')}}</option>
+                                                    <option value="finanical_year_start_month">{{__('business_settings.financial_year_start_month')}}
+                                                    </option>
+                                                    <option value="stock_accounting_method">{{__('business_settings.stock_accounting_method')}}</option>
+                                                    <option value="transaction_edit_days">{{__('business_settings.transaction_edit_days')}}</option>
+                                                    <option value="date_format">{{__('business_settings.date_format')}}</option>
+                                                    <option value="time_format">{{__('business_settings.time_format')}}</option>
+                                                    <option value="currency_position">{{__('business_settings.currency_position')}}</option>
+                                                    <option value="quantity_precision">{{__('business_settings.quantity_precision')}}</option>
+                                                    <option value="currency_rounded_method">{{__('business_settings.currency_rounded_method')}}</option>
+                                                    <option value="quantity_rounded_method">{{__('business_settings.quantity_rounded_method')}}</option>
+                                                    <option value=""></option>
 
+                                                    {{-- tax --}}
+                                                    <option value="tax_1_name">{{__('business_settings.tax_1_name')}}</option>
+                                                    <option value="tax_1_no">{{__('business_settings.tax_1_no')}}</option>
+                                                    <option value="tax_2_name">{{__('business_settings.tax_2_name')}}</option>
+                                                    <option value="tax_2_no">{{__('business_settings.tax_2_no')}}</option>
+                                                    <option value="enable_inline_tax_in_purchase_and_sell">
+                                                        {{__('business_settings.enable_inline_tax_in_purchase_and_sell')}}</option>
+
+                                                    {{-- Product --}}
+
+                                                    <option value="sku_prefix">{{__('business_settings.sku_prefix')}}</option>
+                                                    <option value=""></option>
+                                                    <option value="enable_product_expiry_check">{{__('business_settings.enable_product_expiry')}}</option>
+                                                    <option value="enable_brands">{{__('business_settings.enable_brands')}}</option>
+                                                    <option value="enable_categories">{{__('business_settings.enable_categories')}}</option>
+                                                    <option value="enable_price_and_tax_info">{{__('business_settings.enable_categories')}}</option>
+                                                    <option value="default_units">{{__('business_settings.default_units')}}</option>
+                                                    <option value="enable_sub_unit">{{__('business_settings.enable_sub_unit')}}</option>
+                                                    <option value="enable_racks">{{__('business_settings.enable_racks')}}</option>
+                                                    <option value="enable_position">{{__('business_settings.enable_position')}}</option>
+                                                    <option value="enable_warranty">{{__('business_settings.enable_warranty')}}</option>
+                                                    <option value="enable_secondary_unit">{{__('business_settings.enable_secondary_unit')}}</option>
+
+                                                    {{-- CONTACT --}}
+                                                    <option value="default_credit_limit">{{__('business_settings.default_credit_limit')}}</option>
+
+                                                    {{-- sale --}}
+                                                    <option value="enable_line_discount_for_sale">{{__('business_settings.enable_line_discount_for_sale')}}
+                                                    </option>
+                                                    <option value="default_sale_discount">{{__('business_settings.default_sale_discount')}}</option>
+                                                    <option value="default_sale_tax">{{__('business_settings.default_sale_tax')}}</option>
+                                                    <option value="sales_item_addition_method">{{__('business_settings.sales_item_addition_method')}}
+                                                    </option>
+                                                    <option value="amount_rounding_method">{{__('business_settings.amount_rounding_method')}}</option>
+                                                    <option value="minimun_selling_price">{{__('business_settings.sales_price_is_minimum_selling_price')}}
+                                                    </option>
+                                                    <option value="allow_overselling">{{__('business_settings.allow_overselling')}}</option>
+                                                    <option value="enable_sale_order">{{__('business_settings.enable_sales_order')}}</option>
+                                                    <option value="pay_required">{{__('business_settings.is_pay_term_required')}}</option>
+                                                    <option value="sales_commission_agent">{{__('business_settings.sales_commission_agent')}}</option>
+                                                    <option value="commission_calc_type">{{__('business_settings.commission_calculation_type')}}</option>
+                                                    <option value="commission_agent_required">{{__('business_settings.is_commission_agent_required')}}
+                                                    </option>
+                                                    <option value="enable_payment_link">{{__('business_settings.enable_payment_link')}}</option>
+                                                    <option value="razorpay_key_id">{{__('business_settings.razorpay_key_id')}}</option>
+                                                    <option value="razorpay_key_secret">{{__('business_settings.razorapay_key_secret')}}</option>
+                                                    <option value="stripe_public_key">{{__('business_settings.stripe_public_key')}}</option>
+                                                    <option value="stripe_secret_key">{{__('business_settings.stripe_secret_key')}}</option>
+
+
+                                                    {{-- pos --}}
+                                                    <option value="express_checkout">{{__('business_settings.express_checkout')}}</option>
+                                                    <option value="pay_checkout">{{__('business_settings.pay_and_checkout')}}</option>
+                                                    <option value="draft">{{__('business_settings.pos_draft')}}</option>
+                                                    <option value="cancle">{{__('business_settings.cancel')}}</option>
+                                                    <option value="go_product_qt">{{__('business_settings.go_to_product_quantity')}}</option>
+                                                    <option value="weighing_scale">{{__('business_settings.weighing_scale')}}</option>
+                                                    <option value="edit_order_tax">{{__('business_settings.edit_order_tax')}}</option>
+                                                    <option value="add_payment_row">{{__('business_settings.add_payment_row')}}</option>
+                                                    <option value="finalize_payment">{{__('business_settings.finalize_payment')}}</option>
+                                                    <option value="add_new_product">{{__('business_settings.add_new_product')}}</option>
+                                                    <option value="disable_mulitple_pay">{{__('business_settings.disable_multiple_pay')}}</option>
+                                                    <option value="disable_draft">{{__('business_settings.display_draft')}}</option>
+                                                    <option value="disable_express_checkout">{{__('business_settings.display_express_checkout')}}</option>
+                                                    <option value="show_product_suggestion">{{__('business_settings.dont_show_product_suggestion')}}
+                                                    </option>
+                                                    <option value="recent_transactions">{{__('business_settings.dont_show_recent_transactions')}}</option>
+                                                    <option value="disable_discount">{{__('business_settings.disable_discount')}}</option>
+                                                    <option value="disable_order_tax">{{__('business_settings.disable_order_tax')}}</option>
+                                                    <option value="subtotal_editable">{{__('business_settings.subtotal_editable')}}</option>
+                                                    <option value="disable_suspend_sale">{{__('business_settings.disable_suspend_sale')}}</option>
+                                                    <option value="enable_transaction_date_on_pos_screen">
+                                                        {{__('business_settings.enable_transaction_date_on_pos_screen')}}</option>
+                                                    <option value="enable_serviece_staff_in_product_line">
+                                                        {{__('business_settings.enable_service_staff_in_product_line')}}</option>
+                                                    <option value="service_staff_required">{{__('business_settings.is_service_staff_required')}}</option>
+                                                    <option value="disable_credit_sale_btn">{{__('business_settings.disable_credit_sale_button')}}</option>
+                                                    <option value="enable_weighting_scale">{{__('business_settings.enable_weighing_scale')}}</option>
+                                                    <option value="show_invoice_scheme">{{__('business_settings.show_invoice_scheme')}}</option>
+                                                    <option value="show_invoice_layout_dropdown">{{__('business_settings.show_invoice_layout_dropdown')}}
+                                                    </option>
+                                                    <option value="print_invoice_on_suspend">{{__('business_settings.print_invoice_on_suspend')}}</option>
+                                                    <option value="procing_on_product_suggestion_tooltip">
+                                                        {{__('business_settings.show_pricing_on_product_suggestion_tooltip')}}</option>
+                                                    <option value="barcode_perfix">{{__('business_settings.barcode_prefix')}}</option>
+                                                    <option value="product_sku_length">{{__('business_settings.barcode_product_sku_length')}}</option>
+                                                    <option value="quantity_interger_part_length">{{__('business_settings.quantity_integer_part_length')}}
+                                                    </option>
+                                                    <option value="quantity_fractional_part_length">
+                                                        {{__('business_settings.quantity_fractional_part_length')}}</option>
+                                                    <option value="enable_line_discount_for_purchase">{{__('business_settings.enable_line_discount')}}
+                                                    </option>
+                                                    <option value="enable_editing_product_price_from_purchase_screen">
+                                                        {{__('business_settings.enable_editing_product_price_from_purchase_screen')}}</option>
+                                                    <option value="enable_pruchase_status">{{__('business_settings.enable_purchase_status')}}</option>
+                                                    <option value="enable_lot_number">{{__('business_settings.enable_lot_number')}}</option>
+                                                    <option value="enable_purchase_order">{{__('business_settings.enable_purchase_order')}}</option>
+
+
+                                                    {{-- payment Tab --}}
+                                                    <option value="cash_denominations">{{__('business_settings.enable_cash_denomination_on')}}</option>
+                                                    <option value="enable_cash_denomination_for_payment_methods">
+                                                        {{__('business_settings.enable_cash_denomination_for_payment_methods')}}</option>
+                                                    <option value="strict_check">{{__('business_settings.strict_check')}}</option>
+
+                                                    {{-- dahsboard --}}
+                                                    <option value="view_storck_expiry_alert_for">{{__('business_settings.view_stock_expiry_alert_for')}}
+                                                    </option>
+                                                    {{-- system --}}
+                                                    <option value="theme_color">{{__('business_settings.theme_color')}}</option>
+                                                    <option value="default_page_entries">{{__('business_settings.default_datatable_page_entries')}}</option>
+                                                    <option value="show_help_text">{{__('business_settings.show_help_text')}}</option>
+
+
+                                                    {{-- prefix --}}
+                                                    <option value="purchase_return">{{__('business_settings.purchase_return')}}</option>
+                                                    <option value="purchase_order">{{__('business_settings.purchase_order')}}</option>
+                                                    <option value="stock_transfer">{{__('business_settings.stock_transfer')}}</option>
+                                                    <option value="stock_adjustment">{{__('business_settings.stock_adjustment')}}</option>
+                                                    <option value="sell_return">{{__('business_settings.sell_return')}}</option>
+                                                    <option value="expenses">{{__('business_settings.expenses')}}</option>
+                                                    <option value="contacts">{{__('business_settings.contacts')}}</option>
+                                                    <option value="purchase_payment">{{__('business_settings.purchase_payment')}}</option>
+                                                    <option value="sell_payment">{{__('business_settings.sell_payment')}}</option>
+                                                    <option value="expense_payment">{{__('business_settings.expense_payment')}}</option>
+                                                    <option value="business_location">{{__('business_settings.business_location')}}</option>
+                                                    <option value="perfixes_username">{{__('business_settings.prefix_username')}}</option>
+                                                    <option value="subscription_no">{{__('business_settings.subscription_no')}}</option>
+                                                    <option value="perfixes_draft">{{__('business_settings.prefix_draft')}}</option>
+                                                    <option value="sales_order">{{__('business_settings.sales_order')}}</option>
+
+
+                                                    {{-- email setting --}}
+
+                                                    <option value="mail_driver">{{__('business_settings.mail_driver')}}</option>
+                                                    <option value="mail_host">{{__('business_settings.mail_host')}}</option>
+                                                    <option value="mail_port">{{__('business_settings.mail_port')}}</option>
+                                                    <option value="mail_username">{{__('business_settings.mail_username')}}</option>
+                                                    <option value="mail_password">{{__('business_settings.mail_password')}}</option>
+                                                    <option value="mail_encryption">{{__('business_settings.mail_encryption')}}</option>
+                                                    <option value="mail_form_address">{{__('business_settings.mail_address_from')}}</option>
+                                                    <option value="mail_from_name">{{__('business_settings.mail_name_from')}}</option>
+
+
+                                                    {{-- sms --}}
+
+                                                    <option value="sms_service">{{__('business_settings.sms_service')}}</option>
+                                                    <option value="sms_url">{{__('business_settings.sms_url')}}</option>
+                                                    <option value="parameter_name">{{__('business_settings.send_to_parameter_name')}}</option>
+                                                    <option value="message_para_name">{{__('business_settings.message_parameter_name')}}</option>
+                                                    <option value="request_method">{{__('business_settings.request_method_for_sms')}}</option>
+                                                    <option value="header_1_key">{{__('business_settings.header_1_key')}}</option>
+                                                    <option value="header_1_value">{{__('business_settings.header_1_value')}}</option>
+                                                    <option value="header_2_key">{{__('business_settings.header_2_key')}}</option>
+                                                    <option value="header_2_value">{{__('business_settings.header_2_value')}}</option>
+                                                    <option value="header_3_key">{{__('business_settings.header_3_key')}}</option>
+                                                    <option value="header_3_value">{{__('business_settings.header_3_value')}}</option>
+
+                                                    <option value="parameter_1_value">{{__('business_settings.parameter_1_value')}}</option>
+                                                    <option value="parameter_1_key">{{__('business_settings.parameter_1_key')}}</option>
+
+                                                    <option value="parameter_2_value">{{__('business_settings.parameter_2_value')}}</option>
+                                                    <option value="parameter_2_key">{{__('business_settings.parameter_2_key')}}</option>
+
+                                                    <option value="parameter_3_value">{{__('business_settings.parameter_3_value')}}</option>
+                                                    <option value="parameter_3_key">{{__('business_settings.parameter_3_key')}}</option>
+
+                                                    <option value="parameter_4_value">{{__('business_settings.parameter_4_value')}}</option>
+                                                    <option value="parameter_4_key">{{__('business_settings.parameter_4_key')}}</option>
+
+                                                    <option value="parameter_5_value">{{__('business_settings.parameter_5_value')}}</option>
+                                                    <option value="parameter_5_key">{{__('business_settings.parameter_5_key')}}</option>
+
+                                                    <option value="parameter_6_value">{{__('business_settings.parameter_6_value')}}</option>
+                                                    <option value="parameter_6_key">{{__('business_settings.parameter_6_key')}}</option>
+
+                                                    <option value="parameter_7_value">{{__('business_settings.parameter_7_value')}}</option>
+                                                    <option value="parameter_7_key">{{__('business_settings.parameter_7_key')}}</option>
+
+                                                    <option value="parameter_8_value">{{__('business_settings.parameter_8_value')}}</option>
+                                                    <option value="parameter_8_key">{{__('business_settings.parameter_8_key')}}</option>
+
+                                                    <option value="parameter_9_value">{{__('business_settings.parameter_9_value')}}</option>
+                                                    <option value="parameter_9_key">{{__('business_settings.parameter_9_key')}}</option>
+
+                                                    <option value="parameter_10_value">{{__('business_settings.parameter_10_value')}}</option>
+                                                    <option value="parameter_10_key">{{__('business_settings.parameter_10_key')}}</option>
+
+                                                    <option value="nexmo_key">{{__('business_settings.nexmo_key')}}</option>
+                                                    <option value="nexmo_secret">{{__('business_settings.nexmo_secret')}}</option>
+                                                    <option value="nexmo_from">{{__('business_settings.from_nexmo')}}</option>
+
+                                                    <option value="twilio_key">{{__('business_settings.twilio_key')}}</option>
+                                                    <option value="twilio_secret">{{__('business_settings.twilio_secret')}}</option>
+                                                    <option value="twilio_from">{{__('business_settings.from_twilio')}}</option>
+
+
+                                                    {{-- reward Point --}}
+
+                                                    <option value="enable_reward_point">{{__('business_settings.enable_reward_point')}}</option>
+                                                    <option value="reward_point_display_name">{{__('business_settings.reward_point_display_name')}}</option>
+                                                    <option value="amount_spend_for_unit_point">{{__('business_settings.amount_spend_for_unit_point')}}
+                                                    </option>
+                                                    <option value="minimun_order_total_to_earn_reward">
+                                                        {{__('business_settings.minimum_order_total_to_earn_reward')}}</option>
+                                                    <option value="maximum_points_per_order">{{__('business_settings.maximum_points_per_order')}}</option>
+
+                                                    <option value="redeem_amount_per_unit_point">{{__('business_settings.redeem_amount_per_unit_point')}}
+                                                    </option>
+                                                    <option value="minimun_order_total_to_redeem_reward">
+                                                        {{__('business_settings.minimum_order_total_to_redeem_points')}}</option>
+                                                    <option value="minium_redeem_point">{{__('business_settings.minimum_redeem_point')}}</option>
+                                                    <option value="maximum_redeem_point_per_order">
+                                                        {{__('business_settings.maximum_redeem_point_per_order')}}</option>
+                                                    <option value="reward_point_expiry_period">{{__('business_settings.reward_point_expiry_period')}}
+                                                    </option>
+
+                                                    <option value="module_purchases">{{__('business_settings.purchases')}}</option>
+                                                    <option value="module_add_sale">{{__('business_settings.add_sale')}}</option>
+                                                    <option value="module_pos">{{__('business_settings.pos')}}</option>
+                                                    <option value="module_stock_transfers">{{__('business_settings.stock_transfers')}}</option>
+                                                    <option value="modulse_stock_adjustment">{{__('business_settings.stock_adjustment')}}</option>
+                                                    <option value="module_expenses">{{__('business_settings.expenses_module')}}</option>
+                                                    <option value="module_account">{{__('business_settings.account')}}</option>
+                                                    <option value="module_table">{{__('business_settings.table')}}</option>
+                                                    <option value="module_modifiers">{{__('business_settings.modifiers')}}</option>
+                                                    <option value="module_service_staff">{{__('business_settings.service_staff')}}</option>
+                                                    <option value="modulse_enable_bookings">{{__('business_settings.enable_bookings')}}</option>
+                                                    <option value="module_order_display_restaurants">{{__('business_settings.order_for_restaurants')}}
+                                                    </option>
+                                                    <option value="module_enable_subscription">{{__('business_settings.enable_subscription')}}</option>
+                                                    <option value="module_type_of_service">{{__('business_settings.types_of_service')}}</option>
+
+                                                    {{-- custom label --}}
+                                                    <option value="custom_payment_1">{{__('business_settings.custom_payment_1')}}</option>
+                                                    <option value="custom_payment_2">{{__('business_settings.custom_payment_2')}}</option>
+                                                    <option value="custom_payment_3">{{__('business_settings.custom_payment_3')}}</option>
+                                                    <option value="custom_payment_4">{{__('business_settings.custom_payment_4')}}</option>
+                                                    <option value="custom_payment_5">{{__('business_settings.custom_payment_5')}}</option>
+                                                    <option value="custom_payment_6">{{__('business_settings.custom_payment_6')}}</option>
+                                                    <option value="custom_payment_7">{{__('business_settings.custom_payment_7')}}</option>
+
+                                                    <option value="contact_custom_field_1">{{__('business_settings.contact_custom_field_1')}}</option>
+                                                    <option value="contact_custom_field_2">{{__('business_settings.contact_custom_field_2')}}</option>
+                                                    <option value="contact_custom_field_3">{{__('business_settings.contact_custom_field_3')}}</option>
+                                                    <option value="contact_custom_field_4">{{__('business_settings.contact_custom_field_4')}}</option>
+                                                    <option value="contact_custom_field_5">{{__('business_settings.contact_custom_field_5')}}</option>
+                                                    <option value="contact_custom_field_6">{{__('business_settings.contact_custom_field_6')}}</option>
+                                                    <option value="contact_custom_field_7">{{__('business_settings.contact_custom_field_7')}}</option>
+                                                    <option value="contact_custom_field_8">{{__('business_settings.contact_custom_field_8')}}</option>
+                                                    <option value="contact_custom_field_9">{{__('business_settings.contact_custom_field_9')}}</option>
+                                                    <option value="contact_custom_field_10">{{__('business_settings.contact_custom_field_10')}}</option>
+
+                                                    <option value="product_custom_field_1">{{__('business_settings.product_custom_field_1')}}</option>
+                                                    <option value="product_custom_field_2">{{__('business_settings.product_custom_field_2')}}</option>
+                                                    <option value="product_custom_field_3">{{__('business_settings.product_custom_field_3')}}</option>
+                                                    <option value="product_custom_field_4">{{__('business_settings.product_custom_field_4')}}</option>
+
+
+                                                    <option value="location_custom_field_1">{{__('business_settings.location_custom_field_1')}}</option>
+                                                    <option value="location_custom_field_2">{{__('business_settings.location_custom_field_2')}}</option>
+                                                    <option value="location_custom_field_3">{{__('business_settings.location_custom_field_3')}}</option>
+                                                    <option value="location_custom_field_4">{{__('business_settings.location_custom_field_4')}}</option>
+
+                                                    <option value="purchase_shipping_customer_field_1">
+                                                        {{__('business_settings.purchase_shipping_custom_field_1')}}</option>
+                                                    <option value="purchase_shipping_customer_field_2">
+                                                        {{__('business_settings.purchase_shipping_custom_field_2')}}</option>
+                                                    <option value="purchase_shipping_customer_field_3">
+                                                        {{__('business_settings.purchase_shipping_custom_field_3')}}</option>
+                                                    <option value="purchase_shipping_customer_field_4">
+                                                        {{__('business_settings.purchase_shipping_custom_field_4')}}</option>
+                                                    <option value="purchase_shipping_customer_field_5">
+                                                        {{__('business_settings.purchase_shipping_custom_field_5')}}</option>
+
+                                                    <option value="sell_custom_field_1">{{__('business_settings.sell_custom_field_1')}}</option>
+                                                    <option value="sell_custom_field_2">{{__('business_settings.sell_custom_field_2')}}</option>
+                                                    <option value="sell_custom_field_3">{{__('business_settings.sell_custom_field_3')}}</option>
+                                                    <option value="sell_custom_field_4">{{__('business_settings.sell_custom_field_4')}}</option>
+
+                                                    <option value="sale_shipping_custom_field_1">{{__('business_settings.sale_shipping_custom_field_1')}}
+                                                    </option>
+                                                    <option value="sale_shipping_custom_field_2">{{__('business_settings.sale_shipping_custom_field_2')}}
+                                                    </option>
+                                                    <option value="sale_shipping_custom_field_3">{{__('business_settings.sale_shipping_custom_field_3')}}
+                                                    </option>
+                                                    <option value="sale_shipping_custom_field_4">{{__('business_settings.sale_shipping_custom_field_4')}}
+                                                    </option>
+                                                    <option value="sale_shipping_custom_field_5">{{__('business_settings.sale_shipping_custom_field_5')}}
+                                                    </option>
+
+                                                    <option value="types_of_service_custom_1">{{__('business_settings.service_custom_payment_1')}}</option>
+                                                    <option value="types_of_service_custom_2">{{__('business_settings.service_custom_payment_2')}}</option>
+                                                    <option value="types_of_service_custom_3">{{__('business_settings.service_custom_payment_3')}}</option>
+                                                    <option value="types_of_service_custom_4">{{__('business_settings.service_custom_payment_4')}}</option>
+                                                    <option value="types_of_service_custom_5">{{__('business_settings.service_custom_payment_5')}}</option>
+                                                    <option value="types_of_service_custom_6">{{__('business_settings.service_custom_payment_6')}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="tab-content " id="myTabContent" >
                                     {{-- business-tab --}}
                                     <div class="tab-pane setting-tab fade active show" id="business_setting_business" role="tabpanel">
                                         <!--begin::Form-->
                                             <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-md-9 p-3">
-                                                    <h2 class="">{{__('business_settings.business')}}</h2>
-                                                </div>
-                                            </div>
                                             <!--end::Heading-->
 
                                             <div class="row fv-row row-cols ">
@@ -550,7 +614,7 @@
                                                         <span class="input-group-text" >
                                                            <i class="fa-solid fa-circle-plus"></i>
                                                         </span>
-                                                        <input type="number"  id="default_profit_percent" class="form-control form-control form-control form-control-sm" name="default_profit_percent" />
+                                                        <input type="number"  id="default_profit_percent" class="form-control form-control form-control form-control-sm" value="{{$settingData['default_profit_percent']}}" name="default_profit_percent" />
                                                     </div>
                                                     <!--end::Input-->
                                                 </div>
@@ -673,7 +737,7 @@
                                                         <span class="input-group-text" >
                                                             <i class="fa-solid fa-pen-to-square"></i>
                                                         </span>
-                                                        <input type="number" id="transaction_edit_days" class="form-control form-control form-control form-control-sm" name="transaction_edit_days">
+                                                        <input type="number" id="transaction_edit_days" class="form-control form-control form-control form-control-sm" value="{{$settingData['transaction_edit_days']}}" name="transaction_edit_days">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12  mb-7  col-lg-4">
@@ -778,15 +842,7 @@
                                     </div>
 
                                     {{-- tax-tab --}}
-                                    <div class="tab-pane setting-tab fade" id="business_setting_tax" role="tabpanel">
-                                         <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-md-9 p-3">
-                                                    <h2 class="">{{__('business_settings.tax')}}</h2>
-                                                </div>
-                                            </div>
-                                            <!--end::Heading-->
-
+                                    {{-- <div class="tab-pane setting-tab fade" id="business_setting_tax" role="tabpanel">
                                             <div class="row fv-row row-cols flex-wrap">
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Label-->
@@ -832,17 +888,11 @@
                                                 </div>
                                             </div>
 
-                                    </div>
+                                    </div> --}}
 
                                     {{-- product-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_product" role="tabpanel">
-                                         <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-md-9 p-3">
-                                                    <h2  class="">{{__('business_settings.product')}}</h2>
-                                                </div>
-                                            </div>
-                                            <!--end::Heading-->
+
 
                                             <div class="row fv-row row-cols flex-wrap">
                                                 {{-- <div class="col-md-12 mb-7 col-lg-4">
@@ -989,11 +1039,7 @@
                                     {{-- contact-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_contact" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-md-9 p-3">
-                                                    <h2  class="">{{__('business_settings.contact')}}</h2>
-                                                </div>
-                                            </div>
+
                                             <div class="row fv-row row-cols flex-wrap">
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Label-->
@@ -1028,11 +1074,6 @@
                                     {{-- sale-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_sale" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-md-9 p-3">
-                                                    <h2  class="">{{__('business_settings.sale')}}</h2>
-                                                </div>
-                                            </div>
                                             <div class="row fv-row row-cols flex-wrap">
                                                 <div class="col-md-12  mb-7  col-lg-4">
                                                     <div class="form-check form-switch ">
@@ -1070,11 +1111,6 @@
                                     {{-- pos-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_pos" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.pos')}}</h2>
-                                                </div>
-                                            </div>
                                             <div class="row row-cols">
                                                 <div class="col-12">
                                                     <h3 class="fw-lighter fs-2 text-primary">
@@ -1466,11 +1502,6 @@
                                     {{-- purchasess-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_purchases" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.purchases')}}</h2>
-                                                </div>
-                                            </div>
 
                                             <div class="row fv-row row-cols flex-wrap">
                                                 <div class="col-md-12 mb-7 col-lg-4">
@@ -1530,11 +1561,6 @@
                                      {{-- payment-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_payment" role="tabpanel">
                                          <!--begin::Heading-->
-                                         <div class="row mb-7">
-                                            <div class="col-12 p-3">
-                                                <h2>{{__('business_settings.payment')}}</h2>
-                                            </div>
-                                        </div>
                                             <div class="col-md-12 mb-7 col-lg-4">
                                                 <div class="form-check form-check-custom">
                                                     <input type="checkbox" class="form-check-input border-gray-400 me-3" name="use_paymentAccount" id="use_payment_account" @checked($settingData['use_paymentAccount']==1)  >
@@ -1595,11 +1621,7 @@
                                     {{-- dashobard-tab --}}
                                     <div class="tab-pane setting-tab fade d-none" id="business_setting_dashboard" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.dashboard_setting')}}</h2>
-                                                </div>
-                                            </div>
+
                                             <div class="row fv-row row-cols flex-wrap">
                                                 <div class="col-md-12  mb-7 col-lg-6">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="view_storck_expiry_alert_for">
@@ -1621,11 +1643,7 @@
                                     {{-- system-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_system" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.system_setting')}}</h2>
-                                                </div>
-                                            </div>
+
                                             <div class="row row-cols">
                                                 {{-- <div class="col-md-12  mb-7  col-lg-6">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="theme_color">
@@ -1665,12 +1683,7 @@
 
                                     {{-- prefix-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_prefix" role="tabpanel">
-                                         <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.prefix')}}</h2>
-                                                </div>
-                                            </div>
+
 
                                             <div class="row fv-row row-cols flex-wrap">
                                                 <div class="col-md-12 mb-7 col-lg-4">
@@ -1823,12 +1836,6 @@
 
                                     {{-- emailSetting-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_emailSetting" role="tabpanel">
-                                         <!--begin::Heading-->
-                                        <div class="row mb-7">
-                                            <div class="col-12 p-3">
-                                                <h2>{{__('business_settings.email_setting')}}</h2>
-                                            </div>
-                                        </div>
 
                                         <div class="row fv-row row-cols flex-wrap">
                                             <div class="col-md-12  mb-7  col-lg-4">
@@ -1907,11 +1914,7 @@
                                     {{-- sms-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_sms" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.sms_setting')}}</h2>
-                                                </div>
-                                            </div>
+
                                             <div class="row fv-row row-cols flex-wrap">
                                                 <div class="col-md-12  mb-7  col-lg-4">
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="sms_service">
@@ -2314,11 +2317,7 @@
                                     {{-- reward-point-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_reward_point_setting" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-md-9 p-3">
-                                                    <h2  class="text-primary">{{__('business_settings.contact')}}</h2>
-                                                </div>
-                                            </div>
+
                                             <div class="row row-cols">
                                                 <div class="col-md-12 mb-13 col-lg-4  d-flex align-items-center">
                                                     <div class="form-check form-check-custom ">
@@ -2455,11 +2454,6 @@
                                     {{-- modules-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_reward_point_modules" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.modules')}}</h2>
-                                                </div>
-                                            </div>
                                              <!--begin::Heading-->
                                             <div class="row mb-7">
                                                 <div class="col-md-9 p-3">
@@ -2593,11 +2587,6 @@
                                     {{-- business_setting_custom_labels --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_custom_labels" role="tabpanel">
                                          <!--begin::Heading-->
-                                            <div class="row mb-7">
-                                                <div class="col-12 p-3">
-                                                    <h2>{{__('business_settings.custom_labels')}}</h2>
-                                                </div>
-                                            </div>
                                             <div class="row mb-2">
                                                 <div class="col-md-9 p-3">
                                                     <h3 class="text-primary">{{__('business_settings.labels_for_custom_payments')}}</h3>
@@ -3268,4 +3257,12 @@
         <script src={{asset('customJs/smsSetting.js')}}></script>
         <script src={{asset('customJs/customFileInput.js')}}></script>
         <script src={{asset('customJs/businessSettingFormSearch.js')}}></script>
+        <script>
+            $(document).ready(function(){
+                $('.nav-link').click(function(){
+                    let title=$(this).closest('.nav-item').data('title');
+                    $('#tab-title').text(title);
+                })
+            })
+        </script>
 @endpush

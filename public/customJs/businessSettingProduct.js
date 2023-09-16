@@ -16,9 +16,9 @@
             const enable_sub_cat_div = document.querySelector('#enable_sub_cat_div');
 
             //init
-            enableProductExCk();
-            enableProductExpiry.addEventListener('change', enableProductExCk);
-            enableCategory();
+            // enableProductExCk();
+            // enableProductExpiry.addEventListener('change', enableProductExCk);
+            // enableCategory();
 
             //enableProductExpiry
             // function enableProductExCk() {
@@ -44,7 +44,7 @@
                     n_day.disabled=false;
                 }
             }
-            enable_cat_check.addEventListener('change', enableCategory);
+            // enable_cat_check.addEventListener('change', enableCategory);
             function enableCategory() {
                 if (enable_cat_check.checked) {
                     enable_sub_cat_div.classList.remove('d-none');

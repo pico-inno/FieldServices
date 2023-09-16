@@ -1,359 +1,336 @@
+<div class="modal-dialog modal-fullscreen-sm" id="printArea">
+    <div class="modal-content">
+        <form>
+            <div class="modal-header">
+                <h3 class="fs-4">Purchase Details -<span class=" "
+                        id="clipboard">{{$purchase['purchase_voucher_no']}}</span>
+                    <a type="button" class="btn btn-icon btn-sm p-0" data-clipboard-target="#clipboard">
+                        <i class="fa-solid fa-copy fs-6 clipboard-icon ki-copy"></i>
+                    </a>
+                </h3>
 
-    <div class="modal-dialog modal-fullscreen-sm" id="printArea">
-        <div class="modal-content">
-              <form>
-                <div class="modal-header">
-                    <h3 class="fs-4">Purchase Details <br> (Purchase Voucher No: <span class=" " id="clipboard">{{$purchase['purchase_voucher_no']}}</span> )
-                        <a type="button" class="btn btn-icon btn-sm p-0" data-clipboard-target="#clipboard">
-                            <i class="fa-solid fa-copy fs-6 clipboard-icon ki-copy"></i>
-                        </a></h3>
-
-                    <!--begin::Close-->
-                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fas fa-times fs-2"></i>
-                    </div>
-                    <!--end::Close-->
+                <!--begin::Close-->
+                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                    aria-label="Close">
+                    <i class="fas fa-times fs-2"></i>
                 </div>
+                <!--end::Close-->
+            </div>
 
-                <div class="modal-body">
-                    <div class="row mb-10">
-                        <div class="col-sm-4 col-6 mb-5 mb-sm-0">
-                            <h3 class="text-primary-emphasis fs-6">
-                                Supplier:
-                            </h3>
+            <div class="modal-body">
+                <div class="m-0">
+                    <!--begin::Label-->
+                    {{-- <div class="fw-bold fs-3 text-gray-800 mb-8">Invoice #34782</div> --}}
+                    <!--end::Label-->
+                    <!--begin::Row-->
+                    <div class="row g-5 mb-10">
+                        <!--end::Col-->
+                        <div class="col-sm-6">
+                            <!--end::Label-->
+                            <div class="fw-bold fs-6 text-gray-800">#{{$purchase['purchase_voucher_no']}}</div>
+                            <div class="fw-semibold fs-7 text-gray-600">
+                                Status : <span class="badge badge-light-success">{{$purchase['status']}}</span>
+                            </div>
+                            <!--end::Label-->
+                            <!--end::Text-->
+                            <!--end::Text-->
+                            <!--end::Description-->
+                            <!--end::Description-->
+                        </div>
+                        <!--end::Col-->
+                        <div class="col-sm-6">
+                            <!--end::Label-->
+                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Purchase Date:</div>
+                            <!--end::Label-->
+                            <!--end::Info-->
+                            <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
+                                <span class="pe-2">{{fDate($purchase['purchased_at'])}}</span>
+                            </div>
+                            <!--end::Info-->
+                        </div>
+                    </div>
+                    <!--end::Row-->
+                    <!--begin::Row-->
+                    <div class="row g-5 mb-11">
+                        <!--end::Col-->
+                        <div class="col-sm-6">
+                            <!--end::Label-->
+                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Supplier:</div>
+                            <!--end::Label-->
+                            <!--end::Col-->
                             @if ($purchase['supplier'])
-                            <address class="mt-3 fs-5 fw-semibold">
-                                {{$purchase['supplier']['company_name']}}<br>
-                                Mobile:{{$purchase['supplier']['mobile']}}
+                            <address class="mt-3 fs-5 fw-semibold fs-7">
+                                <span class="fw-bold">{{$purchase['supplier']['company_name']}}</span>
+                                <br>
+                                <span class="text-gray-700 fs-7">
+                                    {{$purchase['supplier']['mobile']}}
+                                </span>
                             </address>
                             @endif
+                            <!--end::Col-->
                         </div>
-                        <div class="col-sm-4 col-6">
-                            <h3 class="text-primary-emphasis fs-6">
-                                Bussiness:
-                            </h3>
-                              <address class="mt-3 fs-6 fw-semibold">
-                                    {{$location['name']}}<br>
-                                    {{$location['landmark']}}<br>
-                                    {{$location['city'] ? $location['city']."," :''}}
-                                    {{$location['state'] ? $location['state']."," :' '}}
-                                    {{$location['country'] ? $location['country'].",":''}}
-                                    {{$location['zip_code'] ? $location['zip_code']."," :''}}
-                                </address>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="text-group">
-                                <h3 class="text-primary-emphasis fw-semibold fs-6 mb-5">
-                                    Voucher No : <span class="text-gray-600 fw-semibold"> {{$purchase['purchase_voucher_no']}}3</span>
-                                </h3>
-                                <h3 class="text-primary-emphasis fw-semibold fs-6 mb-5">
-                                    Date : <span class="text-gray-600 fw-semibold">{{fDate($purchase['purchased_at'])}}</span>
-                                </h3>
-                                <h3 class="text-primary-emphasis fw-semibold fs-6 mb-5">
-                                    Purchase Status : <span class="text-gray-600 fw-semibold">{{$purchase['status']}}</span>
-                                </h3>
+                        <!--end::Col-->
+                        <!--end::Col-->
+                        <div class="col-sm-6">
+                            <!--end::Label-->
+                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Business Location:</div>
+                            <!--end::Label-->
+                            <!--end::Text-->
+                            <div class="fw-bold fs-6 text-gray-800">{{$location['name']}}</div>
+                            <!--end::Text-->
+                            <!--end::Description-->
+                            <div class="fw-semibold fs-7 text-gray-600">
+                                {{$location['landmark']}}<br>
+                                {{$location['city'] ? $location['city']."," :''}}
+                                {{$location['state'] ? $location['state']."," :' '}}
+                                {{$location['country'] ? $location['country'].",":''}}
+                                {{$location['zip_code'] ? $location['zip_code']:''}}
                             </div>
+                            <!--end::Description-->
                         </div>
+                        <!--end::Col-->
+                        <!--end::Col-->
+                        <!--end::Col-->
                     </div>
-                    <div class="table-responsive mt-10">
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                            <!--begin::Table head-->
-                            <thead class="bg-primary">
-                                <!--begin::Table row-->
-                                <tr class="bg-primary fw-bold fs-6 text-white text-start text-uppercase fs-8">
-                                    <th class="min-w-30 text-center ps-5">#</th>
-                                    <th class="min-w-100px text-center ">Product Name</th>
-                                    <th class="min-w-100px text-center ">Purchase Quantity</th>
-                                    <th class="min-w-100px text-center ">UOM</th>
-                                    <th class="min-w-100px text-center ">UOM Price</th>
-                                    <th class="min-w-100px text-center {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Per Item Discount</th>
-                                    <th class="min-w-100px text-center {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Subtotal With Discount</th>
-                                    <th class="min-w-100px text-center ">Per Item Expense</th>
-                                    <th class="min-w-100px text-center ">Subtotal </th>
-                                </tr>
-                                <!--end::Table row-->
-                            </thead>
-                            <!--end::Table head-->
-                            <!--begin::Table body-->
-                           <tbody class="fw-semibold text-gray-800 fs-6">
-                            @foreach ($purchase_details as $key=>$pd)
-                                @php
+                    <!--end::Row-->
+                    <!--begin::Content-->
+                    <div class="flex-grow-1">
+                        <!--begin::Table-->
+                        <div class="table-responsive border-bottom mb-9">
+                            <table class="table mb-3">
+                                <thead class="">
+                                    <tr class="border-bottom  border-primary fs-7 fw-bold  text-gray-500 x">
+                                        <th class="min-w-10 text-start ps-2">#</th>
+                                        <th class="min-w-175px pb-2 text-start">Description</th>
+                                        <th class="min-w-100px text-end ">Purchase Quantity</th>
+                                        <th class="min-w-100px text-end ">UOM</th>
+                                        <th class="min-w-100px text-end ">UOM Price</th>
+                                        <th
+                                            class="min-w-100px text-end {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                            Per Item Discount</th>
+                                        <th
+                                            class="min-w-100px text-end {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                            Subtotal With Discount</th>
+                                        <th class="min-w-100px text-end ">Per Item Expense</th>
+                                        <th class="min-w-100px text-end ">Subtotal </th>
+
+                                        {{-- <th class="min-w-70px text-end pb-2">Hours</th>
+                                        <th class="min-w-80px text-end pb-2">Rate</th>
+                                        <th class="min-w-100px text-end pb-2">Amount</th> --}}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($purchase_details as $key=>$pd)
+                                    @php
+                                    // dd($pd);
                                     $p=$pd->product;
                                     $product_variation =$pd->toArray()['product_variation'];
                                     // dd($pd->toArray());
                                     $pdCurrency=$pd->currency['symbol'] ?? ' ';
 
                                     $quantityDp=getSettingValue('quantity_decimal_places');
-                                @endphp
-                                <tr class="text-center">
-                                    <!--begin::Name=-->
-                                    <td class="text-center">
-                                        {{$key+1}}
-                                    </td>
-                                    <!--end::Name=-->
-                                    <!--begin::Email=-->
-                                    <td>
-                                        {{$p->name}}
-                                         @if(isset($product_variation['variation_template_value']))
+                                    @endphp
+                                    <tr class="fw-bold text-gray-700 fs-7 text-end">
+                                        <td class="pt-6 text-start ps-2">{{$key+1}}</td>
+                                        <td class="d-flex align-items-center pt-6">
+                                            <div href="" class="symbol symbol-40px me-2">
+                                                <span class="symbol-label" style="background-image:url({{asset("
+                                                    storage/product-image/$p->image")}});"></span>
+                                            </div>
+                                            {{$p->name}}
+                                            @if(isset($product_variation['variation_template_value']))
                                             <span class="my-2 d-block">
                                                 ({{ $product_variation['variation_template_value']['name'] }})
                                             </span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{round($pd->quantity,$quantityDp)}}
-                                    </td>
-                                    <td>
-                                        {{$pd->toArray()['purchase_uom']['name']}}
-                                    </td>
-                                    <td>
-                                        {{price($pd->uom_price ?? 0,$pd->currency_id)}}
-                                    </td>
-                                    <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
-                                        {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{ $pd->discount_type=='percentage'?'%':$pdCurrency }}
-                                    </td>
-                                    <td class="{{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
-                                        {{price($pd->subtotal_with_discount,$pd->currency_id)}}
-                                    </td>
-                                    <td>
-                                        {{price($pd->per_item_expense,$pd->currency_id)}}
-                                    </td>
-                                    <td>
-                                        {{price($pd->subtotal_with_tax,$pd->currency_id)}}
-                                    </td>
-
-
-                                </tr>
-                            @endforeach
-                        </tbody>
-                            <!--end::Table body-->
-                        </table>
-
-                    </div>
-                    <div class="row mt-5 justify-content-end">
-                        {{-- <div class="col-md-6 col-sm-12 col-xs-12">
-                            <div class="table-responsive mt-10">
-                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                                    <!--begin::Table head-->
-                                    <thead class="bg-success">
-                                        <!--begin::Table row-->
-                                        <tr class="bg-success fw-bold fs-6 text-white text-start text-uppercase fs-7 ">
-                                            <th class="ps-3">#</th>
-                                            <th class="min-w-100px">Date</th>
-                                            <th class="min-w-100px">Reference No</th>
-                                            <th class="min-w-100px">Amount</th>
-                                            <th class="min-w-100px">Payment mode</th>
-                                            <th class="min-w-100px">Payment note</th>
-                                        </tr>
-                                        <!--end::Table row-->
-                                    </thead>
-                                    <tbody class="fw-semibold text-gray-800">
-                                        <tr>
-                                            <td colspan="6" class="text-center">
-                                                No payments found
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> --}}
-                        <div class="col-md-6 col-sm-12 col-xs-12  ">
-                            <div class="table-responsive mt-10">
-                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                                    <!--begin::Table body-->
-                                    @php
-                                        $purchaseCurrency=$purchase['currency']['symbol'] ?? ''
-                                    @endphp
-                                   <tbody class="fw-semibold text-gray-800 table-bordere">
-                                    <tr>
-                                        <td>
-                                            Net Total Amount:
+                                            @endif
                                         </td>
-                                        <td class="text-end">
-                                        </td>
-                                        <td class="text-end">
-                                            {{price($purchase['purchase_amount'] ?? 0,$pd->currency_id)}}
-                                        </td>
+                                        <td class="pt-6">{{round($pd->quantity,$quantityDp)}}</td>
+                                        <td class="pt-6">{{$pd->toArray()['purchase_uom']['name']}}</td>
+                                        <td class="pt-6">{{price($pd->uom_price ?? 0,$pd->currency_id)}}</td>
+                                        <td
+                                            class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                            {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{
+                                            $pd->discount_type=='percentage'?'%':$pdCurrency }}</td>
+                                        <td
+                                            class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                            {{price($pd->subtotal_with_discount,$pd->currency_id)}}</td>
+                                        <td class="pt-6">{{price($pd->per_item_expense,$pd->currency_id)}}</td>
+                                        <td class="pt-6 text-dark fw-bolder">
+                                            {{price($pd->subtotal_with_tax,$pd->currency_id)}}</td>
+                                        {{-- <td class="pt-6 text-dark fw-bolder">$3200.00</td> --}}
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            Discount:
-                                        </td>
-                                        <td class="text-end">
-                                            (-)
-                                        </td>
-                                        <td class="text-end">
-                                            {{round($purchase['extra_discount'] ?? 0,2)}} &nbsp;{{ $purchase['extra_discount_type']=='percentage'?'%':$purchaseCurrency}}
+                                    @endforeach
 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Purchase Expense:
-                                        </td>
-                                        <td class="text-end">
-                                            (+)
-                                        </td>
-                                        <td class="text-end">
-                                            {{price($purchase['purchase_expense'],$pd->currency_id)}}
-                                        </td>
-                                    </tr>
-                                    {{-- <tr>
-                                        <td>Additional Shipping charges:	</td>
-                                        <td class="text-end">
-                                            (+)
-                                        </td>
-                                        <td class="text-end">
-                                            0
-                                        </td>
-                                    </tr> --}}
-                                    <tr>
-                                        <td>
-                                            Purchase Total:
-                                        </td>
-                                        <td class="text-end">
-                                            (=)
-                                        </td>
-                                        <td class="text-end">
-                                        {{price($purchase['total_purchase_amount'],$pd->currency_id)}}
-                                        </td>
-                                    </tr>
 
                                 </tbody>
-                                    <!--end::Table body-->
-                                </table>
-
-                            </div>
+                            </table>
                         </div>
+                        <!--end::Table-->
+                        <!--begin::Container-->
+                        <div class="d-flex justify-content-end">
+                            @php
+                            $purchaseCurrency=$purchase['currency']['symbol'] ?? ''
+                            @endphp
+                            <!--begin::Section-->
+                            <div class="mw-300px">
+                                <!--begin::Item-->
+                                <div class="d-flex flex-stack mb-3">
+                                    <!--begin::Accountname-->
+                                    <div class="fw-semibold pe-10 text-gray-600 fs-7">Net Total Amount:</div>
+                                    <!--end::Accountname-->
+                                    <!--begin::Label-->
+                                    <div class="text-end fw-bold fs-6 text-gray-800">
+                                        {{price($purchase['purchase_amount'] ?? 0,$pd->currency_id)}}</div>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Item-->
+                                <!--begin::Item-->
+                                <div class="d-flex flex-stack mb-3">
+                                    <!--begin::Accountname-->
+                                    <div class="fw-semibold pe-10 text-gray-600 fs-7">Discount</div>
+                                    <!--end::Accountname-->
+                                    <!--begin::Label-->
+                                    <div class="text-end fw-bold fs-6 text-gray-800">
+                                        {{round($purchase['extra_discount'] ?? 0,2)}}
+                                        &nbsp;{{$purchase['extra_discount_type']=='percentage'?'%':$purchaseCurrency}}
+                                    </div>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Item-->
+                                <!--begin::Item-->
+                                <div class="d-flex flex-stack mb-3">
+                                    <!--begin::Accountnumber-->
+                                    <div class="fw-semibold pe-10 text-gray-600 fs-7">Purchase Expense</div>
+                                    <!--end::Accountnumber-->
+                                    <!--begin::Number-->
+                                    <div class="text-end fw-bold fs-6 text-gray-800">
+                                        {{price($purchase['purchase_expense'],$pd->currency_id)}}</div>
+                                    <!--end::Number-->
+                                </div>
+                                <!--end::Item-->
+                                <!--begin::Item-->
+                                <div class="d-flex flex-stack">
+                                    <!--begin::Code-->
+                                    <div class="fw-semibold pe-10 text-gray-600 fs-7">Total Purchase Amount</div>
+                                    <!--end::Code-->
+                                    <!--begin::Label-->
+                                    <div class="text-end fw-bold fs-6 text-gray-800">
+                                        {{price($purchase['total_purchase_amount'],$pd->currency_id)}}</div>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Item-->
+                            </div>
+                            <!--end::Section-->
+                        </div>
+                        <!--end::Container-->
                     </div>
-                    {{-- <div class="row mt-5 mb-5">
-                        <div class="col-md-6">
-                            <h3 class="text-primary-emphasis fs-4">
-                                Shipping Details:
-                            </h3>
-                            <div class="mt-3 fs-5">
-                                <p>
-                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Exercitationem ipsa iure adipisci culpa explicabo quaerat a in incidunt! Eius aliquid deserunt cum culpa saepe voluptate repudiandae vero. Minima, sequi.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mt-5">
-                            <h3 class="text-primary-emphasis fs-4">
-                                Additional Notes:
-                            </h3>
-                            <div class="mt-3 fs-5">
-                                <p>
-                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Exercitationem ipsa iure adipisci culpa explicabo quaerat a in incidunt! Eius aliquid deserunt cum culpa saepe voluptate repudiandae vero. Minima, sequi.
-                                </p>
-                            </div>
-                        </div>
-                    </div> --}}
-                    <div class="table-responsive mt-10">
-                        <table class="table table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                            <!--begin::Table head-->
-                            <thead class="bg-success">
-                                <!--begin::Table row-->
-                                <tr class="bg-secondary fw-bold fs-6 text-black text-start text-uppercase fs-7 p-2">
-                                    <th class="min-w-60px ps-2">Date	</th>
-                                    <th class="min-w-100px">Action</th>
-                                    <th class="min-w-100px">By</th>
-                                    {{-- <th class="min-w-100px">Note</th> --}}
-                                </tr>
-                                <!--end::Table row-->
-                            </thead>
-                            <!--end::Table head-->
-                            <!--begin::Table body-->
-                            <tbody class="fw-semibold text-gray-800">
-
-                                    <tr>
-                                        <!--begin::Name=-->
-                                        <td class="ps-2">
-                                            {{fDate($purchase['purchased_at'])}}
-                                        </td>
-                                        <!--end::Name=-->
-                                        <!--begin::Email=-->
-                                        <td>
-                                            <span class="badge badge-success">Purchase</span>
-                                        </td>
-                                        <td>
-                                            {{$purchase['purchased_by']['username']??'-'}}
-                                        </td>
-                                        {{-- <td class="">
-                                            <table class="no-border table table-slim mb-0">
-                                                <tbody>
-                                                    <tr>
-                                                        <th>Status</th>
-                                                        <td><span class="badge badge-light-success">Ordered</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Total:</th>
-                                                        <td><span class="badge badge-light-success">Ks 0</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Payment status:</th>
-                                                        <td><span class="badge badge-light-success">Due</span></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td> --}}
-
-
-
-                                    </tr>
-                                    @if ($purchase['updated_by'])
-                                        <tr>
-                                            <!--begin::Name=-->
-                                            <td class="ps-2">
-                                                {{fDate($purchase['updated_at'])}}
-                                            </td>
-                                            <!--end::Name=-->
-                                            <!--begin::Email=-->
-                                            <td>
-                                                <span class="badge badge-warning">Updated</span>
-                                            </td>
-                                            <td>
-                                                {{$purchase['updated_by']['username']??'-'}}
-                                            </td>
-                                            {{-- <td class="">
-                                                <table class="no-border table table-slim mb-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Status</th>
-                                                            <td><span class="badge badge-light-success">Ordered</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Total:</th>
-                                                            <td><span class="badge badge-light-success">Ks 0</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Payment status:</th>
-                                                            <td><span class="badge badge-light-success">Due</span></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td> --}}
-
-
-
-                                        </tr>
-                                    @endif
-
-                            </tbody>
-                            <!--end::Table body-->
-                        </table>
-
-                    </div>
+                    <!--end::Content-->
                 </div>
+                <div class="table-responsive mt-10 d-none">
+                    <table class="table table-row-dashed fs-6 gy-5" id="kt_customers_table">
+                        <!--begin::Table head-->
+                        <thead class="bg-success">
+                            <!--begin::Table row-->
+                            <tr class="bg-gray-100 fw-bold fs-6 text-black text-start text-uppercase fs-7 p-2">
+                                <th class="min-w-60px ps-2">Date </th>
+                                <th class="min-w-100px">Action</th>
+                                <th class="min-w-100px">By</th>
+                                {{-- <th class="min-w-100px">Note</th> --}}
+                            </tr>
+                            <!--end::Table row-->
+                        </thead>
+                        <!--end::Table head-->
+                        <!--begin::Table body-->
+                        <tbody class="fw-semibold text-gray-800">
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    {{-- <button type="button" class="btn btn-primary" id="print">Print</button> --}}
+                            <tr>
+                                <!--begin::Name=-->
+                                <td class="ps-2">
+                                    {{fDate($purchase['purchased_at'])}}
+                                </td>
+                                <!--end::Name=-->
+                                <!--begin::Email=-->
+                                <td>
+                                    <span class="badge badge-light-success">Purchase</span>
+                                </td>
+                                <td>
+                                    {{$purchase['purchased_by']['username']??'-'}}
+                                </td>
+                                {{-- <td class="">
+                                    <table class="no-border table table-slim mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <th>Status</th>
+                                                <td><span class="badge badge-light-success">Ordered</span></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Total:</th>
+                                                <td><span class="badge badge-light-success">Ks 0</span></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Payment status:</th>
+                                                <td><span class="badge badge-light-success">Due</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td> --}}
+
+
+
+                            </tr>
+                            @if ($purchase['updated_by'])
+                            <tr>
+                                <!--begin::Name=-->
+                                <td class="ps-2">
+                                    {{fDate($purchase['updated_at'])}}
+                                </td>
+                                <!--end::Name=-->
+                                <!--begin::Email=-->
+                                <td>
+                                    <span class="badge badge-light-warning">Updated</span>
+                                </td>
+                                <td>
+                                    {{$purchase['updated_by']['username']??'-'}}
+                                </td>
+                                {{-- <td class="">
+                                    <table class="no-border table table-slim mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <th>Status</th>
+                                                <td><span class="badge badge-light-success">Ordered</span></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Total:</th>
+                                                <td><span class="badge badge-light-success">Ks 0</span></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Payment status:</th>
+                                                <td><span class="badge badge-light-success">Due</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td> --}}
+
+
+
+                            </tr>
+                            @endif
+
+                        </tbody>
+                        <!--end::Table body-->
+                    </table>
+
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {{-- <button type="button" class="btn btn-primary" id="print">Print</button> --}}
+            </div>
+        </form>
     </div>
-    <script src={{asset('customJs/general.js')}}></script>
-    <script>
-        clipboard()
-    </script>
-
+</div>
+<script src={{asset('customJs/general.js')}}></script>
+<script>
+    clipboard()
+</script>

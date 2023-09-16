@@ -35,4 +35,9 @@ class generatorHelpers
         $voucherNo = sprintf('ROV-'.$numberCount, ($paymentCount + 1));
         return $voucherNo;
     }
+
+    public static function generateVoucher($transaction)
+    {
+        // $prefix=getSe
+    }
 }
