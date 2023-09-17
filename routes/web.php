@@ -61,7 +61,7 @@ use App\Http\Controllers\Product\VariationController;
 use App\Http\Controllers\purchase\purchaseController;
 use App\Http\Controllers\settings\BuildingController;
 use App\Http\Controllers\businessActivationController;
-use App\Http\Controllers\importOpeningStockController;
+use App\Http\Controllers\import\importOpeningStockController;
 use App\Http\Controllers\Service\ServiceTypeController;
 use App\Http\Controllers\Stock\StockTransferController;
 use \App\Http\Controllers\userManagement\RoleController;
@@ -78,6 +78,7 @@ use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
 use App\Http\Controllers\configurationController;
 use App\Http\Controllers\export\ExportController;
+use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
@@ -828,6 +829,12 @@ Route::controller(PriceListDetailController::class)->group(function () {
 
     // search applied_value
     Route::get('/price-list-detail/search', 'searchAppliedValue');
+    Route::get('/import/price-list', 'importTemplate')->name('priceListTemplate');
+});
+
+Route::controller(priceListImportController::class)->group(function(){
+    Route::post('/price-list/import','import')->name('priceListImport');
+    Route::get('/download/price-list/excel', 'dowloadDemoExcel')->name('downloadPrceListExcel');
 });
 
 Route::controller(TestController::class)->group(function () {

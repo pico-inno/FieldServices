@@ -12,4 +12,5 @@ return [
     'edit_pricelist' => 'Edit Pricelist',
 
     'pricelist' => 'Price List',
+    'import_pricelist' => 'Import Price List',
 ];

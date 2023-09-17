@@ -61,7 +61,7 @@ class OpeningImport implements ToModel,WithHeadingRow
             $sku = $row['product_variation_sku'];
             $productVariation= ProductVariation::where('variation_sku', $sku)->first();
             $product=Product::where('id',$productVariation->product_id)->select('id', 'has_variation', 'uom_id', 'product_type')->first();
-        
+
             if($product->product_type!='storable'){
                 return;
             }

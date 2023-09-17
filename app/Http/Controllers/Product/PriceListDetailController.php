@@ -27,7 +27,7 @@ class PriceListDetailController extends Controller
     {
         $this->middleware(['auth', 'isActive']);
     }
-    
+
     public function priceListDetailDatas()
     {
         $priceLists = PriceLists::with('priceListDetails', 'businessSetting', 'currency')->get();
@@ -55,13 +55,13 @@ class PriceListDetailController extends Controller
     {
         $currencies = Currencies::all();
         $price_lists = PriceLists::all();
-        
+
         return view('App.product.PriceListDetail.add', compact('currencies', 'price_lists'));
     }
 
     public function create(PriceListCreateRequest $request)
     {
-        
+
         DB::beginTransaction();
         try{
             $business_id = businessSettings::first()->id;
@@ -72,11 +72,11 @@ class PriceListDetailController extends Controller
                 'name' => $request->name,
                 'description' => $request->description
             ])->id;
-    
+
             $hasCreation = $this->hasCreatePricelistDetail($request);
             if($hasCreation){
                 $this->insertPricelistDetail($request, $price_list_id);
-            }            
+            }
 
             DB::commit();
 
@@ -107,7 +107,7 @@ class PriceListDetailController extends Controller
             $priceList->name = $request->name;
             $priceList->description = $request->description;
             $priceList->update();
-            
+
             $hasCreation = $this->hasCreatePricelistDetail($request);
             if($hasCreation){
                 $this->insertPricelistDetail($request, $priceList->id, false);
@@ -163,7 +163,7 @@ class PriceListDetailController extends Controller
 
         if($applied_type === 'Variation'){
             $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')->select('id', 'product_id', 'variation_template_value_id')->get();
-            
+
             $allVariations = [];
             foreach($product_with_variations as $variation) {
                 $product_name = $variation->product->name;
@@ -186,7 +186,7 @@ class PriceListDetailController extends Controller
         $minQty = $request->min_qty[0];
         $calType = $request->cal_type[0];
         $calValue = $request->cal_val[0];
-        
+
         if($applyType == null || $applyValue == null || $minQty == null || $calType == null || $calValue == null){
             return false;
         }else{
@@ -201,7 +201,7 @@ class PriceListDetailController extends Controller
             $dbPricelistDetailIds = PriceListDetails::where('pricelist_id', $pricelistId)->pluck('id');
 
             // Find pricelist-detail IDs to delete
-            $pricelistDetailsToDelete = array_diff($dbPricelistDetailIds->toArray(), $request->price_list_detail_id);        
+            $pricelistDetailsToDelete = array_diff($dbPricelistDetailIds->toArray(), $request->price_list_detail_id);
             if(!empty($pricelistDetailsToDelete)){
                 PriceListDetails::destroy($pricelistDetailsToDelete);
             }
@@ -234,5 +234,12 @@ class PriceListDetailController extends Controller
                 PriceListDetails::updateOrCreate(['id' => $detail['id']], $detail);
             }
         }
+    }
+    public function importTemplate()
+    {
+        $currencies = Currencies::all();
+        $businessSetting = getSettings();
+        $price_lists = PriceLists::where('currency_id', $businessSetting->currency_id)->get();
+        return view('App.product.PriceListDetail.import.importTemplate', compact('currencies', 'businessSetting', 'price_lists'));
     }
 }
