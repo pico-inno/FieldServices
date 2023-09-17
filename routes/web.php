@@ -828,6 +828,8 @@ Route::controller(PriceListDetailController::class)->group(function () {
 
     //getPriceListByCurrency
     Route::get('/price-list/{currency_id}', 'getPriceListByCurrency');
+
+    Route::get('/import/price-list', 'importTemplate')->name('priceListTemplate');
 });
 
 Route::controller(TestController::class)->group(function () {

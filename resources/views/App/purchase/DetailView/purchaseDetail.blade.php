@@ -1,6 +1,6 @@
 <div class="modal-dialog modal-fullscreen-sm" id="printArea">
     <div class="modal-content">
-        <form>
+        <div>
             <div class="modal-header">
                 <h3 class="fs-4">Purchase Details -<span class=" "
                         id="clipboard">{{$purchase['purchase_voucher_no']}}</span>
@@ -19,25 +19,13 @@
 
             <div class="modal-body">
                 <div class="m-0">
-                    <!--begin::Label-->
-                    {{-- <div class="fw-bold fs-3 text-gray-800 mb-8">Invoice #34782</div> --}}
-                    <!--end::Label-->
-                    <!--begin::Row-->
                     <div class="row g-5 mb-10">
-                        <!--end::Col-->
                         <div class="col-sm-6">
-                            <!--end::Label-->
                             <div class="fw-bold fs-6 text-gray-800">#{{$purchase['purchase_voucher_no']}}</div>
                             <div class="fw-semibold fs-7 text-gray-600">
                                 Status : <span class="badge badge-light-success">{{$purchase['status']}}</span>
                             </div>
-                            <!--end::Label-->
-                            <!--end::Text-->
-                            <!--end::Text-->
-                            <!--end::Description-->
-                            <!--end::Description-->
                         </div>
-                        <!--end::Col-->
                         <div class="col-sm-6">
                             <!--end::Label-->
                             <div class="fw-semibold fs-7 text-gray-600 mb-1">Purchase Date:</div>
@@ -169,7 +157,7 @@
                         <!--begin::Container-->
                         <div class="d-flex justify-content-end">
                             @php
-                            $purchaseCurrency=$purchase['currency']['symbol'] ?? ''
+                                $purchaseCurrency=$purchase['currency']['symbol'] ?? ''
                             @endphp
                             <!--begin::Section-->
                             <div class="mw-300px">
@@ -226,12 +214,12 @@
                     </div>
                     <!--end::Content-->
                 </div>
-                <div class="table-responsive mt-10 d-none">
-                    <table class="table table-row-dashed fs-6 gy-5" id="kt_customers_table">
+                <div class="table-responsive mt-15 ">
+                    <table class="table table-row-dashed fs-6 gy-2" id="kt_customers_table">
                         <!--begin::Table head-->
-                        <thead class="bg-success">
+                        <thead class="bg-gray-200 bg-opacity-20">
                             <!--begin::Table row-->
-                            <tr class="bg-gray-100 fw-bold fs-6 text-black text-start text-uppercase fs-7 p-2">
+                            <tr class=" fw-bold fs-6 text-gray-600 text-start text-uppercase fs-7 p-2">
                                 <th class="min-w-60px ps-2">Date </th>
                                 <th class="min-w-100px">Action</th>
                                 <th class="min-w-100px">By</th>
@@ -251,7 +239,7 @@
                                 <!--end::Name=-->
                                 <!--begin::Email=-->
                                 <td>
-                                    <span class="badge badge-light-success">Purchase</span>
+                                    <span class="badge badge-light-success">Creaete Purchase</span>
                                 </td>
                                 <td>
                                     {{$purchase['purchased_by']['username']??'-'}}
@@ -279,41 +267,41 @@
 
                             </tr>
                             @if ($purchase['updated_by'])
-                            <tr>
-                                <!--begin::Name=-->
-                                <td class="ps-2">
-                                    {{fDate($purchase['updated_at'])}}
-                                </td>
-                                <!--end::Name=-->
-                                <!--begin::Email=-->
-                                <td>
-                                    <span class="badge badge-light-warning">Updated</span>
-                                </td>
-                                <td>
-                                    {{$purchase['updated_by']['username']??'-'}}
-                                </td>
-                                {{-- <td class="">
-                                    <table class="no-border table table-slim mb-0">
-                                        <tbody>
-                                            <tr>
-                                                <th>Status</th>
-                                                <td><span class="badge badge-light-success">Ordered</span></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Total:</th>
-                                                <td><span class="badge badge-light-success">Ks 0</span></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Payment status:</th>
-                                                <td><span class="badge badge-light-success">Due</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td> --}}
+                                <tr>
+                                    <!--begin::Name=-->
+                                    <td class="ps-2">
+                                        {{fDate($purchase['updated_at'])}}
+                                    </td>
+                                    <!--end::Name=-->
+                                    <!--begin::Email=-->
+                                    <td>
+                                        <span class="badge badge-light-warning">Updated</span>
+                                    </td>
+                                    <td>
+                                        {{$purchase['updated_by']['username']??'-'}}
+                                    </td>
+                                    {{-- <td class="">
+                                        <table class="no-border table table-slim mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Status</th>
+                                                    <td><span class="badge badge-light-success">Ordered</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Total:</th>
+                                                    <td><span class="badge badge-light-success">Ks 0</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Payment status:</th>
+                                                    <td><span class="badge badge-light-success">Due</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td> --}}
 
 
 
-                            </tr>
+                                </tr>
                             @endif
 
                         </tbody>
@@ -325,9 +313,8 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                {{-- <button type="button" class="btn btn-primary" id="print">Print</button> --}}
             </div>
-        </form>
+        </div>
     </div>
 </div>
 <script src={{asset('customJs/general.js')}}></script>

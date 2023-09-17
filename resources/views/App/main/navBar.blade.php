@@ -1227,6 +1227,17 @@
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
+                                                        <div class="menu-item">
+                                                            <!--begin:Menu link-->
+                                                            <a class="menu-link @yield('import_price_list_detail_menu_link')" href="{{ route('priceListTemplate') }}">
+                                                                <span class="menu-icon">
+                                                                    <i class="fa-solid fa-download"></i>
+                                                                </span>
+                                                                <span class="menu-title fs-6">{{
+                                                                    __('product/pricelist.import_pricelist') }}</span>
+                                                            </a>
+                                                            <!--end:Menu link-->
+                                                        </div>
                                                     </div>
                                                     <!--end:Menu sub-->
                                                     <!--end:Menu sub-->
