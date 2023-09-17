@@ -217,7 +217,7 @@ class purchaseController extends Controller
                             if (hasUpdate('purchase')){
                                 $html .= $editBtn;
                             }
-                            if($purchase->balance_amount!=0){
+                            if(($purchase->paid_amount ?? 0) < $purchase->total_purchase_amount){
                                 $html.='<a class="dropdown-item p-2 cursor-pointer " id="paymentCreate"   data-href="'.route('paymentTransaction.createForPurchase',['id' => $purchase->id,'currency_id'=>$purchase->currency_id]).'">Add Payment</a>';
                             }
                             $html.='<a class="dropdown-item p-2 cursor-pointer " id="viewPayment"   data-href="'.route('paymentTransaction.viewForPurchase',$purchase->id).'">View Payment</a>';

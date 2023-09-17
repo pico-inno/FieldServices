@@ -62,8 +62,9 @@ class ProductsImport implements
         $this->variation_values = VariationTemplateValues::select('id', 'name', 'variation_template_id');
     }
 
-    private function createOrGetRecord($model, $query, $field1, $value1, $field2 = null){
-        if($value1){
+    private function createOrGetRecord($model, $query, $field1, $value1, $field2 = null)
+    {
+        if ($value1) {
             if (array_key_exists($value1, $this->realtionId)) {
                 $id = $this->realtionId[$value1];
                 return $id;
@@ -95,26 +96,29 @@ class ProductsImport implements
         }
     }
 
-    private function formatProductVariation($product_id, $variation_id, $variation_values, $variation_sku, $row, $product_sku){
+    private function formatProductVariation($product_id, $variation_id, $variation_values, $variation_sku, $row, $product_sku)
+    {
 
         $format_data = [];
-        foreach($variation_values as $key => $value){
+        foreach ($variation_values as $key => $value) {
             $variation_value_query = $this->variation_values->where('variation_template_id', $variation_id);
-            $vari_val_query_lowercase = $variation_value_query->pluck('name')->map(fn($v) => strtolower($v));
+            $vari_val_query_lowercase = $variation_value_query->pluck('name')->map(fn ($v) => strtolower($v));
             $variation_template_value_id = null;
-            if(!$vari_val_query_lowercase->contains(strtolower($value))){
-                $variation_template_value_id = VariationTemplateValues::create(['name' => $value,'variation_template_id' => $variation_id, 'created_by' => auth()->id()])->id;
+            if (!$vari_val_query_lowercase->contains(strtolower($value))) {
+                $variation_template_value_id = VariationTemplateValues::create(['name' => $value, 'variation_template_id' => $variation_id, 'created_by' => auth()->id()])->id;
             }
-            if($vari_val_query_lowercase->contains(strtolower($value))){
-                foreach($variation_value_query->get() as $v){
-                    if(strtolower($v->name) === strtolower($value)){
+            if ($vari_val_query_lowercase->contains(strtolower($value))) {
+                foreach ($variation_value_query->get() as $v) {
+                    if (strtolower($v->name) === strtolower($value)) {
                         $variation_template_value_id = $v->id;
                     }
                 }
             }
-
-            $vari_sku = $variation_sku[$key] ?? $product_sku . '-' . $key+1;
-
+            if(trim($variation_sku[$key]) == '') {
+                $vari_sku =$product_sku . '-' . $key + 1;
+            }else {
+                $vari_sku = $variation_sku[$key];
+            };
             $format_data[] = [
                 'product_id' => $product_id,
                 'variation_sku' => $vari_sku,
@@ -129,25 +133,31 @@ class ProductsImport implements
         return $format_data;
     }
 
-    private function processUoM($rowData){
-        $unitCategoryName = $rowData['unit_category'];
-        if (!$unitCategoryName) {
-            throw new \Exception("Unit Category Required");
-        }
+    private function processUoM($rowData)
+    {
+        // $unitCategoryName = $rowData['unit_category'];
+        // if (!$unitCategoryName) {
+        //     throw new \Exception("Unit Category Required");
+        // }
         $uomName = $rowData['uom'];
         $purchaseUoMName = $rowData['purchase_uom'];
 
-        $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
-        $uomId = $this->uom->where('name', $uomName)->where('unit_category_id', $unitCategoryId)->pluck('id')->first();
-        $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $unitCategoryId)->pluck('id')->first();
-        if(!$uomId){
+        // $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
+        $uom = $this->uom->where('name', $uomName)->select('id', 'unit_category_id')->first();
+        $uomId=$uom->id;
+        $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $uom->unit_category_id)->pluck('id')->first();
+        // dd($purchaseUoMId);
+        if(($uomId && !$purchaseUoMId) || (!$uomId && $purchaseUoMId) || (!$uomId && !$purchaseUoMId)) {
+            throw new \Exception("UOM and Purchase uom do not match cateogry.");
+        }
+        if (!$uomId) {
             throw new \Exception("UoM doesn't exist");
         }
-        if(!$purchaseUoMId){
+        if (!$purchaseUoMId) {
             throw new \Exception("Purchase UoM doesn't exist");
         }
 
-        if($uomId && $purchaseUoMId){
+        if ($uomId && $purchaseUoMId) {
             return [
                 'uom_id' => $uomId,
                 'purchaseUoM_id' => $purchaseUoMId
@@ -159,7 +169,7 @@ class ProductsImport implements
     {
         // dd($rows->toArray());
         DB::beginTransaction();
-        try{
+        try {
             // begin: for image
             $spreadsheet = IOFactory::load(request()->file('import-products'));
             $i = 0;
@@ -173,13 +183,13 @@ class ProductsImport implements
                     $imageContents = ob_get_contents();
                     ob_end_clean();
                     switch ($drawing->getMimeType()) {
-                        case MemoryDrawing::MIMETYPE_PNG :
+                        case MemoryDrawing::MIMETYPE_PNG:
                             $extension = 'png';
                             break;
                         case MemoryDrawing::MIMETYPE_GIF:
                             $extension = 'gif';
                             break;
-                        case MemoryDrawing::MIMETYPE_JPEG :
+                        case MemoryDrawing::MIMETYPE_JPEG:
                             $extension = 'jpg';
                             break;
                     }
@@ -194,7 +204,7 @@ class ProductsImport implements
                     $this->imageCoordinates[] = [
                         $drawing->getCoordinates() => $myFileName
                     ];
-                    Storage::put('product-image/' .$myFileName, $imageContents);
+                    Storage::put('product-image/' . $myFileName, $imageContents);
                 }
             }
 
@@ -202,10 +212,10 @@ class ProductsImport implements
             $imageArrays = array_merge(...$this->imageCoordinates);
             // dd($imageArrays);
             $count = 1;
-            foreach($rows as $key => $row){
-                $currentRow = 'P'. ++$count;
+            foreach ($rows as $key => $row) {
+                $currentRow = 'P' . ++$count;
                 $imageName = null;
-                if(array_key_exists($currentRow, $imageArrays)){
+                if (array_key_exists($currentRow, $imageArrays)) {
                     $imageName = $currentRow;
                 }
                 $brand_id = $this->createOrGetRecord(Brand::class, $this->brands, 'name', $row['brand']);
@@ -217,14 +227,14 @@ class ProductsImport implements
                 $variation_id = $variation_name ? $this->createOrGetRecord(VariationTemplates::class, $this->variations, 'name', $variation_name) : null;
 
                 $product_count = Product::withTrashed()->count();
-                $sku = $row['sku_leave_blank_to_auto_generate_sku'] ?? sprintf('%07d',($product_count+1));
+                $sku = $row['sku_leave_blank_to_auto_generate_sku'] ?? sprintf('%07d', ($product_count + 1));
 
                 $product = new Product([
                     "name" => $row["name"],
                     "product_code" => $row["product_code"],
                     "sku" => $sku,
                     "product_type" => $row["product_type_consumeable_or_storable_or_service"],
-                    "has_variation"=>$row["has_variation_single_or_variable"],
+                    "has_variation" => $row["has_variation_single_or_variable"],
                     "brand_id" => $brand_id,
                     "category_id" => $category_id,
                     "manufacturer_id" => $manufacturer_id,
@@ -244,6 +254,7 @@ class ProductsImport implements
                 ]);
                 $product->save();
                 $product_id = $product->fresh()->id;
+                $createdProduct=$product->fresh();
 
                 ProductVariationsTemplates::create([
                     'product_id' => $product_id,
@@ -253,19 +264,20 @@ class ProductsImport implements
 
                 // for product variation
                 $hasVariation = $row['has_variation_single_or_variable'];
-                if(trim($hasVariation) === "variable"){
+                if (trim($hasVariation) === "variable") {
                     $raw_variation_value = $row['variation_values_seperated_values_blank_if_product_type_if_single'];
-                    $variation_value_array = array_map(fn($value) => trim($value), explode("|", $raw_variation_value));
+                    $variation_value_array = array_map(fn ($value) => trim($value), explode("|", $raw_variation_value));
 
                     $raw_variation_sku = $row['variation_skus_seperated_values_blank_if_product_type_if_single'];
-                    $variation_sku_array = array_map(fn($value) => trim($value), explode("|", $raw_variation_sku));
+                    $variation_sku_array = array_map(fn ($value) => trim($value), explode("|", $raw_variation_sku));
                     $insert_data = $this->formatProductVariation($product_id, $variation_id, $variation_value_array, $variation_sku_array, $row, $sku);
                     ProductVariation::insert($insert_data);
                 }
 
-                if(trim($hasVariation) === "single"){
+                if (trim($hasVariation) === "single") {
                     ProductVariation::create([
                         'product_id' => $product_id,
+                        'variation_sku'=>$createdProduct->sku,
                         'default_purchase_price' => $row['purchase_price'],
                         'profit_percent' => $row['profit_margin'],
                         'default_selling_price' => $row['selling_price'],
@@ -274,7 +286,7 @@ class ProductsImport implements
                 }
             }
             DB::commit();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             $errorMessage = $e->getMessage();
             DB::rollBack();
             return back()->withErrors($errorMessage)->withInput();
@@ -290,8 +302,10 @@ class ProductsImport implements
     public function rules(): array
     {
         return [
-            '*.sku_leave_blank_to_auto_generate_sku' => ['nullable',
-                                                         Rule::unique('products', 'sku')]
+            '*.sku_leave_blank_to_auto_generate_sku' => [
+                'nullable',
+                Rule::unique('products', 'sku')
+            ]
         ];
     }
 
@@ -302,4 +316,6 @@ class ProductsImport implements
         ];
     }
 }
+
+
 

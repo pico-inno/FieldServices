@@ -14,7 +14,7 @@ class configurationController extends Controller
 
     public function __construct()
     {
-        
+
     }
     public function envConfigure()
     {
@@ -34,9 +34,10 @@ class configurationController extends Controller
         try {
             Artisan::call('migrate');
             Artisan::call('db:seed --class=RolesTableSeeder');
-            // Artisan::call('db:seed', ["--class=CurrenciesTableSeeder"]);
             Artisan::call('db:seed --class=UoMSeeder');
             Artisan::call('db:seed --class=ContactWalkInTableSeeder');
+
+            // Artisan::call('db:seed', ["--class=CurrenciesTableSeeder"]);
             return view('App.business.activationForm')->with(['success'=>'Successfully Configured']);
         } catch (\Throwable $th) {
             return back()->with(['error'=> $th->getMessage()]);

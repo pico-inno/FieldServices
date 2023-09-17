@@ -19,6 +19,10 @@
 <!--end::Breadcrumb-->
 @endsection
 
+@section('styles')
+<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
+@endsection
+
 @section('content')
     <!--begin::Content-->
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -118,23 +122,22 @@
                 <!--begin::Main column-->
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
                     <!--begin:::Tabs-->
-                    <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
-                        <!--begin:::Tab item-->
+                    <!-- <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
+                  
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general">All Produts</a>
                         </li>
-                        <!--end:::Tab item-->
-                        <!--begin:::Tab item-->
+              
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_advanced">Stock Report</a>
                         </li>
-                        <!--end:::Tab item-->
-                    </ul>
+                       
+                    </ul> -->
                     <!--end:::Tabs-->
                     <!--begin::Tab content-->
                     <div class="tab-content">
                         <!--begin::Tab pane-->
-                        <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
+                        <div class="tab-pane fade show active" id="remove_kt_ecommerce_add_product_general" role="tab-panel">
                             <div class="d-flex flex-column gap-7 gap-lg-10">
                                 <!--begin::General options-->
                                 <div class="card card-flush py-4">
@@ -183,32 +186,32 @@
                                                     <!--begin::Menu-->
                                                     <div id="kt_datatable_example_export_menu" class="btn-sm menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
                                                         <!--begin::Menu item-->
-                                                        <div class="menu-item px-3">
+                                                        {{-- <div class="menu-item px-3">
                                                             <a href="#" class="menu-link px-3" data-kt-export="copy">
                                                             Copy to clipboard
                                                             </a>
-                                                        </div>
+                                                        </div> --}}
                                                         <!--end::Menu item-->
                                                         <!--begin::Menu item-->
                                                         <div class="menu-item px-3">
-                                                            <a href="#" class="menu-link px-3" data-kt-export="excel">
+                                                            <a href="{{ route('export-productlist') }}" class="menu-link px-3" data-kt-export="excel">
                                                             Export as Excel
                                                             </a>
                                                         </div>
                                                         <!--end::Menu item-->
                                                         <!--begin::Menu item-->
-                                                        <div class="menu-item px-3">
+                                                        {{-- <div class="menu-item px-3">
                                                             <a href="#" class="menu-link px-3" data-kt-export="csv">
                                                             Export as CSV
                                                             </a>
-                                                        </div>
+                                                        </div> --}}
                                                         <!--end::Menu item-->
                                                         <!--begin::Menu item-->
-                                                        <div class="menu-item px-3">
+                                                        {{-- <div class="menu-item px-3">
                                                             <a href="#" class="menu-link px-3" data-kt-export="pdf">
                                                             Export as PDF
                                                             </a>
-                                                        </div>
+                                                        </div> --}}
                                                         <!--end::Menu item-->
                                                     </div>
                                                     <!--end::Menu-->
@@ -226,7 +229,7 @@
                                             <div class="card-body">
                                                 {{-- <img src="{{ asset('/storage/product-image/1680624705_anime-girl.jpg') }}" alt="image" />	 --}}
                                                 <div class="table-responsive">
-                                                    <table class="table border-1 Datatable-tb align-middle  rounded table-row-dashed fs-6 g-5" id="kt_datatable_example">
+                                                    <table class="table border-1 Datatable-tb align-middle  rounded table-row-dashed fs-6 g-5" id="kt_datatable_example" >
                                                         <!--begin::Table head-->
                                                         <thead>
                                                             <!--begin::Table row-->
@@ -243,6 +246,7 @@
                                                                     Business Location <i class="fas fa-exclamation-circle ms-1 fs-7 text-success cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
                                                                     title="Product will be available only in this business locations"></i>
                                                                 </th> --}}
+                                                                <th class="text-start min-w-150px">{{ __('product/product.sku') }}</th>
                                                                 <th class="text-start min-w-150px">{{ __('product/product.purchase_price') }}</th>
                                                                 <th class="text-start min-w-100px">{{ __('product/product.sell_price') }}</th>
                                                                 {{-- <th class="text-start min-w-150px">Current Stock</th> --}}
@@ -336,9 +340,9 @@
                                                     </button>
                                                     @if(hasExport('product'))
                                                     <!--begin::Export dropdown-->
-                                                    <button type="button" class="btn btn-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                                    <!-- <button type="button" class="btn btn-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                                                         Export Report
-                                                    </button>
+                                                    </button> -->
                                                     <!--begin::Menu-->
                                                     <div id="kt_datatable_example_export_menu_stock" class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4" data-kt-menu="true">
                                                         <!--begin::Menu item-->
@@ -358,7 +362,7 @@
                                                         <!--begin::Menu item-->
                                                         <div class="menu-item px-3">
                                                             <a href="#" class="menu-link px-3" data-kt-export-stock="csv">
-                                                            Export as CSV
+                                                            Export as CSVa
                                                             </a>
                                                         </div>
                                                         <!--end::Menu item-->
@@ -372,88 +376,49 @@
                                                     </div>
                                                     <!--end::Menu-->
                                                     <!--end::Export dropdown-->
-                                                    @endif
+                                                  
                                                     <!--begin::Hide default export buttons-->
                                                     <div id="kt_datatable_example_buttons_stock" class="d-none"></div>
                                                     <!--end::Hide default export buttons-->
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="card-body">
                                                 <div class="table-responsive">
-                                                    <table class="table align-middle  rounded table-row-dashed fs-6 g-5" id="kt_datatable_example_stock">
+                                                    <table class="table align-middle  rounded table-row-dashed fs-6 g-5" >
                                                         <!--begin::Table head-->
                                                         <thead>
                                                             <!--begin::Table row-->
                                                             <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                                                                <th class="text-start min-w-150px">SKU</th>
-                                                                <th class="text-start min-w-100px">Product</th>
-                                                                <th class="text-start min-w-150px">Variation</th>
-                                                                <th class="text-start min-w-100px">Category</th>
-                                                                <th class="text-start min-w-100px">Location</th>
-                                                                <th class="text-start min-w-200px">Unit Selling Price</th>
-                                                                <th class="text-start min-w-100px">Current Stock</th>
-                                                                <th class="text-start min-w-150px">Current Stock Value (By purchase price)</th>
-                                                                <th class="text-start min-w-150px">Current Stock Value (By sale price)</th>
-                                                                <th class="text-start min-w-100px">Potential profit</th>
-                                                                <th class="text-start min-w-100px">Total unit sold</th>
-                                                                <th class="text-start min-w-150px">Total Unit Transfered</th>
-                                                                <th class="text-start min-w-150px">Total Unit Adjusted</th>
-                                                                <th class="text-start min-w-100px">IMEI</th>
-                                                                <th class="text-start min-w-100px">Custom Field2</th>
-                                                                <th class="text-start min-w-100px">Custom Field3</th>
-                                                                <th class="text-start min-w-100px">Custom Field4</th>
-                                                                <th class="text-start min-w-100px">
-                                                                    Current Stock (Manufacturing) <i class="fas fa-exclamation-circle ms-1 fs-7 text-success cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                    title="Stock left from total manufactured"></i>
+                                                                <th>SKU</th>
+                                                                <th>Product & Variation</th>
+                                                                <th>Batch No</th>
+                                                                <th>Lot No</th>
+                                                                <th>Location</th>
+                                                                <th>Category</th>
+                                                                <th>Brand</th>
+
+                                                                <th>
+                                                                    <span id="stock-qty-header">
+                                                                        Purchase Qty
+                                                                    </span>
                                                                 </th>
+                                                                <th class="text-center">
+                                                                 <span id="stock-qty-header1">
+                                                                        Current Qty
+                                                                 </span>
+                                                                </th>
+                                                                <th>UOM</th>
+
                                                             </tr>
                                                             <!--end::Table row-->
                                                         </thead>
                                                         <!--end::Table head-->
                                                         <!--begin::Table body-->
                                                         <tbody class="fw-semibold text-gray-600">
-                                                            @foreach ([1,2,3,4,5,6,6,7,8,8,9,9,12,23,43,42,17] as $item)
-                                                                <!--begin::Table row-->
-                                                                <tr>
-                                                                    <td>IP13PM256</td>
-                                                                    <td>iPhone 13 Pro Max 256GB</td>
-                                                                    <td></td>
-                                                                    <td>Color</td>
-                                                                    <td>Main Store</td>
-                                                                    <td>
-                                                                        Ks 3,000,000 <br/>
-                                                                        <button type="button" class="btn btn-primary btn-sm p-1">View group prices</button>
-                                                                    </td>
-                                                                    <td>4.00 Pc(s)</td>
-                                                                    <td>Ks 10,400,000</td>
-                                                                    <td>Ks 12,200,400</td>
-                                                                    <td>Ks 1,600,000</td>
-                                                                    <td>1.00 Pc(s)</td>
-                                                                    <td>0.00 Pc(s)</td>
-                                                                    <td>0.00 Pc(s)</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td>0.00 Pc(s)</td>
-                                                                </tr>
-                                                                <!--end::Table row-->
-                                                            @endforeach
+                                                            
                                                         </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <td colspan="6">Total: </td>
-                                                                <td>7885</td>
-                                                                <td>55665</td>
-                                                                <td>565</td>
-                                                                <td>454541</td>
-                                                                <td>5465</td>
-                                                                <td>5465</td>
-                                                                <td>0</td>
-                                                                <td colspan="4"></td>
-                                                                <td>0</td>
-                                                            </tr>
-                                                        </tfoot>
+                                                        
                                                         <!--end::Table body-->
                                                     </table>
                                                 </div>
@@ -480,6 +445,8 @@
 
 @push('scripts')
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
+    <script src="{{asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+    <!-- <script src="{{ asset('customJs/product/productListExport.js') }}"></script> -->
     <script>
         // success message
         // toastr.options = {
@@ -499,10 +466,27 @@
         //     "showMethod": "fadeIn",
         //     "hideMethod": "fadeOut"
         // };
-
+        var table;
         $(document).ready(function () {
-            let table = $('.Datatable-tb').DataTable({
+
+
+            function disablePagination() {
+    // Store the current pagination state
+    var currentPage = table.page();
+
+    // Disable pagination
+    table.page('all').draw('page');
+
+    // Revert to the original page after the export is complete
+    table.one('draw.dt', function () {
+        table.page(currentPage).draw('page');
+    });
+}
+
+            var initDatatable = function (){
+                table = $('.Datatable-tb').DataTable({
                 processing: true,
+                paging:true,
                 serverSide: true,
                 ajax: {
                     url: '/product-datas',
@@ -558,6 +542,10 @@
                             </div>
                             `;
                         }
+                    },
+                    {
+                        data: 'sku',
+                        name: 'sku',
                     },
                     {
                         data: 'purchase_price',
@@ -639,6 +627,11 @@
 
                 ]
             });
+
+            disablePagination();
+            };
+
+            initDatatable();
             // Search
             $('#search').on('keyup', function() {
                 table.search(this.value).draw();
@@ -767,7 +760,7 @@
                 let selling_price = data.selling_price.selling_prices[index];
                 let variation_id = data.product_variations[index].id;
                 return `
-                    <table class="table">
+                    <table class="table" >
                         <tr>
                             <td class="w-50px"></td>
                             <td class="text-start w-100px text-gray-500">
@@ -780,7 +773,7 @@
                                     </ul>
                                 </div>
                             </td>
-                            <td class="w-150px text-gray-500">${data.name} | ${variation_name}</td>
+                            <td class="w-150px text-gray-500">${data.name} | ${variation_name}</td>       
                             <td class="text-start w-150px text-gray-500">Ks ${purchase_price}</td>
                             <td class="text-start w-100px text-gray-500">Ks ${selling_price}</td>
                             <td class="text-start w-100px text-gray-500">${data.has_variation}</td>
@@ -796,6 +789,71 @@
                     </table>
                     `;
             }
+
+
+            var exportButtons = () => {
+                        const documentTitle = 'Product List';
+                       
+
+                        
+                        var buttons = new $.fn.dataTable.Buttons(table, {
+                            buttons: [
+                                {
+                                    extend: 'copyHtml5',
+                                    title: documentTitle,
+                                    exportOptions: {
+                                        page: 'all', // Export all pages
+                                        search: 'none' // Exclude search filter from export
+                                    },
+                
+
+                                },
+                                {
+                                    extend: 'excelHtml5',
+                                    title: documentTitle,
+                                    exportOptions: {
+                                        page: 'all', // Export all pages
+                                        search: 'none' // Exclude search filter from export
+                                    },
+                    
+                                },
+                                {
+                                    extend: 'csvHtml5',
+                                    title: documentTitle,
+                                    exportOptions: {
+                                modifier: {
+                                    page: 'all', // Export all pages
+                                    search: 'none' // Exclude search filter from export
+                                }
+                            }
+                                },
+                                {
+                                    extend: 'pdfHtml5',
+                                    title: documentTitle,
+                                    exportOptions: {
+                                modifier: {
+                                    page: 'all', // Export all pages
+                                    search: 'none' // Exclude search filter from export
+                                }
+                            }
+                                },
+                                
+                            ]
+                        }).container().appendTo($('#kt_datatable_example_buttons'));
+
+                        const exportButtons = document.querySelectorAll('#kt_datatable_example_export_menu [data-kt-export]');
+                        // exportButtons.forEach(exportButton => {
+                        //     exportButton.addEventListener('click', e => {
+                        //         console.log('work');
+                        //         e.preventDefault();
+
+                        //         const exportValue = e.target.getAttribute('data-kt-export');
+                        //         const target = document.querySelector('.dt-buttons .buttons-' + exportValue);
+                        //         target.click();
+                        //     });
+                        // });
+             }
+             exportButtons();
         });
 
     </script>
@@ -805,92 +863,5 @@
         </script>
     @endif
 
-    <script>
-        var KTDatatablesExampleStock = function () {
-            // Shared variables
-            var table;
-            var datatable;
-
-            // Private functions
-            var initDatatable = function () {
-                // Set date data order
-                const tableRows = table.querySelectorAll('tbody tr');
-
-                // Init datatable --- more info on datatables: https://datatables.net/manual/
-                datatable = $(table).DataTable({
-                    "info": false,
-                    'order': [],
-                    'pageLength': 10,
-                });
-            }
-
-            // Hook export buttons
-            var exportButtons = () => {
-                const documentTitle = 'Customer Orders Report';
-                var buttons = new $.fn.dataTable.Buttons(table, {
-                    buttons: [
-                        {
-                            extend: 'copyHtml5',
-                            title: documentTitle
-                        },
-                        {
-                            extend: 'excelHtml5',
-                            title: documentTitle
-                        },
-                        {
-                            extend: 'csvHtml5',
-                            title: documentTitle
-                        },
-                        {
-                            extend: 'pdfHtml5',
-                            title: documentTitle
-                        }
-                    ]
-                }).container().appendTo($('#kt_datatable_example_buttons_stock'));
-
-                // Hook dropdown menu click event to datatable export buttons
-                const exportButtons = document.querySelectorAll('#kt_datatable_example_export_menu_stock [data-kt-export-stock]');
-                exportButtons.forEach(exportButton => {
-                    exportButton.addEventListener('click', e => {
-                        e.preventDefault();
-
-                        // Get clicked export value
-                        const exportValue = e.target.getAttribute('data-kt-export-stock');
-                        const target = document.querySelector('.dt-buttons .buttons-' + exportValue);
-
-                        // Trigger click event on hidden datatable export buttons
-                        target.click();
-                    });
-                });
-            }
-
-            // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
-            var handleSearchDatatable = () => {
-                const filterSearch = document.querySelector('[data-kt-filter="search-stock"]');
-                filterSearch.addEventListener('keyup', function (e) {
-                    datatable.search(e.target.value).draw();
-                });
-            }
-
-            // Public methods
-            return {
-                init: function () {
-                    table = document.querySelector('#kt_datatable_example_stock');
-
-                    if ( !table ) {
-                        return;
-                    }
-
-                    initDatatable();
-                    exportButtons();
-                    handleSearchDatatable();
-                }
-            };
-        }();
-
-        // On document ready
-        KTUtil.onDOMContentLoaded(function () {
-            KTDatatablesExampleStock.init();
-        });
-    </script>
+    
 @endpush

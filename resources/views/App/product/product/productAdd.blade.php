@@ -194,20 +194,29 @@
                                                     <label for="" class="form-label">
                                                         {{ __('product/product.category') }}
                                                     </label>
-                                                    <select id="categorySelect" name="category" class="form-select form-select-sm" data-control="select2" data-placeholder="Select category">
+                                                    <div class="input-group mb-5 flex-nowrap">
+                                                    <div class="overflow-hidden flex-grow-1">
+                                                    <select id="categorySelect" name="category" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select category">
                                                         <option></option>
                                                         @foreach ($categories as $category)
                                                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    </div>
+                                                    <span class="input-group-text cursor-pointer" data-bs-toggle="modal" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_category">
+                                                            <i class="fas fa-circle-plus text-primary"></i>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <label for="" class="form-label">
                                                         {{ __('product/product.sub_category') }}
                                                     </label>
+                                        
                                                     <select class="form-select form-select-sm" name="sub_category" id="subCategorySelect" data-control="select2" data-hide-search="true" data-placeholder="Select sub category">
 
                                                     </select>
+                                                
                                                 </div>
                                             </div>
                                             <div class="row advance-toggle-class d-none">
@@ -545,6 +554,7 @@
     </div>
     <!--end::Content-->
     @include('App.product.brand.quickAddBrand')
+    @include('App.product.category.quickAddCategory')
     @include('App.product.generic.quickAddGeneric')
     @include('App.product.manufacturer.quickAddManufacturer')
 @endsection
@@ -1012,6 +1022,47 @@
             });
         })
     // ============= > End:: For Brand  < ==================
+
+    // ============= > Begin:: For Category  < ==================
+    $('.quick-add-category').on('click', function(e) {
+            // e.preventDefault();
+            let category_name = $(document).find('input[name="category_name"]').val();
+            let category_code = $(document).find('input[name="category_code"]').val();
+            let parent_id = $(document).find('select[name="parent_id"]').val();
+            let category_desc = $(document).find('input[name="category_desc"]').val();
+            let form_type = "from_product";
+
+            var formData = {category_name, category_code, parent_id,category_desc, form_type};
+
+            $.ajax({
+                url: '/category/create',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    success(response.message)
+                    $('select[name="category"]').empty();
+
+                    $('select[name="category"]').append($('<option>'));
+
+                    $.each(response.categories, function(index, category) {
+                        $('select[name="category"]').append($('<option>', {
+                            value: category.id,
+                            text: category.name
+                        }));
+                        $('select[name="category"]').val(category.id).trigger('change');
+                    });
+
+                    $('#kt_modal_category').modal('hide');
+                },
+                error: function(error) {
+
+                }
+            });
+        })
+    // ============= > End:: For Category  < ==================
 
     // ============= > Begin:: For Generic  < ==================
         $('.quick-add-generic').on('click', function(e) {

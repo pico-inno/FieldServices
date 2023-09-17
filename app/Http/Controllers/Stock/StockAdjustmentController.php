@@ -21,6 +21,7 @@ use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class StockAdjustmentController extends Controller
@@ -76,7 +77,11 @@ class StockAdjustmentController extends Controller
      */
     public function store(Request $request)
     {
-
+        Validator::make([
+            'details'=>$request->adjustment_details,
+        ],[
+            'details'=>'required',
+        ])->validate();
         $adjustmentDetails = $request->adjustment_details;
         $settings = businessSettings::all()->first();
 
@@ -131,7 +136,7 @@ class StockAdjustmentController extends Controller
 
 
                     if ($request->status == 'completed' && $adjustQty != 0){
-                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                         CurrentStockBalance::create([
                             'business_location_id' => $request->business_location,
@@ -451,7 +456,7 @@ class StockAdjustmentController extends Controller
                         $updateToAdjustmentDetail->save();
 
 
-                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                         CurrentStockBalance::create([
                             'business_location_id' => $request->business_location,
@@ -726,7 +731,7 @@ class StockAdjustmentController extends Controller
                                     ->latest()
                                     ->first();
 
-                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                                 CurrentStockBalance::create([
                                     'business_location_id' => $request->business_location,
@@ -929,7 +934,7 @@ class StockAdjustmentController extends Controller
                                     ->first();
 
 
-                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                                $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                                 CurrentStockBalance::create([
                                     'business_location_id' => $request->business_location,
@@ -1034,7 +1039,7 @@ class StockAdjustmentController extends Controller
 
 
                     if ($request->status == 'completed' && $adjustQty != 0){
-                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'SA',6);
+                        $batchNo = UomHelper::generateBatchNo($adjustmentDetail['variation_id'],'',6);
 
                         CurrentStockBalance::create([
                             'business_location_id' => $request->business_location,

@@ -77,6 +77,7 @@ use App\Http\Controllers\Product\ImportProductController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
 use App\Http\Controllers\configurationController;
+use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
@@ -149,7 +150,6 @@ Route::controller(UserProfileController::class)->group(function () {
 //_End: User Profile
 
 //============================ End: User Management ============================================
-
 
 //============================ Being: Stock - In, Out, Transfer, Adjustment ===========================================
 
@@ -444,7 +444,10 @@ Route::controller(importOpeningStockController::class)->group(function () {
     Route::post('/opening/import', 'import')->name('importOpeningStock');
     Route::get('/download/demo/excel', 'dowloadDemoExcel')->name('download-excel');
 });
-
+Route::controller(ExportController::class)->group(function () {
+    Route::get('/opening/export/product', 'export')->name('exprotOpeningStockWithProduct');
+    Route::get('/product/export/productlist', 'productListExport')->name('export-productlist');
+});
 //============================ End::Opening Stock ============================================
 Route::prefix('stock-history')->group(function () {
     Route::controller(stockHistoryController::class)->group(function () {
@@ -702,7 +705,7 @@ Route::controller(CategoryController::class)->group(function () {
     Route::get('/category/sub-category/{id}', 'subCategory')->name('sub.category');
     Route::get('/category', 'index')->name('categories');
     Route::get('/category/add', 'add')->name('category.add');
-    Route::post('category/create', 'create')->name('category.create');
+    Route::post('/category/create', 'create')->name('category.create');
     Route::get('/category/edit/{category}', 'edit')->name('category.edit');
     Route::put('/category/update/{category}', 'update')->name('category.update');
     Route::delete('/category/delete/{category}', 'delete')->name('category.delete');

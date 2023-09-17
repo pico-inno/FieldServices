@@ -126,7 +126,7 @@
                     $.ajax({
                         url: `/sell/get/product`,
                         type: 'POST',
-                        delay: 250,
+                        delay: 150,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },

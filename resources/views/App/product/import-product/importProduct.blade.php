@@ -83,7 +83,7 @@
                             <strong>Follow the instructions carefully before importing the file.</strong>
                             <p class="mt-4">The columns of the file should be in the following order.</p>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
+                                <table class="table table-bordered table-striped g-3">
                                     <thead>
                                         <tr class="fw-bold fs-6 text-gray-800">
                                             <th>Column Number</th>
@@ -91,350 +91,247 @@
                                             <th>Instruction</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Product Name
-                                                <span class="text-muted">(Required)</span>
-                                            </td>
-                                            <td>Name of the product</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Brand (Optional)</td>
-                                            <td>Name of the brand
-                                                <br/><span class="text-muted">(If not found new brand with the given name will be created)</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>
-                                                Unit <span class="text-muted">(Required)</span>
-                                            </td>
-                                            <td>Name of the unit</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>
-                                                Category <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Name of the Category <br/>
-                                                <span class="text-muted">(If not found new category with the given name will be created)</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>
-                                                Sub category <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Name of the Sub-Category <br/>
-                                                <span class="text-muted">(If not found new sub-category with the given name under the
-                                                    parent Category will be created)</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>6</td>
-                                            <td>
-                                                SKU <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>Product SKU. If blank an SKU will be automatically generated</td>
-                                        </tr>
-                                        <tr>
-                                            <td>7</td>
-                                            <td>
-                                                Barcode Type <span class="text-muted">(Optional, Default: C128)</span>
-                                            </td>
-                                            <td>
-                                                Barcode Type for the product. <br/>
-                                                <b>Currently supported: C128, C39, EAN-13, EAN-8, UPC-A, UPC-E, ITF-14</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>8</td>
-                                            <td>
-                                                Manage Stock? <span class="text-muted">(Required)</span>
-                                            </td>
-                                            <td>
-                                                Enable or disable stock managemant <br />
-                                                <strong>1 = Yes</strong> <br />
-                                                <strong>0 = No</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>9</td>
-                                            <td>
-                                                Alert quantity <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Alert quantity
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>10</td>
-                                            <td>
-                                                Expires in <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>Product expiry period (Only in numbers)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>11</td>
-                                            <td>
-                                                Expiry Period Unit <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Unit for the expiry period <br/>
-                                                <strong>Available Options: days, months</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>12</td>
-                                            <td>
-                                                Applicable Tax  <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Name of the Tax Rate <br /> <br />
-                                                If purchase Price (Excluding Tax) is not same as
-                                                Purchase Price (Including Tax)
-                                                then you must supply the tax rate name.
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>13</td>
-                                            <td>
-                                                Selling Price Tax Type <span class="text-muted">(Required)</span>
-                                            </td>
-                                            <td>
-                                                Selling Price Tax Type <br/>
-                                                <strong>Available Options: inclusive, exclusive</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>14</td>
-                                            <td>
-                                                Product Type <span class="text-muted">(Required)</span>
-                                            </td>
-                                            <td>
-                                                Product Type <br/>
-                                                <strong>Available Options: single, variable</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>15</td>
-                                            <td>
-                                                Variation Name  <span class="text-muted">(Required if product type is variable)</span>
-                                            </td>
-                                            <td>Name of the variation (Ex: Size, Color etc )</td>
-                                        </tr>
-                                        <tr>
-                                            <td>16</td>
-                                            <td>
-                                                Variation Values <span class="text-muted">(Required if product type is variable)</span>
-                                            </td>
-                                            <td>
-                                                Values for the variation separated with '|' <br/>
-                                                (Ex: Red|Blue|Green)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>17</td>
-                                            <td>
-                                                Variation SKUs <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>SKUs of each variations separated by "|" if product type is variable</td>
-                                        </tr>
-                                        <tr>
-                                            <td>18</td>
-                                            <td>
-                                                Purchase Price (Including Tax) <br/>
-                                                <span class="text-muted">(Required if Purchase Price Excluding Tax is not given)</span>
-                                            </td>
-                                            <td>
-                                                Purchase Price (Including Tax) (Only in numbers) <br /><br />
-                                                For variable products '|' separated values with
-                                                the same order as Variation Values
-                                                (Ex: 84|85|88)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>19</td>
-                                            <td>
-                                                Purchase Price (Excluding Tax) <br/>
-                                                <span class="text-muted">(Required if Purchase Price Including Tax is not given)</span>
-                                            </td>
-                                            <td>
-                                                Purchase Price (Excluding Tax) (Only in numbers) <br/><br/>
-                                                For variable products '|' separated values with
-                                                the same order as Variation Values
-                                                (Ex: 84|85|88)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>20</td>
-                                            <td>
-                                                Profit Margin % <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Profit Margin (Only in numbers) <br/>
-                                                <span class="text-muted">If blank default profit margin for the
-                                                    business will be used</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>21</td>
-                                            <td>
-                                                Selling Price <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Selling Price (Only in numbers) <br/>
-                                                <span class="text-muted">If blank selling price will be calculated
-                                                    with the given Purchase Price
-                                                    and Applicable Tax</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>22</td>
-                                            <td>
-                                                Opening Stock <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Opening Stock (Only in numbers) <br/><br/>
-                                                For variable products separate stock quantities with '|' <br/>
-                                                (Ex: 100|150|200)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>23</td>
-                                            <td>
-                                                Opening stock location <span class="text-muted">(Optional)</span> <br/>
-                                                <span class="text-muted">If blank first business location will be used</span>
-                                            </td>
-                                            <td>Name of the business location</td>
-                                        </tr>
-                                        <tr>
-                                            <td>24</td>
-                                            <td>
-                                                Expiry Date <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Stock Expiry Date <br/>
-                                                <strong>Format: mm-dd-yyyy; Ex: 11-25-2018</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>25</td>
-                                            <td>
-                                                Enable Product description, IMEI or Serial Number <br/>
-                                                <span class="text-muted">(Optional, Default: 0)</span>
-                                            </td>
-                                            <td>
-                                                <strong>1 = Yes</strong> <br/>
-                                                <strong>0 = No</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>26</td>
-                                            <td>
-                                                Weight <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Optional
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>27</td>
-                                            <td>
-                                                Rack <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Rack details seperated by '|' for different business locations serially. <br/>
-                                                (Ex: R1|R5|R12)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>28</td>
-                                            <td>
-                                                Row <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Row details seperated by '|' for different business locations serially. <br/>
-                                                (Ex: ROW1|ROW2|ROW3)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>29</td>
-                                            <td>
-                                                Position <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Position details seperated by '|' for different business locations serially. <br/>
-                                                (Ex: POS1|POS2|POS3)
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>30</td>
-                                            <td>
-                                                Image <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                Image name with extension. <br/>
-                                                (Image name must be uploaded to the server public/uploads/img ) <br/><br/>
-                                                Or URL of the image
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>31</td>
-                                            <td>
-                                                Product Description <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>32</td>
-                                            <td>
-                                                Custom Field1 <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>33</td>
-                                            <td>
-                                                Custom Field2 <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>34</td>
-                                            <td>
-                                                Custom Field3 <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>35</td>
-                                            <td>
-                                                Custom Field4 <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>36</td>
-                                            <td>
-                                                Not for selling <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>
-                                                <strong>1 = Yes</strong> <br/>
-                                                <strong>0 = No</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>37</td>
-                                            <td>
-                                                Product locations <span class="text-muted">(Optional)</span>
-                                            </td>
-                                            <td>Comma separated string of business location names where product will be available</td>
-                                        </tr>
+                                    @php
+                                        $Instructions = [
+                                            [
+                                                'name' => 'Product Name',
+                                                'is_req' => true,
+                                                'instruction' => 'Name of the product',
+                                            ],
+                                            [
+                                                'name' => 'Brand',
+                                                'is_req' => false,
+                                                'instruction' => 'Name of the brand ',
+                                                'note'=>'If not found new brand with the given name will be created'
+                                            ],
+                                            // [
+                                            //     'name' => 'Unit Category',
+                                            //     'is_req' => true,
+                                            //     'instruction' => 'Unit Category (eg . mass, unit, weight,...)',
+                                            // ],
+                                            [
+                                                'name' => 'UoM',
+                                                'is_req' => true,
+                                                'instruction' => 'Default UOM ',
+                                            ],
+                                            [
+                                                'name' => 'Purchase UoM',
+                                                'is_req' => true,
+                                                'instruction' => 'Default UOM For Purchase',
+                                            ],
+                                            [
+                                                'name' => 'Category',
+                                                'is_req' => false,
+                                                'instruction' => 'Name of the Category',
+                                                'note'=>'If not found new category with the given name will be created'
+                                            ],
+
+                                            [
+                                                'name' => 'Manufacture',
+                                                'is_req' => false,
+                                                'instruction' => 'Name of the Manufacture',
+                                                'note'=>'If not found new Manufacture with the given name will be created.'
+                                            ],
+                                            [
+                                                'name' => 'Generic',
+                                                'is_req' => false,
+                                                'instruction' => 'Name of the Generic ',
+                                                'note'=>'If not found new generic with the given name under the parent Category will be created'
+                                            ],
+                                            [
+                                                'name' => 'SKU',
+                                                'is_req' => false,
+                                                'instruction' => 'Product SKU. ',
+                                                'note'=>'If blank an SKU will be automatically generated.',
+                                            ],
+                                            // [
+                                            //     'name' => 'Product Type',
+                                            //     'is_req' => true,
+                                            //     'instruction' => 'Type Of Product.',
+                                            //     'note'=>'Current Proudct types are Consumeable,Storable and Serivce'
+                                            // ],
+
+                                            // [
+                                            //     'name' => 'Has Variation',
+                                            //     'is_req' => true,
+                                            //     'instruction' => 'Has product variation? (Single or Variable)',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Barcode Type (Optional, Default: C128)',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Barcode Type for the product. ',
+                                            //     'note'=>'Currently supported: C128, C39, EAN-13, EAN-8, UPC-A, UPC-E, ITF-14',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Manage Stock?',
+                                            //     'is_req' => true,
+                                            //     'instruction' => 'Enable or disable stock management. 1 = Yes, 0 = No',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Alert quantity',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Alert quantity',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Expires in',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Product expiry period (Only in numbers)',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Expiry Period Unit',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Unit for the expiry period. Available Options: days, months',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Applicable Tax',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Name of the Tax Rate. If purchase Price (Excluding Tax) is not the same as Purchase Price (Including Tax), then you must supply the tax rate name.',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Selling Price Tax Type',
+                                            //     'is_req' => true,
+                                            //     'instruction' => 'Selling Price Tax Type. Available Options: inclusive, exclusive',
+                                            // ],
+                                            [
+                                                'name' => 'Product Type',
+                                                'is_req' => true,
+                                                'instruction' => 'Product Type. Available Options: Consumeable , Storable , Serivce',
+                                            ],
+                                            [
+                                                'name' => 'Has Variation',
+                                                'is_req' => true,
+                                                'instruction' => 'Has product variation? (Single or Variable)',
+                                            ],
+                                            [
+                                                'name' => 'Variation Name (Required if product type is variable)',
+                                                'is_req' => true,
+                                                'instruction' => 'Name of the variation (Ex: Size, Color, etc.)',
+                                            ],
+                                            [
+                                                'name' => 'Variation Values (Required if product type is variable)',
+                                                'is_req' => true,
+                                                'instruction' => 'Values for the variation separated with \'|\'. (Ex: Red|Blue|Green)',
+                                            ],
+                                            [
+                                                'name' => 'Variation SKUs',
+                                                'is_req' => false,
+                                                'instruction' => 'SKUs of each variation separated by "|" if product type is variable',
+                                            ],
+                                            [
+                                                'name' => 'Purchase Price ',
+                                                'is_req' => false,
+                                                'instruction' => 'Default Purchase Price',
+                                            ],
+                                            // [
+                                            //     'name' => 'Purchase Price (Excluding Tax) (Required if Purchase Price Including Tax is not given)',
+                                            //     'is_req' => true,
+                                            //     'instruction' => 'Purchase Price (Excluding Tax) (Only in numbers). For variable products, "|" separated values with the same order as Variation Values (Ex: 84|85|88)',
+                                            // ],
+                                            [
+                                                'name' => 'Profit Margin %',
+                                                'is_req' => false,
+                                                'instruction' => 'Profit Margin (Only in numbers).',
+                                                'note'=>'If blank, the default profit margin for the business will be used'
+                                            ],
+                                            [
+                                                'name' => 'Selling Price',
+                                                'is_req' => false,
+                                                'instruction' => 'Selling Price (Only in numbers). ',
+                                                'note'=>'If blank, selling price will be calculated with the given Purchase Price and Applicable Tax'
+                                            ],
+                                            [
+                                                'name' => 'Can Sale',
+                                                'is_req' => true,
+                                                'instruction' => 'Can Product use in sale .Option : 0 or 1',
+                                                'note'=>"If blank or 0, Product can't search in sale voucher creation",
+                                            ],
+                                            [
+                                                'name' => 'Can Purchase',
+                                                'is_req' => true,
+                                                'instruction' => 'Can Product use in sale .Option : 0 or 1',
+                                                'note'=>"If blank or 0, Product can't search in purchase voucher  creation",
+                                            ],
+                                            [
+                                                'name' => 'Can Expense',
+                                                'is_req' => false,
+                                                'instruction' => 'Can Product use as Expense Product .Option : 0 or 1',
+                                                'note'=>"If blank or 0, Product can't search in Expense voucher  creation",
+                                            ],
+
+                                            [
+                                                'name' => 'Product Description',
+                                                'is_req' => false,
+                                                'instruction' => 'Description of product',
+                                            ],
+                                            // [
+                                            //     'name' => 'Opening Stock',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Opening Stock (Only in numbers). For variable products, separate stock quantities with \'|\'. (Ex: 100|150|200)',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Opening stock location',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Name of the business location. If blank, the first business location will be used',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Expiry Date',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Stock Expiry Date. Format: mm-dd-yyyy; Ex: 11-25-2018',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Enable Product description, IMEI or Serial Number (Optional, Default: 0)',
+                                            //     'is_req' => false,
+                                            //     'instruction' => '1 = Yes, 0 = No',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Weight',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Optional',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Rack',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Rack details separated by \'|\' for different business locations serially. (Ex: R1|R5|R12)',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Row',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Row details separated by \'|\' for different business locations serially. (Ex: ROW1|ROW2|ROW3)',
+                                            // ],
+                                            // [
+                                            //     'name' => 'Position',
+                                            //     'is_req' => false,
+                                            //     'instruction' => 'Position details separated by \'|\' for different business locations serially. (Ex: POS1|POS2|POS3)',
+                                            // ],
+                                        ];
+                                    @endphp
+                                    <tbody >
+                                        @foreach ($Instructions as $i=>$ins)
+                                            @php
+                                                $i++;
+                                            @endphp
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td>
+                                                    {{$ins['name']}}
+                                                    <span></span>
+                                                    <span class="text-muted {{$ins['is_req']?'required':''}}">
+                                                        {{$ins['is_req']?'(Required)':'(Optional)'}}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {{$ins['instruction']}}
+                                                    @if(isset($ins['note']))
+                                                        <br>
+                                                        <span class="text-gray-600">
+                                                            {{$ins['note']}}
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+
+                                        @endforeach
+
                                     </tbody>
                                 </table>
                             </div>

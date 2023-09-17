@@ -38,7 +38,6 @@ class OpeningImport implements ToModel,WithHeadingRow
     }
     public function model(Array $row)
     {
-        // dd($row);
         if($row['product_name'] ||$row['variation_name'] || $row['product_variation_sku'] || $row['expired_date'] || $row['quantity']|| $row['unit_uom_name'] || $row['price'] || $row['remark']  ){
             Validator::make($row,[
                 'product_variation_sku'=> 'required|exists:product_variations,variation_sku',
@@ -60,8 +59,15 @@ class OpeningImport implements ToModel,WithHeadingRow
             // get product_id
             $product_name=$row['product_name'];
             $sku = $row['product_variation_sku'];
-            $product= Product::where('sku', $sku)->select('id', 'has_variation', 'uom_id')->first();
+            $productVariation= ProductVariation::where('variation_sku', $sku)->first();
+            $product=Product::where('id',$productVariation->product_id)->select('id', 'has_variation', 'uom_id', 'product_type')->first();
+        
+            if($product->product_type!='storable'){
+                return;
+            }
             $product_id = $product->id;
+
+            // dd($product_id);
             $unitCategoryId=$product->uom->unit_category->id;
             // custom validation for custom rule
             $customUnitRule = Rule::exists('uom', 'id')->where(function ($query) use ($unitCategoryId) {
@@ -85,7 +91,13 @@ class OpeningImport implements ToModel,WithHeadingRow
             // get product_variation_id
             if($product->has_variation!="single"){
                 $variation_name=$row['variation_name'];
-                $variation_value_id=VariationTemplateValues::where('name', $variation_name)->first()->id;
+                Validator::make([
+                    'variation_name' => $row['variation_name']
+                ], [
+                    'variation_name' => 'exists:variation_template_values,name',
+                ])->validate();
+                $variation=VariationTemplateValues::where('name', $variation_name)->first();
+                $variation_value_id= $variation->id;
                 $variation_id=ProductVariation::where('product_id',$product_id)->where('variation_template_value_id',$variation_value_id)->first()->id;
 
                 $customVariationRule = Rule::exists('product_variation', 'variation_template_value_id')->where(function ($query) use ($product_id) {

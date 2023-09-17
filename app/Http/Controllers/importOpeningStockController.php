@@ -24,7 +24,7 @@ class importOpeningStockController extends Controller
         DB::beginTransaction();
         $file = $request->file('ImportedFile');
         request()->validate([
-            'ImportedFile' => 'required|mimes:xlx,xls|max:2048',
+            'ImportedFile' => 'required|mimes:xlx,xls,xlsx|max:2048',
             'business_location_id' => 'required',
             'opening_date' => 'required',
         ],[
@@ -56,7 +56,7 @@ class importOpeningStockController extends Controller
             DB::rollBack();
             return back()->with(['warning'=>'Something Went Wrong!']);
         }
-        return redirect()->route('opening_stock_list');
+        return redirect()->route('opening_stock_list')->with(['success' => 'Successfully imported!']);
 
 
 

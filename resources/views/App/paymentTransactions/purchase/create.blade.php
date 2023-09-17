@@ -19,10 +19,10 @@
                                <tbody class="">
                                    <tr>
                                        <th class="text-start">
-                                         <span class="fw-semibold fs-7 text-gray-600">Total Sale Amout:</span>
+                                         <span class="fw-semibold fs-7 text-gray-600">Total Purchase Amout:</span>
                                        </th>
                                        <td  class="text-end">
-                                         <span class="fw-bold fs-7 text-gray-800">{{$data->total_purchase_amount}} {{$data->currency->symbol ?? ' '}}</span>
+                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->total_purchase_amount,$data->currency->symbol)}} </span>
                                        </td>
                                    </tr>
                                    <tr>
@@ -30,7 +30,7 @@
                                          <span class="fw-semibold fs-7 text-gray-600">Paid Amount:</span>
                                        </th>
                                        <td  class="text-end">
-                                         <span class="fw-bold fs-7 text-gray-800">{{$data->paid_amount}} {{$data->currency->symbol ?? ' '}}</span>
+                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->paid_amount,$data->currency->symbol)}}</span>
                                        </td>
                                    </tr>
                                    <tr>
@@ -38,7 +38,7 @@
                                          <span class="fw-semibold fs-7 text-gray-600">Balance Amount:</span>
                                        </th>
                                        <td  class="text-end">
-                                         <span class="fw-bold fs-7 text-gray-800">{{$data->balance_amount}} {{$data->currency->symbol ?? ' '}}</span>
+                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->balance_amount,$data->currency->symbol)}}</span>
                                        </td>
                                    </tr>
                                </tbody>
