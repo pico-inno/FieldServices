@@ -543,8 +543,49 @@
                                         <!--begin::Form-->
                                             <!--begin::Heading-->
                                             <!--end::Heading-->
-
-                                            <div class="row fv-row row-cols ">
+                                            <div class="row d-none">
+                                                <div class="col-lg-6 col-12">
+                                                    <div class=" d-flex justify-content-between">
+                                                        <div class="">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
+                                                                <span class="required">{{__('business_settings.business_name')}}</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <input type="text" class="form-control form-control form-control form-control-sm border-left-0 border-right-0 border-top-0 border-bottom-1 rounded-0" name="name" id="business_name" value="{{$settingData['name']}}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-12">
+                                                    <div class=" d-flex justify-content-between">
+                                                        <div class="">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
+                                                                <span class="required">{{__('business_settings.owner_name')}}</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <input type="text"
+                                                                class="form-control form-control form-control form-control-sm border-left-0 border-right-0 border-top-0 border-bottom-1 rounded-0"
+                                                                name="name" id="business_name" value="{{$settingData['name']}}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-12">
+                                                    <div class=" d-flex justify-content-between">
+                                                        <div class="">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
+                                                                <span class="required">{{__('business_settings.start_date')}}</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <input type="text"
+                                                                class="form-control form-control form-control form-control-sm border-left-0 border-right-0 border-top-0 border-bottom-1 rounded-0"
+                                                                name="name" id="business_name" value="{{$settingData['name']}}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row fv-row row-cols">
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Label-->
                                                     <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
@@ -644,7 +685,7 @@
                                             </div>
 
 
-                                            <div class="row fv-row row-cols ">
+                                            <div class="row fv-row row-cols">
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Input-->
                                                     <!--begin::Label-->
@@ -1683,155 +1724,222 @@
 
                                     {{-- prefix-tab --}}
                                     <div class="tab-pane setting-tab fade" id="business_setting_prefix" role="tabpanel">
+                                        <div class="row">
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.purchases')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase_prefix" value="{{$settingData['purchase_prefix']}}" />
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="col-12  col-lg-5 mb-5 d-flex justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.sale')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="sale_prefix" value="{{$settingData['sale_prefix']}}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.purchase_return')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
 
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
-                                                        <span class="">{{__('business_settings.purchases')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" id="purchase" name="purchase" value="PO" />
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.purchase_order')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                        <!--begin::Label-->
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="purchase_return">
-                                                            <span class="">{{__('business_settings.purchase_return')}}:</span>
-                                                        </label>
-                                                        <!--end::Label-->
-                                                        <input type="text" class="form-control form-control" name="purchase_return" id="purchase_return" value="" placeholder="" />
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="purchase_order">
-                                                        <span class="">{{__('business_settings.purchase_order')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" name="purchase_order" id="purchase_order" value=""  />
-                                                </div>
-                                            </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.stock_transfer')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
 
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="stock_transfer">
-                                                        <span class="">{{__('business_settings.stock_transfer')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" id="stock_transfer" name="stock_transfer" value="ST" />
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.stock_adjustment')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                        <!--begin::Label-->
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="stock_adjustment">
-                                                            <span class="">{{__('business_settings.stock_adjustment')}}t:</span>
-                                                        </label>
-                                                        <!--end::Label-->
-                                                        <input type="text" class="form-control form-control" name="stock_adjustment" id="stock_adjustment" value="SA" placeholder="" />
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="sell_return">
-                                                        <span class="">{{__('business_settings.sell_return')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" name="sell_return" id="sell_return" value="SN"  />
-                                                </div>
-                                            </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.sell_return')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
 
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="expenses">
-                                                        <span class="">{{__('business_settings.expenses')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" id="expenses" name="expenses" value="EP" />
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.expenses')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                        <!--begin::Label-->
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="contacts">
-                                                            <span class="">{{__('business_settings.contacts')}}:</span>
-                                                        </label>
-                                                        <!--end::Label-->
-                                                        <input type="text" class="form-control form-control" name="contacts" id="contacts" value="CO" placeholder="" />
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="purchase_payment">
-                                                        <span class="">{{__('business_settings.purchase_payment')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" name="purchase_payment" id="purchase_payment" value="PP"  />
-                                                </div>
-                                            </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.contacts')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.purchase_payment')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.sell_payment')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
 
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="sell_payment">
-                                                        <span class="">{{__('business_settings.sell_payment')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" id="sell_payment" name="sell_payment" value="SP" />
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.expense_payment')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                        <!--begin::Label-->
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="expense_payment">
-                                                            <span class="">{{__('business_settings.expense_payment')}}:</span>
-                                                        </label>
-                                                        <!--end::Label-->
-                                                        <input type="text" class="form-control form-control" name="expense_payment" id="expense_payment" value="" placeholder="" />
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="business_location">
-                                                        <span class="">{{__('business_settings.business_location')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" name="business_location" id="business_location" value="BL"  />
-                                                </div>
-                                            </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.business_location')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.username')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.subscription_no')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
 
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="perfixes_username">
-                                                        <span class="">{{__('business_settings.username')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" id="perfixes_username" name="perfixes_username" value="" />
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.draft')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                        <!--begin::Label-->
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="subscription_no">
-                                                            <span class="">{{__('business_settings.subscription_no')}}:</span>
-                                                        </label>
-                                                        <!--end::Label-->
-                                                        <input type="text" class="form-control form-control" name="subscription_no" id="subscription_no" value="" placeholder="" />
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="perfixes_draft">
-                                                        <span class="">{{__('business_settings.draft')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" name="perfixes_draft" id="perfixes_draft" value=""  />
-                                                </div>
-                                            </div>
+                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
 
-                                            <div class="row fv-row row-cols flex-wrap">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="sales_order">
-                                                        <span class="">{{__('business_settings.sales_order')}}:</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control" id="sales_order" name="sales_order" value="" />
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                                <span class="">{{__('business_settings.sales_order')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="purchase" name="purchase" value="PO" />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                        </div>
                                     </div>
 
                                     {{-- emailSetting-tab --}}

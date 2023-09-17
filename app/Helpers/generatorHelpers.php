@@ -8,9 +8,11 @@ use App\Models\Product\UOM;
 use App\Models\CurrentStockBalance;
 use App\Models\paymentsTransactions;
 use App\Models\resOrders;
+use App\Models\sale\sales;
 
 class generatorHelpers
 {
+
     public static function generateBatchNo($variation_id, $prefix = "", $count = 6)
     {
         $lastCurrentStockCount = CurrentStockBalance::select('id','batch_no','variation_id')->where('variation_id',$variation_id)->OrderBy('id', 'DESC')->first()->batch_no ?? 0;
@@ -36,8 +38,11 @@ class generatorHelpers
         return $voucherNo;
     }
 
-    public static function generateVoucher($transaction)
+
+    public static function generateVoucher($prefix,$uniqueCount,$voucherCount=6)
     {
-        // $prefix=getSe
+        $numberCount = "%0" . $voucherCount . "d";
+        $voucherNo = sprintf($prefix.'-'. $numberCount, ($uniqueCount + 1));
+        return $voucherNo;
     }
 }

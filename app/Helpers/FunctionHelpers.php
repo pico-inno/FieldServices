@@ -1,8 +1,10 @@
 <?php
 
+use App\Helpers\generatorHelpers;
 use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Helpers\SettingHelpers;
+use App\Helpers\UomHelper;
 use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessSettings;
@@ -223,4 +225,19 @@ function checkTxEditable($startDate){
     }else{
         return true;
     }
+}
+
+
+
+// --------------------------------------------------    voucher generator
+
+
+function saleVoucher($uniqueCount){
+    $prefix=getSettingValue('sale_prefix');
+    return generatorHelpers::generateVoucher($prefix,$uniqueCount);
+}
+function purchaseVoucher($uniqueCount)
+{
+    $prefix = getSettingValue('purchase_prefix');
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }

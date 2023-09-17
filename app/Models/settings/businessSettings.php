@@ -83,7 +83,13 @@ class businessSettings extends Model
         'sms_settings',
         'custom_labels',
         'common_settings',
-        'is_active'
+        'is_active',
+
+
+
+        // prefix
+        'sale_prefix',
+        'purchase_prefix'
 
     ];
 

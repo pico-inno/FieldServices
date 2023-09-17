@@ -94,7 +94,7 @@ class purchaseController extends Controller
         try {
             $lastPurchaseId=purchases::orderBy('id','DESC')->select('id')->first()->id ?? 0;
             $purchases_data=$this->purchaseData($request);
-            $purchases_data['purchase_voucher_no'] =sprintf('PVN-' . '%06d', ($lastPurchaseId + 1));
+            $purchases_data['purchase_voucher_no'] = purchaseVoucher($lastPurchaseId);
             $purchases_data['purchased_by']=Auth::user()->id;
             $purchases_data['confirm_at']=$request->status==='confirmed'? now() :null;
             $purchases_data['confirm_by']=$request->status==='confirmed'?  Auth::user()->id : null;

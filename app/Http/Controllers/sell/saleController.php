@@ -329,7 +329,7 @@ class saleController extends Controller
             }
             $sale_data = sales::create([
                 'business_location_id' => $request->business_location_id,
-                'sales_voucher_no' => sprintf('SVN-' . '%06d', ($lastSaleId + 1)),
+                'sales_voucher_no' =>saleVoucher($lastSaleId),
                 'contact_id' => $request->contact_id,
                 'status' => $request->status,
                 'sale_amount' => $request->sale_amount,

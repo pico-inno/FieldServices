@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::table('business_settings',function(Blueprint $table) {
-        //     $table->integer('currency_rounded_method')->default(2)->nullable();
-        //     $table->integer('quantity_rounded_method')->default(2)->nullable();
-        // });
+        // prefix
+        Schema::table('business_settings',function(Blueprint $table) {
+            $table->string('sale_prefix')->default('S')->nullable();
+            $table->string('purchase_prefix')->default('P')->nullable();
+        });
     }
 
     /**

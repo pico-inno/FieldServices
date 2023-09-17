@@ -77,6 +77,8 @@ class businessSettingController extends Controller
             'time_format' => $request->time_format,
             'start_date' => $formattedDate,
             'transaction_edit_days'=>$request->transaction_edit_days,
+            'sale_prefix'=>$request->sale_prefix,
+            'purchase_prefix'=>$request->purchase_prefix,
         ];
 
         $oldData = businessSettings::where('id', Auth::user()->business_id)->first();
