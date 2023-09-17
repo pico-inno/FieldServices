@@ -99,7 +99,7 @@
                 </div>
                 <div class="card-body pt-0">
                     <div class="row mb-5">
-                        <div class="col-md-6 col-md-offset-3">
+                        <div class="d-flex align-items-center gap-3 col-md-6 col-md-offset-3">
                             <div class="">
                                 <label class=" form-label" for="formFileSm">{{ __('product/import-product.file_to_import')
                                     }}</label>
@@ -110,15 +110,20 @@
 
                                 @enderror
                             </div>
+                            <div class="">
+                                <div class="mt-5">
+                                    {{-- <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-primary btn-sm">
+                                        <i class="fas fa-download"></i>{{ __('product/import-product.download_template_file') }}
+                                    </a> --}}
+                                    <button type="button" class="btn btn-light-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        {{ __('product/import-product.download_template_file') }}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="">
                         <button type="submit" class="btn btn-success btn-sm">{{ __('product/import-product.submit') }}</button>
-                    </div>
-                    <div class="mt-5">
-                        <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-primary btn-sm">
-                            <i class="fas fa-download"></i>{{ __('product/import-product.download_template_file') }}
-                        </a>
                     </div>
                 </div>
             </div>
@@ -128,6 +133,41 @@
     <!--end::container-->
 </div>
 <!--end::Content-->
+<!-- Vertically centered modal -->
+<div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Choose Template</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-wrap justify-content-center gap-5">
+                    <div class="">
+                        <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-primary btn-sm">
+                            <i class="fas fa-download"></i>{{ __('product/import-product.download_template_file') }}
+                        </a>
+                    </div>
+                    <div class="">
+                        <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-success btn-sm">
+                            <i class="fas fa-download"></i>Download Template ForPirce List By Product PriceList
+                        </a>
+                    </div>
+                    <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-warning btn-sm">
+                        <i class="fas fa-download"></i>Download Template ForPirce List By Product Variation
+                    </a>
+                    <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-danger btn-sm">
+                        <i class="fas fa-download"></i>Download Template For Pirce List By Category
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
