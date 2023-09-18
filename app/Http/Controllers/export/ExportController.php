@@ -15,8 +15,11 @@ class ExportController extends Controller
         return Excel::download(new exportProductForOS, 'OpeningStockWithData.xlsx');
     }
 
-
     public function productListExport()
+    {
+        return Excel::download(new ProductExport, 'AllProductList.xlsx');
+    }
+    public function priceListForProduct()
     {
         return Excel::download(new ProductExport, 'AllProductList.xlsx');
     }

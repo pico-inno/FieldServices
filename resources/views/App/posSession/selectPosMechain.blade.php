@@ -45,8 +45,8 @@
                     <div
                         class="card d-flex justify-content-center align-items-center p-3 bg-hover-light-primary position-relative">
                         @if ($pr->status=='open')
-                        <div class="position-absolute top-0" style="right: 10px">
-                            <i class="fa-solid fa-circle text-success fs-10  animation-blink start-100"></i>
+                        <div class="position-absolute top-0 pt-1" style="right: 10px">
+                            <i class="fa-solid fa-circle text-success fs-9  animation-blink start-100"></i>
                         </div>
                         @endif
                         <div class="rounded-3 p-5 text-center">
@@ -61,20 +61,56 @@
                 </a>
             </div>
             @endforeach
-            @if(count($posRegisters) <=0) <div class="d-flex justify-content-center">
-                <div class="card col-6">
+            @if(count($posRegisters) <=0)
+            <div class="d-flex justify-content-start">
+                <div class="col-md-2  col-4 mb-5">
+                    <a href="#" class="openModal" id="add" data-href="{{route('posCreate')}}">
+                        <div class="card d-flex justify-content-center align-items-center p-3 bg-hover-light-primary position-relative">
+                            <div class="rounded-3 p-5 text-center">
+                                <i class="fa-solid fa-plus text-primary fs-2x "></i>
+                            </div>
+                            <div class="mb-2">
+                                <div class="text-center">
+                                    <span class="fw-bold text-gray-800 fs-6 mb-3">
+                                        Create POS
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {{-- <div class="card col-6">
                     <div class="card-body text-center">
                         <i class="ki-solid ki-screen fs-5tx"></i>
                         <h4 class="mt-3 text-muted">Opps! There Is No POS Counter</h4>
                     </div>
-                </div>
+                </div> --}}
                 @endif
     </div>
+</div>
+<div class="">
+    <div id="spinnerWrapper" class="spinner-wrapper">
+        <div class="spinner">
+        </div>
+    </div>
+</div>
+<div class="modal fade modal-lg" tabindex="-1" id="modal">
+
 </div>
 
 <script src={{asset("assets/plugins/global/plugins.bundle.js")}}></script>
 <script src={{asset("assets/js/scripts.bundle.js")}}></script>
+<script src={{asset('customJs/loading/miniLoading.js')}}></script>
 </body>
 <!--end::Body-->
-
+<script>
+    $(document).on('click', '.openModal', function(e){
+    e.preventDefault();
+    loadingOn()
+    $('#modal').load($(this).data('href'), function() {
+        loadingOff();
+        $(this).modal('show');
+    });
+});
+</script>
 </html>

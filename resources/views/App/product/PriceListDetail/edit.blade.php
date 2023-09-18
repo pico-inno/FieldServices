@@ -1,7 +1,7 @@
 @extends('App.main.navBar')
 @section('styles')
 <style>
-    
+
 </style>
 @endsection
 @section('room_management_icon','active')
@@ -28,24 +28,24 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::container-->
     <div class="container-xxl" id="kt_content_container">
-        <form action="{{route('price-list-detail.update', $priceList->id)}}" method="POST">
+        <form action="{{route('price-list-detail.update', $priceList->id)}}" method="POST" id="priceList_form">
             @method('PUT')
             @csrf
             <!--begin::Card-->
             <div class="card card-p-4 card-flush mb-5">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4 col-sm-12 mb-8">
+                        <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label for="" class="fs-5 form-label required">{{ __('product/product.name') }}</label>
                             <input type="text" class="form-control form-control-sm " name="name" placeholder="Name" value="{{old('name',$priceList->name)}}">
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="col-md-4 col-sm-12 mb-8">
+                        <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label class="form-label required">{{ __('product/pricelist.base_price') }}</label>
                             <select name="base_price" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Select Location">
-                                <option></option> 
+                                <option></option>
                                 <option value="0" @selected(0 == $priceList->priceListDetails[0]->base_price)>{{ __('product/pricelist.cost') }}</option>
                                 @foreach($price_lists as $price_list)
                                     <option value="{{ $price_list->id }}" @selected($price_list->id === $priceList->priceListDetails[0]->base_price)>{{ $price_list->name }}</option>
@@ -54,8 +54,8 @@
                             @error('base_price')
                                 <div class="text-danger my-2">{{ $message }}</div>
                             @enderror
-                        </div>                        
-                        <div class="col-md-4 col-sm-12 mb-8 ">
+                        </div>
+                        <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label for="" class="form-label required">{{ __('product/pricelist.currency') }}</label>
                             <select name="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
                                 <option></option>
@@ -99,35 +99,50 @@
                             <!--begin::Table body-->
                             <tbody class="fw-semibold text-gray-700 x" id="price_list_body">
                                 @if ($price_list_details)
-                                    @foreach ($price_list_details as $item)                                    
+                                    @foreach ($price_list_details as $item)
                                         <tr class="price_list_row">
                                             <input type="hidden" name="price_list_detail_id[]" value="{{ $item->id }}">
                                             <td>
-                                                <select name="apply_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="true" data-placeholder="Please select">
-                                                    <option></option>
-                                                    <option value="All" @selected($item->applied_type === 'All')>All</option>
-                                                    <option value="Category" @selected($item->applied_type === 'Category')>Category</option>
-                                                    <option value="Product" @selected($item->applied_type === 'Product')>Product</option>
-                                                    <option value="Variation" @selected($item->applied_type === 'Variation')>Variations</option>
-                                                </select>
+                                                <div class="fv-row">
+                                                    <select name="apply_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2"
+                                                        data-hide-search="true" data-placeholder="Please select">
+                                                        <option></option>
+                                                        <option value="All" @selected($item->applied_type === 'All')>All</option>
+                                                        <option value="Category" @selected($item->applied_type === 'Category')>Category</option>
+                                                        <option value="Product" @selected($item->applied_type === 'Product')>Product</option>
+                                                        <option value="Variation" @selected($item->applied_type === 'Variation')>Variations</option>
+                                                    </select>
+                                                </div>
                                             </td>
                                             <td>
-                                                <select name="apply_value[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="false" data-placeholder="Please select">
-                                                    
-                                                </select>
-                                            </td> 
-                                            <td>
-                                                <input type="text" class="form-control form-control-sm rounded-0" name="min_qty[]" value="{{old('min_qty[]',$item->min_qty * 1)}}">
+                                                <div class="fv-row">
+                                                    <select name="apply_value[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2"
+                                                        data-hide-search="false" data-placeholder="Please select">
+
+                                                    </select>
+                                                </div>
                                             </td>
                                             <td>
-                                                <select name="cal_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="true" data-placeholder="Please select">
-                                                    <option></option>
-                                                    <option value="fixed" @selected($item->cal_type === "fixed")>Fix</option>
-                                                    <option value="percentage" @selected($item->cal_type === "percentage")>Percentage</option>
-                                                </select>
+                                                <div class="fv-row">
+                                                    <input type="text" class="form-control form-control-sm rounded-0" name="min_qty[]"
+                                                        value="{{old('min_qty[]',$item->min_qty * 1)}}">
+                                                </div>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control form-control-sm rounded-0" name="cal_val[]" value="{{old('cal_val[]',$item->cal_value * 1)}}">
+                                                <div class="fv-row">
+                                                    <select name="cal_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2"
+                                                        data-hide-search="true" data-placeholder="Please select">
+                                                        <option></option>
+                                                        <option value="fixed" @selected($item->cal_type === "fixed")>Fix</option>
+                                                        <option value="percentage" @selected($item->cal_type === "percentage")>Percentage</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="fv-row">
+                                                    <input type="text" class="form-control form-control-sm rounded-0" name="cal_val[]"
+                                                        value="{{old('cal_val[]',$item->cal_value * 1)}}">
+                                                </div>
                                             </td>
                                             <td>
                                                 <input type="text" name="start_date[]" class="form-control form-control-sm rounded-0 fs-7 select_date" value="{{ old('start_date[]', $item->from_date) }}" placeholder="Select date" autocomplete="off" />
@@ -152,7 +167,7 @@
                 </div>
                 <div class="card-footer d-flex justify-content-end">
                     <a href="{{ route('price-list-detail') }}"  class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>
-                    <button type="submit" class="btn btn-primary">{{ __('product/product.save') }}</button>
+                    <button type="submit" id="submit" class="btn btn-primary">{{ __('product/product.save') }}</button>
                 </div>
             </div>
             <!--end::Card-->
@@ -165,7 +180,7 @@
 
 @push('scripts')
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
-    
+
     @if ($errors->any())
         @foreach ($errors->all() as $error)
             <script>
