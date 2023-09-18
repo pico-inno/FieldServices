@@ -118,14 +118,14 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
-        'slack' => [
-            'driver' => 'slack',
-            'url' => env('SLACK_WEBHOOK_URL'),
-            'channel' => '#logs',
-            'username' => 'Pico SBS',
-            'emoji' => ':bomb:', // Customize the emoji as needed
-            'level' => 'error',
-        ],
+        // 'slack' => [
+        //     'driver' => 'slack',
+        //     'url' => env('SLACK_WEBHOOK_URL'),
+        //     'channel' => '#logs',
+        //     'username' => 'Pico SBS',
+        //     'emoji' => ':bomb:', // Customize the emoji as needed
+        //     'level' => 'error',
+        // ],
     ],
 
 ];
