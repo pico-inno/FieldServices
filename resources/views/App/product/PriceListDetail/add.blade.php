@@ -46,7 +46,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label for="" class="fs-5 form-label required">{{ __('product/product.name') }}</label>
-                            <input type="text" class="form-control form-control-sm " name="name" placeholder="Name" value="{{ $priceListData['name'] ?? ' ' }}">
+                            <input type="text" class="form-control form-control-sm " name="name" placeholder="Name" value="{{$priceListData['name'] ?? '' }}">
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -111,10 +111,12 @@
                             <!--end::Table head-->
                             <!--begin::Table body-->
                             <tbody class="fw-semibold text-gray-700 x" id="price_list_body">
-                                {{-- This Condition is purpose for the data that will come from excel import --}}
+                                {{-- This Condition is purpose for the dat
+                                a that will come from excel import --}}
                                 @if ($PriceListDetaildata)
                                     @foreach ($PriceListDetaildata as $pl)
                                     {!! App\Http\Controllers\Product\UI\PriceListDetailsUI::detailsUI($pl) !!}
+
                                     {{-- <tr class="price_list_row">
                                         <td>
                                             <div class="fv-row">

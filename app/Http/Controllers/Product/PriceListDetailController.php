@@ -93,6 +93,7 @@ class PriceListDetailController extends Controller
 
             return redirect('/price-list-detail')->with('message', 'Created Sucessfully PriceList');
         }catch(Exception $e){
+            dd($e);
             DB::rollBack();
             return back()->with('message', $e->getMessage());
         }

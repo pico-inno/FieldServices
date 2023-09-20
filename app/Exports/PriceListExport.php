@@ -20,6 +20,7 @@ class PriceListExport implements FromView, ShouldAutoSize
     {
         try {
             $priceListDetail = PriceListDetails::where('pricelist_id', $this->priceListId)->get();
+            // dd($priceListDetail);
             return view('App.openingStock.export.priceList4Edit', compact('priceListDetail'));
         } catch (\Throwable $th) {
            return back()->with(['error'=>$th->getMessage()]);

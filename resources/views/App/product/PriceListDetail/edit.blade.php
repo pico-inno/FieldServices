@@ -4,9 +4,9 @@
 
 </style>
 @endsection
-@section('room_management_icon','active')
-@section('room_management_show','active show')
-@section('price_list_detail_menu_link','active')
+@section('products_icon', 'active')
+@section('products_show', 'active show')
+@section('price_list_detail_menu_link', 'active')
 
 @section('title')
 <!--begin::Heading-->

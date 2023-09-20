@@ -37,6 +37,7 @@
                     $applyValues=$product->name;
                     $variationSkuForSingle=$product->productVariations[0]->variation_sku;
                 }
+                // dd($pl['start_date']);
             @endphp
             <tr>
                 <td>{{$pl['id']}}</td>
@@ -47,8 +48,8 @@
                 <td>1</td>
                 <td>{{$pl['cal_type']}}</td>
                 <td>{{$pl['cal_value']}}</td>
-                <td></td>
-                <td></td>
+                <td>{{dateCreate($pl['from_date'],'d/m/Y')}}</td>
+                <td>{{dateCreate($pl['to_date'],'d/m/Y')}}</td>
             </tr>
         @endforeach
     </tbody>

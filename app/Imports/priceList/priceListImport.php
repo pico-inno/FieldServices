@@ -74,6 +74,8 @@ class priceListImport implements ToCollection, WithHeadingRow
                         'min_qty' => $row['min_quantity'],
                         'cal_type' => $row['fix_or_percentage'],
                         'cal_value' => $row['value'],
+                        'start_date' => $row['start_date'],
+                        'end_date' => $row['end_date'],
                     ];
                     $pricelistDetails=[...$pricelistDetails,$pricelistData];
                 }

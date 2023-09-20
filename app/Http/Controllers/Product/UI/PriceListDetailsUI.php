@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Product\UI;
 use App\Models\Product\Product;
 use App\Models\Product\Category;
 use App\Http\Controllers\Product\PriceListDetailController;
+use PDO;
 
 class PriceListDetailsUI
 {
 
     public static function detailsUI($pl)
     {
-        // dd($pl);
         if ($pl['applied_type'] == 'Category') {
             $applyValues = Category::get();
         } else if ($pl['applied_type'] == 'Product') {
@@ -30,7 +30,22 @@ class PriceListDetailsUI
                 $Avoption .= '<option value="' . $av->id . '"' . ($av->id == $pl['applied_value'] ? ' selected' : '') . '>' . $av->name . '</option>';
             }
         }
+        $start_date='';
+        $end_date='';
+        if (isset($pl['start_date'])) {
+            $numericDate=$pl['start_date'];
+            $timestamp = (($numericDate - 25569) * 86400); // Convert Excel date to Unix timestamp
+            $start_date = date('Y/d/m', $timestamp);
 
+            // dd($start_date);
+        }
+
+        if(isset($pl['end_date'])){
+            $numericDate = $pl['end_date'];
+            $timestamp = (($numericDate - 25569) * 86400); // Convert Excel date to Unix timestamp
+            $end_date = date('Y/d/m', $timestamp);
+        }
+        // dd($start_date);
         $html = '<tr class="price_list_row">
                 <td>
 
@@ -76,11 +91,11 @@ class PriceListDetailsUI
                 </td>
                 <td>
                     <input type="text" name="start_date[]" class="form-control form-control-sm rounded-0 fs-7 select_date"
-                        placeholder="Select date" autocomplete="off" />
+                        placeholder="Select date" autocomplete="off" value="'. $start_date. '" />
                 </td>
                 <td>
                     <input type="text" name="end_date[]" class="form-control form-control-sm rounded-0 fs-7 select_date"
-                        placeholder="Select date" autocomplete="off" />
+                        placeholder="Select date" autocomplete="off" value="' . $end_date . '" />
                 </td>
                 <td><button type="button" class="btn btn-light-danger btn-sm delete_each_row"><i
                             class="fa-solid fa-trash"></i></button></td>

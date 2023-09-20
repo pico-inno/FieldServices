@@ -81,6 +81,11 @@ function fDate($date,$br=false)
      return $formattedDate.' '.'('.$formattedTime.')';
     }
 }
+function dateCreate($date,$format) {
+    $dateTime = date_create($date);
+    $formattedDate = $dateTime->format($format);
+    return $formattedDate ;
+}
 
 function getSettingsValue($selector){
     return SettingHelpers::load()->getSettingsValue($selector)->$selector;
