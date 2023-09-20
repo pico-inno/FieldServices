@@ -77,7 +77,18 @@
                 </div>
             </div>
             <div class="card card-p-4 card-flush">
+
                 <div class="card-body">
+                    <div class="text-end mb-5">
+                        <a href="{{route('export-priceList',$priceList->id)}}" class="btn btn-light-primary btn-sm">
+                          <span class="fa-solid fa-upload me-3"></span>  Export Price List Data
+                        </a>
+                        <button type="button"  class="btn btn-light-success btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <span class="fa-solid fa-download me-3"></span> Update Price List With Excel
+                        </button>
+
+                    </div>
+                    <div class="separator mb-5"></div>
                     <div class="table-responsive mb-4">
                         <table class="table table-row-dashed fs-6 gy-4" id="room_added_table">
                             <!--begin::Table head-->
@@ -98,7 +109,14 @@
                             <!--end::Table head-->
                             <!--begin::Table body-->
                             <tbody class="fw-semibold text-gray-700 x" id="price_list_body">
-                                @if ($price_list_details)
+                                @php
+                                    $PriceListDetaildataFromExcel=request()['PriceListDetaildataFromExcel'];
+                                @endphp
+                                @if ($PriceListDetaildataFromExcel)
+                                        @foreach ($PriceListDetaildataFromExcel as $pl)
+                                        {!! App\Http\Controllers\Product\UI\PriceListDetailsUI::detailsUI($pl) !!}
+                                        @endforeach
+                                @elseif ($price_list_details)
                                     @foreach ($price_list_details as $item)
                                         <tr class="price_list_row">
                                             <input type="hidden" name="price_list_detail_id[]" value="{{ $item->id }}">
@@ -176,6 +194,27 @@
     <!--end::container-->
 </div>
 <!--end::Content-->
+<div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog w-500px modal-dialog-centered">
+        <form action="{{route('priceListImport',['action'=>'update','id'=>$priceList->id])}}" method="POSt" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Upload File</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" name="importPriceList" class="form-control" id="">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
 @endsection
 
 @push('scripts')

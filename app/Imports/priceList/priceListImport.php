@@ -2,48 +2,90 @@
 
 namespace App\Imports\priceList;
 
-use App\Models\Product\PriceListDetails;
+use App\Models\Product\Product;
+use App\Models\Product\Category;
 use App\Models\Product\PriceLists;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToModel;
+use App\Models\Product\PriceListDetails;
+use App\Models\Product\ProductVariation;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use App\Models\Product\VariationTemplateValues;
 
-class priceListImport implements ToModel,WithHeadingRow
+
+class priceListImport implements ToCollection, WithHeadingRow
 {
-    protected $priceList;
-    public function __construct($priceList)
+    // protected $priceList;
+    protected $pricelistDetails;
+    public function __construct()
     {
-        $this->priceList= $priceList;
+        // $this->priceList = $priceList;
     }
-
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
-        try {
-            if (
-                $row['apply_type'] &&
-                $row['apply_value'] &&
-                $row['min_quantity'] &&
-                $row['cal_type_fix_or_percentage'] &&
-                $row['cal_value']
-            ) {
-                $pricelistData = [
-                    'pricelist_id' => $this->priceList['id'],
-                    'applied_type' => $row['apply_type'],
-                    'applied_value' => $row['apply_value']== 'all product' ? 0 : '',
-                    'min_qty' => $row['min_quantity'],
-                    'cal_type' => $row['cal_type_fix_or_percentage'],
-                    'cal_value' => $row['cal_value'],
-                    'base_price' => $this->priceList['base_price'],
-                ];
-                PriceListDetails::create($pricelistData);
+        $pricelistDetails=[];
+        foreach ($rows as $row) {
+            $pricelistData=[];
+            try {
+                if (
+                    (
+                        $row['category'] ||
+                        $row['product'] ||
+                        $row['variation']
+                    ) &&
+                    $row['min_quantity'] &&
+                    $row['fix_or_percentage'] &&
+                    $row['value']
+                ) {
+                    if (
+                        ($row['category'] && $row['product'] && $row['variation']) ||
+                        ($row['product'] && $row['variation']) ||
+                        ($row['category'] && $row['variation'])
+                        || $row['variation']
+                        ) {
+                        $appliedType = "Variation";
+                        $product = Product::where('name', $row['product'])->firstOrFail();
+                        $productVariationTemplate = VariationTemplateValues::where('name', $row['variation'])->firstOrFail();
+                        $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')
+                                                    ->where('product_id',$product->id)
+                                                    ->where('variation_template_value_id', $productVariationTemplate->id)
+                                                    ->select('id', 'product_id', 'variation_template_value_id')
+                                                    ->firstOrFail();
+                        // dd($product_with_variations);
+                        $appliedValue = $product_with_variations->id;
+                        // $appliedType = "Product";
+                    } elseif (($row['category'] && $row['product'])||$row['product'])
+                    {
+                        $appliedType = "Product";
+                        $product = Product::where('name', $row['product'])->firstOrFail();
+                        $appliedValue = $product->id;
+                    } elseif ($row['category']) {
+                        $appliedType = "Category";
+                        $category = Category::where('name', $row['category'])->firstOrFail();
+                        $appliedValue = $category->id;
+                    }
+
+                    $pricelistData = [
+                        'detail_id' => isset($row['idplease_dont_touch']) ? $row['idplease_dont_touch']:'',
+                        'min_qty' => $row['min_quantity'],
+                        'applied_type' => $appliedType,
+                        'applied_value' => $appliedValue,
+                        'min_qty' => $row['min_quantity'],
+                        'cal_type' => $row['fix_or_percentage'],
+                        'cal_value' => $row['value'],
+                    ];
+                    $pricelistDetails=[...$pricelistDetails,$pricelistData];
+                }
+            } catch (\Throwable $th) {
+                throw new \Exception($th->getMessage());
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($th->getMessage());
         }
-
+        return $this->pricelistDetails=$pricelistDetails;
     }
+    public function getProcessedData()
+    {
+        return $this->pricelistDetails;
+    }
+
 }

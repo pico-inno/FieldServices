@@ -18,3 +18,4 @@ class exportProductForOS implements FromView,ShouldAutoSize
         return view('App.openingStock.export.exportWithData',compact('products'));
     }
 }
+

@@ -12,3 +12,18 @@ function loadingOff() {
         spinnerWrapper.style.display = "none";
     },5000)
 }
+
+function noti(message='Greate ! You Successfully Imported. Check and Save the data.')
+{
+
+    var noti = document.getElementById("noti");
+    noti.classList.remove('d-none');
+    noti.classList.add('animated-content');
+    setInterval(() => {
+        $('#notiMessage').text(message);
+
+    }, 300);
+    setTimeout(function () {
+        noti.classList.add('d-none');
+    }, 2000);
+}

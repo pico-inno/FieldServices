@@ -20,6 +20,7 @@ use App\Models\settings\businessSettings;
 use App\Http\Requests\Product\PriceList\PriceListCreateRequest;
 use App\Http\Requests\Product\PriceList\PriceListUpdateRequest;
 use App\Models\Product\PriceListDetails;
+use Illuminate\Support\Facades\Auth;
 
 class PriceListDetailController extends Controller
 {
@@ -53,12 +54,22 @@ class PriceListDetailController extends Controller
 
     public function add()
     {
+        $PriceListDetaildata= request()['PriceListDetaildata'] ??[];
+        $priceListData=request()['priceListData']?? [];
+        // dd($priceListData);
         $currencies = Currencies::all();
-        $price_lists = PriceLists::all();
-
-        return view('App.product.PriceListDetail.add', compact('currencies', 'price_lists'));
+        $businessSetting = getSettings();
+        $price_lists = PriceLists::where('currency_id', $businessSetting->currency_id)->get();
+        return view('App.product.PriceListDetail.add', compact('currencies', 'price_lists', 'businessSetting', 'PriceListDetaildata', 'priceListData'));
     }
-
+    public function importTemplate()
+    {
+        $priceListDatas = request()['data'] ?? [];
+        $currencies = Currencies::all();
+        $businessSetting = getSettings();
+        $price_lists = PriceLists::where('currency_id', $businessSetting->currency_id)->get();
+        return view('App.product.PriceListDetail.import.importTemplate', compact('currencies', 'price_lists', 'businessSetting', 'priceListDatas'));
+    }
     public function create(PriceListCreateRequest $request)
     {
 
@@ -91,10 +102,11 @@ class PriceListDetailController extends Controller
     public function edit(PriceLists $priceList)
     {
         $currencies = Currencies::all();
-        $price_lists = PriceLists::all();
+        $businessSetting = getSettings();
+        $price_lists = PriceLists::where('currency_id', $priceList->currency_id)->where('id', '!=', $priceList->id)->get();
         $price_list_details = $priceList->priceListDetails;
 
-        return view('App.product.PriceListDetail.edit', compact('priceList', 'currencies', 'price_lists', 'price_list_details'));
+        return view('App.product.PriceListDetail.edit', compact('priceList', 'currencies', 'price_lists', 'price_list_details','businessSetting'));
     }
 
     public function update(PriceListUpdateRequest $request, PriceLists $priceList)
@@ -162,23 +174,26 @@ class PriceListDetailController extends Controller
         }
 
         if($applied_type === 'Variation'){
-            $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')->select('id', 'product_id', 'variation_template_value_id')->get();
-
-            $allVariations = [];
-            foreach($product_with_variations as $variation) {
-                $product_name = $variation->product->name;
-                $variation_template_name = $variation->variationTemplateValue->variationTemplate->name ?? '';
-                $variation_template_value_name = $variation->variationTemplateValue->name ?? '';
-                $variation['product_variation_name'] ="$product_name - ($variation_template_name - $variation_template_value_name)";
-                ;
-                $allVariations[] = $variation;
-            };
+            $allVariations=$this::getVariationOptions();
             $toResponseData = $allVariations;
         }
 
         return response()->json($toResponseData);
     }
 
+    public static function getVariationOptions(){
+        $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')->select('id', 'product_id', 'variation_template_value_id')->get();
+
+        $allVariations = [];
+        foreach ($product_with_variations as $variation) {
+            $product_name = $variation->product->name;
+            $variation_template_name = $variation->variationTemplateValue->variationTemplate->name ?? '';
+            $variation_template_value_name = $variation->variationTemplateValue->name ?? '';
+            $variation['product_variation_name'] = "$product_name - ($variation_template_name - $variation_template_value_name)";;
+            $allVariations[] = $variation;
+        };
+        return $allVariations;
+    }
     private function hasCreatePricelistDetail($request)
     {
         $applyType = $request->apply_type[0];
@@ -220,6 +235,7 @@ class PriceListDetailController extends Controller
                 'cal_value' => $request->cal_val[$index],
                 'base_price' => $request->base_price
             ];
+            // dd($pricelistData);
             if(!$isCreating){
                 $pricelistData['id'] = $request->price_list_detail_id[$index] ?? null;
             }
@@ -235,11 +251,14 @@ class PriceListDetailController extends Controller
             }
         }
     }
-    public function importTemplate()
-    {
-        $currencies = Currencies::all();
-        $businessSetting = getSettings();
-        $price_lists = PriceLists::where('currency_id', $businessSetting->currency_id)->get();
-        return view('App.product.PriceListDetail.import.importTemplate', compact('currencies', 'businessSetting', 'price_lists'));
+
+    public function getPriceListByCurrency($currencyId){
+        try {
+            $businessSetting = getSettings();
+            $price_lists = PriceLists::where('currency_id', $currencyId)->select('id', 'name as text')->get();
+            return response()->json($price_lists, 200);
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage(), $th->getCode());
+        }
     }
 }

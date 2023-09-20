@@ -23,13 +23,15 @@ const disableDeleteButton = () => {
     }
 }
 
+
+
 const priceListRow =
 `
 <tr class="price_list_row">
     <input type="hidden" name="price_list_detail_id[]" value="">
     <td>
         <div class="fv-row">
-            <select name="apply_type[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="true" data-placeholder="Please select">
+            <select name="apply_type[]" class="form-select form-select-sm rounded-0 fs-7 apply_type" data-control="select2" data-hide-search="true" data-placeholder="Please select">
                 <option></option>
                 <option value="All">All</option>
                 <option value="Category">Category</option>

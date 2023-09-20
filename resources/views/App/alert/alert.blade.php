@@ -17,3 +17,10 @@
         error("{{session('error')}}");
     </script>
 @endif
+
+@if(session('noti'))
+    <script>
+        noti("{{session('noti')}}");
+    </script>
+
+@endif

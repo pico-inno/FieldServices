@@ -1,0 +1,19 @@
+.animated-content {
+    opacity: 0;
+    animation: backIn 0.6s ease forwards;
+
+}
+#noti{
+    transition: all 5s linear;
+}
+@keyframes backIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

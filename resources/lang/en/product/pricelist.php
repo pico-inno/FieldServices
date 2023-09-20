@@ -13,4 +13,6 @@ return [
 
     'pricelist' => 'Price List',
     'import_pricelist' => 'Import Price List',
+
+    'download_template_with_data' => 'Download Template With Data',
 ];

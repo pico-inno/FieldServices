@@ -59,9 +59,9 @@
                             <select name="base_price" class="form-select form-select-sm fs-7" id="base_price"
                                 data-control="select2" data-placeholder="Select Base Price">
                                 <option></option>
-                                <option value="0">{{ __('product/pricelist.cost') }}</option>
+                                    <option value="0">{{ __('product/pricelist.cost') }}</option>
                                 @foreach($price_lists as $price_list)
-                                <option value="{{ $price_list->id }}">{{ $price_list->name }}</option>
+                                    <option value="{{ $price_list->id }}">{{ $price_list->name }}</option>
                                 @endforeach
                             </select>
                             @error('base_price')
@@ -98,9 +98,9 @@
                     </div>
                 </div>
                 <div class="card-body pt-0">
-                    <div class="row mb-5">
-                        <div class="d-flex align-items-center gap-3 col-md-6 col-md-offset-3">
-                            <div class="">
+                    <div class="row mb-5 col-12">
+                        <div class="d-flex align-items-center gap-3 col-md-12">
+                            <div class="col-4">
                                 <label class=" form-label" for="formFileSm">{{ __('product/import-product.file_to_import')
                                     }}</label>
 
@@ -110,14 +110,16 @@
 
                                 @enderror
                             </div>
-                            <div class="">
+                            <div class="d-flex gap-5 col-8">
                                 <div class="mt-5">
-                                    {{-- <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-primary btn-sm">
+                                    <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-primary btn-sm">
                                         <i class="fas fa-download"></i>{{ __('product/import-product.download_template_file') }}
-                                    </a> --}}
-                                    <button type="button" class="btn btn-light-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                        {{ __('product/import-product.download_template_file') }}
-                                    </button>
+                                    </a>
+                                </div>
+                                <div class="mt-5">
+                                    <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-success btn-sm">
+                                        <i class="fas fa-download"></i>{{ __('product/pricelist.download_template_with_data') }}
+                                    </a>
                                 </div>
                             </div>
                         </div>

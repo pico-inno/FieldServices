@@ -448,6 +448,7 @@ Route::controller(importOpeningStockController::class)->group(function () {
 Route::controller(ExportController::class)->group(function () {
     Route::get('/opening/export/product', 'export')->name('exprotOpeningStockWithProduct');
     Route::get('/product/export/productlist', 'productListExport')->name('export-productlist');
+    Route::get('/price-list/{id}/export/edit-data', 'priceListExport')->name('export-priceList');
 });
 //============================ End::Opening Stock ============================================
 Route::prefix('stock-history')->group(function () {
@@ -833,7 +834,8 @@ Route::controller(PriceListDetailController::class)->group(function () {
 });
 
 Route::controller(priceListImportController::class)->group(function(){
-    Route::post('/price-list/import','import')->name('priceListImport');
+    Route::post('/price-list/import/{action?}/{id?}','import')->name('priceListImport');
+    // Route::post('/price-list/import/update', 'importUpdate')->name('priceListImportUpdate');
     Route::get('/download/price-list/excel', 'dowloadDemoExcel')->name('downloadPrceListExcel');
 });
 

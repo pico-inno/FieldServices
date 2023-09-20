@@ -39,6 +39,24 @@
     </div> --}}
     <div class="container m-auto mt-20 row justify">
         {{-- <form action="{{route('pos.sessionStore',$posRegisteredId)}}" method="POST"> --}}
+            {{-- <div class="d-flex justify-content-start"> --}}
+                <div class="col-md-2  col-4 mb-5">
+                    <a href="#" class="openModal" id="add" data-href="{{route('posCreate')}}">
+                        <div class="card d-flex justify-content-center align-items-center p-3 bg-hover-light-primary position-relative">
+                            <div class="rounded-3 p-5 text-center">
+                                <i class="fa-solid fa-plus text-primary fs-2x "></i>
+                            </div>
+                            <div class="mb-2">
+                                <div class="text-center">
+                                    <span class="fw-bold text-gray-800 fs-6 mb-3">
+                                        Create POS
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {{-- </div> --}}
             @foreach ($posRegisters as $pr)
             <div class="col-md-2  col-4 mb-5">
                 <a href="{{route('pos.sessionCheck',$pr->id)}}">
@@ -61,33 +79,9 @@
                 </a>
             </div>
             @endforeach
-            @if(count($posRegisters) <=0)
-            <div class="d-flex justify-content-start">
-                <div class="col-md-2  col-4 mb-5">
-                    <a href="#" class="openModal" id="add" data-href="{{route('posCreate')}}">
-                        <div class="card d-flex justify-content-center align-items-center p-3 bg-hover-light-primary position-relative">
-                            <div class="rounded-3 p-5 text-center">
-                                <i class="fa-solid fa-plus text-primary fs-2x "></i>
-                            </div>
-                            <div class="mb-2">
-                                <div class="text-center">
-                                    <span class="fw-bold text-gray-800 fs-6 mb-3">
-                                        Create POS
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                {{-- <div class="card col-6">
-                    <div class="card-body text-center">
-                        <i class="ki-solid ki-screen fs-5tx"></i>
-                        <h4 class="mt-3 text-muted">Opps! There Is No POS Counter</h4>
-                    </div>
-                </div> --}}
-                @endif
-    </div>
-</div>
+            {{-- @if(count($posRegisters) <=0) --}}
+
+        </div>
 <div class="">
     <div id="spinnerWrapper" class="spinner-wrapper">
         <div class="spinner">
