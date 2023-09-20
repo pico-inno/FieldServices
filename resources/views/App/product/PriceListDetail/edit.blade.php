@@ -83,7 +83,7 @@
                         <a href="{{route('export-priceList',$priceList->id)}}" class="btn btn-light-primary btn-sm">
                           <span class="fa-solid fa-upload me-3"></span>  Export Price List Data
                         </a>
-                        <button type="button"  class="btn btn-light-success btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <button type="button"  class="btn btn-light-success btn-sm" data-bs-toggle="modal" data-bs-target="#priceListModal">
                             <span class="fa-solid fa-download me-3"></span> Update Price List With Excel
                         </button>
 
@@ -194,20 +194,23 @@
     <!--end::container-->
 </div>
 <!--end::Content-->
-<div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog w-500px modal-dialog-centered">
-        <form action="{{route('priceListImport',['action'=>'update','id'=>$priceList->id])}}" method="POSt" enctype="multipart/form-data">
+<div class="modal" id="priceListModal" tabindex="-1" aria-labelledby="priceListLabel" aria-hidden="true">
+    <div class="modal-dialog w-500px  modal-dialog-centered">
+        <form action="{{route('priceListImport',['action'=>'update','id'=>$priceList->id])}}" id="priceListForm" method="POSt" enctype="multipart/form-data">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Upload File</h1>
+                    <h1 class="modal-title fs-5" id="priceListLabel">Upload File</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="file" name="importPriceList" class="form-control" id="">
+                    <div class="fv-row">
+                        <label for="" class="required form-label">Price List file</label>
+                        <input type="file" name="importPriceList" class="form-control" id="">
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button type="submit" id="upload" class="btn btn-primary">Upload</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -218,6 +221,63 @@
 @endsection
 
 @push('scripts')
+<script>
+// Define form element
+const form = document.getElementById('priceListModal');
+
+// Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+var validator = FormValidation.formValidation(
+    form,
+    {
+        fields: {
+            'importPriceList': {
+                validators: {
+                    notEmpty: {
+                        message: 'Price List File is required'
+                    }
+                }
+            },
+        },
+
+        plugins: {
+            trigger: new FormValidation.plugins.Trigger(),
+            bootstrap: new FormValidation.plugins.Bootstrap5({
+                rowSelector: '.fv-row',
+                eleInvalidClass: '',
+                eleValidClass: ''
+            })
+        }
+    }
+);
+
+// Submit button handler
+const submitButton = document.getElementById('upload');
+submitButton.addEventListener('click', function (e) {
+    // Prevent default button action
+
+    // Validate form before submit
+    if (validator) {
+        validator.validate().then(function (status) {
+            if (status == 'Valid') {
+                e.currentTarget=true;
+                return true;
+            } else {
+                e.preventDefault();
+                // Show popup warning. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                Swal.fire({
+                    text: "Sorry, looks like there are some errors detected, please try again.",
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
 
     @if ($errors->any())

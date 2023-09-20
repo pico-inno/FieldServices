@@ -36,7 +36,7 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::container-->
     <div class="container-xxl" id="kt_content_container">
-        <form action="{{route('priceListImport')}}" method="POST" enctype="multipart/form-data">
+        <form action="{{route('priceListImport')}}" method="POST" enctype="multipart/form-data" id="priceList_form">
             @csrf
             <!--begin::Card-->
             <div class="card card-p-4 card-flush mb-5">
@@ -117,7 +117,7 @@
                                     </a>
                                 </div>
                                 <div class="mt-5">
-                                    <a href="{{route('downloadPrceListExcel')}}" download class="btn btn-light-success btn-sm">
+                                    <a href="{{route('export-priceListWithData')}}" download class="btn btn-light-success btn-sm">
                                         <i class="fas fa-download"></i>{{ __('product/pricelist.download_template_with_data') }}
                                     </a>
                                 </div>
@@ -125,7 +125,7 @@
                         </div>
                     </div>
                     <div class="">
-                        <button type="submit" class="btn btn-success btn-sm">{{ __('product/import-product.submit') }}</button>
+                        <button type="submit" id="submit" class="btn btn-success btn-sm">{{ __('product/import-product.submit') }}</button>
                     </div>
                 </div>
             </div>
@@ -183,5 +183,6 @@
 @endforeach
 @endif
 
-@include('App.product.PriceListDetail.js.price_list_detail_js');
+{{-- @include('App.product.PriceListDetail.js.price_list_detail_js'); --}}
+
 @endpush

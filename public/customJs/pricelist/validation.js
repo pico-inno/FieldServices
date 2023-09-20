@@ -1,8 +1,4 @@
-    var fields = [
-        // 'patient_id',
-        // 'registration_status'
-    ];
-    // user update validation
+  // user update validation
     var priceListVal = function () {
         // Shared variables
 

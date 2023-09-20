@@ -3048,7 +3048,7 @@
                     <div class="d-none animated-content position-absolute px-10 start-50 translate-middle z-index-3 shadow-sm bg-white rounded pt-15" id="noti"
                                 style="top: 10px">
                         <div class="col-12 m-auto text-center pb-1 border-bottom-1 border-top-0 border-left-0 border-right-0 border">
-                            <h5 class="fs-5 text-muted">
+                            <h5 class="fs-6 text-muted">
                                 <i class="fa-solid fa-thumbs-up fa-bounce text-success fs-3 me-2"></i>
                                 <span id="notiMessage"></span>
                             </h5>
