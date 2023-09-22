@@ -3,10 +3,12 @@
     var productsOnSelectData=[];
     $(document).ready(function () {
         var products;
+        var allSelectedProduct=[];
         let unique_name_id=1;
         let products_length=$('#sale_table tbody tr').length-1;
         let productQty=[];
         let setting=@json($setting);
+        console.log(setting);
         let currency=@json($defaultCurrency);
         let currencies=@json($currencies);
         let locations=@json($locations);
@@ -224,12 +226,12 @@
                         return p.variation_id==v.id
                     });
 
-                    append_row(t[0],unique_name_id);
+                    append_row(t[0]);
                     unique_name_id+=1;
                 });
                 return;
             }
-            append_row(selected_product,unique_name_id);
+            append_row(selected_product);
             unique_name_id+=1;
             $('#searchInput').focus();
 
@@ -237,8 +239,9 @@
         });
 
         //append table row for product to sell
-        function append_row(selected_product,unique_name_id) {
-            if(setting.enable_row == 0){
+        function append_row(selected_product,forceSplit=false) {
+            allSelectedProduct[selected_product.product_variations.id]=selected_product;
+            if(setting.enable_row == 0 && !forceSplit){
                let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
                if(checkProduct){
                     // let ParentRow=$(`[data-product=${selected_product.product_variations.id}]`);
@@ -288,10 +291,11 @@
                 // `
                 }
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
+            let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left fa-rotate-270 text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
                 <tr class="sale_row mt-2" data-product="${selected_product.product_variations.id}">
                     <td>
-                        <div class="w-250px">
+                        <div class="w-300px">
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
@@ -361,8 +365,8 @@
                         <input type="hidden" class="currency_id" name="sale_details[${unique_name_id}][currency_id]" value="0">
                     </td>
                     <th class="text-end">
-                        <div class="d-flex justify-content-around align-items-center">
-                            <i class="fa-solid fa-arrows-split-up-and-left fa-rotate-270 text-success p-2 pe-5 fs-6 pe-5 splitNewRow" type="button"></i>
+                        <div class="d-flex  ${!setting.enable_row ? 'justify-content-around -items-center' :'align-items-center justify-content-end'}">
+                            ${splitRow}
                             <i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
                         </div>
                     </th>
@@ -376,10 +380,12 @@
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
             numberOnly();
-                $('.splitNewRow').click(function () {
+                $(`.splitNewRow_${unique_name_id}`).click(function () {
                     let parent = $(this).closest('.sale_row');
-                    parent.clone().appendTo(".saleDetailItems");
-                    console.log(parent);
+                    let variationId=parent.find('.variation_id').val();
+                    let product=allSelectedProduct[variationId];
+                    append_row(product,true);
+                    unique_name_id+=1;
                 });
             $('#searchInput').val('');
             checkAndStoreSelectedProduct(selected_product);

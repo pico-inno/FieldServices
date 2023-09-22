@@ -89,7 +89,14 @@ class businessSettings extends Model
 
         // prefix
         'sale_prefix',
-        'purchase_prefix'
+        'purchase_prefix',
+        'stock_transfer_prefix',
+        'stock_adjustment_prefix',
+        'expense_prefix',
+        'purchase_payment_prefix',
+        'expense_payment_prefix',
+        'sale_payment_prefix',
+        'expense_report_prefix'
 
     ];
 

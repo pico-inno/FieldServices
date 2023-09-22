@@ -540,75 +540,25 @@
                                 <div class="tab-content " id="myTabContent" >
                                     {{-- business-tab --}}
                                     <div class="tab-pane setting-tab fade active show" id="business_setting_business" role="tabpanel">
-                                        <!--begin::Form-->
-                                            <!--begin::Heading-->
-                                            <!--end::Heading-->
-                                            <div class="row d-none">
-                                                <div class="col-lg-6 col-12">
-                                                    <div class=" d-flex justify-content-between">
-                                                        <div class="">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
-                                                                <span class="required">{{__('business_settings.business_name')}}</span>
-                                                            </label>
-                                                        </div>
-                                                        <div class="col-7">
-                                                            <input type="text" class="form-control form-control form-control form-control-sm border-left-0 border-right-0 border-top-0 border-bottom-1 rounded-0" name="name" id="business_name" value="{{$settingData['name']}}" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-12">
-                                                    <div class=" d-flex justify-content-between">
-                                                        <div class="">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
-                                                                <span class="required">{{__('business_settings.owner_name')}}</span>
-                                                            </label>
-                                                        </div>
-                                                        <div class="col-7">
-                                                            <input type="text"
-                                                                class="form-control form-control form-control form-control-sm border-left-0 border-right-0 border-top-0 border-bottom-1 rounded-0"
-                                                                name="name" id="business_name" value="{{$settingData['name']}}" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-12">
-                                                    <div class=" d-flex justify-content-between">
-                                                        <div class="">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
-                                                                <span class="required">{{__('business_settings.start_date')}}</span>
-                                                            </label>
-                                                        </div>
-                                                        <div class="col-7">
-                                                            <input type="text"
-                                                                class="form-control form-control form-control form-control-sm border-left-0 border-right-0 border-top-0 border-bottom-1 rounded-0"
-                                                                name="name" id="business_name" value="{{$settingData['name']}}" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row fv-row row-cols">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="business_name">
-                                                        <span class="required">{{__('business_settings.business_name')}}</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control form-control form-control-sm" name="name" id="business_name" value="{{$settingData['name']}}" />
-                                                </div>
 
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="owner">
-                                                        <span class="required">{{__('business_settings.owner_name')}}</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control form-control form-control-sm" name="owner_id" id="owner" value="{{$settingData->owner? $settingData->owner->username :''}}" />
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4 browseLogo">
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="update_logo">
-                                                        <span class="required">{{__('business_settings.upload_logo')}}</span>
-                                                    </label>
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.business_name')" firstFor="business_name"
+                                                :secLabel="__('business_settings.owner_name')" secFor="owner_name"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.input :value="$settingData['name']" id="business_name" name="name"></x-forms.input>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.input :value="$settingData->owner? $settingData->owner->username :''"  id="owner_id" name="owner_id" placeholder=""></x-forms.input>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.upload_logo')" firstFor="update_logo"
+                                                :secLabel="__('business_settings.start_date')" secFor="kt_datepicker_1"
+                                            >
+                                                <x-slot:firstInput>
                                                     <div class="input-group browseLogo input-group-sm">
-
                                                         <input type="file" class="form-control form-control form-control form-control-sm" id="update_logo" name="logo"
                                                             value="">
                                                         <button type="button" class="btn btn-sm btn-danger d-none" id="removeFileBtn"><i
@@ -618,118 +568,57 @@
                                                             <i class="fa-regular fa-folder-open"></i>
                                                         </label>
                                                     </div>
-                                                </div>
-                                                {{-- <div class="col-md-12  mb-7 col-lg-4">
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="kt_datepicker_1">
-                                                        <span class="required">{{__('business_settings.start_date')}}</span>
-                                                    </label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text" data-td-target="#kt_datepicker_1" data-td-toggle="datetimepicker">
-                                                            <i class="fas fa-calendar"></i>
-                                                        </span>
-                                                        <input class="form-control form-control form-control form-control-sm" name="start_date" placeholder="Pick a date"  id="kt_datepicker_1" value="{{date('d-m-Y')}}" />
-                                                    </div>
-                                                </div> --}}
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.input :value="date('d-m-Y')"  id="kt_datepicker_1" name="start_date" placeholder="Pick a date" ></x-forms.input>
+                                                </x-slot>
+                                            </x-setting.setting-row>
 
-
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                     <label class="fs-6 fw-semibold form-label mt-3" for="kt_datepicker_1">
-                                                        <span class="required">{{__('business_settings.start_date')}}</span>
-                                                    </label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text" data-td-target="#kt_datepicker_1" data-td-toggle="datetimepicker">
-                                                            <i class="fas fa-calendar"></i>
-                                                        </span>
-                                                        <input class="form-control form-control form-control form-control-sm" name="start_date" placeholder="Pick a date"  id="kt_datepicker_1" value="{{date('d-m-Y')}}" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Input-->
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="default_profit_percent">
-                                                        <span class="required">{{__('business_settings.default_profit_percent')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Default profit margin of a product."></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <div class="input-group">
-                                                        <span class="input-group-text" >
-                                                           <i class="fa-solid fa-circle-plus"></i>
-                                                        </span>
-                                                        <input type="number"  id="default_profit_percent" class="form-control form-control form-control form-control-sm" value="{{$settingData['default_profit_percent']}}" name="default_profit_percent" />
-                                                    </div>
-                                                    <!--end::Input-->
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="default_currency">
-                                                        <span class="required">{{__('business_settings.default_currency')}}</span>
-                                                    </label>
-                                                    <!--end::Label-->
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.default_profit_percent')" firstFor="default_profit_percent"
+                                                :secLabel="__('business_settings.default_currency')" secFor="default_currency"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.input :value="$settingData['default_profit_percent']" id="default_profit_percent" name="default_profit_percent"></x-forms.input>
+                                                </x-slot>
+                                                <x-slot:secInput>
                                                     <div class="input-group flex-nowrap">
-                                                        <span class="input-group-text">
-                                                            <i class="fa-solid fa-money-bill-1"></i>
-                                                        </span>
                                                         <div class="overflow-hidden flex-grow-1">
-                                                            <select name="currency_id" class="form-select rounded-start-0 form-select-sm" id="currency"
-                                                                data-control="select2" data-placeholder="Select Currency">
+                                                            <x-forms.nob-select name="currency_id" id="currency" placeholder="Select Currency">
                                                                 <option></option>
                                                                 @foreach ($currencies as $c)
-                                                                <option value="{{$c->id}}" @selected($settingData['currency_id']==$c->id)>{{$c->name}} ({{$c->symbol}})
-                                                                </option>
+                                                                    <option value="{{$c->id}}" @selected($settingData['currency_id']==$c->id)>{{$c->name}} ({{$c->symbol}})
+                                                                    </option>
                                                                 @endforeach
-
-                                                            </select>
+                                                            </x-forms.nob-select>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </x-slot>
+                                            </x-setting.setting-row>
 
-
-                                            <div class="row fv-row row-cols">
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Input-->
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="currency_symbol_placement">
-                                                        <span class="required">{{__('business_settings.currency_symbol_placement')}}</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <select class="form-select  form-select-sm" name="currency_symbol_placement" id="currency_symbol_placement" data-control="select2" data-placeholder="Select Currency">
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.currency_symbol_placement')" firstFor="currency_symbol_placement"
+                                                :secLabel="__('business_settings.time_zone')" secFor="time_zone"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.nob-select name="currency_symbol_placement" id="currency_symbol_placement" placeholder="Currency Symbol Placement">
                                                         <option value="before" @selected($settingData['currency_symbol_placement']='before')>Before Amount</option>
                                                         <option value="after" @selected($settingData['currency_symbol_placement']='after')>After Amount</option>
-                                                    </select>
-                                                    <!--end::Input-->
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="timezone">
-                                                        <span class="required">{{__('business_settings.time_zone')}}</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <div class="input-group flex-nowrap">
-                                                        <span class="input-group-text" >
-                                                            <i class="fa-regular fa-clock"></i>
-                                                        </span>
-                                                        <div class="overflow-hidden flex-grow-1">
-                                                            <select class="form-select rounded-start-0 form-select-sm" id="timezone" name="timezone" data-control="select2" data-placeholder="Select timezone">
-                                                                <option value="1">Asia/Yangon</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3 required" for="finanical_year_start_month">
-                                                        <span class="required">{{__('business_settings.financial_year_start_month')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Starting month of the finanical year for your business."></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <div class="input-group input-group-sm flex-nowrap">
-                                                        <span class="input-group-text" >
-                                                            <i class="fas fa-calendar"></i>
-                                                        </span>
-                                                        <div class="overflow-hidden flex-grow-1">
-                                                            <select name="finanical_year_start_month" class="form-select rounded-start-0 form-select-sm" id="finanical_year_start_month" data-control="select2" data-placeholder="Select month">
-                                                                <option></option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.nob-select name="time_zone" id="time_zone" placeholder="Time Zone">
+                                                       <option value="1">Asia/Yangon</option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.financial_year_start_month')" firstFor="finanical_year_start_month"
+                                                :secLabel="__('business_settings.stock_accounting_method')" secFor="stock_accounting_method"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.nob-select name="finanical_year_start_month" id="finanical_year_start_month" placeholder="__('business_settings.financial_year_start_month')">
                                                                 <option value="january" @selected($settingData['finanical_year_start_month']==='january' )>January</option>
                                                                 <option value="february" @selected($settingData['finanical_year_start_month']==='february' )>February</option>
                                                                 <option value="march" @selected($settingData['finanical_year_start_month']==='march' )>March</option>
@@ -742,143 +631,88 @@
                                                                 <option value="october" @selected($settingData['finanical_year_start_month']==='october' )>October</option>
                                                                 <option value="november" @selected($settingData['finanical_year_start_month']==='november' )>November</option>
                                                                 <option value="december" @selected($settingData['finanical_year_start_month']==='december' )>December</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                    <!--begin::Input-->
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="stock_accounting_method">
-                                                        <span class="required">{{__('business_settings.stock_accounting_method')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Set the title of the store for SEO."></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <div class="input-group flex-nowrap input-group-sm">
-                                                        <span class="input-group-text" >
-                                                            <i class="fa-solid fa-calculator"></i>
-                                                        </span>
-                                                        <div class="overflow-hidden flex-grow-1">
-                                                            <select name="accounting_method" data-hide-search="true" id="stock_accounting_method" class="form-select rounded-start-0 form-select-sm" data-control="select2" data-placeholder="">
-                                                                <option value="fifo" @selected($settingData->accounting_method=='fifo')>FIFO (First In First Out)</option>
-                                                                <option value="lifo" @selected($settingData->accounting_method=='lifo')>LIFO (Last In First Out)</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <!--end::Input-->
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="transaction_edit_days">
-                                                        <span class="required">{{__('business_settings.transaction_edit_days')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Number of days from Transaction Date till which a transaction can be edited."></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <div class="input-group">
-                                                        <span class="input-group-text" >
-                                                            <i class="fa-solid fa-pen-to-square"></i>
-                                                        </span>
-                                                        <input type="number" id="transaction_edit_days" class="form-control form-control form-control form-control-sm" value="{{$settingData['transaction_edit_days']}}" name="transaction_edit_days">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                        <label class="fs-6 fw-semibold form-label mt-3" for="date_format">
-                                                            <span class="required">{{__('business_settings.date_format')}}</span>
-                                                        </label>
-                                                        <div class="input-group flex-nowrap">
-                                                            <span class="input-group-text">
-                                                                <i class="fas fa-calendar"></i>
-                                                            </span>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                                <select name="date_format" id="date_format" data-hide-search="true" class="form-select rounded-start-0 form-select-sm" data-control="select2" data-placeholder="">
-                                                                    <option value="d-m-y">dd-mm-yyyy</option>
-                                                                    <option value="m-d-y">mm-dd-yyyy</option>
-                                                                    <option value="d/m/y">dd/mm/yyyy</option>
-                                                                    <option value="m/d/y">mm/dd/yyyy</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="time_format">
-                                                            <span class="required">{{__('business_settings.time_format')}}</span>
-                                                        </label>
-                                                        <div class="input-group flex-nowrap">
-                                                            <span class="input-group-text" >
-                                                                <i class="fas fa-calendar"></i>
-                                                            </span>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                                <select name="time_format" id="time_format" data-hide-search="true" class="form-select rounded-start-0 form-select-sm" data-control="select2" data-placeholder="">
-                                                                    <option value="24">24 hours</option>
-                                                                    <option value="12">12 hours</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="currency_position">
-                                                        <span class="required">{{__('business_settings.currency_decimal_places')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Number of digits after decimal point for currency value.Example:0.00 for value 2, 0.000 for value 3, 0.0000 for value 4"></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <select name="currency_decimal_places" id="currency_position" class="form-select form-select-sm" data-control="select2" data-placeholder="Select month">
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.nob-select name="stock_accounting_method" id="stock_accounting_method" :placeholder="__('business_settings.stock_accounting_method')" attr='data-hide-search="true"'>
+                                                        <option value="fifo" @selected($settingData->accounting_method=='fifo')>FIFO (First In First Out)</option>
+                                                        <option value="lifo" @selected($settingData->accounting_method=='lifo')>LIFO (Last In First Out)</option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.transaction_edit_days')" firstFor="transaction_edit_days"
+                                                :secLabel="__('business_settings.date_format')" secFor="date_format"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.input :value="$settingData['transaction_edit_days']" id="transaction_edit_days"
+                                                        name="transaction_edit_days" :placeholder="__('business_settings.transaction_edit_days')">
+                                                    </x-forms.input>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.nob-select name="date_format" id="date_format" :placeholder="__('business_settings.date_format')" >
+                                                        <option value="d-m-y">dd-mm-yyyy</option>
+                                                        <option value="m-d-y">mm-dd-yyyy</option>
+                                                        <option value="d/m/y">dd/mm/yyyy</option>
+                                                        <option value="m/d/y">mm/dd/yyyy</option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.time_format')" firstFor="time_format"
+                                                :secLabel="__('business_settings.currency_decimal_places')" secFor="currency_position"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.nob-select name="time_format" id="time_format" :placeholder="__('business_settings.time_format')" >
+                                                        <option value="24">24 hours</option>
+                                                        <option value="12">12 hours</option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.nob-select name="currency_position" id="currency_position" :placeholder="__('business_settings.currency_decimal_places')" >
                                                         <option value="0" @selected($settingData['currency_decimal_places'] == 0)>0</option>
                                                         <option value="1" @selected($settingData['currency_decimal_places'] == 1)>1</option>
                                                         <option value="2" @selected($settingData['currency_decimal_places'] == 2)>2</option>
                                                         <option value="3" @selected($settingData['currency_decimal_places'] == 3)>3</option>
                                                         <option value="4" @selected($settingData['currency_decimal_places'] == 4)>4</option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                            </x-setting.setting-row>
 
-                                                    </select>
-
-                                                </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="quantity_precision">
-                                                        <span class="required">{{__('business_settings.quantity_decimal_places')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Number of digits after decimal point for quantity value.Example:0.00 for value 2, 0.000 for value 3, 0.0000 for value 4"></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <select name="quantity_decimal_places" id="quantity_precision" class="form-select form-select-sm" data-control="select2" data-placeholder="Select month">
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.quantity_decimal_places')" firstFor="quantity_precision"
+                                                :secLabel="__('business_settings.currency_rounded_method')" secFor="currency_rounded_method"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.nob-select name="quantity_decimal_places" id="quantity_decimal_places" :placeholder="__('business_settings.quantity_decimal_places')" >
                                                         <option value="0" @selected($settingData['quantity_decimal_places'] == 0)>0</option>
                                                         <option value="1" @selected($settingData['quantity_decimal_places'] == 1)>1</option>
                                                         <option value="2" @selected($settingData['quantity_decimal_places'] == 2)>2</option>
                                                         <option value="3" @selected($settingData['quantity_decimal_places'] == 3)>3</option>
                                                         <option value="4" @selected($settingData['quantity_decimal_places'] == 4)>4</option>
-                                                    </select>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.nob-select name="quantity_decimal_places" id="quantity_decimal_places" :placeholder="__('business_settings.quantity_decimal_places')" >
+                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>RoundUp</option>
+                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>RoundDown</option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                            </x-setting.setting-row>
 
-                                                </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="currency_rounded_method">
-                                                        <span class="required">{{__('business_settings.currency_rounded_method')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
-                                                            title="Number of digits after decimal point for quantity value.Example:0.00 for value 2, 0.000 for value 3, 0.0000 for value 4"></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <select name="quantity_decimal_places" id="currency_rounded_method" class="form-select form-select-sm"
-                                                        data-control="select2" data-placeholder="Select month">
-                                                        <option value="0" @selected($settingData['quantity_decimal_places'] == 0)>RoundUp</option>
-                                                        <option value="1" @selected($settingData['quantity_decimal_places'] == 1)>RoundDown</option>
-                                                    </select>
 
-                                                </div>
-                                                <div class="col-md-12  mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="quantity_rounded_method">
-                                                        <span class="required">{{__('business_settings.quantity_rounded_method')}}</span>
-                                                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
-                                                            title="Number of digits after decimal point for quantity value.Example:0.00 for value 2, 0.000 for value 3, 0.0000 for value 4"></i>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <select name="quantity_decimal_places" id="quantity_rounded_method" class="form-select form-select-sm"
-                                                        data-control="select2" data-placeholder="Select month">
-                                                        <option value="0" @selected($settingData['quantity_decimal_places'] == 0)>RoundUp</option>
-                                                        <option value="1" @selected($settingData['quantity_decimal_places'] == 1)>RoundDown</option>
-                                                    </select>
-
-                                                </div>
-                                            </div>
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.quantity_rounded_method')" firstFor="quantity_rounded_method"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.nob-select name="quantity_rounded_method" id="quantity_rounded_method" :placeholder="__('business_settings.quantity_rounded_method')" >
+                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>RoundUp</option>
+                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>RoundDown</option>
+                                                    </x-forms.nob-select>
+                                                </x-slot>
+                                            </x-setting.setting-row>
                                         <!--end::Form-->
                                     </div>
 
@@ -936,99 +770,39 @@
 
 
                                             <div class="row fv-row row-cols flex-wrap">
-                                                {{-- <div class="col-md-12 mb-7 col-lg-4">
-                                                    <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="sku_prefix">
-                                                        <span class="required">{{__('business_settings.sku_prefix')}}</span>
-                                                    </label>
-                                                    <!--end::Label-->
-                                                    <input type="text" class="form-control form-control form-control form-control-sm" id="sku_prefix" name="sku" value="" placeholder="GST/VAT/OTHER" />
-                                                </div> --}}
-                                                {{-- <div class="col-md-12  mb-7 col-lg-4">
-                                                        <!--begin::Label-->
-                                                    <label class="fs-6 fw-semibold form-label mt-3" for="enable_product_expiry_check">
-                                                        <span class="required">{{__('business_settings.enable_product_expiry')}}</span>
-                                                    </label>
-                                                    <div class="input-group flex-nowrap">
-                                                        <span class="input-group-text">
-                                                            <div class="form-check form-check-custom">
-                                                            <input type="checkbox" name="enable_product_expiry_check" class="form-check-input border-gray-400 w-20px h-20px border-gray-500" id="enable_product_expiry_check">
-                                                            </div>
-                                                        </span>
-                                                        <div class="overflow-hidden flex-grow-1">
-                                                            <select name="enable_product_expiry" data-hide-search="true"  id="enable_product_expiry" class="form-select rounded-start-0" data-control="select2" data-placeholder="">
-                                                                <option value="fifo">{{__('business_settings.add_item_expiry')}}</option>
-                                                                <option value="lifo">{{__('business_settings.add_manufacturing_date_and_expiry_period')}}</option>
-                                                            </select>
+                                                <x-setting.setting-row
+                                                    :firstLabel="__('business_settings.keep_selling_on_expired')" firstFor="flexSwitchCheckDefault"
+                                                    :secLabel="__('business_settings.stop_selling_n_day_before')" secFor="kt_datepicker_1"
+                                                >
+                                                    <x-slot:firstInput>
+                                                        <div class="form-check form-switch ">
+                                                            <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="flexSwitchCheckDefault">
                                                         </div>
-                                                    </div>
-                                                </div> --}}
-                                                <div class="col-md-12 mb-7 col-lg-4 mt-5" id="sell_expiry">
-                                                    <!--begin::Label-->
-                                                    {{-- <label class="fs-6 fw-semibold form-label mt-3">
-                                                        <span class="required">{{__('business_settings.on_product_expiry')}}</span>
-                                                    </label> --}}
-                                                    {{-- <!--end::Label-->data-control="select2" --}}
-                                                   {{-- <div class="input-group flex-nowrap">
-                                                        <div class="overflow-hidden flex-grow-1">
-                                                            <select name="stop_selling_before" disabled data-hide-search="true" data-control="select2" id="add_sell_expriy" class="form-select rounded-end-0 min-w-125px "  data-placeholder="">
-                                                                <option value="keep_sell">{{__('business_settings.keep_selling')}}</option>
-                                                                <option value="stop_sell">{{__('business_settings.stop_selling_n_day_before')}}</option>
-                                                            </select>
-                                                        </div>
-                                                        <input type="text" disabled value="0" id="n_day" name="form-control form-control" class="form-control form-control min-w-125px" id="check_product_ex">
-                                                    </div> --}}
-                                                    <div class="form-check form-switch ">
-                                                        <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="flexSwitchCheckDefault" >
-                                                        <label class="form-check-label" for="flexSwitchCheckDefault">{{__('business_settings.keep_selling_on_expired')}}</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-7 col-lg-4">
-                                                    <label class="fs-6 fw-semibold form-label">
-                                                        <span class="required">{{__('business_settings.stop_selling_n_day_before')}}</span>
-                                                    </label>
-                                                    <div class="input-group input-group-sm flex-nowrap">
-                                                            <input type="text" class="form-control form-control-sm">
-                                                            <div class="input-group-text">
-                                                                Day
-                                                            </div>
-                                                        </div>
-                                                </div>
+                                                    </x-slot>
+                                                    <x-slot:secInput>
+                                                            <x-forms.input :placeholder="__('business_settings.stop_selling_n_day_before')"> </x-forms.input>
+                                                    </x-slot>
+                                                </x-setting.setting-row>
 
-                                            </div>
-                                            <div class="row row-cols">
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="default_purchase_units">
-                                                            <span class="required">{{__('business_settings.default_purchase_uom')}}</span>
-                                                        </label>
-                                                        <div class="input-group input-group-sm flex-nowrap">
-                                                            <span class="input-group-text" >
-                                                              <i class="fa-solid fa-scale-balanced"></i>
-                                                            </span>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                                <select name="default_purchase_units" id="default_purchase_units" data-hide-search="true" class="form-select form-select-sm rounded-start-0" data-control="select2" data-kt-select2="true" data-placeholder="">
-                                                                    <option value=" ">{{__('business_settings.please_select')}}</option>
-                                                                    <option value="2">Kg</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                </div>
-                                                <div class="col-md-12  mb-7  col-lg-4">
-                                                      <label class="fs-6 fw-semibold form-label mt-3" for="default_sale_uom">
-                                                            <span class="required">{{__('business_settings.default_sale_uom')}}</span>
-                                                        </label>
-                                                        <div class="input-group input-group-sm flex-nowrap">
-                                                            <span class="input-group-text" >
-                                                              <i class="fa-solid fa-scale-balanced"></i>
-                                                            </span>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                                <select name="default_sale_uom" id="default_sale_uom" data-hide-search="true" class="form-select form-select-sm rounded-start-0" data-kt-select2="true" data-control="select2" data-placeholder="">
-                                                                    <option value=" ">{{__('business_settings.please_select')}}</option>
-                                                                    <option value="2">Kg</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                </div>
+                                                <x-setting.setting-row
+                                                    :firstLabel="__('business_settings.default_purchase_uom')" firstFor="default_purchase_uom"
+                                                    :secLabel="__('business_settings.default_sale_uom')" secFor="default_sale_uom"
+                                                >
+                                                    <x-slot:firstInput>
+                                                        <x-forms.nob-select name="default_purchase_uom" id="default_purchase_uom"
+                                                            placeholder="__('business_settings.default_purchase_uom')">
+                                                           <option value=" ">{{__('business_settings.please_select')}}</option>
+                                                            <option value="2">Kg</option>
+                                                        </x-forms.nob-select>
+                                                    </x-slot>
+                                                    <x-slot:secInput>
+                                                        <x-forms.nob-select name="default_sale_uom" id="default_sale_uom"
+                                                            placeholder="__('business_settings.default_sale_uom')">
+                                                           <option value=" ">{{__('business_settings.please_select')}}</option>
+                                                            <option value="2">Kg</option>
+                                                        </x-forms.nob-select>
+                                                    </x-slot>
+                                                </x-setting.setting-row>
                                             </div>
                                             {{-- <div class="row row-cols">
                                                 <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
@@ -1749,9 +1523,7 @@
                                                                 id="purchase" name="sale_prefix" value="{{$settingData['sale_prefix']}}" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.purchase_return')}}:</span>
@@ -1763,7 +1535,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.purchase_order')}}:</span>
@@ -1774,8 +1546,6 @@
                                                                 id="purchase" name="purchase" value="PO" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
                                                     <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
@@ -1784,24 +1554,22 @@
                                                         </div>
                                                         <div class="col-5">
                                                             <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
-                                                                id="purchase" name="purchase" value="PO" />
+                                                                id="purchase" name="stock_transfer_prefix" value="{{$settingData['stock_transfer_prefix']}}" />
                                                         </div>
                                                     </div>
 
                                                     <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
                                                         <div class="label">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="stock_adjustment_prefix">
                                                                 <span class="">{{__('business_settings.stock_adjustment')}}:</span>
                                                             </label>
                                                         </div>
                                                         <div class="col-5">
                                                             <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
-                                                                id="purchase" name="purchase" value="PO" />
+                                                                id="stock_adjustment_prefix" name="stock_adjustment_prefix" value="{{$settingData['stock_adjustment_prefix']}}" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.sell_return')}}:</span>
@@ -1815,18 +1583,27 @@
 
                                                     <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
                                                         <div class="label">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="expense_prefix">
                                                                 <span class="">{{__('business_settings.expenses')}}:</span>
                                                             </label>
                                                         </div>
                                                         <div class="col-5">
                                                             <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
-                                                                id="purchase" name="purchase" value="PO" />
+                                                                id="expense_prefix" name="expense_prefix" value="{{$settingData['expense_prefix']}}" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                        <div class="label">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="expense_report_prefix">
+                                                                <span class="">{{__('business_settings.expense_report')}}:</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
+                                                                id="expense_report_prefix" name="expense_report_prefix" value="{{$settingData['expense_report_prefix']}}" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.contacts')}}:</span>
@@ -1840,45 +1617,41 @@
 
                                                     <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
                                                         <div class="label">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase_payment_prefix">
                                                                 <span class="">{{__('business_settings.purchase_payment')}}:</span>
                                                             </label>
                                                         </div>
                                                         <div class="col-5">
                                                             <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
-                                                                id="purchase" name="purchase" value="PO" />
+                                                                id="purchase_payment_prefix" name="purchase_payment_prefix" value="{{$settingData['purchase_payment_prefix']}}" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
                                                     <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
                                                         <div class="label">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="sale_payment_prefix">
                                                                 <span class="">{{__('business_settings.sell_payment')}}:</span>
                                                             </label>
                                                         </div>
                                                         <div class="col-5">
                                                             <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
-                                                                id="purchase" name="purchase" value="PO" />
+                                                                id="sale_payment_prefix" name="sale_payment_prefix" value="{{$settingData['sale_payment_prefix']}}" />
                                                         </div>
                                                     </div>
 
                                                     <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
                                                         <div class="label">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="expense_payment_prefix">
                                                                 <span class="">{{__('business_settings.expense_payment')}}:</span>
                                                             </label>
                                                         </div>
                                                         <div class="col-5">
                                                             <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
-                                                                id="purchase" name="purchase" value="PO" />
+                                                                id="expense_payment_prefix" name="expense_payment_prefix" value="{{$settingData['expense_payment_prefix']}}" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
                                                     <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
                                                         <div class="label">
-                                                            <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
+                                                            <label class="fs-6 fw-semibold form-label mt-3" for="business_location_prefix">
                                                                 <span class="">{{__('business_settings.business_location')}}:</span>
                                                             </label>
                                                         </div>
@@ -1888,7 +1661,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.username')}}:</span>
@@ -1899,9 +1672,7 @@
                                                                 id="purchase" name="purchase" value="PO" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between ">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.subscription_no')}}:</span>
@@ -1913,7 +1684,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.draft')}}:</span>
@@ -1924,10 +1695,8 @@
                                                                 id="purchase" name="purchase" value="PO" />
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row mb-lg-4 gap-1 gap-lg-5 justify-content-between">
 
-                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between">
+                                                    <div class="col-12 col-lg-5 d-flex mb-5 justify-content-between d-none">
                                                         <div class="label">
                                                             <label class="fs-6 fw-semibold form-label mt-3" for="purchase">
                                                                 <span class="">{{__('business_settings.sales_order')}}:</span>

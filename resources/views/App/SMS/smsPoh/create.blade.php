@@ -45,24 +45,25 @@
             </div>
             <div class="card-body p-0">
                 <!--begin::Form-->
-                <form id="kt_inbox_compose_form" action="{{route('sms.send')}}" method="POST">
+                <form id="kt_inbox_compose_form" action="{{route('sms.smsPoh.send')}}" method="POST">
                     @csrf
                     <!--begin::Body-->
                     <div class="d-block">
                         <!--begin::To-->
-                        <div class="d-flex align-items-center border-bottom px-8 min-h-50px">
+                        <div class="d-flex align-items-center px-8 min-h-50px">
                             <!--begin::Label-->
                             <div class="text-dark fw-bold w-100px">Phone No:</div>
                             <!--end::Label-->
                             <!--begin::Input-->
-                            <input type="text" class="form-control form-control-sm " name="sent_to" id="sent_to" value=""
-                                 placeholder="Enter Contact Name" />
+                            <x-forms.input name='sent_to'  placeholder="Enter Contact Name" id="contactTagify"></x-forms.input>
+                            {{-- <input type="text" class="form-control form-control-sm border-left-0" name="sent_to" id="sent_to" value=""
+                                 placeholder="Enter Contact Name" /> --}}
                             {{-- <input type="text" class="form-control form-control-sm " name="sent_to" id="sent_to" value=""
                                 data-kt-inbox-form="tagify" placeholder="Enter Contact Name" /> --}}
                             <!--end::Input-->
                         </div>
                         <!--end::To-->
-                        <div class="d-flex align-items-start border-bottom px-8 min-h-50px">
+                        <div class="d-flex align-items-start px-8 min-h-50px mt-10">
                                 <!--begin::Label-->
                                 <div class="text-dark fw-bold w-100px">Message:</div>
                                 <textarea class="form-control form-control- borer-0  min-h-45px mb-3" cols="30" rows="10" name="message"
@@ -70,8 +71,8 @@
                             </div>
                             <!--end::To-->
                         <!--begin::Subject-->
-                        <div class="border-bottom col-12 ">
-                        </div>
+                        {{-- <div class="border-bottom col-12 ">
+                        </div> --}}
                         <!--end::Subject-->
                         <!--begin::Message-->
                         <!--end::Message-->
@@ -105,5 +106,18 @@
 @endsection
 
 @push('scripts')
+<script>
+    var contactInput = document.querySelector('#contactTagify');
+    let contact=@json($contact).map((e)=>{
+        name=`${e.first_name?e.first_name+' ' :''}${e.middle_name?e.middle_name+' ' :''}${e.last_name?e.last_name+' ' :''}`;
+        return {'value':name,'mobile':e.mobile};
+    });
+    // Init Tagify script on the above inputs
+    tagify = new Tagify(contactInput, {
+        whitelist: contact,
+        placeholder: "Type Contact Name",
+        enforceWhitelist: true
+    });
+</script>
 {{-- <script src="assets/js/custom/apps/inbox/compose.js"></script> --}}
 @endpush

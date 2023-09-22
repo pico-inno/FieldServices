@@ -2,36 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
+use App\Services\smsServices;
+use App\Models\Contact\Contact;
 use Illuminate\Support\Facades\Http;
+use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
 
 class SMSController extends Controller
 {
-    private $AuthToken;
-    private $sender;
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
-        $this->AuthToken= env('SMSPOH_AUTH_TOKEN');
-        $this->sender=env('SMSPOH_SENDER');
+    }
+    public function index(smsServices $sms){
+        $smsDatas=$sms->getSMSWithSmsPoh()['data'];
+        return view('App.SMS.smsPoh.index',compact('smsDatas'));
     }
     public function create(){
-        return view('App.SMS.create');
+        $contact=Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
+        return view('App.SMS.smsPoh.create',compact('contact'));
     }
-    public function send(Request $request)
+    public function send(Request $request,smsServices $sms)
     {
-        try {
-            $data = [
-                'to' => $request->sent_to,
-                'message' => $request->message,
-                'sender' => $this->sender,
-            ];
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->AuthToken,
-                'Content-Type' => 'application/json',
-            ])->post('https://smspoh.com/api/v2/send', $data);
 
-            // return;
+        try {
+            if (!trim($request->message)) {
+                throw new Exception("Message is Required", 1);
+            }
+            $receivers=$this->requestJsonId($request->sent_to);
+            foreach ($receivers as $receiver) {
+                if($receiver['mobile']){
+                    $data = [
+                        'to'=>$receiver['mobile'],
+                        'message' => $request->message,
+                    ];
+                    $response = $sms->sendWithSMSPoh($data);
+                }
+            }
+
             if ($response->successful()) {
                 return back()->with(['success' => 'Successfully Send Message']);
             } else {
@@ -40,5 +49,21 @@ class SMSController extends Controller
         } catch (\Throwable $th) {
             return back()->with(['error' => $th->getMessage()]);
         }
+    }
+    public function getSMS(smsServices $sms){
+        // dd('ejer');
+        // echo "<pre>";
+        // return $sms->getSMSWithSmsPoh();
+    }
+    protected function requestJsonId($requestJson)
+    {
+        $datas = json_decode($requestJson);
+        if ($datas) {
+            $data = array_map(function ($c) {
+                return ['mobile'=>$c->mobile];
+            }, $datas);
+            return $data;
+        }
+        return [];
     }
 }

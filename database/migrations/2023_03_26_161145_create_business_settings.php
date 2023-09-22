@@ -28,7 +28,7 @@ return new class extends Migration
 
 
             // for sale
-            $table->tinyInteger('enable_row')->unsigned()->notNull()->default(0);
+            $table->tinyInteger('enable_row')->unsigned()->notNull()->default(1);
 
             $table->unsignedBigInteger('owner_id')->nullable(true);
             $table->string('time_zone', 191)->default('Asia/Kolkata')->nullable(true);

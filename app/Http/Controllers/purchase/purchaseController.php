@@ -712,7 +712,7 @@ class purchaseController extends Controller
     protected function makePayment($purchase,$payment_account_id,$increasePayment=false,$increaseAmount=0){
         $paymentAmount=$increasePayment ? $increaseAmount :$purchase->paid_amount;
         $data=[
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
+            'payment_voucher_no'=>generatorHelpers::paymentVoucher('purchase'),
             'payment_date'=>now(),
             'transaction_type'=>'purchase',
             'transaction_id'=>$purchase->id,

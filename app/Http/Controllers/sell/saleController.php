@@ -232,7 +232,7 @@ class saleController extends Controller
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
         $paymentAccounts = paymentAccounts::get();
-        $setting = businessSettings::first();
+        $setting = businessSettings::where('id',Auth::user()->business_id)->first();
         $defaultCurrency = $this->currency;
         $currencies = Currencies::get();
         $locations = businessLocation::all();

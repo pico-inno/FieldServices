@@ -478,10 +478,12 @@ Route::prefix('deliver-channel')->group(function () {
 });
 Route::prefix('SMS')->group(function () {
     Route::controller(SMSController::class)->group(function () {
-        // Route::get('/list', 'index')->name('deliveryChannel.list');
-        Route::get('/create', 'create')->name('sms.create');
-        Route::post('/send', 'send')->name('sms.send');
+        Route::get('/smsPoh/dashboard', 'index')->name('sms.smsPoh.index');
+        Route::get('/smsPoh/get/sms', 'getSMS')->name('sms.smsPoh.getsms');
+        Route::get('/smsPoh/create', 'create')->name('sms.smsPoh.create');
+        Route::post('/smsPoh/send', 'send')->name('sms.smsPoh.send');
     });
+
 });
 
 

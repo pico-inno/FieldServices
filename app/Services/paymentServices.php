@@ -31,7 +31,7 @@ class paymentServices
         $paymentAmount = $increatePayment ? $increaseAmount : $sale->paid_amount;
         if ($paymentAmount > 0) {
             $data = [
-                'payment_voucher_no' => generatorHelpers::paymentVoucher(),
+                'payment_voucher_no' => generatorHelpers::paymentVoucher('sale'),
                 'payment_date' => now(),
                 'transaction_type' => 'sale',
                 'transaction_id' => $sale->id,

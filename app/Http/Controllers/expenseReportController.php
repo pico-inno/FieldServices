@@ -40,7 +40,7 @@ class expenseReportController extends Controller
         $expenseReport=expenseReports::create(
             [
                 'expense_title'=>$expenseReportDataArray['expense_title'],
-                'expense_report_no'=>sprintf('ERP-'."%0" . 6 . "d", ($expenseReportsCount + 1)),
+                'expense_report_no'=> expenseReportVoucherNo($expenseReportsCount),
                 'expense_on'=>date_create($expenseReportDataArray['expense_on']),
                 'note'=>$expenseReportDataArray['note'],
                 'created_by'=>Auth::user()->id,

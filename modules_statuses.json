@@ -1,12 +1,7 @@
 {
     "ObjectStorage": true,
     "OrderDisplay": true,
-<<<<<<< HEAD
     "Reservation": true,
     "RoomManagement": true,
     "ExchangeRate": true
 }
-=======
-    "StockInOut": true
-}
->>>>>>> e117cc1bf472f1b8ee94c8e45403f9ff3d8e2794

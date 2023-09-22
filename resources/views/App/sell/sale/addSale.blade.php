@@ -167,7 +167,7 @@
                                         <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc Amount </th>
                                         {{-- <th class="min-w-125px">Discount Amount</th> --}}
                                         {{-- <th class="min-w-125px">Subtotal</th> --}}
-                                        <th class="pe-1 min-w-100px text-end" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+                                        <th class="pe-1 min-w-50px text-end" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>

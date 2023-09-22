@@ -25,10 +25,17 @@ class generatorHelpers
         return $batchNo;
     }
 
-    public static function paymentVoucher(){
+    public static function paymentVoucher($transaction_type=''){
+        if($transaction_type=='expense'){
+            $prefix = getSettingValue('expense_payment_prefix');
+        }else if($transaction_type == 'sale') {
+            $prefix = getSettingValue('sale_payment_prefix');
+        } else if ($transaction_type == 'purchase') {
+            $prefix = getSettingValue('purchase_payment_prefix');
+        }
         $paymentCount=paymentsTransactions::orderBy('id','DESC')->first()->id ?? 0;
         $numberCount = "%0" . 6 . "d";
-        $voucherNo = sprintf('PMV-'.$numberCount, ($paymentCount + 1));
+        $voucherNo = sprintf($prefix.'-'.$numberCount, ($paymentCount + 1));
         return $voucherNo;
     }
     public static function resOrderVoucherNo(){
@@ -39,6 +46,14 @@ class generatorHelpers
     }
 
 
+    /**
+     * generateVoucher
+     *
+     * @param  mixed $prefix
+     * @param  mixed $uniqueCount
+     * @param  mixed $voucherCount
+     * @return void
+     */
     public static function generateVoucher($prefix,$uniqueCount,$voucherCount=6)
     {
         $numberCount = "%0" . $voucherCount . "d";

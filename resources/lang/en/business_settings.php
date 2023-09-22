@@ -129,6 +129,7 @@ return [
     'stock_adjustment' => 'Stock Adjustment',
     'sell_return' => 'Sell Return',
     'expenses' => 'Expenses',
+    'expense_report' => 'Expense Report',
     'contacts' => 'Contacts',
     'purchase_payment' => 'Purchase Payment',
     'sell_payment' => 'Sell Payment',

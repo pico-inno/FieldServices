@@ -562,10 +562,11 @@ $(document).ready(function() {
                 $('.extra_discount').val(percentage_amount);
                 $('#total_discount_amount_txt').text(fpDecimal(total_line_discount_val+percentage_amount,currentCurrency));
                 $('#total_discount_amount').val(pDecimal(total_line_discount_val+percentage_amount));
-                price_after_discount=(pDecimal(net_purchase_total_amount - percentage_amount));
+                price_after_discount=pDecimal(net_purchase_total_amount - percentage_amount);
 
             }
-            result=price_after_discount+purchaseExpense;
+            // console.log(price_after_discount,purchaseExpense);
+            result=isNullOrNan(price_after_discount)+isNullOrNan(purchaseExpense);
             $('#total_purchase_amount').val(pDecimal(result));
             $('#total_purchase_amount_txt').text(fpDecimal(result,currentCurrency));
 
@@ -576,7 +577,7 @@ $(document).ready(function() {
 
     function total_balance_amount_cal() {
         setTimeout(() => {
-        let total_purchase_amount=$('#total_purchase_amount').val();
+        let total_purchase_amount=isNullOrNan($('#total_purchase_amount').val());
 
         let paid_amount=isNullOrNan($('#paid_amount').val());
         $('#paid_amount_txt').text(paid_amount);

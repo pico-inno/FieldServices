@@ -1,6 +1,6 @@
 <script>
     let locations=@json($locations);
-
+    let setting=@json($setting);
     var price_lists_with_location = [];
     var uoms = @json($uoms ?? null);
     var posRegisterId=@json($posRegisterId);
@@ -144,7 +144,7 @@
             `;
         }
 
-        let invoiceSidebar = (product) => {
+        let invoiceSidebar = (product,forceSplit=false) => {
             checkAndStoreSelectedProduct(product);
             let variation_value_and_name;
             // Get Variation Value and Variation Template Value Name
@@ -393,7 +393,7 @@
             let productId = parent.find('input[name="product_id"]').val();
             let variationId = parent.find('input[name="variation_id"]').val();
 
-            let product = productsOnSelectData.filter( product => product.variation_id == variationId )[0];
+            let product = productsOnSelectData.find( product => product.variation_id == variationId );
             let quantity = isNullOrNan(product.total_current_stock_qty);
 
             const uoms = product.uom.unit_category.uom_by_category;
@@ -929,6 +929,24 @@
         })
 
         $('#all_product_list').on('click', '.each_product', function(e) {
+            let variation_id = $(this).find('input[name="product_variation_id"]').val();
+            if(setting.enable_row == 0 ){
+               let checkProduct= productsOnSelectData.find(p=>p.variation_id==variation_id);
+               if(checkProduct){
+                    let ParentRow=$(`.invoice_row_${variation_id}`);
+                    let qtyInput=ParentRow.find(`.quantity_input`);
+                    let selectQtyInputVal=qtyInput.val();
+                    let val=isNullOrNan(selectQtyInputVal);
+                    qtyInput.val(val+1);
+                    getPrice(ParentRow);
+                    calPrice(ParentRow);
+                    totalSubtotalAmountCalculate();
+                    checkStock(ParentRow);
+                    hideCalDisPrice(ParentRow);
+                    totalDisPrice();
+                    return ;
+               }
+            }
             var selectedLocation = $('#business_location_id').val();
             if(selectedLocation === ''){
                 warning('Select location!')
@@ -936,7 +954,6 @@
             }
             let business_location_id = selectedLocation;
             let query = $(this).find('.pos-product-name').text();
-            let variation_id = $(this).find('input[name="product_variation_id"]').val();
             let data = {
                 business_location_id, query, variation_id
             }

@@ -11,14 +11,22 @@ var KTAppInboxListing = function () {
         datatable = $(table).DataTable({
             "info": false,
             'order': [],
+
             // 'paging': false,
-            // 'pageLength': false,      
+            // 'pageLength': false,
         });
 
         datatable.on('draw', function () {
             handleDatatableFooter();
         });
     }
+
+
+
+
+
+
+    
 
     // Handle datatable footer spacings
     var handleDatatableFooter = () => {

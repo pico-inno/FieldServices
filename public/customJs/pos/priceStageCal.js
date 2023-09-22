@@ -32,9 +32,11 @@
             let mainPriceStatus=false;
             mainPriceLists.forEach((mainPriceList) => {
                 if (mainPriceStatus == true) {
-                    return;
+                    priceSetting(mainPriceList, parent,false);
+                }else{
+
+                mainPriceStatus = priceSetting(mainPriceList, parent,true);
                 }
-                mainPriceStatus = priceSetting(mainPriceList, parent);
             })
 
             let basePriceLists=priceList.basePriceList ?? [];

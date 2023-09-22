@@ -22,6 +22,7 @@ class businessSettingController extends Controller
     {
         $settingData = businessSettings::where('id', Auth::user()->business_id)->firstorFail();
         $currencies = Currencies::where('business_id', $settingData->id)->get();
+
         return view('App.businessSetting.businessSetting', compact('settingData', 'currencies'));
     }
     public function create(Request $request)
@@ -79,6 +80,13 @@ class businessSettingController extends Controller
             'transaction_edit_days'=>$request->transaction_edit_days,
             'sale_prefix'=>$request->sale_prefix,
             'purchase_prefix'=>$request->purchase_prefix,
+            'stock_transfer_prefix'=>$request->stock_transfer_prefix,
+            'stock_adjustment_prefix'=>$request->stock_adjustment_prefix,
+            'expense_prefix' => $request->expense_prefix,
+            'purchase_payment_prefix' => $request->purchase_payment_prefix,
+            'expense_payment_prefix' => $request->expense_payment_prefix,
+            'sale_payment_prefix' => $request->sale_payment_prefix,
+            'expense_report_prefix'=>$request->expense_report_prefix,
         ];
 
         $oldData = businessSettings::where('id', Auth::user()->business_id)->first();

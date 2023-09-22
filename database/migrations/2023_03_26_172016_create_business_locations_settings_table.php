@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('business_locations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('business_id')->nullable();
             $table->string('location_id')->nullable();
+            $table->unsignedBigInteger('business_id')->nullable();
             $table->string('location_code')->nullable();
             $table->string('name', 256)->nullable();
             $table->boolean('allow_purchase_order')->default(0);
