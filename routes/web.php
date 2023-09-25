@@ -883,6 +883,8 @@ Route::prefix('/contacts')->group(function () {
     Route::resource('import-contacts', ImportContactsController::class);
 });
 
+Route::get('/download/contact-excel-template', [ImportContactsController::class, 'dowloadContactExcel'])->name('download-contact-excel');
+
 Route::get('customers/quickadd', [CustomerController::class, 'quickCreateCustomer']);
 Route::post('customers', [CustomerController::class, 'quickStoreCustomer']);
 
