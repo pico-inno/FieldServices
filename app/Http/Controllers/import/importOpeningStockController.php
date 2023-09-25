@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\import;
 
 use Illuminate\Http\Request;
 use App\Models\openingStocks;
 use Illuminate\Support\Facades\DB;
+use App\Models\openingStockDetails;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\openingStocks\Import;
 use App\Imports\openingStocks\OpeningImport;
-use App\Models\openingStockDetails;
 
 class importOpeningStockController extends Controller
 {
@@ -24,7 +25,7 @@ class importOpeningStockController extends Controller
         DB::beginTransaction();
         $file = $request->file('ImportedFile');
         request()->validate([
-            'ImportedFile' => 'required|mimes:xlx,xls,xlsx|max:2048',
+            'ImportedFile' => 'required|mimes:xlx,xls,xlsx,csv|max:2048',
             'business_location_id' => 'required',
             'opening_date' => 'required',
         ],[

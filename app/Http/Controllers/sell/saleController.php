@@ -93,10 +93,12 @@ class saleController extends Controller
                 $items = '';
                 foreach ($saleDetails as $key => $sd) {
                     $variation = $sd->productVariation;
-                    $productName = $variation->product->name;
-                    $sku = $variation->product->sku ?? '';
-                    $variationName = $variation->variationTemplateValue->name ?? '';
-                    $items .= "$productName,$variationName,$sku ;";
+                    if($variation){
+                        $productName = $variation->product->name;
+                        $sku = $variation->product->sku ?? '';
+                        $variationName = $variation->variationTemplateValue->name ?? '';
+                        $items .= "$productName,$variationName,$sku ;";
+                    }
                 }
                 return $items;
             })

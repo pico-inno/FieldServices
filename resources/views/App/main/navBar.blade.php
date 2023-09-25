@@ -24,6 +24,7 @@
 		<link href={{asset("assets/plugins/global/plugins.bundle.css")}} rel="stylesheet" type="text/css" />
 		<link href={{asset("assets/css/style.bundle.css")}} rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href={{asset("customCss/scrollbar.css")}}>
+        <link rel="stylesheet" href={{asset("customCss/noti.css")}}>
 		<!--end::Global Stylesheets Bundle-->
         @yield('styles')
 	</head>
@@ -1038,6 +1039,17 @@
 																</a>
 																<!--end:Menu link-->
 															</div>
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('import_price_list_detail_menu_link')" href="{{ route('priceListTemplate') }}">
+                                                                    <span class="menu-icon">
+                                                                        <i class="fa-solid fa-download"></i>
+                                                                    </span>
+                                                                    <span class="menu-title fs-6">{{
+                                                                        __('product/pricelist.import_pricelist') }}</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
 														</div>
 														<!--end:Menu sub-->
 														<!--end:Menu sub-->
@@ -3033,6 +3045,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="d-none animated-content position-absolute px-10 start-50 translate-middle z-index-3 shadow-sm bg-white rounded pt-15" id="noti"
+                                style="top: 10px">
+                        <div class="col-12 m-auto text-center pb-1 border-bottom-1 border-top-0 border-left-0 border-right-0 border">
+                            <h5 class="fs-6 text-muted">
+                                <i class="fa-solid fa-thumbs-up fa-bounce text-success fs-3 me-2"></i>
+                                <span id="notiMessage"></span>
+                            </h5>
+                        </div>
+                        <div class="col-12 text-center py-2">
+                            <div class="m-auto bg-secondary rounded-pill" style="width: 30px;height: 3px;">
+
+                            </div>
+                        </div>
+                    </div>
 
                     @yield('content')
 					<!--end::Content-->
@@ -3101,7 +3127,8 @@
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
         <script src={{asset('customJs/toastrAlert/alert.js')}}></script>
         @include('App.alert.alert');
+        <script src={{asset('customJs/loading/miniLoading.js')}}></script>
         @stack('scripts')
 	</body>
-	<!--end::Body-->
+<!--end::Body-->
 </html>

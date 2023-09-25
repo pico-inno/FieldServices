@@ -24,6 +24,7 @@ use App\Models\exchangeRates;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
+use App\Models\Product\VariationTemplateValues;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
@@ -123,6 +124,7 @@ class purchaseController extends Controller
                 return redirect()->route('purchase_list')->with(['success' => 'Successfully Created Purchase']);
             }
         } catch (\Exception $e) {
+            dd($e);
             $filePath = $e->getFile();
             $fileName = basename($filePath);
             DB::rollBack();
@@ -317,11 +319,23 @@ class purchaseController extends Controller
                             CurrentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase')->delete();
                             stock_history::where('transaction_details_id', $purchase_detail_id)->where('transaction_type', 'purchase')->first()->delete();
                         }
+
+                        $product = Product::where('id', $pd['product_id'])->select('purchase_uom_id')->first();
+                        $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'], $pd['purchase_uom_id']);
+                        $requestQty = $referencUomInfo['qtyByReferenceUom'];
+                        $referencteUom = $referencUomInfo['referenceUomId'];
+
+                        $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
+                        $default_selling_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
+                        $this->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
+
                         $stock_check=currentStockBalance::where('transaction_detail_id',$purchase_detail_id)->where('transaction_type','purchase')->exists();
                         if(!$stock_check){
+                            $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
+                            $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
+                            $pd['per_ref_uom_price'] = $per_ref_uom_price;
                             $purchase_details->update($pd);
                             if($purchase->status!='received' && $request->status=='received'){
-                                // if(){
                                     $data=$this->currentStockBalanceData($purchase_details,$purchase,'purchase');
                                     if ($businessLocation->allow_purchase_order == 0) {
                                         CurrentStockBalance::create($data);
@@ -341,24 +355,22 @@ class purchaseController extends Controller
                             //    }
                             }
                         }else {
-                            $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'],$pd['purchase_uom_id']);
-                            $requestQty=$referencUomInfo['qtyByReferenceUom'];
-                            $referencteUom= $referencUomInfo['referenceUomId'];
 
                             $currentStock= currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase');
 
                             $purchase_quantity=(int) $currentStock->get()->first()->ref_uom_quantity;
                             $current_qty_from_db = (int)  $currentStock->get()->first()->current_quantity;
+
                             $diff_qty = $purchase_quantity- $current_qty_from_db;
                             $currentResultQty= $requestQty-$diff_qty;
                             $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
                             $pd['subtotal_with_discount'] = $pd['subtotal_with_discount'];
                             $pd['expense'] = $pd['per_item_expense'] * $pd['quantity'];
-                            $pd['per_ref_uom_price'] = $pd['uom_price'] ?? 0 /  $requestQty;
                             $pd['ref_uom_id'] = $referencteUom;
                             $pd['per_item_tax'] = 0;
                             $pd['tax_amount'] = 0;
                             $pd['subtotal_wit_tax'] = $pd['per_item_expense'] * $pd['quantity'] + 0;
+                            $pd['per_ref_uom_price'] = $per_ref_uom_price;
                             $pd['updated_by'] = Auth::user()->id;
                             $pd['updated_at'] = now();
 
@@ -424,9 +436,11 @@ class purchaseController extends Controller
                     'deleted_by'=>Auth::user()->id,
                 ]);
             }
+            // dd('here');
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);
             throw $e;
         }
@@ -534,14 +548,17 @@ class purchaseController extends Controller
     {
 
         foreach ($purchases_details as $key=>$pd) {
+            $product=Product::where('id',$pd['product_id'])->select('purchase_uom_id')->first();
             $referencteUom = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'], $pd['purchase_uom_id']);
+            $per_ref_uom_price= priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom['referenceUomId']);
+            $default_selling_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
             $pd['purchases_id'] = $purchase_id;
             $pd['subtotal'] =$pd['uom_price'] * $pd['quantity'];
             $pd['subtotal_with_discount'] = $pd['subtotal_with_discount'];
             $pd['currency_id'] = $purchase->currency_id;
             $pd['expense'] = $pd['per_item_expense'] * $pd['quantity'];
             $pd['ref_uom_id'] = $referencteUom['referenceUomId'];
-            $pd['per_ref_uom_price'] =($pd['uom_price'] ?? 0) /($referencteUom['qtyByReferenceUom'] ?? 0);
+            $pd['per_ref_uom_price'] = $per_ref_uom_price;
             $pd['batch_no'] = UomHelper::generateBatchNo($pd['variation_id']);
             $pd['per_item_tax']=0;
             $pd['tax_amount'] =0;
@@ -552,10 +569,19 @@ class purchaseController extends Controller
             $pd['deleted_by'] = Auth::user()->id;
             $pd['is_delete'] = 0;
             $pd=purchase_details::create($pd);
+            $this->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
             $this->currentStockBalanceCreation($pd,$purchase,'purchase');
         }
     }
 
+    public function changeDefaultPurchasePrice($variation_id, $default_selling_price){
+        $variation_product = ProductVariation::where('id', $variation_id)->first();
+        if ($variation_product) {
+            $variation_product->update(['default_purchase_price' => $default_selling_price]);
+        }
+    }
+
+    // private function variation_
     private function UOM_unit($id){
         return UOM::where('uomset_id', $id)
         ->leftJoin('units', 'uoms.unit_id', '=', 'units.id')
@@ -690,6 +716,7 @@ class purchaseController extends Controller
                             'default_selling_price' => $variation['default_selling_price'],
                             'lastPurchasePrice' => $lastPurchase ? $lastPurchasePrice: 0,
                         ];
+                        // dd($variation_product)
                         array_push($products, $variation_product);
                     }
                 }else{

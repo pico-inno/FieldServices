@@ -52,3 +52,4 @@ function flotemessage(message=''){
       toastr.success(message)
 }
 
+

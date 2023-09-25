@@ -40,7 +40,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
-                        <a href="https://demo.picosbs.com/files/import_contacts_csv_template.xls" class="btn btn-success btn-sm" download=""><i class="fa fa-download"></i>
+                        <a href="{{route('download-contact-excel')}}" class="btn btn-success btn-sm" download=""><i class="fa fa-download"></i>
                             Download template file</a>
                     </div>
                 </div>

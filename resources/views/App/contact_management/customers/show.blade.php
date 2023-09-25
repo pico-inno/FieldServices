@@ -39,7 +39,7 @@
                                 <div class="d-flex flex-column">
                                     <!--begin::Name-->
                                     <div class="d-flex">
-                                        <a href="#" class="text-gray-700 text-hover-primary fs-4 fw-bold me-1 mb-3">
+                                        <a class="text-gray-700 text-hover-primary fs-4 fw-bold me-1 mb-3">
                                             @if(in_array($contact->type, ['Both', 'Customer']) || in_array($contact->type, ['Both', 'Supplier']))
                                             @if(!empty($contact->prefix))
                                             {{$contact->prefix}}
@@ -64,7 +64,7 @@
                                     <div class="d-flex flex-wrap fw-semibold fs-6 pe-2">
                                         @if(!empty($contact->address_line_1))
                                         <i class="fa-solid fa-location-dot me-2 mt-1"></i>
-                                        <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
+                                        <a class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
                                             <!--begin::FontAwesome Icon-->
                                             <!--end::FontAwesome Icon-->
                                             {{$contact->address_line_1}}
@@ -73,14 +73,14 @@
 
                                         @if(!empty($contact->email))
                                         <i class="fa-solid fa-envelope me-2 mt-1"></i>
-                                        <a href="#" class="d-flex text-gray-400 text-hover-primary me-5 mb-2">
+                                        <a class="d-flex text-gray-400 text-hover-primary me-5 mb-2">
                                             {{$contact->email}}
                                         </a>
                                         @endif
 
                                         @if(!empty($contact->mobile))
                                         <i class="fa-solid fa-phone-volume me-2 mt-1"></i>
-                                        <a href="#" class="d-flex text-gray-400 text-hover-primary mb-2">
+                                        <a class="d-flex text-gray-400 text-hover-primary mb-2">
                                             {{$contact->mobile}}
                                         </a>
                                         @endif
@@ -90,7 +90,78 @@
                                 <!--end::User-->
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-6">
+                            @php
+                                $currentReceivable = $contact->receivable_amount;
+                                $currentPayable = $contact->payable_amount;
+                                $currentBal = $currentReceivable - $currentPayable;
+                            @endphp
+                            <div class="d-flex flex-column flex-grow-1 pe-8">
+                                <!--begin::Stats-->
+                                <div class="d-flex flex-wrap">
+                                    <!--begin::Stat-->
+                                    <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                                        <!--begin::Number-->
+                                        <div class="d-flex align-items-center">
+                                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr066.svg-->
+                                            <span class="svg-icon svg-icon-3 svg-icon-success me-2">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect opacity="0.5" x="13" y="6" width="13" height="2" rx="1" transform="rotate(90 13 6)" fill="currentColor" />
+                                                    <path d="M12.5657 8.56569L16.75 12.75C17.1642 13.1642 17.8358 13.1642 18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25L12.7071 5.70711C12.3166 5.31658 11.6834 5.31658 11.2929 5.70711L5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75C6.16421 13.1642 6.83579 13.1642 7.25 12.75L11.4343 8.56569C11.7467 8.25327 12.2533 8.25327 12.5657 8.56569Z" fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                            <!--end::Svg Icon-->
+                                            <div class="fs-3 fw-bold" data-kt-countup="true" data-kt-countup-value="{{$contact->receivable_amount}}">0</div>
+                                        </div>
+                                        <!--end::Number-->
+                                        <!--begin::Label-->
+                                        <div class="fw-semibold fs-8 text-gray-400">Current Receivable Amount</div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Stat-->
+                                    <!--begin::Stat-->
+                                    <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                                        <!--begin::Number-->
+                                        <div class="d-flex align-items-center">
+                                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr065.svg-->
+                                            <span class="svg-icon svg-icon-3 svg-icon-danger me-2">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect opacity="0.5" x="11" y="18" width="13" height="2" rx="1" transform="rotate(-90 11 18)" fill="currentColor" />
+                                                    <path d="M11.4343 15.4343L7.25 11.25C6.83579 10.8358 6.16421 10.8358 5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75L11.2929 18.2929C11.6834 18.6834 12.3166 18.6834 12.7071 18.2929L18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25C17.8358 10.8358 17.1642 10.8358 16.75 11.25L12.5657 15.4343C12.2533 15.7467 11.7467 15.7467 11.4343 15.4343Z" fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                            <!--end::Svg Icon-->
+                                            <div class="fs-3 fw-bold" data-kt-countup="true" data-kt-countup-value="{{$contact->payable_amount}}">0</div>
+                                        </div>
+                                        <!--end::Number-->
+                                        <!--begin::Label-->
+                                        <div class="fw-semibold fs-8 text-gray-400">Current Payable Amount</div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Stat-->
+                                    <!--begin::Stat-->
+                                    <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                                        <!--begin::Number-->
+                                        <div class="d-flex align-items-center">
+                                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr066.svg-->
+                                            <span class="svg-icon svg-icon-3 svg-icon-success me-2">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect opacity="0.5" x="13" y="6" width="13" height="2" rx="1" transform="rotate(90 13 6)" fill="currentColor" />
+                                                    <path d="M12.5657 8.56569L16.75 12.75C17.1642 13.1642 17.8358 13.1642 18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25L12.7071 5.70711C12.3166 5.31658 11.6834 5.31658 11.2929 5.70711L5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75C6.16421 13.1642 6.83579 13.1642 7.25 12.75L11.4343 8.56569C11.7467 8.25327 12.2533 8.25327 12.5657 8.56569Z" fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                            <!--end::Svg Icon-->
+                                            <div class="fs-3 fw-bold" data-kt-countup="true" data-kt-countup-value="{{$currentBal}}">0</div>
+                                        </div>
+                                        <!--end::Number-->
+                                        <!--begin::Label-->
+                                        <div class="fw-semibold fs-8 text-gray-400">Current Balance</div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Stat-->
+                                </div>
+                                <!--end::Stats-->
+                            </div>
                         </div>
                     </div>
                     <!--end::Info-->
@@ -569,19 +640,19 @@
                                     <p class="bg-secondary fw-bold text-gray-700 fs-6 p-3">Account Summary:</p>
                                     <span class="text-gray-600 d-flex justify-content-end">30-5-2023 - 29-6-2023</span>
                                     @php
-                                        $totalSaleAmount = 0;
-                                        $paidAmount = 0;
-                                        $balanceAmount = 0;
-                                        $balanceDue = 0;
+                                    $totalSaleAmount = 0;
+                                    $paidAmount = 0;
+                                    $balanceAmount = 0;
+                                    $balanceDue = 0;
 
-                                        if(isset($data['sales'])) {
-                                            foreach($data['sales'] as $s) {
-                                                $totalSaleAmount += $s->total_sale_amount;
-                                                $paidAmount += $s->paid_amount;
-                                            }
-                                            $balanceDue = ($contact->receivable_amount + $totalSaleAmount) - $paidAmount;
+                                    if(isset($data['sales'])) {
+                                    foreach($data['sales'] as $s) {
+                                    $totalSaleAmount += $s->total_sale_amount;
+                                    $paidAmount += $s->paid_amount;
+                                    }
+                                    $balanceDue = ($contact->receivable_amount + $totalSaleAmount) - $paidAmount;
 
-                                        }
+                                    }
                                     @endphp
                                     <div class="table-responsive">
                                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_datatable_example">
@@ -593,7 +664,8 @@
                                                 <tr>
                                                     <td>Payable Amount</td>
                                                     <td>{{ $contact->payable_amount }}</td>
-                                                </tr><tr>
+                                                </tr>
+                                                <tr>
                                                     <td>Receivable Amount</td>
                                                     <td>{{ $contact->receivable_amount }}</td>
                                                 </tr>
@@ -639,41 +711,41 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 @php
-                                    if(isset($data['payments'])) {
-                                        foreach($data['payments'] as $payment) {
-                                            foreach($payment as $payment_tran) {
-                                                $paymentType = $payment_tran->transaction_type;
-                                                $paymentAmount = $payment_tran->payment_amount;
-                                            }
+                                if(isset($data['payments'])) {
+                                foreach($data['payments'] as $payment) {
+                                foreach($payment as $payment_tran) {
+                                $paymentType = $payment_tran->transaction_type;
+                                $paymentAmount = $payment_tran->payment_amount;
+                                }
 
-                                        }
-                                    }
-                                    
+                                }
+                                }
+
                                 @endphp
                                 <tbody class="fw-semibold text-gray-600">
-                                   {{-- @if(isset($data['sales']))
+                                    {{-- @if(isset($data['sales']))
                                     @foreach($data['sales'] as $s)
                                     <tr>
                                         <td>{{$s->sold_at}}</td>
-                                        <td>{{$s->sales_voucher_no}}</td>
-                                        <td>
-                                           {{$paymentType}}
-                                        </td>
-                                        <td>{{$s->businessLocation->name}}</td>
-                                        <td>
-                                            @if($s->payment_status == 'paid')
-                                            <span class="badge badge-success">{{$s->payment_status}}</span>
-                                            @elseif($s->payment_status == 'pending')
-                                            <span class="badge badge-warning">{{$s->payment_status}}</span>
-                                            @else
-                                            <span class="badge badge-primary">{{$s->payment_status}}</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $s->total_sale_amount }}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                    <td>{{$s->sales_voucher_no}}</td>
+                                    <td>
+                                        {{$paymentType}}
+                                    </td>
+                                    <td>{{$s->businessLocation->name}}</td>
+                                    <td>
+                                        @if($s->payment_status == 'paid')
+                                        <span class="badge badge-success">{{$s->payment_status}}</span>
+                                        @elseif($s->payment_status == 'pending')
+                                        <span class="badge badge-warning">{{$s->payment_status}}</span>
+                                        @else
+                                        <span class="badge badge-primary">{{$s->payment_status}}</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $s->total_sale_amount }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                     </tr>
                                     @endforeach
                                     @endif
@@ -692,12 +764,12 @@
                                         <td></td>
                                         <td>{{$payment_tran->payment_method}}</td>
                                         <td>
-                                            {{$payment_tran->transaction_ref_no}} 
-                                            @if($payment_tran->transaction_type == 'sale') 
+                                            {{$payment_tran->transaction_ref_no}}
+                                            @if($payment_tran->transaction_type == 'sale')
                                             <span class="text-primary">(sale)</span>
                                             @elseif($payment_tran->transaction_type == 'purchase')
                                             <span class="text-primary">(purchase)</span>
-                                            @endif 
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
@@ -718,73 +790,70 @@
                                     </tr>
 
                                     @if(isset($data['sales']) && isset($data['payments']))
-                                        @php
-                                            $paymentIndex = 0;
-                                            $balance = $contact->receivable_amount;
-                                        @endphp
+                                    @php
+                                    $paymentIndex = 0;
+                                    $balance = $contact->receivable_amount;
+                                    @endphp
 
-                                        @foreach($data['sales'] as $s)
+                                    @foreach($data['sales'] as $s)
+                                    @php
+                                    $balance += $s->total_sale_amount;
+                                    @endphp
+                                    <tr>
+                                        <td>{{$s->sold_at}}</td>
+                                        <td>{{$s->sales_voucher_no}}</td>
+                                        <td>
+                                            {{$paymentType}}
+                                        </td>
+                                        <td>{{$s->businessLocation->name}}</td>
+                                        <td>
+                                            @if($s->payment_status == 'paid')
+                                            <span class="badge badge-success">{{$s->payment_status}}</span>
+                                            @elseif($s->payment_status == 'pending')
+                                            <span class="badge badge-warning">{{$s->payment_status}}</span>
+                                            @else
+                                            <span class="badge badge-primary">{{$s->payment_status}}</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $s->total_sale_amount }}</td>
+                                        <td></td>
+                                        <td>{{ number_format($balance, 4) }}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    @if($paymentIndex < count($data['payments'])) @foreach($data['payments'] as $payment) @foreach($payment as $payment_tran) @if($payment_tran->transaction_id == $s->id)
                                         @php
-                                            $balance += $s->total_sale_amount;
+                                        $balance -= $payment_tran->payment_amount;
                                         @endphp
                                         <tr>
-                                            <td>{{$s->sold_at}}</td>
-                                            <td>{{$s->sales_voucher_no}}</td>
+                                            <td>{{$payment_tran->payment_date}}</td>
+                                            <td>{{$payment_tran->payment_voucher_no}}</td>
+                                            <td>{{$paymentType}}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>{{$payment_tran->payment_amount}}</td>
+                                            <td>{{ number_format($balance, 4)}}</td>
+                                            <td>{{$payment_tran->payment_method}}</td>
                                             <td>
-                                            {{$paymentType}}
-                                            </td>
-                                            <td>{{$s->businessLocation->name}}</td>
-                                            <td>
-                                                @if($s->payment_status == 'paid')
-                                                <span class="badge badge-success">{{$s->payment_status}}</span>
-                                                @elseif($s->payment_status == 'pending')
-                                                <span class="badge badge-warning">{{$s->payment_status}}</span>
-                                                @else
-                                                <span class="badge badge-primary">{{$s->payment_status}}</span>
+                                                {{$payment_tran->transaction_ref_no}}
+                                                @if($payment_tran->transaction_type == 'sale')
+                                                <span class="text-primary">(sale)</span>
+                                                @elseif($payment_tran->transaction_type == 'purchase')
+                                                <span class="text-primary">(purchase)</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $s->total_sale_amount }}</td>
-                                            <td></td>
-                                            <td>{{ number_format($balance, 4) }}</td>
-                                            <td></td>
-                                            <td></td>
                                         </tr>
-                                        @if($paymentIndex < count($data['payments']))
-                                            @foreach($data['payments'] as $payment)
-                                            @foreach($payment as $payment_tran)
-                                            @if($payment_tran->transaction_id == $s->id)
-                                            @php
-                                                $balance -= $payment_tran->payment_amount;
-                                            @endphp
-                                            <tr>
-                                                <td>{{$payment_tran->payment_date}}</td>
-                                                <td>{{$payment_tran->payment_voucher_no}}</td>
-                                                <td>{{$paymentType}}</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>{{$payment_tran->payment_amount}}</td>
-                                                <td>{{ number_format($balance, 4)}}</td>
-                                                <td>{{$payment_tran->payment_method}}</td>
-                                                <td>
-                                                    {{$payment_tran->transaction_ref_no}} 
-                                                    @if($payment_tran->transaction_type == 'sale') 
-                                                    <span class="text-primary">(sale)</span>
-                                                    @elseif($payment_tran->transaction_type == 'purchase')
-                                                    <span class="text-primary">(purchase)</span>
-                                                    @endif 
-                                                </td>
-                                            </tr>
-                                            @endif
-                                            @endforeach
-                                            @endforeach
-                                            @php
-                                                $paymentIndex++;
-                                            @endphp
+                                        @endif
+                                        @endforeach
+                                        @endforeach
+                                        @php
+                                        $paymentIndex++;
+                                        @endphp
                                         @endif
 
                                         @endforeach
-                                    @endif
+                                        @endif
                                 </tbody>
                                 <!--end::Table body-->
                             </table>
@@ -1296,12 +1365,12 @@
                                         <td>{{$payment_tran->payment_amount}}</td>
                                         <td>{{$payment_tran->payment_method}}</td>
                                         <td>
-                                            {{$payment_tran->transaction_ref_no}} 
-                                            @if($payment_tran->transaction_type == 'sale') 
+                                            {{$payment_tran->transaction_ref_no}}
+                                            @if($payment_tran->transaction_type == 'sale')
                                             <span class="text-primary">(sale)</span>
                                             @elseif($payment_tran->transaction_type == 'purchase')
                                             <span class="text-primary">(purchase)</span>
-                                            @endif 
+                                            @endif
                                         </td>
                                         <td>
                                             <div class="dropdown">
@@ -1315,10 +1384,10 @@
                                                     @if($data['purchases'] || $data['sales'])
                                                     <li>
                                                         @if($data['purchases'] && $payment_tran->transaction_type == 'purchase')
-                                                            <a data-href="{{route('paymentTransaction.viewForPurchase', $payment_tran->transaction_id)}}" id="view_payment" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        <a data-href="{{route('paymentTransaction.viewForPurchase', $payment_tran->transaction_id)}}" id="view_payment" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
                                                         @elseif($data['sales'] && $payment_tran->transaction_type == 'sale')
-                                                            <a data-href="{{route('paymentTransaction.viewForSell', $payment_tran->transaction_id)}}" id="view_payment_sale" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
-                                                        @endif                                                    
+                                                        <a data-href="{{route('paymentTransaction.viewForSell', $payment_tran->transaction_id)}}" id="view_payment_sale" class="dropdown-item p-2 cursor-pointer"><i class="fa-solid fa-eye me-3"></i> View</a>
+                                                        @endif
                                                     </li>
                                                     @endif
                                                     <li>
@@ -1364,7 +1433,7 @@
     <div class="modal fade" tabindex="-1" id="view_sale_detail_modal"></div>
     <div class="modal modal-lg fade" tabindex="-1" id="add_payment_for_sale_modal"></div>
     <div class="modal modal-lg fade" tabindex="-1" id="view_payment_for_sale_modal"></div>
-    
+
 </div>
 <!--end::Content-->
 @endsection
@@ -1393,7 +1462,7 @@
 
     cb(start, end);
 
-    $("#document_and_note_table,#sales_table,#payment_table,#purchase_table,#ledger_table").DataTable({
+    $("#document_and_note_table,#payment_table,#purchase_table,#ledger_table").DataTable({
         "order": false,
         "paging": false,
         "info": false,
@@ -1449,6 +1518,92 @@
                 done();
             }
         }
+    });
+
+    var KTDatatablesExample = function() {
+        // Shared variables
+        var table;
+        var datatable;
+
+        // Private functions
+        var initDatatable = function() {
+            // Set date data order
+            const tableRows = table.querySelectorAll('tbody tr');
+
+            // Init datatable --- more info on datatables: https://datatables.net/manual/
+            datatable = $(table).DataTable({
+                "info": false,
+                'order': false,
+                'paging': false
+            });
+        }
+
+        // Hook export buttons
+        var exportButtons = () => {
+            const documentTitle = 'Sale Report';
+            var buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: [{
+                        extend: 'copyHtml5',
+                        title: documentTitle
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        title: documentTitle
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        title: documentTitle
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: documentTitle
+                    }
+                ]
+            }).container().appendTo($('#kt_datatable_example_buttons'));
+
+            // Hook dropdown menu click event to datatable export buttons
+            const exportButtons = document.querySelectorAll('#kt_datatable_example_export_menu [data-kt-export]');
+            exportButtons.forEach(exportButton => {
+                exportButton.addEventListener('click', e => {
+                    e.preventDefault();
+
+                    // Get clicked export value
+                    const exportValue = e.target.getAttribute('data-kt-export');
+                    const target = document.querySelector('.dt-buttons .buttons-' + exportValue);
+
+                    // Trigger click event on hidden datatable export buttons
+                    target.click();
+                });
+            });
+        }
+
+        // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
+        var handleSearchDatatable = () => {
+            const filterSearch = document.querySelector('[data-kt-filter="search"]');
+            filterSearch.addEventListener('keyup', function(e) {
+                datatable.search(e.target.value).draw();
+            });
+        }
+
+        // Public methods
+        return {
+            init: function() {
+                table = document.querySelector('#sales_table');
+
+                if (!table) {
+                    return;
+                }
+
+                initDatatable();
+                exportButtons();
+                handleSearchDatatable();
+            }
+        };
+    }();
+
+    // On document ready
+    KTUtil.onDOMContentLoaded(function() {
+        KTDatatablesExample.init();
     });
 </script>
 @endpush

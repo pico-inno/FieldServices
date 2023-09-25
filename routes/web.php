@@ -61,7 +61,7 @@ use App\Http\Controllers\Product\VariationController;
 use App\Http\Controllers\purchase\purchaseController;
 use App\Http\Controllers\settings\BuildingController;
 use App\Http\Controllers\businessActivationController;
-use App\Http\Controllers\importOpeningStockController;
+use App\Http\Controllers\import\importOpeningStockController;
 use App\Http\Controllers\Service\ServiceTypeController;
 use App\Http\Controllers\Stock\StockTransferController;
 use \App\Http\Controllers\userManagement\RoleController;
@@ -78,6 +78,7 @@ use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
 use App\Http\Controllers\configurationController;
 use App\Http\Controllers\export\ExportController;
+use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
@@ -448,6 +449,8 @@ Route::controller(importOpeningStockController::class)->group(function () {
 Route::controller(ExportController::class)->group(function () {
     Route::get('/opening/export/product', 'export')->name('exprotOpeningStockWithProduct');
     Route::get('/product/export/productlist', 'productListExport')->name('export-productlist');
+    Route::get('/price-list/{id}/export/edit-data', 'priceListExport')->name('export-priceList');
+    Route::get('/price-list/export/data', 'priceListExportWithData')->name('export-priceListWithData');
 });
 //============================ End::Opening Stock ============================================
 Route::prefix('stock-history')->group(function () {
@@ -829,6 +832,13 @@ Route::controller(PriceListDetailController::class)->group(function () {
 
     // search applied_value
     Route::get('/price-list-detail/search', 'searchAppliedValue');
+    Route::get('/import/price-list', 'importTemplate')->name('priceListTemplate');
+});
+
+Route::controller(priceListImportController::class)->group(function(){
+    Route::post('/price-list/import/{action?}/{id?}','import')->name('priceListImport');
+    Route::get('/download/price-list/excel', 'dowloadDemoExcel')->name('downloadPrceListExcel');
+    // Route::post('/price-list/import/update', 'importUpdate')->name('priceListImportUpdate');
 });
 
 Route::controller(TestController::class)->group(function () {
@@ -873,6 +883,8 @@ Route::prefix('/contacts')->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('import-contacts', ImportContactsController::class);
 });
+
+Route::get('/download/contact-excel-template', [ImportContactsController::class, 'dowloadContactExcel'])->name('download-contact-excel');
 
 Route::get('customers/quickadd', [CustomerController::class, 'quickCreateCustomer']);
 Route::post('customers', [CustomerController::class, 'quickStoreCustomer']);

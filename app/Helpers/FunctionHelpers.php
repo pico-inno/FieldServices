@@ -81,6 +81,11 @@ function fDate($date,$br=false)
      return $formattedDate.' '.'('.$formattedTime.')';
     }
 }
+function dateCreate($date,$format) {
+    $dateTime = date_create($date);
+    $formattedDate = $dateTime->format($format);
+    return $formattedDate ;
+}
 
 function getSettingsValue($selector){
     return SettingHelpers::load()->getSettingsValue($selector)->$selector;
@@ -185,7 +190,7 @@ function priceChangeByUom($currentUOMId, $currentUomPrice,$newUOMID) {
         }else if ($currentUomType == 'bigger' && $newUomType == 'reference') {
             $resultPrice = $currentUomPrice / $currentUomValue;
         }else if ($currentUomType == 'bigger' && $newUomType == 'bigger') {
-            $resultPrice = $currentUomPrice *( $newUomInfo / $currentUomValue);
+            $resultPrice = $currentUomPrice *($newUomValue / $currentUomValue);
         }else if ($currentUomType == 'smaller' && $newUomType == 'bigger') {
             $resultPrice = $currentUomPrice * ($currentUomValue * $newUomValue) ;
         }else if ($currentUomType == 'smaller' && $newUomType == 'smaller') {
