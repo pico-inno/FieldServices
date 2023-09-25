@@ -8,6 +8,10 @@ use App\Models\paymentsTransactions;
 
 trait ContactUtility
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isActive']);
+    }
     public function getSalesAndPurchases($id)
     {
         $sales = sales::where('contact_id', $id)->where('is_delete',0)->orderBy('sold_at', 'asc')->get();

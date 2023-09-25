@@ -11,6 +11,10 @@ use App\Http\Requests\Product\UoM\UoMUpdateRequest;
 
 class UoMController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isActive']);
+    }
     public function index()
     {
 

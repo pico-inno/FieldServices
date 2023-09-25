@@ -13,6 +13,10 @@ use PDO;
 
 class priceListImportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isActive']);
+    }
    public function import(Request $request,$action='create',$id=null){
         try {
 
