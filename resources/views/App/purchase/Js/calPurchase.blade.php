@@ -89,13 +89,14 @@ $(document).ready(function() {
                         }else{
                             console.log(' Something Went Wrong! Error Status: '+status )
                         };
-                    },success:function(e){
+                    },
+                    success:function(e){
                         results=e;
                         products=e;
                         var html = '';
                         // products=results;
-                        if (results.length > 0) {
-                            console.log(results);
+                        // console.log(results);
+                        if (results.length > 0 && Array.isArray(results)) {
                             results.forEach(function(result,key) {
                                 html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
                                 html += `<h4 class="fs-6 ps-10 pt-3">
@@ -207,7 +208,7 @@ $(document).ready(function() {
             <td>
                 <div class="input-group input-group-sm">
 
-                    <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[${unique_name_id}][uom_price]" id="numberonly"  value="${lastPurchasePrice?? (default_purchase_price ?? 0)}">
+                    <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="purchase_details[${unique_name_id}][uom_price]" id="numberonly"  value="${ default_purchase_price ?? 0}">
                     <span class="input-group-text currencySymbol">${currentCurrencySymbol}</span>
                 </div>
             </td>

@@ -190,7 +190,7 @@ function priceChangeByUom($currentUOMId, $currentUomPrice,$newUOMID) {
         }else if ($currentUomType == 'bigger' && $newUomType == 'reference') {
             $resultPrice = $currentUomPrice / $currentUomValue;
         }else if ($currentUomType == 'bigger' && $newUomType == 'bigger') {
-            $resultPrice = $currentUomPrice *( $newUomInfo / $currentUomValue);
+            $resultPrice = $currentUomPrice *($newUomValue / $currentUomValue);
         }else if ($currentUomType == 'smaller' && $newUomType == 'bigger') {
             $resultPrice = $currentUomPrice * ($currentUomValue * $newUomValue) ;
         }else if ($currentUomType == 'smaller' && $newUomType == 'smaller') {
