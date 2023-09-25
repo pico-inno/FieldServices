@@ -319,11 +319,23 @@ class purchaseController extends Controller
                             CurrentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase')->delete();
                             stock_history::where('transaction_details_id', $purchase_detail_id)->where('transaction_type', 'purchase')->first()->delete();
                         }
+
+                        $product = Product::where('id', $pd['product_id'])->select('purchase_uom_id')->first();
+                        $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'], $pd['purchase_uom_id']);
+                        $requestQty = $referencUomInfo['qtyByReferenceUom'];
+                        $referencteUom = $referencUomInfo['referenceUomId'];
+
+                        $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
+                        $default_selling_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
+                        $this->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
+
                         $stock_check=currentStockBalance::where('transaction_detail_id',$purchase_detail_id)->where('transaction_type','purchase')->exists();
                         if(!$stock_check){
+                            $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
+                            $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
+                            $pd['per_ref_uom_price'] = $per_ref_uom_price;
                             $purchase_details->update($pd);
                             if($purchase->status!='received' && $request->status=='received'){
-                                // if(){
                                     $data=$this->currentStockBalanceData($purchase_details,$purchase,'purchase');
                                     if ($businessLocation->allow_purchase_order == 0) {
                                         CurrentStockBalance::create($data);
@@ -343,9 +355,6 @@ class purchaseController extends Controller
                             //    }
                             }
                         }else {
-                            $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'],$pd['purchase_uom_id']);
-                            $requestQty=$referencUomInfo['qtyByReferenceUom'];
-                            $referencteUom= $referencUomInfo['referenceUomId'];
 
                             $currentStock= currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase');
 
@@ -361,11 +370,9 @@ class purchaseController extends Controller
                             $pd['per_item_tax'] = 0;
                             $pd['tax_amount'] = 0;
                             $pd['subtotal_wit_tax'] = $pd['per_item_expense'] * $pd['quantity'] + 0;
-                            $uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
-                            $pd['per_ref_uom_price'] = $pd['uom_price'] ?? 0 /  $requestQty;
+                            $pd['per_ref_uom_price'] = $per_ref_uom_price;
                             $pd['updated_by'] = Auth::user()->id;
                             $pd['updated_at'] = now();
-                            dd($pd);
 
                             if($request->status=='received'){
                                 if ($businessLocation->allow_purchase_order == 0) {
@@ -429,9 +436,11 @@ class purchaseController extends Controller
                     'deleted_by'=>Auth::user()->id,
                 ]);
             }
+            // dd('here');
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);
             throw $e;
         }
@@ -559,12 +568,16 @@ class purchaseController extends Controller
             $pd['updated_by'] = Auth::user()->id;
             $pd['deleted_by'] = Auth::user()->id;
             $pd['is_delete'] = 0;
-            $variation_product=ProductVariation::where('id',$pd['variation_id'])->first();
-            if($variation_product){
-                $variation_product->update(['default_purchase_price'=> $default_selling_price]);
-            }
             $pd=purchase_details::create($pd);
+            $this->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
             $this->currentStockBalanceCreation($pd,$purchase,'purchase');
+        }
+    }
+
+    public function changeDefaultPurchasePrice($variation_id, $default_selling_price){
+        $variation_product = ProductVariation::where('id', $variation_id)->first();
+        if ($variation_product) {
+            $variation_product->update(['default_purchase_price' => $default_selling_price]);
         }
     }
 
