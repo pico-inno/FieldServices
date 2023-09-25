@@ -4,6 +4,7 @@ use App\Models\Manufacturer;
 use Illuminate\Http\Request;
 
 use App\Models\Product\UOMSet;
+use App\Services\mailServices;
 use App\Models\Contact\Contact;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\CurrentStockBalance;
@@ -15,6 +16,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\openingStocks\Import;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SMSController;
+use App\Http\Controllers\mailController;
 use App\Http\Controllers\TestController;
 use App\Models\Product\PriceListDetails;
 use App\Http\Controllers\tableController;
@@ -32,16 +34,18 @@ use App\Http\Controllers\restaurantController;
 use App\Http\Middleware\permissions\role\view;
 use App\Http\Controllers\Product\UoMController;
 use App\Http\Controllers\exchangeRateController;
-use App\Http\Controllers\openingStockController;
-use App\Http\Controllers\orderDisplayController;
 // use App\Http\Controllers\ContactController\CustomerGroupController;
 // use App\Http\Controllers\ContactController\ImportContactsController;
+use App\Http\Controllers\openingStockController;
+use App\Http\Controllers\orderDisplayController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\stockHistoryController;
+use App\Http\Controllers\configurationController;
+//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\expenseReportController;
+use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
-//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Stock\StockInController;
 use App\Http\Controllers\settings\FloorController;
@@ -50,11 +54,11 @@ use App\Http\Controllers\deliveryChannelController;
 use App\Http\Controllers\paymentAccountsController;
 use App\Http\Controllers\posRegistrationController;
 use App\Http\Controllers\Product\GenericController;
+// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Service\ServiceController;
 use App\Http\Controllers\Contact\CustomerController;
 use App\Http\Controllers\Contact\SupplierController;
-// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\PriceListController;
 use App\Http\Controllers\Product\VariationController;
@@ -76,8 +80,6 @@ use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Controllers\Product\ImportProductController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
-use App\Http\Controllers\configurationController;
-use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
@@ -476,16 +478,21 @@ Route::prefix('deliver-channel')->group(function () {
         // Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
     });
 });
-Route::prefix('SMS')->group(function () {
+Route::prefix('SMS/{service}')->group(function () {
     Route::controller(SMSController::class)->group(function () {
-        Route::get('/smsPoh/dashboard', 'index')->name('sms.smsPoh.index');
-        Route::get('/smsPoh/get/sms', 'getSMS')->name('sms.smsPoh.getsms');
-        Route::get('/smsPoh/create', 'create')->name('sms.smsPoh.create');
-        Route::post('/smsPoh/send', 'send')->name('sms.smsPoh.send');
+        Route::get('dashboard', 'index')->name('sms.index');
+        Route::get('get/sms', 'getSMS')->name('sms.getsms');
+        Route::get('create', 'create')->name('sms.create');
+        Route::post('send', 'send')->name('sms.send');
     });
-
 });
-
+Route::prefix('mail')->group(function () {
+    Route::controller(mailController::class)->group(function () {
+        Route::get('compose', 'commpose')->name('mail.compose');
+        Route::post('send', 'send')->name('mail.send');
+    });
+});
+Route::get('/sendMail', [mailServices::class, 'sendEmail']);
 
 Route::prefix('payment-account')->group(function () {
     Route::controller(paymentAccountsController::class)->group(function () {

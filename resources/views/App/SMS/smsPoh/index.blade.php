@@ -1,7 +1,8 @@
 @extends('App.main.navBar')
-@section('dashboard_active','active')
-@section('dashboard_show', 'active show')
-@section('dashboard_active_show', 'active ')
+@section('sms_active','active')
+@section('sms_active_show', 'active show')
+@section('sms_poh_dashboard','active')
+@section('sms_poh_active_show', 'active show')
 @section('title')
 <!--begin::Heading-->
 <h1 class="text-dark fw-bold my-0 fs-2">SMS POH</h1>
@@ -264,14 +265,22 @@
                                 <td class="text-start ">
                                     <a href="../../demo55/dist/apps/inbox/reply.html" class="d-flex align-items-center text-dark">
                                         <!--begin::Avatar-->
-                                        <div class="symbol symbol-35px me-3">
+                                        {{-- <div class="symbol symbol-35px me-3">
                                             <div class="symbol-label bg-light-danger">
                                                 <span class="text-danger">M</span>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <!--end::Avatar-->
                                         <!--begin::Name-->
-                                        <span class="fw-semibold">+{{$sms['message_to']}}</span>
+                                        @php
+                                           $contact =App\Models\Contact\Contact::where('mobile','09'.substr($sms['message_to'],3))->first();
+                                        @endphp
+                                        <div class="d-flex flex-column">
+                                            @if (isset($contact))
+                                                <div class="fs-7 fw-bold ps-1 pt-3">{{$contact->getFullNameAttribute()}}</div>
+                                            @endif
+                                            <span class="fw-semibold text-gray-700">+{{$sms['message_to']}}</span>
+                                        </div>
                                         <!--end::Name-->
                                     </a>
                                 </td>
@@ -287,12 +296,20 @@
                                         <!--end::Heading-->
                                     </div>
                                     <!--begin::Badges-->
-                                    <div class="badge badge-light-primary">inbox</div>
-                                    <div class="badge badge-light-warning">task</div>
+
+                                    @if($sms['operator']=='Ooredoo')
+                                        <div class="badge badge-light-danger">Ooredoo</div>
+
+                                    @elseif ($sms['operator']=='Telenor')
+                                        <div class="badge badge-light-primary">Telenor</div>
+
+                                    @elseif ($sms['operator']=='MyTel')
+                                    <div class="badge badge-light-danger">Mytel</div>
+                                    @endif
                                     <!--end::Badges-->
                                 </td>
                                 <td class="w-100px text-end fs-7 pe-9">
-                                    <span class="fw-semibold">{{date($sms['create_at'])}}</span>
+                                    <span class="fw-semibold text-muted">{{numericToDate($sms['create_at'])}}</span>
                                 </td>
                             </tr>
                         @endforeach

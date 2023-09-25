@@ -20,8 +20,7 @@
     <!--end::Fonts-->
     <!--begin::Vendor Stylesheets(used for this page only)-->
     <link href={{asset("assets/plugins/custom/datatables/datatables.bundle.css")}} rel="stylesheet" type="text/css" />
-    <link href={{asset("assets/plugins/custom/vis-timeline/vis-timeline.bundle.css")}} rel="stylesheet"
-        type="text/css" />
+    <link href={{asset("assets/plugins/custom/vis-timeline/vis-timeline.bundle.css")}} rel="stylesheet"  type="text/css" />
     <!--end::Vendor Stylesheets-->
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
     <link href={{asset("assets/plugins/global/plugins.bundle.css")}} rel="stylesheet" type="text/css" />
@@ -379,6 +378,17 @@
                                         data-bs-toggle="tab" href="#kt_aside_nav_tab_sms">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen048.svg-->
                                         <i class="fa-solid fa-sms fs-6"></i>
+                                        <!--end::Svg Icon-->
+                                    </a>
+                                    <!--end::Nav link-->
+                                </li>
+                                <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                    data-bs-placement="right" data-bs-dismiss="click" title="Mail">
+                                    <!--begin::Nav link-->
+                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('mail_active')"
+                                        data-bs-toggle="tab" href="#kt_aside_nav_tab_mail">
+                                        <!--begin::Svg Icon | path: icons/duotune/general/gen048.svg-->
+                                        <i class="fa-solid fa-envelope fs-6"></i>
                                         <!--end::Svg Icon-->
                                     </a>
                                     <!--end::Nav link-->
@@ -2233,38 +2243,94 @@
                                                     <!--end:Menu content-->
                                                 </div>
                                                 <!--begin:Menu item-->
-                                                <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('sms_active_show')">
-                                                        <span class="menu-link">
-                                                            <span class="menu-icon">
-                                                                <i class="fa-solid fa-sms"></i>
-                                                            </span>
-                                                            <span class="menu-title">SMS</span>
-                                                            <span class="menu-arrow"></span>
+                                                <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('sms_poh_active_show')">
+                                                    <span class="menu-link">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-sms"></i>
                                                         </span>
-                                                        <div class="menu-sub menu-sub-accordion">
-                                                            <div class="menu-item">
-                                                                <a class="menu-link @yield('sms_dashboard')" href="{{route('sms.smsPoh.index')}}">
-                                                                    <span class="menu-bullet">
-                                                                        <span class="bullet bullet-dot"></span>
-                                                                    </span>
-                                                                    <span class="menu-title ">Dashboard</span>
-                                                                </a>
-                                                            </div>
-                                                            <div class="menu-item">
-                                                                <a class="menu-link @yield('sms_active')"
-                                                                    href="{{route('sms.smsPoh.create')}}">
-                                                                    <span class="menu-bullet">
-                                                                        <span class="bullet bullet-dot"></span>
-                                                                    </span>
-                                                                    <span class="menu-title ">Send SMS</span>
-                                                                </a>
-                                                            </div>
+                                                        <span class="menu-title">SMS Poh</span>
+                                                        <span class="menu-arrow"></span>
+                                                    </span>
+                                                    <div class="menu-sub menu-sub-accordion">
+                                                        <div class="menu-item">
+                                                            <a class="menu-link @yield('sms_poh_dashboard')" href="{{route('sms.index','smspoh')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title ">Dashboard</span>
+                                                            </a>
+                                                        </div>
+                                                        <div class="menu-item">
+                                                            <a class="menu-link @yield('sms_poh_active')"
+                                                                href="{{route('sms.create','smspoh')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title ">Send SMS</span>
+                                                            </a>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('sms_twilio_active_show')">
+                                                    <span class="menu-link">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-sms"></i>
+                                                        </span>
+                                                        <span class="menu-title">Twilio SMS</span>
+                                                        <span class="menu-arrow"></span>
+                                                    </span>
+                                                    <div class="menu-sub menu-sub-accordion">
+                                                        <div class="menu-item">
+                                                            <a class="menu-link @yield('sms_twilio_active')"
+                                                                href="{{route('sms.create','twilio')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title ">Send SMS</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                     </div>
                                 </div>
                                 <!--end::Wrapper-->
                             </div>
+                                    <div class="tab-pane fade @yield('mail_active_show')" id="kt_aside_nav_tab_mail" role="tabpanel">
+                                        <!--begin::Wrapper-->
+                                        <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
+                                            id="kt_aside_menu" data-kt-menu="true">
+                                            <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                                <div class="menu-item pt-2">
+                                                    <!--begin:Menu content-->
+                                                    <div class="menu-content">
+                                                        <span class="menu-heading fw-bold text-uppercase fs-7">Mail
+                                                        </span>
+                                                    </div>
+                                                    <!--end:Menu content-->
+                                                </div>
+                                                <!--begin:Menu item-->
+                                                <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('mail_drop_active_show')">
+                                                    <span class="menu-link">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-envelope"></i>
+                                                        </span>
+                                                        <span class="menu-title">Mail</span>
+                                                        <span class="menu-arrow"></span>
+                                                    </span>
+                                                    <div class="menu-sub menu-sub-accordion">
+                                                        <div class="menu-item">
+                                                            <a class="menu-link @yield('compose_active')" href="{{route('mail.compose')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title ">Compose</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                             <!--begin::Tab pane-->
                             <div class="tab-pane fade @yield('setting_active_show')" id="kt_aside_nav_tab_settings"
                                 role="tabpanel">

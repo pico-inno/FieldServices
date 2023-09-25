@@ -100,26 +100,12 @@ function fDate($date, $br = false, $time = true)
     }
 }
 
-function date($date, $br = false, $time = true)
+function numericToDate($date)
 {
-    $dateTime = date_create($date);
     $setting = getSettings();
-    $formattedDate = $dateTime->format("$setting->date_format");
     // dd($setting->time_format);
-    if ($setting->time_format == '12') {
-        $formattedTime = $dateTime->format(" h:i A ");
-    } else {
-        $formattedTime = $dateTime->format(" H:i A ");
-    }
-    if ($time) {
-        if ($br) {
-            return $formattedDate . '<br>' . '(' . $formattedTime . ')';
-        } else {
-            return $formattedDate . ' ' . '(' . $formattedTime . ')';
-        }
-    } else {
-        return $formattedDate;
-    }
+    $dateTime = date("d/M/Y", $date);
+    return $dateTime;
 }
 
 function getSettingsValue($selector)
@@ -296,3 +282,14 @@ function expenseReportVoucherNo($uniqueCount)
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
 
+     function requestJsonId($requestJson,$key,$value)
+    {
+        $datas = json_decode($requestJson);
+        if ($datas) {
+            $data = array_map(function ($c)use($key,$value) {
+                return [$key => $c->$value];
+            }, $datas);
+            return $data;
+        }
+        return [];
+    }
