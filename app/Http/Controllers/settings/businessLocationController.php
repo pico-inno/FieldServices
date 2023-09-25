@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\settings;
 
 use Exception;
+use App\Models\locationType;
 use Illuminate\Http\Request;
+use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
@@ -25,7 +26,8 @@ class businessLocationController extends Controller
     public function addForm()
     {
         $priceLists=PriceLists::get();
-        return view('App.businessSetting.location.add',compact('priceLists'));
+        $locationType= locationType::get();
+        return view('App.businessSetting.location.add',compact('priceLists', 'locationType'));
     }
     public function add(Request $request)
     {

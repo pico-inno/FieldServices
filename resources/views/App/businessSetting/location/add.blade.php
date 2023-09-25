@@ -39,12 +39,33 @@
                     <div class="me-n7 pe-7" id="kt_modal_add_customer_scroll" data-kt-scroll="false" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_customer_header" data-kt-scroll-wrappers="#kt_modal_add_customer_scroll" data-kt-scroll-offset="300px">
                        <div class="row">
                             <!--begin::Input group-->
-                            <div class="fv-row mb-12 col-12 fv-row">
+                            <div class="fv-row mb-12 col-4 fv-row">
                                 <!--begin::Label-->
                                 <label class="required fs-6 fw-semibold mb-2">Location Name</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
-                                <input type="text" class="form-control form-control-sm" placeholder="name" name="name" value="{{old('name')}}" />
+                                <x-forms.input  placeholder="Eg : Warehouse" name="name" ></x-forms.input>
+                                <!--end::Input-->
+                            </div>
+                            <div class="fv-row mb-12 col-4 fv-row">
+                                <!--begin::Label-->
+                                <label class="required fs-6 fw-semibold mb-2">Sub Location Name</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <x-forms.input placeholder="sub location name" name="sub_location_name"></x-forms.input>
+                                <!--end::Input-->
+                            </div>
+                            <div class="fv-row mb-12 col-4 fv-row">
+                                <!--begin::Label-->
+                                <label class="required fs-6 fw-semibold mb-2">Locatino Type</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <x-forms.nob-select placeholder="Select Location Type">
+                                    <option value=""></option>
+                                    @foreach ($locationType as $lt)
+                                        <option value="{{$lt->id}}">{{$lt->name}}</option>
+                                    @endforeach
+                                </x-forms.nob-select>
                                 <!--end::Input-->
                             </div>
                        </div>
