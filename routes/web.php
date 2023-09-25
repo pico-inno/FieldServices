@@ -226,6 +226,7 @@ Route::controller(ReportController::class)->group(function () {
         //Being: Sale
         Route::get('/sales', 'saleIndex')->name('report.sale.index');
         Route::post('/sales/filter-list', 'saleFilter');
+        Route::post('/sales/this-months', 'saleFilterThisMonths');
         Route::get('/sales-details', 'saleDetailsIndex')->name('report.sale.details.index');
         Route::post('/sale-details/filter-list', 'saleDetailsFilter');
         //End: Sale

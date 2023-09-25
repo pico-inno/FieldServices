@@ -15,6 +15,7 @@ use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Modules\StockInOut\Entities\Stockin;
 use App\Models\settings\businessLocation;
 use App\Http\Controllers\sell\saleController;
@@ -39,6 +40,22 @@ class ReportController extends Controller
             'locations' => $locations,
             'customers' => $customers,
         ]);
+    }
+
+    public function saleFilterThisMonths(Request $request){
+
+        $startDate = $request->data['filter_first_day'];
+        $endDate = $request->data['filter_last_day'];
+
+        $query = sales::where('is_delete', 0)
+            ->whereBetween('sold_at', [$startDate, $endDate])
+            ->select(DB::raw('DATE(sold_at) as sold_date'), DB::raw('SUM(paid_amount) as total_paid_amount'))
+            ->groupBy('sold_date');
+
+
+        $result = $query->get()->toArray();
+
+        return response()->json($result, 200);
     }
     public function saleFilter(Request $request){
         $dateRange = $request->data['filter_date'];
@@ -951,7 +968,7 @@ class ReportController extends Controller
         $brands = Brand::select('id', 'name',)->get();
         $products = Product::select('id', 'name')->get();
         $enableLotSerial = businessSettings::find(1)->lot_control;
-    
+
 
         return view('App.report.inventory.stock.currentBalance', [
             'locations' => $locations,
@@ -1013,76 +1030,76 @@ class ReportController extends Controller
         $finalProduct = $finalProduct->get()->toArray();
 
         if($filterView == 1){
- 
+
                 foreach ($currentStocks as $currentStock) {
-    
+
                     $batchNo = $currentStock['batch_no'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
-        
-    
+
+
                     $key = $batchNo . '_' . $variationId . '_' . $locationId;
-                
-    
+
+
                     if (!isset($mergedStocks[$key])) {
                         $mergedStocks[$key] = $currentStock;
                         $mergedStocks[$key]['batch_number'] =  $batchNo;
                     } else {
-                
+
                         $mergedStocks[$key]['batch_number'] =  $batchNo. '(merged)';
                         $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
                         $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
-    
+
                     }
                 }
-    
+
                 $mergeAllBatchStocks = $mergedStocks;
         }elseif ($filterView == 2){
                foreach ($currentStocks as $currentStock) {
-                    $transactionID = $currentStock['transaction_detail_id'];  
+                    $transactionID = $currentStock['transaction_detail_id'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
-               
-    
-    
+
+
+
                     $key = $currentStock['batch_no'] . '_' .$variationId . '_' . $locationId .'-'. $transactionID;
-                
-    
+
+
                     if (!isset($mergedStocks[$key])) {
                         $mergedStocks[$key] = $currentStock;
                         $mergedStocks[$key]['batch_number'] =  $currentStock['batch_no'];
                     } else {
-                
+
                         $mergedStocks[$key]['batch_number'] =  $currentStock['batch_no']. '(merged)';
                         $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
                         $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
-    
+
                     }
                 }
-    
+
                 $mergeAllBatchStocks = $mergedStocks;
         }elseif ($filterView == 3){
-            
+
         } else{
             if($currentStocks->count() > 0){
                 foreach($currentStocks as $currentStock){
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
-             
-    
+
+
                     $key = $variationId;
-    
+
                     if (!isset($mergeAllBatchs[$key])) {
                         $mergeAllBatchs[$key] = $currentStock;
-                        $mergeAllBatchs[$key]['batch_number'] =  '-';                
+                        $mergeAllBatchs[$key]['batch_number'] =  '-';
                     } else {
-                   
+
                         $mergeAllBatchs[$key]['batch_number'] =  '-';
                         $mergeAllBatchs[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
                         $mergeAllBatchs[$key]['current_quantity'] += $currentStock['current_quantity'];
-    
+
                     }
-    
+
                 }
                 $mergeAllBatchStocks = $mergeAllBatchs;
             }else{
