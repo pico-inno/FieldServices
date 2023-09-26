@@ -394,7 +394,7 @@ class ProductController extends Controller
                         'created_by' => auth()->id(),
                     ])->id;
                 }
-                // $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
+//                 $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
                 $variationData = [
                     'product_id' => $nextProductId,
                     'variation_sku' => $nextProduct['sku'].'-0'.$index,
@@ -431,7 +431,7 @@ class ProductController extends Controller
             $productSingle = [
                 'product_id' => $nextProductId,
                 'variation_sku' => $nextProduct['sku'],
-                'variation_template_value_id' => $nextProduct['sku'],
+//                'variation_template_value_id' => $nextProduct['sku'],
                 'default_purchase_price' => $request->single_exc,
                 'profit_percent' => $request->single_profit,
                 'default_selling_price' => $request->single_selling,
