@@ -95,6 +95,8 @@
 <script src={{asset("assets/plugins/global/plugins.bundle.js")}}></script>
 <script src={{asset("assets/js/scripts.bundle.js")}}></script>
 <script src={{asset('customJs/loading/miniLoading.js')}}></script>
+<script src={{asset('customJs/toastrAlert/alert.js')}}></script>
+@include('App.alert.alert');
 </body>
 <!--end::Body-->
 <script>

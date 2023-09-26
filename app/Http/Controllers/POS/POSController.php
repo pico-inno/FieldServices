@@ -64,7 +64,7 @@ class POSController extends Controller
                 $posRegisterQry = posRegisters::whereJsonContains('employee_id', Auth::user()->id)->where('id',$posRegisterId);
                 $checkAccess = $posRegisterQry->exists();
                 if (!$checkAccess) {
-                    return back()->with(['error' => 'Access Denied']);
+                    return redirect()->route('pos.selectPos')->with(['error' => 'Access Denied']);
                 }
                 $posRegister=$posRegisterQry->first();
                 $paymentAccIds=json_decode($posRegister->payment_account_id);

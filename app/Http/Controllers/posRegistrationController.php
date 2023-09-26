@@ -124,11 +124,15 @@ class posRegistrationController extends Controller
 
         // for employee
         $employee_ids=json_decode($registeredPos->employee_id);
-        $employees=BusinessUser::whereIn('id',$employee_ids)->get();
-        $employeeText='';
-        foreach ($employees as $key=>$e) {
-            $seperator=$key==0 ? '' :',';
-           $employeeText.=$seperator.$e->username;
+        $employeeText = '';
+        if($employee_ids){
+            $employees = BusinessUser::whereIn('id', $employee_ids)->get();
+            if ($employees) {
+                foreach ($employees as $key => $e) {
+                    $seperator = $key == 0 ? '' : ',';
+                    $employeeText .= $seperator . $e->username;
+                }
+            }
         }
 
         // for payment Account

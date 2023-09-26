@@ -924,7 +924,7 @@ Route::controller(POSController::class)->group(function () {
 
 Route::prefix('pos')->group(function () {
     Route::controller(posSessionController::class)->group(function () {
-        Route::get('/select/', 'selectPos')->name('pos.selectPos');
+        Route::get('select/', 'selectPos')->name('pos.selectPos');
         Route::get('{id}/session/check', 'sessionCheck')->name('pos.sessionCheck');
         Route::get('{id}/session/create', 'sessionCreate')->name('pos.sessionCreate');
         Route::post('{id}/session/store', 'sessionStore')->name('pos.sessionStore');

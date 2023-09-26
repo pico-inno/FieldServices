@@ -1,7 +1,7 @@
 
 <div class="modal-dialog  ">
-    <div class="modal-content">
-        <form action="{{route('posStore')}}" method="POST" id="add_exchange_rates">
+    <div class="modal-content" id="pos_create_model">
+        <form action="{{route('posStore')}}" method="POST" id="pos_create_form">
             @csrf
             <div class="modal-header">
                 <h3 class="modal-title">Register Pos</h3>
@@ -15,7 +15,7 @@
 
             <div class="modal-body">
                 <div class="row mb-6">
-                    <div class="col-md-12 mb-5">
+                    <div class="col-md-12 mb-5 fv-row">
                             <input class="form-control form-control border border-1 border-top-0 border-right-0 border-left-0 rounded-0 border-gray-300 fs-4" name="name" placeholder="Pos Register Name"
                                 id="name"
                                 value=""/>
@@ -28,13 +28,13 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-6 mb-5">
+                    <div class="col-6 mb-5 fv-row">
                         <label for="employeeTagify" class="required form-label">Employee</label>
                         <input class="form-control form-control-sm" name="employee_id"  id="employeeTagify"/>
 
                     </div>
                     @if (isUsePaymnetAcc())
-                        <div class="col-6 mb-5">
+                        <div class="col-6 mb-5 fv-row">
                             <label for="paymentAccTagify" class="required form-label">Payment Account</label>
                             <input class="form-control form-control-sm" name="payment_account_id"  id="paymentAccTagify"/>
                         </div>
@@ -46,7 +46,7 @@
                             <option value="active">Active</option>
                         </select>
                     </div> --}}
-                    <div class="col-6 mb-5">
+                    <div class="col-6 mb-5 fv-row">
                         <label for="printer" class="required form-label">Printer Id</label>
                         <select name="printer_id" id="printer" class="form-select form-select-sm" data-control="select2" placeholder="Select Printer" data-placeholder="Select Printer">
                             <option value="0">Browser Base Printing</option>
@@ -56,7 +56,7 @@
                         </select>
                     </div>
                     <div class="col-6 mb-5">
-                        <label for="location" class="required form-label">Description</label>
+                        <label for="location" class=" form-label">Description</label>
                         <textarea name="description" class="form-control form-control-sm" id="" cols="30" rows="3"></textarea>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" id="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>
@@ -98,6 +98,107 @@
             placeholder: "Type payment account",
             enforceWhitelist: true
         });
+
+
+            // user update validation
+    var posValidator = function () {
+        // Shared variables
+
+        const element = document.getElementById("pos_create_model");
+        const form = element.querySelector("#pos_create_form");
+        // let value={account->current_balance}};
+        // Init add schedule modal
+        var initPaidAll = () => {
+
+            // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+
+            // Submit button handler
+            const submitButton = element.querySelectorAll('#submit');
+
+            submitButton.forEach((btn) => {
+                btn.addEventListener('click', function (e) {
+                        var validator =validationField(form);
+                        if (validator) {
+                            validator.validate().then(function (status) {
+                                if (status == 'Valid') {
+                                    e.currentTarget=true;
+                                    btn.setAttribute('data-kt-indicator', 'on');
+                                    return true;
+                                } else {
+                                    e.preventDefault();
+
+                                    btn.setAttribute('data-kt-indicator', 'off');
+                                    // Show popup warning. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                                    Swal.fire({
+                                        text: "Sorry, looks like there are some errors detected, please try again.",
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn btn-primary"
+                                        }
+                                    });
+                                }
+                            });
+                        }
+
+                });
+            })
+
+        }
+
+        // Select all handler
+
+        return {
+            // Public functions
+            init: function () {
+                initPaidAll();
+            }
+        };
+    }();
+    // On document ready
+    KTUtil.onDOMContentLoaded(function () {
+        posValidator.init();
+    });
+
+    function validationField(form) {
+        $('.fv-plugins-message-container').remove();
+        let accountId=$('#payment_account').val();
+        let paidAmountValidator;
+
+        var validationFields = {
+                name:{
+                    validators: {
+                        notEmpty: { message: "* Pos Register Name is required" }
+                    },
+                },
+                employee_id:{
+                    validators: {
+                        notEmpty: { message: "* Employee is required" }
+                    },
+                },
+                payment_account_id:{
+                    validators: {
+                        notEmpty: { message: "* Payment Account is required" }
+                    },
+                },
+        };
+        return  FormValidation.formValidation(
+            form,
+            {
+                fields:validationFields,
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger(),
+                    bootstrap: new FormValidation.plugins.Bootstrap5({
+                        rowSelector: '.fv-row',
+                        eleInvalidClass: '',
+                        eleValidClass: ''
+                    })
+                },
+
+            }
+        );
+    }
 
 })();
 
