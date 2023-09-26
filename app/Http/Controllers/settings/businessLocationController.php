@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\settings;
 
+use App\Actions\location\locationActions;
 use Exception;
 use App\Models\locationType;
 use Illuminate\Http\Request;
@@ -27,21 +28,14 @@ class businessLocationController extends Controller
     {
         $priceLists=PriceLists::get();
         $locationType= locationType::get();
-        return view('App.businessSetting.location.add',compact('priceLists', 'locationType'));
+        $locations = businessLocation::orderBy('id','DESC')->get();
+        return view('App.businessSetting.location.add',compact('priceLists', 'locationType', 'locations'));
     }
-    public function add(Request $request)
+    public function add(Request $request,locationActions $action)
     {
-        $location_count=businessLocation::count();
-        $location_id= $request->location_id ?? sprintf('BL' . '%03d', ($location_count + 1));
-        $request['business_id']=businessSettings::first()->id;
-        $request['location_id']=$location_id;
-        $request['is_active'] = $request['is_acitve']??0;
-        $request['allow_purchase_order'] = $request['is_active'] ?? 0;
-        $create=businessLocation::create($request->toArray());
-
-        if($create){
-            return redirect()->route('business_location')->with(['success'=>'Successfully Created Location']);
-        }
+        $location=$action->createLocation($request);
+        $action->createLocationAddress($request,$location);
+        return redirect()->route('business_location')->with(['success'=>'Successfully Created Location']);
 
     }
     public function listData()

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('state', 255)->nullable();
             $table->string('city', 255)->nullable();
             $table->char('zip_postal_code', 7)->nullable();
-            $table->tinyInteger('is_active')->default(1)->nullable();
+            // $table->tinyInteger('is_active')->default(1)->nullable();
             $table->timestamps();
         });
     }

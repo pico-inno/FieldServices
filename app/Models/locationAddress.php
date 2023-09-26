@@ -18,6 +18,5 @@ class locationAddress extends Model
         'state',
         'city',
         'zip_postal_code',
-        'is_active',
     ];
 }

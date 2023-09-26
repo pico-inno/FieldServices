@@ -293,3 +293,16 @@ function expenseReportVoucherNo($uniqueCount)
         }
         return [];
     }
+
+
+function getParentName($parentLocation){
+    if($parentLocation){
+        $parent= getParentName($parentLocation->parentLocation);
+        $name=$parent .' / '.$parentLocation->name;
+        return $name;
+    }else{
+        return null;
+    }
+
+
+}
