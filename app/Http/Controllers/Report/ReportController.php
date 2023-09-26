@@ -49,7 +49,7 @@ class ReportController extends Controller
 
         $query = sales::where('is_delete', 0)
             ->whereBetween('sold_at', [$startDate, $endDate])
-            ->select(DB::raw('DATE(sold_at) as sold_date'), DB::raw('SUM(paid_amount) as total_paid_amount'))
+            ->select(DB::raw('DATE(sold_at) as sold_date'), DB::raw('SUM(total_sale_amount) as total_sale_amount'))
             ->groupBy('sold_date');
 
 

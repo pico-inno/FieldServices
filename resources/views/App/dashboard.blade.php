@@ -364,13 +364,33 @@
                             data: data,
                         },
                         success: function (results) {
-                           // var total_paid_amount = results.map(item => item.total_paid_amount);
-                            var total_paid_amount = results.map(item => parseFloat(item.total_paid_amount));
+                            function formatNumberAsK(number) {
+                                if (number >= 1000) {
+                                    return (number / 1000).toFixed(1) + 'k';
+                                }
+                                return number.toString();
+                            }
+
+                            // function formatNumberAsK(number) {
+                            //     if (number >= 1000000) {
+                            //         return (number / 1000000).toFixed(0) + 'M';
+                            //     } else if (number >= 1000) {
+                            //         return (number / 1000).toFixed(0) + 'k';
+                            //     } else {
+                            //         return number.toFixed(0);
+                            //     }
+                            // }
 
 
-                            var sum = total_paid_amount.reduce((acc, currentValue) => acc + currentValue, 0);
+                            var total_sale_amount = results.map(item => parseFloat(item.total_sale_amount));
+                            var sum = total_sale_amount.reduce((acc, currentValue) => acc + currentValue, 0);
 
-                            console.log('Total Sum of total_paid_amount:', sum);
+                            var total_sale_amount_label = total_sale_amount.map(function(amount) {
+                                var formattedAmount = (amount / 1000).toFixed(1);
+                                return formattedAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'k';
+                            });
+
+                            console.log(total_sale_amount_label);
 
                             results.forEach(item => {
                                 const soldAt = new Date(item.sold_date);
@@ -383,9 +403,8 @@
 
 
 
-                            var element = document.getElementById('kt_charts_widget_26');
-
-        $('.total-sale-amount-this-month').text(sum);
+        var element = document.getElementById('kt_charts_widget_26');
+        $('.total-sale-amount-this-month').text(formatNumberAsK(sum));
         $('.currency-symbol').text(currencySymbol);
         var height = parseInt(KTUtil.css(element, 'height'));
         var labelColor = KTUtil.getCssVariableValue('--bs-gray-500');
@@ -401,7 +420,7 @@
         var options = {
             series: [{
                 name: 'Sale Amount',
-                data: total_paid_amount,
+                data: total_sale_amount,
             }],
                 chart: {
                     fontFamily: 'inherit',
@@ -470,6 +489,10 @@
             },
             yaxis: {
                 labels: {
+                    formatter: function (value) {
+
+                        return   formatNumberAsK(parseInt(value));
+                    },
                     style: {
                         colors: labelColor,
                         fontSize: '12px'
@@ -477,60 +500,55 @@
                 }
 
             },
-                        states: {
-                            normal: {
-                                filter: {
-                                    type: 'none',
-                                    value: 0
-                                }
-                            },
-                            hover: {
-                                filter: {
-                                    type: 'none',
-                                    value: 0
-                                }
-                            },
-                            active: {
-                                allowMultipleDataPointsSelection: false,
-                                filter: {
-                                    type: 'none',
-                                    value: 0
-                                }
-                            }
-                        },
-                        tooltip: {
-                            style: {
-                                fontSize: '12px'
-                            },
-                            y: {
-                                formatter: function (val) {
-                                    return currencySymbol + parseInt(val)
-                                }
-                            }
-                        },
-                        colors: [lightColor],
-                        grid: {
-                            borderColor: borderColor,
-                            strokeDashArray: 4,
-                            yaxis: {
-                                lines: {
-                                    show: true
-                                }
-                            }
-                        },
-                        markers: {
-                            strokeColor: baseColor,
-                            strokeWidth: 3
-                        }
+            states: {
+                normal: {
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                },
+                hover: {
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                },
+                active: {
+                    allowMultipleDataPointsSelection: false,
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                }
+            },
+            tooltip: {
+                style: {
+                    fontSize: '12px'
+                },
+                y: {
+                    formatter: function (val) {
+                        return currencySymbol + parseInt(val)
+                    }
+                }
+            },
+            colors: [lightColor],
+            grid: {
+                borderColor: borderColor,
+                strokeDashArray: 4,
+                yaxis: {
+                    lines: {
+                        show: true
+                    }
+                }
+            },
+            markers: {
+                strokeColor: baseColor,
+                strokeWidth: 3
+            }
         };
 
         var chart = new ApexCharts(element, options);
         chart.render();
-
-
-
-
-
 
                         },
                         error: function (e) {
@@ -544,204 +562,6 @@
                 }
             }
         });
-
-
-
-
-
-
-
-
-        //
-        //
-        // var KTChartsWidget26 = function () {
-        //     var chart = {
-        //         self: null,
-        //         rendered: false
-        //     };
-        //
-        //     // Private methods
-        //     var initChart = function() {
-        //         var element = document.getElementById("kt_charts_widget_26");
-        //
-        //         if (!element) {
-        //             return;
-        //         }
-        //
-        //         var height = parseInt(KTUtil.css(element, 'height'));
-        //         var labelColor = KTUtil.getCssVariableValue('--bs-gray-500');
-        //         var borderColor = KTUtil.getCssVariableValue('--bs-border-dashed-color');
-        //         var baseColor = KTUtil.getCssVariableValue('--bs-primary');
-        //         var lightColor = KTUtil.getCssVariableValue('--bs-primary');
-        //         var chartInfo = element.getAttribute('data-kt-chart-info');
-        //
-        //         var options = {
-        //
-        //             series: [{
-        //                 name: chartInfo,
-        //                 data: [150000, 200000, 700000, 500000, 600000], //[ 34.5, 34.5, 35, 35, 35.5, 35.5, 35, 35, 35.5, 35.5, 35, 35, 34.5, 34.5, 35, 35, 35.5, 35.5, 35]
-        //             }],
-        //             chart: {
-        //                 fontFamily: 'inherit',
-        //                 type: 'area',
-        //                 height: height,
-        //                 toolbar: {
-        //                     show: false
-        //                 }
-        //             },
-        //             plotOptions: {
-        //             },
-        //             legend: {
-        //                 show: false
-        //             },
-        //             dataLabels: {
-        //                 enabled: false
-        //             },
-        //             fill: {
-        //                 type: "gradient",
-        //                 gradient: {
-        //                     shadeIntensity: 1,
-        //                     opacityFrom: 0.4,
-        //                     opacityTo: 0,
-        //                     stops: [0, 80, 100]
-        //                 }
-        //             },
-        //             stroke: {
-        //                 curve: 'smooth',
-        //                 show: true,
-        //                 width: 3,
-        //                 colors: [baseColor]
-        //             },
-        //             xaxis: {
-        //                 categories: ['','Sep 1', 'Sep 2', 'Sep 3', 'Sep 4', 'Sep 5',''], // ['', 'Nov 02', 'Apr 03', 'Nov 04', 'Apr 05', 'Apr 06', 'Apr 07', 'Apr 08', 'Apr 09', 'Apr 10', 'Apr 11', 'Apr 12', 'Apr 13', 'Apr 14', 'Apr 17', 'Apr 18', 'Apr 19', 'Apr 21', ''],
-        //                 axisBorder: {
-        //                     show: false,
-        //                 },
-        //                 axisTicks: {
-        //                     show: false
-        //                 },
-        //                 tickAmount: 6,
-        //                 labels: {
-        //                     rotate: 0,
-        //                     rotateAlways: true,
-        //                     style: {
-        //                         colors: labelColor,
-        //                         fontSize: '12px'
-        //                     }
-        //                 },
-        //                 crosshairs: {
-        //                     position: 'front',
-        //                     stroke: {
-        //                         color: baseColor,
-        //                         width: 1,
-        //                         dashArray: 3
-        //                     }
-        //                 },
-        //                 tooltip: {
-        //                     enabled: true,
-        //                     formatter: undefined,
-        //                     offsetY: 0,
-        //                     style: {
-        //                         fontSize: '12px'
-        //                     }
-        //                 }
-        //             },
-        //             yaxis: {
-        //                 max: 1500000.0000, //Math.max(...sale_amount), //36.3,
-        //                 min: 6000000.0000, //Math.min(...sale_amount),//33,
-        //                 tickAmount: 6,
-        //                 labels: {
-        //                     style: {
-        //                         colors: labelColor,
-        //                         fontSize: '12px'
-        //                     },
-        //                     formatter: function (val) {
-        //                         return '$' + parseInt(val)
-        //                     }
-        //                 }
-        //             },
-        //             states: {
-        //                 normal: {
-        //                     filter: {
-        //                         type: 'none',
-        //                         value: 0
-        //                     }
-        //                 },
-        //                 hover: {
-        //                     filter: {
-        //                         type: 'none',
-        //                         value: 0
-        //                     }
-        //                 },
-        //                 active: {
-        //                     allowMultipleDataPointsSelection: false,
-        //                     filter: {
-        //                         type: 'none',
-        //                         value: 0
-        //                     }
-        //                 }
-        //             },
-        //             tooltip: {
-        //                 style: {
-        //                     fontSize: '12px'
-        //                 },
-        //                 y: {
-        //                     formatter: function (val) {
-        //                         return '$' + parseInt(val)
-        //                     }
-        //                 }
-        //             },
-        //             colors: [lightColor],
-        //             grid: {
-        //                 borderColor: borderColor,
-        //                 strokeDashArray: 4,
-        //                 yaxis: {
-        //                     lines: {
-        //                         show: true
-        //                     }
-        //                 }
-        //             },
-        //             markers: {
-        //                 strokeColor: baseColor,
-        //                 strokeWidth: 3
-        //             }
-        //         };
-        //
-        //         chart.self = new ApexCharts(element, options);
-        //
-        //         // Set timeout to properly get the parent elements width
-        //         setTimeout(function() {
-        //             chart.self.render();
-        //             chart.rendered = true;
-        //         }, 200);
-        //     }
-        //
-        //     // Public methods
-        //     return {
-        //         init: function () {
-        //             initChart();
-        //
-        //             // Update chart on theme mode change
-        //             KTThemeMode.on("kt.thememode.change", function() {
-        //                 if (chart.rendered) {
-        //                     chart.self.destroy();
-        //                 }
-        //
-        //                 initChart();
-        //             });
-        //         }
-        //     }
-        // }();
-        //
-        // // Webpack support
-        // if (typeof module !== 'undefined') {
-        //     module.exports = KTChartsWidget26;
-        // }
-        //
-        // // On document ready
-        // KTUtil.onDOMContentLoaded(function() {
-        //     KTChartsWidget26.init();
-        // });
     </script>
 
 @endpush
