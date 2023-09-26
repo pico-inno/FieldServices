@@ -108,6 +108,11 @@ function numericToDate($date)
     return $dateTime;
 }
 
+function formateDate($dateTime){
+
+    $setting = getSettings();
+    return $dateTime->format("$setting->date_format");
+}
 function getSettingsValue($selector)
 {
     return SettingHelpers::load()->getSettingsValue($selector)->$selector;

@@ -28,6 +28,7 @@ class locationActions
                 'parent_location_id' => $data['parent_location_id'],
                 'location_type' => $data['location_type'],
                 'inventory_flow' => $data['inventory_flow'],
+                'price_lists_id'=>$data['price_lists_id']
 
             ];
             $location=businessLocation::create($locationData);

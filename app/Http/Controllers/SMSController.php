@@ -15,11 +15,23 @@ class SMSController extends Controller
     {
         $this->middleware(['auth', 'isActive']);
     }
-    public function index(smsServices $sms)
+    public function index($service,smsServices $sms)
     {
-        $smsDatas = $sms->getSMSWithSmsPoh()['data'];
-        return view('App.SMS.smsPoh.index', compact('smsDatas'));
+        if($service=='smspoh'){
+            $smsDatas = $sms->getSMSWithSmsPoh()['data'];
+            return view('App.SMS.smsPoh.index', compact('smsDatas'));
+        }else{
+            $smsDatas = $sms->getSMSWithTwilio();
+            // dd($smsDatas);
+            return view('App.SMS.twilio.index', compact('smsDatas'));
+        }
     }
+    // public function twilioSMS(smsServices $sms)
+    // {
+    //     $smsDatas = $sms->getSMSWithTwilio();
+    //     dd($smsDatas);
+    //     return view('App.SMS.smsPoh.index', compact('smsDatas'));
+    // }
     public function create($service)
     {
         if($service == 'smspoh'){

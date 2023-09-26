@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\locationAddress;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
@@ -48,25 +49,19 @@ class businessLocationController extends Controller
                 return $name.$location->name;
             })
             ->addColumn('address', function ($location) {
-                return $location->locationAddress['address'];
-            })
-            ->addColumn('address', function ($location) {
-                return $location->locationAddress['address'];
-            })
-            ->addColumn('address', function ($location) {
-                return $location->locationAddress['address'];
+                return arr($location->locationAddress, 'address');
             })
             ->addColumn('city', function ($location) {
-                return $location->locationAddress['address'];
+            return arr($location->locationAddress, 'city');
             })
             ->addColumn('zip_code', function ($location) {
-                return $location->locationAddress['zip_postal_code'];
+            return arr($location->locationAddress, 'zip_code');
             })
             ->addColumn('state', function ($location) {
-                return $location->locationAddress['state'];
+            return arr($location->locationAddress, 'state');
             })
             ->addColumn('country', function ($location) {
-                return $location->locationAddress['country'];
+            return arr($location->locationAddress, 'country');
             })
             ->addColumn('checkbox',function($location){
                 return
@@ -101,7 +96,10 @@ class businessLocationController extends Controller
     {
         $bl= $businessLocation;
         $priceLists=PriceLists::get();
-        return view('App.businessSetting.location.edit',compact('bl','priceLists'));
+        $locationType = locationType::get();
+        $locations = businessLocation::orderBy('id', 'DESC')->get();
+        $address = locationAddress::where('location_id',$bl->id)->first();
+        return view('App.businessSetting.location.edit',compact('bl','priceLists','locationType','locations', 'address'));
 
 
     }

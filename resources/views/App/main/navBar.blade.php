@@ -2281,6 +2281,14 @@
                                                     </span>
                                                     <div class="menu-sub menu-sub-accordion">
                                                         <div class="menu-item">
+                                                            <a class="menu-link @yield('twilio_dashboard')" href="{{route('sms.index','twilio')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title ">Dashboard</span>
+                                                            </a>
+                                                        </div>
+                                                        <div class="menu-item">
                                                             <a class="menu-link @yield('sms_twilio_active')"
                                                                 href="{{route('sms.create','twilio')}}">
                                                                 <span class="menu-bullet">
