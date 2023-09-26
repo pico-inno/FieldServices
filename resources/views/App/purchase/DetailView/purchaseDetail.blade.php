@@ -68,7 +68,7 @@
                             <!--end::Text-->
                             <!--end::Description-->
                             <div class="fw-semibold fs-7 text-gray-600">
-                                {{$location['landmark']}}<br>
+                                {{arr($location['address'])}}<br>
                                 {{$location['city'] ? $location['city']."," :''}}
                                 {{$location['state'] ? $location['state']."," :' '}}
                                 {{$location['country'] ? $location['country'].",":''}}

@@ -40,8 +40,34 @@ class businessLocationController extends Controller
     }
     public function listData()
     {
-        $locations = businessLocation::query();
+        $locations = businessLocation::query()->with('locationAddress');
         return DataTables::of($locations)
+            ->editColumn('name', function ($location) {
+                $parentName = getParentName($location->parentLocation);
+                $name=$parentName ? substr($parentName,2).' / '  : '' ;
+                return $name.$location->name;
+            })
+            ->addColumn('address', function ($location) {
+                return $location->locationAddress['address'];
+            })
+            ->addColumn('address', function ($location) {
+                return $location->locationAddress['address'];
+            })
+            ->addColumn('address', function ($location) {
+                return $location->locationAddress['address'];
+            })
+            ->addColumn('city', function ($location) {
+                return $location->locationAddress['address'];
+            })
+            ->addColumn('zip_code', function ($location) {
+                return $location->locationAddress['zip_postal_code'];
+            })
+            ->addColumn('state', function ($location) {
+                return $location->locationAddress['state'];
+            })
+            ->addColumn('country', function ($location) {
+                return $location->locationAddress['country'];
+            })
             ->addColumn('checkbox',function($location){
                 return
                 '

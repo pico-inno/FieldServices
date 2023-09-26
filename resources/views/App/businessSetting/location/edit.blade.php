@@ -86,10 +86,10 @@
                             <!--begin::Input group-->
                             <div class="fv-row mb-12 col-md-4 col-sm-6 col-12">
                                 <!--begin::Label-->
-                                <label class="fs-6 fw-semibold mb-2">Landmark</label>
+                                <label class="fs-6 fw-semibold mb-2">address</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
-                                <input type="text" class="form-control form-control-sm " placeholder="landmark" name="landmark" value="{{old('landmark',$bl->landmark)}}" />
+                                <input type="text" class="form-control form-control-sm " placeholder="address" name="address" value="{{old('address',$bl->address)}}" />
                                 <!--end::Input-->
                             </div>
                             <div class="fv-row mb-12 col-md-4 col-sm-6 col-12">

@@ -29,7 +29,7 @@
                             </h3>
                               <address class="mt-3 fs-5">
                                     {{$location['name']}}<br>
-                                    {{$location['landmark']}}<br>
+                                    {{arr($location['address'])}}<br>
                                     {{$location['city'] ? $location['city']."," :''}}
                                     {{$location['state'] ? $location['state']."," :' '}}
                                     {{$location['country'] ? $location['country'].",":''}}

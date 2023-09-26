@@ -71,11 +71,11 @@
                                 <!--end::Text-->
                                 <!--end::Description-->
                                 <div class="fw-semibold fs-7 text-gray-600">
-                                    {{$location['landmark']}}<br>
-                                    {{$location['city'] ? $location['city']."," :''}}
-                                    {{$location['state'] ? $location['state']."," :' '}}
-                                    {{$location['country'] ? $location['country'].",":''}}
-                                    {{$location['zip_code'] ? $location['zip_code']:''}}
+                                    {{arr($location,'address')}}<br>
+                                    {{arr($location,'city') ? $location['city']."," :''}}
+                                    {{arr($location,'state') ? $location['state']."," :' '}}
+                                    {{arr($location,'country') ? $location['country'].",":''}}
+                                    {{arr($location,'zip_code')? $location['zip_code']:''}}
                                 </div>
                                 <!--end::Description-->
                             </div>

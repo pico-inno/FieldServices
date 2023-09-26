@@ -108,7 +108,7 @@
                             <th class="text-center min-w-80px">Actions</th>
                             <th class="min-w-125px">Name</th>
                             <th class="min-w-125px">Location Id</th>
-                            <th class="min-w-125px">Landmark</th>
+                            <th class="min-w-125px">address</th>
                             <th class="min-w-125px">City</th>
                             <th class="min-w-125px">Zip Code</th>
                             <th class="min-w-125px">State</th>

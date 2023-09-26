@@ -2,6 +2,7 @@
 
 namespace App\Models\settings;
 
+use App\Models\locationAddress;
 use App\Models\Product\PriceLists;
 use App\Models\Stock\Stockin;
 use App\Models\Stock\StockTransfer;
@@ -35,7 +36,10 @@ class businessLocation extends Model
     {
         return $this->hasOne(businessLocation::class,'id', 'parent_location_id');
     }
-
+    public function locationAddress()
+    {
+        return $this->belongsTo(locationAddress::class, 'id', 'location_id');
+    }
     // public function products()
     // {
     //     return $this->hasMany(Product::class);

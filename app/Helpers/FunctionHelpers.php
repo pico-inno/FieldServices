@@ -303,6 +303,8 @@ function getParentName($parentLocation){
     }else{
         return null;
     }
+}
 
-
+function arr($array,$key) {
+    return isset($array[$key])? $array[$key]:'';
 }

@@ -35,7 +35,7 @@
                 </h3>
                 <address class="mt-3 fs-5">
                     {{$transfer['business_location_from']['name']}}<br>
-                    {{!empty($transfer['business_location_from']['landmark']) ? $transfer['business_location_from']['landmark'].'<br>' : ''}}
+                    {{!empty($transfer['business_location_from']['address']) ? $transfer['business_location_from']['address'].'<br>' : ''}}
                     {{$transfer['business_location_from']['city']}},{{$transfer['business_location_from']['state']}},{{$transfer['business_location_from']['country']}},{{$transfer['business_location_from']['zip_code']}}
                 </address>
             </div>
@@ -45,7 +45,7 @@
                 </h3>
                 <address class="mt-3 fs-5">
                     {{$transfer['business_location_to']['name']}}<br>
-                    {{!empty($transfer['business_location_to']['landmark']) ? $transfer['business_location_to']['landmark'].'<br>' : ''}}
+                    {{!empty($transfer['business_location_to']['address']) ? $transfer['business_location_to']['address'].'<br>' : ''}}
                     {{$transfer['business_location_to']['city']}},{{$transfer['business_location_to']['state']}},{{$transfer['business_location_to']['country']}},{{$transfer['business_location_to']['zip_code']}}
                 </address>
             </div>

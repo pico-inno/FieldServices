@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,7 @@
                     </h3>
                     <address class="mt-3 fs-5">
                        {{ $location['name'] ? $location['name'].','  :''}}<br>
-                       {{ $location['landmark'] ? $location['landmark'].','  :''}}<br>
+                       {{ $location['address'] ? $location['address'].','  :''}}<br>
                         {{$location['city'] ? $location['city'].',' :'' }}{{ $location['state'] ? $location['state'].',' :'' }}
                         {{$location['country'] ? $location['country'].',' :'' }}{{$location['zip_code'] ? $location['zip_code'].',' :''}}
                     </address>
