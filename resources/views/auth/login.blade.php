@@ -102,6 +102,11 @@
                                     {{ $errors->first('account_inactive') }}
                                 </div>
                             @endif
+                            @if(session('session_timeout'))
+                                <div class="alert alert-danger">
+                                    {{ session('session_timeout') }}
+                                </div>
+                            @endif
                             <!--begin::Input group=-->
                             <div class="fv-row mb-8">
                                 <!--begin::Email-->
