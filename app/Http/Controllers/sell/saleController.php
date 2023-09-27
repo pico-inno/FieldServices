@@ -868,7 +868,6 @@ class saleController extends Controller
             ->where('deleted_at', null)
             ->where('name', 'like', '%' . $q . '%')
             ->orWhere('sku', 'like', '%' . $q . '%')
-
             ->with([
                 'productVariations' => function ($query) use ($variation_id) {
                     $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price')
@@ -880,8 +879,11 @@ class saleController extends Controller
                         }]);
                 },
                 'stock' => function ($query) use ($business_location_id) {
+
+                    $locationIds = childLocationIDs($business_location_id);
                     $query->where('current_quantity', '>', 0)
-                        ->where('business_location_id', $business_location_id);
+                        ->whereIn('business_location_id', $locationIds);
+
                 }, 'uom' => function ($q) {
                     $q->with(['unit_category' => function ($q) {
                         $q->with('uomByCategory');
@@ -889,7 +891,8 @@ class saleController extends Controller
                 }
             ])
             ->withSum(['stock' => function ($q) use ($business_location_id) {
-                $q->where('business_location_id', $business_location_id);
+                $locationIds = childLocationIDs($business_location_id);
+                $q->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()
             ->map(function ($product) {

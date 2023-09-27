@@ -37,25 +37,24 @@
                 if(uoms.currentUom){
                     saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(sale.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
                 }
-                if(!product){
-                    newProductData={
-                        'product_id':sale.product.id,
-                        'product_type':sale.product.product_type,
-                        'variation_id':sale.product_variation.id,
-                        'category_id':sale.product.category_id,
-                        'defaultSellingPrices':sale.product_variation.default_selling_price,
-                        'sellingPrices':sale.product_variation.uom_selling_price,
-                        'total_current_stock_qty':editSale.status=='delivered' ? isNullOrNan(sale.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(sale.stock_sum_current_quantity) ,
-                        'validate':true,
-                        'uom':sale.product.uom,
-                        'uom_id':sale.uom_id,
-                        'stock':sale.stock,
-                    };
-                    productsOnSelectData=[...productsOnSelectData,newProductData];
+                newProductData={
+                    'product_id':sale.product.id,
+                    'product_type':sale.product.product_type,
+                    'variation_id':sale.product_variation.id,
+                    'category_id':sale.product.category_id,
+                    'defaultSellingPrices':sale.product_variation.default_selling_price,
+                    'sellingPrices':sale.product_variation.uom_selling_price,
+                    'total_current_stock_qty':editSale.status=='delivered' ? isNullOrNan(sale.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(sale.stock_sum_current_quantity) ,
+                    'validate':true,
+                    'uom':sale.product.uom,
+                    'uom_id':sale.uom_id,
+                    'stock':sale.stock,
+                };
+                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+                if(indexToReplace !== -1){
+                    productsOnSelectData[indexToReplace] = newProductData;
                 }else{
-                    if(editSale.status=='delivered'){
-                        productsOnSelectData[secIndex].total_current_stock_qty=isNullOrNan(productsOnSelectData[secIndex].total_current_stock_qty)+ saleQty;
-                    }
+                    productsOnSelectData=[...productsOnSelectData,newProductData];
                 }
             })
             let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
@@ -127,11 +126,11 @@
                 throttleTimeout = setTimeout(function() {
                     $.ajax({
                         url: `/sell/get/product`,
-                        type: 'POST',
+                        type: 'GET',
                         delay: 150,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
+                        // headers: {
+                        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        // },
                         data: {
                             data,
                         },
@@ -499,18 +498,11 @@
             'uom_id':newSelectedProduct.uom_id,
             'stock':newSelectedProduct.stock,
         };
-        if(productsOnSelectData.length>0){
-            let fileterProduct=productsOnSelectData.filter(function(p){
-                return p.product_id==newSelectedProduct.id && p.variation_id==newSelectedProduct.product_variations.id
-
-            })[0];
-            if(fileterProduct){
-                return
-            }else{
-                productsOnSelectData=[...productsOnSelectData,newProductData];
-            }
+        const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+        if(indexToReplace !== -1){
+            productsOnSelectData[indexToReplace] = newProductData;
         }else{
-                productsOnSelectData=[...productsOnSelectData,newProductData];
+            productsOnSelectData=[...productsOnSelectData,newProductData];
         }
     }
 

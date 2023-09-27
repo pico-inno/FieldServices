@@ -147,32 +147,32 @@
                                 </x-location-input>
 
                                 <x-location-input label="Address">
-                                    <x-forms.input placeholder="Address" name="address" :value="$address->address"></x-forms.input>
+                                    <x-forms.input placeholder="Address" name="address" :value="arr($address,'address')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="City">
-                                    <x-forms.input placeholder="City" name="city" :value="$address->city"></x-forms.input>
+                                    <x-forms.input placeholder="City" name="city" :value="arr($address,'city')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="State">
-                                    <x-forms.input placeholder="State" name="state" :value="$address->state"></x-forms.input>
+                                    <x-forms.input placeholder="State" name="state" :value="arr($address,'state')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="Country">
-                                    <x-forms.input placeholder="Country" name="country" :value="$address->country"></x-forms.input>
+                                    <x-forms.input placeholder="Country" name="country" :value="arr($address,'country')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="Zip Code:">
-                                    <x-forms.input placeholder="Zip Code:" name="zip_postal_code" :value="$address->zip_postal_code"></x-forms.input>
+                                    <x-forms.input placeholder="Zip Code:" name="zip_postal_code" :value="arr($address,'zip_postal_code')"></x-forms.input>
                                 </x-location-input>
                             </div>
                             <div class="col-6">
                                 <x-location-input label="Mobile">
-                                    <x-forms.input placeholder="Mobile" name="mobile" :value="$address->mobile"></x-forms.input>
+                                    <x-forms.input placeholder="Mobile" name="mobile" :value="arr($address,'mobile')"></x-forms.input>
                                 </x-location-input>
 
                                 <x-location-input label="Alternate contact number">
-                                    <x-forms.input placeholder="Alternate contact number" name="alternate_number" :value="$address->alternate_number">
+                                    <x-forms.input placeholder="Alternate contact number" name="alternate_number" :value="arr($address,'alternate_number')">
                                     </x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="Email">
-                                    <x-forms.input placeholder="Email" name="email" :value="$address->email"></x-forms.input>
+                                    <x-forms.input placeholder="Email" name="email" :value="arr($address,'email')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="Price list:">
                                     <x-forms.nob-select placeholder="Price list" name="price_lists_id">

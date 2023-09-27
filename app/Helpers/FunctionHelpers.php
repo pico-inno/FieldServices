@@ -5,6 +5,7 @@ use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Helpers\SettingHelpers;
 use App\Helpers\generatorHelpers;
+use App\Models\settings\businessLocation;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
@@ -315,10 +316,18 @@ function arr($array,$key,$seperator='') {
 }
 function businessLocationName($bl)
 {
-    $parentName=getParentName($bl->parentLocation);
+    logger($bl);
+    $parentName=getParentName($bl['parentLocation']);
     $parent= $parentName ? substr($parentName, 2) . ' / ' : '';
-    return $parent.$bl->name;
+    return $parent.$bl['name'];
 }
+function childLocationIDs($locationId)
+{
+    $LocationsIds=businessLocation::where('parent_location_id',$locationId)->select('id')->pluck('id')->toArray();
+    $LocationsIds[]=$locationId;
+    return $LocationsIds;
+}
+
 function addresss($address)
 {
     // dd($address);

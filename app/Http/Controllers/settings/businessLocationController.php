@@ -44,9 +44,7 @@ class businessLocationController extends Controller
         $locations = businessLocation::query()->with('locationAddress');
         return DataTables::of($locations)
             ->editColumn('name', function ($location) {
-                $parentName = getParentName($location->parentLocation);
-                $name=$parentName ? substr($parentName,2).' / '  : '' ;
-                return $name.$location->name;
+                return businessLocationName($location);
             })
             ->addColumn('address', function ($location) {
                 return arr($location->locationAddress, 'address');
@@ -105,7 +103,6 @@ class businessLocationController extends Controller
     }
     public function view(businessLocation $businessLocation){
         $bl = $businessLocation;
-        // dd($bl->locationType);
         $address = locationAddress::where('location_id', $bl->id)->first();
         return view('App.businessSetting.location.view', compact('bl', 'address'));
     }

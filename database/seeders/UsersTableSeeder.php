@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
         $defaultLocaitonId = businessLocation::create([
             'name' => 'Main Branch',
             'allow_purchase_order' => 0,
+            'location_type' => 5,
         ]);
         $locationIds = [0];
         BusinessUser::create([

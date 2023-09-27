@@ -137,7 +137,7 @@ class purchaseController extends Controller
     {
 
         $purchases=purchases::where('is_delete',0)
-            ->with('business_location_id','supplier')
+            ->with('business_location_id', 'businessLocation','supplier')
             ->OrderBy('id','desc');
             if($request->filled('form_data') && $request->filled('to_date')){
                 $purchases=$purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=',$request->to_date);
@@ -151,6 +151,9 @@ class purchaseController extends Controller
                         <input class="form-check-input" type="checkbox" data-checked="delete" value='.$purchase->id.' />
                     </div>
                 ';
+            })
+            ->editColumn('location', function ($purchase) {
+                return businessLocationName($purchase->businessLocation);
             })
             ->editColumn('supplier', function($purchase){
                 return $purchase->supplier['company_name']??$purchase->supplier['first_name'];

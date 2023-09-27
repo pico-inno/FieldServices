@@ -150,14 +150,22 @@
             dropdown: {
                 closeOnSelect: false,
                 enabled: 0,
+                closeOnSelect: false,
                 classname: 'users-list',
                 searchKeys: ['value', 'mobile']  // very important to set by which keys to search for suggesttions when typing
             },
+
             templates: {
                 tag: tagTemplate,
                 dropdownItem: suggestionItemTemplate
             },
         });
+        // dropdown: {
+        //     maxItems: 20,           // <- mixumum allowed rendered suggestions
+        //     classname: "tags-look", // <- custom classname for this dropdown, so it could be targeted
+        //     enabled: 0,             // <- show suggestions on focus
+        //     closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+        // }
         // var tagify = new Tagify(inputElm, {
         //     tagTextProp: 'name',
         //     enforceWhitelist: true,
