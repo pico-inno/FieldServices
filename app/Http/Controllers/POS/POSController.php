@@ -224,18 +224,24 @@ class POSController extends Controller
         $invoice_no = $request->invoice_no;
         $totalPriceAndOtherData = $request->totalPriceAndOtherData;
         $posRegisterId=$totalPriceAndOtherData['posRegisterId'];
-        $printerInfo=posRegisters::where('id', $posRegisterId)->select('printer_id')->with('printer')->first()->printer;
-        if($printerInfo->printer_type=='network'){
-            $networkPrinter=new networkPrinterController();
-            $status=$networkPrinter->print($printerInfo,['voucherData'=>$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, 'invoice_no'=> $invoice_no]);
+        $printer=posRegisters::where('id', $posRegisterId)->select('printer_id')->with('printer');
+        // if($printer->exists()){
+        //     $printerInfo= $printer->first()->printer;
+        //     dd($printerInfo);
+        //     if($printerInfo->printer_type=='network'){
+        //         $networkPrinter=new networkPrinterController();
+        //         $status=$networkPrinter->print($printerInfo,['voucherData'=>$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, 'invoice_no'=> $invoice_no]);
 
-            // $voucherData = $totalPriceAndOtherData;
-            // $invoice_row = $invoice_row;
-            // dd($invoice_row);
-            // return view('App.pos.print.payment', compact('invoice_row', 'invoice_no','voucherData'));
-            return response()->json([$status,'type'=>'network']);
-        }
-        $html = view('App.pos.print.payment', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no'))->render();
+        //         // dd($invoice_row);
+                // $html= view('App.pos.print.payment', compact('invoice_row', 'invoice_no','voucherData'))->render();
+        //         return response()->json([$status,'type'=>'network']);
+        //     }
+        // }
+
+        $voucherData = $totalPriceAndOtherData;
+        $invoice_row = $invoice_row;
+        // dd($invoice_row);
+        $html = view('App.pos.print.payment', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no', 'voucherData'))->render();
 
         return response()->json(['html' => $html]);
     }

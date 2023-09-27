@@ -202,3 +202,42 @@ function priceChangeByUom($currentUOMId, $currentUomPrice,$newUOMID) {
         }
         return $resultPrice;
 }
+
+
+
+
+// format char to print in 48
+function printFormat($productName, $quantity, $price)
+{
+    $columnWidthName = 22;
+    $columnWidthQuantity = 8;
+    $columnWidthPrice = 18;
+
+    $formattedName = str_split($productName, $columnWidthName);
+    $formattedQuantity = str_split($quantity, $columnWidthQuantity);
+    $formattedPrice = str_split($price, $columnWidthPrice);
+
+    $lengths = [
+        'formattedName' => count($formattedName),
+        'formattedQuantity' => count($formattedQuantity),
+        'formattedPrice' => count($formattedPrice)
+    ];
+
+    $longestArrayName = '';
+    $longestArrayLength = 0;
+
+    foreach ($lengths as $arrayName => $arrayLength) {
+        if ($arrayLength > $longestArrayLength) {
+            $longestArrayName = $arrayName;
+            $longestArrayLength = $arrayLength;
+        }
+    }
+    $str = "";
+    foreach ($$longestArrayName as $index => $la) {
+        $forName = isset($formattedName[$index]) ? str_pad($formattedName[$index], $columnWidthName, " ") : str_pad(" ", $columnWidthName, " ");
+        $forQty = isset($formattedQuantity[$index]) ? str_pad($formattedQuantity[$index], $columnWidthQuantity + 1, " ", STR_PAD_LEFT) : str_pad(" ", $columnWidthQuantity + 1, " ", STR_PAD_LEFT);
+        $forPrice = isset($formattedPrice[$index]) ? str_pad($formattedPrice[$index], $columnWidthPrice, " ", STR_PAD_LEFT) : str_pad(" ", $columnWidthPrice, " ", STR_PAD_LEFT);
+        $str .= $forName . $forQty . $forPrice . "\n";
+    }
+    return $str;
+}
