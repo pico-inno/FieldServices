@@ -45,6 +45,7 @@ use Modules\Reservation\Entities\FolioInvoice;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Requests\sale\saleRequest;
+use App\Models\locationAddress;
 use App\Models\posRegisterTransactions;
 use App\Services\paymentServices;
 use App\Services\SaleServices;
@@ -193,12 +194,13 @@ class saleController extends Controller
     public function saleDetail($id)
     {
         $relations=[
-            'business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
+             'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
         ];
         class_exists('Modules\Restaurant\Entities\table') ? $relations[]='table' : '';
         $sale = sales::with(...$relations)->where('id', $id)->first()->toArray();
 
-        $location = $sale['business_location_id'];
+        $location = businessLocation::where("id",$sale['business_location_id'])->first();
+        $address = locationAddress::where("location_id", $location->id)->first();
         $setting = $this->setting;
         $sale_details_query = sale_details::with([
             'productVariation' => function ($q) {
@@ -221,7 +223,8 @@ class saleController extends Controller
             'sale',
             'location',
             'sale_details',
-            'setting'
+            'setting',
+            'address'
         ));
     }
     // sale create page

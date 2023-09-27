@@ -21,6 +21,7 @@ use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Http\Controllers\Controller;
 use App\Models\exchangeRates;
+use App\Models\locationAddress;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
@@ -456,7 +457,8 @@ class purchaseController extends Controller
     {
 
         $purchase = purchases::with('business_location_id', 'purchased_by','confirm_by','supplier','updated_by', 'currency')->where('id', $id)->first()->toArray();
-        $location = $purchase['business_location_id'];
+        $location = businessLocation::where("id", $purchase['business_location_id'])->first();
+        $addresss=locationAddress::where('location_id',$location['id'])->first();
         $purchase_details=purchase_details::with(['productVariation'=>function($q){
             $q->select('id','product_id','variation_template_value_id')
                 ->with([
@@ -473,7 +475,8 @@ class purchaseController extends Controller
             'purchase',
             'location',
             'purchase_details',
-            'setting'
+            'setting',
+            'addresss'
         ));
     }
 

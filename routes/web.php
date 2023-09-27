@@ -310,6 +310,8 @@ Route::controller(businessLocationController::class)->group(function () {
         Route::get('/add/form', 'addForm')->name('location_add_form');
         Route::post('/add', 'add')->name('location_add');
 
+
+        Route::get('{businessLocation}/view', 'view')->name('location_view');
         // update
         Route::get('/update/{businessLocation}/form', 'updateForm')->name('location_update_form');
         Route::post('{id}/update', 'update')->name('location_update');

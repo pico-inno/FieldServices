@@ -71,11 +71,7 @@
                                 <!--end::Text-->
                                 <!--end::Description-->
                                 <div class="fw-semibold fs-7 text-gray-600">
-                                    {{arr($location,'address')}}<br>
-                                    {{arr($location,'city') ? $location['city']."," :''}}
-                                    {{arr($location,'state') ? $location['state']."," :' '}}
-                                    {{arr($location,'country') ? $location['country'].",":''}}
-                                    {{arr($location,'zip_code')? $location['zip_code']:''}}
+                                    {!! addresss($address) !!}
                                 </div>
                                 <!--end::Description-->
                             </div>

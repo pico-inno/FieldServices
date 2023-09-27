@@ -667,11 +667,23 @@
     </div>
     <!--end::Container-->
 </div>
+<div class="modal fade view" tabindex="-1">
 
+</div>
 @endsection
 
 @push('scripts')
 
 		<script src={{asset('customJs/businessJs/businessLocation.js')}}></script>
+<script>
+    $(document).on('click', '.view_detail', function(){
 
+            loadingOn();
+            $url=$(this).data('href');
+            $('.view').load($url, function() {
+                $(this).modal('show');
+                loadingOff();
+            });
+        });
+</script>
 @endpush

@@ -81,7 +81,8 @@ class businessLocationController extends Controller
                             Actions
                         </button>
                         <ul class="dropdown-menu z-10 p-5 " aria-labelledby="dropdownMenuButton1" role="menu">'
-                            .$activationBtn.'
+                            .$activationBtn. '
+                            <a data-href="' . route('location_view', $location->id) . '" class="dropdown-item p-2 edit-unit bg-active-primary text-primary view_detail" data-id="' . $location->id . '" >View</a>
                             <a href="' . route('location_update_form',$location->id) . '" class="dropdown-item p-2 edit-unit bg-active-primary text-primary" data-id="' . $location->id . '" >Edit</a>
                             <a class="dropdown-item p-2 location_delete_confirm cursor-pointer bg-active-danger text-danger"  data-id="'.$location->id. '" data-kt-location-table-filter="delete_row">Delete</a>
                         </ul>
@@ -101,7 +102,12 @@ class businessLocationController extends Controller
         $address = locationAddress::where('location_id',$bl->id)->first();
         return view('App.businessSetting.location.edit',compact('bl','priceLists','locationType','locations', 'address'));
 
-
+    }
+    public function view(businessLocation $businessLocation){
+        $bl = $businessLocation;
+        // dd($bl->locationType);
+        $address = locationAddress::where('location_id', $bl->id)->first();
+        return view('App.businessSetting.location.view', compact('bl', 'address'));
     }
     public function update(Request $request,$id)
     {

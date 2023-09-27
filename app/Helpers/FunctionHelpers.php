@@ -310,6 +310,21 @@ function getParentName($parentLocation){
     }
 }
 
-function arr($array,$key) {
-    return isset($array[$key])? $array[$key]:'';
+function arr($array,$key,$seperator='') {
+    return isset($array[$key])? $array[$key].$seperator:'';
+}
+function businessLocationName($bl)
+{
+    $parentName=getParentName($bl->parentLocation);
+    $parent= $parentName ? substr($parentName, 2) . ' / ' : '';
+    return $parent.$bl->name;
+}
+function addresss($address)
+{
+    // dd($address);
+    return
+        arr($address,'address',',')."<br>".
+        arr($address,'city',',').arr($address,'state',',').arr($address,'country',',')."<br>".
+        arr($address,'zip_postal_code','')
+    ;
 }

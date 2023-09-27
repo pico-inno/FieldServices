@@ -45,7 +45,7 @@
                         <div class="overflow-hidden  flex-grow-1">
                             <select name="business_location_id" id="business_location_id" class="form-select rounded-0" data-kt-select2="true"  data-placeholder="Select locations">
                                 @foreach ($locations as $l)
-                                    <option value="{{$l->id}}">{{$l->name}}</option>
+                                    <option value="{{$l->id}}">{{businessLocationName($l)}}</option>
                                 @endforeach
                             </select>
                         </div>
