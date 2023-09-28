@@ -60,7 +60,7 @@ class purchaseController extends Controller
 
     public function add()
     {
-        $locations=businessLocation::all();
+        $locations=businessLocation::where('is_active',1)->get();
         $currency=$this->currency;
         $suppliers=Contact::where('type','Supplier')
                     ->orWhere('type','Both')

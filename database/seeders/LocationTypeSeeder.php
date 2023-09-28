@@ -14,9 +14,9 @@ class LocationTypeSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            [
-                'name' => 'Company',
-            ],
+            // [
+            //     'name' => 'Company',
+            // ],
             [
                 'name' => 'Supplier Location',
 
