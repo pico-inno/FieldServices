@@ -255,7 +255,7 @@
                                                                 @endif
                                                             <br>
                                                             {{
-                                                            $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.'('.($sd->productVariation->variationTemplateValue->name).')'.`</span><br>`: ''
+                                                             $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$sd->productVariation->variationTemplateValue?'('.$sd->productVariation->variationTemplateValue->name.')':''.`</span><br>`: ''
                                                             }}
                                                         </span>
                                                         <br>
@@ -488,7 +488,7 @@
                                                                 {{$product->name}}
                                                                 <br>
                                                                 {{
-                                                                $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.'('.($sd->productVariation->variationTemplateValue->name).')'.`</span><br>`: ''
+                                                                $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$sd->productVariation->variationTemplateValue?'('.$sd->productVariation->variationTemplateValue->name.')':''.`</span><br>`: ''
                                                                 }}
 
 

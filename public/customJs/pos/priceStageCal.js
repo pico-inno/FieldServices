@@ -1,4 +1,12 @@
     var priceList;
+        function isNullOrNan(val){
+            let v=parseFloat(val);
+            if(v=='' || v==null || isNaN(v)){
+                return 0;
+            }else{
+                return v;
+            }
+        }
     function getPriceList(priceListId,callBack=null) {
         if (priceListId === 'default_selling_price') {
             priceList = null;

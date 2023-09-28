@@ -10,6 +10,14 @@
         let currency=@json($defaultCurrency);
         let locations=@json($locations);
         let lotControl=setting.lot_control;
+        function isNullOrNan(val){
+            let v=parseFloat(val);
+            if(v=='' || v==null || isNaN(v)){
+                return 0;
+            }else{
+                return v;
+            }
+        }
 
 
         let editSaleDetails=@json($sale_details ?? []);
@@ -870,14 +878,6 @@
 
 
 
-    function isNullOrNan(val){
-        let v=parseFloat(val);
-        if(v=='' || v==null || isNaN(v)){
-            return 0;
-        }else{
-            return v;
-        }
-    }
 
 
 
