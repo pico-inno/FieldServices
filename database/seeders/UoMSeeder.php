@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 class UoMSeeder extends Seeder
 {
     /**
-     * Run the database seeds. 
+     * Run the database seeds.
      */
     public function run(): void
     {
@@ -19,26 +19,26 @@ class UoMSeeder extends Seeder
         try{
             $unit_categories = [
                 [
-                    'name' => 'Unit', 
+                    'name' => 'Unit',
                 ],
                 [
-                    'name' => 'Weight', 
+                    'name' => 'Weight',
                 ],
                 [
-                    'name' => 'Working Time', 
+                    'name' => 'Working Time',
                 ],
                 [
-                    'name' => 'Length / Distance', 
+                    'name' => 'Length / Distance',
                 ],
                 [
-                    'name' => 'Surface', 
+                    'name' => 'Surface',
                 ],
                 [
-                    'name' => 'Volume', 
+                    'name' => 'Volume',
                 ]
             ];
             DB::table('unit_categories')->insert($unit_categories);
-    
+
             $unitCategoryId = DB::table('unit_categories')->where('name', 'Unit')->value('id');
             $weightCategoryId = DB::table('unit_categories')->where('name', 'Weight')->value('id');
             $timeCategoryId = DB::table('unit_categories')->where('name', 'Working Time')->value('id');
@@ -116,7 +116,15 @@ class UoMSeeder extends Seeder
                     'short_name' => 'hr',
                     'unit_category_id' => $timeCategoryId,
                     'unit_type' => 'smaller',
-                    'value' => 1,
+                    'value' => 24,
+                    'rounded_amount' => 4
+                ],
+                [
+                    'name' => 'Month',
+                    'short_name' => 'mon',
+                    'unit_category_id' => $timeCategoryId,
+                    'unit_type' => 'bigger',
+                    'value' => 30,
                     'rounded_amount' => 4
                 ],
                 [
