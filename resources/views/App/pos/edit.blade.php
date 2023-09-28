@@ -1296,7 +1296,7 @@
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
 		<script src={{asset('customJs/print/print.js')}}></script>
         <!--end::Global Javascript Bundle-->
-
+        @include('App.resources.common')
         @include('App.pos.contactAdd')
 
         @include('App.pos.js.pos_js')
