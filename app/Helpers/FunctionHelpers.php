@@ -316,7 +316,6 @@ function arr($array,$key,$seperator='') {
 }
 function businessLocationName($bl)
 {
-    logger($bl);
     $parentName=getParentName($bl['parentLocation']);
     $parent= $parentName ? substr($parentName, 2) . ' / ' : '';
     return $parent.$bl['name'];

@@ -227,7 +227,7 @@ class expenseReportController extends Controller
             foreach($expense_ids as $id){
                 $expense=expenseTransactions::where('id',$id)->first();
                 $data=[
-                    'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
+                    'payment_voucher_no'=>generatorHelpers::paymentVoucher("expense"),
                     'payment_date'=>now(),
                     'transaction_type'=>'expense',
                     'transaction_id'=>$expense->id,

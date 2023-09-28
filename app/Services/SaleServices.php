@@ -72,6 +72,7 @@ class SaleServices
     {
         foreach ($sale_details as $sale_detail) {
             $product = Product::where('id', $sale_detail['product_id'])->select('product_type')->first();
+            // dd($product);
             $stock = CurrentStockBalance::where('product_id', $sale_detail['product_id'])
             ->where('business_location_id', $sale_data->business_location_id)
                 // ->where('id', $sale_detail['stock_id_by_batch_no'])
@@ -157,6 +158,7 @@ class SaleServices
     {
         $product_id = $sale_detail['product_id'];
         $sale_detail_id = $sale_detail['id'];
+        $locationIds= childLocationIDs($business_location_id);
         // check lot control from setting
         $product = Product::where('id', $product_id)->select('product_type')->first();
         if ($product->product_type == 'storable') {
@@ -164,16 +166,15 @@ class SaleServices
             $totalStocks = CurrentStockBalance::select('id', 'current_stock_id')
                             ->where('product_id', $product_id)
                             ->where('variation_id', $variation_id)
-                            ->where('business_location_id', $business_location_id)
+                            ->whereIn('business_location_id', $locationIds)
                             ->where('current_quantity', '>', '0')
                             ->sum('current_quantity');
-
             if ($requestQty > $totalStocks) {
                 return false;
             } else {
                 $stocks = CurrentStockBalance::where('product_id', $product_id)
                     ->where('variation_id', $variation_id)
-                    ->where('business_location_id', $business_location_id)
+                    ->whereIn('business_location_id', $locationIds)
                     ->where('current_quantity', '>', '0');
                 if ($this->accounting_method == 'lifo') {
                     $stocks = $stocks->orderBy('id', 'DESC')->get();
@@ -234,14 +235,14 @@ class SaleServices
                 return $data;
             }
         } else {
+            dd('here');
             $current_stock_id = $current_stock['id'];
             $product_id = $current_stock['product_id'];
             $variation_id = $current_stock['variation_id'];
-            $currentStock = CurrentStockBalance::where('business_location_id', $business_location_id)
+            $currentStock = CurrentStockBalance::whereIn('business_location_id', $business_location_id)
                 ->where('product_id', $product_id)
                 ->where('variation_id', $variation_id)
                 ->where('id', $current_stock_id);
-            // dd($currentStock->get()->toArray());
             $current_stock_qty =  $currentStock->first()->current_quantity;
             return abort(404, '');
             if ($requestQty > $current_stock_qty) {

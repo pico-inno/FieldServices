@@ -32,6 +32,8 @@ class generatorHelpers
             $prefix = getSettingValue('sale_payment_prefix');
         } else if ($transaction_type == 'purchase') {
             $prefix = getSettingValue('purchase_payment_prefix');
+        }else{
+            $prefix='';
         }
         $paymentCount=paymentsTransactions::orderBy('id','DESC')->first()->id ?? 0;
         $numberCount = "%0" . 6 . "d";

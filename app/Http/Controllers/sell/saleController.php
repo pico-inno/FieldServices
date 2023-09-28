@@ -278,8 +278,9 @@ class saleController extends Controller
                     ]);
             },
             'stock' => function ($q) use ($business_location_id) {
+                $locationIds=childLocationIDs($business_location_id);
                 $q->where('current_quantity', '>', 0)
-                    ->where('business_location_id', $business_location_id);
+                    ->whereIn('business_location_id', $locationIds);
             },
             'Currentstock',  'product' => function ($q) {
                 $q->with(['uom' => function ($q) {
@@ -291,7 +292,8 @@ class saleController extends Controller
         ])
         ->where('sales_id', $id)->where('is_delete', 0)
         ->withSum(['stock' => function ($q) use ($business_location_id) {
-            $q->where('business_location_id', $business_location_id);
+            $locationIds = childLocationIDs($business_location_id);
+            $q->whereIn('business_location_id', $locationIds);
         }], 'current_quantity');
         $sale_details = $sale_details_query->get();
         $currencies = Currencies::get();
@@ -540,8 +542,9 @@ class saleController extends Controller
                     if($product->product_type=='storable'){
                         // stock adjustment
                         if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
-                            $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
+                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
                             if ($changeQtyStatus == false) {
+
                                 return redirect()->back()->withInput()->with(['warning' => "product Out of Stock"]);
                             } else {
                                 // if ($this->setting->lot_control == "off") {
@@ -571,13 +574,15 @@ class saleController extends Controller
                         } else {
                             $referecneQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_details->quantity, $sale_details->uom_id)['qtyByReferenceUom'];
                             if ($request_old_sale['quantity'] > $sale_details->quantity) {
+                                $locationIds=childLocationIDs($businessLocation->id);
                                 $current_stock = CurrentStockBalance::where('product_id', $sale_details->product_id)
-                                    ->where('business_location_id', $businessLocation->id)
+                                    ->whereIn('business_location_id', $locationIds)
                                     ->where('variation_id', $sale_details->variation_id)
                                     ->where('current_quantity', '>', '0');
                                 $availableStocks = $current_stock->get();
                                 $availableQty = $current_stock->sum('current_quantity');
                                 $newQty = round($requestQty - $sale_detial_qty_from_db, 2);
+
                                 if ($newQty > $availableQty) {
                                     return redirect()->route('all_sales', 'allSales')->with(['warning' => 'out of stock']);
                                 }
@@ -785,6 +790,8 @@ class saleController extends Controller
 
             DB::commit();
         } catch (Exception $e) {
+
+            dd($e);
             logger($e);
             DB::rollBack();
         }
