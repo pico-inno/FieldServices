@@ -592,7 +592,7 @@ class paymentsTransactionsController extends Controller
 
     protected function makePayment($transaction,$request,$transaction_type="expense"){
         $data=[
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
+            'payment_voucher_no'=>generatorHelpers::paymentVoucher($transaction_type),
             'payment_date'=>now(),
             'transaction_type'=>$transaction_type,
             'transaction_id'=>$transaction->id,

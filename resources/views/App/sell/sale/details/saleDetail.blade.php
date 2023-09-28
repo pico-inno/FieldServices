@@ -21,391 +21,230 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="row mb-10">
-                        <div class="col-sm-4">
-                            <h3 class="text-primary-emphasis fs-4">
-                                Customer:
-                            </h3>
-                            @if ($sale['customer'])
-                                <address class="mt-3 fs-5 fw-semibold">
-                                    @if ($sale['pos_register_id'] && isset($sale['table']))
-                                        <div class="fw-semibold fs-5 d-inline-block">Table No : <span class="ms-1 mb-1 fs-7 badge badge-primary">{{$sale['table']? $sale['table']['table_no'] : ''}}</span></div><br>
-                                    @endif
-                                    {{$sale['customer']['first_name']}} <br>
-                                    Mobile:{{$sale['customer']['mobile']}}<br>
-                                </address>
-                            @endif
-                        </div>
-                        <div class="col-sm-4">
-                            <h3 class="text-primary-emphasis fs-4">
-                                Bussiness:
-                            </h3>
-                              <address class="mt-3 fs-5">
-                                    {{$location['name']}}<br>
-                                    {{$location['landmark']}}<br>
-                                    {{$location['city'] ? $location['city']."," :''}}
-                                    {{$location['state'] ? $location['state']."," :' '}}
-                                    {{$location['country'] ? $location['country'].",":''}}
-                                    {{$location['zip_code'] ? $location['zip_code']."," :''}}
-                                </address>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="text-group">
-                                {{-- <h3 class="text-primary-emphasis fw-semibold fs-5">
-                                    Reference No : <span class="text-gray-600"> {{$sale['reference_no']}}3</span>
-                                </h3> --}}
-                                <h3 class="text-primary-emphasis fw-semibold fs-5">
-                                    Date : <span class="text-gray-600">{{fDate($sale['sold_at'])}}</span>
-                                </h3>
-                                <h3 class="text-primary-emphasis fw-semibold fs-5">
-                                    sale Status : <span class="text-gray-600">{{$sale['status']}}</span>
-                                </h3>
+                    <div class="m-0">
+                        <div class="row g-5 mb-10">
+                            <div class="col-sm-6">
+                                <div class="fw-bold fs-6 text-gray-800">#{{$sale['sales_voucher_no']}}</div>
+                                <div class="fw-semibold fs-7 text-gray-600">
+                                    Status : <span class="badge badge-light-success">{{$sale['status']}}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <!--end::Label-->
+                                <div class="fw-semibold fs-7 text-gray-600 mb-1">Sold Date:</div>
+                                <!--end::Label-->
+                                <!--end::Info-->
+                                <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
+                                    <span class="pe-2">{{fDate($sale['sold_at'])}}</span>
+                                </div>
+                                <!--end::Info-->
                             </div>
                         </div>
-                    </div>
-                    <div class="table-responsive mt-10">
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                            <!--begin::Table head-->
-                            <thead class="bg-primary">
-                                <!--begin::Table row-->
-                                <tr class="bg-primary fw-bold fs-9 text-white text-center text-uppercase fs-7">
-                                    <th class="min-w-30 text-center ps-5">#</th>
-                                    <th class="min-w-100px">Product Name</th>
-                                    <th class="min-w-100px">Quantity</th>
-                                    @if ($sale['status']=='partial')
-                                        <th class="min-w-100px">Deivered Quantity</th>
-                                    @endif
-                                    <th class="min-w-100px">UOM</th>
-                                    <th class="min-w-100px text-end">UOM Price</th>
-                                    <th class="min-w-100px text-end">Subtotal </th>
-                                    <th class="min-w-100px   ">Discount Type</th>
-                                    <th class="min-w-100px  ">Per Item Discount Amount</th>
-                                    <th class="min-w-100px text-end pe-3">Subtotal with Dis</th>
-                                </tr>
-                                <!--end::Table row-->
-                            </thead>
-                            <!--end::Table head-->
-                            <!--begin::Table body-->
-                           <tbody class="fw-semibold text-gray-800">
-                            @foreach ($sale_details as $key=>$sd)
-                                @php
-                                    $p=$sd->product;
-                                    $product_variation =$sd->toArray()['product_variation'];
-                                    $currency=$sd->currency ? $sd->currency['symbol']:'';
-                                @endphp
+                        <!--end::Row-->
+                        <!--begin::Row-->
+                        <div class="row g-5 mb-11">
+                            <!--end::Col-->
+                            <div class="col-sm-6">
+                                <!--end::Label-->
+                                <div class="fw-semibold fs-7 text-gray-600 mb-1">Customer:</div>
+                                <!--end::Label-->
+                                <!--end::Col-->
+                                @if ($sale['customer'])
+                                <address class="mt-3 fs-5 fw-semibold fs-7">
+                                    <span class="fw-bold">{{$sale['customer']['first_name']}}</span>
+                                    <br>
+                                    <span class="text-gray-700 fs-7">
+                                        {{$sale['customer']['mobile']}}
+                                    </span>
+                                </address>
+                                @endif
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Col-->
+                            <!--end::Col-->
+                            <div class="col-sm-6">
+                                <!--end::Label-->
+                                <div class="fw-semibold fs-7 text-gray-600 mb-1">Business Location:</div>
+                                <!--end::Label-->
+                                <!--end::Text-->
+                                <div class="fw-bold fs-6 text-gray-800">{{$location['name']}}</div>
+                                <!--end::Text-->
+                                <!--end::Description-->
+                                <div class="fw-semibold fs-7 text-gray-600">
+                                    {!! addresss($address) !!}
+                                </div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Col-->
+                            <!--end::Col-->
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+                        <!--begin::Content-->
+                        <div class="flex-grow-1">
+                            <!--begin::Table-->
+                            <div class="table-responsive border-bottom mb-9">
+                                <table class="table mb-3">
+                                    <thead class="">
+                                        <tr class="border-bottom  border-primary fs-7 fw-bold  text-gray-500 x">
+                                            <th class="min-w-10 text-start ps-2">#</th>
+                                            <th class="min-w-175px pb-2 text-start">Description</th>
+                                            <th class="min-w-100px text-end">Quantity</th>
+                                            @if ($sale['status']=='partial')
+                                                <th class="min-w-100px text-end">Deivered Quantity</th>
+                                            @endif
+                                            <th class="min-w-100px text-end ">UOM</th>
+                                            <th class="min-w-100px text-end ">UOM Price</th>
+                                            <th class="min-w-100px text-end">
+                                                Subtotal
+                                            </th>
+                                            <th class="min-w-100px text-end">
+                                                Discount Type
+                                            </th>
+                                            <th class="min-w-100px text-end ">Per Item Discount Amount</th>
+                                            <th class="min-w-100px text-end ">Subtotal</th>
 
-                                    <tr class="text-center fs-6">
-                                        <!--begin::Name=-->
-                                        <td class="text-center">
-                                            {{$key+1}}
-                                        </td>
-                                        <!--end::Name=-->
-                                        <!--begin::Email=-->
-                                        <td>
-                                            {{$p->name}}
-                                            @if(isset($product_variation['variation_template_value']))
+                                            {{-- <th class="min-w-70px text-end pb-2">Hours</th>
+                                            <th class="min-w-80px text-end pb-2">Rate</th>
+                                            <th class="min-w-100px text-end pb-2">Amount</th> --}}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($sale_details as $key=>$sd)
+                                        @php
+                                            // dd($sd);
+                                            $p=$sd->product;
+                                            $product_variation =$sd->toArray()['product_variation'];
+                                            $currency=$sd->currency['symbol'] ?? ' ';
+                                            $quantityDp=getSettingValue('quantity_decimal_places');
+                                        @endphp
+                                        <tr class="fw-bold text-gray-700 fs-7 text-end">
+                                            <td class="pt-6 text-start ps-2">{{$key+1}}</td>
+                                            <td class="d-flex align-items-center pt-6">
+                                                <div href="" class="symbol symbol-40px me-2">
+                                                    <span class="symbol-label" style="background-image:url({{asset("
+                                                        storage/product-image/$p->image")}});"></span>
+                                                </div>
+                                                {{$p->name}}
+                                                @if(isset($product_variation['variation_template_value']))
                                                 <span class="my-2 d-block">
                                                     ({{ $product_variation['variation_template_value']['name'] }})
                                                 </span>
+                                                @endif
+                                            </td>
+                                            <td class="pt-6">{{round($sd->quantity,$quantityDp)}}</td>
+                                            @if ($sale['status']=='partial')
+                                                <td class="min-w-100px">{{round($sd->delivered_quantity ?? 0,$currencyDp)}}</td>
                                             @endif
-                                        </td>
-                                        <td>
-                                            {{round($sd->quantity,$quantityDp)}}
-                                        </td>
-                                        @if ($sale['status']=='partial')
-                                            <td class="min-w-100px">{{round($sd->delivered_quantity ?? 0,$currencyDp)}}</td>
-                                        @endif
-                                        <td>
-                                            {{$sd['uom']['name']}}
-                                        </td>
-                                        <td class="text-end">
-                                            {{price($sd->uom_price,$sd->currency_id)}}
-                                        </td>
-                                        <td class="text-end">
-                                            {{price($sd->subtotal,$sd->currency_id)}}
-                                        </td>
-                                        <td class=" ">
-                                            {{$sd->discount_type}}
-                                        </td>
-                                        <td class=" ">
-                                            {{price($sd->per_item_discount)}} &nbsp; {{ $sd->discount_type=='percentage'?'%':$currency }}
-                                        </td>
-                                        <td class="text-end pe-3">
-                                            {{price($sd->subtotal_with_discount,$sd->currency_id)}}
-                                        </td>
-
-
-                                    </tr>
-
-                            @endforeach
-                        </tbody>
-                            <!--end::Table body-->
-                        </table>
-
-                    </div>
-                    <div class="row mt-5 justify-content-end">
-                        {{-- <div class="col-md-6 col-sm-12 col-xs-12">
-                            <div class="table-responsive mt-10">
-                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                                    <!--begin::Table head-->
-                                    <thead class="bg-success">
-                                        <!--begin::Table row-->
-                                        <tr class="bg-success fw-bold fs-6 text-white text-start text-uppercase fs-7 ">
-                                            <th class="ps-3">#</th>
-                                            <th class="min-w-100px">Date</th>
-                                            <th class="min-w-100px">Reference No</th>
-                                            <th class="min-w-100px">Amount</th>
-                                            <th class="min-w-100px">Payment mode</th>
-                                            <th class="min-w-100px">Payment note</th>
-                                        </tr>
-                                        <!--end::Table row-->
-                                    </thead>
-                                    <tbody class="fw-semibold text-gray-800">
-                                        <tr>
-                                            <td colspan="6" class="text-center">
-                                                No payments found
+                                            <td class="pt-6">
+                                               {{$sd['uom']['name']}}
                                             </td>
+                                            <td class="pt-6">
+                                                {{price($sd->uom_price ?? 0,$sd->currency_id)}}
+                                            </td>
+                                            <td class="pt-6 ">
+                                                {{price($sd->subtotal,$sd->currency_id)}}
+                                            </td>
+                                            <td class="pt-6">
+                                                {{$sd->discount_type}}
+                                            </td>
+                                            <td class="pt-6">
+                                               {{price($sd->per_item_discount)}} &nbsp; {{
+                                            $sd->discount_type=='percentage'?'%':$currency }}
+                                            </td>
+                                            <td class="pt-6 text-dark fw-bolder">
+                                               {{price($sd->subtotal_with_discount,$sd->currency_id)}}
+                                            </td>
+                                            {{-- <td class="pt-6 text-dark fw-bolder">$3200.00</td> --}}
                                         </tr>
+                                        @endforeach
+
+
                                     </tbody>
                                 </table>
                             </div>
-                        </div> --}}
-                        <div class="col-md-6 col-sm-12 col-xs-12  me-lg-10">
-                            <div class="table-responsive mt-10">
-                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                                    <!--begin::Table body-->
-                                    <tbody class="fw-semibold text-gray-800 table-bordered billDiv">
-                                        <tr>
-                                            <td>
-                                                Sale Amount
-                                            </td>
-                                            <td class="text-end">
-                                                (=)
-                                            </td>
-                                            <td class="text-end">
-                                                {{price($sale['sale_amount'] ?? 0,$sale['currency_id'])}}
-                                            </td>
-                                        </tr>
-                                        <tr class="">
-                                            <td>
-                                                Total Item Discount:
-                                            </td>
-                                            <td class="text-end">
-                                                (-)
-                                            </td>
-                                            <td class="text-end">
-                                                {{price($sale['total_item_discount'] ?? 0,$sale['currency_id'])}}
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                            Extra Discount:
-                                            </td>
-                                            <td class="text-end">
-                                                (-)
-                                            </td>
-                                            <td class="text-end">
-                                                {{price($sale['extra_discount'] ?? 0)}} &nbsp;{{ $sale['extra_discount_type']=='percentage'?'%':$currency}}
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Total Sale Amount:
-                                            </td>
-                                            <td class="text-end">
-                                                (=)
-                                            </td>
-                                            <td class="text-end">
+                            <!--end::Table-->
+                            <!--begin::Container-->
+                            <div class="d-flex justify-content-end">
+                                <!--begin::Section-->
+                                <div class="mw-600px">
+                                    <!--begin::Item-->
+                                    <div class="d-flex flex-stack mb-3">
+                                        <!--begin::Accountname-->
+                                        <div class="fw-semibold pe-10 text-gray-600 fs-7">Sale Amount:</div>
+                                        <!--end::Accountname-->
+                                        <!--begin::Label-->
+                                        <div class="text-end fw-bold fs-6 text-gray-800">
+                                            {{price($sale['sale_amount'] ?? 0,$sale['currency_id'])}}
+                                        </div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Item-->
+                                    <!--begin::Item-->
+                                    <div class="d-flex flex-stack mb-3">
+                                        <!--begin::Accountname-->
+                                        <div class="fw-semibold pe-10 text-gray-600 fs-7">Total Item Discount:</div>
+                                        <!--end::Accountname-->
+                                        <!--begin::Label-->
+                                        <div class="text-end fw-bold fs-6 text-gray-800">
+                                            {{price($sale['total_item_discount'] ?? 0,$sale['currency_id'])}}
+                                        </div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Item-->
+                                    <!--begin::Item-->
+                                    <div class="d-flex flex-stack mb-3">
+                                        <!--begin::Accountnumber-->
+                                        <div class="fw-semibold pe-10 text-gray-600 fs-7">Extra Discount:</div>
+                                        <!--end::Accountnumber-->
+                                        <!--begin::Number-->
+                                        <div class="text-end fw-bold fs-6 text-gray-800">
+                                            {{price($sale['extra_discount'] ?? 0)}} &nbsp;{{$sale['extra_discount_type']=='percentage'?'%':$currency}}
+                                        </div>
+                                        <!--end::Number-->
+                                    </div>
+                                    <!--end::Item-->
+                                    <!--begin::Item-->
+                                    <div class="d-flex flex-stack mb-3">
+                                        <!--begin::Code-->
+                                        <div class="fw-semibold pe-10 text-gray-600 fs-7">Total Sale Amount:</div>
+                                        <!--end::Code-->
+                                        <!--begin::Label-->
+                                        <div class="text-end fw-bold fs-6 text-gray-800">
                                             {{price($sale['total_sale_amount'],$sale['currency_id'])}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Paid Amount:
-                                            </td>
-                                            <td class="text-end">
-                                                (-)
-                                            </td>
-                                            <td class="text-end">
-                                                {{price($sale['paid_amount'],$sale['currency_id'])}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Balance Amount:
-                                            </td>
-                                            <td class="text-end">
-                                                (=)
-                                            </td>
-                                            <td class="text-end">
-                                                {{price($sale['balance_amount'],$sale['currency_id'])}}
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                    <!--end::Table body-->
-                                </table>
-
+                                        </div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <div class="d-flex flex-stack mb-3">
+                                        <!--begin::Code-->
+                                        <div class="fw-semibold pe-10 text-gray-600 fs-7">Paid Amount:</div>
+                                        <!--end::Code-->
+                                        <!--begin::Label-->
+                                        <div class="text-end fw-bold fs-6 text-gray-800">
+                                            {{price($sale['paid_amount'],$sale['currency_id'])}}
+                                        </div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <div class="d-flex flex-stack">
+                                        <!--begin::Code-->
+                                        <div class="fw-semibold pe-10 text-gray-600 fs-7">Balance Amount:</div>
+                                        <!--end::Code-->
+                                        <!--begin::Label-->
+                                        <div class="text-end fw-bold fs-6 text-gray-800">
+                                           {{price($sale['balance_amount'],$sale['currency_id'])}}
+                                        </div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Item-->
+                                </div>
+                                <!--end::Section-->
                             </div>
+                            <!--end::Container-->
                         </div>
+                        <!--end::Content-->
                     </div>
-                    {{-- <div class="row mt-5 mb-5">
-                        <div class="col-md-6">
-                            <h3 class="text-primary-emphasis fs-4">
-                                Shipping Details:
-                            </h3>
-                            <div class="mt-3 fs-5">
-                                <p>
-                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Exercitationem ipsa iure adipisci culpa explicabo quaerat a in incidunt! Eius aliquid deserunt cum culpa saepe voluptate repudiandae vero. Minima, sequi.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mt-5">
-                            <h3 class="text-primary-emphasis fs-4">
-                                Additional Notes:
-                            </h3>
-                            <div class="mt-3 fs-5">
-                                <p>
-                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Exercitationem ipsa iure adipisci culpa explicabo quaerat a in incidunt! Eius aliquid deserunt cum culpa saepe voluptate repudiandae vero. Minima, sequi.
-                                </p>
-                            </div>
-                        </div>
-                    </div> --}}
-                    <div class="table-responsive mt-10">
-                        <table class="table table-row-dashed fs-6 gy-5" id="kt_customers_table">
-                            <!--begin::Table head-->
-                            <thead class="bg-success">
-                                <!--begin::Table row-->
-                                <tr class="bg-secondary fw-bold fs-6 text-black text-start text-uppercase fs-7 p-2">
-                                    <th class="min-w-60px ps-2">Date	</th>
-                                    <th class="min-w-100px">Action</th>
-                                    <th class="min-w-100px">By</th>
-                                    {{-- <th class="min-w-100px">Note</th> --}}
-                                </tr>
-                                <!--end::Table row-->
-                            </thead>
-                            <!--end::Table head-->
-                            <!--begin::Table body-->
-                            <tbody class="fw-semibold text-gray-800">
 
-                                    <tr>
-                                        <!--begin::Name=-->
-                                        <td class="ps-2">
-                                            {{fDate($sale['sold_at'])}}
-                                        </td>
-                                        <!--end::Name=-->
-                                        <!--begin::Email=-->
-                                        <td>
-                                            <span class="badge badge-success">sale</span>
-                                        </td>
-                                        <td>
-                                            {{$sale['saled_by']['username']??'-'}}
-                                        </td>
-                                        {{-- <td class="">
-                                            <table class="no-border table table-slim mb-0">
-                                                <tbody>
-                                                    <tr>
-                                                        <th>Status</th>
-                                                        <td><span class="badge badge-light-success">Ordered</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Total:</th>
-                                                        <td><span class="badge badge-light-success">Ks 0</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Payment status:</th>
-                                                        <td><span class="badge badge-light-success">Due</span></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td> --}}
-
-
-
-                                    </tr>
-                                    @if ($sale['updated_by'])
-                                        <tr>
-                                            <!--begin::Name=-->
-                                            <td class="ps-2">
-                                                {{fDate($sale['updated_at'])}}
-                                            </td>
-                                            <!--end::Name=-->
-                                            <!--begin::Email=-->
-                                            <td>
-                                                <span class="badge badge-warning">Updated</span>
-                                            </td>
-                                            <td>
-                                                {{$sale['updated_by']['username']??'-'}}
-                                            </td>
-                                            {{-- <td class="">
-                                                <table class="no-border table table-slim mb-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Status</th>
-                                                            <td><span class="badge badge-light-success">Ordered</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Total:</th>
-                                                            <td><span class="badge badge-light-success">Ks 0</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Payment status:</th>
-                                                            <td><span class="badge badge-light-success">Due</span></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td> --}}
-
-
-
-                                        </tr>
-                                    @endif
-                                    @if ($sale['confirm_by'])
-                                        <tr>
-                                            <!--begin::Name=-->
-                                            <td class="ps-2">
-                                                {{fDate($sale['sold_at'])}}
-                                            </td>
-                                            <!--end::Name=-->
-                                            <!--begin::Email=-->
-                                            <td>
-                                                <span class="badge badge-primary">Confirmed</span>
-                                            </td>
-                                            <td>
-                                                {{$sale['confirm_by']['username']??'-'}}
-                                            </td>
-                                            {{-- <td class="">
-                                                <table class="no-border table table-slim mb-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Status</th>
-                                                            <td><span class="badge badge-light-success">Ordered</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Total:</th>
-                                                            <td><span class="badge badge-light-success">Ks 0</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Payment status:</th>
-                                                            <td><span class="badge badge-light-success">Due</span></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td> --}}
-
-
-
-                                        </tr>
-                                    @endif
-                            </tbody>
-                            <!--end::Table body-->
-                        </table>
-
-                    </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     {{-- <button type="button" class="btn btn-primary" id="print">Print</button> --}}

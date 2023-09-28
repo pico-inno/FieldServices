@@ -129,7 +129,7 @@ class paymentAccountsController extends Controller
     }
     private function createPaymentTransaction($account){
         return paymentsTransactions::create([
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
+            'payment_voucher_no'=>generatorHelpers::paymentVoucher('opening_amount'),
             'payment_date'=>now(),
             'transaction_type'=>'opening_amount',
             'payment_account_id'=>$account->id,

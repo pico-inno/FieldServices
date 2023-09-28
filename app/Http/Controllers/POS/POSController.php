@@ -56,6 +56,7 @@ class POSController extends Controller
                 $posRegisterId = decrypt(request('pos_register_id'));
                 $posSession=posRegisterSessions::where('id',$sessionId)->where('pos_register_id',$posRegisterId)->where('status','open')->firstOrFail();
                 $posRegisterQry=posRegisters::where('id',$posRegisterId);
+                $setting = businessSettings::where('id', Auth::user()->business_id)->first();
                 $checkPos=$posRegisterQry->exists();
 
                 if(!$checkPos){
@@ -101,7 +102,7 @@ class POSController extends Controller
         } catch (\Throwable $th) {
             $table=null;
         }
-        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables', 'reservations'));
+        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables', 'reservations', 'setting'));
     }
     public function edit($posRegisterId)
     {

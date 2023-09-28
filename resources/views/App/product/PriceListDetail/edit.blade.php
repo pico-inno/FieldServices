@@ -2,6 +2,7 @@
 @section('styles')
 <style>
 
+
 </style>
 @endsection
 @section('products_icon', 'active')
@@ -55,9 +56,11 @@
                                 <div class="text-danger my-2">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="col-md-4 col-sm-12 mb-8 ">
+                        </div>
                         <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label for="" class="form-label required">{{ __('product/pricelist.currency') }}</label>
-                            <select name="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
+                            <select name="currency_id" id="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
                                 <option></option>
                                 @foreach($currencies as $currency)
                                     <option value="{{ $currency->id }}" @selected($currency->id === $priceList->currency_id)>{{ $currency->name }}</option>
@@ -109,6 +112,8 @@
                             <!--end::Table head-->
                             <!--begin::Table body-->
                             <tbody class="fw-semibold text-gray-700 x" id="price_list_body">
+                                @if ($price_list_details)
+                                    @foreach ($price_list_details as $item)
                                 @php
                                     $PriceListDetaildataFromExcel=request()['PriceListDetaildataFromExcel'];
                                 @endphp
@@ -133,6 +138,10 @@
                                                 </div>
                                             </td>
                                             <td>
+                                                <select name="apply_value[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2" data-hide-search="false" data-placeholder="Please select">
+
+                                                </select>
+                                            </td>
                                                 <div class="fv-row">
                                                     <select name="apply_value[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2"
                                                         data-hide-search="false" data-placeholder="Please select">
@@ -279,6 +288,7 @@ submitButton.addEventListener('click', function (e) {
 });
 </script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
+
 
     @if ($errors->any())
         @foreach ($errors->all() as $error)

@@ -28,12 +28,8 @@
                                 Bussiness:
                             </h3>
                               <address class="mt-3 fs-5">
-                                    {{$location['name']}}<br>
-                                    {{$location['landmark']}}<br>
-                                    {{$location['city'] ? $location['city']."," :''}}
-                                    {{$location['state'] ? $location['state']."," :' '}}
-                                    {{$location['country'] ? $location['country'].",":''}}
-                                    {{$location['zip_code'] ? $location['zip_code']."," :''}}
+                                    {{businessLocationName($location)}}
+                                    {!! addresss($address)!!}
                                 </address>
                         </div>
                         <div class="col-sm-4">

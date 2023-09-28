@@ -87,10 +87,10 @@
                 throttleTimeout = setTimeout(function() {
                     $.ajax({
                         url: `/sell/get/product`,
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
+                        type: 'GET',
+                        // headers: {
+                        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        // },
                         data: {
                             data,
                         },
@@ -386,7 +386,7 @@
             console.log(productsOnSelectData);
         }
 
-        
+
         function inputs(e) {
             let parent = $(e).closest('.transfer_row');
             let quantity = parent.find('.quantity');
@@ -402,7 +402,7 @@
                 before_edit_quantity,
                 smallest_unit_txt,
                 current_stock_qty_txt,
-               
+
 
             }
         }
@@ -413,14 +413,14 @@
             showDeliveredQty($(this));
         })
 
-  
+
         function checkQty(e) {
             const i = inputs(e);
             var quantity = Number(i.quantity.val());
             var before_edit_quantity = Number(i.before_edit_quantity.val());
             var current_stock_qty_txt = Number(i.current_stock_qty_txt.text());
 
-        
+
 
             setTimeout(function() {
                 var isQtyInvalid =  quantity > current_stock_qty_txt + before_edit_quantity;
@@ -687,7 +687,7 @@
                         });
         });
 
-        
+
 
         // $(document).on('input','.extra_discount_amount',function(){
         //     cal_total_sale_amount();

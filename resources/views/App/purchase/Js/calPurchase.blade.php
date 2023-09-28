@@ -5,7 +5,6 @@ $(document).ready(function() {
     let setting=@json($setting);
     let currency=@json($currency);
     let currentCurrency=currency;
-    console.log(currentCurrency);
     let currentCurrencySymbol=currency.symbol;
     let currencies=@json($currencies);
     let lotControl=setting.lot_control;
@@ -220,7 +219,7 @@ $(document).ready(function() {
             </td>
             <td class="${setting.enable_line_discount_for_purchase == 1 ? '' :'d-none'}">
                 <input type="text" class="form-control form-control-sm sum discount_amount per_item_discount input_number " name="purchase_details[${unique_name_id}][per_item_discount]" value="0">
-                <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>${currency.symbol}</div>
+                <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span><span class="input-group-text currencySymbol">${currentCurrencySymbol}</span></div>
                 <input type="hidden" class="form-control form-control-sm sum line_discount"  value="0">
                 <input type="hidden" class="subtotal_with_discount input_number" name="purchase_details[${unique_name_id}][subtotal_with_discount]"  >
             </td>
@@ -236,7 +235,7 @@ $(document).ready(function() {
             </td>
 
             <td class='d-none'>
-               <span class="subtotal_with_tax p-3">0</span>${currency.symbol}
+               <span class="subtotal_with_tax p-3">0</span><span class="input-group-text currencySymbol">${currentCurrencySymbol}</span>
             </td>
 
             <input type="hidden" class="form-control form-control-sm sum  input_number subtotal_with_tax_input" name="purchase_details[${unique_name_id}][subtotal_with_tax]" value="0">
@@ -564,10 +563,11 @@ $(document).ready(function() {
                 $('.extra_discount').val(percentage_amount);
                 $('#total_discount_amount_txt').text(fpDecimal(total_line_discount_val+percentage_amount,currentCurrency));
                 $('#total_discount_amount').val(pDecimal(total_line_discount_val+percentage_amount));
-                price_after_discount=(pDecimal(net_purchase_total_amount - percentage_amount));
+                price_after_discount=pDecimal(net_purchase_total_amount - percentage_amount);
 
             }
-            result=price_after_discount+purchaseExpense;
+            // console.log(price_after_discount,purchaseExpense);
+            result=isNullOrNan(price_after_discount)+isNullOrNan(purchaseExpense);
             $('#total_purchase_amount').val(pDecimal(result));
             $('#total_purchase_amount_txt').text(fpDecimal(result,currentCurrency));
 
@@ -578,7 +578,7 @@ $(document).ready(function() {
 
     function total_balance_amount_cal() {
         setTimeout(() => {
-        let total_purchase_amount=$('#total_purchase_amount').val();
+        let total_purchase_amount=isNullOrNan($('#total_purchase_amount').val());
 
         let paid_amount=isNullOrNan($('#paid_amount').val());
         $('#paid_amount_txt').text(paid_amount);

@@ -10,17 +10,19 @@ use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Models\Product\Unit;
 use Illuminate\Http\Request;
+use App\Models\exchangeRates;
 use App\Models\stock_history;
 use App\Models\Product\UOMSet;
 use App\Models\Contact\Contact;
+use App\Models\locationAddress;
 use App\Models\paymentAccounts;
 use App\Models\Product\Product;
 use App\Helpers\generatorHelpers;
+use App\repositories\locationRepo;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Http\Controllers\Controller;
-use App\Models\exchangeRates;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
@@ -60,7 +62,7 @@ class purchaseController extends Controller
 
     public function add()
     {
-        $locations=businessLocation::all();
+        $locations= locationRepo::getTransactionLocation();
         $currency=$this->currency;
         $suppliers=Contact::where('type','Supplier')
                     ->orWhere('type','Both')
@@ -95,7 +97,7 @@ class purchaseController extends Controller
         try {
             $lastPurchaseId=purchases::orderBy('id','DESC')->select('id')->first()->id ?? 0;
             $purchases_data=$this->purchaseData($request);
-            $purchases_data['purchase_voucher_no'] =sprintf('PVN-' . '%06d', ($lastPurchaseId + 1));
+            $purchases_data['purchase_voucher_no'] = purchaseVoucher($lastPurchaseId);
             $purchases_data['purchased_by']=Auth::user()->id;
             $purchases_data['confirm_at']=$request->status==='confirmed'? now() :null;
             $purchases_data['confirm_by']=$request->status==='confirmed'?  Auth::user()->id : null;
@@ -138,7 +140,7 @@ class purchaseController extends Controller
     {
 
         $purchases=purchases::where('is_delete',0)
-            ->with('business_location_id','supplier')
+            ->with('business_location_id', 'businessLocation','supplier')
             ->OrderBy('id','desc');
             if($request->filled('form_data') && $request->filled('to_date')){
                 $purchases=$purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=',$request->to_date);
@@ -152,6 +154,9 @@ class purchaseController extends Controller
                         <input class="form-check-input" type="checkbox" data-checked="delete" value='.$purchase->id.' />
                     </div>
                 ';
+            })
+            ->editColumn('location', function ($purchase) {
+                return businessLocationName($purchase->businessLocation);
             })
             ->editColumn('supplier', function($purchase){
                 return $purchase->supplier['company_name']??$purchase->supplier['first_name'];
@@ -236,13 +241,18 @@ class purchaseController extends Controller
 
     public function edit($id)
     {
-        $locations = businessLocation::all();
+        $purchase=purchases::where('id',$id)->first();
+        if(!checkTxEditable($purchase->created_at)){
+            return back()->with([
+                'error'=> 'This transaction is not editable.'
+            ]);
+        };
+        $locations = locationRepo::getTransactionLocation();
         $currency = $this->currency;
         $suppliers=Contact::where('type','Supplier')
                 ->orWhere('type','Both')
                 ->select('id','company_name','prefix','first_name','last_name','middle_name','address_line_1','address_line_2','zip_code','city','state','country')
                 ->get();
-        $purchase=purchases::where('id',$id)->first();
         $currencies=Currencies::get();
         $purchase_detail=purchase_details::with([
                 'productVariation'=>function($q){
@@ -263,7 +273,6 @@ class purchaseController extends Controller
                     ]);
                 }
         ])->where('purchases_id',$id)->where('is_delete',0)->get();
-        // dd($purchase_detail->toArray());
 
         $setting = $this->setting;
         return view('App.purchase.editPurchase', compact('purchase','locations', 'purchase_detail','suppliers','setting','currency','currencies'));
@@ -466,7 +475,8 @@ class purchaseController extends Controller
     {
 
         $purchase = purchases::with('business_location_id', 'purchased_by','confirm_by','supplier','updated_by', 'currency')->where('id', $id)->first()->toArray();
-        $location = $purchase['business_location_id'];
+        $location = businessLocation::where("id", $purchase['business_location_id'])->first();
+        $addresss=locationAddress::where('location_id',$location['id'])->first();
         $purchase_details=purchase_details::with(['productVariation'=>function($q){
             $q->select('id','product_id','variation_template_value_id')
                 ->with([
@@ -483,7 +493,8 @@ class purchaseController extends Controller
             'purchase',
             'location',
             'purchase_details',
-            'setting'
+            'setting',
+            'addresss'
         ));
     }
 
@@ -735,7 +746,7 @@ class purchaseController extends Controller
     protected function makePayment($purchase,$payment_account_id,$increasePayment=false,$increaseAmount=0){
         $paymentAmount=$increasePayment ? $increaseAmount :$purchase->paid_amount;
         $data=[
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
+            'payment_voucher_no'=>generatorHelpers::paymentVoucher('purchase'),
             'payment_date'=>now(),
             'transaction_type'=>'purchase',
             'transaction_id'=>$purchase->id,

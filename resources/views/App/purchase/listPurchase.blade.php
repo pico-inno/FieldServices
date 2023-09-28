@@ -64,7 +64,7 @@
                                     <option></option>
                                     <option value="all">All</option>
                                     @foreach ($locations as $l)
-                                        <option value="{{$l->name}}">{{$l->name}}</option>
+                                        <option value="{{$l->name}}">{{businessLocationName($l)}}</option>
                                     @endforeach
                                 </select>
                             </div>

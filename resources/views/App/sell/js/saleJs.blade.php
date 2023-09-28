@@ -3,11 +3,14 @@
     var productsOnSelectData=[];
     $(document).ready(function () {
         var products;
+        var allSelectedProduct=[];
         let unique_name_id=1;
         let products_length=$('#sale_table tbody tr').length-1;
         let productQty=[];
         let setting=@json($setting);
+        console.log(setting);
         let currency=@json($defaultCurrency);
+        let currencies=@json($currencies);
         let locations=@json($locations);
         let lotControl=setting.lot_control;
         function isNullOrNan(val){
@@ -18,7 +21,15 @@
                 return v;
             }
         }
-
+        let priceLists=@json($priceLists);
+        let exchangeRates=@json($exchangeRates ?? []);
+        let currentPriceList;
+        var currentCurrency=@json($defaultCurrency);
+        $('#currency_id').change(function(e){
+            currentCurrency=currencies.find(c=>c.id==$(this).val());
+            currentCurrencySymbol=currentCurrency.symbol;
+            $('.currencySymbol').text(currentCurrencySymbol);
+        })
 
         let editSaleDetails=@json($sale_details ?? []);
         let editSale=@json($sale ?? []);
@@ -34,30 +45,29 @@
                 if(uoms.currentUom){
                     saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(sale.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
                 }
-                if(!product){
-                    newProductData={
-                        'product_id':sale.product.id,
-                        'product_type':sale.product.product_type,
-                        'variation_id':sale.product_variation.id,
-                        'category_id':sale.product.category_id,
-                        'defaultSellingPrices':sale.product_variation.default_selling_price,
-                        'sellingPrices':sale.product_variation.uom_selling_price,
-                        'total_current_stock_qty':editSale.status=='delivered' ? isNullOrNan(sale.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(sale.stock_sum_current_quantity) ,
-                        'validate':true,
-                        'uom':sale.product.uom,
-                        'uom_id':sale.uom_id,
-                        'stock':sale.stock,
-                    };
-                    productsOnSelectData=[...productsOnSelectData,newProductData];
+                newProductData={
+                    'product_id':sale.product.id,
+                    'product_type':sale.product.product_type,
+                    'variation_id':sale.product_variation.id,
+                    'category_id':sale.product.category_id,
+                    'defaultSellingPrices':sale.product_variation.default_selling_price,
+                    'sellingPrices':sale.product_variation.uom_selling_price,
+                    'total_current_stock_qty':editSale.status=='delivered' ? isNullOrNan(sale.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(sale.stock_sum_current_quantity) ,
+                    'validate':true,
+                    'uom':sale.product.uom,
+                    'uom_id':sale.uom_id,
+                    'stock':sale.stock,
+                };
+                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+                if(indexToReplace !== -1){
+                    productsOnSelectData[indexToReplace] = newProductData;
                 }else{
-                    if(editSale.status=='delivered'){
-                        productsOnSelectData[secIndex].total_current_stock_qty=isNullOrNan(productsOnSelectData[secIndex].total_current_stock_qty)+ saleQty;
-                    }
+                    productsOnSelectData=[...productsOnSelectData,newProductData];
                 }
             })
             let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
             getPriceList(CurrentPriceListId);
-            $('.price_group').val(CurrentPriceListId).trigger('change');
+            $('.price_list_input').val(CurrentPriceListId).trigger('change');
             editSaleDetails.forEach(function(sale,index){
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
                 uom.select2();
@@ -124,11 +134,11 @@
                 throttleTimeout = setTimeout(function() {
                     $.ajax({
                         url: `/sell/get/product`,
-                        type: 'POST',
+                        type: 'GET',
                         delay: 150,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
+                        // headers: {
+                        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        // },
                         data: {
                             data,
                         },
@@ -223,12 +233,12 @@
                         return p.variation_id==v.id
                     });
 
-                    append_row(t[0],unique_name_id);
+                    append_row(t[0]);
                     unique_name_id+=1;
                 });
                 return;
             }
-            append_row(selected_product,unique_name_id);
+            append_row(selected_product);
             unique_name_id+=1;
             $('#searchInput').focus();
 
@@ -236,7 +246,20 @@
         });
 
         //append table row for product to sell
-        function append_row(selected_product,unique_name_id) {
+        function append_row(selected_product,forceSplit=false) {
+            allSelectedProduct[selected_product.product_variations.id]=selected_product;
+            if(setting.enable_row == 0 && !forceSplit){
+               let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
+               if(checkProduct){
+                    // let ParentRow=$(`[data-product=${selected_product.product_variations.id}]`);
+                    let selectQtyInput=document.querySelectorAll(`.quantity-${selected_product.product_variations.id}`);
+                    let qtyInput=selectQtyInput[selectQtyInput.length-1];
+                    let val=isNullOrNan(qtyInput.value);
+                    qtyInput.value=val+1;
+                    checkAndStoreSelectedProduct(selected_product);
+                    return;
+               }
+            }
             let default_purchase_price,variation_id;
             let isStorable=selected_product.product_type=="storable";
             // let uomSetOption=""
@@ -275,10 +298,11 @@
                 // `
                 }
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
+            let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left fa-rotate-270 text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
-                <tr class="sale_row mt-2">
+                <tr class="sale_row mt-2" data-product="${selected_product.product_variations.id}">
                     <td>
-                        <div class="my-">
+                        <div class="w-300px">
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
@@ -299,7 +323,7 @@
                     </td>
                     <td>
                         <span class="text-danger-emphasis  stock_alert_${selected_product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
-                        <div class="input-group sale_dialer_${unique_name_id}" >
+                        <div class="input-group sale_dialer_${unique_name_id} w-200px" >
                             <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
                                 <i class="fa-solid fa-minus fs-2"></i>
                             </button>
@@ -324,10 +348,16 @@
                         <input type="hidden" class="price_list_id" name="sale_details[${unique_name_id}][price_list_id]" value='default_selling_price'/>
                     </td>
                     <td class=" fv-row">
-                        <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]">
+                            <span class="input-group-text currencySymbol">${currentCurrency.symbol}</span>
+                        </div>
                     </td>
                     <td>
-                       <input type="text" class="subtotal form-control form-control-sm input_number" name="sale_details[${unique_name_id}][subtotal]" readonly >
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="subtotal form-control form-control-sm input_number" name="sale_details[${unique_name_id}][subtotal]" readonly >
+                            <span class="input-group-text currencySymbol">${currentCurrency.symbol}</span>
+                        </div>
                     </td>
                     <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                         <select name="sale_details[${unique_name_id}][discount_type]" id="" class="form-select form-select-sm discount_type" data-kt-repeater="select2"  data-hide-search="true">
@@ -337,13 +367,19 @@
                     </td>
                     <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                         <input type="text" class="form-control form-control-sm per_item_discount" value="0" name="sale_details[${unique_name_id}][per_item_discount]" placeholder="Discount amount">
-                        <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>${currency['symbol']}</div>
+                        <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>${currentCurrency.symbol}</div>
                         <input type="hidden" class="line_subtotal_discount" name="sale_details[${unique_name_id}][line_subtotal_discount]" value="0">
                         <input type="hidden" class="currency_id" name="sale_details[${unique_name_id}][currency_id]" value="0">
                     </td>
-                    <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
+                    <th class="text-end">
+                        <div class="d-flex  ${!setting.enable_row ? 'justify-content-around -items-center' :'align-items-center justify-content-end'}">
+                            ${splitRow}
+                            <i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
+                        </div>
+                    </th>
                 </tr>
             `;
+
 
             // new row append
             $('#sale_table tbody').prepend(newRow);
@@ -351,8 +387,14 @@
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
             numberOnly();
+                $(`.splitNewRow_${unique_name_id}`).click(function () {
+                    let parent = $(this).closest('.sale_row');
+                    let variationId=parent.find('.variation_id').val();
+                    let product=allSelectedProduct[variationId];
+                    append_row(product,true);
+                    unique_name_id+=1;
+                });
             $('#searchInput').val('');
-            console.log(selected_product,'----------------sp----------------------');
             checkAndStoreSelectedProduct(selected_product);
             let rowCount = $('#sale_table tbody tr').length;
 
@@ -464,18 +506,11 @@
             'uom_id':newSelectedProduct.uom_id,
             'stock':newSelectedProduct.stock,
         };
-        if(productsOnSelectData.length>0){
-            let fileterProduct=productsOnSelectData.filter(function(p){
-                return p.product_id==newSelectedProduct.id && p.variation_id==newSelectedProduct.product_variations.id
-
-            })[0];
-            if(fileterProduct){
-                return
-            }else{
-                productsOnSelectData=[...productsOnSelectData,newProductData];
-            }
+        const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+        if(indexToReplace !== -1){
+            productsOnSelectData[indexToReplace] = newProductData;
         }else{
-                productsOnSelectData=[...productsOnSelectData,newProductData];
+            productsOnSelectData=[...productsOnSelectData,newProductData];
         }
     }
 
@@ -883,6 +918,9 @@
 
     $('[name="business_location_id"]').on('change',function(){
         limitStatusBylocation($(this).val());
+        let CurrentPriceListId=locations.find((location)=>location.id==$(this).val()).price_lists_id;
+        $('[name="price_list"]').val(CurrentPriceListId).trigger('change');
+        getPriceList(CurrentPriceListId);
     });
 
     function limitStatusBylocation($id) {
@@ -908,6 +946,9 @@
     getPriceList(locations[0].price_lists_id);
     $('[name="price_list"]').val(locations[0].price_lists_id).trigger('change');
     $('[name="price_list"]').change(function(){
+        currentPriceList=priceLists.find((p)=>{
+            return p.id == $(this).val();
+        });
         getPriceList($(this).val());
     })
     $('[name="contact_id"]').change(function(){
@@ -944,9 +985,11 @@
             let mainPriceStatus=false;
             mainPriceLists.forEach((mainPriceList) => {
                 if (mainPriceStatus == true) {
-                    return;
+                    priceSetting(mainPriceList, parent,false);
+                }else{
+
+                mainPriceStatus = priceSetting(mainPriceList, parent,true);
                 }
-                mainPriceStatus = priceSetting(mainPriceList, parent);
             })
 
             let basePriceLists=priceList.basePriceList ?? [];
@@ -958,9 +1001,10 @@
                         let priceStatus = false;
                         basePriceList.forEach((bp) => {
                             if (priceStatus == true) {
+                                priceSetting(bp, parent,false);
                                 return;
                             }
-                            priceStatus = priceSetting(bp, parent);
+                            priceStatus = priceSetting(bp, parent,true);
                         })
                         if (priceStatus) {
                             break;
@@ -986,14 +1030,14 @@
             }
         }
     }
-    function priceSetting(priceStage,parentDom){
+    function priceSetting(priceStage,parentDom,dfs){
         let productId=parentDom.find('.product_id').val();
         let variationId=parentDom.find('.variation_id').val();
         let product=productsOnSelectData.filter(function(p){
             return p.product_id==productId && variationId == p.variation_id;
         })[0];
         if(priceStage.applied_type=='All'){
-            if(!priceSettingToUi(priceStage,parentDom,product)){
+            if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                 return false
             }else{
                 return true;
@@ -1001,7 +1045,7 @@
         }else if(priceStage.applied_type=='Category'){
             let categoryId=product.category_id;
             if(priceStage.applied_value==categoryId){
-                if(!priceSettingToUi(priceStage,parentDom,product)){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                     return false
                 }else{
                     return true;
@@ -1009,7 +1053,7 @@
             }
         }else if(priceStage.applied_type=='Product'){
             if(priceStage.applied_value==productId){
-                if(!priceSettingToUi(priceStage,parentDom,product)){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                     return false
                 }else{
                 return true;
@@ -1017,7 +1061,7 @@
             }
         }else if(priceStage.applied_type=='Variation'){
             if(priceStage.applied_value==variationId){
-                if(!priceSettingToUi(priceStage,parentDom,product)){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
                     return false
                 }else{
                     return true;
@@ -1027,7 +1071,7 @@
             return false;
         }
     }
-    function priceSettingToUi(priceStage,parentDom,product){
+    function priceSettingToUi(priceStage,parentDom,product,dfs=true){
         let checkDate=checkAvailableDate(priceStage);
         if(!checkDate){
             return false;
@@ -1108,16 +1152,30 @@
         const inputUom =uoms.filter(function ($u) {
                 return $u.id ==inputUomId;
         })[0];
+        let resultPrice=resultAfterUomChange.resultPrice;
         if(quantity >= qtyByPriceStage){
-            parentDom.find('.uom_price').val(resultAfterUomChange.resultPrice);
+            if(currentPriceList.currency_id != currentCurrency.id){
+                let fromCurrency=exchangeRates.find(xr=>xr.currency_id==currentPriceList.currency_id);
+                let toCurrency=exchangeRates.find(xr=>xr.currency_id==currentCurrency.id);
+                if(fromCurrency !=null && toCurrency != null){
+                    let adjustCurrency = price / fromCurrency.rate;
+                    let convertedAmount = adjustCurrency * toCurrency.rate ;
+                    resultPrice = convertedAmount;
+                }
+            console.log(fromCurrency,toCurrency);
+            }
+            parentDom.find('.uom_price').val(pDecimal(resultPrice));
             parentDom.find('.price_list').val(priceStage.pricelist_id).trigger('change');
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
-            let lastIndexOfStock=product.stock.length-1;
-            let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
-            let result=refPrice * isNullOrNan( inputUom.value);
-            parentDom.find('.uom_price').val(result);
+            console.log(dfs);
+            if(dfs){
+                let lastIndexOfStock=product.stock.length-1;
+                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
+                let result=refPrice * isNullOrNan( inputUom.value);
+                parentDom.find('.uom_price').val(result);
+            }
         }
         return false;
     }

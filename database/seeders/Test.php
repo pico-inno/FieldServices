@@ -66,7 +66,7 @@ class Test extends Seeder
         //         'building_id' => 1,
         //         'business_location_id' => 1,
         //         'name' => '2nd floor',
-        //     ]
+        //  k   ]
         // ];
 
         // DB::table('floors')->insert($floors);

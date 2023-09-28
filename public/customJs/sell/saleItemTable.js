@@ -49,8 +49,8 @@
                     name: 'sale_amount'
                 },
                 {
-                    data: "business_location_id.name",
-                    name: "business_location_id.name"
+                    data: "businessLocation",
+                    name: "businessLocation"
                 },
 
                 {

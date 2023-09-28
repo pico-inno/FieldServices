@@ -87,7 +87,7 @@
                                     <!--end::Text-->
                                     <!--end::Description-->
                                     <div class="fw-semibold  text-gray-600 invoice-sales">
-                                        {{ $location['landmark'] ? $location['landmark'].','  :''}}<br>
+                                        {{ $location['address'] ? $location['address'].','  :''}}<br>
                                         {{$location['city'] ? $location['city'].',' :'' }}{{ $location['state'] ? $location['state'].',' :'' }}
                                         {{$location['country'] ? $location['country'].',' :'' }} <br>
                                         {{$location['zip_code'] ? $location['zip_code'].',' :''}}

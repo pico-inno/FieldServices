@@ -71,7 +71,7 @@
                                                     data-kt-user-table-filter="role" data-hide-search="true" required>
                                                 <option></option>
                                             @foreach ($locations as $location)
-                                                <option value="{{$location->id}}">{{$location->name}}</option>
+                                                <option value="{{$location->id}}">{{businessLocationName($location)}}</option>
                                             @endforeach
                                             </select>
                                         </div>

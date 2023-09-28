@@ -46,7 +46,7 @@
                                     @if(count($locations) > 0)
                                         <option selected value="0">All Locations</option>
                                         @foreach($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
+                                            <option value="{{$location->id}}">{{businessLocationName($location)}}</option>
                                         @endforeach
                                     @else
                                         <option selected disabled value="null">No locations</option>
@@ -122,7 +122,7 @@
                                 <select class="form-select form-select-sm  fw-bold filter_view" data-kt-select2="true"
                                         data-placeholder="Select View Option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
-                                    <option value="1">Batch</option>
+                                    <option value="1" >Batch</option>
                                     <option value="2">Batch Details</option>
                                     <option @if($enableLotSerial == 'off') disabled @endif value="3">Lot/Serial</option>
                                 </select>

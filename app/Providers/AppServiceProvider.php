@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Currencies;
 use Ramsey\Uuid\Type\Integer;
 use App\Helpers\SettingHelpers;
-use App\Models\Currencies;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -34,12 +35,17 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('*', function($view) {
             try {
                 if (Auth::check()) {
-                    $user = Auth::user();
-                    app()->setLocale($user->language ?? 'en');
+                    $user = Auth::user()->personal_info;
+                    $language=$user->language =='mm' ? 'my' : $user->language;
+                    app()->setLocale($language ?? 'en');
                 }
+
             } catch (\Throwable $th) {
             }
         });
+
+        Paginator::useBootstrapFive();
+
 
     }
 }

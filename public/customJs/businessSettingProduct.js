@@ -16,24 +16,24 @@
             const enable_sub_cat_div = document.querySelector('#enable_sub_cat_div');
 
             //init
-            enableProductExCk();
-            enableProductExpiry.addEventListener('change', enableProductExCk);
-            enableCategory();
+            // enableProductExCk();
+            // enableProductExpiry.addEventListener('change', enableProductExCk);
+            // enableCategory();
 
             //enableProductExpiry
-            function enableProductExCk() {
-                if(enableProductExpiry.checked){
-                    productExpiry.disabled=false;
-                    addSellExpiry.disabled=false;
-                    sellExpiry.classList.remove('d-none');
-                }else{
-                    productExpiry.disabled=true;
-                    addSellExpiry.disabled=true;
-                    n_day.disabled=true;
-                    sellExpiry.classList.add('d-none');
+            // function enableProductExCk() {
+            //     if(enableProductExpiry.checked){
+            //         productExpiry.disabled=false;
+            //         addSellExpiry.disabled=false;
+            //         sellExpiry.classList.remove('d-none');
+            //     }else{
+            //         productExpiry.disabled=true;
+            //         addSellExpiry.disabled=true;
+            //         n_day.disabled=true;
+            //         sellExpiry.classList.add('d-none');
 
-                }
-            }
+            //     }
+            // }
 
             //expiray Day check
             function expirayDayCk(){
@@ -44,7 +44,7 @@
                     n_day.disabled=false;
                 }
             }
-            enable_cat_check.addEventListener('change', enableCategory);
+            // enable_cat_check.addEventListener('change', enableCategory);
             function enableCategory() {
                 if (enable_cat_check.checked) {
                     enable_sub_cat_div.classList.remove('d-none');
