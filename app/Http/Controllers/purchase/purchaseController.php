@@ -10,18 +10,19 @@ use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Models\Product\Unit;
 use Illuminate\Http\Request;
+use App\Models\exchangeRates;
 use App\Models\stock_history;
 use App\Models\Product\UOMSet;
 use App\Models\Contact\Contact;
+use App\Models\locationAddress;
 use App\Models\paymentAccounts;
 use App\Models\Product\Product;
 use App\Helpers\generatorHelpers;
+use App\repositories\locationRepo;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Http\Controllers\Controller;
-use App\Models\exchangeRates;
-use App\Models\locationAddress;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
@@ -60,7 +61,7 @@ class purchaseController extends Controller
 
     public function add()
     {
-        $locations=businessLocation::where('is_active',1)->get();
+        $locations= locationRepo::getTransactionLocation();
         $currency=$this->currency;
         $suppliers=Contact::where('type','Supplier')
                     ->orWhere('type','Both')
@@ -244,7 +245,7 @@ class purchaseController extends Controller
                 'error'=> 'This transaction is not editable.'
             ]);
         };
-        $locations = businessLocation::all();
+        $locations = locationRepo::getTransactionLocation();
         $currency = $this->currency;
         $suppliers=Contact::where('type','Supplier')
                 ->orWhere('type','Both')

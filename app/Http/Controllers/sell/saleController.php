@@ -54,6 +54,7 @@ use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
 use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
+use App\repositories\locationRepo;
 
 class saleController extends Controller
 {
@@ -76,13 +77,13 @@ class saleController extends Controller
 
     public function index($saleType = 'allSales')
     {
-        $locations = businessLocation::select('name', 'id')->get();
+        $locations = businessLocation::select('name', 'id','parent_location_id')->get();
         $customers = contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         return view('App.sell.sale.allSales', compact('locations', 'customers', 'saleType'));
     }
     public function saleItemsList(Request $request)
     {
-        $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')->with('business_location_id', 'customer');
+        $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')->with('business_location_id', 'businessLocation', 'customer');
         if ($request->saleType == 'posSales') {
             $saleItems = $saleItems->whereNotNull('pos_register_id');
         }
@@ -113,6 +114,9 @@ class saleController extends Controller
                         <input class="form-check-input" type="checkbox" data-checked="delete" value=' . $saleItem->id . ' />
                     </div>
                 ';
+            })
+            ->editColumn('businessLocation', function ($saleItem) {
+                return businessLocationName($saleItem->businessLocation);
             })
             ->editColumn('customer', function ($saleItem) {
                 if ($saleItem->customer) {
@@ -230,7 +234,7 @@ class saleController extends Controller
     // sale create page
     public function createPage()
     {
-        $locations = businessLocation::all();
+        $locations = locationRepo::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
@@ -238,7 +242,6 @@ class saleController extends Controller
         $setting = businessSettings::where('id',Auth::user()->business_id)->first();
         $defaultCurrency = $this->currency;
         $currencies = Currencies::get();
-        $locations = businessLocation::all();
         $exchangeRates=[];
         if(class_exists('Modules\ExchangeRate\Entities\exchangeRates')){
             $exchangeRates=exchangeRates::get();
@@ -248,7 +251,7 @@ class saleController extends Controller
     // for edit page
     public function saleEdit($id)
     {
-        $locations = businessLocation::all();
+        $locations = locationRepo::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description')->get();

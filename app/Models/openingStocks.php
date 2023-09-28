@@ -34,6 +34,10 @@ class openingStocks extends Model
     {
         return $this->belongsTo(businessLocation::class, 'business_location_id', 'id');
     }
+    public function businessLocation(): BelongsTo
+    {
+        return $this->belongsTo(businessLocation::class, 'business_location_id', 'id');
+    }
     public function opening_person(): HasOne
     {
         return $this->hasOne(BusinessUser::class, 'id', 'opening_person');
