@@ -29,53 +29,59 @@
         if(priceList){
             let parent = e.closest('tr');
             let mainPriceLists = priceList.mainPriceList ?? [];
-            let mainPriceStatus=false;
-            mainPriceLists.forEach((mainPriceList) => {
-                if (mainPriceStatus == true) {
-                    priceSetting(mainPriceList, parent,false);
-                }else{
-
-                mainPriceStatus = priceSetting(mainPriceList, parent,true);
-                }
-            })
-
-            let basePriceLists=priceList.basePriceList ?? [];
-            if(!mainPriceStatus){
-                if(basePriceLists.length > 0){
-                    let i = 0;
-                    while (i < basePriceLists.length) {
-                        let basePriceList = basePriceLists[i];
-                        let priceStatus = false;
-                        basePriceList.forEach((bp) => {
-                            if (priceStatus == true) {
-                                return;
-                            }
-                            priceStatus = priceSetting(bp, parent);
-                        })
-                        if (priceStatus) {
-                            break;
-                        }
-                        i++;
-                    }
-                }else{
-                    let productId = parent.find('input[name="product_id"]').val();
-                    let variationId=parent.find('input[name="variation_id"]').val();
-                    let product=productsOnSelectData.filter(function(p){
-                        return p.product_id==productId && variationId == p.variation_id;
-                    })[0];
-                    let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices ?? 0);
-                    let price=isNullOrNan(result.resultPrice);
-                    if(price == 0){
-                        let uomPirce=parent.find('input[name="selling_price[]"]').val();
-                        parent.find('input[name="selling_price[]"]').val(pDecimal(uomPirce ?? 0));
-                        parent.find('.subtotal_price').text(pDecimal(uomPirce?? 0) );
-
+            let mainPriceStatus = false;
+            let dis_type = parent.find('input[name="discount_type"]').val();
+            if (dis_type!='foc') {
+                mainPriceLists.forEach((mainPriceList) => {
+                    if (mainPriceStatus == true) {
+                        priceSetting(mainPriceList, parent,false);
                     }else{
-                        parent.find('input[name="selling_price[]"]').val(pDecimal(price));
-                        parent.find('.subtotal_price').text(pDecimal(price) );
+
+                    mainPriceStatus = priceSetting(mainPriceList, parent,true);
+                    }
+                })
+
+                let basePriceLists=priceList.basePriceList ?? [];
+                if(!mainPriceStatus){
+                    if(basePriceLists.length > 0){
+                        let i = 0;
+                        while (i < basePriceLists.length) {
+                            let basePriceList = basePriceLists[i];
+                            let priceStatus = false;
+                            basePriceList.forEach((bp) => {
+                                if (priceStatus == true) {
+                                    return;
+                                }
+                                priceStatus = priceSetting(bp, parent);
+                            })
+                            if (priceStatus) {
+                                break;
+                            }
+                            i++;
+                        }
+                    }else{
+                        let productId = parent.find('input[name="product_id"]').val();
+                        let variationId=parent.find('input[name="variation_id"]').val();
+                        let product=productsOnSelectData.filter(function(p){
+                            return p.product_id==productId && variationId == p.variation_id;
+                        })[0];
+                        let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices ?? 0);
+                        let price=isNullOrNan(result.resultPrice);
+                        if(price == 0){
+                            let uomPirce=parent.find('input[name="selling_price[]"]').val();
+                            parent.find('input[name="selling_price[]"]').val(pDecimal(uomPirce ?? 0));
+                            parent.find('.subtotal_price').text(pDecimal(uomPirce?? 0) );
+                        }else{
+                            parent.find('input[name="selling_price[]"]').val(pDecimal(price));
+                            parent.find('.subtotal_price').text(pDecimal(price) );
+                        }
                     }
                 }
+            } else {
+                parent.find('input[name="selling_price[]"]').val(pDecimal(0));
+                parent.find('.subtotal_price').text(pDecimal(0) );
             }
+
         }
     }
     function priceSetting(priceStage,parentDom){

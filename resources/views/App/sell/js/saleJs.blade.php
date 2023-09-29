@@ -355,6 +355,7 @@
                         <select name="sale_details[${unique_name_id}][discount_type]" id="" class="form-select form-select-sm discount_type" data-kt-repeater="select2"  data-hide-search="true">
                             <option value="fixed">fixed</option>
                             <option value="percentage">Percentage</option>
+                            <option value="foc">FOC</option>
                         </select>
                     </td>
                     <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
@@ -674,7 +675,29 @@
             lineDiscountCalulation($(this));
 
         })
+
+    function setFoc(e) {
+        let parent = e.closest('.sale_row');
+        let discount_type=parent.find('.discount_type').val();
+        let uomPrice=parent.find('.uom_price');
+        let subtotal=parent.find('.subtotal');
+        let discount_amount=parent.find('.discount_amount');
+        if(discount_type=='foc'){
+            uomPrice.val(0);
+            subtotal.val(0);
+            uomPrice.attr('disabled',true);
+            subtotal.attr('disabled',true);
+            subtotal.attr('disabled',true);
+        }else{
+            uomPrice.attr('disabled',false);
+            subtotal.attr('disabled',false);
+            discount_amount.attr('disabled',false);
+        }
+
+
+    }
         $(document).on('change','.discount_type',function(e) {
+            setFoc($(this));
             sale_amount_cal() ;
             cal_total_sale_amount();
             cal_balance_amount();
@@ -784,11 +807,16 @@
     //
     function subtotalCalculation(e) {
         let parent = e.closest('.sale_row');
-        let quantity=isNullOrNan(parent.find('.quantity').val());
-        let uom_price=isNullOrNan(parent.find('.uom_price').val());
-        let subtotal=parent.find('.subtotal');
-        subtotal.val(uom_price * quantity);
-        lineDiscountCalulation(e);
+        let disType=parent.find('.discount_type').val();
+        if(disType!='foc'){
+            let quantity=isNullOrNan(parent.find('.quantity').val());
+            let uom_price=isNullOrNan(parent.find('.uom_price').val());
+            let subtotal=parent.find('.subtotal');
+            subtotal.val(uom_price * quantity);
+            lineDiscountCalulation(e);
+        }else{
+           setFoc(e);
+        }
     }
 
     //
@@ -1017,7 +1045,7 @@
                     let product=productsOnSelectData.filter(function(p){
                         return p.product_id==productId && variationId == p.variation_id;
                     })[0];
-                    let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices);
+                    let result=getPriceByUOM(parent,product,'',product?product.defaultSellingPrices:0);
                     let price=isNullOrNan(result.resultPrice);
                     if(price == 0){
                         let uomPirce=parent.find('.uom_price').val();
@@ -1180,18 +1208,22 @@
         return false;
     }
     function getPriceByUOM(parentDom,product,priceStageQty=1,priceStageCalVal=''){
-        const uoms=product.uom.unit_category.uom_by_category;
-        let inputUomId=parentDom.find('.uom_select').val();
-        let uomIdForSale=product.uom_id;
-        const uomForSale =uoms.filter(function ($u) {
-                return $u.id ==uomIdForSale;
-        })[0];
+        if(product){
+            const uoms=product.uom.unit_category.uom_by_category;
+            let inputUomId=parentDom.find('.uom_select').val();
+            let uomIdForSale=product.uom_id;
+            const uomForSale =uoms.filter(function ($u) {
+            return $u.id ==uomIdForSale;
+            })[0];
 
-        const refUOM =uoms.filter(function ($u) {
-                return $u.unit_type =="reference";
-        })[0];
+            const refUOM =uoms.filter(function ($u) {
+            return $u.unit_type =="reference";
+            })[0];
 
-        return changeQtyOnUom2(uomIdForSale,inputUomId,priceStageQty,uoms,priceStageCalVal);
+            return changeQtyOnUom2(uomIdForSale,inputUomId,priceStageQty,uoms,priceStageCalVal);
+        }else{
+            return {resultPrice:0};
+        }
     }
 
 

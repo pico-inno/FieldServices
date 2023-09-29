@@ -1112,9 +1112,16 @@
 
             $(document).on('change', 'select[name="invoice_row_discount_type"]', function(e){
                 $('#invoice_row_discount').find('input[name="discount_amount"]').trigger('input');
-                let disAmt=$('#invoice_row_discount').find('input[name="discount_amount"]');
-                disAmt.val(100);
-                disAmt.attr('disabled',true)
+                    let disAmt=$('#invoice_row_discount').find('input[name="discount_amount"]');
+                if($(this).val()=='foc'){
+                    $('#invoice_row_discount').find('input[name="modal_price_without_dis"]').val(0);
+                    $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',true);
+                    disAmt.val(0);
+                    disAmt.attr('disabled',true);
+                }else{
+                    $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',false);
+                    disAmt.attr('disabled',false);
+                }
             })
 
             $(document).on('input', 'input[name="discount_amount"]', function(e){
@@ -1161,13 +1168,14 @@
             let dis_amount = $(this).find('input[name="discount_amount"]').val();
             let subtotal_with_dis = $(this).find('input[name="subtotal_with_discount"]').val();
 
-            current_tr.find('input[name="selling_price[]"]').val(pDecimal(uom_price));
             // current_tr.find('input[name="each_selling_price"]').val(selling_price_group);
             current_tr.find('input[name="discount_type"]').val(dis_type);
             if(dis_type.toLowerCase() == 'foc'){
-                current_tr.find('input[name="per_item_discount"]').val(100);
+                current_tr.find('input[name="per_item_discount"]').val(0);
                 current_tr.find('input[name="subtotal_with_discount"]').val(0);
+                current_tr.find('input[name="selling_price[]"]').val(0).attr('disabled',true);
             }else{
+                current_tr.find('input[name="selling_price[]"]').val(pDecimal(uom_price)).attr('disabled',false);
                 current_tr.find('input[name="per_item_discount"]').val(dis_amount);
                 current_tr.find('input[name="subtotal_with_discount"]').val(subtotal_with_dis);
                 current_tr.find('input[name="item_detail_note"]').val(item_detail_note);
