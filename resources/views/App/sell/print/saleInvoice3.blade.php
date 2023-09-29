@@ -83,14 +83,11 @@
                                     {{-- <div class="fw-semibold fs-7 text-gray-600 mb-1">Issued By:</div> --}}
                                     <!--end::Label-->
                                     <!--end::Text-->
-                                    <div class="fw-bold  text-gray-800 invoice-sales"> {{ $location['name'] ? $location['name'].'.'  :''}}</div>
+                                    <div class="fw-bold  text-gray-800 invoice-sales"> {{businessLocationName($location)}}</div>
                                     <!--end::Text-->
                                     <!--end::Description-->
                                     <div class="fw-semibold  text-gray-600 invoice-sales">
-                                        {{ $location['address'] ? $location['address'].','  :''}}<br>
-                                        {{$location['city'] ? $location['city'].',' :'' }}{{ $location['state'] ? $location['state'].',' :'' }}
-                                        {{$location['country'] ? $location['country'].',' :'' }} <br>
-                                        {{$location['zip_code'] ? $location['zip_code'].',' :''}}
+                                        {!! addresss($address) !!}
                                 </div>
                                     <!--end::Description-->
                                 </div>

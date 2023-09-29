@@ -67,7 +67,7 @@
                                 <div class="fw-semibold fs-7 text-gray-600 mb-1">Business Location:</div>
                                 <!--end::Label-->
                                 <!--end::Text-->
-                                <div class="fw-bold fs-6 text-gray-800">{{$location['name']}}</div>
+                                <div class="fw-bold fs-6 text-gray-800">{{businessLocationName($location)}}</div>
                                 <!--end::Text-->
                                 <!--end::Description-->
                                 <div class="fw-semibold fs-7 text-gray-600">
