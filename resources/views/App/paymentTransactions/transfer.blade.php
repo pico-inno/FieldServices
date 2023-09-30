@@ -112,11 +112,13 @@
         }
     }
     function exchangeCurrency(amount, fromCurrencyRate, toCurrencyRate) {
+            toCurrencyRate=toCurrencyRate ?? 1;
+            fromCurrencyRate=fromCurrencyRate ?? 1;
             // Convert amount to reference currency (Dollar)
             var inDollar = amount / fromCurrencyRate;
 
             // Convert amount from reference currency to target currency
-            var convertedAmount = inDollar * toCurrencyRate;
+            var convertedAmount = inDollar * toCurrencyRate ?? 1;
 
             return convertedAmount;
         }

@@ -106,7 +106,7 @@ class purchaseController extends Controller
             if ($purchases_details) {
                 $this->purchase_detail_creation($purchases_details, $purchase_id, $purchase);
             }
-            if($request->paid_amount>0 && $request->payment_account){
+            if($request->paid_amount>0){
                 $this->makePayment($purchase,$request->payment_account);
             }else{
                 $suppliers=Contact::where('id',$request->contact_id)->first();
@@ -732,13 +732,15 @@ class purchaseController extends Controller
             'currency_id'=>$purchase->currency_id,
         ];
         paymentsTransactions::create($data);
-        $accountInfo=paymentAccounts::where('id',$payment_account_id);
-        if($accountInfo){
-            $currentBalanceFromDb=$accountInfo->first()->current_balance ;
-            $finalCurrentBalance=$currentBalanceFromDb-$paymentAmount;
-            $accountInfo->update([
-                'current_balance'=>$finalCurrentBalance,
-            ]);
+        if($payment_account_id){
+            $accountInfo = paymentAccounts::where('id', $payment_account_id);
+            if ($accountInfo) {
+                $currentBalanceFromDb = $accountInfo->first()->current_balance;
+                $finalCurrentBalance = $currentBalanceFromDb - $paymentAmount;
+                $accountInfo->update([
+                    'current_balance' => $finalCurrentBalance,
+                ]);
+            }
         }
         $suppliers=Contact::where('id',$purchase->contact_id)->first();
         if($purchase->balance_amount > 0){

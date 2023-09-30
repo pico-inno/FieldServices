@@ -181,25 +181,20 @@
             function validationField(form) {
                 $('.fv-plugins-message-container').remove();
                 let accountId=$('#payment_account').val();
-                let paidAmountValidator;
+                var rule={
+                    notEmpty: { message: "* Amount is required" },
+                };
                 if(accountId){
-                    paidAmountValidator= {
-                        validators:{
-                            notEmpty: { message: "* Amount is required" },
-                            lessThan: {
-                                max: currentBalance,
-                                message: 'Insufficient Balance Amount',
-                            }
-                        }
-                    }
+                    rule.lessThan={
+                        max: currentBalance,
+                        message: 'Insufficient Balance Amount',
+                    };
                 }
                 var validationFields = {
-                        payment_account_id:{
-                            validators: {
-                                notEmpty: { message: "* Payment Account is required" }
-                            },
-                        },
-                        payment_amount:paidAmountValidator,
+                        payment_amount:{
+                            validators:rule,
+                        }
+                        // payment_amount:paidAmountValidator,
                 };
                 return  FormValidation.formValidation(
                     form,
