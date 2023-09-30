@@ -103,7 +103,8 @@ class PriceListDetailController extends Controller
     {
         $currencies = Currencies::all();
         $businessSetting = getSettings();
-        $price_lists = PriceLists::where('currency_id', $priceList->currency_id)->where('id', '!=', $priceList->id)->get();
+        // $price_lists = PriceLists::where('currency_id', $priceList->currency_id)->where('id', '!=', $priceList->id)->get();
+        $price_lists = PriceLists::where('id', '!=', $priceList->id)->get();
         $price_list_details = $priceList->priceListDetails;
 
         return view('App.product.PriceListDetail.edit', compact('priceList', 'currencies', 'price_lists', 'price_list_details','businessSetting'));
