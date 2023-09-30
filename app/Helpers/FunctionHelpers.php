@@ -132,14 +132,7 @@ function isUsePaymnetAcc()
  */
 function getSettings()
 {
-    return businessSettings::where('id', Auth::user()->business_id)
-        ->select(
-            'currency_id',
-            'currency_decimal_places',
-            'quantity_decimal_places',
-            'date_format',
-            'time_format'
-        )
+    return businessSettings::where('id',Auth::user()->business_id)
         ->first();
 }
 

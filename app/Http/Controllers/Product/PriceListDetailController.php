@@ -56,7 +56,6 @@ class PriceListDetailController extends Controller
     {
         $PriceListDetaildata= request()['PriceListDetaildata'] ??[];
         $priceListData=request()['priceListData']?? [];
-        // dd($priceListData);
         $currencies = Currencies::all();
         $businessSetting = getSettings();
         $price_lists = PriceLists::where('currency_id', $businessSetting->currency_id)->get();
