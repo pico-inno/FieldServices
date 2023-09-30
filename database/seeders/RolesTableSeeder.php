@@ -60,7 +60,10 @@ class RolesTableSeeder extends Seeder
         $this->createFeatureAndPermissions($billingFeatures1, $billingPermissions);
         $this->createFeatureAndPermissions($billingFeatures2, $this->basic_permissions);
         $this->createFeatureAndPermissions($system, $vds_permissions);
-//        $this->createFeatureAndPermissions($system, $systemPermissions);
+        $this->createFeatureAndPermissions($system, $systemPermissions);
+
+
+
 
         // Associate permissions with the default role
         $permissions = Permission::pluck('id');
