@@ -816,7 +816,7 @@
                         <div class="row mb-5">
                             <div class="col-12">
                                 <label for="" class="fs-5">Selling Price</label>
-                                <select class="form-select mb-2 form-select-sm rounded-0" disabled name="each_selling_price" data-control="select2" data-hide-search="true">
+                                <select class="form-select mb-2 form-select-sm rounded-0" disabled name="each_selling_price" data-control="select2" data-placeholder="-" placeholder="-" data-hide-search="true">
                                     <option value="default_selling_price">Default Selling Price</option>
                                     @foreach ($price_lists as $pricelist)
                                         <option value="{{ $pricelist->id }}">{{ $pricelist->name }}</option>
@@ -836,6 +836,7 @@
                                 <select class="form-select mb-2 form-select-sm rounded-0" name="invoice_row_discount_type" data-control="select2" data-hide-search="true">
                                     <option value="fixed">Fixed</option>
                                     <option value="percentage" selected>Percentage</option>
+                                    <option value="foc" >FOC</option>
                                 </select>
                             </div>
                             <div class="col-6">

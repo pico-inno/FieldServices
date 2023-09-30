@@ -974,10 +974,10 @@ class saleController extends Controller
 
     public function saleInvoice($id)
     {
-        $sale = sales::with('business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
+        $sale = sales::with( 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
 
-        $location = $sale['business_location_id'];
-
+        $location = businessLocation::where('id',$sale['business_location_id'])->first();
+        $address=$location->locationAddress;
 
         $sale_details = sale_details::with(['productVariation' => function ($q) {
             $q->select('id', 'product_id', 'variation_template_value_id')
@@ -991,7 +991,7 @@ class saleController extends Controller
                 ]);
         }, 'product', 'uom', 'currency'])
             ->where('sales_id', $id)->where('is_delete', 0)->get();
-        $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details'))->render();
+        $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details','address'))->render();
         return response()->json(['html' => $invoiceHtml]);
     }
 

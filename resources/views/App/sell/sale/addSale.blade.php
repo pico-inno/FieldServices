@@ -161,9 +161,9 @@
                                         <th class="min-w-200px ">Quantity </th>
                                         <th class="min-w-100px">UOM </th>
                                         <th class="min-w-100px" style="max-width: 100px;">Price List</th>
-                                        <th class="min-w-100px">Uom Price</th>
-                                        <th class="min-w-100px">Subtotal</th>
-                                        <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc </th>
+                                        <th class="min-w-200px">Uom Price</th>
+                                        <th class="min-w-200px">Subtotal</th>
+                                        <th class="min-w-105px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc </th>
                                         <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc Amount </th>
                                         {{-- <th class="min-w-125px">Discount Amount</th> --}}
                                         {{-- <th class="min-w-125px">Subtotal</th> --}}

@@ -14,7 +14,7 @@
                 .saleTableCard .table-responsive{
                     min-height: 60vh;
                 }
-                #allSaleTable tr td:nth-child(6){
+                #allSaleTable tr td:nth-child(5){
                     text-align: end;
 
                 }

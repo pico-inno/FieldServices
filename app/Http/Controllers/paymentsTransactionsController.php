@@ -370,7 +370,7 @@ class paymentsTransactionsController extends Controller
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
-                    'balance_amount'=>$transaction->expense_amount-$request->payment_amount,
+                    'balance_amount'=>$transaction->expense_amount- $oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
             }elseif($transaction_type == 'sale'){
@@ -382,7 +382,7 @@ class paymentsTransactionsController extends Controller
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
-                    'balance_amount'=>$transaction->total_sale_amount-$request->payment_amount,
+                    'balance_amount'=>$transaction->total_sale_amount-$oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
             }elseif($transaction_type == 'purchase'){
@@ -394,10 +394,11 @@ class paymentsTransactionsController extends Controller
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
-                    'balance_amount'=>$transaction->total_purchase_amount-$request->payment_amount,
+                    'balance_amount' => $transaction->total_purchase_amount - $oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
             }
+            // dd($transaction_type);
             $paymentAccounts=paymentAccounts::where('id',$data->payment_account_id)->first();
             if($data->payment_account_id == $request->payment_account_id){
                 $diffAmt = $request->payment_amount - $data->payment_amount;

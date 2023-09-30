@@ -107,7 +107,7 @@ class purchaseController extends Controller
             if ($purchases_details) {
                 $this->purchase_detail_creation($purchases_details, $purchase_id, $purchase);
             }
-            if($request->paid_amount>0 && $request->payment_account){
+            if($request->paid_amount>0){
                 $this->makePayment($purchase,$request->payment_account);
             }else{
                 $suppliers=Contact::where('id',$request->contact_id)->first();
@@ -460,15 +460,16 @@ class purchaseController extends Controller
 
     public function purhcaseInvoice($id)
     {
-        $purchase=purchases::with('business_location_id', 'supplier', 'purchased_by','currency')->where('id',$id)->first()->toArray();
-        $location=$purchase['business_location_id'];
+        $purchase=purchases::with( 'supplier', 'purchased_by','currency')->where('id',$id)->first()->toArray();
+        $location = businessLocation::where('id', $purchase['business_location_id'])->first();
+        $address = $location->locationAddress;
         $purchase_details=purchase_details::where('purchases_id',$purchase['id'])
                         ->where('is_delete','0')
                         ->with(['product','currency', 'purchaseUom','productVariation'=>function($q){
                             $q->with('variationTemplateValue');
                         }])
                         ->get();
-        $invoiceHtml = view('App.purchase.invoice.invoice',compact('purchase','location','purchase_details'))->render();
+        $invoiceHtml = view('App.purchase.invoice.invoice',compact('purchase','location','purchase_details','address'))->render();
         return response()->json(['html' => $invoiceHtml]);
     }
     public function purchaseDetail($id)
@@ -758,13 +759,15 @@ class purchaseController extends Controller
             'currency_id'=>$purchase->currency_id,
         ];
         paymentsTransactions::create($data);
-        $accountInfo=paymentAccounts::where('id',$payment_account_id);
-        if($accountInfo){
-            $currentBalanceFromDb=$accountInfo->first()->current_balance ;
-            $finalCurrentBalance=$currentBalanceFromDb-$paymentAmount;
-            $accountInfo->update([
-                'current_balance'=>$finalCurrentBalance,
-            ]);
+        if($payment_account_id){
+            $accountInfo = paymentAccounts::where('id', $payment_account_id);
+            if ($accountInfo) {
+                $currentBalanceFromDb = $accountInfo->first()->current_balance;
+                $finalCurrentBalance = $currentBalanceFromDb - $paymentAmount;
+                $accountInfo->update([
+                    'current_balance' => $finalCurrentBalance,
+                ]);
+            }
         }
         $suppliers=Contact::where('id',$purchase->contact_id)->first();
         if($purchase->balance_amount > 0){

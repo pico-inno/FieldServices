@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('uom_price', 22, 4)->nullable();
             $table->decimal('subtotal', 22, 4)->nullable();
             $table->unsignedBigInteger('price_list_id')->nullable();
-            $table->enum('discount_type', ['fixed', 'percentage'])->nullable();
+            $table->enum('discount_type', ['fixed', 'percentage','foc'])->nullable();
             $table->decimal('per_item_discount', 22, 4)->nullable();
             $table->decimal('subtotal_with_discount', 22, 4)->nullable();
             $table->decimal('tax_amount', 22, 4)->nullable();
