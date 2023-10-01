@@ -1,8 +1,6 @@
 <?php
 
 return [
-    'dashboard' => 'ပင်မစာမျက်နာ',
-
-
+    'dashboard' => 'ဒိုင်ခွက်',
     // Other translation keys and values
 ];

@@ -1,11 +1,11 @@
 <?php 
 
 return [
-    'add_generic' => 'Add Generic',
+    'add_generic' => 'ယေဘုယျ ဖြည့်သွင်းပါ',
 
-    'edit_generic' => 'Edit Generic',
+    'edit_generic' => 'ယေဘုယျ ပြင်ဆင်ပါ',
 
-    'generic_list' => 'Generic List',
-    'generic' => 'Generic',
+    'generic_list' => 'ယေဘုယျ စာရင်း',
+    'generic' => 'ယေဘုယျ',
     
 ];

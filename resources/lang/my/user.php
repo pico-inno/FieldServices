@@ -2,9 +2,8 @@
 
 return [
     'users' => 'အသုံးပြုသူများ',
-    'user_managements' =>'အသုံးပြုသူစီမံခန့် ခွဲခြင်း',
-    'users_list' => 'အသုံးပြုသူ စာရင်း',
-    'create_user' => 'အသုံးပြုသူ အသစ်',
-
+    'user_managements' =>'အသုံးပြုသူစီမံခန့်ခွဲမှု',
+    'users_list' => 'အသုံးပြုသူစာရင်း',
+    'create_user' => 'အသုံးပြုသူကိုဖန်တီးပါ။',
     // Other translation keys and values
 ];

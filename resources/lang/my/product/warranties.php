@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'warranties' => 'Warranties',
+    'warranties' => 'အာမခံချက်များ',
 ];

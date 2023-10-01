@@ -1,11 +1,11 @@
 <?php 
 
 return [
-    'add_manufacturer' => 'Add Manufacturer',
+    'add_manufacturer' => 'ထုတ်လုပ်သူ ဖြည့်သွင်းပါ',
 
-    'edit_manufacturer' => 'Edit Manufacturer',
+    'edit_manufacturer' => 'ထုတ်လုပ်သူ ပြင်ဆင်ပါ',
 
-    'manufacturer_list' => 'Manufacturer List',
-    'manufacturer' => 'Manufacturer',
+    'manufacturer_list' => 'ထုတ်လုပ်သူ စာရင်း',
+    'manufacturer' => 'ထုတ်လုပ်သူ',
     
 ];
