@@ -91,7 +91,28 @@
                                 <!--end::Title-->
                                 <div class="row g-10 mb-3 justify-content-between">
                                     <div class="col-12 col-md-6">
-                                        <table class="table  table-layout-fixed  table-row-bordered">
+                                        <div class="group fs-7 text-gray-600 fw-semibold">
+                                            <div>
+                                                Account Number
+                                            </div>
+                                            <div class="d-block fw-bold fs-7  mt-3 mb-5">
+                                                <span>
+                                                    <i class="fa-solid fa-hashtag fs-9"></i>
+                                                </span>
+                                                <span class="text-gray-700">
+                                                    {{$account->account_number}}
+                                                </span>
+                                            </div>
+                                            <div class="d-block fw-bold fs-7 text-gray-800 mt-3">
+                                                <div class="text-gray-600 mb-4">
+                                                   Description:
+                                                </div>
+                                                <span class="text-gray-700 mt-3 d-block">
+                                                    {{$account->description}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <table class="table  table-layout-fixed  table-row-bordered d-none">
                                             <tbody class="">
                                                 <tr>
                                                     <th class="text-start">
@@ -101,14 +122,14 @@
                                                         <span class="fw-bold fs-7 text-gray-800">{{$account->account_number}}</span>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                {{-- <tr>
                                                     <th class="text-start">
                                                         <span class="fw-semibold fs-7 text-gray-600">Account Type:</span>
                                                     </th>
                                                     <td class="text-end">
                                                         <span class="fw-bold fs-7 text-gray-800">{{$account->account_type}}</span>
                                                     </td>
-                                                </tr>
+                                                </tr> --}}
                                                 <tr>
                                                     <th class="text-start">
                                                         <span class="fw-semibold fs-7 text-gray-600">Opening Amount:</span>
@@ -117,11 +138,16 @@
                                                         <span class="fw-bold fs-7 text-gray-800">{{price($account->opening_amount,$account->currency->id)}}</span>
                                                     </td>
                                                 </tr>
+
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="col-12 col-md-6 ">
-                                        <div class="d-flex justify-content-between">
+                                    <div class="col-12 col-md-6 text-end">
+                                        <div class="">
+                                            <a class="btn btn-sm btn-primary me-2 px-4 py-2 fs-8 mt-2" id="edit"
+                                                data-href="{{route('paymentAcc.edit',$account->id)}}">Edit</a>
+                                        </div>
+                                        {{-- <div class="d-flex justify-content-between d-none">
                                             <div class="fw-semibold fs-6 text-gray-600 mb-3">Description :</div>
                                             <div class="">
                                                 <a class="btn btn-sm btn-primary me-2 px-4 py-2 fs-8 mt-2" id="edit" data-href="{{route('paymentAcc.edit',$account->id)}}">Edit</a>
@@ -129,7 +155,7 @@
                                         </div>
                                         <div class="">
                                             <div class="fw-semibold fs-7 text-gray-800">{{$account->description}}</div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="col-12 col-md-6 d-none">
                                         <table class="table  table-layout-fixed  table-row-bordered">

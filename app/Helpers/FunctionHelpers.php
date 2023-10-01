@@ -5,10 +5,11 @@ use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Helpers\SettingHelpers;
 use App\Helpers\generatorHelpers;
-use App\Models\settings\businessLocation;
+use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
+use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 
 
@@ -253,9 +254,10 @@ function saleVoucher($uniqueCount)
     $prefix = getSettingValue('sale_prefix');
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
-function purchaseVoucher($uniqueCount)
+function purchaseVoucher()
 {
     $prefix = getSettingValue('purchase_prefix');
+    $uniqueCount = purchases::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
 function stockTransferVoucher($uniqueCount)

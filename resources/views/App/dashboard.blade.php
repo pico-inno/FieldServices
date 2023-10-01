@@ -289,7 +289,7 @@
                                 <!--begin::Title-->
                                 <h1 class="fw-semibold text-gray-800 text-center lh-lg">Try out our
                                     <br />new
-                                    <span class="fw-bolder">Invoice Manager Module</span></h1>
+                                    <span class="fw-bolder">SMS Module</span></h1>
                                 <!--end::Title-->
                                 <!--begin::Illustration-->
                                 <div class="py-10 text-center">
