@@ -662,7 +662,7 @@
 
                                             <x-setting.setting-row
                                                 :firstLabel="__('business_settings.time_format')" firstFor="time_format"
-                                                :secLabel="__('business_settings.currency_decimal_places')" secFor="currency_position"
+                                                :secLabel="__('business_settings.currency_decimal_places')" secFor="currency_decimal_places"
                                             >
                                                 <x-slot:firstInput>
                                                     <x-forms.nob-select name="time_format" id="time_format" :placeholder="__('business_settings.time_format')" >
@@ -671,7 +671,7 @@
                                                     </x-forms.nob-select>
                                                 </x-slot>
                                                 <x-slot:secInput>
-                                                    <x-forms.nob-select name="currency_position" id="currency_position" :placeholder="__('business_settings.currency_decimal_places')" >
+                                                    <x-forms.nob-select name="currency_decimal_places" id="currency_decimal_places" :placeholder="__('business_settings.currency_decimal_places')" >
                                                         <option value="0" @selected($settingData['currency_decimal_places'] == 0)>0</option>
                                                         <option value="1" @selected($settingData['currency_decimal_places'] == 1)>1</option>
                                                         <option value="2" @selected($settingData['currency_decimal_places'] == 2)>2</option>
