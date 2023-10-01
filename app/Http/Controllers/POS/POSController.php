@@ -58,6 +58,7 @@ class POSController extends Controller
                 $posRegisterQry=posRegisters::where('id',$posRegisterId);
                 $setting = businessSettings::where('id', Auth::user()->business_id)->first();
                 $checkPos=$posRegisterQry->exists();
+                $currencySymbol=$setting->currency->symbol;
 
                 if(!$checkPos){
                     return back()->with(['warning'=>'This POS is not in Register List']);
@@ -102,7 +103,7 @@ class POSController extends Controller
         } catch (\Throwable $th) {
             $table=null;
         }
-        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables', 'reservations', 'setting'));
+        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables', 'reservations', 'setting', 'currencySymbol'));
     }
     public function edit($posRegisterId)
     {

@@ -1,6 +1,7 @@
 <script>
     let locations=@json($locations);
     let setting=@json($setting);
+    let symbol=@json($currencySymbol);
     var price_lists_with_location = [];
     var uoms = @json($uoms ?? null);
     var posRegisterId=@json($posRegisterId);
@@ -211,7 +212,7 @@
 
                         </div>
                     </td>
-                    <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} subtotal_price">${product.product_variations.default_selling_price * 1}</td>
+                    <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} "><span class="subtotal_price">${product.product_variations.default_selling_price * 1}</span> ${symbol}</td>
                     <td class="exclude-modal">
                         <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
                     </td>
@@ -1113,12 +1114,18 @@
             $(document).on('change', 'select[name="invoice_row_discount_type"]', function(e){
                 $('#invoice_row_discount').find('input[name="discount_amount"]').trigger('input');
                     let disAmt=$('#invoice_row_discount').find('input[name="discount_amount"]');
-                if($(this).val()=='foc'){
+                if($(this).val()=='foc'){$('.percSymbol').addClass('d-none');
                     $('#invoice_row_discount').find('input[name="modal_price_without_dis"]').val(0);
                     $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',true);
                     disAmt.val(0);
                     disAmt.attr('disabled',true);
-                }else{
+                }else if($(this).val()=='percentage'){
+                    $('.percSymbol').removeClass('d-none');
+                    $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',false);
+                    disAmt.attr('disabled',false);
+                }
+                else{
+                    $('.percSymbol').addClass('d-none');
                     $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',false);
                     disAmt.attr('disabled',false);
                 }
