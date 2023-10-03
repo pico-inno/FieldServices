@@ -56,6 +56,7 @@ class purchaseActions
         $this->currentStockBalanceCreation($pd, $purchase, 'purchase');
     }
 
+    
     public function updateDefaultPurchasePrice($variation_id, $default_selling_price)
     {
         $variation_product = ProductVariation::where('id', $variation_id)->first();

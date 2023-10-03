@@ -18,12 +18,12 @@
 
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-3">Purchase Order</h1>
+    <h1 class="text-dark fw-bold my-0 fs-3">{{__('purchase.list_purchase')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Purchases</li>
-        <li class="breadcrumb-item text-dark">List </li>
+        <li class="breadcrumb-item text-muted">{{__('purchase.purchase')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('purchase.list_purchase')}} </li>
     </ul>
     <!--end::Breadcrumb-->
 @endsection
@@ -235,14 +235,14 @@
                                     <input class="form-check-input" data-checked="selectAll" id="selectAll" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_purchase_table .form-check-input" value="" />
                                 </div>
                             </th>
-                            <th class="min-w-125px">Actions</th>
+                            <th class="min-w-125px">{{__('table/label.actions')}}</th>
                             <th class="min-w-125px">Date</th>
                             <th>Purchase at</th>
-                            <th class="min-w-125px">Voucher No</th>
-                            <th class="min-w-125px">location</th>
+                            <th class="min-w-125px">{{__('table/label.voucher_no')}}</th>
+                            <th class="min-w-125px">{{__('table/label.location')}}</th>
                             <th class="min-w-125px">Supplier</th>
-                            <th class="min-w-125px">status</th>
-                            <th class="min-w-125px">Payment Status</th>
+                            <th class="min-w-125px">{{__('table/label.status')}}</th>
+                            <th class="min-w-125px">{{__('table/label.paymnet_status')}}</th>
                             {{-- <th class="min-w-125px">Quantity Remaining</th>
                             <th class="min-w-125px">Shipping Status</th>
                             <th class="min-w-125px">Added By</th> --}}

@@ -9,5 +9,8 @@ return [
     'edit_expense'=>'ကုန်ကျစရိတ် ပြင်ဆင်ပါ',
     'select_expense_product'=>'ကုန်ကျစရိတ်ထုတ်ကုန်ကို ရွေးပါ',
     'report'=>'အစီရင်ခံစာ',
-    'create_expense_product'=>'ကုန်ကျစရိတ်ထုတ်ကုန်ဖန်တီးပါ'
+    'create_expense_product'=>'ကုန်ကျစရိတ်ထုတ်ကုန်ဖန်တီးပါ',
+
+    // new label
+    'per_item_expense'=>'ပစ္စည်းတစ်ခုကုန်ကျစရိတ်'
 ];

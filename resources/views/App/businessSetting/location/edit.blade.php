@@ -182,11 +182,10 @@
                                         @endforeach
                                     </x-forms.nob-select>
                                 </x-location-input>
-                                <x-location-input label="Invoice scheme:">
-                                    <x-forms.nob-select placeholder="Invoice scheme">
-                                        <option value=""></option>
-                                        <option value="">Please Select</option>
-                                        <option value="">Default</option>
+                                <x-location-input label="Invoice Layout:">
+                                    <x-forms.nob-select placeholder="Invoice Layout" name="invoice_layout">
+                                        <option value="1" @selected($bl->invoice_layout==1)>Default Template</option>
+                                        <option value="2"@selected($bl->invoice_layout==2)>Moden Template</option>
                                     </x-forms.nob-select>
                                 </x-location-input>
                             </div>

@@ -58,7 +58,7 @@
                                     <input type="text" name="expense_amount" class="form-control form-control-sm">
                                 </div>
                                 <div class="col-md-4 offset-md-4 mb-5  fv-row">
-                                    <label for="" class="form-label fs-7 mb-2 required">Payment Account</label>
+                                    <label for="" class="form-label fs-7 mb-2 ">Payment Account</label>
                                     <select name="payment_account_id" id="payment_account_id" data-control="select2" class="form-select form-select-sm" placeholder="Select Account" data-placeholder="Select Account" >
 
                                     </select>

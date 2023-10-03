@@ -67,7 +67,7 @@ class businessSettingController extends Controller
             'currency_id' => $request->currency_id,
             'currency_decimal_places' => $request->currency_decimal_places,
             'quantity_decimal_places' => $request->quantity_decimal_places,
-            'accounting_method' => $request->accounting_method,
+            'accounting_method' => $request->stock_accounting_method,
             'enable_line_discount_for_purchase' => $request->enable_line_discount_for_purchase ? '1' : '0',
             'enable_line_discount_for_sale' => $request->enable_line_discount_for_sale ? '1' : '0',
             'currency_symbol_placement' => $request->currency_symbol_placement,

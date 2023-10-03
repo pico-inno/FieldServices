@@ -1267,7 +1267,7 @@
 													<div class="menu-item pt-2">
 														<!--begin:Menu content-->
 														<div class="menu-content">
-															<span class="menu-heading fw-bold text-uppercase fs-7">Purchases</span>
+															<span class="menu-heading fw-bold text-uppercase fs-7">{{__('purchase.purchase')}}</span>
 														</div>
 														<!--end:Menu content-->
 													</div>
@@ -1287,7 +1287,7 @@
                                                                 <span class="menu-icon">
                                                                     <i class="fa-solid fa-list-ul"></i>
                                                                 </span>
-                                                                <span class="menu-title fs-6">List Purchase</span>
+                                                                <span class="menu-title fs-6">{{__('purchase.list_purchase')}}</span>
                                                             </a>
                                                         </div>
                                                         @endif
@@ -1297,7 +1297,7 @@
                                                                 <span class="menu-icon">
                                                                      <i class="fa-solid fa-cart-plus"></i>
                                                                 </span>
-                                                                <span class="menu-title px-0">Add Purchase</span>
+                                                                <span class="menu-title px-0">{{__('purchase.add_purchase')}}</span>
                                                             </a>
                                                         </div>
                                                         <div class="menu-item d-none">
@@ -3538,7 +3538,7 @@
                 </div>
                 <!--end::Copyright-->
                 <!--begin::Menu-->
-                <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
+                {{-- <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
                     <li class="menu-item">
                         <a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
                     </li>
@@ -3548,7 +3548,7 @@
                     <li class="menu-item">
                         <a href="https://1.envato.market/EA4JP" target="_blank" class="menu-link px-2">Purchase</a>
                     </li>
-                </ul>
+                </ul> --}}
                 <!--end::Menu-->
             </div>
             <!--end::Container-->

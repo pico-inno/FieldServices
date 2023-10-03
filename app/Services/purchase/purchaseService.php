@@ -21,9 +21,10 @@ class purchaseService
      * @return void
      */
     public function createPurchase($request){
+
         $action=new purchaseActions();
         $payment = new paymentServices();
-        // create purchase
+        // create obj
         $purchase= $action->create($this->purchaseData($request));
 
         //create purchaseDetail

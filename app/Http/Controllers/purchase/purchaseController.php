@@ -97,7 +97,9 @@ class purchaseController extends Controller
             'details' => 'required',
         ])->validate();
         try {
+            // create purchase from service
             $purchase= $service->createPurchase($request);
+
             if ($request->save == 'save_&_print') {
                 return redirect()->route('purchase_list')->with([
                     'success' => 'Successfully Created Purchase',
