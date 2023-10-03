@@ -253,7 +253,8 @@
                if(checkProduct){
                     // let ParentRow=$(`[data-product=${selected_product.product_variations.id}]`);
                     let selectQtyInput=document.querySelectorAll(`.quantity-${selected_product.product_variations.id}`);
-                    let qtyInput=selectQtyInput[selectQtyInput.length-1];
+                    // console.log(selectQtyInput);
+                    let qtyInput=selectQtyInput[0];
                     let val=isNullOrNan(qtyInput.value);
                     qtyInput.value=val+1;
                     checkAndStoreSelectedProduct(selected_product);
@@ -298,7 +299,7 @@
                 // `
                 }
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
-            let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left fa-rotate-270 text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
+            let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
                 <tr class="sale_row mt-2" data-product="${selected_product.product_variations.id}">
                     <td>

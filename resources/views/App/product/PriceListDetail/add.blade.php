@@ -69,8 +69,8 @@
                                 <div class="text-danger my-2">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4 col-sm-12 mb-8 ">
-                        </div>
+                        {{-- <div class="col-md-4 col-sm-12 mb-8 ">
+                        </div> --}}
                         <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label for="" class="form-label required">{{ __('product/pricelist.currency') }}</label>
                             <select name="currency_id" id="currency_id"  class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">

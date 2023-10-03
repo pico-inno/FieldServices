@@ -69,7 +69,7 @@
                         }
                     }else{
                         let productId = parent.find('input[name="product_id"]').val();
-                        let variationId=parent.find('input[name="variation_id"]').val();
+                        let variationId = parent.find('input[name="variation_id"]').val();
                         let product=productsOnSelectData.filter(function(p){
                             return p.product_id==productId && variationId == p.variation_id;
                         })[0];

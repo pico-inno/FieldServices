@@ -343,7 +343,7 @@ Route::prefix('purchase')->group(function () {
         Route::get('/list/data', 'listData');
 
         Route::get('/add', 'add')->name('purchase_add');
-        Route::get('/new/add', 'purchase__new_add')->name('purchase_new_add');
+        Route::get('/new/add', 'purchase_new_add')->name('purchase_new_add');
         Route::post('/store', 'store')->name('purchase_store');
 
         Route::get('{id}/edit', 'edit')->name('purchase_edit');
@@ -846,8 +846,8 @@ Route::controller(PriceListDetailController::class)->group(function () {
     Route::get('/import/price-list', 'importTemplate')->name('priceListTemplate');
 });
 
-Route::controller(priceListImportController::class)->group(function(){
-    Route::post('/price-list/import/{action?}/{id?}','import')->name('priceListImport');
+Route::controller(priceListImportController::class)->group(function () {
+    Route::post('/price-list/import/{action?}/{id?}', 'import')->name('priceListImport');
     Route::get('/download/price-list/excel', 'dowloadDemoExcel')->name('downloadPrceListExcel');
     // Route::post('/price-list/import/update', 'importUpdate')->name('priceListImportUpdate');
 });

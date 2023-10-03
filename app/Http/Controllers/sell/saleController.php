@@ -345,9 +345,9 @@ class saleController extends Controller
                         'saleId'=>$sale_data->id,
                         'currency_id'=>  $request->currency_id,
                     ];
-                    $paymentServices->multiPayment($multiPayment,$data);
+                    $paymentServices->multiPayment($multiPayment,$data, $sale_data);
                 }else{
-                    $payemntTransaction = $paymentServices->makePayment($sale_data, $request->payment_account);
+                    $payemntTransaction = $paymentServices->makePayment($sale_data, $request->payment_account,'sale');
                 }
             } else {
                 $suppliers = Contact::where('id', $request->contact_id)->first();
@@ -394,6 +394,7 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
+            logger($e);
             DB::rollBack();
             if ($request->type == 'pos') {
                 return response()->json([
@@ -1131,11 +1132,11 @@ class saleController extends Controller
         if ($oldTransaction) {
             if ($oldTransaction->payment_account_id != $request->payment_account && isset($request->payment_account)) {
                 $this->depositeToBeforeChangeAcc($oldTransaction, $saleBeforeUpdate);
-                $paymentServices->makePayment($updatedSale, $request->payment_account);
+                $paymentServices->makePayment($updatedSale, $request->payment_account,'sale');
             } elseif ($updatedSale->paid_amount > $saleBeforeUpdate->paid_amount) {
 
                 $increaseAmount = $updatedSale->paid_amount - $saleBeforeUpdate->paid_amount;
-                $paymentServices->makePayment($updatedSale, $request->payment_account, true, $increaseAmount);
+                $paymentServices->makePayment($updatedSale, $request->payment_account,'sale', true, $increaseAmount);
             } elseif ($updatedSale->paid_amount <= $saleBeforeUpdate->paid_amount) {
 
                 $decreaseAmount = $saleBeforeUpdate->paid_amount - $updatedSale->paid_amount;

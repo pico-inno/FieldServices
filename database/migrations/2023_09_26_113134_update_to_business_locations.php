@@ -15,6 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_location_id')->after('name')->nullable();
             $table->unsignedBigInteger('location_type')->after('parent_location_id')->nullable();
             $table->enum('inventory_flow',['fifo','lifo'])->after('location_type')->nullable();
+            $table->unsignedBigInteger('invoice_layout')->default('1')->nullable();
         });
     }
 

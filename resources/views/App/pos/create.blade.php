@@ -891,7 +891,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal"  id="saveExtraSetting">Save</button>
                     </div>
                 </div>
             </div>

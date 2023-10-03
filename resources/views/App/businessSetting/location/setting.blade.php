@@ -116,8 +116,8 @@
                                 </div>
                                 <div class="col-md-12  mb-7  col-lg-5">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold form-label mt-3" for="invoice_scheme">
-                                        <span class="required">Invoice scheme:</span>
+                                    <label class="fs-6 fw-semibold form-label mt-3" for="invoice_layout">
+                                        <span class="required">Invoice Layout:</span>
                                         <i class="fas fa-exclamation-circle ms-1 fs-7 text-success" data-bs-html="true" data-bs-toggle="tooltip" title="Invoice Scheme means invoice numbering format. Select the scheme to be used for this business location<br><small class='text-muted'><i>You can add new Invoice Scheme</b> in Invoice Settings</i></small>"></i>
                                     </label>
                                     <!--end::Label-->
@@ -126,8 +126,8 @@
                                            <i class="fa-solid fa-circle-info"></i>
                                         </span>
                                         <div class="overflow-hidden flex-grow-1">
-                                            <select name="invoice_scheme" id="invoice_scheme" data-hide-search="true" class="form-select rounded-start-0" data-control="select2" data-placeholder="">
-                                                <option value="1">Default</option>
+                                            <select name="invoice_layout" id="invoice_layout" data-hide-search="true" class="form-select rounded-start-0" data-control="select2" data-placeholder="">
+                                                <option value="1">Default Template</option>
                                             </select>
                                         </div>
                                     </div>

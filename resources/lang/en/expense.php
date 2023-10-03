@@ -11,5 +11,9 @@ return [
     'expense_report_list'=>'Expense Report List',
     'expense_report'=>'Expense Report',
     'report'=>'Report',
-    'create_expense_product'=>'Create Expense Product'
+    'create_expense_product'=>'Create Expense Product',
+
+    // new label
+
+    'per_item_expense' => 'Per Item Expense'
 ];

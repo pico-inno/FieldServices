@@ -5,13 +5,13 @@
 @section('purchases_add_active_show', 'active ')
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">Add Purchase</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('purchase.add_purchase')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Purchases</li>
+        <li class="breadcrumb-item text-muted">{{__('purchase.purchase')}}</li>
         <li class="breadcrumb-item text-muted">Order</li>
-        <li class="breadcrumb-item text-dark">Add</li>
+        <li class="breadcrumb-item text-dark">{{__('adjustment.add')}}</li>
     </ul>
     <!--end::Breadcrumb-->
 @endsection
@@ -48,7 +48,7 @@
                         <div class="row mb-5 flex-wrap">
                             <!--begin::Input group-->
                             <div class="mb-7 mt-3 col-12 col-md-3 fv-row">
-                                <label class="form-label fs-6 fw-semibold required">Supplier:</label>
+                                <label class="form-label fs-6 fw-semibold required">{{__('contact.supplier')}}:</label>
                                 <div class="input-group input-group-sm">
                                     <div class="input-group-text">
                                         <i class="fa-solid fa-user text-muted"></i>
@@ -71,7 +71,7 @@
                             </div>
                             <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold required" for="">
-                                    Business Location
+                                    {{__('business_settings.business_location')}}
                                 </label>
                                 <div class="fv-row">
                                     <select name="business_location_id" class="form-select form-select-sm fw-bold " data-kt-select2="true" data-hide-search="false" data-placeholder="Select Location" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
@@ -84,7 +84,7 @@
                             </div>
                             <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold required" for="">
-                                    Purchase Status:
+                                    {{__('purchase.purchase_status')}}:
                                 </label>
                                 <div class="fv-row">
                                     <select name="status" class="form-select form-select-sm fw-bold " id="OrderStatus" data-status="filter"  data-kt-select2="true" data-hide-search="false" data-placeholder="Select Status" data-allow-clear="true"  data-hide-search="true" >
@@ -99,7 +99,7 @@
                             </div>
                             <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
-                                    Currency
+                                    {{__('product/pricelist.currency')}}
                                 </label>
                                 <select name="currency_id" id="currency_id"  class="form-select form-select-sm" data-kt-select2="true" data-placeholder="Select Currency" placeholder="Select Currency" data-status="filter" data-hide-search="true" required>
                                     <option  disabled selected>Select Currency</option>
@@ -110,7 +110,7 @@
                             </div>
                             <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold" for="orderDate">
-                                    Address:
+                                    {{__('purchase.supplier_address')}}:
                                 </label>
                                 <div class="fs-6 text-gray-70 supplier_address">
                                     {{-- ၅၅လမ်း၊ ၁၃၂ လမ်း နှင့် ၁၃၃လမ်းကြား၊ ပြည်ကြီးတံခွန်မြို့နယ်၊ မန္တလေးမြို့။ --}}
@@ -118,7 +118,7 @@
                             </div>
                             <div class="mb-7 mt-3 col-12 col-md-3">
                                 <label class="form-label fs-6 fw-semibold required" for="purchaseDatee">
-                                    Purchase Date:
+                                    {{__('purchase.purchase_date')}}:
                                 </label>
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text"  >
@@ -138,12 +138,12 @@
                                     <div class="input-group-text">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
+                                    <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="{{__('transfer.search_products')}}...">
                                     <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
                             <a class="col-12 col-md-3 btn-light-primary btn btn-sm add_new_product_modal my-5 my-lg-0 productQuickAdd"   data-href="{{route('product.quickAdd')}}"  >
-                                <i class="fa-solid fa-plus me-2 "></i> Add new product
+                                <i class="fa-solid fa-plus me-2 "></i> {{__('business_settings.add_new_product')}}
                             </a>
                         </div>
                         <div class="table-responsive">
@@ -153,17 +153,17 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-8 text-uppercase gs-0 ">
                                         {{-- <th class="min-w-50px">#</th> --}}
-                                        <th class="min-w-125px ps-1" style="max-width: 125px">Product Name</th>
-                                        <th class="min-w-80px">Qty </th>
-                                        <th class="min-w-100px">Unit</th>
-                                        <th class="min-w-125px">UOM Price</th>
-                                        <th class="min-w-80px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}"> Dis Type </th>
-                                        <th class="min-w-125px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Discount Amount </th>
-                                        <th class="min-w-125px">Per Item  Expense</th>
-                                        <th class="min-w-125px d-none">Subtotal <br>
+                                        <th class="min-w-125px ps-1" style="max-width: 125px">{{__('product/product.product_name')}}</th>
+                                        <th class="min-w-80px">{{__('report.quantity')}} </th>
+                                        <th class="min-w-100px">{{__('product/unit-and-uom.unit')}}</th>
+                                        <th class="min-w-125px">{{__('report.uom_price')}}</th>
+                                        <th class="min-w-80px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}"> {{__('service.discount_amount')}} </th>
+                                        <th class="min-w-125px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">{{__('service.discount_amount')}} </th>
+                                        <th class="min-w-125px">{{__('expense.per_item_expense')}}</th>
+                                        <th class="min-w-125px d-none">{{__('table/label.subtotal')}} <br>
                                             {{-- with Expense & Disc --}}
                                         </th>
-                                        <th class="min-w-125px">Subtotal</th>
+                                        <th class="min-w-125px">{{__('table/label.subtotal')}}</th>
                                         @if ( $setting->lot_control=='on')
                                             <th class="min-w-150px">Lot/Serial No</th>
                                         @endif
@@ -175,7 +175,7 @@
                                 <!--begin::Table body-->
                                 <tbody class="fw-semibold text-gray-600 data-table-body">
                                     <tr class="dataTables_empty text-center">
-                                        <td colspan="8 " >There is no data to show</td>
+                                        <td colspan="8 " >{{__('table/label.no_data_to_show')}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -185,7 +185,7 @@
                             <table class="col-12 ">
                                 <tbody class="">
                                     <tr class="mb-5 ">
-                                        <th class="fw-semibold">Total Item :</th>
+                                        <th class="fw-semibold">{{__('table/label.total_items')}} :</th>
                                         <td class="rowcount text-left  fs-6 fw-semibold text-end" >
                                             <span id="total_item fw-bold"> 0 </span>
                                         </td>
@@ -198,7 +198,7 @@
                                     </tr>
                                     <input type="hidden" name="total_line_discount" class="total_line_discount_input input_number" id="" class="" value="{{old('purchase_amount',0)}}">
                                     <tr class="mb-2">
-                                        <th class=" fw-semibold">Net Total Purchase Amount :</th>
+                                        <th class=" fw-semibold">{{__('purchase.total_purchase_amount')}} :</th>
                                         <td class="rowSum text-left fs-6 fw-semibold text-end" id=''>
                                             <span class="net_purchase_total_amount_text"> 0 </span> <span class="currencySymbol">{{$currency['symbol']}}</span>
                                         </td>
