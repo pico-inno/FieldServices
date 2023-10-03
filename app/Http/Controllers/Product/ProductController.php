@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Models\Product\AdditionalProduct;
 use Exception;
 use App\Models\Product\UOM;
 use App\Models\BusinessUser;
@@ -136,7 +137,7 @@ class ProductController extends Controller
         $variations = VariationTemplates::all();
         $unitCategories = UnitCategory::all();
 
-        return view('App.product.product.productAdd', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations'));
+        return view('App.product.product.productAdd', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', ));
     }
     public function quickAdd() {
         $brands = Brand::all();
@@ -151,7 +152,7 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request)
     {
-//return $request;
+
         DB::beginTransaction();
         try{
             $img_name = $this->saveProductImage($request);
@@ -159,6 +160,11 @@ class ProductController extends Controller
             $nextProduct=Product::create($productData);
             $nextProductId = $nextProduct->id;
             $this->insertProductVariations($request, $nextProduct);
+
+            if ($request->additional_product_details){
+                $this->createAdditionalProducts($request->additional_product_details, $nextProduct);
+            }
+
             DB::table('product_variations_tmplates')->insert([
                 'product_id' => $nextProductId,
                 'variation_template_id' => $request->variation_name,
@@ -200,14 +206,34 @@ class ProductController extends Controller
         $uoms = UOM::all();
         $variations = VariationTemplates::all();
         $productVariation = ProductVariation::with('product', 'variationTemplateValue')->where('product_id', $product->id)->get();
+        $additional_products =   AdditionalProduct::with([
+            'productVariation'=>function($q){
+                $q->select('id','product_id','variation_template_value_id','default_purchase_price','profit_percent','default_selling_price')
+                    ->with(
+                        [
+                            'variationTemplateValue'=>function($q){
+                                $q->select('id','name');
+                            },
+                            'product'=>function($q){
+                            $q->with([
+                                'uom'=>function($q){
+                                    $q->with(['unit_category' => function ($q) {
+                                        $q->with('uomByCategory');
+                                    }]);
+                                }
+                            ]);
+                        }
+                        ]);
+            }
+        ])->where('primary_product_id',$product->id)->get();
 
-//        return $productVariation;
-        return view('App.product.product.productEdit', compact('product', 'brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation'));
+
+        return view('App.product.product.productEdit', compact('product', 'brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
-    //    return $request;
+//        return $request;
         DB::beginTransaction();
         try{
             // Update Product
@@ -217,6 +243,10 @@ class ProductController extends Controller
 
             // Update Product Variationn
             $this->insertProductVariations($request, $product, false);
+
+            if ($request->additional_product_details){
+                $this->createAdditionalProducts($request->additional_product_details, $product, false);
+            }
 
             // Update Product Variation Template
             ProductVariationsTemplates::where('product_id', $product->id)->update([
@@ -343,6 +373,62 @@ class ProductController extends Controller
             $productData['updated_by'] = Auth::user()->id;
         }
         return $productData;
+    }
+
+    private function createAdditionalProducts(array $datas , $nextProduct, $isCreating = true){
+        $nextProductId = $nextProduct->id;
+        $productVariation = ProductVariation::where('product_id', $nextProductId)->first();
+        if(!$isCreating) {
+
+            $additionalDetailsIds = array_filter($datas, function ($item){
+               return isset($item['additional_detail_id']);
+            });
+            $oldDetailsIds = array_column($additionalDetailsIds, 'additional_detail_id');
+
+            AdditionalProduct::where('primary_product_id', $nextProductId)
+                ->whereNotIn('id', $oldDetailsIds)
+                ->delete();
+
+            foreach ($additionalDetailsIds as $data) {
+                AdditionalProduct::where('primary_product_id', $nextProductId)
+                    ->where('id', $data['additional_detail_id'])
+                    ->update([
+                    'additional_product_variation_id' => $data['variation_id'],
+                    'uom_id' => $data['uom_id'],
+                    'quantity' => $data['quantity'],
+                ]);
+            }
+
+            $detailsWithoutAdId = array_filter($datas, function ($item) {
+                return !isset($item['additional_detail_id']);
+            });
+
+            foreach ($detailsWithoutAdId as $data) {
+                AdditionalProduct::create([
+                    'primary_product_id' => $nextProduct->id,
+                    'primary_product_variation_id' => $productVariation->id,
+                    'additional_product_variation_id' => $data['variation_id'],
+                    'uom_id' => $data['uom_id'],
+                    'quantity' => $data['quantity'],
+                ]);
+            }
+            return;
+
+        }
+
+
+
+        foreach ($datas as $data) {
+            AdditionalProduct::create([
+                'primary_product_id' => $nextProduct->id,
+                'primary_product_variation_id' => $productVariation->id,
+                'additional_product_variation_id' => $data['variation_id'],
+                'uom_id' => $data['uom_id'],
+                'quantity' => $data['quantity'],
+            ]);
+        }
+        return;
+
     }
 
     private function insertProductVariations($request, $nextProduct, $isCreating = true)

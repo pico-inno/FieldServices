@@ -570,6 +570,72 @@
                                             <!--end::Description-->
                                         </div>
 
+
+                                        <div class="row align-items-center mb-8">
+                                            <div class="col-12">
+                                                <div class="input-group quick-search-form p-0">
+                                                    <div class="input-group-text">
+                                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control form-control-sm rounded-end-3" id="searchInput" placeholder="Search...">
+                                                    <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-rounded table-striped border gy-4 gs-4" id="additional_product_table">
+                                                <!--begin::Table head-->
+                                                <thead class="bg-light rounded-3">
+                                                <!--begin::Table row-->
+                                                <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                    <th class="min-w-125px" style="max-width: 125px">Product</th>
+                                                    <th class="w-200px">Quantity</th>
+                                                    <th class="w-300px">UOM</th>
+                                                    <th class="text-center" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+                                                </tr>
+                                                <!--end::Table row-->
+                                                </thead>
+                                                <!--end::Table head-->
+                                                <!--begin::Table body-->
+                                                <tbody class="fw-semibold text-gray-600 data-table-body">
+                                                @foreach($additional_products as $key=>$pd)
+                                                    @php
+                                                     $product_variation = $pd->toArray()['product_variation'];
+                                                    $product_data = $product_variation['product'];
+                                                    @endphp
+
+                                                    <tr class='cal-gp'>
+                                                        <td class="d-none">
+                                                            <input type="hidden" value="{{$pd->id}}" name="additional_product_details[{{$key}}][additional_detail_id]">
+                                                            <input type="hidden" value="{{$product_data['id']}}" name="additional_product_details[{{$key}}][product_id]">
+                                                            <input type="hidden" value="{{$product_variation['id']}}" name="additional_product_details[{{$key}}][variation_id]">
+                                                        </td>
+                                                        <td>
+                                                            <span  class="text-gray-600 text-hover-primary">{{$product_data['name']}}</span>
+                                                            @if(isset($product_variation['variation_template_value']))
+                                                            <span class="text-gray-500 fw-semibold fs-5">({{$product_variation['variation_template_value']['name']}})</span>
+                                                            @endif
+
+                                                        </td>
+                                                        <td class="fv-row">
+                                                            <input type="text" class="form-control form-control-sm mb-1 purchase_quantity input_number" placeholder="Quantity" name="additional_product_details[{{$key}}][quantity]" value="{{number_format($pd->quantity, 2)}}">
+                                                        </td>
+                                                        <td>
+                                                            <select  name="additional_product_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id " data-kt-repeater="uom_select" data-hide-search="false" data-placeholder="Select unit">
+                                                                @foreach ($product_data['uom']['unit_category']['uom_by_category'] as $unit)
+                                                                    <option value="{{$unit['id']}}" @selected($unit['id']==$pd['uom_id'])>{{$unit['name']}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+
+                                                        <th class="text-center"><i class="fa-solid fa-trash text-danger deleteRow" ></i></th>
+                                                    </tr>
+                                                @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+
                                         {{-- Product Disable  --}}
                                         <div class="row advance-toggle-class d-none">
                                             <div class="col-md-3 mb-8 col-md-offset-4">
@@ -619,8 +685,12 @@
 @push('scripts')
     <script src="/assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
-
+    @include('App.product.JS.productQuickSearch')
 <script>
+    $(document).ready(function (){
+        $('[data-kt-repeater="uom_select"]').select2();
+    });
+
     toastr.options = {
         "closeButton": false,
         "debug": false,
