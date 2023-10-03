@@ -10,7 +10,7 @@ use App\Models\posRegisterTransactions;
 
 class paymentServices
 {
-    public function multiPayment(Array $multiPayment,$data){
+    public function multiPayment(Array $multiPayment,$data, $sale_data){
         foreach ($multiPayment as $mp) {
             $sale_data['paid_amount'] = $mp['payment_amount'];
             $payemntTransaction = $this->makePayment($sale_data, $mp['payment_account_id'] ?? null,'sale');

@@ -105,17 +105,17 @@
                         </span>
                         <!--end::Marked-->
                     </li>
-                    <li class="nav-item   d-block" data-title="{{__('business_settings.pos')}}">
-                        <!--begin::Marked-->
-                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_pos"  data-bs-target="#business_setting_pos" >
-                            <span class="menu-title fw-bold">{{__('business_settings.pos')}}</span>
-                        </span>
-                        <!--end::Marked-->
-                    </li>
                     <li class="nav-item  d-block" data-title="{{__('business_settings.purchases')}}">
                         <!--begin::Marked-->
                         <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_purchases"  data-bs-target="#business_setting_purchases" >
                             <span class="menu-title fw-bold">{{__('business_settings.purchases')}}</span>
+                        </span>
+                        <!--end::Marked-->
+                    </li>
+                    <li class="nav-item   d-block" data-title="{{__('business_settings.pos')}}">
+                        <!--begin::Marked-->
+                        <span class="nav-link setting-link "  data-bs-toggle="tab" href="#business_setting_pos"  data-bs-target="#business_setting_pos" >
+                            <span class="menu-title fw-bold">{{__('business_settings.pos')}}</span>
                         </span>
                         <!--end::Marked-->
                     </li>

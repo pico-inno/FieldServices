@@ -345,7 +345,7 @@ class saleController extends Controller
                         'saleId'=>$sale_data->id,
                         'currency_id'=>  $request->currency_id,
                     ];
-                    $paymentServices->multiPayment($multiPayment,$data);
+                    $paymentServices->multiPayment($multiPayment,$data, $sale_data);
                 }else{
                     $payemntTransaction = $paymentServices->makePayment($sale_data, $request->payment_account,'sale');
                 }
@@ -394,6 +394,7 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
+            logger($e);
             DB::rollBack();
             if ($request->type == 'pos') {
                 return response()->json([
