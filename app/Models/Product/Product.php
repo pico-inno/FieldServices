@@ -55,7 +55,6 @@ class Product extends Model
     public function getVariationName(){
 
     }
-
     public function productVariations(): HasMany
     {
         return $this->hasMany(ProductVariation::class);

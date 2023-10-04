@@ -31,6 +31,10 @@ class ProductVariation extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
+    public function additionalProduct()
+    {
+        return $this->hasMany(additionalProduct::class, 'primary_product_variation_id','id');
+    }
 
     public function variationTemplateValue() : BelongsTo
     {

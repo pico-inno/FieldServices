@@ -21,7 +21,10 @@ class AdditionalProduct extends Model
     {
         return $this->hasOne(ProductVariation::class,'id','additional_product_variation_id');
     }
-
+    public function uom()
+    {
+        return $this->hasOne(UOM::class,'id', 'uom_id');
+    }
 //    public function product(): HasOne
 //    {
 //        return $this->hasOne(Product::class, 'id', 'primary_product_id');

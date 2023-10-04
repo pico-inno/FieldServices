@@ -999,65 +999,63 @@ class saleController extends Controller
         $variation_id = $request->data['variation_id'] ?? null;
 
         $products = Product::where('can_sale', 1)
-            ->where('deleted_at', null)
-            ->where('name', 'like', '%' . $q . '%')
-            ->orWhere('sku', 'like', '%' . $q . '%')
-
+            ->whereNull('deleted_at')
+            ->where(function ($query) use ($q) {
+                $query->where('name', 'like', '%' . $q . '%')
+                    ->orWhere('sku', 'like', '%' . $q . '%');
+            })
             ->with([
                 'productVariations' => function ($query) use ($variation_id) {
                     $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price')
                         ->when($variation_id, function ($query) use ($variation_id) {
                             $query->where('id', $variation_id);
                         })
-                        ->with(['variationTemplateValue' => function ($query) {
-                            $query->select('id', 'name');
-                        }]);
+                        ->with('variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue');
                 },
                 'stock' => function ($query) use ($business_location_id) {
                     $query->where('current_quantity', '>', 0)
                         ->where('business_location_id', $business_location_id);
-                }, 'uom' => function ($q) {
-                    $q->with(['unit_category' => function ($q) {
-                        $q->with('uomByCategory');
-                    }]);
-                }
+                },
+                'uom.unit_category.uomByCategory'
             ])
-            ->withSum(['stock' => function ($q) use ($business_location_id) {
-                $q->where('business_location_id', $business_location_id);
+            ->withSum(['stock' => function ($query) use ($business_location_id) {
+                $query->where('business_location_id', $business_location_id);
             }], 'current_quantity')
-            ->get()
-            ->map(function ($product) {
-                $batch_nos = [];
-                foreach ($product->stock as $stock) {
-                    $no = $stock['batch_no'];
-                    $lot_id = $stock['id'];
-                    $batch_nos[] = ['id' => $lot_id, 'no' => $no];
-                }
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'product_code' => $product->product_code,
-                    'category_id' => $product->category_id,
-                    'sku' => $product->sku,
-                    'has_variation' => $product->has_variation,
-                    'product_type' => $product->product_type,
-                    'uom_id' => $product->uom_id,
-                    'uom' => $product->uom,
-                    'purchase_uom_id' => $product->purchase_uom_id,
-                    'product_variations' => $product->has_variation == 'single' ? $product->productVariations->toArray()[0] : $product->productVariations->toArray(),
-                    'total_current_stock_qty' => $product->stock_sum_current_quantity ?? 0,
-                    'batch_nos' => $batch_nos,
-                    'stock' => $product->stock->toArray(),
-                ];
-            });
+            ->get();
+
+        $result = [];
+
         foreach ($products as $product) {
-            if ($product['has_variation'] == 'variable') {
-                $product_variation = $product['product_variations'];
-                foreach ($product_variation as $variation) {
+            $batch_nos = [];
+            foreach ($product->stock as $stock) {
+                $no = $stock['batch_no'];
+                $lot_id = $stock['id'];
+                $batch_nos[] = ['id' => $lot_id, 'no' => $no];
+            }
+
+            $result[] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'product_code' => $product->product_code,
+                'category_id' => $product->category_id,
+                'sku' => $product->sku,
+                'has_variation' => $product->has_variation,
+                'product_type' => $product->product_type,
+                'uom_id' => $product->uom_id,
+                'uom' => $product->uom,
+                'purchase_uom_id' => $product->purchase_uom_id,
+                'product_variations' => $product->has_variation == 'single' ? $product->productVariations->toArray()[0] : $product->productVariations->toArray(),
+                'total_current_stock_qty' => $product->stock_sum_current_quantity ?? 0,
+                'batch_nos' => $batch_nos,
+                'stock' => $product->stock->toArray(),
+            ];
+
+            if ($product->has_variation == 'variable') {
+                foreach ($product->productVariations as $variation) {
                     $batch_nos = [];
                     $reference_uom_id = [];
                     $total_current_stock_qty = 0;
-                    $stocks = array_filter($product['stock'], function ($s) use ($variation) {
+                    $stocks = array_filter($product->stock->toArray(), function ($s) use ($variation) {
                         return $s['variation_id'] == $variation['id'] && $s['current_quantity'] > 0;
                     });
                     foreach ($stocks as $stock) {
@@ -1068,28 +1066,68 @@ class saleController extends Controller
                         $reference_uom_id = $stock['ref_uom_id'];
                     }
                     $variation_product = [
-                        'id' => $product['id'],
-                        'name' => $product['name'],
-                        'sku' => $product['sku'],
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'sku' => $product->sku,
                         'total_current_stock_qty' => $total_current_stock_qty,
-                        'stock' => [...$stocks],
+                        'stock' => $stocks,
                         'uom_id' => $reference_uom_id,
                         'product_variations' => $variation,
-                        'uom_id' => $product['uom_id'],
-                        'uom' => $product['uom'],
-                        'batch_nos' => $product['batch_nos'],
+                        'uom_id' => $product->uom_id,
+                        'uom' => $product->uom,
+                        'batch_nos' => $batch_nos,
                         'variation_id' => $variation['id'],
-                        'category_id' => $product['category_id'],
+                        'category_id' => $product->category_id,
                         'has_variation' => 'sub_variable',
-                        'product_type' => $product['product_type'],
-                        'variation_name' => $variation['variation_template_value']['name'],
+                        'product_type' => $product->product_type,
+                        'variation_name' => $variation['variationTemplateValue']['name'],
                     ];
-                    $products[] = $variation_product;
+                    $result[] = $variation_product;
                 }
             }
         }
-        return response()->json($products, 200);
+
+        return response()->json($result, 200);
     }
+    public function getSuggestionProduct(Request $request){
+        $locationId = $request['locationId'];
+        $productId = $request['productId'];
+        $variationId = $request['variationId'];
+        $product=Product::where('id', $productId)->with('uom.unit_category.uomByCategory')->first();
+        $variation=ProductVariation::where('id',$variationId)
+                    ->where('product_id', $productId)
+                    ->with('additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue','variationTemplateValue')
+                    ->first();
+        $stockQuery=CurrentStockBalance::where('variation_id',$variationId)->where('current_quantity', '>', 0)
+            ->where('business_location_id', $locationId);
+        $total_current_stock_qty= $stockQuery->sum('current_quantity');
+        $stocks= $stockQuery->get();
+        $batch_nos = [];
+        foreach ($stocks as $stock) {
+            $no = $stock['batch_no'];
+            $lot_id = $stock['id'];
+            $batch_nos[] = ['id' => $lot_id, 'no' => $no];
+        }
+        $result=[
+            'id' => $product->id,
+            'name' => $product->name,
+            'sku' => $product->sku,
+            'total_current_stock_qty' => $total_current_stock_qty,
+            'variation_name' => $variation['variationTemplateValue']? $variation['variationTemplateValue']['name']:'',
+            'stock' => $stocks,
+            'uom_id' => $product->uom_id,
+            'product_variations' => $variation,
+            'uom_id' => $product->uom_id,
+            'uom' => $product->uom,
+            'batch_nos' => $batch_nos,
+            'variation_id' => $variation['id'],
+            'category_id' => $product->category_id,
+            'has_variation' => 'sub_variable',
+            'product_type' => $product->product_type,
+        ];
+        return response()->json($result, 200);
+    }
+
 
     public function saleInvoice($id)
     {

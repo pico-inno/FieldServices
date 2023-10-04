@@ -381,6 +381,7 @@ Route::prefix('sell')->group(function () {
         Route::post('/${id}/update', 'update')->name('update_sale');
 
         Route::post('get/product', 'getProduct');
+        Route::get('get/suggestion/product', 'getSuggestionProduct');
         Route::get('{id}/price/list', 'getpriceList');
 
 

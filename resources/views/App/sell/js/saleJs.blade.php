@@ -10,6 +10,7 @@
         let currency=@json($defaultCurrency);
         let locations=@json($locations);
         let lotControl=setting.lot_control;
+        var suggestionProduct=[];
         function isNullOrNan(val){
             let v=parseFloat(val);
             if(v=='' || v==null || isNaN(v)){
@@ -234,11 +235,102 @@
 
 
         });
+        function showSuggestion(additionalProduct) {
+            if(additionalProduct.length>0){
+                $('#suggestionProducts').html('');
+                var modal = new bootstrap.Modal($('#suggestionModal'));
+                additionalProduct.forEach(ap => {
+                    let productInfo=ap.product_variation.product;
+                    let product={name:productInfo.name,id:productInfo.id};
+                    let variation_id=ap.product_variation.id;
+                    let variation_template_value=ap.product_variation.variation_template_value;
+                    let qty=ap.quantity;
+                    let uom=ap.uom;
+                    let uomId=ap.uom_id;
+                    let checkProduct =suggestionProduct.find((sp)=>{
+                        return sp.variation_id==variation_id && sp.qty==qty && sp.uomId ==uomId;
+                    })
+                    if(!checkProduct){
+                        // <i class="fa-solid fa-xmark-circle me-3"></i>
+                        //  <span
+                        //     class="btn w-auto min-w-175px text-center bg-light rounded-1 fw-semibold fs-7 pe-4 py-1 text-gray-800 shadow-md suggestionProduct"
+                        //     data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}">
+                        //      ${product.name} ${variation_template_value ? '(' + variation_template_value.name  + ')' :''} x ${qty} ${uom.short_name}
+                        // </span>
+                        let badge=`
+                            <div class="cursor-pointer  border border-1 rounded px-2 py-3 d-flex mb-2 suggestionProduct" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}">
+                                <div class="img bg-light w-50px h-50px rounded">
+
+                                </div>
+                                <div class="product-info ms-4 pt-1">
+                                    <span class="fw-bold text-gray-800">${product.name} <span class="text-gray-700 fw-semibold">
+                                        ${variation_template_value ? '(' + variation_template_value.name + ')' :''}</span></span>
+                                    <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30 pcs</span></span>
+                                </div>
+                            </div>
+                        `
+                        $('#suggestionProducts').append(badge);
+                        $('.suggestionProduct').off('click').on('click',function(){
+                            let suggestionProductDiv=$(this);
+                            let variationId=$(this).data('varid');
+                            let dataUomId=$(this).data('uomid');
+                            let productId=$(this).data('productid');
+                            let locationId=$('[name="business_location_id"]').val();
+                            let qty=$(this).data('qty');
+                            suggestionProduct.find((sp,i)=>{
+                                if(sp.variation_id==variationId && sp.qty==qty && sp.uomId ==dataUomId){
+                                    suggestionProduct.splice(i,1);
+                                    return i;
+                                }else{
+                                    return null;
+                                }
+                            })
+                            $.ajax({
+                                url:'/sell/get/suggestion/product',
+                                data:{
+                                    locationId,
+                                    variationId,
+                                    productId
+                                },
+                                type: 'GET',
+                                error:function(e){
+                                    status=e.status;
+                                    if(status==405){
+                                        warning('Method Not Allow!');
+                                    }else if(status==419){
+                                        error('Session Expired')
+                                    }else{
+                                        console.log(' Something Went Wrong! Error Status: '+status )
+                                    };
+                                },
+                                success: function(results){
+                                    append_row(results,unique_name_id,qty,dataUomId);
+                                    unique_name_id++;
+
+                                }
+                            })
+                            suggestionProductDiv.remove();
+                            if($('.suggestionProduct').length <=0){
+                                modal.hide();
+                                $('.modal-backdrop').remove();
+                            }
+
+                        })
+                        suggestionProduct=[...suggestionProduct,{variation_id,qty,uomId}];
+                    }
+
+                });
+                modal.show();
+            }
+        }
+
 
         //append table row for product to sell
-        function append_row(selected_product,unique_name_id) {
+        function append_row(selected_product,unique_name_id,qty='1',suggestUom=null) {
             let default_purchase_price,variation_id;
             let isStorable=selected_product.product_type=="storable";
+            let additionalProduct=selected_product.product_variations.additional_product;
+            showSuggestion(additionalProduct);
             // let uomSetOption=""
             let uomIds=[];
             // if the item is out of stock reutrn do nothing;
@@ -303,7 +395,7 @@
                             <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
                                 <i class="fa-solid fa-minus fs-2"></i>
                             </button>
-                            <input type="text" class="form-control form-control-sm quantity input_number form-control-sm quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="1" data-kt-dialer-control="input"/>
+                            <input type="text" class="form-control form-control-sm quantity input_number form-control-sm quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="${qty}" data-kt-dialer-control="input"/>
                             <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
                                 <i class="fa-solid fa-plus fs-2"></i>
                             </button>
@@ -352,7 +444,6 @@
             $('.quick-search-results').empty();
             numberOnly();
             $('#searchInput').val('');
-            console.log(selected_product,'----------------sp----------------------');
             checkAndStoreSelectedProduct(selected_product);
             let rowCount = $('#sale_table tbody tr').length;
 
@@ -400,7 +491,12 @@
             });
             // optionSelected(selected_product.lot_serial_nos[0],$(`[data-lot-select-${unique_name_id}="select2"]`));
             // optionSelected(selected_product.uom_id,$(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`));
-            optionSelected(selected_product.uom_id,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
+            console.log(suggestUom);
+            if(suggestUom){
+                optionSelected(suggestUom,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
+            }else{
+                optionSelected(selected_product.uom_id,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
+            }
 
             // getLotByUom($(`[data-uomSet-select-${unique_name_id}="select2"]`));
             setTimeout(() => {
