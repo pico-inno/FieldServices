@@ -104,7 +104,7 @@ class expenseController extends Controller
         $data['balance_amount'] = $data['expense_amount'] - $data['paid_amount'];
         if ($data['expense_amount'] ==  $data['paid_amount']) {
             $data['payment_status'] = 'paid';
-        } elseif ($data['expense_amount'] ==  0) {
+        } elseif ($data['paid_amount'] ==  0) {
             $data['payment_status'] = 'due';
         } else {
             $data['payment_status'] = 'partial';
@@ -139,14 +139,14 @@ class expenseController extends Controller
             'documents'
         );
         $expense = expenseTransactions::where('id', $id)->first();
+        $data['balance_amount'] = $data['expense_amount'] - $expense->paid_amount;
         if ($data['expense_amount'] ==  $expense->paid_amount) {
             $data['payment_status'] = 'paid';
-        } elseif ($data['expense_amount'] ==  0) {
+        } elseif ($data['expense_amount'] ==  $data['balance_amount']) {
             $data['payment_status'] = 'due';
         } else {
             $data['payment_status'] = 'partial';
         }
-        $data['balance_amount'] = $data['expense_amount'] - $expense->paid_amount;
         $data['updated_by'] = Auth::user()->id;
         $data['updated_at'] = now();
         $expense->update($data);

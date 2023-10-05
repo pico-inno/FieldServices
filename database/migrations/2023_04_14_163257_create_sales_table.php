@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('business_location_id')->nullable();
+            $table->unsignedBigInteger('table_id')->nullable();
             $table->string('sales_voucher_no')->nullable();
             $table->unsignedBigInteger('contact_id')->nullable();
             $table->enum('status', [ 'quotation', 'draft','pending','order', 'partial', 'delivered'])->nullable();

@@ -162,6 +162,9 @@ class POSController extends Controller
         $locations = businessLocation::all();
         $price_lists = PriceLists::all();
         $currentStockBalance = CurrentStockBalance::all();
+
+        $setting = businessSettings::where('id', Auth::user()->business_id)->first();
+        $currencySymbol = $setting->currency->symbol;
         $uoms = UOM::all();
 
         $categories = Category::all();
@@ -176,7 +179,7 @@ class POSController extends Controller
             $table = null;
         }
         // dd($saleDetails->toArray());
-        return view('App.pos.edit', compact('sale', 'paymentAcc', 'saleDetails', 'locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations', 'posRegisterId', 'posRegister', 'tables', 'posSession'));
+        return view('App.pos.edit', compact('sale','setting', 'currencySymbol' ,'paymentAcc', 'saleDetails', 'locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations', 'posRegisterId', 'posRegister', 'tables', 'posSession'));
     }
     public function productVariationsGet()
     {

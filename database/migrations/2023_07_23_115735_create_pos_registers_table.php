@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('payment_account_id')->nullable();
             $table->enum('status',['open','close'])->nullable();
             $table->integer('printer_id')->nullable();
+            $table->unsignedBigInteger('use_for_res')->before('printer_id')->nullable();
             $table->timestamps();
         });
     }

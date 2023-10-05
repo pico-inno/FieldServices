@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sale_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sales_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
             $table->unsignedBigInteger('variation_id')->nullable();
             $table->unsignedBigInteger('uom_id')->nullable();
@@ -32,6 +33,9 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('rest_order_id')->nullable();
+            $table->text('note')->nullable();
+            $table->enum('rest_order_status', ['order', 'preparing', 'ready', 'complete'])->nullable();
             $table->boolean('is_delete')->default(false)->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
