@@ -14,7 +14,7 @@
                 .saleTableCard .table-responsive{
                     min-height: 60vh;
                 }
-                #allSaleTable tr td:nth-child(6){
+                #allSaleTable tr td:nth-child(5){
                     text-align: end;
 
                 }
@@ -73,7 +73,7 @@
                                 <select class="form-select form-select-sm fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-saleItem-table-filter="businesslocation" data-hide-search="true">
                                     <option value="all">All</option>
                                     @foreach ($locations as $l)
-                                        <option value="{{$l->name}}">{{$l->name}}</option>
+                                        <option value="{{$l->name}}">{{businessLocationName($l)}}</option>
                                     @endforeach
                                 </select>
                             </div>

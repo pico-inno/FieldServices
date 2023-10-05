@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'add_pricelist' => 'Add Pricelist',
+    'add_pricelist' => 'စျေးနှုန်းစာရင်း ဖြည့်သွင်းပါ',
 
-    'business' => 'Business',
-    'base_price' => 'Base Price',
+    'business' => 'စီးပွားရေး',
+    'base_price' => 'အခြေခံဈေး',
 
-    'currency' => 'Currency',
-    'cost' => 'Cost',
+    'currency' => 'ငွေကြေး',
+    'cost' => 'ကုန်ကျစရိတ်',
 
-    'edit_pricelist' => 'Edit Pricelist',
+    'edit_pricelist' => 'စျေးနှုန်းစာရင်း ပြင်ဆင်ပါ',
 
-    'pricelist' => 'Price List',
+    'pricelist' => 'စျေးနှုန်းစာရင်း',
 ];

@@ -1,46 +1,46 @@
 <?php 
 
 return [
-    'add_service_type' => 'Add Service Type',
-    'add_service' => 'Add Service',
-    'add_service_sale' => 'Add Service Sale',
+    'add_service_type' => 'ဝန်ဆောင်မှုအမျိုးအစားထည့်ပါ',
+    'add_service' => 'ဝန်ဆောင်မှုထည့်ပါ',
+    'add_service_sale' => 'ဝန်ဆောင်မှုရောင်းရန် ထည့်ပါ',
 
-    'balance_amount' => 'Balance Amount',
+    'balance_amount' => 'လက်ကျန်ငွေပမာဏ',
 
-    'customer' => 'Customer',
+    'customer' => 'ဖောက်သည်',
 
-    'date' => 'Date',
-    'discount' => 'Discount',
-    'discount_type' => 'Dsicount Type',
-    'discount_amount' => 'Discount Amount',
+    'date' => 'ရက်စွဲ',
+    'discount' => 'လျှော့စျေး',
+    'discount_type' => 'လျှော့စျေးအမျိုးအစား',
+    'discount_amount' => 'လျှော့စျေးပမာဏ',
 
-    'edit_service_type' => 'Edit Service Type',
-    'edit_service' => 'Edit Service',
-    'edit_service_sale' => 'Edit Service Sale',
+    'edit_service_type' => 'ဝန်ဆောင်မှုအမျိုးအစားကို ပြင်ဆင်ပါ',
+    'edit_service' => 'ဝန်ဆောင်မှုကို ပြင်ဆင်ပါ',
+    'edit_service_sale' => 'ဝန်ဆောင်မှုရောင်းရန်ကို ပြင်ဆင်ပါ',
 
-    'is_active' => 'Is Active',
-    'items' => 'Items',
+    'is_active' => 'အသက်ဝင်သည်',
+    'items' => 'ပစ္စည်းများ',
 
-    'location' => 'Location',
+    'location' => 'တည်နေရာ',
 
-    'price' => 'Price',
-    'paid_amount' => 'Paid Amount',
+    'price' => 'စျေးနှုန်း',
+    'paid_amount' => 'ပေးဆောင်သည့်ပမာဏ',
 
-    'remark' => 'Remark',
+    'remark' => 'မှတ်ချက်',
 
-    'service_type' => 'Service Type',
-    'service_type_list' => 'Service Type List',
-    'service' => 'Service',
-    'service_sale' => 'Service Sale',
-    'service_list' => 'Service List',
-    'service_sale_list' => 'Service Sale List',
-    'service_code' => 'Service Code',
-    'service_name' => 'Service Name',
-    'sale_amount' => 'Sale Amount',
-    'status' => 'Status', 
-    'save_and_print' => 'Save & Print',
+    'service_type' => 'ဝန်ဆောင်မှုအမျိုးအစား',
+    'service_type_list' => 'ဝန်ဆောင်မှုအမျိုးအစားစာရင်း',
+    'service' => 'ဝန်ဆောင်မှု',
+    'service_sale' => 'ဝန်ဆောင်မှုရောင်းချခြင်း',
+    'service_list' => 'ဝန်ဆောင်မှုစာရင်း',
+    'service_sale_list' => 'ဝန်ဆောင်မှုရောင်းချခြင်းစာရင်း',
+    'service_code' => 'ဝန်ဆောင်မှုကုဒ်',
+    'service_name' => 'ဝန်ဆောင်မှုအမည်',
+    'sale_amount' => 'အရောင်းပမာဏ',
+    'status' => 'အခြေအနေ', 
+    'save_and_print' => 'သိမ်းဆည်းပြီး ပုံနှိပ်ထုတ်ပါ',
     
-    'total_sale_amount' => 'Total Sale Amount',
+    'total_sale_amount' => 'စုစုပေါင်းရောင်းရငွေပမာဏ',
 
-    'voucher_no' => 'Voucher No',
+    'voucher_no' => 'ဘောက်ချာနံပါတ်',
 ];

@@ -25,6 +25,21 @@ return new class extends Migration
                 "january", "february", "march", "april", "may", "june",
                 "july", "august", "september", "october", "november", "december"
             ])->nullable(true);
+
+
+
+            $table->string('sale_prefix')->default('S')->nullable();
+            $table->string('purchase_prefix')->default('P')->nullable();
+            $table->string('stock_transfer_prefix')->default('ST')->nullable();
+            $table->string('stock_adjustment_prefix')->default('SA')->nullable();
+            $table->string('expense_prefix')->default('E')->nullable();
+            $table->string('purchase_payment_prefix')->default('PMV')->nullable();
+            $table->string('expense_payment_prefix')->default('PMV')->nullable();
+            $table->string('sale_payment_prefix')->default('PMV')->nullable();
+            $table->string('expense_report_prefix')->default('ER')->nullable();
+            // for sale
+            $table->tinyInteger('enable_row')->unsigned()->notNull()->default(1);
+
             $table->unsignedBigInteger('owner_id')->nullable(true);
             $table->string('time_zone', 191)->default('Asia/Kolkata')->nullable(true);
             $table->tinyInteger('fy_start_month')->default(1)->nullable(true);
@@ -61,7 +76,6 @@ return new class extends Migration
             $table->integer('default_unit')->nullable()->default(NULL);
             $table->tinyInteger('enable_sub_units')->unsigned()->notNull()->default(0);
             $table->tinyInteger('enable_racks')->unsigned()->notNull()->default(0);
-            $table->tinyInteger('enable_row')->unsigned()->notNull()->default(0);
             $table->tinyInteger('enable_position')->unsigned()->notNull()->default(0);
             $table->tinyInteger('enable_editing_product_from_purchase')->unsigned()->notNull()->default(1);
             $table->enum('sales_cmsn_agnt', ['value1', 'value2', 'value3'])->nullable()->default(NULL);
@@ -70,7 +84,7 @@ return new class extends Migration
             $table->enum('currency_symbol_placement', ['before', 'after'])->notNull()->default('after');
             $table->text('enabled_modules')->nullable();
             $table->string('date_format', 191)->notNull()->default('m/d/Y');
-            $table->enum('time_format', ['12', '24'])->notNull()->default('24');
+            $table->enum('time_format', ['12', '24'])->notNull()->default('12');
             $table->text('ref_no_prefixes')->nullable();
             $table->char('theme_color', 20)->nullable()->default(NULL);
             $table->integer('created_by')->nullable()->default(NULL);
@@ -92,7 +106,6 @@ return new class extends Migration
             $table->text('custom_labels')->nullable();
             $table->text('common_settings')->nullable();
             $table->boolean('is_active')->default(true)->nullable(true);
-
             $table->timestamps();
         });
     }

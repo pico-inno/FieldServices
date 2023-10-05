@@ -37,8 +37,9 @@
         <form action={{route('update_sale',$sale->id)}} method="POST" id="sale_form">
             @csrf
             <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5" >
-
-                <input type="hidden" name="business_location_id" id="business_location_id" value="{{$sale->business_location_id}}">
+                <div class="fv-row">
+                    <input type="hidden" name="business_location_id" id="business_location_id" value="{{$sale->business_location_id}}">
+                </div>
                 {{-- <div class="col-12 my-5 input-group flex-nowrap">
                     <div class="input-group-text"><i class="fa-solid fa-location-dot"></i></div>
                     <select name="business_location_id" id="business_location_id" class="form-select rounded-0" data-kt-select2="true" data-placeholder="Select locations">
@@ -62,7 +63,7 @@
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Default Selling Price
                                 </label>
-                                <select name="price_list"  class="form-select form-select-sm price_group" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price">
+                                <select name="price_list"  class="form-select form-select-sm price_group price_list_input" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price">
                                     <option value="default_selling_price">defalut selling price</option>
                                     @foreach ($priceLists as $PriceList)
                                         <option value="{{$PriceList->id}}">{{$PriceList->name}}</option>
@@ -219,8 +220,8 @@
                                                 </select>
                                             </td>
                                             <td class="fv-row">
-                                                <select name=""  class="form-select form-select-sm price_group price_list w-180px" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price" disabled >
-                                                    <option value="default_selling_price">defalut selling price</option>
+                                                <select name=""  class="form-select form-select-sm price_group price_list w-180px priceL" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price" disabled >
+                                                    <option value="default_selling_price">defalut selling price</option>b
                                                     @foreach ($priceLists as $priceList)
                                                         <option value="{{$priceList->id}}" @selected($priceList->id==$sale_detail->price_list_id)>{{$PriceList->name}}</option>
                                                     @endforeach
@@ -387,14 +388,13 @@
 </div>
 
 <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
-@include('App.purchase.contactAdd')
 @include('App.purchase.newProductAdd')
 @include('App.sell.sale.subscribeModel')
 @endsection
 
 @push('scripts')
 <script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
-
+@include('App.purchase.contactAdd')
     <script>
         $('[data-kt-select2="select2"]').select2();
         $('#subscribe').change(function() {

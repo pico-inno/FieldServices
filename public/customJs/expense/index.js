@@ -43,7 +43,7 @@ $(document).on('click', '.edit_payment', function(e){
 $(document).on('change','#currency_id',function(e){
 
     $.ajax({
-        url: `/payment-account/get/${$(this).val()}`,
+        url: `pt/get/${$(this).val()}`,
         type: 'get',
         error:function(e){
            let status=e.status;

@@ -1,36 +1,45 @@
 <?php
 
+use App\Helpers\UomHelper;
 use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Helpers\SettingHelpers;
+use App\Helpers\generatorHelpers;
+use App\Models\purchases\purchases;
+use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
+use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 
 
 
 
 
-function hasModule($moduleName){
-    $moduleName=ucfirst($moduleName);
+function hasModule($moduleName)
+{
+    $moduleName = ucfirst($moduleName);
     return  Module::has($moduleName);
 }
 
 
 
-function isEnableModule($moduleName){
-    $moduleName=ucfirst($moduleName);
+function isEnableModule($moduleName)
+{
+    $moduleName = ucfirst($moduleName);
     $status = Module::find($moduleName)->isEnabled();
     return  $status;
 }
 
 
-function getModuleVer($moduleName,$ver='version'){
-    $moduleName=strtolower($moduleName);
-    return config($moduleName.'.'.$ver);
+function getModuleVer($moduleName, $ver = 'version')
+{
+    $moduleName = strtolower($moduleName);
+    return config($moduleName . '.' . $ver);
 }
 
-function getReferenceUomId($currentUomId){
+function getReferenceUomId($currentUomId)
+{
     $currentUnit = UOM::where('id', $currentUomId)->with(['unit_category' => function ($q) {
         $q->with('uomByCategory');
     }])->first();
@@ -41,58 +50,79 @@ function getReferenceUomId($currentUomId){
     return $referenceUnit;
 }
 
-function price($price,$currencyId='default'){
-    $loadSetting=SettingHelpers::load();
-    $setting=$loadSetting->getSettingsValue();
-    $formattedPrice=number_format($price,$setting->currency_decimal_places,'.',',');
+function price($price, $currencyId = 'default')
+{
+    $loadSetting = SettingHelpers::load();
+    $setting = $loadSetting->getSettingsValue();
+    $formattedPrice = number_format($price, $setting->currency_decimal_places, '.', ',');
 
     try {
-        if($currencyId != 'default'){
-            $currency=Currencies::where('id',$setting->currency_id)->firstOrFail();
-        }else{
-            $currency=Currencies::where('id',$currencyId)->firstOrFail();
-
+        if ($currencyId != 'default') {
+            $currency = Currencies::where('id', $setting->currency_id)->firstOrFail();
+        } else {
+            $currency = Currencies::where('id', $currencyId)->firstOrFail();
         }
-        if($setting->currency_symbol_placement == 'before'){
-                return $currency->symbol.' '.$formattedPrice;
-        }else{
-                return $formattedPrice.' '.$currency->symbol;
+        if ($setting->currency_symbol_placement == 'before') {
+            return $currency->symbol . ' ' . $formattedPrice;
+        } else {
+            return $formattedPrice . ' ' . $currency->symbol;
         }
     } catch (\Throwable $th) {
         return $formattedPrice;
     }
 }
 
-function fprice($price){
+function fprice($price)
+{
     // $loadSetting=SettingHelpers::load();
-    $setting=getSettings();
-    $formattedPrice=number_format($price,$setting->currency_decimal_places,'.','');
+    $setting = getSettings();
+    $formattedPrice = number_format($price, $setting->currency_decimal_places, '.', '');
     return $formattedPrice;
 }
 
-function fDate($date,$br=false)
+function fDate($date, $br = false, $time = true)
 {
-    $dateTime =date_create($date);
-    $formattedDate = $dateTime->format("d-M-Y " );
-    $formattedTime = $dateTime->format(" h:i A " );
-    if($br){
-        return $formattedDate.'<br>'.'('.$formattedTime.')';
-    }else{
-     return $formattedDate.' '.'('.$formattedTime.')';
+    $dateTime = date_create($date);
+    $setting = getSettings();
+    $formattedDate = $dateTime->format("$setting->date_format");
+    // dd($setting->time_format);
+    if ($setting->time_format == '12') {
+        $formattedTime = $dateTime->format(" h:i A ");
+    } else {
+        $formattedTime = $dateTime->format(" H:i A ");
+    }
+    if ($time) {
+        if ($br) {
+            return $formattedDate . '<br>' . '(' . $formattedTime . ')';
+        } else {
+            return $formattedDate . ' ' . '(' . $formattedTime . ')';
+        }
+    } else {
+        return $formattedDate;
     }
 }
-function dateCreate($date,$format) {
-    $dateTime = date_create($date);
-    $formattedDate = $dateTime->format($format);
-    return $formattedDate ;
+
+function numericToDate($date)
+{
+    $setting = getSettings();
+    // dd($setting->time_format);
+    $dateTime = date("d/M/Y", $date);
+    return $dateTime;
 }
 
-function getSettingsValue($selector){
+function formateDate($dateTime){
+
+    $setting = getSettings();
+    return $dateTime->format("$setting->date_format");
+}
+function getSettingsValue($selector)
+{
     return SettingHelpers::load()->getSettingsValue($selector)->$selector;
 }
 
-function isUsePaymnetAcc(){
-    return getSettingsValue('use_paymentAccount')==1 ? true :false;
+function isUsePaymnetAcc()
+{
+    return getSettingsValue('use_paymentAccount') == 1 ? true : false;
 }
 
 
@@ -119,14 +149,15 @@ function updenv($newEnvVariables)
 
     foreach ($newEnvVariables as $key => $newValue) {
         // Update the environment variable
-        $newValue='"'.$newValue.'"';
-        $currentValue = '"'.env($key).'"';
+        $newValue = '"' . $newValue . '"';
+        $currentValue = '"' . env($key) . '"';
         // Replace the existing value with the new value
         if ($currentValue !== false) {
-            $str = preg_replace("/$key=" . preg_quote($currentValue, '/') . "/", "$key=" .$newValue, $str);
+            $str = preg_replace("/$key=" . preg_quote($currentValue, '/') . "/", "$key=" . $newValue, $str);
         } else {
             // If the key doesn't exist, add it to the .env file
-            $str .= "\n$key=$newValue";dd('what');
+            $str .= "\n$key=$newValue";
+            dd('what');
         }
 
         // Refresh the environment variables
@@ -142,7 +173,7 @@ function updenvWithoutQuote($newEnvVariables)
     $str = file_get_contents($envFile);
 
     foreach ($newEnvVariables as $key => $newValue) {
-        $newValue= str_replace(' ', '_', $newValue);
+        $newValue = str_replace(' ', '_', $newValue);
         // Update the environment variable
         $currentValue = env($key);
         // Replace the existing value with the new value
@@ -197,6 +228,107 @@ function priceChangeByUom($currentUOMId, $currentUomPrice,$newUOMID) {
             $resultPrice = $currentUomPrice  ;
         }
         return $resultPrice;
+}
+
+
+// applied transaction edit day
+function checkTxEditable($startDate)
+{
+    $start_date = new DateTime($startDate);
+    $since_start = $start_date->diff(now());
+    $transaction_edit_days = getSettingValue('transaction_edit_days');
+    if ($since_start->d >= $transaction_edit_days) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+
+
+// --------------------------------------------------    voucher generator
+
+
+function saleVoucher($uniqueCount)
+{
+    $prefix = getSettingValue('sale_prefix');
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+}
+function purchaseVoucher()
+{
+    $prefix = getSettingValue('purchase_prefix');
+    $uniqueCount = purchases::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+}
+function stockTransferVoucher($uniqueCount)
+{
+    $prefix = getSettingValue('stock_transfer_prefix');
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+}
+function stockAdjustmentVoucherNo($uniqueCount)
+{
+    $prefix = getSettingValue('stock_adjustment_prefix');
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+}
+function expenseVoucherNo($uniqueCount)
+{
+    $prefix = getSettingValue('expense_prefix');
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+}
+
+function expenseReportVoucherNo($uniqueCount)
+{
+    $prefix = getSettingValue('expense_report_prefix');
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+}
+
+     function requestJsonId($requestJson,$key,$value)
+    {
+        $datas = json_decode($requestJson);
+        if ($datas) {
+            $data = array_map(function ($c)use($key,$value) {
+                return [$key => $c->$value];
+            }, $datas);
+            return $data;
+        }
+        return [];
+    }
+
+
+function getParentName($parentLocation){
+    if($parentLocation){
+        $parent= getParentName($parentLocation->parentLocation);
+        $name=$parent .' / '.$parentLocation->name;
+        return $name;
+    }else{
+        return null;
+    }
+}
+
+function arr($array,$key,$seperator='') {
+    return isset($array[$key])? $array[$key].$seperator:'';
+}
+function businessLocationName($bl)
+{
+    $parentName=getParentName($bl['parentLocation']);
+    $parent= $parentName ? substr($parentName, 2) . ' / ' : '';
+    return $parent.$bl['name'];
+}
+function childLocationIDs($locationId)
+{
+    $LocationsIds=businessLocation::where('parent_location_id',$locationId)->select('id')->pluck('id')->toArray();
+    $LocationsIds[]=$locationId;
+    return $LocationsIds;
+}
+
+function addresss($address)
+{
+    // dd($address);
+    return
+        arr($address,'address',',')."<br>".
+        arr($address,'city',',').arr($address,'state',',').arr($address,'country',',')."<br>".
+        arr($address,'zip_postal_code','')
+    ;
 }
 
 

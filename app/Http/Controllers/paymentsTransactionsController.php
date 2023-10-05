@@ -370,7 +370,7 @@ class paymentsTransactionsController extends Controller
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
-                    'balance_amount'=>$transaction->expense_amount-$request->payment_amount,
+                    'balance_amount'=>$transaction->expense_amount- $oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
             }elseif($transaction_type == 'sale'){
@@ -382,7 +382,7 @@ class paymentsTransactionsController extends Controller
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
-                    'balance_amount'=>$transaction->total_sale_amount-$request->payment_amount,
+                    'balance_amount'=>$transaction->total_sale_amount-$oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
             }elseif($transaction_type == 'purchase'){
@@ -394,13 +394,18 @@ class paymentsTransactionsController extends Controller
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
-                    'balance_amount'=>$transaction->total_purchase_amount-$request->payment_amount,
+                    'balance_amount' => $transaction->total_purchase_amount - $oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
             }
+            // dd($transaction_type);
             $paymentAccounts=paymentAccounts::where('id',$data->payment_account_id)->first();
             if($data->payment_account_id == $request->payment_account_id){
-                $diffAmt = $request->payment_amount - $data->payment_amount;
+                if($transaction_type == 'sale'){
+                    $diffAmt =  $data->payment_amount -$request->payment_amount;
+                }else{
+                    $diffAmt = $request->payment_amount - $data->payment_amount;
+                }
                 $data->update([
                     'payment_amount' => $request->payment_amount
                 ]);
@@ -412,7 +417,12 @@ class paymentsTransactionsController extends Controller
                 }
             }else{
                 if($paymentAccounts){
-                    $current_balance=$paymentAccounts->current_balance  +$data->payment_amount;
+
+                    if ($transaction_type == 'sale') {
+                        $current_balance = $paymentAccounts->current_balance  -$data->payment_amount;
+                    } else {
+                        $current_balance = $paymentAccounts->current_balance  + $data->payment_amount;
+                    }
                     $paymentAccounts->update([
                         'current_balance'=>$current_balance,
                     ]);
@@ -592,14 +602,14 @@ class paymentsTransactionsController extends Controller
 
     protected function makePayment($transaction,$request,$transaction_type="expense"){
         $data=[
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
+            'payment_voucher_no'=>generatorHelpers::paymentVoucher($transaction_type),
             'payment_date'=>now(),
             'transaction_type'=>$transaction_type,
             'transaction_id'=>$transaction->id,
             'transaction_ref_no'=>$transaction->expense_voucher_no,
             'payment_method'=>'card',
             'payment_account_id'=>$request->payment_account_id ?? null,
-            'payment_type'=>'credit',
+            'payment_type'=> $transaction_type =='sale'?'debit':'credit',
             'payment_amount'=>$request->payment_amount,
             'currency_id'=>$transaction->currency_id,
             'note'=>$request->note,

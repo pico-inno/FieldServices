@@ -58,7 +58,7 @@ class PriceListDetailController extends Controller
         $priceListData=request()['priceListData']?? [];
         $currencies = Currencies::all();
         $businessSetting = getSettings();
-        $price_lists = PriceLists::get();
+        $price_lists = PriceLists::where('currency_id', $businessSetting->currency_id)->get();
         return view('App.product.PriceListDetail.add', compact('currencies', 'price_lists', 'businessSetting', 'PriceListDetaildata', 'priceListData'));
     }
     public function importTemplate()

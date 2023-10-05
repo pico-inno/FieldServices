@@ -44,10 +44,17 @@ use App\Models\posSession\posRegisterSessions;
 use Modules\Reservation\Entities\FolioInvoice;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
+use App\Http\Requests\sale\saleRequest;
+use App\Models\locationAddress;
 use App\Models\posRegisterTransactions;
+use App\Services\paymentServices;
+use App\Services\SaleServices;
+use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
+use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
+use App\repositories\locationRepo;
 
 class saleController extends Controller
 {
@@ -70,13 +77,13 @@ class saleController extends Controller
 
     public function index($saleType = 'allSales')
     {
-        $locations = businessLocation::select('name', 'id')->get();
+        $locations = businessLocation::select('name', 'id','parent_location_id')->get();
         $customers = contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         return view('App.sell.sale.allSales', compact('locations', 'customers', 'saleType'));
     }
     public function saleItemsList(Request $request)
     {
-        $saleItems = sales::where('is_delete', 0)->orderBy('id', 'DESC')->with('business_location_id', 'customer');
+        $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')->with('business_location_id', 'businessLocation', 'customer');
         if ($request->saleType == 'posSales') {
             $saleItems = $saleItems->whereNotNull('pos_register_id');
         }
@@ -109,6 +116,9 @@ class saleController extends Controller
                         <input class="form-check-input" type="checkbox" data-checked="delete" value=' . $saleItem->id . ' />
                     </div>
                 ';
+            })
+            ->editColumn('businessLocation', function ($saleItem) {
+                return businessLocationName($saleItem->businessLocation);
             })
             ->editColumn('customer', function ($saleItem) {
                 if ($saleItem->customer) {
@@ -190,12 +200,13 @@ class saleController extends Controller
     public function saleDetail($id)
     {
         $relations=[
-            'business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
+             'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
         ];
         class_exists('Modules\Restaurant\Entities\table') ? $relations[]='table' : '';
         $sale = sales::with(...$relations)->where('id', $id)->first()->toArray();
 
-        $location = $sale['business_location_id'];
+        $location = businessLocation::where("id",$sale['business_location_id'])->first();
+        $address = locationAddress::where("location_id", $location->id)->first();
         $setting = $this->setting;
         $sale_details_query = sale_details::with([
             'productVariation' => function ($q) {
@@ -218,31 +229,31 @@ class saleController extends Controller
             'sale',
             'location',
             'sale_details',
-            'setting'
+            'setting',
+            'address'
         ));
     }
-
-
-
-
     // sale create page
     public function createPage()
     {
-        $locations = businessLocation::all();
+        $locations = locationRepo::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
-        $priceLists = PriceLists::select('id', 'name', 'description')->get();
+        $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
         $paymentAccounts = paymentAccounts::get();
-        $setting = businessSettings::first();
+        $setting = businessSettings::where('id',Auth::user()->business_id)->first();
         $defaultCurrency = $this->currency;
         $currencies = Currencies::get();
-        $locations = businessLocation::all();
-        return view('App.sell.sale.addSale', compact('locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies'));
+        $exchangeRates=[];
+        if(class_exists('Modules\ExchangeRate\Entities\exchangeRates')){
+            $exchangeRates=exchangeRates::get();
+        }
+        return view('App.sell.sale.addSale', compact('locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
     }
     // for edit page
     public function saleEdit($id)
     {
-        $locations = businessLocation::all();
+        $locations = locationRepo::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description')->get();
@@ -251,6 +262,10 @@ class saleController extends Controller
         $setting = businessSettings::first();
         $currency = $this->currency;
 
+        $exchangeRates = [];
+        if (class_exists('exchangeRates')) {
+            $exchangeRates = exchangeRates::get();
+        }
 
         $sale = sales::with('currency')->where('id', $id)->get()->first();
         $business_location_id = $sale->business_location_id;
@@ -268,8 +283,9 @@ class saleController extends Controller
                     ]);
             },
             'stock' => function ($q) use ($business_location_id) {
+                $locationIds=childLocationIDs($business_location_id);
                 $q->where('current_quantity', '>', 0)
-                    ->where('business_location_id', $business_location_id);
+                    ->whereIn('business_location_id', $locationIds);
             },
             'Currentstock',  'product' => function ($q) {
                 $q->with(['uom' => function ($q) {
@@ -279,19 +295,20 @@ class saleController extends Controller
                 }]);
             },
         ])
-            ->where('sales_id', $id)->where('is_delete', 0)
-            ->withSum(['stock' => function ($q) use ($business_location_id) {
-                $q->where('business_location_id', $business_location_id);
-            }], 'current_quantity');
+        ->where('sales_id', $id)->where('is_delete', 0)
+        ->withSum(['stock' => function ($q) use ($business_location_id) {
+            $locationIds = childLocationIDs($business_location_id);
+            $q->whereIn('business_location_id', $locationIds);
+        }], 'current_quantity');
         $sale_details = $sale_details_query->get();
         $currencies = Currencies::get();
         $defaultCurrency = $this->currency;
         // $child_sale_details = $sale_details_query->whereNotNull('parent_sale_details_id', '!=', null)->get();
         // dd($sale_details->toArray());
-        return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations'));
+        return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
     }
     // sale store
-    public function store(Request $request)
+    public function store(saleRequest $request,SaleServices $saleService,paymentServices $paymentServices)
     {
         $sale_details = $request->sale_details;
         if ($request->type == 'pos') {
@@ -301,18 +318,8 @@ class saleController extends Controller
             $request['currency_id'] = $this->currency->id ?? null;
         }
         DB::beginTransaction();
-        Validator::make($request->toArray(), [
-            'sale_details' => 'required',
-            'business_location_id' => 'required',
-            'contact_id' => 'required',
-            'status' => 'required',
-        ], [
-            'sale_details.required' => 'Sale Items are required!',
-            'business_location_id.required' => 'Bussiness Location is required!',
-            'contact_id.required' => 'Contact is required!',
-        ])->validate();
         try {
-            $lastSaleId = sales::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
+            // get payment status
             if ($request->paid_amount == 0) {
                 $payment_status = 'due';
             } elseif ($request->paid_amount >= $request->total_sale_amount) {
@@ -320,49 +327,27 @@ class saleController extends Controller
             } else {
                 $payment_status = 'partial';
             }
-            $sale_data = sales::create([
-                'business_location_id' => $request->business_location_id,
-                'sales_voucher_no' => sprintf('SVN-' . '%06d', ($lastSaleId + 1)),
-                'contact_id' => $request->contact_id,
-                'status' => $request->status,
-                'sale_amount' => $request->sale_amount,
-                'total_item_discount' => $request->total_item_discount,
-                'extra_discount_type' => $request->extra_discount_type,
-                'extra_discount_amount' => $request->extra_discount_amount,
-                'total_sale_amount' => $request->total_sale_amount,
-                'paid_amount' => $request->paid_amount,
-                'payment_status' => $payment_status,
-                'pos_register_id' => $request->pos_register_id ?? null,
-                'table_id' => $request->table_id,
-                'balance_amount' => $request->balance_amount,
-                'currency_id' => $request->currency_id,
-                'sold_at' => now(),
-                'sold_by' => Auth::user()->id,
-                'created_by' => Auth::user()->id,
-            ]);
+            $request['payment_status']= $payment_status;
+            $sale_data=$saleService->create($request);
+
             if($request->reservation_id){
                 $request['sale_id']=$sale_data->id;
                 $this->addToReservationFolio($request,true);
             }
+
+
+            // create payment
             if ($request->paid_amount > 0) {
                 if($request->type=='pos'){
                     $multiPayment=$request->multiPayment;
-                    foreach ($multiPayment as $mp ) {
-                        $sale_data['paid_amount']=$mp['payment_amount'];
-                        $payemntTransaction = $this->makePayment($sale_data, $mp['payment_account_id'] ?? null);
-                        posRegisterTransactions::create([
-                            'register_session_id' => $request->sessionId,
-                            'payment_account_id' => $mp['payment_account_id'] ?? null,
-                            'transaction_type' => 'sale',
-                            'transaction_id' => $sale_data->id,
-                            'transaction_amount' => $mp['payment_amount'],
-                            'currency_id' => $request->currency_id,
-                            'payment_transaction_id' => $payemntTransaction->id ?? null,
-                        ]);
-                    }
-
+                    $data=[
+                        'sessionId'=>$request->sessionId,
+                        'saleId'=>$sale_data->id,
+                        'currency_id'=>  $request->currency_id,
+                    ];
+                    $paymentServices->multiPayment($multiPayment,$data, $sale_data);
                 }else{
-                    $payemntTransaction = $this->makePayment($sale_data, $request->payment_account);
+                    $payemntTransaction = $paymentServices->makePayment($sale_data, $request->payment_account,'sale');
                 }
             } else {
                 $suppliers = Contact::where('id', $request->contact_id)->first();
@@ -372,9 +357,10 @@ class saleController extends Controller
                 ]);
             }
             $resOrderData = null;
+            // for pos
             if ($request->type == 'pos' && $registeredPos->use_for_res == 1) {
                 $resOrderData = $this->resOrderCreation($sale_data, $request);
-                $sdcStatus=$this->saleDetailCreation($request, $sale_data, $sale_details, $resOrderData);
+                $sdcStatus=$saleService->saleDetailCreation($request, $sale_data, $sale_details, $resOrderData);
                 if($sdcStatus== 'outOfStock'){
                     return response()->json([
                         'status' => '422',
@@ -382,15 +368,16 @@ class saleController extends Controller
                     ], 422);
                 }
             } else {
-                $sdcStatus= $this->saleDetailCreation($request, $sale_data, $sale_details);
+                $sdcStatus= $saleService->saleDetailCreation($request, $sale_data, $sale_details);
                 if ($sdcStatus == 'outOfStock') {
                     return redirect()->back()->withInput()->with(['error' => 'Product Out Of Stock']);
                 }
             }
 
             DB::commit();
-            if ($request->type == 'pos') {
 
+            // response
+            if ($request->type == 'pos') {
                 return response()->json([
                     'data' => $sale_data->sales_voucher_no,
                     'status' => '200',
@@ -419,6 +406,13 @@ class saleController extends Controller
             }
         }
     }
+
+
+
+
+
+
+
     public function resOrderCreation($sale_data, $request)
     {
         return resOrders::create([
@@ -430,131 +424,11 @@ class saleController extends Controller
         ]);
     }
 
-    public function changeStockQty($requestQty, $business_location_id, $sale_detail, $current_stock = [])
-    {
-        $product_id = $sale_detail['product_id'];
-        $sale_detail_id = $sale_detail['id'];
-        // check lot control from setting
-        $product=Product::where('id',$product_id)->select('product_type')->first();
-        if($product->product_type=='storable'){
-            // $lot_control = businessSettings::select('lot_control')->first()->lot_control;
-            // if ($lot_control == 'off') {
-                $variation_id = $sale_detail['variation_id'];
-                $totalStocks = CurrentStockBalance::select('id', 'current_stock_id')
-                    ->where('product_id', $product_id)
-                    ->where('variation_id', $variation_id)
-                    ->where('business_location_id', $business_location_id)
-                    ->where('current_quantity', '>', '0')
-                    ->sum('current_quantity');
-
-                if ($requestQty > $totalStocks) {
-                    return false;
-                } else {
-                    $stocks = CurrentStockBalance::where('product_id', $product_id)
-                        ->where('variation_id', $variation_id)
-                        ->where('business_location_id', $business_location_id)
-                        ->where('current_quantity', '>', '0');
-                    if ($this->accounting_method == 'lifo') {
-                        $stocks = $stocks->orderBy('id', 'DESC')->get();
-                    } else {
-                        $stocks = $stocks->get();
-                    }
-                    $qtyToRemove = $requestQty;
-                    // dd($requestQty);
-                    $data = [];
-                    foreach ($stocks as  $stock) {
-                        $stockQty = $stock->current_quantity;
-                        // prepare data for stock history
-                        $stock_history_data = [
-                            'business_location_id' => $stock['business_location_id'],
-                            'product_id' => $stock['product_id'],
-                            'variation_id' => $stock['variation_id'],
-                            'expired_date' => $stock['expired_date'],
-                            'transaction_type' => 'sale',
-                            'transaction_details_id' => $sale_detail_id,
-                            'increase_qty' => 0,
-                            'ref_uom_id' => $stock['ref_uom_id'],
-                        ];
-
-                        //remove qty from current stock
-                        if ($qtyToRemove > $stockQty) {
-                            $data[] = [
-                                'stockQty' => $stockQty,
-                                'batch_no' => $stock['batch_no'],
-                                'lot_serial_no' => $stock['lot_serial_no'],
-                                'ref_uom_id' => $stock->ref_uom_id,
-                                'stock_id' => $stock->id
-                            ];
-                            $qtyToRemove -= $stockQty;
-                            CurrentStockBalance::where('id', $stock->id)->first()->update([
-                                'current_quantity' => 0,
-                            ]);
-                            $stock_history_data['decrease_qty'] = $stockQty;
-                            stock_history::create($stock_history_data);
-                        } else {
-                            $leftStockQty = $stockQty - $qtyToRemove;
-                            $data[] = [
-                                'stockQty' => $qtyToRemove,
-                                'batch_no' => $stock['batch_no'],
-                                'lot_serial_no' => $stock['lot_serial_no'],
-                                'ref_uom_id' => $stock->ref_uom_id,
-                                'stock_id' => $stock->id
-                            ];
-                            $stock_history_data['decrease_qty'] = $qtyToRemove;
-                            $qtyToRemove = 0;
-                            CurrentStockBalance::where('id', $stock->id)->first()->update([
-                                'current_quantity' => $leftStockQty,
-                            ]);
-                            stock_history::create($stock_history_data);
-                            break;
-                        }
-                    };
-                    // dd($data);
-                    return $data;
-                }
-            } else {
-                $current_stock_id = $current_stock['id'];
-                $product_id = $current_stock['product_id'];
-                $variation_id = $current_stock['variation_id'];
-                $currentStock = CurrentStockBalance::where('business_location_id', $business_location_id)
-                    ->where('product_id', $product_id)
-                    ->where('variation_id', $variation_id)
-                    ->where('id', $current_stock_id);
-                // dd($currentStock->get()->toArray());
-                $current_stock_qty =  $currentStock->first()->current_quantity;
-                return abort(404, '');
-                if ($requestQty > $current_stock_qty) {
-                    return false;
-                } else {
-                    $left_qty = $current_stock_qty - $requestQty;
-                    $currentStock->update([
-                        'current_quantity' => $left_qty
-                    ]);
-                    $currentStockData = $currentStock->get()->first()->toArray();
-                    stock_history::create([
-                        'business_location_id' => $currentStockData['business_location_id'],
-                        'product_id' => $currentStockData['product_id'],
-                        'variation_id' => $currentStockData['variation_id'],
-                        'batch_no' => $currentStockData['batch_no'],
-                        'expired_date' => $currentStockData['expired_date'],
-                        'transaction_type' => 'sale',
-                        'transaction_details_id' => $sale_detail_id,
-                        'increase_qty' => 0,
-                        'decrease_qty' => $requestQty,
-                        'ref_uom_id' => $currentStockData['ref_uom_id'],
-                    ]);
-                    return true;
-                }
-            }
-        // }else{
-        //     return false;
-        // }
-
-    }
 
 
 
-    public function update($id, Request $request)
+
+    public function update($id, Request $request,SaleServices $saleService)
     {
         $request_sale_details = $request->sale_details;
         // $lot_control = $this->setting->lot_control;
@@ -674,8 +548,9 @@ class saleController extends Controller
                     if($product->product_type=='storable'){
                         // stock adjustment
                         if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
-                            $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
+                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
                             if ($changeQtyStatus == false) {
+
                                 return redirect()->back()->withInput()->with(['warning' => "product Out of Stock"]);
                             } else {
                                 // if ($this->setting->lot_control == "off") {
@@ -705,13 +580,15 @@ class saleController extends Controller
                         } else {
                             $referecneQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_details->quantity, $sale_details->uom_id)['qtyByReferenceUom'];
                             if ($request_old_sale['quantity'] > $sale_details->quantity) {
+                                $locationIds=childLocationIDs($businessLocation->id);
                                 $current_stock = CurrentStockBalance::where('product_id', $sale_details->product_id)
-                                    ->where('business_location_id', $businessLocation->id)
+                                    ->whereIn('business_location_id', $locationIds)
                                     ->where('variation_id', $sale_details->variation_id)
                                     ->where('current_quantity', '>', '0');
                                 $availableStocks = $current_stock->get();
                                 $availableQty = $current_stock->sum('current_quantity');
                                 $newQty = round($requestQty - $sale_detial_qty_from_db, 2);
+
                                 if ($newQty > $availableQty) {
                                     return redirect()->route('all_sales', 'allSales')->with(['warning' => 'out of stock']);
                                 }
@@ -885,9 +762,9 @@ class saleController extends Controller
                     $resOrderData = null;
                     if ($request->type == 'pos' && $registeredPos->use_for_res == 1) {
                         $resOrderData = $this->resOrderCreation($sales, $request);
-                        $this->saleDetailCreation($request, $sales, $new_sale_details, $resOrderData);
+                        $saleService->saleDetailCreation($request, $sales, $new_sale_details, $resOrderData);
                     } else {
-                        $this->saleDetailCreation($request, $sales, $new_sale_details, $resOrderData);
+                        $saleService->saleDetailCreation($request, $sales, $new_sale_details, $resOrderData);
                     }
                 }
             } else {
@@ -919,6 +796,8 @@ class saleController extends Controller
 
             DB::commit();
         } catch (Exception $e) {
+
+            dd($e);
             logger($e);
             DB::rollBack();
         }
@@ -1013,13 +892,17 @@ class saleController extends Controller
                         ->with('variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue');
                 },
                 'stock' => function ($query) use ($business_location_id) {
+
+                    $locationIds = childLocationIDs($business_location_id);
                     $query->where('current_quantity', '>', 0)
-                        ->where('business_location_id', $business_location_id);
+                        ->whereIn('business_location_id', $locationIds);
+
                 },
                 'uom.unit_category.uomByCategory'
             ])
             ->withSum(['stock' => function ($query) use ($business_location_id) {
-                $query->where('business_location_id', $business_location_id);
+                $locationIds = childLocationIDs($business_location_id);
+                $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get();
 
@@ -1131,10 +1014,10 @@ class saleController extends Controller
 
     public function saleInvoice($id)
     {
-        $sale = sales::with('business_location_id', 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
+        $sale = sales::with( 'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
 
-        $location = $sale['business_location_id'];
-
+        $location = businessLocation::where('id',$sale['business_location_id'])->first();
+        $address=$location->locationAddress;
 
         $sale_details = sale_details::with(['productVariation' => function ($q) {
             $q->select('id', 'product_id', 'variation_template_value_id')
@@ -1148,7 +1031,7 @@ class saleController extends Controller
                 ]);
         }, 'product', 'uom', 'currency'])
             ->where('sales_id', $id)->where('is_delete', 0)->get();
-        $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details'))->render();
+        $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details','address'))->render();
         return response()->json(['html' => $invoiceHtml]);
     }
 
@@ -1166,91 +1049,7 @@ class saleController extends Controller
         }
     }
 
-    private function saleDetailCreation($request, Object $sale_data, array $sale_details, $resOrderData = null)
-    {
-        foreach ($sale_details as $sale_detail) {
-            $product=Product::where('id', $sale_detail['product_id'])->select('product_type')->first();
-            $stock = CurrentStockBalance::where('product_id', $sale_detail['product_id'])
-                ->where('business_location_id', $sale_data->business_location_id)
-                // ->where('id', $sale_detail['stock_id_by_batch_no'])
-                ->with(['product' => function ($q) {
-                    $q->select('id', 'name');
-                }])
-                ->where('variation_id', $sale_detail['variation_id'])
-                ->get()->first();
-            $line_subtotal_discount = $sale_detail['line_subtotal_discount'] ?? 0;
-            $currency_id= $this->currency->id;
-            $sale_details_data = [
-                'sales_id' => $sale_data->id,
-                'product_id' => $sale_detail['product_id'],
-                'variation_id' => $sale_detail['variation_id'],
-                'uom_id' => $sale_detail['uom_id'],
-                'quantity' => $sale_detail['quantity'],
-                'uom_price' => $sale_detail['uom_price'],
-                'subtotal' =>  $sale_detail['subtotal'],
-                'discount_type' => $sale_detail['discount_type'],
-                'per_item_discount' => $sale_detail['per_item_discount'],
-                'subtotal_with_discount' => $request->type != 'pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'],
-                'currency_id' => $request->currency_id ?? $currency_id ,
-                'price_list_id' => $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
-                'tax_amount' => 0,
-                'per_item_tax' => 0,
-                'subtotal_with_tax' => $request->type != 'pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'],
-                'note' => $sale_detail['item_detail_note'] ?? null,
-            ];
-            if ($resOrderData) {
-                $sale_details_data['rest_order_id'] = $resOrderData ? $resOrderData->id : null;
-                $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;
-            }
-            $created_sale_details = sale_details::create($sale_details_data);
-            $refInfo= UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_detail['quantity'], $sale_detail['uom_id']);
-            $requestQty = $refInfo['qtyByReferenceUom'];
-            $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
 
-            if($product){
-                if($product->product_type!='storable'){
-                    $stock_history_data = [
-                        'business_location_id' => $sale_data->business_location_id,
-                        'product_id' => $sale_detail['product_id'],
-                        'variation_id' => $sale_detail['variation_id'],
-                        'expired_date' => $sale_detail['expired_date'] ?? null,
-                        'transaction_type' => 'sale',
-                        'transaction_details_id' => $created_sale_details->id,
-                        'increase_qty' => 0,
-                        'ref_uom_id' => $refInfo['referenceUomId'],
-                        'decrease_qty'=> $requestQty
-                    ];
-                    stock_history::create($stock_history_data);
-                }else{
-                    if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
-                        $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $created_sale_details->toArray(), $stock);
-                        if ($changeQtyStatus == false) {
-                            return 'outOfStock';
-                            // return redirect()->back()->withInput()->with(['warning' => "Out of Stock In " . $stock['product']['name']]);
-                        } else {
-                            // if ($this->setting->lot_control == "off") {
-                                $datas = $changeQtyStatus;
-                                foreach ($datas as $data) {
-                                    // dd($datas);
-                                    $sale_uom_qty = UomHelper::changeQtyOnUom($data['ref_uom_id'], $created_sale_details->uom_id, $data['stockQty']);
-                                    lotSerialDetails::create([
-                                        'transaction_type' => 'sale',
-                                        'transaction_detail_id' => $created_sale_details->id,
-                                        'current_stock_balance_id' => $data['stock_id'],
-                                        'lot_serial_numbers' => $data['lot_serial_no'],
-                                        'uom_quantity' => $sale_uom_qty,
-                                        'uom_id' => $created_sale_details->uom_id,
-                                    ]);
-                                }
-                            // }
-                        }
-                    }
-                }
-            }
-
-        }
-        return;
-    }
 
     public function postToRegistrationFolio($id)
     {
@@ -1357,54 +1156,11 @@ class saleController extends Controller
     }
 
 
-    protected function makePayment($sale, $payment_account_id, $increatePayment = false, $increaseAmount = 0)
-    {
-        $paymentAmount = $increatePayment ? $increaseAmount : $sale->paid_amount;
-        if ($paymentAmount > 0) {
-            $data = [
-                'payment_voucher_no' => generatorHelpers::paymentVoucher(),
-                'payment_date' => now(),
-                'transaction_type' => 'sale',
-                'transaction_id' => $sale->id,
-                'transaction_ref_no' => $sale->sales_voucher_no,
-                'payment_method' => 'card',
-                'payment_account_id' => $payment_account_id ?? null,
-                'payment_type' => 'debit',
-                'payment_amount' => $paymentAmount,
-                'currency_id' => $sale->currency_id,
-            ];
-            $paymentTransaction = paymentsTransactions::create($data);
-            if ($payment_account_id) {
-                $accountInfo = paymentAccounts::where('id', $payment_account_id);
-                if ($accountInfo->exists()) {
-                    $currentBalanceFromDb = $accountInfo->first()->current_balance;
-                    $finalCurrentBalance = $currentBalanceFromDb + $paymentAmount;
-                    $accountInfo->update([
-                        'current_balance' => $finalCurrentBalance,
-                    ]);
-                }
-                $suppliers = Contact::where('id', $sale->contact_id)->first();
-                if ($sale->balance_amount > 0) {
-                    $suppliers_receivable = $suppliers->receivable_amount;
-                    $suppliers->update([
-                        'receivable_amount' => $suppliers_receivable +  $sale->balance_amount
-                    ]);
-                } else if ($sale->balance_amount < 0) {
-                    $suppliers_payable = $suppliers->receivable_amount;
-                    $suppliers->update([
-                        'payable_amount' => $suppliers_payable + $sale->balance_amount
-                    ]);
-                }
-            }
-
-            return $paymentTransaction;
-        }
-        return null;
-    }
 
 
 
-    protected function changeTransaction($saleBeforeUpdate, $updatedSale, $request)
+
+    protected function changeTransaction($saleBeforeUpdate, $updatedSale, $request, paymentServices $paymentServices)
     {
         $transaction = paymentsTransactions::orderBy('id', 'DESC')
             ->where('transaction_ref_no', $saleBeforeUpdate->sales_voucher_no)
@@ -1415,11 +1171,11 @@ class saleController extends Controller
         if ($oldTransaction) {
             if ($oldTransaction->payment_account_id != $request->payment_account && isset($request->payment_account)) {
                 $this->depositeToBeforeChangeAcc($oldTransaction, $saleBeforeUpdate);
-                $this->makePayment($updatedSale, $request->payment_account);
+                $paymentServices->makePayment($updatedSale, $request->payment_account,'sale');
             } elseif ($updatedSale->paid_amount > $saleBeforeUpdate->paid_amount) {
 
                 $increaseAmount = $updatedSale->paid_amount - $saleBeforeUpdate->paid_amount;
-                $this->makePayment($updatedSale, $request->payment_account, true, $increaseAmount);
+                $paymentServices->makePayment($updatedSale, $request->payment_account,'sale', true, $increaseAmount);
             } elseif ($updatedSale->paid_amount <= $saleBeforeUpdate->paid_amount) {
 
                 $decreaseAmount = $saleBeforeUpdate->paid_amount - $updatedSale->paid_amount;

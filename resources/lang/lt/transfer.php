@@ -1,0 +1,40 @@
+<?php
+return [
+    //Index Page
+    'transfer' => 'Prekių perkėlimas',
+    'transfer_list' => 'Prekių perkėlimo sąrašas',
+    'transfer_details' => 'Prekių perkėlimo detalės',
+    'list' => 'sąrašas',
+    'add' => 'pridėti',
+    'filter' => 'Filtras',
+    'export' => 'Eksportuoti',
+    'no_data_table' => 'Lentelėje nėra duomenų',
+    'create' => 'Sukurti prekių perkėlimą',
+    'from_location' => 'Vieta (Iš)',
+    'to_location' => 'Vieta (Į)',
+    'status' => 'Būsena',
+    'transfer_person' => 'Perkėlimo asmuo',
+    'receive_person' => 'Gavimo asmuo',
+    'date' => 'Perkėlimo data',
+    'search_stock_transfer' => 'Ieškoti prekių perkėlimo',
+    'actions' => 'Veiksmai',
+    'voucher_no' => 'Vaučerio Nr.',
+
+    //Create Page
+    'placeholder_transfer_person' => 'Pasirinkite perkėlimo asmenį',
+    'placeholder_receive_person' => 'Pasirinkite gavimo asmenį',
+    'placeholder_from_location' => 'Pasirinkite iš vietos',
+    'placeholder_to_location' => 'Pasirinkite į vietą',
+    'search_products' => 'Ieškoti produktų...',
+    'product' => 'Prekė',
+    'total_current_qty' => 'Iš viso esamo kiekio',
+    'transfer_qty' => 'Perkėlimo kiekis',
+    'unit' => 'Vienetas',
+    'remark' => 'Pastaba',
+    'save' => 'Išsaugoti',
+
+    'edit_transfer' => "Redaguoti prekių perkėlimą",
+    'cannot_editable' => "Redaguoti negalima",
+    'cannot_editable_message' => 'Perkeltų duomenų negalima keisti, nes jų būsena yra "baigta". Norėdami redaguoti perkeltą prekę, turite pakeisti būseną.',
+    'update' => 'Atnaujinti',
+];

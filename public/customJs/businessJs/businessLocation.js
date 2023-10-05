@@ -49,12 +49,12 @@ var KTlocationsList = function () {
                     name: 'name'
                 },
                 {
-                    data: 'location_id',
-                    name: 'location_id'
+                    data: 'location_code',
+                    name: 'location_code'
                 },
                 {
-                    data: 'landmark',
-                    name: 'landmark'
+                    data: 'address',
+                    name: 'address',
                 },
                 {
                     data: 'city',

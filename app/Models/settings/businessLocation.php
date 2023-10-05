@@ -2,6 +2,8 @@
 
 namespace App\Models\settings;
 
+use App\Models\locationAddress;
+use App\Models\locationType;
 use App\Models\Product\PriceLists;
 use App\Models\Stock\Stockin;
 use App\Models\Stock\StockTransfer;
@@ -14,27 +16,16 @@ class businessLocation extends Model
 
     protected $fillable = [
         'business_id',
-        'location_id',
+        'location_code',
         'name',
+        'is_active',
         'allow_purchase_order',
         'allow_sale_order',
         'price_lists_id',
-        'landmark',
-        'country',
-        'state',
-        'city',
-        'zip_code',
-        'mobile',
-        'alternate_number',
-        'email',
-        'website',
-        'featured_products',
-        'is_active',
-        'custom_field1',
-        'custom_field2',
-        'custom_field3',
-        'custom_field4',
-
+        'parent_location_id',
+        'location_type',
+        'inventory_flow',
+        'invoice_layout',
     ];
 
     // protected $casts = [
@@ -43,11 +34,18 @@ class businessLocation extends Model
 
     protected $dates = ['deleted_at'];
 
-    // public function business()
-    // {
-    //     return $this->belongsTo(Business::class);
-    // }
-
+    public function parentLocation()
+    {
+        return $this->hasOne(businessLocation::class,'id', 'parent_location_id');
+    }
+    public function locationAddress()
+    {
+        return $this->belongsTo(locationAddress::class, 'id', 'location_id');
+    }
+    public function locationType()
+    {
+        return $this->hasOne(locationType::class, 'id', 'location_type');
+    }
     // public function products()
     // {
     //     return $this->hasMany(Product::class);

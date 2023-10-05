@@ -20,10 +20,10 @@ $(document).ready(function () {
         }
         $.ajax({
             url: `/sell/get/product`,
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
+            type: 'GET',
+            // headers: {
+            //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            // },
             data: {
                 data,
             },

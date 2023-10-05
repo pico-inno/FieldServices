@@ -258,8 +258,22 @@
                                             <!--end::Content-->
                                             <!--begin::Content-->
                                             <div class="fs-7 fw-bold text-end">
-                                                <span class="d-block lh-1  mb-6 sb-total" data-kt-pos-element="total"></span>
-                                                <span class="d-block mb-5 mb-6 sb-discount" data-kt-pos-element="discount"></span>
+                                                <div class="d-block lh-1  mb-6">
+                                                    <span class=" sb-total" data-kt-pos-element="total">
+
+                                                    </span>
+                                                    <span>
+                                                         {{$currencySymbol}}
+                                                    </span>
+                                                </div>
+                                                <div class="d-block mb-5 mb-6">
+                                                    <span class="sb-discount" data-kt-pos-element="discount">
+
+                                                    </span>
+                                                    <span>
+                                                         {{$currencySymbol}}
+                                                    </span>
+                                                </div>
                                             </div>
                                             <!--end::Content-->
                                         </div>
@@ -268,8 +282,11 @@
                                                 <span class="d-block fs-md-2  fs-2x lh-1">Total Amount</span>
                                             </div>
                                             <div class="fs-6 fw-bold  text-end">
-                                                <span class="d-block fs-md-2 lh-1 sb-total-amount" data-kt-pos-element="grant-total">
-
+                                                <span class="d-inline-block fs-md-2 lh-1 sb-total-amount" data-kt-pos-element="grant-total">
+                                                    0.00
+                                                </span>
+                                                <span>
+                                                    {{$currencySymbol}}
                                                 </span>
                                             </div>
                                         </div>
@@ -529,23 +546,35 @@
                             <div class="card-body d-flex flex-column ">
                                 <div class=" rounded-top d-flex justify-content-between align-items-center ">
                                     <h4 class="p-1 text-primary">Payable Amount</h4>
-                                    <span class="fs-3 text-primary me-5 print_payable_amount fw-bold">0.00</span>
+                                    <div class="">
+                                        <span class="fs-3 text-primary me-3 print_payable_amount fw-bold">0.00</span>
+                                        <span class="fw-bold fs-4 text-primary">{{$currencySymbol}}</span>
+                                    </div>
                                 </div>
                                 <div class="separator my-2 separator-dashed border-gray-400"></div>
                                 <div class=" d-flex justify-content-between align-items-center">
                                     <h4 class="p-1">Paid</h4>
-                                    <span class="fs-5 me-5 print_paid fw-bold"></span>
+                                    <div class="">
+                                        <span class="fs-5 me-5 print_paid fw-bold"></span>
+                                        <span class="fw-bold fs-5">{{$currencySymbol}}</span>
+                                    </div>
                                 </div>
                                 <div class="separator my-2 separator-dashed border-gray-400"></div>
                                 <div class=" d-flex justify-content-between align-items-center">
                                     <h4 class="p-1">Balance</h4>
-                                    <span class="fs-5 me-5 print_balance fw-bold"></span>
+                                    <div class="">
+                                        <span class="fs-5 me-5 print_balance fw-bold"></span>
+                                        <span class="fw-bold fs-5">{{$currencySymbol}}</span>
+                                    </div>
                                 </div>
 
                                 <div class="separator my-2 separator-dashed border-gray-400"></div>
                                 <div class=" rounded-bottom d-flex justify-content-between align-items-center">
                                     <h4 class="p-1">Change</h4>
-                                    <span class="fs-5 me-5 print_change fw-bold">0.00</span>
+                                    <div class="">
+                                        <span class="fs-5 me-5 print_change fw-bold">0.00</span>
+                                        <span class="fw-bold fs-5">{{$currencySymbol}}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -816,7 +845,7 @@
                         <div class="row mb-5">
                             <div class="col-12">
                                 <label for="" class="fs-5">Selling Price</label>
-                                <select class="form-select mb-2 form-select-sm rounded-0" disabled name="each_selling_price" data-control="select2" data-hide-search="true">
+                                <select class="form-select mb-2 form-select-sm rounded-0" disabled name="each_selling_price" data-control="select2" data-placeholder="-" placeholder="-" data-hide-search="true">
                                     <option value="default_selling_price">Default Selling Price</option>
                                     @foreach ($price_lists as $pricelist)
                                         <option value="{{ $pricelist->id }}">{{ $pricelist->name }}</option>
@@ -836,11 +865,15 @@
                                 <select class="form-select mb-2 form-select-sm rounded-0" name="invoice_row_discount_type" data-control="select2" data-hide-search="true">
                                     <option value="fixed">Fixed</option>
                                     <option value="percentage" selected>Percentage</option>
+                                    <option value="foc" >FOC</option>
                                 </select>
                             </div>
                             <div class="col-6">
                                 <label for="" class="fs-5">Discount Amount</label>
-                                <input type="text" class="form-control form-control-sm rounded-0" name="discount_amount" value="0">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm rounded-0" name="discount_amount" value="0">
+                                    <div class="input-group-text percSymbol  rounded-0">%</div>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-5">
@@ -858,7 +891,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Save</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal"  id="saveExtraSetting">Save</button>
                     </div>
                 </div>
             </div>

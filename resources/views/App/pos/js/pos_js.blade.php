@@ -1,6 +1,7 @@
 <script>
     let locations=@json($locations);
-
+    let setting=@json($setting);
+    let symbol=@json($currencySymbol);
     var price_lists_with_location = [];
     var uoms = @json($uoms ?? null);
     var posRegisterId=@json($posRegisterId);
@@ -144,7 +145,7 @@
             `;
         }
 
-        let invoiceSidebar = (product) => {
+        let invoiceSidebar = (product,forceSplit=false) => {
             checkAndStoreSelectedProduct(product);
             let variation_value_and_name;
             // Get Variation Value and Variation Template Value Name
@@ -211,7 +212,7 @@
 
                         </div>
                     </td>
-                    <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} subtotal_price">${product.product_variations.default_selling_price * 1}</td>
+                    <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} "><span class="subtotal_price">${product.product_variations.default_selling_price * 1}</span> ${symbol}</td>
                     <td class="exclude-modal">
                         <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
                     </td>
@@ -257,7 +258,7 @@
             if(disType === "fixed"){
                 $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - perItemDiscounts);
             }
-            if(disType === "percentage"){
+            if(disType === "percentage" || disType === "FOC"){
                 let dis_amount_with_price = default_price * (perItemDiscounts / 100);
                 $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - dis_amount_with_price);
             }
@@ -393,7 +394,7 @@
             let productId = parent.find('input[name="product_id"]').val();
             let variationId = parent.find('input[name="variation_id"]').val();
 
-            let product = productsOnSelectData.filter( product => product.variation_id == variationId )[0];
+            let product = productsOnSelectData.find( product => product.variation_id == variationId );
             let quantity = isNullOrNan(product.total_current_stock_qty);
 
             const uoms = product.uom.unit_category.uom_by_category;
@@ -418,7 +419,7 @@
 
             parent.find('.stock_quantity_unit').text(result);
             parent.find('.stock_quantity_name').text(newUomInfo.name);
-            getPrice(e);
+            getPrice(parent);
 
             // false ? getPriceByEachRow() : getPrice();
         }
@@ -554,6 +555,7 @@
                 error('Products Are Out Of Stock');
                 return;
             }
+            console.log(dataForSale,'----here------');
             let url=saleId ?route : `/sell/create`;
             $.ajax({
                 url,
@@ -849,10 +851,10 @@
 
             $.ajax({
                 url: `/sell/get/product`,
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
+                type: 'GET',
+                // headers: {
+                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                // },
                 data: {
                     data,
                 },
@@ -929,6 +931,25 @@
         })
 
         $('#all_product_list').on('click', '.each_product', function(e) {
+            let variation_id = $(this).find('input[name="product_variation_id"]').val();
+            let checkProduct= productsOnSelectData.find(p=>p.variation_id==variation_id);
+            if(setting.enable_row == 0 ){
+               if(checkProduct){
+                    let ParentRow=$(`.invoice_row_${variation_id}`);
+                    let qtyInput=ParentRow.find(`.quantity_input`);
+                    let selectQtyInputVal=qtyInput.val();
+                    let val=isNullOrNan(selectQtyInputVal);
+                    qtyInput.val(val+1);
+                    // alert(val);
+                    getPrice(ParentRow);
+                    calPrice(ParentRow);
+                    totalSubtotalAmountCalculate();
+                    checkStock(ParentRow);
+                    hideCalDisPrice(ParentRow);
+                    totalDisPrice();
+                    return ;
+               }
+            }
             var selectedLocation = $('#business_location_id').val();
             if(selectedLocation === ''){
                 warning('Select location!')
@@ -936,17 +957,16 @@
             }
             let business_location_id = selectedLocation;
             let query = $(this).find('.pos-product-name').text();
-            let variation_id = $(this).find('input[name="product_variation_id"]').val();
             let data = {
                 business_location_id, query, variation_id
             }
 
             $.ajax({
                 url: `/sell/get/product`,
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
+                type: 'GET',
+                // headers: {
+                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                // },
                 data: {
                     data,
                 },
@@ -962,7 +982,7 @@
                 },
                 success: function(results){
                     if(results.length>0 && results[0].product_type=="storable"){
-                        if(results[0].total_current_stock_qty === 0 || results[0].total_current_stock_qty === ''){
+                        if(results[0].total_current_stock_qty == 0 || results[0].total_current_stock_qty == ''){
                             error('Out of stock');
                             return;
                         }
@@ -1033,11 +1053,10 @@
         $(document).on('click', '#decrease', function() {
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
             let decVal = parent.find('input[name="quantity[]"]');
-            getPrice($(this));
+            getPrice(parent);
             let value = parseInt(decVal.val()) - 1;
             decVal.val(value >= 1 ? value : 1);
             // false ? getPriceByEachRow() : getPrice();
-            getPrice($(this));
             calPrice($(this));
             totalSubtotalAmountCalculate();
             checkStock($(this));
@@ -1047,7 +1066,7 @@
         function processTableRows() {
             $(`#${tableBodyId} tr`).each(function() {
                 let parent = $(this).closest('tr');
-            getPrice($(this));
+                getPrice(parent);
                 calPrice(parent);
                 totalSubtotalAmountCalculate();
                 totalDisPrice();
@@ -1095,6 +1114,22 @@
 
             $(document).on('change', 'select[name="invoice_row_discount_type"]', function(e){
                 $('#invoice_row_discount').find('input[name="discount_amount"]').trigger('input');
+                    let disAmt=$('#invoice_row_discount').find('input[name="discount_amount"]');
+                if($(this).val()=='foc'){$('.percSymbol').addClass('d-none');
+                    $('#invoice_row_discount').find('input[name="modal_price_without_dis"]').val(0);
+                    $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',true);
+                    disAmt.val(0);
+                    disAmt.attr('disabled',true);
+                }else if($(this).val()=='percentage'){
+                    $('.percSymbol').removeClass('d-none');
+                    $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',false);
+                    disAmt.attr('disabled',false);
+                }
+                else{
+                    $('.percSymbol').addClass('d-none');
+                    $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').attr('disabled',false);
+                    disAmt.attr('disabled',false);
+                }
             })
 
             $(document).on('input', 'input[name="discount_amount"]', function(e){
@@ -1133,20 +1168,27 @@
             //     $('#invoice_row_discount').find('input[name="discount_amount"]').trigger('input');
             // })
         })
-        $('#invoice_row_discount').on('hidden.bs.modal', function(event) {
+        $('#invoice_row_discount #saveExtraSetting').on('click',function(event) {
             // let selling_price_group = $(this).find('select[name="each_selling_price"]').val();
-            let uom_price = $(this).find('input[name="modal_price_without_dis"]').val();
-            let item_detail_note = $(this).find('#item_detail_note_input').val();
-            let dis_type = $(this).find('select[name="invoice_row_discount_type"]').val();
-            let dis_amount = $(this).find('input[name="discount_amount"]').val();
-            let subtotal_with_dis = $(this).find('input[name="subtotal_with_discount"]').val();
+            let parent=$('#invoice_row_discount');
+            let uom_price = parent.find('input[name="modal_price_without_dis"]').val();
+            let item_detail_note = parent.find('#item_detail_note_input').val();
+            let dis_type = parent.find('select[name="invoice_row_discount_type"]').val();
+            let dis_amount = parent.find('input[name="discount_amount"]').val();
+            let subtotal_with_dis = parent.find('input[name="subtotal_with_discount"]').val();
 
-            current_tr.find('input[name="selling_price[]"]').val(pDecimal(uom_price));
             // current_tr.find('input[name="each_selling_price"]').val(selling_price_group);
             current_tr.find('input[name="discount_type"]').val(dis_type);
-            current_tr.find('input[name="per_item_discount"]').val(dis_amount);
-            current_tr.find('input[name="subtotal_with_discount"]').val(subtotal_with_dis);
-            current_tr.find('input[name="item_detail_note"]').val(item_detail_note);
+            if(dis_type.toLowerCase() == 'foc'){
+                current_tr.find('input[name="per_item_discount"]').val(0);
+                current_tr.find('input[name="subtotal_with_discount"]').val(0);
+                current_tr.find('input[name="selling_price[]"]').val(0).attr('disabled',true);
+            }else{
+                current_tr.find('input[name="selling_price[]"]').val(pDecimal(uom_price)).attr('disabled',false);
+                current_tr.find('input[name="per_item_discount"]').val(dis_amount);
+                current_tr.find('input[name="subtotal_with_discount"]').val(subtotal_with_dis);
+                current_tr.find('input[name="item_detail_note"]').val(item_detail_note);
+            }
             calPrice(current_tr);
             totalDisPrice();
         });

@@ -1,0 +1,23 @@
+<?php
+return [
+    'customer_groups' => 'Групи на клиентите',
+    'customer_group_lists' => 'Списък на групите на клиентите',
+    'customer_group' => 'Група на клиенти',
+    'all_customer_group' => 'Всички групи на клиентите',
+    'export_report' => 'Експортиране на отчет',
+    'add' => 'Добави',
+    'actions' => 'Действия',
+    'edit' => 'Редакция',
+    'delete' => 'Изтрий',
+    'add_customer_group' => 'Добави група на клиенти',
+    'customer_group_name' => 'Име на групата на клиентите',
+    'price_calc_type' => 'Тип на изчисление на цената',
+    'calc_percent' => 'Процент на изчисление (%)',
+    'selling_price_group' => 'Група за продажна цена',
+    'close' => 'Затвори',
+    'save' => 'Запази',
+    'edit_customer_group' => 'Редакция на групата на клиентите',
+    'update' => 'Актуализирай',
+    'are_you_sure' => 'Наистина ли сте',
+    'this_customer_group_will_be_deleted' => 'Тази група на клиентите ще бъде изтрита',
+];

@@ -1,10 +1,10 @@
 <?php 
 
 return [
-    'add_brand' => 'Add Brand',
+    'add_brand' => 'အမှတ်တံဆိပ် ဖြည့်သွင်းပါ',
 
-    'edit_brand' => 'Edit Brand',
+    'edit_brand' => 'အမှတ်တံဆိပ် ပြင်ဆင်ပါ',
 
-    'brand_list' => 'Brand List',
-    'brand_name' => 'Brand Name',
+    'brand_list' => 'အမှတ်တံဆိပ် စာရင်း',
+    'brand_name' => 'အမှတ်တံဆိပ် အမည်',
 ];

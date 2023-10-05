@@ -15,7 +15,6 @@ class RolesTableSeeder extends Seeder
 
     private function createFeatureAndPermissions($features, $permissions)
     {
-
         foreach ($features as $feature) {
             $featureData = Feature::create([
                 'name' => $feature,

@@ -1445,7 +1445,7 @@ class StockAdjustmentController extends Controller
     {
         $lastStockAdjustmentId = StockAdjustment::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
 
-        $voucherNumber =  sprintf($prefix.'-' . '%06d', ($lastStockAdjustmentId + 1));
+        $voucherNumber = stockAdjustmentVoucherNo($lastStockAdjustmentId);
 
         return $voucherNumber;
     }

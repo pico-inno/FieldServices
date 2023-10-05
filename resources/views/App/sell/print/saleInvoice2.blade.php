@@ -34,7 +34,7 @@
                         <span class="fs-5 fw-semibold">{{$location['mobile']}}</span>
                         <address class="mt-3 fs-5">
                                 <br>
-                                {{ $location['landmark'] ? $location['landmark'].','  :''}}<br>
+                                {{ $location['address'] ? $location['address'].','  :''}}<br>
                                 {{$location['city'] ? $location['city'].',' :'' }}{{ $location['state'] ? $location['state'].',' :'' }}
                                 {{$location['country'] ? $location['country'].',' :'' }}{{$location['zip_code'] ? $location['zip_code'].',' :''}}
                         </address>

@@ -106,9 +106,9 @@
 
 
                             <th class="text-center min-w-80px">Actions</th>
-                            <th class="min-w-125px">Name</th>
+                            <th class="min-w-400px">Name</th>
                             <th class="min-w-125px">Location Id</th>
-                            <th class="min-w-125px">Landmark</th>
+                            <th class="min-w-125px">address</th>
                             <th class="min-w-125px">City</th>
                             <th class="min-w-125px">Zip Code</th>
                             <th class="min-w-125px">State</th>
@@ -667,11 +667,23 @@
     </div>
     <!--end::Container-->
 </div>
+<div class="modal fade view" tabindex="-1">
 
+</div>
 @endsection
 
 @push('scripts')
 
 		<script src={{asset('customJs/businessJs/businessLocation.js')}}></script>
+<script>
+    $(document).on('click', '.view_detail', function(){
 
+            loadingOn();
+            $url=$(this).data('href');
+            $('.view').load($url, function() {
+                $(this).modal('show');
+                loadingOff();
+            });
+        });
+</script>
 @endpush

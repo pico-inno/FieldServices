@@ -1,7 +1,6 @@
 @extends('App.main.navBar')
-@section('dashboard_active','active')
 @section('dashboard_show', 'active show')
-@section('dashboard_active_show', 'active ')
+@section('dashboard_active', 'active ')
 @section('title')
     <!--begin::Heading-->
     <h1 class="text-dark fw-bold my-0 fs-2">{{getSettingsValue('name')}}</h1>
@@ -290,7 +289,7 @@
                                 <!--begin::Title-->
                                 <h1 class="fw-semibold text-gray-800 text-center lh-lg">Try out our
                                     <br />new
-                                    <span class="fw-bolder">Invoice Manager Module</span></h1>
+                                    <span class="fw-bolder">SMS Module</span></h1>
                                 <!--end::Title-->
                                 <!--begin::Illustration-->
                                 <div class="py-10 text-center">

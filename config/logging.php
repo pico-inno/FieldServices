@@ -2,6 +2,7 @@
 
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
+use Illuminate\Support\Facades\Auth;
 use Monolog\Handler\SyslogUdpHandler;
 
 return [
@@ -117,6 +118,14 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        // 'slack' => [
+        //     'driver' => 'slack',
+        //     'url' => env('SLACK_WEBHOOK_URL'),
+        //     'channel' => '#logs',
+        //     'username' => 'Pico SBS',
+        //     'emoji' => ':bomb:', // Customize the emoji as needed
+        //     'level' => 'error',
+        // ],
     ],
 
 ];

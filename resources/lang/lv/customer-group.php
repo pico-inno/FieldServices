@@ -1,0 +1,23 @@
+<?php
+return [
+    'customer_groups' => 'Klientu grupas',
+    'customer_group_lists' => 'Klientu grupu saraksts',
+    'customer_group' => 'Klientu grupa',
+    'all_customer_group' => 'Visas klientu grupas',
+    'export_report' => 'Eksportēt ziņojumu',
+    'add' => 'Pievienot',
+    'actions' => 'Darbības',
+    'edit' => 'Rediģēt',
+    'delete' => 'Dzēst',
+    'add_customer_group' => 'Pievienot klientu grupu',
+    'customer_group_name' => 'Klientu grupas nosaukums',
+    'price_calc_type' => 'Cenas aprēķina veids',
+    'calc_percent' => 'Aprēķina procents (%)',
+    'selling_price_group' => 'Pārdošanas cenas grupa',
+    'close' => 'Aizvērt',
+    'save' => 'Saglabāt',
+    'edit_customer_group' => 'Rediģēt klientu grupu',
+    'update' => 'Atjaunināt',
+    'are_you_sure' => 'Vai jūs esat pārliecināts',
+    'this_customer_group_will_be_deleted' => 'šī klientu grupa tiks dzēsta',
+];

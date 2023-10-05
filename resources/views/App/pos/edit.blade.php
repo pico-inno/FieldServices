@@ -970,11 +970,15 @@
                                 <select class="form-select mb-2 form-select-sm rounded-0" name="invoice_row_discount_type" data-control="select2" data-hide-search="true">
                                     <option value="fixed">Fixed</option>
                                     <option value="percentage">Percentage</option>
+                                    <option value="foc">FOC</option>
                                 </select>
                             </div>
                             <div class="col-6">
                                 <label for="" class="fs-5">Discount Amount</label>
-                                <input type="text" class="form-control form-control-sm rounded-0" name="discount_amount" value="0">
+                               <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm rounded-0" name="discount_amount" value="0">
+                                    <div class="input-group-text percSymbol">%</div>
+                               </div>
                             </div>
                         </div>
                         <div class="row mb-5">

@@ -1,0 +1,23 @@
+<?php
+return [
+    'customer_groups' => 'Skupiny zákazníků',
+    'customer_group_lists' => 'Seznam skupin zákazníků',
+    'customer_group' => 'Skupina zákazníků',
+    'all_customer_group' => 'Všechny skupiny zákazníků',
+    'export_report' => 'Exportovat zprávu',
+    'add' => 'Přidat',
+    'actions' => 'Akce',
+    'edit' => 'Upravit',
+    'delete' => 'Smazat',
+    'add_customer_group' => 'Přidat skupinu zákazníků',
+    'customer_group_name' => 'Název skupiny zákazníků',
+    'price_calc_type' => 'Typ výpočtu ceny',
+    'calc_percent' => 'Výpočetní procento (%)',
+    'selling_price_group' => 'Skupina prodejní ceny',
+    'close' => 'Zavřít',
+    'save' => 'Uložit',
+    'edit_customer_group' => 'Upravit skupinu zákazníků',
+    'update' => 'Aktualizovat',
+    'are_you_sure' => 'Opravdu chcete pokračovat',
+    'this_customer_group_will_be_deleted' => 'Tato skupina zákazníků bude smazána',
+];

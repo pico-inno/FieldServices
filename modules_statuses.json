@@ -1,5 +1,7 @@
 {
     "ObjectStorage": true,
     "OrderDisplay": true,
-    "StockInOut": true
+    "Reservation": true,
+    "RoomManagement": true,
+    "ExchangeRate": true
 }

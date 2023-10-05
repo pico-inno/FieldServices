@@ -1278,7 +1278,7 @@ class StockTransferController extends Controller
     {
         $lastStockTransferId = StockTransfer::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
 
-        $voucherNumber =  sprintf($prefix.'-' . '%06d', ($lastStockTransferId + 1));
+        $voucherNumber =  stockTransferVoucher($lastStockTransferId);
 
         return $voucherNumber;
     }

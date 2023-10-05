@@ -109,7 +109,7 @@
                                          data-placeholder="Select Location" data-kt-user-table-filter="role" data-allow-clear="true" >
                                         <option></option>
                                         @foreach ($locations as $l)
-                                        <option value="{{$l->id}}" @selected($l->id==$purchase->business_location_id)>{{$l->name}}</option>
+                                        <option value="{{$l->id}}" @selected($l->id==$purchase->business_location_id)>{{businessLocationName($l)}}</option>
                                         @endforeach
                                     </select>
                                 </div>

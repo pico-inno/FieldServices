@@ -1,0 +1,23 @@
+<?php
+return [
+    'customer_groups' => 'Klientų grupės',
+    'customer_group_lists' => 'Klientų grupių sąrašas',
+    'customer_group' => 'Klientų grupė',
+    'all_customer_group' => 'Visos klientų grupės',
+    'export_report' => 'Eksportuoti ataskaitą',
+    'add' => 'Pridėti',
+    'actions' => 'Veiksmai',
+    'edit' => 'Redaguoti',
+    'delete' => 'Ištrinti',
+    'add_customer_group' => 'Pridėti klientų grupę',
+    'customer_group_name' => 'Klientų grupės pavadinimas',
+    'price_calc_type' => 'Kainos skaičiavimo tipas',
+    'calc_percent' => 'Skaičiavimo procentas(%)',
+    'selling_price_group' => 'Pardavimo kainos grupė',
+    'close' => 'Uždaryti',
+    'save' => 'Išsaugoti',
+    'edit_customer_group' => 'Redaguoti klientų grupę',
+    'update' => 'Atnaujinti',
+    'are_you_sure' => 'Ar tikrai',
+    'this_customer_group_will_be_deleted' => 'ši klientų grupė bus ištrinta',
+];

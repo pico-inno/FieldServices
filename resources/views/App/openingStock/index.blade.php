@@ -140,7 +140,7 @@
                 <!--begin::Card toolbar-->
                 <div class="card-toolbar">
                     <!--begin::Toolbar-->
-                    <div class="d-flex justify-content-end" data-kt-saleItem-table-toolbar="base">
+                    <div class="d-flex justify-content-end d-none" data-kt-saleItem-table-toolbar="base">
                         <!--begin::Filter-->
                        <!--begin::Toolbar-->
                         <div class="d-flex justify-content-end" data-kt-saleItem-table-toolbar="base">

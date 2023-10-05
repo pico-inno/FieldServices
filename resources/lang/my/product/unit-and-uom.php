@@ -1,26 +1,26 @@
 <?php 
 
 return [
-    'add_uom' => 'Add UoM',
-    'add_unit_category' => 'Add Unit Category',
+    'add_uom' => 'UoM ဖြည့်သွင်းပါ',
+    'add_unit_category' => 'ယူနစ်အမျိုးအစား ထည့်ပါ',
 
-    'bigger' => 'Bigger ( > )',
+    'bigger' => 'ပိုကြီး ( > )',
 
-    'edit_uom' => 'Edit UoM',
-    'edit_unit_category' => 'Edit Unit Category',
+    'edit_uom' => 'UoM ကို ပြင်ဆင်ပါ',
+    'edit_unit_category' => 'ယူနစ်အမျိုးအစားကို ပြင်ဆင်ပါ',
 
-    'filter_by_category' => 'Filter By Category',
+    'filter_by_category' => 'အမျိုးအစားအလိုက် စစ်ထုတ်ပါ',
 
-    'reference_unit' => 'Reerence Unit',
-    'reference_uom' => 'Reference UoM',
-    'reference' => 'Reference',
-    'rounded_amount' => 'Rounded Amount',
+    'reference_unit' => 'ကိုးကား ယူနစ်',
+    'reference_uom' => 'ကိုးကား UoM',
+    'reference' => 'ကိုးကား',
+    'rounded_amount' => 'လုံးဝန်းသော ပမာဏ',
 
-    'short_name' => 'Short Name',
-    'smaller' => 'Smaller ( < )',
+    'short_name' => 'နာမည် အတိုကောက်',
+    'smaller' => 'ပိုသေး ( < )',
 
-    'unit_category' => 'Unit Category',
-    'unit_list' => 'Unit List',
-    'unit_type' => 'Unit Type',
-    'unit' => 'Unit',
+    'unit_category' => 'ယူနစ် အမျိုးအစား',
+    'unit_list' => 'ယူနစ် စာရင်း',
+    'unit_type' => 'ယူနစ် အမျိုးအစား',
+    'unit' => 'ယူနစ်',
 ];

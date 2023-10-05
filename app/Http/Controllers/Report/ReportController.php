@@ -456,7 +456,7 @@ class ReportController extends Controller
                                    'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
                                    'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                    'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
-                                   'location_name' => $currentStock['location']['name'],
+                                   'location_name' => businessLocationName($currentStock->location),
                                    'category_name' => $product['category']['name'] ?? '',
                                    'brand_name' => $product['brand']['name'] ?? '',
                                    'ref_uom_name' => $currentStock['uom']['name'],
@@ -617,7 +617,7 @@ class ReportController extends Controller
                                 'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
-                                'location_name' => $currentStock['location']['name'],
+                                'location_name' => businessLocationName($currentStock->location),
                                 'category_name' => $product['category']['name'] ?? '',
                                 'brand_name' => $product['brand']['name'] ?? '',
                                 'ref_uom_name' => $currentStock['uom']['name'],
@@ -963,7 +963,7 @@ class ReportController extends Controller
 
 
     public function currentStockBalanceIndex(){
-        $locations = businessLocation::select('id', 'name')->get();
+        $locations = businessLocation::select('id', 'name', 'parent_location_id')->get();
         $categories = Category::select('id', 'name', 'parent_id')->get();
         $brands = Brand::select('id', 'name',)->get();
         $products = Product::select('id', 'name')->get();
@@ -981,6 +981,7 @@ class ReportController extends Controller
 
 
     public function currentStockBalanceFilter(Request $request){
+
         $filterView = $request->data['filter_view'];
         $filterProduct = $request->data['filter_product'];
         $filterCategory = $request->data['filter_category'];
@@ -992,12 +993,12 @@ class ReportController extends Controller
         $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
 
 
-        $query = CurrentStockBalance::with(['uom','location:id,name'])
+        $query = CurrentStockBalance::with(['uom','location:id,name,parent_location_id'])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->where('current_quantity', '>', 0);
-
         if ($request->data['filter_locations'] != 0) {
-            $query->where('business_location_id', $request->data['filter_locations']);
+            $locationId=childLocationIDs($request->data['filter_locations']);
+            $query->whereIn('business_location_id', $locationId);
         }
 
         $currentStocks = $query->get();
@@ -1055,6 +1056,7 @@ class ReportController extends Controller
 
                 $mergeAllBatchStocks = $mergedStocks;
         }elseif ($filterView == 2){
+
                foreach ($currentStocks as $currentStock) {
                     $transactionID = $currentStock['transaction_detail_id'];
                     $variationId = $currentStock['variation_id'];
@@ -1109,7 +1111,6 @@ class ReportController extends Controller
 
         $lotCounts = [];
         $result = [];
-
         foreach ($mergeAllBatchStocks as $currentStock) {
             $productId = $currentStock['product_id'];
             $variationId = $currentStock['variation_id'];
@@ -1143,7 +1144,7 @@ class ReportController extends Controller
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
                                 'batch_no' => $filterView == 3 ? $currentStock['batch_no'] : $currentStock['batch_number'],
                                 'lot_no' => $filterView == 3 ? $currentStock['lot_serial_no'] : '-',
-                                'location_name' => $currentStock['location']['name'],
+                                'location_name' => businessLocationName($currentStock->location),
                                 'category_id' => $product['category']['id'] ?? '',
                                 'category_name' => $product['category']['name'] ?? '',
                                 'brand_name' => $product['brand']['name'] ?? '',
@@ -1153,13 +1154,13 @@ class ReportController extends Controller
                                 'purchase_qty' => $currentStock['ref_uom_quantity'],
                                 'current_qty' => $currentStock['current_quantity'],
                             ];
-
                             $result[] = $variationProduct;
                         }
                     }
                 }
             }
         }
+        logger($result);
 
 
         return response()->json( $result, 200);

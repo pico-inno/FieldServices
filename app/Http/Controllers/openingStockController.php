@@ -16,6 +16,7 @@ use App\Models\Contact\Contact;
 use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
+use App\Models\locationAddress;
 use App\Models\openingStockDetails;
 use App\Models\purchases\purchases;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +40,7 @@ class openingStockController extends Controller
     {
 
         $openingStocks = openingStocks::where('is_delete', 0)
-        ->with('business_location_id', 'opening_person')
+        ->with('business_location_id', 'businessLocation','opening_person')
         ->OrderBy('id', 'desc')
         ->get();
         return DataTables::of($openingStocks)
@@ -51,7 +52,9 @@ class openingStockController extends Controller
                     </div>
                 ';
             })
-
+            ->editColumn('location',function($stock){
+                return businessLocationName($stock->businessLocation);
+            })
             ->addColumn('action', function ($stock) {
                 $route=route('view_opening_stock',$stock->id);
                 $invoiceRoute=route('printInvoice', $stock->id);
@@ -296,13 +299,15 @@ class openingStockController extends Controller
     {
         $openingStock = openingStocks::with('business_location_id', 'opening_person', 'confirm_by', 'updated_by','created_by')->where('id', $id)->first()->toArray();
 
-        $location = $openingStock['business_location_id'];
+        $location = businessLocation::where('id', $openingStock['business_location_id'])->first();
 
         $openingStockDetails = $this->openingStockDetail($id);
+        $address=locationAddress::where('id',$location->id)->first();
         return view('App.openingStock.view', compact(
             'openingStock',
             'location',
-            'openingStockDetails'
+            'openingStockDetails',
+            'address'
         ));
     }
 

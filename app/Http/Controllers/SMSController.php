@@ -2,37 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
+use App\Services\smsServices;
+use App\Models\Contact\Contact;
 use Illuminate\Support\Facades\Http;
+use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
 
 class SMSController extends Controller
 {
-    private $AuthToken;
-    private $sender;
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
-        $this->AuthToken= env('SMSPOH_AUTH_TOKEN');
-        $this->sender=env('SMSPOH_SENDER');
     }
-    public function create(){
-        return view('App.SMS.create');
+    public function index($service,smsServices $sms)
+    {
+        if($service=='smspoh'){
+            $smsDatas = $sms->getSMSWithSmsPoh()['data'];
+            return view('App.SMS.smsPoh.index', compact('smsDatas'));
+        }else{
+            $smsDatas = $sms->getSMSWithTwilio();
+            // dd($smsDatas);
+            return view('App.SMS.twilio.index', compact('smsDatas'));
+        }
     }
-    public function send(Request $request)
+    // public function twilioSMS(smsServices $sms)
+    // {
+    //     $smsDatas = $sms->getSMSWithTwilio();
+    //     dd($smsDatas);
+    //     return view('App.SMS.smsPoh.index', compact('smsDatas'));
+    // }
+    public function create($service)
+    {
+        if($service == 'smspoh'){
+            return view('App.SMS.smsPoh.create');
+        }else {
+            return view('App.SMS.twilio.create');
+        }
+    }
+    public function send(Request $request,$service, smsServices $sms)
     {
         try {
-            $data = [
-                'to' => $request->sent_to,
-                'message' => $request->message,
-                'sender' => $this->sender,
-            ];
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->AuthToken,
-                'Content-Type' => 'application/json',
-            ])->post('https://smspoh.com/api/v2/send', $data);
-
-            // return;
-            if ($response->successful()) {
+            if (!trim($request->message)) {
+                throw new Exception("Message is Required", 1);
+            }
+            $receivers = $this->requestJsonId($request->sent_to);
+            foreach ($receivers as $receiver) {
+                if ($receiver['mobile']) {
+                    $data = [
+                        'to' => $receiver['mobile'],
+                        'message' => $request->message,
+                    ];
+                    if($service == 'smspoh'){
+                        $response = $sms->sendWithSMSPoh($data);
+                    }elseif($service=='twilio') {
+                        $response = $sms->sendWithTwillio($data);
+                    }
+                }
+            }
+            if ($response) {
                 return back()->with(['success' => 'Successfully Send Message']);
             } else {
                 return back()->with(['error' => $response->status()]);
@@ -40,5 +68,22 @@ class SMSController extends Controller
         } catch (\Throwable $th) {
             return back()->with(['error' => $th->getMessage()]);
         }
+    }
+    public function getSMS(smsServices $sms)
+    {
+        // dd('ejer');
+        // echo "<pre>";
+        // return $sms->getSMSWithSmsPoh();
+    }
+    protected function requestJsonId($requestJson)
+    {
+        $datas = json_decode($requestJson);
+        if ($datas) {
+            $data = array_map(function ($c) {
+                return ['mobile' => $c->mobile];
+            }, $datas);
+            return $data;
+        }
+        return [];
     }
 }

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\settings;
 
+use App\Actions\location\locationActions;
 use Exception;
+use App\Models\locationType;
 use Illuminate\Http\Request;
+use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Product\PriceLists;
+use App\Models\locationAddress;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
@@ -25,27 +28,39 @@ class businessLocationController extends Controller
     public function addForm()
     {
         $priceLists=PriceLists::get();
-        return view('App.businessSetting.location.add',compact('priceLists'));
+        $locationType= locationType::get();
+        $locations = businessLocation::orderBy('id','DESC')->get();
+        return view('App.businessSetting.location.add',compact('priceLists', 'locationType', 'locations'));
     }
-    public function add(Request $request)
+    public function add(Request $request,locationActions $action)
     {
-        $location_count=businessLocation::count();
-        $location_id= $request->location_id ?? sprintf('BL' . '%03d', ($location_count + 1));
-        $request['business_id']=businessSettings::first()->id;
-        $request['location_id']=$location_id;
-        $request['is_active'] = $request['is_acitve']??0;
-        $request['allow_purchase_order'] = $request['is_active'] ?? 0;
-        $create=businessLocation::create($request->toArray());
-
-        if($create){
-            return redirect()->route('business_location')->with(['success'=>'Successfully Created Location']);
-        }
+        $location=$action->createLocation($request);
+        $action->createLocationAddress($request,$location);
+        return redirect()->route('business_location')->with(['success'=>'Successfully Created Location']);
 
     }
     public function listData()
     {
-        $locations = businessLocation::query();
+        $locations = businessLocation::query()->with('locationAddress');
         return DataTables::of($locations)
+            ->editColumn('name', function ($location) {
+                return businessLocationName($location);
+            })
+            ->addColumn('address', function ($location) {
+                return arr($location->locationAddress, 'address');
+            })
+            ->addColumn('city', function ($location) {
+            return arr($location->locationAddress, 'city');
+            })
+            ->addColumn('zip_code', function ($location) {
+            return arr($location->locationAddress, 'zip_code');
+            })
+            ->addColumn('state', function ($location) {
+            return arr($location->locationAddress, 'state');
+            })
+            ->addColumn('country', function ($location) {
+            return arr($location->locationAddress, 'country');
+            })
             ->addColumn('checkbox',function($location){
                 return
                 '
@@ -64,7 +79,8 @@ class businessLocationController extends Controller
                             Actions
                         </button>
                         <ul class="dropdown-menu z-10 p-5 " aria-labelledby="dropdownMenuButton1" role="menu">'
-                            .$activationBtn.'
+                            .$activationBtn. '
+                            <a data-href="' . route('location_view', $location->id) . '" class="dropdown-item p-2 edit-unit bg-active-primary text-primary view_detail" data-id="' . $location->id . '" >View</a>
                             <a href="' . route('location_update_form',$location->id) . '" class="dropdown-item p-2 edit-unit bg-active-primary text-primary" data-id="' . $location->id . '" >Edit</a>
                             <a class="dropdown-item p-2 location_delete_confirm cursor-pointer bg-active-danger text-danger"  data-id="'.$location->id. '" data-kt-location-table-filter="delete_row">Delete</a>
                         </ul>
@@ -79,9 +95,16 @@ class businessLocationController extends Controller
     {
         $bl= $businessLocation;
         $priceLists=PriceLists::get();
-        return view('App.businessSetting.location.edit',compact('bl','priceLists'));
+        $locationType = locationType::get();
+        $locations = businessLocation::orderBy('id', 'DESC')->get();
+        $address = locationAddress::where('location_id',$bl->id)->first();
+        return view('App.businessSetting.location.edit',compact('bl','priceLists','locationType','locations', 'address'));
 
-
+    }
+    public function view(businessLocation $businessLocation){
+        $bl = $businessLocation;
+        $address = locationAddress::where('location_id', $bl->id)->first();
+        return view('App.businessSetting.location.view', compact('bl', 'address'));
     }
     public function update(Request $request,$id)
     {

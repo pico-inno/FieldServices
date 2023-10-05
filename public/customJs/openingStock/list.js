@@ -55,8 +55,8 @@ var KTCustomersList = function () {
                     name: "opening_person.username"
                 },
                 {
-                    data: "business_location_id.name",
-                    name: "business_location_id.name"
+                    data: "location",
+                    name: "location"
                 },
                 {
                     data: "total_opening_amount",

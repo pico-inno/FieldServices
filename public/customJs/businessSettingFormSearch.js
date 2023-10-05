@@ -16,7 +16,8 @@ function scrollToLabel() {
     tabPanes.removeClass('active show');
     matchingTabLink.addClass('active');
     matchingTabPane.addClass('active show');
-
+    let title = $(matchingTabLink.closest('.nav-item')).data('title');
+    $('#tab-title').text(title);
     // Highlight the matching label for 5 seconds
     matchingLabel.addClass('highlighted');
     setTimeout(() => {

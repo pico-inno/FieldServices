@@ -3,6 +3,7 @@
 <style>
     /* .custom-select2 {
         width: 135px;
+        width: 135px;
     }
 
     #delete_room_row {
@@ -11,9 +12,9 @@
     } */
 </style>
 @endsection
-@section('room_management_icon','active')
-@section('room_management_show','active show')
-@section('price_list_detail_menu_link','active')
+@section('products_icon', 'active')
+@section('products_show', 'active show')
+@section('price_list_detail_menu_link', 'active')
 
 @section('title')
 <!--begin::Heading-->
@@ -57,7 +58,7 @@
                         </div>
                         <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label class="form-label required">{{ __('product/pricelist.base_price') }}</label>
-                            <select name="base_price" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Select Base Price">
+                            <select name="base_price" class="form-select form-select-sm fs-7" id="base_price" data-control="select2" data-placeholder="Select Base Price">
                                 <option></option>
                                 <option value="0" selected>{{ __('product/pricelist.cost') }}</option>
                                 @foreach($price_lists as $price_list)
@@ -68,9 +69,11 @@
                                 <div class="text-danger my-2">{{ $message }}</div>
                             @enderror
                         </div>
+                        {{-- <div class="col-md-4 col-sm-12 mb-8 ">
+                        </div> --}}
                         <div class="col-md-4 col-sm-12 mb-8 fv-row">
                             <label for="" class="form-label required">{{ __('product/pricelist.currency') }}</label>
-                            <select name="currency_id" class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
+                            <select name="currency_id" id="currency_id"  class="form-select form-select-sm fs-7" data-control="select2" data-placeholder="Please select">
                                 <option></option>
                                 @foreach($currencies as $currency)
                                     <option value="{{ $currency->id }}" @selected(isset($priceListData['currency_id']) ? $priceListData['currency_id'] == $currency->id:false) >{{ $currency->name }}</option>
@@ -266,6 +269,7 @@
 
 @push('scripts')
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
+
 
     @if ($errors->any())
         @foreach ($errors->all() as $error)

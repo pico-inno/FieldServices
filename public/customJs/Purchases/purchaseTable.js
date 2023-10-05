@@ -64,12 +64,8 @@ var KTCustomersList = function () {
 
                 },
                 {
-                    name: "business_location_id",
-                    data: "business_location_id",
-                    render:function(data){
-                        console.log(data);
-                        return data ? data.name : '-' ;
-                    }
+                    name: "location",
+                    data: "location",
                 },
                 {
                     data: 'supplier',
