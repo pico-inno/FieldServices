@@ -388,6 +388,45 @@
 </div>
 
 <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
+<div class="modal fade" id="suggestionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog w-lg-600px modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-gray-800">Product Suggestion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="suggestionProducts">
+                <div class="border border-1 rounded px-2 py-3 d-flex mb-2">
+                    <div class="img bg-light w-50px h-50px rounded">
+
+                    </div>
+                    <div class="product-info ms-4 pt-1">
+                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span
+                                class="text-gray-700 fw-semibold">(Cherry Mx blue switch)</span></span>
+                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30
+                                pcs</span></span>
+                    </div>
+                </div>
+                <div class="border border-1 rounded px-2 py-3 d-flex">
+                    <div class="img bg-light w-50px h-50px rounded">
+
+                    </div>
+                    <div class="product-info ms-4 pt-1">
+                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span
+                                class="text-gray-700 fw-semibold">(Cherry Mx
+                                blue switch)</span></span>
+                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30
+                                pcs</span></span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @include('App.purchase.newProductAdd')
 @include('App.sell.sale.subscribeModel')
 @endsection

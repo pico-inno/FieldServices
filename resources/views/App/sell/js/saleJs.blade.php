@@ -59,7 +59,7 @@
                     'uom_id':sale.uom_id,
                     'stock':sale.stock,
                 };
-                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
                 if(indexToReplace !== -1){
                     productsOnSelectData[indexToReplace] = newProductData;
                 }else{
@@ -275,7 +275,7 @@
                                 <div class="product-info ms-4 pt-1">
                                     <span class="fw-bold text-gray-800">${product.name} <span class="text-gray-700 fw-semibold">
                                         ${variation_template_value ? '(' + variation_template_value.name + ')' :''}</span></span>
-                                    <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30 pcs</span></span>
+                                    <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> ${ap.quantity} ${uom.short_name}</span></span>
                                 </div>
                             </div>
                         `
@@ -287,7 +287,9 @@
                             let productId=$(this).data('productid');
                             let locationId=$('[name="business_location_id"]').val();
                             let qty=$(this).data('qty');
-                            suggestionProduct.find((sp,i)=>{
+                            if(suggestionProduct.length >0){
+                                console.log(suggestionProduct);
+                                suggestionProduct.forEach((sp,i)=>{
                                 if(sp.variation_id==variationId && sp.qty==qty && sp.uomId ==dataUomId){
                                     suggestionProduct.splice(i,1);
                                     return i;
@@ -295,6 +297,7 @@
                                     return null;
                                 }
                             })
+                            }
                             $.ajax({
                                 url:'/sell/get/suggestion/product',
                                 data:{
