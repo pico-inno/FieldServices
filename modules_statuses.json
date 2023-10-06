@@ -3,5 +3,5 @@
     "OrderDisplay": true,
     "Reservation": true,
     "RoomManagement": true,
-    "ExchangeRate": true
+    "ExchangeRate": false
 }
