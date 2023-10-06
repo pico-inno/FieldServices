@@ -4,8 +4,13 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Models\BusinessUser;
+use App\Models\Contact\Contact;
+use App\Models\Product\UnitCategory;
+use App\Models\Product\UOM;
 use Illuminate\Http\Request;
+use App\Models\RolePermission;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 use App\Models\settings\businessSettings;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,6 +28,7 @@ class install
                 $businessUserCount = BusinessUser::count();
                 $businessCount = businessSettings::count();
                 if ($businessUserCount == 0 && $businessCount == 0) {
+                    $this->seeding();
                     return redirect()->route('activationForm');
                 } else {
                     return redirect('/');
@@ -32,6 +38,23 @@ class install
             };
         } catch (\Throwable $th) {
             return $next($request);
+        }
+    }
+    public function seeding(){
+        $permissionCount = RolePermission::count();
+        if ($permissionCount <= 0) {
+            Artisan::call('db:seed --class=RolesTableSeeder');
+        }
+
+        $uomCount = UOM::count();
+        $unitCategoryCount = UnitCategory::count();
+        if ($uomCount <= 0 && $unitCategoryCount <= 0) {
+            Artisan::call('db:seed --class=UoMSeeder');
+        }
+
+        $contactCount = Contact::count();
+        if ($contactCount <= 0) {
+            Artisan::call('db:seed --class=ContactWalkInTableSeeder');
         }
     }
 }

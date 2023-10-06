@@ -8,8 +8,10 @@ use App\Helpers\SettingHelpers;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use App\Models\settings\businessSettings;
+use Illuminate\Support\Facades\Artisan;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Currency;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,6 +34,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        if(!Schema::hasTable('session')) {
+            Artisan::call('migrate --path=database/migrations/2023_09_26_103002_create_sessions_table.php');
+        }
         view()->composer('*', function($view) {
             try {
                 if (Auth::check()) {
