@@ -35,7 +35,6 @@ use App\Models\purchases\purchases;
 use App\Http\Controllers\Controller;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\sale\SaleRequest;
 use App\Models\hospitalRoomSaleDetails;
 use App\Models\posRegisterTransactions;
 use App\Models\Product\PriceListDetails;
@@ -308,15 +307,26 @@ class saleController extends Controller
         return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
     }
     // sale store
-    public function store(SaleRequest $request,SaleServices $saleService,paymentServices $paymentServices)
+    public function store(Request $request,SaleServices $saleService,paymentServices $paymentServices)
     {
         $sale_details = $request->sale_details;
+        Validator::make($request->toArray(), [
+            'sale_details' => 'required',
+            'business_location_id' => 'required',
+            'contact_id' => 'required',
+            'status' => 'required',
+        ], [
+            'sale_details.required' => 'Sale Items are required!',
+            'business_location_id.required' => 'Bussiness Location is required!',
+            'contact_id.required' => 'Contact is required!',
+        ])->validate();
         if ($request->type == 'pos') {
             $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
             $paymentAccountIds = json_decode($registeredPos->payment_account_id);
             $request['payment_account'] = $paymentAccountIds[0] ?? null;
             $request['currency_id'] = $this->currency->id ?? null;
         }
+
         DB::beginTransaction();
         try {
             // get payment status

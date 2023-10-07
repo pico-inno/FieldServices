@@ -28,7 +28,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
 use Yajra\DataTables\Facades\DataTables;
 use App\Actions\purchase\purchaseActions;
-use App\Http\Requests\purchase\CreatePurchaseRequest;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
