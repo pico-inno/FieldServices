@@ -232,14 +232,6 @@ class UoMSeeder extends Seeder
                     'rounded_amount' => 4
                 ],
                 [
-                    'name' => 'Fluid Ounces (US)',
-                    'short_name' => 'fl oz (US)',
-                    'unit_category_id' => $volumeCategoryId,
-                    'unit_type' => 'smaller',
-                    'value' => 33.81,
-                    'rounded_amount' => 4
-                ],
-                [
                     'name' => 'Quarts (US)',
                     'short_name' => 'qt (US)',
                     'unit_category_id' => $volumeCategoryId,
