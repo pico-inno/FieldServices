@@ -4,6 +4,7 @@ namespace App\Models\Product;
 
 use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Product\AdditionalProduct;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,7 +34,7 @@ class ProductVariation extends Model
     }
     public function additionalProduct()
     {
-        return $this->hasMany(additionalProduct::class, 'primary_product_variation_id','id');
+        return $this->hasMany(AdditionalProduct::class, 'primary_product_variation_id','id');
     }
 
     public function variationTemplateValue() : BelongsTo

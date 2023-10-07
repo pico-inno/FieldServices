@@ -245,7 +245,7 @@ class saleController extends Controller
         $defaultCurrency = $this->currency;
         $currencies = Currencies::get();
         $exchangeRates=[];
-        if(class_exists('Modules\ExchangeRate\Entities\exchangeRates')){
+        if(class_exists('Modules\ExchangeRate\Entities\exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')){
             $exchangeRates=exchangeRates::get();
         }
         return view('App.sell.sale.addSale', compact('locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
