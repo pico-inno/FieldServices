@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
 use Yajra\DataTables\Facades\DataTables;
 use App\Actions\purchase\purchaseActions;
-use App\Http\Requests\purchase\createPurchaseRequest;
+use App\Http\Requests\purchase\CreatePurchaseRequest;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
@@ -89,7 +89,7 @@ class purchaseController extends Controller
         $setting = $this->setting;
         return view('App.purchase.addNewPurchase', compact('locations', 'suppliers', 'setting', 'currency', 'currencies'));
     }
-    public function store(Request $request,purchaseService $service)
+    public function store(Request $request, purchaseService $service)
     {
         Validator::make([
             'details' => $request->purchase_details,
@@ -98,7 +98,7 @@ class purchaseController extends Controller
         ])->validate();
         try {
             // create purchase from service
-            $purchase= $service->createPurchase($request);
+            $purchase = $service->createPurchase($request);
 
             if ($request->save == 'save_&_print') {
                 return redirect()->route('purchase_list')->with([
@@ -118,7 +118,7 @@ class purchaseController extends Controller
         }
     }
 
-    public function listData(Request $request,purchaseService $purchaseService)
+    public function listData(Request $request, purchaseService $purchaseService)
     {
         return $purchaseService->listData($request);
     }
@@ -166,7 +166,7 @@ class purchaseController extends Controller
 
 
 
-    public function update($id, Request $request,purchaseService $service)
+    public function update($id, Request $request, purchaseService $service)
     {
         Validator::make([
             'details' => $request->purchase_details,
@@ -596,5 +596,4 @@ class purchaseController extends Controller
         }
         return response()->json($products, 200);
     }
-
 }

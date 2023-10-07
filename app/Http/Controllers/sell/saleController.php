@@ -16,22 +16,28 @@ use App\Models\Product\UOM;
 use App\Models\posRegisters;
 use Illuminate\Http\Request;
 use App\Models\stock_history;
+use App\Services\SaleServices;
 use Illuminate\Support\Carbon;
 use App\Models\Contact\Contact;
+use App\Models\locationAddress;
 use App\Models\paymentAccounts;
 use App\Models\Product\Product;
 use App\Models\lotSerialDetails;
 use App\Helpers\generatorHelpers;
 use App\Models\sale\sale_details;
+use App\Services\paymentServices;
 use App\Models\Product\PriceGroup;
 use App\Models\Product\PriceLists;
+use App\repositories\locationRepo;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Http\Controllers\Controller;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\sale\SaleRequest;
 use App\Models\hospitalRoomSaleDetails;
+use App\Models\posRegisterTransactions;
 use App\Models\Product\PriceListDetails;
 use App\Models\Product\ProductVariation;
 use Yajra\DataTables\Facades\DataTables;
@@ -42,19 +48,13 @@ use App\Models\purchases\purchase_details;
 use Modules\Reservation\Entities\Reservation;
 use App\Models\posSession\posRegisterSessions;
 use Modules\Reservation\Entities\FolioInvoice;
-use Modules\Reservation\Entities\FolioInvoiceDetail;
-use App\Http\Controllers\posSession\posSessionController;
-use App\Http\Requests\sale\saleRequest;
-use App\Models\locationAddress;
-use App\Models\posRegisterTransactions;
-use App\Services\paymentServices;
-use App\Services\SaleServices;
 use Modules\ExchangeRate\Entities\exchangeRates;
+use Modules\Reservation\Entities\FolioInvoiceDetail;
+use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
+use App\Http\Controllers\posSession\posSessionController;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
-use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
-use App\repositories\locationRepo;
 
 class saleController extends Controller
 {
@@ -308,7 +308,7 @@ class saleController extends Controller
         return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
     }
     // sale store
-    public function store(saleRequest $request,SaleServices $saleService,paymentServices $paymentServices)
+    public function store(SaleRequest $request,SaleServices $saleService,paymentServices $paymentServices)
     {
         $sale_details = $request->sale_details;
         if ($request->type == 'pos') {
