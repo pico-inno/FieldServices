@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use PDO;
 use DateTime;
 use App\Models\Currencies;
+use App\Models\Product\UOM;
 use App\Models\BusinessUser;
 use App\Models\PersonalInfo;
 use Illuminate\Http\Request;
+use App\Models\RolePermission;
+use App\Models\Contact\Contact;
 use Database\Seeders\UoMSeeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product\UnitCategory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +23,7 @@ class businessActivationController extends Controller
 {
     public function __construct()
     {
-        
+
     }
     public function activationForm(){
         return view('App.business.activationForm');
@@ -27,6 +31,8 @@ class businessActivationController extends Controller
     public function store(Request $request){
         try {
             DB::beginTransaction();
+
+            $this->seeding();
             $businessUser=$request->businessUser;
             $businessData = $request->business;
 
@@ -136,6 +142,25 @@ class businessActivationController extends Controller
                     // 'decimal_sepearator' => 'dot',
                 ]);
             }
+        }
+    }
+
+    public function seeding()
+    {
+        $permissionCount = RolePermission::count();
+        if ($permissionCount <= 0) {
+            Artisan::call('db:seed --class=RolesTableSeeder');
+        }
+
+        $uomCount = UOM::count();
+        $unitCategoryCount = UnitCategory::count();
+        if ($uomCount <= 0 && $unitCategoryCount <= 0) {
+            Artisan::call('db:seed --class=UoMSeeder');
+        }
+
+        $contactCount = Contact::count();
+        if ($contactCount <= 0) {
+            Artisan::call('db:seed --class=ContactWalkInTableSeeder');
         }
     }
 }

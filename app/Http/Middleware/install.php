@@ -28,7 +28,6 @@ class install
                 $businessUserCount = BusinessUser::count();
                 $businessCount = businessSettings::count();
                 if ($businessUserCount == 0 && $businessCount == 0) {
-                    $this->seeding();
                     return redirect()->route('activationForm');
                 } else {
                     return redirect('/');
@@ -38,23 +37,6 @@ class install
             };
         } catch (\Throwable $th) {
             return $next($request);
-        }
-    }
-    public function seeding(){
-        $permissionCount = RolePermission::count();
-        if ($permissionCount <= 0) {
-            Artisan::call('db:seed --class=RolesTableSeeder');
-        }
-
-        $uomCount = UOM::count();
-        $unitCategoryCount = UnitCategory::count();
-        if ($uomCount <= 0 && $unitCategoryCount <= 0) {
-            Artisan::call('db:seed --class=UoMSeeder');
-        }
-
-        $contactCount = Contact::count();
-        if ($contactCount <= 0) {
-            Artisan::call('db:seed --class=ContactWalkInTableSeeder');
         }
     }
 }

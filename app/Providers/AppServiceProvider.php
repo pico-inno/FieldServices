@@ -34,8 +34,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-        if(!Schema::hasTable('session')) {
-            Artisan::call('migrate --path=database/migrations/2023_09_26_103002_create_sessions_table.php');
+        if (!Schema::hasTable('sessions')) {
+            Artisan::call('session-create');
         }
         view()->composer('*', function($view) {
             try {
