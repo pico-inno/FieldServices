@@ -28,15 +28,16 @@ return new class extends Migration
 
 
 
-            $table->string('sale_prefix')->default('S')->nullable();
-            $table->string('purchase_prefix')->default('P')->nullable();
+            $table->string('sale_prefix')->default('SL')->nullable();
+            $table->string('purchase_prefix')->default('PC')->nullable();
             $table->string('stock_transfer_prefix')->default('ST')->nullable();
             $table->string('stock_adjustment_prefix')->default('SA')->nullable();
-            $table->string('expense_prefix')->default('E')->nullable();
-            $table->string('purchase_payment_prefix')->default('PMV')->nullable();
-            $table->string('expense_payment_prefix')->default('PMV')->nullable();
-            $table->string('sale_payment_prefix')->default('PMV')->nullable();
-            $table->string('expense_report_prefix')->default('ER')->nullable();
+            $table->string('expense_prefix')->default('EP')->nullable();
+            $table->string('purchase_payment_prefix')->default('PCP')->nullable();
+            $table->string('expense_payment_prefix')->default('EPP')->nullable();
+            $table->string('sale_payment_prefix')->default('SLP')->nullable();
+            $table->string('expense_report_prefix')->default('EPR')->nullable();
+            $table->string('business_location_prefix')->default('LOC')->nullable();
             // for sale
             $table->tinyInteger('enable_row')->unsigned()->notNull()->default(1);
 

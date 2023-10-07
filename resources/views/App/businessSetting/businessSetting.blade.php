@@ -1657,7 +1657,7 @@
                                                         </div>
                                                         <div class="col-5">
                                                             <input type="text" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"
-                                                                id="purchase" name="purchase" value="PO" />
+                                                                id="purchase" name="business_location_prefix" value="{{$settingData['business_location_prefix']}}" />
                                                         </div>
                                                     </div>
 

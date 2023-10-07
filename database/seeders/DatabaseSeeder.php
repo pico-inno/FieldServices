@@ -40,8 +40,8 @@ class DatabaseSeeder extends Seeder
         $this->call(ContactsTableSeeder::class);
         $this->call(ContactWalkInTableSeeder::class);
         $this->call(CurrenciesTableSeeder::class);
-        $this->call(LocationTableSeeder::class);
         $this->call(LocationTypeSeeder::class);
+        $this->call(LocationTableSeeder::class);
         $this->call(BrandTableSeeder::class);
         $this->call(CategoryTableSeeder::class);
         $this->call(UoMSeeder::class);

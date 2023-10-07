@@ -11,13 +11,16 @@ use App\Models\PersonalInfo;
 use Illuminate\Http\Request;
 use App\Models\RolePermission;
 use App\Models\Contact\Contact;
+use App\Models\locationType;
 use Database\Seeders\UoMSeeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product\UnitCategory;
+use App\Models\settings\businessLocation;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use App\Models\settings\businessSettings;
+use Database\Seeders\LocationTypeSeeder;
 
 class businessActivationController extends Controller
 {
@@ -162,5 +165,15 @@ class businessActivationController extends Controller
         if ($contactCount <= 0) {
             Artisan::call('db:seed --class=ContactWalkInTableSeeder');
         }
+
+        $contactCount = locationType::count();
+        if ($contactCount <= 0) {
+            Artisan::call('db:seed --class=LocationTypeSeeder');
+        }
+        $contactCount = businessLocation::count();
+        if ($contactCount <= 0) {
+            Artisan::call('db:seed --class=LocationTableSeeder');
+        }
+
     }
 }

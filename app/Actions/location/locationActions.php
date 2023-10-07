@@ -15,8 +15,7 @@ class locationActions
 
         try {
             DB::beginTransaction();
-            $location_count = businessLocation::count();
-            $location_code = $data->location_id ?? sprintf('BL' . '%03d', ($location_count + 1));
+            $location_code = businessLocationCode();
             // dd(Auth::user());
             $locationData = [
                 'business_id' => Auth::user()->business_id,

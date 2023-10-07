@@ -20,6 +20,11 @@
         .current-stock-balance-table-card .table-responsive{
             min-height: 283px;
         }
+        .update_new{
+            background-repeat: no-repeat;
+            background-size: auto;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='auto' height='560' preserveAspectRatio='none' viewBox='0 0 700 560'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1156%26quot%3b)' fill='none'%3e%3crect width='700' height='560' x='0' y='0' fill='rgba(242%2c 243%2c 245%2c 1)'%3e%3c/rect%3e%3cpath d='M0%2c204.456C37.579%2c202.944%2c61.56%2c165.338%2c93.593%2c145.633C126.461%2c125.414%2c173.322%2c121.541%2c190.754%2c87.114C208.203%2c52.655%2c183.77%2c12.536%2c180.473%2c-25.948C176.921%2c-67.403%2c199.968%2c-118.349%2c170.622%2c-147.844C140.814%2c-177.803%2c88.939%2c-154.817%2c47.007%2c-160.092C13.295%2c-164.333%2c-17.841%2c-179.471%2c-51.62%2c-175.801C-90.135%2c-171.616%2c-133.242%2c-166.715%2c-158.934%2c-137.717C-184.665%2c-108.675%2c-179.159%2c-64.952%2c-183.945%2c-26.447C-188.633%2c11.272%2c-202.95%2c50.903%2c-186.646%2c85.238C-170.395%2c119.461%2c-130.489%2c132.969%2c-98.56%2c153.363C-66.729%2c173.694%2c-37.739%2c205.974%2c0%2c204.456' fill='%23e4e6ea'%3e%3c/path%3e%3cpath d='M700 879.845C761.827 885.769 831.361 877.596 877.109 835.587 921.77 794.576 905.721 720.575 932.62 666.234 960.841 609.22 1037.316 575.084 1037.547 511.468 1037.776 448.28 975.476 404.906 933.739 357.464 892.317 310.38 857.617 241.498 795.153 235.94 731.413 230.26799999999997 688.143 298.782 632.664 330.673 592.185 353.94100000000003 546.387 365.308 513.115 398.063 477.909 432.722 448.053 473.961 437.986 522.328 427.579 572.326 438.312 623.502 456.23900000000003 671.322 475.16200000000003 721.799 502.473 768.5740000000001 543.437 803.616 588.457 842.1279999999999 641.025 874.194 700 879.845' fill='white'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1156'%3e%3crect width='700' height='560' fill='white'%3e%3c/rect%3e%3c/mask%3e%3c/defs%3e%3c/svg%3e");
+        }
     </style>
 @endsection
 
@@ -281,20 +286,27 @@
                 <!--begin::Col-->
                 <div class="col-xxl-4">
                     <!--begin::Engage widget 1-->
-                    <div class="card h-md-100" dir="ltr">
+                    <div class="card h-md-100 update_new" dir="ltr" style="">
                         <!--begin::Body-->
                         <div class="card-body d-flex flex-column flex-center">
                             <!--begin::Heading-->
                             <div class="mb-2">
                                 <!--begin::Title-->
-                                <h1 class="fw-semibold text-gray-800 text-center lh-lg">Try out our
+                                <h1 class="fw-semibold text-gray-900 text-center lh-lg">Try out our
                                     <br />new
-                                    <span class="fw-bolder">SMS Module</span></h1>
+                                    <span class="fw-bolder text-primary">Updated Location</span></h1>
                                 <!--end::Title-->
                                 <!--begin::Illustration-->
                                 <div class="py-10 text-center">
-                                    <img src="assets/media/svg/illustrations/easy/2.svg" class="theme-light-show w-200px" alt="" />
-                                    <img src="assets/media/svg/illustrations/easy/2-dark.svg" class="theme-dark-show w-200px" alt="" />
+                                    {{-- <i class="las la-location-arrow fs-5x text-primary"></i> --}}
+                                    <i class="ki-duotone ki-route fs-5x text-primary">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                        <span class="path4"></span>
+                                    </i>
+                                    {{-- <img src="assets/media/svg/illustrations/easy/2.svg" class="theme-light-show w-200px" alt="" />
+                                    <img src="assets/media/svg/illustrations/easy/2-dark.svg" class="theme-dark-show w-200px" alt="" /> --}}
                                 </div>
                                 <!--end::Illustration-->
                             </div>
@@ -302,10 +314,10 @@
                             <!--begin::Links-->
                             <div class="text-center mb-1">
                                 <!--begin::Link-->
-                                <a class="btn btn-sm btn-primary me-2 disabled" data-bs-target="#kt_modal_create_account" data-bs-toggle="modal">Try Now</a>
+                                <a class="btn btn-sm btn-primary me-2 " href="{{route('location_add_form')}}" >Try Now</a>
                                 <!--end::Link-->
                                 <!--begin::Link-->
-                                <a class="btn btn-sm btn-light disabled" href="../../demo7/dist/apps/ecommerce/sales/listing.html">Learn More</a>
+                                {{-- <a class="btn btn-sm btn-light disabled" href="../../demo7/dist/apps/ecommerce/sales/listing.html">Learn More</a> --}}
                                 <!--end::Link-->
                             </div>
                             <!--end::Links-->

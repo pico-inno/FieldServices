@@ -87,6 +87,7 @@ class businessSettingController extends Controller
             'expense_payment_prefix' => $request->expense_payment_prefix,
             'sale_payment_prefix' => $request->sale_payment_prefix,
             'expense_report_prefix'=>$request->expense_report_prefix,
+            'business_location_prefix' => $request->business_location_prefix,
         ];
 
         $oldData = businessSettings::where('id', Auth::user()->business_id)->first();

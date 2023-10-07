@@ -29,6 +29,7 @@ class businessSettings extends Model
         'sell_price_tax',
         'logo',
         'sku_prefix',
+        'business_location_prefix',
         'enable_product_expiry',
         'expiry_type',
         'on_product_expiry',

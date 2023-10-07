@@ -19,17 +19,12 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $defaultLocaitonId = businessLocation::create([
-            'name' => 'Main Branch',
-            'allow_purchase_order' => 0,
-            'location_type' => 5,
-        ]);
         $locationIds = [0];
         BusinessUser::create([
            'username' => 'admin',
            'role_id' => 1,
            'business_id' => 1,
-           'default_location_id' => $defaultLocaitonId->id,
+           'default_location_id' => 1,
            'access_location_ids' => serialize($locationIds),
            'email' => 'admin@pico.com',
            'password' => Hash::make('password'),

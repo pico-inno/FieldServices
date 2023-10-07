@@ -36,6 +36,8 @@ class configurationController extends Controller
             Artisan::call('db:seed --class=RolesTableSeeder');
             Artisan::call('db:seed --class=UoMSeeder');
             Artisan::call('db:seed --class=ContactWalkInTableSeeder');
+            Artisan::call('db:seed --class=LocationTypeSeeder');
+            Artisan::call('db:seed --class=LocationTableSeeder');
 
             // Artisan::call('db:seed', ["--class=CurrenciesTableSeeder"]);
             return view('App.business.activationForm')->with(['success'=>'Successfully Configured']);

@@ -4,7 +4,7 @@
 
 <head>
     <base href="../../../" />
-    <title>POS For Table</title>
+    <title>Business Activation</title>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="{{asset('assets/media/logos/favicon.ico')}}" />
