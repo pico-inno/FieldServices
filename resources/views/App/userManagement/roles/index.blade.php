@@ -11,12 +11,12 @@
 
 @section('title')
 <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">Users List</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('usermanagement/role.roles_list')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Role</li>
-        <li class="breadcrumb-item text-dark">Role List</li>
+        <li class="breadcrumb-item text-muted">{{__('usermanagement/role.roles')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('usermanagement/role.roles_list')}}</li>
     </ul>
 <!--end::Breadcrumb-->
 @endsection
@@ -62,7 +62,7 @@
 													<rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
 												</svg>
 											</span>
-                                <!--end::Svg Icon-->Create Role</button>
+                                <!--end::Svg Icon-->{{__('usermanagement/role.create')}}</button>
                             <!--end::Add Role-->
                             @endif
                         </div>
