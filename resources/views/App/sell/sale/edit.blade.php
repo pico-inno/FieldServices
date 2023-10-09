@@ -23,7 +23,16 @@
         .data-table-body tr td{
             padding: 3px;
         }
-
+        @keyframes example {
+                0%   {
+                    opacity: 1;
+                    top: 0;
+                }
+                100% {
+                    opacity: 0;
+                    top: -40px;
+                }
+            }
 
     </style>
 @endsection
@@ -172,27 +181,41 @@
                                     </tr>
                                     @foreach ($sale_details as $key=>$sale_detail)
                                         @php
+                                            $key++;
                                             $product=$sale_detail->product;
                                             $product_variation =$sale_detail->toArray()['product_variation'];
-
+                                            $additionalProduct=$sale_detail->productVariation->additionalProduct;
+                                            $parentkey=$sale_detail->parent_id ?array_search($sale_detail->parent_id,array_column($sale_details->toArray(),'id')) +1:$key;
                                         @endphp
-                                        <tr class="sale_row">
-                                            <td>
+                                        <tr class="sale_row sale_row_{{$key}}" data-unid="{{$parentkey}}" data-product="{{$sale_detail->variation_id}}">
+                                            <td class="d-flex ps-2">
+
                                                 <div class="ms-2">
                                                     <span>{{$product->name}}</span>
                                                     <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
                                                     <br>
 
-                                                    <span class="current_stock_qty_txt">{{$sale_detail->stock_sum_current_quantity}}</span> <span class='smallest_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
-
+                                                    @if ($product->type =='storeable')
+                                                        <span class="current_stock_qty_txt">{{$sale_detail->stock_sum_current_quantity}}</span> <span
+                                                            class='smallest_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
+                                                    @endif
+                                                    @if (count($additionalProduct) >0)
+                                                        <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-non" data-varid="{{$sale_detail->variation_id}}"
+                                                            data-uniqueNameId="{{$key}}">
+                                                            Additional Product
+                                                            {{-- <i class="fa-regular fa-lightbulb text-primary me-1 "></i> --}}
+                                                        </div>
+                                                        <input type="hidden" value="{{$key}}" name="sale_details[{{$key}}][isParent]" />
+                                                    @endif
                                                 </div>
-                                            </td>
-                                            <td class="d-none">
                                                 <div>
-                                                    <input type='hidden' value="{{$sale_detail->product_id}}" class="product_id"  name="sale_details[{{$key}}][product_id]"  />
-                                                    <input type='hidden' value="{{$sale_detail->id}}"  name="sale_details[{{$key}}][sale_detail_id]"  />
-                                                    <input type='hidden' value="{{$sale_detail->variation_id}}" class="variation_id" name="sale_details[{{$key}}][variation_id]"  />
-                                                    {{-- <input type='hidden'name="sale_details[{{$key}}][uom_id]" value="{{$sale_detail->uom_id}}" class="uom_id"  /> --}}
+                                                    <input type='hidden' value="{{$sale_detail->product_id}}" class="product_id"
+                                                        name="sale_details[{{$key}}][product_id]" />
+                                                    <input type='hidden' value="{{$sale_detail->id}}" name="sale_details[{{$key}}][sale_detail_id]" />
+                                                    <input type='hidden' value="{{$sale_detail->variation_id}}" class="variation_id"
+                                                        name="sale_details[{{$key}}][variation_id]" />
+                                                    {{-- <input type='hidden' name="sale_details[{{$key}}][uom_id]" value="{{$sale_detail->uom_id}}" class="uom_id" />
+                                                    --}}
                                                 </div>
                                             </td>
                                             {{-- <td class="">
@@ -200,7 +223,7 @@
                                             </td> --}}
                                             <td>
                                                 <span class="text-danger-emphasis  stock_alert_{{$sale_detail->variation_id}} d-none fs-7 p-2">* Out of Stock</span>
-                                                <div class="dialer_obj input-group-sm input-group mb-2 flex-nowrap">
+                                                <div class="dialer_obj input-group-sm sale_dialer_{{$key}} input-group mb-2 flex-nowrap">
                                                     <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
                                                         <i class="fa-solid fa-minus fs-2"></i>
                                                     </button>

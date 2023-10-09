@@ -63,14 +63,17 @@ class SaleServices
      * saleDetailCreation
      *
      * @param  mixed $request
-     * @param  mixed $sale_data
-     * @param  mixed $sale_details
+     * @param  object $sale_data
+     * @param  array $sale_details
      * @param  mixed $resOrderData
      * @return void
      */
     public function saleDetailCreation($request, Object $sale_data, array $sale_details, $resOrderData = null)
     {
-        foreach ($sale_details as $sale_detail) {
+        // dd($sale_details);
+        $parentSaleItems=[];
+        foreach ($sale_details as $key=>$sale_detail) {
+            // dd($sale_details);
             $product = Product::where('id', $sale_detail['product_id'])->select('product_type')->first();
             // dd($product);
             $stock = CurrentStockBalance::where('product_id', $sale_detail['product_id'])
@@ -86,6 +89,7 @@ class SaleServices
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
+                'parent_id'=>isset($sale_detail['parentUniqueNameId']) ? $sale_detail['parentUniqueNameId']:null,
                 'variation_id' => $sale_detail['variation_id'],
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],
@@ -106,6 +110,9 @@ class SaleServices
                 $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;
             }
             $created_sale_details = sale_details::create($sale_details_data);
+            if (isset($sale_detail['isParent'])) {
+                $parentSaleItems[$sale_detail['isParent']]= $created_sale_details;
+            }
             $refInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_detail['quantity'], $sale_detail['uom_id']);
             $requestQty = $refInfo['qtyByReferenceUom'];
             $businessLocation = businessLocation::where('id', $request->business_location_id)->first();

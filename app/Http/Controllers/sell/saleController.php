@@ -278,7 +278,7 @@ class saleController extends Controller
                         },
                         'variationTemplateValue' => function ($q) {
                             $q->select('id', 'name');
-                        }
+                        }, 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
                     ]);
             },
             'stock' => function ($q) use ($business_location_id) {
@@ -303,6 +303,7 @@ class saleController extends Controller
         $currencies = Currencies::get();
         $defaultCurrency = $this->currency;
         // $child_sale_details = $sale_details_query->whereNotNull('parent_sale_details_id', '!=', null)->get();
+        // dd($sale_details->toArray());
         // dd($sale_details->toArray());
         return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
     }

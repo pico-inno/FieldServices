@@ -8,7 +8,6 @@
         let products_length=$('#sale_table tbody tr').length-1;
         let productQty=[];
         let setting=@json($setting);
-        console.log(setting);
         let currency=@json($defaultCurrency);
         let currencies=@json($currencies);
         let locations=@json($locations);
@@ -35,29 +34,30 @@
         let editSaleDetails=@json($sale_details ?? []);
         let editSale=@json($sale ?? []);
         if (editSaleDetails.length>0) {
-            editSaleDetails.forEach(function(sale,index){
+            editSaleDetails.forEach(function(saledetail,index){
                 let secIndex;
                 product= productsOnSelectData.find(function(pd,i) {
                     secIndex=i;
-                    return sale.product_variation.id== pd.variation_id;
+                    return saledetail.product_variation.id== pd.variation_id;
                 });
-                let uoms=getCurrentAndRefUom(sale.product.uom.unit_category.uom_by_category,sale.uom_id);
+                let uoms=getCurrentAndRefUom(saledetail.product.uom.unit_category.uom_by_category,saledetail.uom_id);
                 let saleQty=0;
                 if(uoms.currentUom){
-                    saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(sale.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
+                    saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(saledetail.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
                 }
                 newProductData={
-                    'product_id':sale.product.id,
-                    'product_type':sale.product.product_type,
-                    'variation_id':sale.product_variation.id,
-                    'category_id':sale.product.category_id,
-                    'defaultSellingPrices':sale.product_variation.default_selling_price,
-                    'sellingPrices':sale.product_variation.uom_selling_price,
-                    'total_current_stock_qty':editSale.status=='delivered' ? isNullOrNan(sale.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(sale.stock_sum_current_quantity) ,
+                    'product_id':saledetail.product.id,
+                    'product_type':saledetail.product.product_type,
+                    'variation_id':saledetail.product_variation.id,
+                    'category_id':saledetail.product.category_id,
+                    'defaultSellingPrices':saledetail.product_variation.default_selling_price,
+                    'sellingPrices':saledetail.product_variation.uom_selling_price,
+                    'total_current_stock_qty':editSale.status=='delivered' ? isNullOrNan(saledetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saledetail.stock_sum_current_quantity) ,
                     'validate':true,
-                    'uom':sale.product.uom,
-                    'uom_id':sale.uom_id,
-                    'stock':sale.stock,
+                    'additional_product':saledetail.product_variation.additional_product,
+                    'uom':saledetail.product.uom,
+                    'uom_id':saledetail.uom_id,
+                    'stock':saledetail.stock,
                 };
                 const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
                 if(indexToReplace !== -1){
@@ -68,6 +68,7 @@
             })
             let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
             getPriceList(CurrentPriceListId);
+            suggestionProductEvent();
             $('.price_list_input').val(CurrentPriceListId).trigger('change');
             editSaleDetails.forEach(function(sale,index){
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
@@ -97,7 +98,16 @@
                     getPrice($(ev.inputElement));
                 })
             });
-
+                         $('.sale_row').hover(
+                function() {
+                    let unid=$(this).data('unid');
+                    $(`[data-unid=${unid}]`).addClass('bg-light');
+                },
+                function() {
+                    let unid=$(this).data('unid')
+                    $(`[data-unid=${unid}]`).removeClass('bg-light')
+                }
+            );
         }
 
         unique_name_id+=products_length;
@@ -245,7 +255,7 @@
 
 
         });
-        function showSuggestion(additionalProduct) {
+        function showSuggestion(additionalProduct,parentUniqueNameId) {
             if(additionalProduct.length>0){
                 $('#suggestionProducts').html('');
                 var modal = new bootstrap.Modal($('#suggestionModal'));
@@ -253,6 +263,7 @@
                     let productInfo=ap.product_variation.product;
                     let product={name:productInfo.name,id:productInfo.id};
                     let variation_id=ap.product_variation.id;
+                    let total_current_stock_qty=ap.total_current_stock_qty;
                     let variation_template_value=ap.product_variation.variation_template_value;
                     let qty=ap.quantity;
                     let uom=ap.uom;
@@ -268,7 +279,8 @@
                         //      ${product.name} ${variation_template_value ? '(' + variation_template_value.name  + ')' :''} x ${qty} ${uom.short_name}
                         // </span>
                         let badge=`
-                            <div class="cursor-pointer  border border-1 rounded px-2 py-3 d-flex mb-2 suggestionProduct" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}">
+                        <div class="position-relative main_div" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}">
+                            <div class="disappearing-div  cursor-pointer  border border-1 rounded px-2 py-3 d-flex mb-2 suggestionProduct sgp_${unique_name_id}" >
                                 <div class="img bg-light w-50px h-50px rounded">
 
                                 </div>
@@ -278,25 +290,27 @@
                                     <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> ${ap.quantity} ${uom.short_name}</span></span>
                                 </div>
                             </div>
+                        </div>
                         `
                         $('#suggestionProducts').append(badge);
-                        $('.suggestionProduct').off('click').on('click',function(){
+                        $('.main_div').off('click').on('click',function(){
                             let suggestionProductDiv=$(this);
                             let variationId=$(this).data('varid');
                             let dataUomId=$(this).data('uomid');
                             let productId=$(this).data('productid');
                             let locationId=$('[name="business_location_id"]').val();
                             let qty=$(this).data('qty');
+
+                            // $('.suggesstion_click_count').text(parseFloat($('.suggesstion_click_count').text())+1);
                             if(suggestionProduct.length >0){
-                                console.log(suggestionProduct);
-                                suggestionProduct.forEach((sp,i)=>{
-                                if(sp.variation_id==variationId && sp.qty==qty && sp.uomId ==dataUomId){
-                                    suggestionProduct.splice(i,1);
-                                    return i;
-                                }else{
-                                    return null;
-                                }
-                            })
+                                // suggestionProduct.forEach((sp,i)=>{
+                                //     if(sp.variation_id==variationId && sp.qty==qty && sp.uomId ==dataUomId){
+                                //         suggestionProduct.splice(i,1);
+                                //         return i;
+                                //     }else{
+                                //         return null;
+                                //     }
+                                // })
                             }
                             $.ajax({
                                 url:'/sell/get/suggestion/product',
@@ -317,20 +331,33 @@
                                     };
                                 },
                                 success: function(results){
-                                    console.log(results,'fefe');
-                                    append_row(results,true,unique_name_id,qty,dataUomId);
+                                    append_row(results,true,qty,dataUomId,parentUniqueNameId);
                                     unique_name_id++;
 
                                 }
                             })
-                            suggestionProductDiv.remove();
+                            // suggestionProductDiv.remove();
                             if($('.suggestionProduct').length <=0){
                                 modal.hide();
                                 $('.modal-backdrop').remove();
                             }
 
                         })
-                        suggestionProduct=[...suggestionProduct,{variation_id,qty,uomId}];
+                        $(`.sgp_${unique_name_id}`).off('click').on('click',function(){
+                            var clone=$(this).clone();
+                                $(this).closest('.main_div').append(clone);
+                                clone.css({
+                                    "position":'absolute',
+                                    "width":'100%',
+                                    "animation-name": "example",
+                                    "animation-duration": "0.5s",
+                                });
+                                setTimeout(()=>{
+                                    clone.remove();
+                                },400)
+                        })
+
+                        // suggestionProduct=[...suggestionProduct,{variation_id,qty,uomId}];
                     }
 
                 });
@@ -340,7 +367,7 @@
 
 
         //append table row for product to sell
-        function append_row(selected_product,forceSplit=true,unique_name_id,qty='1',suggestUom=null) {
+        function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false) {
             allSelectedProduct[selected_product.product_variations.id]=selected_product;
             if(setting.enable_row == 0 && !forceSplit){
                let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
@@ -357,12 +384,14 @@
             }
             let default_purchase_price,variation_id;
             let isStorable=selected_product.product_type=="storable";
+
             let additionalProduct=selected_product.product_variations.additional_product;
-            showSuggestion(additionalProduct);
+            showSuggestion(additionalProduct,unique_name_id);
             // let uomSetOption=""
             let uomIds=[];
             // if the item is out of stock reutrn do nothing;
             if(selected_product.total_current_stock_qty==0 && isStorable){
+                warning('Products are out of stock')
                 return;
             }
             let uomByCategory=selected_product['uom']['unit_category']['uom_by_category'];
@@ -396,13 +425,24 @@
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
             let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
-                <tr class="sale_row mt-2" data-product="${selected_product.product_variations.id}">
-                    <td>
+                <tr class="sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selected_product.product_variations.id}">
+                    <td class="d-flex ps-2">
+
                         <div class="w-300px">
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
                             ${$currentQtyText}
+                            ${additionalProduct.length >0 ?
+                                `
+                                <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none" data-varid="${selected_product.product_variations.id}"
+                                    data-uniqueNameId="${unique_name_id}">
+                                    Additional Product
+                                </div>
+                                <input type="hidden" value="${unique_name_id}" name="sale_details[${unique_name_id}][isParent]" />
+                                `
+                                :`<input type="hidden" value="${parentUniqueNameId}" name="sale_details[${unique_name_id}][parentUniqueNameId]" />`
+                                }
                         </div>
                     </td>
                     <td class="d-none">
@@ -476,10 +516,27 @@
                     </th>
                 </tr>
             `;
+             $('.sale_row').hover(
+                function() {
+                    let unid=$(this).data('unid');
+                    $(`[data-unid=${unid}]`).addClass('bg-light');
+                },
+                function() {
+                    let unid=$(this).data('unid')
+                    $(`[data-unid=${unid}]`).removeClass('bg-light')
+                }
+            );
+            suggestionProductEvent();
 
 
             // new row append
-            $('#sale_table tbody').prepend(newRow);
+            console.log(parentUniqueNameId,'sfsdf');
+            if(parentUniqueNameId == false){
+                $('#sale_table tbody').prepend(newRow);
+            }else{
+                console.log($(`.sale_row_${parentUniqueNameId}`));
+                $(`.sale_row_${parentUniqueNameId}`).after(newRow);
+            }
             $('.dataTables_empty').addClass('d-none');
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
@@ -575,7 +632,18 @@
         }
 
 
+    function suggestionProductEvent() {
+            $('.suggestProductBtn').off('click').on('click',function(){
+                let variationId=$(this).data('varid');
+                let parentuiqId=$(this).data('uniquenameid');
+                let product = productsOnSelectData.find(function(pd) {
+                    return  variationId == pd.variation_id;
+                });
+                let additionalProduct=product.additional_product;
+                showSuggestion(additionalProduct,parentuiqId);
+            })
 
+    }
 
     function optionSelected(value,select){
         // Set the value to be selected
@@ -605,6 +673,7 @@
             'validate':true,
             'uom':newSelectedProduct.uom,
             'uom_id':newSelectedProduct.uom_id,
+            'additional_product':newSelectedProduct.product_variations.additional_product,
             'stock':newSelectedProduct.stock,
         };
         const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
