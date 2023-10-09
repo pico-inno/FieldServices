@@ -13,6 +13,7 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
+use Carbon\Carbon;
 
 class SaleServices
 {
@@ -89,7 +90,7 @@ class SaleServices
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
-                'parent_id'=>isset($sale_detail['parentUniqueNameId']) ? $sale_detail['parentUniqueNameId']:null,
+                'parent_id'=>isset($sale_detail['parentUniqueNameId']) && $sale_detail['parentUniqueNameId'] !='false' ? $sale_detail['parentUniqueNameId']: null,
                 'variation_id' => $sale_detail['variation_id'],
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],

@@ -58,9 +58,9 @@ function price($price, $currencyId = 'default')
 
     try {
         if ($currencyId != 'default') {
-            $currency = Currencies::where('id', $setting->currency_id)->firstOrFail();
-        } else {
             $currency = Currencies::where('id', $currencyId)->firstOrFail();
+        } else {
+            $currency = Currencies::where('id', $setting->currency_id)->firstOrFail();
         }
         if ($setting->currency_symbol_placement == 'before') {
             return $currency->symbol . ' ' . $formattedPrice;

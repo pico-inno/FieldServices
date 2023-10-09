@@ -102,7 +102,7 @@
                             <th class=" pe-3 min-w-100px">Name</th>
                             {{-- <th class=" pe-3 min-w-100px">Account Type</th> --}}
                             <th class=" pe-3 min-w-100px">Account Number</th>
-                            <th class=" pe-3 min-w-100px">Opening Amount</th>
+                            {{-- <th class=" pe-3 min-w-100px">Opening Amount</th> --}}
                             <th class=" pe-3 min-w-100px">Current Amount</th>
                             <th class=" pe-3 min-w-100px">Currency</th>
                         </tr>
@@ -230,10 +230,10 @@ var paymentAccounts = function () {
                     data: 'account_number',
                     name: 'account_number',
                 },
-                {
-                    name:'opening_amount',
-                    data:'opening_amount'
-                },
+                // {
+                //     name:'opening_amount',
+                //     data:'opening_amount'
+                // },
                 {
                     name:'current_balance',
                     data:'current_balance',

@@ -405,7 +405,7 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
-            logger($e);
+            dd($e);
             DB::rollBack();
             if ($request->type == 'pos') {
                 return response()->json([
