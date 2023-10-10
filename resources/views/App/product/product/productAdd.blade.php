@@ -36,8 +36,8 @@
             <form action="{{ route('product.create') }}" method="POST" enctype="multipart/form-data" id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo7/dist/apps/ecommerce/catalog/products.html">
                 @csrf
 
-                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
 
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
                     <div class="tab-content">
 
                         <div class="tab-pane fade show active" id="kt_ecommerce_add_product_general" role="tab-panel">
@@ -79,6 +79,9 @@
                                                     </div>
                                                     <div class="text-muted fs-7">Max File Size: 5MB</div>
                                                     <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
+                                                    @error('avatar')
+                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <div class="form-check form-check-custom form-check-solid mt-8">

@@ -123,15 +123,15 @@
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
                     <!--begin:::Tabs-->
                     <!-- <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
-                  
+
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general">All Produts</a>
                         </li>
-              
+
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_advanced">Stock Report</a>
                         </li>
-                       
+
                     </ul> -->
                     <!--end:::Tabs-->
                     <!--begin::Tab content-->
@@ -376,7 +376,7 @@
                                                     </div>
                                                     <!--end::Menu-->
                                                     <!--end::Export dropdown-->
-                                                  
+
                                                     <!--begin::Hide default export buttons-->
                                                     <div id="kt_datatable_example_buttons_stock" class="d-none"></div>
                                                     <!--end::Hide default export buttons-->
@@ -416,9 +416,9 @@
                                                         <!--end::Table head-->
                                                         <!--begin::Table body-->
                                                         <tbody class="fw-semibold text-gray-600">
-                                                            
+
                                                         </tbody>
-                                                        
+
                                                         <!--end::Table body-->
                                                     </table>
                                                 </div>
@@ -773,7 +773,7 @@
                                     </ul>
                                 </div>
                             </td>
-                            <td class="w-150px text-gray-500">${data.name} | ${variation_name}</td>       
+                            <td class="w-150px text-gray-500">${data.name} | ${variation_name}</td>
                             <td class="text-start w-150px text-gray-500">Ks ${purchase_price}</td>
                             <td class="text-start w-100px text-gray-500">Ks ${selling_price}</td>
                             <td class="text-start w-100px text-gray-500">${data.has_variation}</td>
@@ -793,9 +793,9 @@
 
             var exportButtons = () => {
                         const documentTitle = 'Product List';
-                       
 
-                        
+
+
                         var buttons = new $.fn.dataTable.Buttons(table, {
                             buttons: [
                                 {
@@ -805,7 +805,7 @@
                                         page: 'all', // Export all pages
                                         search: 'none' // Exclude search filter from export
                                     },
-                
+
 
                                 },
                                 {
@@ -815,7 +815,7 @@
                                         page: 'all', // Export all pages
                                         search: 'none' // Exclude search filter from export
                                     },
-                    
+
                                 },
                                 {
                                     extend: 'csvHtml5',
@@ -837,7 +837,7 @@
                                 }
                             }
                                 },
-                                
+
                             ]
                         }).container().appendTo($('#kt_datatable_example_buttons'));
 
@@ -863,5 +863,5 @@
         </script>
     @endif
 
-    
+
 @endpush

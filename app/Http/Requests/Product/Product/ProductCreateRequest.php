@@ -22,20 +22,24 @@ class ProductCreateRequest extends FormRequest
     public function rules()
     {
         return [
+            'avatar' => 'file|mimes:jpeg,png,jpg|max:5000',
             'product_name' => 'required',
             'uom_id' => 'required',
             'purchase_uom_id' => 'required',
-            
+
         ];
     }
 
     public function messages()
     {
         return [
+            'avatar.file' => 'The avatar must be a valid file.',
+            'avatar.mimes' => 'The avatar must be a file of type: jpeg, png, jpg.',
+            'avatar.max' => 'The avatar may not be greater than 5MB in size.',
             'product_name.required' => 'Product name is required',
             'uom_id.required' => 'Select Sale UoM',
             'purchase_uom_id.required' => 'Select Purchase UoM',
-            
+
         ];
     }
 }

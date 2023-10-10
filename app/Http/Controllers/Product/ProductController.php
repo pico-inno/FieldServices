@@ -19,6 +19,7 @@ use App\Models\Product\UnitCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product\ProductVariation;
+use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\Product\VariationTemplates;
@@ -321,12 +322,20 @@ class ProductController extends Controller
             if ($existingImagePath) {
                 Storage::delete('product-image/' . $existingImagePath);
             }
-
             $file = $request->file('avatar');
-            $img_name = time() . '_' . $file->getClientOriginalName();
-            Storage::put('product-image/' . $img_name, file_get_contents($file));
+            $uuid = Str::uuid()->toString();
+            $extension = $file->getClientOriginalExtension();
 
-            return $img_name;
+            $fileName = $uuid . '.' . $extension;
+
+
+            if (Storage::disk('public')->put('product-image/' . $fileName, file_get_contents($file))) {
+                // File successfully saved
+                return $fileName;
+            } else {
+                return null;
+            }
+
         }else {
             if($request->avatar_remove == 1 && $existingImagePath){
                 Storage::delete('product-image/' . $existingImagePath);

@@ -111,10 +111,14 @@
                                                             <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
                                                         <!--end::Remove button-->
+
                                                     </div>
                                                     <!--end::Image input-->
                                                     <div class="text-muted fs-7">Max File Size: 5MB</div>
                                                     <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
+                                                    @error('avatar')
+                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
