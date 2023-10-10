@@ -356,14 +356,9 @@
                 <h5 class="modal-title fw-bold text-gray-800 position-relative d-flex">
                     Product Suggestion
                 </h5>
-                {{-- <div class="rounded-pill px-3 py-1 ms-5 bg-light">
-                  <i class="fa-solid fa-basket-shopping fs-3 me-2 text-primary"></i><span class="fw-bold fs-4 suggesstion_click_count">0</span>
-                </div> --}}
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="suggestionProducts">
-
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>

@@ -406,6 +406,7 @@ class saleController extends Controller
             }
         } catch (Exception $e) {
             dd($e);
+            logger($e);
             DB::rollBack();
             if ($request->type == 'pos') {
                 return response()->json([
@@ -903,11 +904,9 @@ class saleController extends Controller
                         ->with('variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue');
                 },
                 'stock' => function ($query) use ($business_location_id) {
-
                     $locationIds = childLocationIDs($business_location_id);
                     $query->where('current_quantity', '>', 0)
                         ->whereIn('business_location_id', $locationIds);
-
                 },
                 'uom.unit_category.uomByCategory'
             ])
@@ -1010,6 +1009,7 @@ class saleController extends Controller
             'variation_name' => $variation['variationTemplateValue']? $variation['variationTemplateValue']['name']:'',
             'stock' => $stocks,
             'uom_id' => $product->uom_id,
+            'product_type' => $product->product_type,
             'product_variations' => $variation,
             'uom_id' => $product->uom_id,
             'uom' => $product->uom,

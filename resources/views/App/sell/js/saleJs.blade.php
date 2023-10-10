@@ -147,9 +147,6 @@
                         url: `/sell/get/product`,
                         type: 'GET',
                         delay: 150,
-                        // headers: {
-                        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        // },
                         data: {
                             data,
                         },
@@ -214,7 +211,6 @@
 
 
                         },
-
                     })
                 },300)
 
@@ -429,7 +425,7 @@
                     <td class="d-flex ps-2">
 
                         <div class="w-300px">
-                            <span>${selected_product.name}</span>
+                            <span>${selected_product.name}</span>a
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
                             ${$currentQtyText}

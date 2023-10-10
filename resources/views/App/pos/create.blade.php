@@ -95,6 +95,16 @@
             .for_disable_btn {
                 /* cursor: not-allowed; */
             }
+            @keyframes example {
+                0%   {
+                    opacity: 1;
+                    top: 0;
+                }
+                100% {
+                    opacity: 0;
+                    top: -40px;
+                }
+            }
           </style>
     </head>
     <!--end::Head-->
@@ -993,6 +1003,23 @@
         <div class="modal fade" tabindex="-1" id="closeSessionModal"></div>
         <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
         <div class="modal modal-lg fade" tabindex="-1"  data-bs-focus="false"  id="reservationFolioPosting"></div>
+        <div class="modal fade" id="suggestionModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog w-lg-600px modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold text-gray-800 position-relative d-flex">
+                            Product Suggestion
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="suggestionProducts">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>

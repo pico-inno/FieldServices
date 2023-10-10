@@ -95,6 +95,16 @@
             .for_disable_btn {
                 /* cursor: not-allowed; */
             }
+                        @keyframes example {
+                0%   {
+                    opacity: 1;
+                    top: 0;
+                }
+                100% {
+                    opacity: 0;
+                    top: -40px;
+                }
+            }
           </style>
     </head>
     <!--end::Head-->
@@ -1299,6 +1309,23 @@
         <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
 		<script src={{asset('customJs/print/print.js')}}></script>
+        <div class="modal fade" id="suggestionModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog w-lg-600px modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title fw-bold text-gray-800 position-relative d-flex">
+                                Product Suggestion
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="suggestionProducts">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <!--end::Global Javascript Bundle-->
         @include('App.resources.common')
         @include('App.pos.contactAdd')
