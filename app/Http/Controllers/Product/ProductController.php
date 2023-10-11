@@ -26,6 +26,7 @@ use App\Models\Product\VariationTemplateValues;
 use App\Models\Product\ProductVariationsTemplates;
 use App\Http\Requests\Product\Product\ProductCreateRequest;
 use App\Http\Requests\Product\Product\ProductUpdateRequest;
+use App\Models\Product\PriceListDetails;
 
 class ProductController extends Controller
 {
@@ -192,6 +193,7 @@ class ProductController extends Controller
                 ]);
             }
         } catch(Exception $e){
+            dd($e);
             DB::rollBack();
             return back()->with('message', $e->getMessage());
         }
@@ -436,7 +438,7 @@ class ProductController extends Controller
         $nextProductId = $nextProduct->id;
         $has_variation = $isCreating ? $request->has_variation : $request->has_variation_hidden;
         $variation_template_id = $isCreating ? $request->variation_name : $request->variation_template_id_hidden;
-
+        $priceListId = getData('defaultPriceListId');
         if ($has_variation === "variable") {
             if(!$isCreating){
                 // Get all variation IDs of the product from the database
@@ -480,7 +482,7 @@ class ProductController extends Controller
                         'created_by' => auth()->id(),
                     ])->id;
                 }
-//                 $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
+                //   $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
                 $variationData = [
                     'product_id' => $nextProductId,
                     'variation_sku' => $nextProduct['sku'].'-0'.$index,
@@ -505,11 +507,15 @@ class ProductController extends Controller
             }
 
             if($isCreating){
-                ProductVariation::insert($productVariations);
+                foreach ($productVariations as $productVariation) {
+                    $variationData = ProductVariation::create($productVariation);
+                    $this->createOrUpdatePriceListDetail('Variation', $variationData->id, $variationData['default_selling_price']);
+                }
             }
             if(!$isCreating){
                 foreach ($productVariations as $variation) {
                     ProductVariation::updateOrCreate(['id' => $variation['id']], $variation);
+                    $this->createOrUpdatePriceListDetail('Variation', $variation['id'], $variationData['default_selling_price']);
                 }
             }
         }
@@ -523,11 +529,11 @@ class ProductController extends Controller
                 'default_selling_price' => $request->single_selling,
                 'alert_quantity' => $request->single_alert_quantity,
             ];
-
+            $this->createOrUpdatePriceListDetail('Product', $nextProductId, $productSingle['default_selling_price']);
             if($isCreating){
                 $productSingle['created_by'] = auth()->id();
                 $productSingle['created_at'] = now();
-                DB::table('product_variations')->insert($productSingle);
+                $variation=DB::table('product_variations')->insert($productSingle);
             }
 
             if(!$isCreating){
@@ -536,6 +542,30 @@ class ProductController extends Controller
                 $productSingle['updated_at'] = now();
                 DB::table('product_variations')->where('id', $productVariationId)->update($productSingle);
             }
+        }
+    }
+
+    public function createOrUpdatePriceListDetail($type,$value,$defaultSellingPrice){
+        $priceListId = getData('defaultPriceListId');
+
+        $pricelistDetailQuery = PriceListDetails::where('pricelist_id', $priceListId)
+            ->where('applied_type', $type)
+            ->where('applied_value', $value);
+        $pricelistDetailCheck= $pricelistDetailQuery->exists();
+
+        if($pricelistDetailCheck){
+            $pricelistDetailQuery->update([
+                'cal_value' => $defaultSellingPrice,
+            ]);
+        }else{
+            PriceListDetails::create([
+                'pricelist_id' => $priceListId,
+                'applied_type' => $type,
+                'applied_value' => $value,
+                'min_qty' => '1',
+                'cal_type' => 'fixed',
+                'cal_value' => $defaultSellingPrice,
+            ]);
         }
     }
 }

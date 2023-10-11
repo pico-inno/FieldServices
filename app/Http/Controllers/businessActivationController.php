@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use App\Models\settings\businessSettings;
+use Database\Factories\default\defaultDataFactory;
 use Database\Seeders\LocationTypeSeeder;
 
 class businessActivationController extends Controller
@@ -31,11 +32,11 @@ class businessActivationController extends Controller
     public function activationForm(){
         return view('App.business.activationForm');
     }
-    public function store(Request $request){
+    public function store(Request $request,defaultDataFactory $defaultData){
         try {
             DB::beginTransaction();
 
-            $this->seeding();
+            $defaultData->seed();
             $businessUser=$request->businessUser;
             $businessData = $request->business;
 
@@ -148,32 +149,4 @@ class businessActivationController extends Controller
         }
     }
 
-    public function seeding()
-    {
-        $permissionCount = RolePermission::count();
-        if ($permissionCount <= 0) {
-            Artisan::call('db:seed --class=RolesTableSeeder');
-        }
-
-        $uomCount = UOM::count();
-        $unitCategoryCount = UnitCategory::count();
-        if ($uomCount <= 0 && $unitCategoryCount <= 0) {
-            Artisan::call('db:seed --class=UoMSeeder');
-        }
-
-        $contactCount = Contact::count();
-        if ($contactCount <= 0) {
-            Artisan::call('db:seed --class=ContactWalkInTableSeeder');
-        }
-
-        $contactCount = locationType::count();
-        if ($contactCount <= 0) {
-            Artisan::call('db:seed --class=LocationTypeSeeder');
-        }
-        $contactCount = businessLocation::count();
-        if ($contactCount <= 0) {
-            Artisan::call('db:seed --class=LocationTableSeeder');
-        }
-
-    }
 }

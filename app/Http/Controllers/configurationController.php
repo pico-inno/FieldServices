@@ -8,6 +8,7 @@ use Database\Seeders\BrandTableSeeder;
 use Database\Seeders\RolesTableSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Database\Seeders\CategoryTableSeeder;
+use Database\Factories\default\defaultDataFactory;
 
 class configurationController extends Controller
 {
@@ -29,15 +30,11 @@ class configurationController extends Controller
             return back()->with(['error'=>'Something is wrong']);
         }
     }
-    public function migrationForm()
+    public function migrationForm(defaultDataFactory $defaultData)
     {
         try {
             Artisan::call('migrate');
-            Artisan::call('db:seed --class=RolesTableSeeder');
-            Artisan::call('db:seed --class=UoMSeeder');
-            Artisan::call('db:seed --class=ContactWalkInTableSeeder');
-            Artisan::call('db:seed --class=LocationTypeSeeder');
-            Artisan::call('db:seed --class=LocationTableSeeder');
+            $defaultData->seed();
 
             // Artisan::call('db:seed', ["--class=CurrenciesTableSeeder"]);
             return view('App.business.activationForm')->with(['success'=>'Successfully Configured']);

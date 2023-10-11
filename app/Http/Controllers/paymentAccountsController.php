@@ -116,7 +116,7 @@ class paymentAccountsController extends Controller
         return view('App.paymentAccounts.view',compact('account'));
     }
 
-    private function getData($request){
+    private function getPaymentData($request){
         $data=$request->only(
             'name',
             'account_type',
