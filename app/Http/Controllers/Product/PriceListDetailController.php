@@ -249,6 +249,20 @@ class PriceListDetailController extends Controller
         if(!$isCreating){
             foreach ($pricelistDetails as $detail) {
                 PriceListDetails::updateOrCreate(['id' => $detail['id']], $detail);
+                if($detail['applied_type']== 'Product'){
+                    $variation=ProductVariation::where('product_id',$detail['applied_value'])->first();
+                    $sellingPrice=$detail['cal_type']== 'percentage' ? percentageCalc($variation->default_purchase_price, $detail['cal_value']): $detail['cal_value'];
+                    $variation->update([
+                        'default_selling_price'=> $sellingPrice,
+                    ]);
+                }elseif($detail['applied_type']== 'Variation'){
+                    $variation = ProductVariation::where('id', $detail['applied_value'])->first();
+
+                    $sellingPrice = $detail['cal_type'] == 'percentage' ? percentageCalc($variation->default_purchase_price, $detail['cal_value']) : $detail['cal_value'];
+                    $variation->update([
+                        'default_selling_price' => $sellingPrice,
+                    ]);
+                }
             }
         }
     }

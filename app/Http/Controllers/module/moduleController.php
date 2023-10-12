@@ -8,6 +8,7 @@ use Nwidart\Modules\Facades\Module;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
 
 class moduleController extends Controller
 {
@@ -53,7 +54,14 @@ class moduleController extends Controller
     public function uploadModule(Request $request)
     {
 
-         $module = $request->file('module_zip');
+
+        $module = $request->file('module_zip');
+        Validator::make([
+            'file'=> $module
+        ],
+        [
+                'file'=> 'required|mimetypes:application/zip'
+        ])->validate();
          //check if uploaded file is valid or not and and if not redirect back
          if ($module->getMimeType() != 'application/zip') {
              return redirect()->back()->with(['warning' => 'Something Wrong on Unzipping Error']);

@@ -105,7 +105,7 @@
                                             </div>
                                             <div class="d-block fw-bold fs-7 text-gray-800 mt-3">
                                                 <div class="text-gray-600 mb-4">
-                                                   Description:
+                                                    Description:
                                                 </div>
                                                 <span class="text-gray-700 mt-3 d-block">
                                                     {{$account->description}}
@@ -135,7 +135,8 @@
                                                         <span class="fw-semibold fs-7 text-gray-600">Opening Amount:</span>
                                                     </th>
                                                     <td class="text-end">
-                                                        <span class="fw-bold fs-7 text-gray-800">{{price($account->opening_amount,$account->currency->id)}}</span>
+                                                        <span
+                                                            class="fw-bold fs-7 text-gray-800">{{price($account->opening_amount,$account->currency->id)}}</span>
                                                     </td>
                                                 </tr>
 
@@ -150,7 +151,8 @@
                                         {{-- <div class="d-flex justify-content-between d-none">
                                             <div class="fw-semibold fs-6 text-gray-600 mb-3">Description :</div>
                                             <div class="">
-                                                <a class="btn btn-sm btn-primary me-2 px-4 py-2 fs-8 mt-2" id="edit" data-href="{{route('paymentAcc.edit',$account->id)}}">Edit</a>
+                                                <a class="btn btn-sm btn-primary me-2 px-4 py-2 fs-8 mt-2" id="edit"
+                                                    data-href="{{route('paymentAcc.edit',$account->id)}}">Edit</a>
                                             </div>
                                         </div>
                                         <div class="">

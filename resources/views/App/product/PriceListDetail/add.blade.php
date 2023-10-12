@@ -62,7 +62,7 @@
                                 <option></option>
                                 <option value="0" selected>{{ __('product/pricelist.cost') }}</option>
                                 @foreach($price_lists as $price_list)
-                                    <option value="{{ $price_list->id }}" @selected($priceListData ? $priceListData['base_price'] == $price_list->id:false)>{{ $price_list->name }}</option>
+                                    <option value="{{ $price_list->id }}" @selected(isset($priceListData['base_price']) ? $priceListData['base_price'] == $price_list->id:false)>{{ $price_list->name }}</option>
                                 @endforeach
                             </select>
                             @error('base_price')

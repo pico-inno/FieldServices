@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Slowly Disappearing Div</title>
+  <style>
+    .disappearing-div {
+      width: 100px;
+      height: 100px;
+      background-color: lightblue;
+      margin-top: 50px;
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hidden {
+      transition: opacity 2s ease; /* Use CSS transition for opacity */
+      opacity: 0; /* Make the div fully transparent when hidden */
+    }
+@keyframes example {
+    0%   {
+        opacity: 1;
+        top: 0;
+    }
+    100% {
+        opacity: 0;
+        top: -40px;
+    }
+}
+    .position-relative{
+        position: relative;
+    }
+  </style>
+</head>
+<body>
+<div class="position-relative">
+
+<div class="disappearing-div">This div will slowly disappear.</div>
+</div>
+
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('.disappearing-div').click(function(){
+        console.log('hello');
+        var clone=$(this).clone();
+        $('.position-relative').append(clone);
+         clone.css({
+            "animation-name": "example",
+            "animation-duration": "0.5s",
+        });
+        setTimeout(()=>{
+            clone.remove();
+        },400)
+    })
+</script>
+</html>

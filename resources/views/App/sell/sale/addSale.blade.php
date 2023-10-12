@@ -24,9 +24,16 @@
         .data-table-body tr td{
             padding: 3px;
         }
-        /* label{
-            font-size: 50px !important ;
-        } */
+        @keyframes example {
+                0%   {
+                    opacity: 1;
+                    top: 0;
+                }
+                100% {
+                    opacity: 0;
+                    top: -40px;
+                }
+            }
     </style>
 @endsection
 
@@ -67,12 +74,12 @@
                             @enderror
                             <div class="mb-sm-10 mb-3 col-12 col-sm-6 mt-3 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold" for="">
-                                    Default Selling Price
+                                    Select Price List
                                 </label>
                                 <select name="price_list"  class="form-select form-select-sm price_group priceList price_list_input" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price">
-                                    <option value="default_selling_price">defalut selling price</option>
+                                    {{-- <option value="default_selling_price">defalut selling price</option> --}}
                                     @foreach ($priceLists as $PriceList)
-                                        <option value="{{$PriceList->id}}">{{$PriceList->name}}</option>
+                                        <option value="{{$PriceList->id}}" @selected($defaultPriceListId == $PriceList->id)>{{$PriceList->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -176,7 +183,7 @@
                                 </thead>
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
-                                <tbody class="fw-semibold text-gray-600 fs-6 data-table-body saleDetailItems">
+                                <tbody class="fw-semibold text-gray-600 fs-6 data-table-body saleDetailItems p-2">
                                     <tr class="dataTables_empty text-center">
                                         <td colspan="8 " >There is no data to show</td>
                                     </tr>
@@ -346,30 +353,12 @@
     <div class="modal-dialog w-lg-600px modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold text-gray-800">Product Suggestion</h5>
+                <h5 class="modal-title fw-bold text-gray-800 position-relative d-flex">
+                    Product Suggestion
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="suggestionProducts">
-                   <div class="border border-1 rounded px-2 py-3 d-flex mb-2">
-                     <div class="img bg-light w-50px h-50px rounded">
-
-                     </div>
-                     <div class="product-info ms-4 pt-1">
-                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span class="text-gray-700 fw-semibold">(Cherry Mx blue switch)</span></span>
-                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30 pcs</span></span>
-                     </div>
-                   </div>
-                   <div class="border border-1 rounded px-2 py-3 d-flex">
-                    <div class="img bg-light w-50px h-50px rounded">
-
-                    </div>
-                    <div class="product-info ms-4 pt-1">
-                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span class="text-gray-700 fw-semibold">(Cherry Mx
-                                blue switch)</span></span>
-                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30 pcs</span></span>
-                    </div>
-                </div>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
@@ -413,6 +402,18 @@
             loadingOff();
         });
     });
+    $('.disappearing-div').click(function(){
+        alert('hello')
+        var clone=$(this).clone();
+        $('.main_div').append(clone);
+         clone.css({
+            "animation-name": "example",
+            "animation-duration": "0.5s",
+        });
+        setTimeout(()=>{
+            clone.remove();
+        },400)
+    })
 </script>
 @include('App.sell.js.saleJs')
 <script src={{asset('customJs/Ajax/getAccountByCurrency.js')}}></script>

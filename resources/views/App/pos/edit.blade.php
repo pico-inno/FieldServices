@@ -95,6 +95,16 @@
             .for_disable_btn {
                 /* cursor: not-allowed; */
             }
+                        @keyframes example {
+                0%   {
+                    opacity: 1;
+                    top: 0;
+                }
+                100% {
+                    opacity: 0;
+                    top: -40px;
+                }
+            }
           </style>
     </head>
     <!--end::Head-->
@@ -225,15 +235,17 @@
                                             </tr>
                                         </thead>
                                         <tbody class="text-center" id="invoice_with_sidebar">
-                                            @foreach ($saleDetails as $sd)
+                                            @foreach($saleDetails as $key=>$sd)
                                             @php
+                                                $key++;
                                                 $product=$sd->product;
                                                 $variation=$sd->product;
                                                 $variationTemplateId=$sd->productVariation->variation_template_value_id;
                                                 $uoms=$product->uom->unit_category->uomByCategory;
                                                 $status=$sd->rest_order_status;
+                                                $additionalProduct=$sd->productVariation->additionalProduct;
                                             @endphp
-                                                <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer" data-saleDetail="{{$sd->id}}" data-status={{$status}}>
+                                                <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer invoice_sidebar_row_{{$key}}" data-saleDetail="{{$sd->id}}" data-status={{$status}}>
 
                                                     <input type="hidden" name="saleDetail_id" value="{{$sd->id}}" />
                                                     <input type="hidden" name="item_detail_note" value="{{$sd->note}}" />
@@ -296,6 +308,16 @@
                                                     @if($status!='ready' && $status!='preparing')
                                                         <td class="exclude-modal">
                                                             <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
+                                                            @if (count($additionalProduct) >0)
+                                                                <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
+                                                                    data-varid="{{$sd->productVariation->id}}" data-uniqueNameId="{{$key}}" data-parentsaledetailid="{{$sd->id}}">
+                                                                    Additional Product
+                                                                    {{-- <i class="fa-regular fa-lightbulb text-primary me-1 "></i> --}}
+                                                                </div>
+                                                                <input type="hidden" value="{{$key}}" name="sale_details[{{$key}}][isParent]" />
+                                                            @else
+                                                                <input type="hidden" value="{{$key}}" name="sale_details[{{$key}}][parentUniqueNameId]" />
+                                                            @endif
                                                         </td>
                                                     @endif
                                                 </tr>
@@ -362,7 +384,7 @@
                                                             </label>
                                                         @else
                                                             <label class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
-                                                                <input class="btn-check" type="radio" name="method" value="1" />
+                                                                {{-- <input class="btn-check" type="radio" name="method" value="1" /> --}}
                                                                 <span class=" text-dark fw-bold  rounded-0">Order</span>
                                                             </label>
                                                         @endif
@@ -464,75 +486,107 @@
                                             </tr>
                                         </thead>
                                         <tbody class=" text-center" id="invoice_with_modal">
-                                                @foreach ($sale->sale_details as $sd)
+                                                @foreach($saleDetails as $key=>$sd)
                                                 @php
-                                                    $product=$sd->product;
-                                                    $variation=$sd->product;
-                                                    $variationTemplateId=$sd->productVariation->variation_template_value_id;
-                                                    $uoms=$product->uom->unit_category->uomByCategory;
+                                                $key++;
+                                                $product=$sd->product;
+                                                $variation=$sd->product;
+                                                $variationTemplateId=$sd->productVariation->variation_template_value_id;
+                                                $uoms=$product->uom->unit_category->uomByCategory;
+                                                $status=$sd->rest_order_status;
+                                                $additionalProduct=$sd->productVariation->additionalProduct;
                                                 @endphp
-                                                    <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer" data-saleDetail="{{$sd->id}}">
-                                                        <input type="hidden" name="saleDetail_id" value="{{$sd->id}}" />
-                                                        <input type="hidden" name="product_id" value="{{$sd->product_id}}" />
-                                                        <input type="hidden" name="lot_no" value="0" />
-                                                        <input type="hidden" name="variation_id" value="{{$sd->variation_id}}" />
-                                                        <input type="hidden" name="each_selling_price" value="{{$sd->price_list_id}}" />
-                                                        <input type="hidden" name="discount_type" value="{{$sd->discount_type}}" />
-                                                        <input type="hidden" name="per_item_discount" value="{{$sd->per_item_discount}}" />
-                                                        <input type="hidden" name="subtotal_with_discount" value="{{$sd->subtotal_with_discount}}" />
-                                                        <input type="hidden" name="cost_price" value="fprice({{$sd->uom_price}})" />
-                                                        <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
+                                                <tr class="fs-9 mb-3 invoiceRow invoice_row_{{$sd->variation_id}} cursor-pointer invoice_sidebar_row_{{$key}}"
+                                                    data-saleDetail="{{$sd->id}}" data-status={{$status}}>
 
-                                                        <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
-                                                            <span class="product-name">
-                                                                {{$product->name}}
-                                                                <br>
-                                                                {{
-                                                                $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$sd->productVariation->variationTemplateValue?'('.$sd->productVariation->variationTemplateValue->name.')':''.`</span><br>`: ''
-                                                                }}
+                                                    <input type="hidden" name="saleDetail_id" value="{{$sd->id}}" />
+                                                    <input type="hidden" name="item_detail_note" value="{{$sd->note}}" />
+                                                    <input type="hidden" name="product_id" value="{{$sd->product_id}}" />
+                                                    <input type="hidden" name="lot_no" value="0" />
+                                                    <input type="hidden" name="variation_id" value="{{$sd->variation_id}}" />
+                                                    <input type="hidden" name="each_selling_price" value="{{$sd->price_list_id}}" />
+                                                    <input type="hidden" name="discount_type" value="{{$sd->discount_type}}" />
+                                                    <input type="hidden" name="per_item_discount" value="{{$sd->per_item_discount ?? 0}}" />
+                                                    <input type="hidden" name="subtotal_with_discount" value="{{$sd->subtotal_with_discount}}" />
+                                                    <input type="hidden" name="cost_price" value="{{$sd->uom_price}}" />
+                                                    <input type="hidden" name="_default_sell_price" value="{{$sd->uom_price * 1}}" />
 
-
-                                                            </span>
+                                                    <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
+                                                        <span class="product-name">
+                                                            {{$product->name}}
+                                                            @if ($posRegister->use_for_res=='1')
+                                                            {{$status ? '('.$status.')' : ''}}
+                                                            @endif
                                                             <br>
-                                                            <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : {{$product->sku ?? ''}}</span>
-                                                            <br>
+                                                            {{
+                                                            $variationTemplateId ? `<span
+                                                                class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$sd->productVariation->variationTemplateValue?'('.$sd->productVariation->variationTemplateValue->name.')':''.`</span><br>`:
+                                                            ''
+                                                            }}
+                                                        </span>
+                                                        <br>
+                                                        <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : {{$product->sku ?? ''}}</span>
+                                                        <br>
+                                                        <span
+                                                            class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_{{$sd->variation_id}}">{{$sd->stock_sum_current_quantity
+                                                            }}</span> -
+                                                        <span
+                                                            class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_{{$sd->variation_id}}">{{$product->uom->name}}</span>
+                                                    </td>
+                                                    <td class="min-w-50px ps-0 pe-0 exclude-modal">
+                                                        <input type="text" name="selling_price[]" class="form-control form-control-sm"
+                                                            value="{{fprice($sd->uom_price)}}">
+                                                    </td>
+                                                    <td class="exclude-modal">
+                                                        <div class="d-flex flex-column">
+                                                            <div class="position-relative d-flex align-items-center mb-3 input-group flex-nowrap ">
 
-                                                            <span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_{{$sd->variation_id}}">{{$product->uom->value }}</span> -
-                                                            <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_{{$sd->variation_id}}">{{$product->uom->name}}</span>
-                                                        </td>
-                                                        <td class="min-w-50px ps-0 pe-0 exclude-modal">
-                                                            <input type="text" name="selling_price[]" class="form-control form-control-sm" value="{{fprice($sd->uom_price)}}">
-                                                        </td>
-                                                        <td class="exclude-modal">
-                                                            <div class="d-flex flex-column">
-                                                                <div class="position-relative d-flex align-items-center mb-3 input-group flex-nowrap " >
+                                                                <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-00 border-end-0"
+                                                                    @if($status!='ready' && $status!='preparing' ) id="decrease" @endif @disabled($status=='ready' ||
+                                                                    $status=='preparing' )>
+                                                                    <i class="fas fa-minus fs-7"></i>
+                                                                </button>
 
-                                                                    <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-00 border-end-0" id="decrease">
-                                                                        <i class="fas fa-minus fs-7"></i>
-                                                                    </button>
+                                                                <input type="text"
+                                                                    class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input"
+                                                                    name="quantity[]" value="{{$sd->quantity}}" @disabled($status=='ready' || $status=='preparing' ) />
 
-                                                                    <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800" name="quantity[]" readonly value="{{$sd->quantity}}" />
-
-                                                                    <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-600 border-end-0" id="increase">
-                                                                        <i class="fas fa-plus"></i>
-                                                                    </button>
-
-                                                                </div>
-                                                                <span class="text-danger-emphasis  stock_alert_{{$sd->variation_id}} d-none fs-7 p-2">* Out of Stock</span>
-                                                                <select class=" form-select form-select-sm invoice_unit_select" data-control="select2" data-kt-select2="true">
-                                                                    @foreach ($uoms as $uom)
-                                                                        <option value="{{$uom->id}}">{{$uom->name}}</option>
-                                                                    @endforeach
-                                                                    {{-- ${uomsData.map(unit => `<option value="${unit.id}" ${unit.id === product.uom.id ? 'selected' : ''}>${unit.text}</option>`).join('')} --}}
-                                                                </select>
+                                                                <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-600 border-end-0"
+                                                                    @if($status!='ready' && $status!='preparing' ) id="increase" @endif @disabled($status=='ready' ||
+                                                                    $status=='preparing' )>
+                                                                    <i class="fas fa-plus"></i>
+                                                                </button>
 
                                                             </div>
-                                                        </td>
-                                                        <td class="fs-6 fw-bold subtotal_price_{{$sd->variation_id}} subtotal_price">{{fprice($sd->subtotal_with_tax)}}</td>
-                                                        <td class="exclude-modal">
-                                                            <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
-                                                        </td>
-                                                    </tr>
+                                                            <span class="text-danger-emphasis  stock_alert_{{$sd->variation_id}} d-none fs-7 p-2">* Out of Stock</span>
+                                                            <select class=" form-select form-select-sm invoice_unit_select" data-control="select2"
+                                                                data-kt-select2="true" @disabled($status=='ready' || $status=='preparing' )>
+                                                                @foreach ($uoms as $uom)
+                                                                <option value="{{$uom->id}}">{{$uom->name}}</option>
+                                                                @endforeach
+                                                                {{-- ${uomsData.map(unit => `<option value="${unit.id}" ${unit.id===product.uom.id ? 'selected' : '' }>
+                                                                    ${unit.text}</option>`).join('')} --}}
+                                                            </select>
+
+                                                        </div>
+                                                    </td>
+                                                    <td class="fs-6 fw-bold subtotal_price_{{$sd->productVariation->id}} subtotal_price">{{fprice($sd->subtotal)}}</td>
+                                                    @if($status!='ready' && $status!='preparing')
+                                                    <td class="exclude-modal">
+                                                        <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
+                                                        @if (count($additionalProduct) >0)
+                                                        <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
+                                                            data-varid="{{$sd->productVariation->id}}" data-uniqueNameId="{{$key}}">
+                                                            Additional Product
+                                                            {{-- <i class="fa-regular fa-lightbulb text-primary me-1 "></i> --}}
+                                                        </div>
+                                                        <input type="hidden" value="{{$key}}" name="sale_details[{{$key}}][isParent]" />
+                                                        @else
+                                                        <input type="hidden" value="{{$key}}" name="sale_details[{{$key}}][parentUniqueNameId]" />
+                                                        @endif
+                                                    </td>
+                                                    @endif
+                                                </tr>
                                                 @endforeach
                                         </tbody>
                                     </table>
@@ -1299,6 +1353,23 @@
         <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
 		<script src={{asset('customJs/print/print.js')}}></script>
+        <div class="modal fade" id="suggestionModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog w-lg-600px modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title fw-bold text-gray-800 position-relative d-flex">
+                                Product Suggestion
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="suggestionProducts">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <!--end::Global Javascript Bundle-->
         @include('App.resources.common')
         @include('App.pos.contactAdd')

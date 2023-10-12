@@ -70,7 +70,8 @@
     var currencyDp={{$currencyDp}};
     (
         function () {
-            let transferCurrencyRate=@json($current_acc).currency.exchange_rate.rate ?? 1;
+            let exchangeRates=@json($current_acc).currency.exchange_rate;
+            let transferCurrencyRate=exchangeRates ? exchangeRates.rate :1;
 
             $(document).on('change','#rx_account',function(){
                 rxAmountCal(transferCurrencyRate);

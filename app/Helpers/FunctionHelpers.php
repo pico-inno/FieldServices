@@ -5,6 +5,7 @@ use App\Models\Currencies;
 use App\Models\Product\UOM;
 use App\Helpers\SettingHelpers;
 use App\Helpers\generatorHelpers;
+use App\Models\data;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
@@ -58,9 +59,9 @@ function price($price, $currencyId = 'default')
 
     try {
         if ($currencyId != 'default') {
-            $currency = Currencies::where('id', $setting->currency_id)->firstOrFail();
-        } else {
             $currency = Currencies::where('id', $currencyId)->firstOrFail();
+        } else {
+            $currency = Currencies::where('id', $setting->currency_id)->firstOrFail();
         }
         if ($setting->currency_symbol_placement == 'before') {
             return $currency->symbol . ' ' . $formattedPrice;
@@ -337,6 +338,14 @@ function addresss($address)
     ;
 }
 
+function getData($key)
+{
+    try {
+        return data::where('key',$key)->firstOrFail()->value;
+    } catch (\Throwable $th) {
+        return null;
+    }
+}
 
 
 

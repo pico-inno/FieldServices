@@ -4,6 +4,7 @@
     let symbol=@json($currencySymbol);
     var price_lists_with_location = [];
     var uoms = @json($uoms ?? null);
+    var suggestionProduct=[];
     var posRegisterId=@json($posRegisterId);
     var sessionId=@json(request('sessionId'));
     var posRegister=@json($posRegister);
@@ -13,6 +14,8 @@
     var getProductVariations;
     var creditLimit=0;
     var receiveAbleAmount=0;
+    var uniqueNameId=1;
+    var contactId=editSale.contact_id ?? 3;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -145,13 +148,12 @@
             `;
         }
 
-        let invoiceSidebar = (product,forceSplit=false) => {
+        let invoiceSidebar = (product,forceSplit=false,parentUniqueNameId,parentSaleDetailId=null) => {
             checkAndStoreSelectedProduct(product);
             let variation_value_and_name;
             // Get Variation Value and Variation Template Value Name
             if(product.variation_id){
                 let pv_id = product.variation_id;
-
                 $(product_with_variations).each(function(index, element) {
                     if(element.product_variation_id && element.product_variation_id == pv_id){
                         variation_value_and_name = element.vari_tem_name + '- ' + element.vari_tem_val_name;
@@ -164,11 +166,25 @@
             uomByCategory.forEach(function(e){
                 uomsData= [...uomsData,{'id':e.id,'text':e.name}]
             })
+            let additionalProduct=product.product_variations.additional_product;
+            showSuggestion(additionalProduct,uniqueNameId);
             // console.log(product)
             // getProducts(1, );
+            let additionProductLink=additionalProduct.length >0 ?
+             `
+                <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
+                    data-varid="${product.product_variations.id}" data-uniqueNameId="${uniqueNameId}" data-parentUniqueNameId=${parentUniqueNameId}>
+                    Additional Product
+                </div>
+                <input type="hidden" value="${uniqueNameId ?? null}" name="isParent" />
+            `:`
+            <input type="hidden" value="${parentUniqueNameId ?? null}" name="parentUniqueNameId" />
+            <input type="hidden" value="${parentSaleDetailId ?? null}" name="parentSaleDetailId" />
+            `;
             let stockBalanceText=product.product_type =="storable" ? `<span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">${product.uom.value * 1}</span> - <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">${product.uom.name}</span>` : ''
             return `
-                <tr class="fs-9 mb-3 invoiceRow invoice_row_${product.product_variations.id} cursor-pointer">
+                <tr class="fs-9 mb-3 invoiceRow invoice_row_${product.product_variations.id} cursor-pointer invoice_sidebar_row_${uniqueNameId}">
+
                     <input type="hidden" name="product_id" value="${product.id}" />
                     <input type="hidden" name="lot_no" value="0" />
                     <input type="hidden" name="variation_id" value="${product.product_variations.id}" />
@@ -213,8 +229,11 @@
                         </div>
                     </td>
                     <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} "><span class="subtotal_price">${product.product_variations.default_selling_price * 1}</span> ${symbol}</td>
-                    <td class="exclude-modal">
-                        <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
+                    <td class="exclude-modal text-end">
+                            <div>
+                            <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
+                            </div>
+                            ${additionProductLink}
                     </td>
                 </tr>
             `;
@@ -440,6 +459,7 @@
                 'uom':newSelectedProduct.uom,
                 'uom_id':newSelectedProduct.uom_id,
                 'stock':newSelectedProduct.stock,
+                'additional_product':newSelectedProduct.product_variations.additional_product,
             };
             if(productsOnSelectData.length>0){
                 const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
@@ -602,6 +622,7 @@
                                 $('input[name="pay_amount"]').val(pDecimal(0));
                                 $('#payment_row_body').html('');
                                 $('#payment_row_body').append(paymentRow);
+                                $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                                 $('.reservation_id').val('').trigger('change')
                                 $('#paymentForm')[0].reset();
                                 ajaxOnContactChange($(`#${contact_id}`).val());
@@ -700,9 +721,15 @@
                 let per_item_discount = parent.find('input[name="per_item_discount"]').val();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 let item_detail_note = parent.find('input[name="item_detail_note"]').val();
+                let isParent = parent.find('input[name="isParent"]') ? parent.find('input[name="isParent"]').val():null;
+                let parentUniqueNameId = parent.find('input[name="parentUniqueNameId"]')?parent.find('input[name="parentUniqueNameId"]').val():'';
+                let parentSaleDetailId = parent.find('input[name="parentSaleDetailId"]')?parent.find('input[name="parentSaleDetailId"]').val():'';
                 let raw_sale_details = {
                     sale_detail_id,
                     item_detail_note,
+                    isParent,
+                    parentUniqueNameId,
+                    parentSaleDetailId,
                     'product_id': product_id,
                     'variation_id': variation_id,
                     'uom_id': uom_id,
@@ -718,7 +745,6 @@
                     'currency_id': null,
                     'delivered_quantity': null
                 };
-
                 sale_details.push(raw_sale_details);
             })
             let type = 'pos';
@@ -820,7 +846,7 @@
 
         let isGetContact = false;
         if(!isGetContact){
-            getContacts(1);
+            getContacts(contactId);
             isGetContact = true;
         }
 
@@ -852,9 +878,6 @@
             $.ajax({
                 url: `/sell/get/product`,
                 type: 'GET',
-                // headers: {
-                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                // },
                 data: {
                     data,
                 },
@@ -873,14 +896,22 @@
                     if(results.length > 0){
                         $(results).each(function(index, element){
                             // console.log(element)
-                            let css_class = element.total_current_stock_qty !== 0 ? " " : " text-gray-500 order-3 not-use";
-
+                            let css_class='';
+                            if(element.product_type=='storable'){
+                                 css_class = element.total_current_stock_qty !== 0  ? " " : " text-gray-500 order-3 not-use";
+                            }
                             let product_countOrSku = element.has_variation === 'variable' ? element.product_variations.length : element.sku;
                             // let stock_qty = element.total_current_stock_qty !== 0 ? element.total_current_stock_qty * 1 + ' ' + element.smallest_unit : 'Out of Stocks';
                             let vari_name_or_selectAll = element.has_variation === 'sub_variable' ? element.variation_name : 'select all';
                             let unit = element.uom.name;
 
                             $('#search_container').append(searchNewRow(index, element.id, element.has_variation, element.variation_id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
+                            if(results.length==1){
+                                setTimeout(() => {
+                                    $(`[data-index="${index}"]`).click();
+                                }, 500);
+
+                            }
                         })
                     }
                 },
@@ -905,7 +936,7 @@
 
             let selected_product = products[index];
 
-            if(selected_product.total_current_stock_qty === 0 || selected_product.total_current_stock_qty === null){
+            if(selected_product.product_type =='storable' && selected_product.total_current_stock_qty === 0 || selected_product.total_current_stock_qty === null){
                 return;
             }
 
@@ -915,6 +946,8 @@
                     let filteredId = products.filter( p => p.variation_id === variation.id);
                     let newInvoiceSidebar = $(invoiceSidebar(filteredId[0]));
                     $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+                    suggestionProductEvent();
+                    uniqueNameId++;
                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                     changeQtyOnUom(newInvoiceSidebar, filteredId[0].uom.id);
                 });
@@ -924,6 +957,8 @@
             }
             let newInvoiceSidebar = $(invoiceSidebar(selected_product));
             $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+            suggestionProductEvent();
+            uniqueNameId++;
             $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
             changeQtyOnUom(newInvoiceSidebar, selected_product.uom.id);
             totalSubtotalAmountCalculate();
@@ -992,6 +1027,8 @@
                         let product = results[0];
                         let newInvoiceSidebar = $(invoiceSidebar(product));
                         $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+                        uniqueNameId++;
+                        suggestionProductEvent();
                         $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                         changeQtyOnUom(newInvoiceSidebar, product.uom.id);
                         totalSubtotalAmountCalculate();
@@ -1000,7 +1037,9 @@
                     }
                     let product = results[1];
                     let newInvoiceSidebar = $(invoiceSidebar(product));
+                    uniqueNameId++;
                     $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+                    suggestionProductEvent();
                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                     changeQtyOnUom(newInvoiceSidebar, product.uom.id);
                     totalSubtotalAmountCalculate();
@@ -1009,7 +1048,128 @@
 
             })
         })
+         function suggestionProductEvent() {
+            $('.suggestProductBtn').off('click').on('click',function(){
+                let variationId=$(this).data('varid');
+                let parentuiqId=$(this).data('uniquenameid');
+                let parentSaleDetailId=$(this).data('parentsaledetailid')?? null;
+                let product = productsOnSelectData.find(function(pd) {
+                    return  variationId == pd.variation_id;
+                });
+                let adp=product.additional_product;
+                showSuggestion(adp,parentuiqId,parentSaleDetailId);
+            })
 
+        }
+
+        function showSuggestion(additionalProduct,unique_name_id,parentSaleDetailId=null) {
+            if(additionalProduct.length>0){
+                $('#suggestionProducts').html('');
+                var modal = new bootstrap.Modal($('#suggestionModal'));
+                additionalProduct.forEach(ap => {
+                    let productInfo=ap.product_variation.product;
+                    let product={name:productInfo.name,id:productInfo.id};
+                    let variation_id=ap.product_variation.id;
+                    let total_current_stock_qty=ap.total_current_stock_qty;
+                    let variation_template_value=ap.product_variation.variation_template_value;
+                    let qty=ap.quantity;
+                    let uom=ap.uom;
+                    let uomId=ap.uom_id;
+                    let checkProduct =suggestionProduct.find((sp)=>{
+                        return sp.variation_id==variation_id && sp.qty==qty && sp.uomId ==uomId;
+                    })
+                    if(!checkProduct){
+                        // <i class="fa-solid fa-xmark-circle me-3"></i>
+                        //  <span
+                        //     class="btn w-auto min-w-175px text-center bg-light rounded-1 fw-semibold fs-7 pe-4 py-1 text-gray-800 shadow-md suggestionProduct"
+                        //     data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}">
+                        //      ${product.name} ${variation_template_value ? '(' + variation_template_value.name  + ')' :''} x ${qty} ${uom.short_name}
+                        // </span>
+                        let badge=`
+                        <div class="position-relative main_div" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}" data-parentsaledetailid=${parentSaleDetailId}>
+                            <div class="disappearing-div  cursor-pointer  border border-1 rounded px-2 py-3 d-flex mb-2 suggestionProduct sgp_${unique_name_id}" >
+                                <div class="img bg-light w-50px h-50px rounded">
+
+                                </div>
+                                <div class="product-info ms-4 pt-1">
+                                    <span class="fw-bold text-gray-800">${product.name} <span class="text-gray-700 fw-semibold">
+                                        ${variation_template_value ? '(' + variation_template_value.name + ')' :''}</span></span>
+                                    <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> ${ap.quantity} ${uom.short_name}</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        `
+                        $('#suggestionProducts').append(badge);
+                        $('.main_div').off('click').on('click',function(){
+                            let suggestionProductDiv=$(this);
+                            let variationId=$(this).data('varid');
+                            let dataUomId=$(this).data('uomid');
+                            let productId=$(this).data('productid');
+                            let locationId=$('[name="business_location_id"]').val();
+                            let parentSaleDetailId=$(this).data('parentsaledetailid');
+                            let qty=$(this).data('qty');
+
+                            $.ajax({
+                                url:'/sell/get/suggestion/product',
+                                data:{
+                                    locationId,
+                                    variationId,
+                                    productId
+                                },
+                                type: 'GET',
+                                error:function(e){
+                                    status=e.status;
+                                    if(status==405){
+                                        warning('Method Not Allow!');
+                                    }else if(status==419){
+                                        error('Session Expired')
+                                    }else{
+                                        console.log(' Something Went Wrong! Error Status: '+status )
+                                    };
+                                },
+                                success: function(results){
+                                    let product=results;
+                                    let newInvoiceSidebar = $(invoiceSidebar(product,false,unique_name_id,parentSaleDetailId));
+                                    $(`#${tableBodyId} .invoice_sidebar_row_${unique_name_id}`).after(newInvoiceSidebar);
+                                    // $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+                                    uniqueNameId++;
+                                    $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
+                                    setTimeout(() => {
+                                        console.log(newInvoiceSidebar);
+                                        changeQtyOnUom(newInvoiceSidebar, product.uom.id);
+                                        totalSubtotalAmountCalculate();
+                                        totalDisPrice();
+                                    }, 50);
+                                }
+                            })
+                            // suggestionProductDiv.remove();
+                            if($('.suggestionProduct').length <=0){
+                                modal.hide();
+                                $('.modal-backdrop').remove();
+                            }
+
+                        })
+                        $(`.sgp_${unique_name_id}`).off('click').on('click',function(){
+                            var clone=$(this).clone();
+                                $(this).closest('.main_div').append(clone);
+                                clone.css({
+                                    "position":'absolute',
+                                    "width":'100%',
+                                    "animation-name": "example",
+                                    "animation-duration": "0.5s",
+                                });
+                                setTimeout(()=>{
+                                    clone.remove();
+                                },400)
+                        })
+
+                        // suggestionProduct=[...suggestionProduct,{variation_id,qty,uomId}];
+                    }
+
+                });
+                modal.show();
+            }
+        }
         $(document).on('input', 'input[name="selling_price[]"]', function() {
             calPrice($(this));
             totalSubtotalAmountCalculate();
@@ -1881,6 +2041,7 @@
         // if edit mode
         if (editSaleDetails.length>0) {
             setTimeout(() => {
+                suggestionProductEvent();
                 editSaleDetails.forEach(function(saleDetail,index){
                     let secIndex;
                     product= productsOnSelectData.find(function(pd,i) {
@@ -1910,8 +2071,8 @@
                             'uom':saleDetail.product.uom,
                             'uom_id':saleDetail.uom_id,
                             'stock':saleDetail.stock,
+                            'additional_product':saleDetail.product_variation.additional_product,
                         };
-                        console.log(newProductData);
                         productsOnSelectData=[...productsOnSelectData,newProductData];
                     }else{
                         if(editSale.status=='delivered'){
@@ -1919,6 +2080,7 @@
                         }
                     }
                 })
+
                 // for increase and decrease SERVICE ITEM QUANTITY
 
                 //     (()=>{

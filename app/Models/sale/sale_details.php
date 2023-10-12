@@ -24,6 +24,7 @@ class sale_details extends Model
         'sales_id',
         'product_id',
         'variation_id',
+        'parent_id',
         'rest_order_id',
         'rest_order_status',
         'uom_id',

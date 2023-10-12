@@ -180,7 +180,7 @@ class paymentsTransactionsController extends Controller
             'transaction_ref_no'=>$tx_voucher_no,
             'payment_type'=>'debit',
             'transaction_type'=>$status,
-            'payment_amount'=>$tx_amount,
+            'payment_amount'=> $rx_amount,
             'currency_id'=>$rx_acc->currency_id,
         ]);
     }

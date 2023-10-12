@@ -95,6 +95,16 @@
             .for_disable_btn {
                 /* cursor: not-allowed; */
             }
+            @keyframes example {
+                0%   {
+                    opacity: 1;
+                    top: 0;
+                }
+                100% {
+                    opacity: 0;
+                    top: -40px;
+                }
+            }
           </style>
     </head>
     <!--end::Head-->
@@ -163,7 +173,7 @@
                             </div>
                             <div class="row mt-3" style="max-height: 5%">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control" name="pos_product_search" placeholder="Search products..." >
+                                    <input type="text" class="form-control" name="pos_product_search" autocomplete="false" placeholder="Search products..." >
                                     <span class="input-group-text custom-tooltip productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button"  >
                                         <i class="fas fa-plus text-primary fs-2"></i>
                                     </span>
@@ -312,7 +322,7 @@
                                                             </label>
                                                         @else
                                                             <label class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
-                                                                <input class="btn-check" type="radio" name="method" value="1" />
+                                                                {{-- <input class="btn-check" type="radio" name="method" value="1" /> --}}
                                                                 <span class=" text-dark fw-bold  rounded-0">Order</span>
                                                             </label>
                                                         @endif
@@ -993,6 +1003,23 @@
         <div class="modal fade" tabindex="-1" id="closeSessionModal"></div>
         <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
         <div class="modal modal-lg fade" tabindex="-1"  data-bs-focus="false"  id="reservationFolioPosting"></div>
+        <div class="modal fade" id="suggestionModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog w-lg-600px modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold text-gray-800 position-relative d-flex">
+                            Product Suggestion
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="suggestionProducts">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
         <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
         <script src={{ asset("assets/js/scripts.bundle.js") }}></script>

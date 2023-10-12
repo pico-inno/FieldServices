@@ -48,8 +48,8 @@
                 <td>1</td>
                 <td>{{$pl['cal_type']}}</td>
                 <td>{{$pl['cal_value']}}</td>
-                <td>{{dateCreate($pl['from_date'],'d/m/Y')}}</td>
-                <td>{{dateCreate($pl['to_date'],'d/m/Y')}}</td>
+                <td>{{isset($pl['from_date'])? dateCreate($pl['from_date'],'d/m/Y') : ''}}</td>
+                <td>{{isset($pl['to_date'])?dateCreate($pl['to_date'],'d/m/Y') : ''}}</td>
             </tr>
         @endforeach
     </tbody>

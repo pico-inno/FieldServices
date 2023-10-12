@@ -289,6 +289,9 @@
 
 {{-- <script src={{asset("assets/plugins/custom/datatables/datatables.bundle.js")}}></script> --}}
 <script>
+@error('file')
+    error('Oops! zip file is missing or empty');
+@enderror
 $(document).ready(function(){
     $('.module_delete').on('click',function(e){
         e.preventDefault();

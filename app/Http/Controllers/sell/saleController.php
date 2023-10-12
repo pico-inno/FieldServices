@@ -243,11 +243,12 @@ class saleController extends Controller
         $setting = businessSettings::where('id',Auth::user()->business_id)->first();
         $defaultCurrency = $this->currency;
         $currencies = Currencies::get();
+        $defaultPriceListId=getData('defaultPriceListId');
         $exchangeRates=[];
         if(class_exists('Modules\ExchangeRate\Entities\exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')){
             $exchangeRates=exchangeRates::get();
         }
-        return view('App.sell.sale.addSale', compact('locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
+        return view('App.sell.sale.addSale', compact('defaultPriceListId','locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
     }
     // for edit page
     public function saleEdit($id)
@@ -256,6 +257,7 @@ class saleController extends Controller
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description')->get();
+        $defaultPriceListId = getData('defaultPriceListId');
         // $priceGroups = PriceGroup::select('id', 'name', 'description')->get();
         // $locations = businessLocation::all();
         $setting = businessSettings::first();
@@ -278,7 +280,7 @@ class saleController extends Controller
                         },
                         'variationTemplateValue' => function ($q) {
                             $q->select('id', 'name');
-                        }
+                        }, 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
                     ]);
             },
             'stock' => function ($q) use ($business_location_id) {
@@ -304,7 +306,8 @@ class saleController extends Controller
         $defaultCurrency = $this->currency;
         // $child_sale_details = $sale_details_query->whereNotNull('parent_sale_details_id', '!=', null)->get();
         // dd($sale_details->toArray());
-        return view('App.sell.sale.edit', compact('products', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
+        // dd($sale_details->toArray());
+        return view('App.sell.sale.edit', compact('products', 'defaultPriceListId', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
     }
     // sale store
     public function store(Request $request,SaleServices $saleService,paymentServices $paymentServices)
@@ -807,8 +810,8 @@ class saleController extends Controller
             DB::commit();
         } catch (Exception $e) {
 
-            dd($e);
             logger($e);
+            dd($e);
             DB::rollBack();
         }
         // dd($request->toArray());
@@ -902,11 +905,9 @@ class saleController extends Controller
                         ->with('variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue');
                 },
                 'stock' => function ($query) use ($business_location_id) {
-
                     $locationIds = childLocationIDs($business_location_id);
                     $query->where('current_quantity', '>', 0)
                         ->whereIn('business_location_id', $locationIds);
-
                 },
                 'uom.unit_category.uomByCategory'
             ])
@@ -1009,6 +1010,7 @@ class saleController extends Controller
             'variation_name' => $variation['variationTemplateValue']? $variation['variationTemplateValue']['name']:'',
             'stock' => $stocks,
             'uom_id' => $product->uom_id,
+            'product_type' => $product->product_type,
             'product_variations' => $variation,
             'uom_id' => $product->uom_id,
             'uom' => $product->uom,
