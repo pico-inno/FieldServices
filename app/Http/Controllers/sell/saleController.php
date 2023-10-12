@@ -810,8 +810,8 @@ class saleController extends Controller
             DB::commit();
         } catch (Exception $e) {
 
-            dd($e);
             logger($e);
+            dd($e);
             DB::rollBack();
         }
         // dd($request->toArray());

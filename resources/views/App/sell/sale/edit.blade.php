@@ -201,11 +201,13 @@
                                                     @endif
                                                     @if (count($additionalProduct) >0)
                                                         <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-non" data-varid="{{$sale_detail->variation_id}}"
-                                                            data-uniqueNameId="{{$key}}">
+                                                            data-uniqueNameId="{{$key}}" data-parentsaledetailid="{{$sale_detail->id}}" >
                                                             Additional Product
                                                             {{-- <i class="fa-regular fa-lightbulb text-primary me-1 "></i> --}}
                                                         </div>
                                                         <input type="hidden" value="{{$key}}" name="sale_details[{{$key}}][isParent]" />
+                                                    @else
+                                                        <input type="hidden" value="{{$key}}" name="sale_details[{{$key}}][parentUniqueNameId]" />
                                                     @endif
                                                 </div>
                                                 <div>

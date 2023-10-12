@@ -86,10 +86,17 @@ class SaleServices
                 ->get()->first();
             $line_subtotal_discount = $sale_detail['line_subtotal_discount'] ?? 0;
             $currency_id = $this->currency->id;
+            if(isset($sale_detail['parentUniqueNameId']) && $sale_detail['parentUniqueNameId'] != 'false' && $sale_detail['parentUniqueNameId'] != 'null'){
+                if(isset($parentSaleItems[$sale_detail['parentUniqueNameId']])){
+                    $parentId= $parentSaleItems[$sale_detail['parentUniqueNameId']]->id;
+                }else{
+                    $parentId = $sale_detail['parentSaleDetailId'];
+                }
+            }
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
-                'parent_id'=>isset($sale_detail['parentUniqueNameId']) && $sale_detail['parentUniqueNameId'] != 'false' && $sale_detail['parentUniqueNameId'] != 'null' ? $parentSaleItems[$sale_detail['parentUniqueNameId']]->id : null,
+                'parent_id'=> $parentId?? null,
                 'variation_id' => $sale_detail['variation_id'],
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],
@@ -105,6 +112,7 @@ class SaleServices
                 'subtotal_with_tax' => $request->type != 'pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'],
                 'note' => $sale_detail['item_detail_note'] ?? null,
             ];
+            // dd($sale_details_data);
             if ($resOrderData) {
                 $sale_details_data['rest_order_id'] = $resOrderData ? $resOrderData->id : null;
                 $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;

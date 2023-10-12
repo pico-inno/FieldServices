@@ -15,6 +15,7 @@
     var creditLimit=0;
     var receiveAbleAmount=0;
     var uniqueNameId=1;
+    var contactId=editSale.contact_id ?? 3;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -147,13 +148,12 @@
             `;
         }
 
-        let invoiceSidebar = (product,forceSplit=false,parentUniqueNameId) => {
+        let invoiceSidebar = (product,forceSplit=false,parentUniqueNameId,parentSaleDetailId=null) => {
             checkAndStoreSelectedProduct(product);
             let variation_value_and_name;
             // Get Variation Value and Variation Template Value Name
             if(product.variation_id){
                 let pv_id = product.variation_id;
-
                 $(product_with_variations).each(function(index, element) {
                     if(element.product_variation_id && element.product_variation_id == pv_id){
                         variation_value_and_name = element.vari_tem_name + '- ' + element.vari_tem_val_name;
@@ -173,11 +173,14 @@
             let additionProductLink=additionalProduct.length >0 ?
              `
                 <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
-                    data-varid="${product.product_variations.id}" data-uniqueNameId="${uniqueNameId}">
+                    data-varid="${product.product_variations.id}" data-uniqueNameId="${uniqueNameId}" data-parentUniqueNameId=${parentUniqueNameId}>
                     Additional Product
                 </div>
                 <input type="hidden" value="${uniqueNameId ?? null}" name="isParent" />
-            `:`<input type="hidden" value="${parentUniqueNameId ?? null}" name="parentUniqueNameId" />`;
+            `:`
+            <input type="hidden" value="${parentUniqueNameId ?? null}" name="parentUniqueNameId" />
+            <input type="hidden" value="${parentSaleDetailId ?? null}" name="parentSaleDetailId" />
+            `;
             let stockBalanceText=product.product_type =="storable" ? `<span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">${product.uom.value * 1}</span> - <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">${product.uom.name}</span>` : ''
             return `
                 <tr class="fs-9 mb-3 invoiceRow invoice_row_${product.product_variations.id} cursor-pointer invoice_sidebar_row_${uniqueNameId}">
@@ -720,11 +723,13 @@
                 let item_detail_note = parent.find('input[name="item_detail_note"]').val();
                 let isParent = parent.find('input[name="isParent"]') ? parent.find('input[name="isParent"]').val():null;
                 let parentUniqueNameId = parent.find('input[name="parentUniqueNameId"]')?parent.find('input[name="parentUniqueNameId"]').val():'';
+                let parentSaleDetailId = parent.find('input[name="parentSaleDetailId"]')?parent.find('input[name="parentSaleDetailId"]').val():'';
                 let raw_sale_details = {
                     sale_detail_id,
                     item_detail_note,
                     isParent,
                     parentUniqueNameId,
+                    parentSaleDetailId,
                     'product_id': product_id,
                     'variation_id': variation_id,
                     'uom_id': uom_id,
@@ -841,7 +846,7 @@
 
         let isGetContact = false;
         if(!isGetContact){
-            getContacts(1);
+            getContacts(contactId);
             isGetContact = true;
         }
 
@@ -1047,16 +1052,17 @@
             $('.suggestProductBtn').off('click').on('click',function(){
                 let variationId=$(this).data('varid');
                 let parentuiqId=$(this).data('uniquenameid');
+                let parentSaleDetailId=$(this).data('parentsaledetailid')?? null;
                 let product = productsOnSelectData.find(function(pd) {
                     return  variationId == pd.variation_id;
                 });
                 let adp=product.additional_product;
-                showSuggestion(adp,parentuiqId);
+                showSuggestion(adp,parentuiqId,parentSaleDetailId);
             })
 
         }
 
-        function showSuggestion(additionalProduct,unique_name_id) {
+        function showSuggestion(additionalProduct,unique_name_id,parentSaleDetailId=null) {
             if(additionalProduct.length>0){
                 $('#suggestionProducts').html('');
                 var modal = new bootstrap.Modal($('#suggestionModal'));
@@ -1080,7 +1086,7 @@
                         //      ${product.name} ${variation_template_value ? '(' + variation_template_value.name  + ')' :''} x ${qty} ${uom.short_name}
                         // </span>
                         let badge=`
-                        <div class="position-relative main_div" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}">
+                        <div class="position-relative main_div" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}" data-parentsaledetailid=${parentSaleDetailId}>
                             <div class="disappearing-div  cursor-pointer  border border-1 rounded px-2 py-3 d-flex mb-2 suggestionProduct sgp_${unique_name_id}" >
                                 <div class="img bg-light w-50px h-50px rounded">
 
@@ -1100,6 +1106,7 @@
                             let dataUomId=$(this).data('uomid');
                             let productId=$(this).data('productid');
                             let locationId=$('[name="business_location_id"]').val();
+                            let parentSaleDetailId=$(this).data('parentsaledetailid');
                             let qty=$(this).data('qty');
 
                             $.ajax({
@@ -1122,15 +1129,17 @@
                                 },
                                 success: function(results){
                                     let product=results;
-                                    let newInvoiceSidebar = $(invoiceSidebar(product,false,unique_name_id));
-                                    $(`.invoice_sidebar_row_${unique_name_id}`).after(newInvoiceSidebar);
+                                    let newInvoiceSidebar = $(invoiceSidebar(product,false,unique_name_id,parentSaleDetailId));
+                                    $(`#${tableBodyId} .invoice_sidebar_row_${unique_name_id}`).after(newInvoiceSidebar);
                                     // $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
                                     uniqueNameId++;
                                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
-                                    changeQtyOnUom(newInvoiceSidebar, product.uom.id);
-                                    totalSubtotalAmountCalculate();
-                                    totalDisPrice();
-
+                                    setTimeout(() => {
+                                        console.log(newInvoiceSidebar);
+                                        changeQtyOnUom(newInvoiceSidebar, product.uom.id);
+                                        totalSubtotalAmountCalculate();
+                                        totalDisPrice();
+                                    }, 50);
                                 }
                             })
                             // suggestionProductDiv.remove();
@@ -1582,7 +1591,7 @@
             }
         })
         // Sale With Order
-        $(document).off("click").on('click', '.finalizeOrder', function() {
+        $(document).on('click', '.finalizeOrder', function() {
             if(posRegister.use_for_res==1){
                 let table_id = $('select[name="table_id"]').val();
                 let services=$('#services').val();
@@ -2032,6 +2041,7 @@
         // if edit mode
         if (editSaleDetails.length>0) {
             setTimeout(() => {
+                suggestionProductEvent();
                 editSaleDetails.forEach(function(saleDetail,index){
                     let secIndex;
                     product= productsOnSelectData.find(function(pd,i) {
@@ -2061,9 +2071,8 @@
                             'uom':saleDetail.product.uom,
                             'uom_id':saleDetail.uom_id,
                             'stock':saleDetail.stock,
-                            'additional_product':newSelectedProduct.product_variations.additional_product,
+                            'additional_product':saleDetail.product_variation.additional_product,
                         };
-                        console.log(newProductData);
                         productsOnSelectData=[...productsOnSelectData,newProductData];
                     }else{
                         if(editSale.status=='delivered'){
@@ -2071,6 +2080,7 @@
                         }
                     }
                 })
+
                 // for increase and decrease SERVICE ITEM QUANTITY
 
                 //     (()=>{

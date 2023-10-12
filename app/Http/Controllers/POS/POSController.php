@@ -138,7 +138,8 @@ class POSController extends Controller
                     },
                     'variationTemplateValue' => function ($q) {
                         $q->select('id', 'name');
-                    }
+                    }, 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
+                    
                 ]);
             },
             'stock' => function ($q) use ($business_location_id) {
@@ -153,10 +154,10 @@ class POSController extends Controller
                 }]);
             },
         ])
-            ->where('sales_id', $saleId)->where('is_delete', 0)
-            ->withSum(['stock' => function ($q) use ($business_location_id) {
-                $q->where('business_location_id', $business_location_id);
-            }], 'current_quantity');
+        ->where('sales_id', $saleId)->where('is_delete', 0)
+        ->withSum(['stock' => function ($q) use ($business_location_id) {
+            $q->where('business_location_id', $business_location_id);
+        }], 'current_quantity');
         $saleDetails = $sale_details_query->get();
 
         $locations = businessLocation::all();

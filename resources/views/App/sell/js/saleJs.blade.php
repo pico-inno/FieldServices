@@ -256,7 +256,7 @@
 
 
         });
-        function showSuggestion(additionalProduct,parentUniqueNameId) {
+        function showSuggestion(additionalProduct,parentUniqueNameId,parentSaleDetailId=null) {
             if(additionalProduct.length>0){
                 $('#suggestionProducts').html('');
                 var modal = new bootstrap.Modal($('#suggestionModal'));
@@ -280,7 +280,7 @@
                         //      ${product.name} ${variation_template_value ? '(' + variation_template_value.name  + ')' :''} x ${qty} ${uom.short_name}
                         // </span>
                         let badge=`
-                        <div class="position-relative main_div" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}">
+                        <div class="position-relative main_div" data-productid="${product.id}" data-varid="${variation_id}" data-qty="${qty}"  data-uomid="${uomId}" data-parentSaleDetailId=${parentSaleDetailId}>
                             <div class="disappearing-div  cursor-pointer  border border-1 rounded px-2 py-3 d-flex mb-2 suggestionProduct sgp_${unique_name_id}" >
                                 <div class="img bg-light w-50px h-50px rounded">
 
@@ -299,6 +299,7 @@
                             let variationId=$(this).data('varid');
                             let dataUomId=$(this).data('uomid');
                             let productId=$(this).data('productid');
+                            let parentSaleDetailId=$(this).data('parentsaledetailid');
                             let locationId=$('[name="business_location_id"]').val();
                             let qty=$(this).data('qty');
 
@@ -332,7 +333,7 @@
                                     };
                                 },
                                 success: function(results){
-                                    append_row(results,false,qty,dataUomId,parentUniqueNameId);
+                                    append_row(results,false,qty,dataUomId,parentUniqueNameId,parentSaleDetailId);
                                     unique_name_id++;
 
                                 }
@@ -368,7 +369,7 @@
 
 
         //append table row for product to sell
-        function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false) {
+        function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false,parentSaleDetailId=null) {
             allSelectedProduct[selected_product.product_variations.id]=selected_product;
             console.log(setting.enable_row,forceSplit);
             if(setting.enable_row == 0 && !forceSplit){
@@ -445,7 +446,10 @@
                                 </div>
                                 <input type="hidden" value="${unique_name_id}" name="sale_details[${unique_name_id}][isParent]" />
                                 `
-                                :`<input type="hidden" value="${parentUniqueNameId}" name="sale_details[${unique_name_id}][parentUniqueNameId]" />`
+                                :`
+                                <input type="hidden" value="${parentUniqueNameId}" name="sale_details[${unique_name_id}][parentUniqueNameId]" />
+                                <input type="hidden" value="${parentSaleDetailId}" name="sale_details[${unique_name_id}][parentSaleDetailId]" />
+                                `
                                 }
                         </div>
                     </td>
@@ -638,11 +642,12 @@
             $('.suggestProductBtn').off('click').on('click',function(){
                 let variationId=$(this).data('varid');
                 let parentuiqId=$(this).data('uniquenameid');
+                let parentSaleDetailId=$(this).data('parentsaledetailid')?? null;
                 let product = productsOnSelectData.find(function(pd) {
                     return  variationId == pd.variation_id;
                 });
                 let additionalProduct=product.additional_product;
-                showSuggestion(additionalProduct,parentuiqId);
+                showSuggestion(additionalProduct,parentuiqId,parentSaleDetailId);
             })
 
     }
