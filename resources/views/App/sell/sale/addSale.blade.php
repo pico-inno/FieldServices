@@ -74,12 +74,12 @@
                             @enderror
                             <div class="mb-sm-10 mb-3 col-12 col-sm-6 mt-3 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold" for="">
-                                    Default Selling Price
+                                    Select Price List
                                 </label>
                                 <select name="price_list"  class="form-select form-select-sm price_group priceList price_list_input" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price">
-                                    <option value="default_selling_price">defalut selling price</option>
+                                    {{-- <option value="default_selling_price">defalut selling price</option> --}}
                                     @foreach ($priceLists as $PriceList)
-                                        <option value="{{$PriceList->id}}">{{$PriceList->name}}</option>
+                                        <option value="{{$PriceList->id}}" @selected($defaultPriceListId == $PriceList->id)>{{$PriceList->name}}</option>
                                     @endforeach
                                 </select>
                             </div>

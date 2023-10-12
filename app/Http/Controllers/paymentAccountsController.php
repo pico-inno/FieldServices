@@ -64,7 +64,7 @@ class paymentAccountsController extends Controller
     }
 
     public function store(Request $request){
-        $data=$this->getData($request);
+        $data=$this->getPaymentData($request);
         $payment=paymentAccounts::create($data);
         $this->createPaymentTransaction($payment);
         return redirect()->back()->with(['success'=>'successfully added']);
@@ -76,7 +76,7 @@ class paymentAccountsController extends Controller
     }
 
     public function update($id,Request $request){
-        $data=$this->getData($request);
+        $data=$this->getPaymentData($request);
         paymentAccounts::where('id',$id)->first()->update($data);
         paymentsTransactions::where('payment_account_id',$id)
                             ->where('transaction_type','opening_amount')

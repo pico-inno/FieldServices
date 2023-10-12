@@ -12,6 +12,11 @@ function DiscAmountCal($originalPrice,$discType,$disAmount)
     return false;
 }
 
+
+function percentageCalc($whoelNumer, $percentage)
+{
+     return $whoelNumer+ ($whoelNumer * ($percentage / 100));
+}
 function roundDown($number,$power){
     return floor($number * $power) / $power;
 }

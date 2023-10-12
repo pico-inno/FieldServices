@@ -11,6 +11,7 @@
         let currency=@json($defaultCurrency);
         let currencies=@json($currencies);
         let locations=@json($locations);
+        let defaultPriceListId={{$defaultPriceListId}}
         let lotControl=setting.lot_control;
         var suggestionProduct=[];
         function isNullOrNan(val){
@@ -25,6 +26,7 @@
         let exchangeRates=@json($exchangeRates ?? []);
         let currentPriceList;
         var currentCurrency=@json($defaultCurrency);
+        $('[name="contact_id"]').val(3).trigger('change');
         $('#currency_id').change(function(e){
             currentCurrency=currencies.find(c=>c.id==$(this).val());
             currentCurrencySymbol=currentCurrency.symbol;
@@ -165,28 +167,31 @@
                             // console.log(results);
                             products=results;
                                 var html = '';
-                                if (results.length > 0) {
-                                    results.forEach(function(result,key) {
-                                        let total_current_stock_qty=Number(result.total_current_stock_qty);
-                                        let css_class=result.total_current_stock_qty<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
-
-                                        html += `<div class="quick-search-result result  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
-                                        html += `<h4 class="fs-6  pt-3 ${css_class}">
-                                                ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :result.sku??'' }`;
-                                                if(result.has_variation=='sub_variable'){
-                                                    html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
-                                                }
-                                        html+='</h4>'
-                                        if(result.product_type=="storable"){
-                                            if(result.total_current_stock_qty>0){
-                                                html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
-                                            }else{
-                                                html += '<p>Out of Stocks</p>';
+                                    if (results.length > 0) {
+                                        results.forEach(function(result,key) {
+                                            if(result.has_variation =='variable' && results.length== 2){
+                                                return;
                                             }
-                                        }
-                                        html += '</div>';
+                                            let total_current_stock_qty=Number(result.total_current_stock_qty);
+                                            let css_class=result.total_current_stock_qty<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
+
+                                            html += `<div class="quick-search-result result  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
+                                            html += `<h4 class="fs-6  pt-3 ${css_class}">
+                                                    ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :result.sku??'' }`;
+                                                    if(result.has_variation=='sub_variable'){
+                                                        html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
+                                                    }
+                                            html+='</h4>'
+                                            if(result.product_type=="storable"){
+                                                if(result.total_current_stock_qty>0){
+                                                    html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
+                                                }else{
+                                                    html += '<p>Out of Stocks</p>';
+                                                }
+                                            }
+                                            html += '</div>';
                                     });
-                                    if (results.length == 1) {
+                                    if (results.length == 1 || (results[0].has_variation =='variable' && results.length== 2)) {
                                         $('.quick-search-results').show();
                                         if(results[0].total_current_stock_qty>0 || results[0].product_type!="storable"){
                                             setTimeout(() => {
@@ -239,13 +244,13 @@
                     let t=products.filter(p=>{
                         return p.variation_id==v.id
                     });
-
-                    append_row(t[0]);
+                    append_row(t[0],false);
                     unique_name_id+=1;
+                    $('#searchInput').focus();
                 });
                 return;
             }
-            append_row(selected_product);
+            append_row(selected_product,false);
             unique_name_id+=1;
             $('#searchInput').focus();
 
@@ -327,7 +332,7 @@
                                     };
                                 },
                                 success: function(results){
-                                    append_row(results,true,qty,dataUomId,parentUniqueNameId);
+                                    append_row(results,false,qty,dataUomId,parentUniqueNameId);
                                     unique_name_id++;
 
                                 }
@@ -365,16 +370,19 @@
         //append table row for product to sell
         function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false) {
             allSelectedProduct[selected_product.product_variations.id]=selected_product;
+            console.log(setting.enable_row,forceSplit);
             if(setting.enable_row == 0 && !forceSplit){
+                // alert('here');
                let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
                if(checkProduct){
-                    // let ParentRow=$(`[data-product=${selected_product.product_variations.id}]`);
                     let selectQtyInput=document.querySelectorAll(`.quantity-${selected_product.product_variations.id}`);
                     // console.log(selectQtyInput);
                     let qtyInput=selectQtyInput[0];
                     let val=isNullOrNan(qtyInput.value);
                     qtyInput.value=val+1;
                     checkAndStoreSelectedProduct(selected_product);
+                    $('.quick-search-results').addClass('d-none');
+                    $('.quick-search-results').empty();
                     return;
                }
             }
@@ -425,7 +433,7 @@
                     <td class="d-flex ps-2">
 
                         <div class="w-300px">
-                            <span>${selected_product.name}</span>a
+                            <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
                             ${$currentQtyText}
@@ -526,11 +534,9 @@
 
 
             // new row append
-            console.log(parentUniqueNameId,'sfsdf');
             if(parentUniqueNameId == false){
                 $('#sale_table tbody').prepend(newRow);
             }else{
-                console.log($(`.sale_row_${parentUniqueNameId}`));
                 $(`.sale_row_${parentUniqueNameId}`).after(newRow);
             }
             $('.dataTables_empty').addClass('d-none');
@@ -1137,7 +1143,7 @@
 
     var priceList;
     getPriceList(locations[0].price_lists_id);
-    $('[name="price_list"]').val(locations[0].price_lists_id).trigger('change');
+    $('[name="price_list"]').val(locations[0].price_lists_id ?? defaultPriceListId).trigger('change');
     $('[name="price_list"]').change(function(){
         currentPriceList=priceLists.find((p)=>{
             return p.id == $(this).val();
@@ -1146,7 +1152,7 @@
     })
     $('[name="contact_id"]').change(function(){
         let selectedOption = $(this).find("option:selected");
-        let priceList = selectedOption.attr("priceList");
+        let priceList = selectedOption.attr("priceList") ?? defaultPriceListId;
         if(priceList && priceList != 'default_selling_price'){
             $('[name="price_list"]').val(priceList).trigger('change');
             getPriceList(priceList);

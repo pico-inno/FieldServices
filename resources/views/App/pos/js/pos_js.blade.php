@@ -891,8 +891,10 @@
                     if(results.length > 0){
                         $(results).each(function(index, element){
                             // console.log(element)
-                            let css_class = element.total_current_stock_qty !== 0 ? " " : " text-gray-500 order-3 not-use";
-
+                            let css_class='';
+                            if(element.product_type=='storable'){
+                                 css_class = element.total_current_stock_qty !== 0  ? " " : " text-gray-500 order-3 not-use";
+                            }
                             let product_countOrSku = element.has_variation === 'variable' ? element.product_variations.length : element.sku;
                             // let stock_qty = element.total_current_stock_qty !== 0 ? element.total_current_stock_qty * 1 + ' ' + element.smallest_unit : 'Out of Stocks';
                             let vari_name_or_selectAll = element.has_variation === 'sub_variable' ? element.variation_name : 'select all';
@@ -929,7 +931,7 @@
 
             let selected_product = products[index];
 
-            if(selected_product.total_current_stock_qty === 0 || selected_product.total_current_stock_qty === null){
+            if(selected_product.product_type =='storable' && selected_product.total_current_stock_qty === 0 || selected_product.total_current_stock_qty === null){
                 return;
             }
 
@@ -939,6 +941,7 @@
                     let filteredId = products.filter( p => p.variation_id === variation.id);
                     let newInvoiceSidebar = $(invoiceSidebar(filteredId[0]));
                     $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+                    suggestionProductEvent();
                     uniqueNameId++;
                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                     changeQtyOnUom(newInvoiceSidebar, filteredId[0].uom.id);
@@ -949,6 +952,7 @@
             }
             let newInvoiceSidebar = $(invoiceSidebar(selected_product));
             $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+            suggestionProductEvent();
             uniqueNameId++;
             $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
             changeQtyOnUom(newInvoiceSidebar, selected_product.uom.id);
@@ -1030,6 +1034,7 @@
                     let newInvoiceSidebar = $(invoiceSidebar(product));
                     uniqueNameId++;
                     $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+                    suggestionProductEvent();
                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                     changeQtyOnUom(newInvoiceSidebar, product.uom.id);
                     totalSubtotalAmountCalculate();
@@ -1577,7 +1582,7 @@
             }
         })
         // Sale With Order
-        $(document).on('click', '.finalizeOrder', function() {
+        $(document).off("click").on('click', '.finalizeOrder', function() {
             if(posRegister.use_for_res==1){
                 let table_id = $('select[name="table_id"]').val();
                 let services=$('#services').val();

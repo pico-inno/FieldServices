@@ -89,7 +89,7 @@ class SaleServices
             $sale_details_data = [
                 'sales_id' => $sale_data->id,
                 'product_id' => $sale_detail['product_id'],
-                'parent_id'=>isset($sale_detail['parentUniqueNameId']) && $sale_detail['parentUniqueNameId'] !='false' ? $parentSaleItems[$sale_detail['parentUniqueNameId']]->id : null,
+                'parent_id'=>isset($sale_detail['parentUniqueNameId']) && $sale_detail['parentUniqueNameId'] != 'false' && $sale_detail['parentUniqueNameId'] != 'null' ? $parentSaleItems[$sale_detail['parentUniqueNameId']]->id : null,
                 'variation_id' => $sale_detail['variation_id'],
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],
