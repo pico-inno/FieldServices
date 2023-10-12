@@ -44,7 +44,7 @@ class defaultDataFactory
         if ($contactCount <= 0) {
             Artisan::call('db:seed --class=LocationTableSeeder');
         }
-        $defaultPriceListCheck = getData('defaultPriceListId');
+        $defaultPriceListCheck = getSystemData('defaultPriceListId');
         if (!$defaultPriceListCheck) {
             Artisan::call('db:seed --class=defaultPriceListSeeder');
         }

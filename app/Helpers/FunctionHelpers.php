@@ -1,11 +1,12 @@
 <?php
 
+use App\Models\data;
 use App\Helpers\UomHelper;
 use App\Models\Currencies;
 use App\Models\Product\UOM;
+use App\Models\systemSetting;
 use App\Helpers\SettingHelpers;
 use App\Helpers\generatorHelpers;
-use App\Models\data;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
@@ -338,10 +339,10 @@ function addresss($address)
     ;
 }
 
-function getData($key)
+function getSystemData($key)
 {
     try {
-        return data::where('key',$key)->firstOrFail()->value;
+        return systemSetting::where('key',$key)->firstOrFail()->value;
     } catch (\Throwable $th) {
         return null;
     }

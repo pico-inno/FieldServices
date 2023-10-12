@@ -48,80 +48,80 @@ class ProductController extends Controller
         $products = Product::with('productVariations', 'category', 'brand')->get();
 
         return DataTables::of($products)
-        ->addColumn('product', function($product) {
-            return ['image' => $product->image, 'name' => $product->name];
-            // return ['image' => $product->image, 'name' => $product->name];
-        })
-        ->addColumn('purchase_price', function($product) {
-            $purchase_price = null;
-            $variation_values = null;
-            // for single product
-            if($product->has_variation === "single"){
-                $purchase_price = $product->productVariations[0]->default_purchase_price ?? 0;
-            }
-            // for variation product
-            if($product->has_variation === "variable"){
-                foreach($product->productVariations as $value){
-                    $purchase_price[] = $value->default_purchase_price;
-                    $variation_values[] = $value->variationTemplateValue->name;
+            ->addColumn('product', function ($product) {
+                return ['image' => $product->image, 'name' => $product->name];
+                // return ['image' => $product->image, 'name' => $product->name];
+            })
+            ->addColumn('purchase_price', function ($product) {
+                $purchase_price = null;
+                $variation_values = null;
+                // for single product
+                if ($product->has_variation === "single") {
+                    $purchase_price = $product->productVariations[0]->default_purchase_price ?? 0;
                 }
-            }
-            return ['purchase_prices' => $purchase_price, 'variation_name' => $variation_values, 'has_variation' => $product->has_variation ];
-        })
-        ->addColumn('selling_price', function($product) {
-            $selling_price = null;
-            // for single product
-            if($product->has_variation === "single"){
-                $selling_price = $product->productVariations[0]->default_selling_price ?? 0;
-            }
-            // for variation product
-            if($product->has_variation === "variable"){
-                foreach($product->productVariations as $value){
-                    $selling_price[] = $value->default_selling_price;
+                // for variation product
+                if ($product->has_variation === "variable") {
+                    foreach ($product->productVariations as $value) {
+                        $purchase_price[] = $value->default_purchase_price;
+                        $variation_values[] = $value->variationTemplateValue->name;
+                    }
                 }
-            }
+                return ['purchase_prices' => $purchase_price, 'variation_name' => $variation_values, 'has_variation' => $product->has_variation];
+            })
+            ->addColumn('selling_price', function ($product) {
+                $selling_price = null;
+                // for single product
+                if ($product->has_variation === "single") {
+                    $selling_price = $product->productVariations[0]->default_selling_price ?? 0;
+                }
+                // for variation product
+                if ($product->has_variation === "variable") {
+                    foreach ($product->productVariations as $value) {
+                        $selling_price[] = $value->default_selling_price;
+                    }
+                }
 
-            return ['selling_prices' => $selling_price, 'has_variation' => $product->has_variation ];
-        })
-        ->addColumn('category', function($product) {
-            $parentCategory = null;
-            $subCategory = null;
-            if($product->category_id){
-                $parentCategory = Category::with('parentCategory', 'childCategory')->find($product->category_id)->name ?? null;
-            }
-            if($product->sub_category_id){
-                $subCategory = Category::with('parentCategory', 'childCategory')->find($product->sub_category_id)->name ?? null;
-            }
+                return ['selling_prices' => $selling_price, 'has_variation' => $product->has_variation];
+            })
+            ->addColumn('category', function ($product) {
+                $parentCategory = null;
+                $subCategory = null;
+                if ($product->category_id) {
+                    $parentCategory = Category::with('parentCategory', 'childCategory')->find($product->category_id)->name ?? null;
+                }
+                if ($product->sub_category_id) {
+                    $subCategory = Category::with('parentCategory', 'childCategory')->find($product->sub_category_id)->name ?? null;
+                }
 
-            return ['parentCategory' => $parentCategory, 'subCategory' => $subCategory];
-        })
-        ->addColumn('brand', function($product) {
-            $brand = null;
-            if($product->brand_id){
-                $brand = $product->brand->name ?? null;
-            }
-            return $brand;
-        })
-        ->addColumn('generic', function($product) {
-            $generic = null;
-            if($product->generic_id){
-                $generic = $product->generic->name ?? null;
-            }
-            return $generic;
-        })
-        ->addColumn('manufacturer', function($product) {
-            $manufacturer = null;
-            if($product->manufacturer_id){
-                $manufacturer = $product->manufacturer->name ?? null;
-            }
-            return $manufacturer;
-        })
-        ->addColumn('action', function($product) {
+                return ['parentCategory' => $parentCategory, 'subCategory' => $subCategory];
+            })
+            ->addColumn('brand', function ($product) {
+                $brand = null;
+                if ($product->brand_id) {
+                    $brand = $product->brand->name ?? null;
+                }
+                return $brand;
+            })
+            ->addColumn('generic', function ($product) {
+                $generic = null;
+                if ($product->generic_id) {
+                    $generic = $product->generic->name ?? null;
+                }
+                return $generic;
+            })
+            ->addColumn('manufacturer', function ($product) {
+                $manufacturer = null;
+                if ($product->manufacturer_id) {
+                    $manufacturer = $product->manufacturer->name ?? null;
+                }
+                return $manufacturer;
+            })
+            ->addColumn('action', function ($product) {
 
-            return $product->id;
-        })
-        ->rawColumns(['product', 'purchase_price', 'category', 'brand', 'generic', 'manufacturer', 'action'])
-        ->make(true);
+                return $product->id;
+            })
+            ->rawColumns(['product', 'purchase_price', 'category', 'brand', 'generic', 'manufacturer', 'action'])
+            ->make(true);
     }
 
     public function index()
@@ -139,9 +139,10 @@ class ProductController extends Controller
         $variations = VariationTemplates::all();
         $unitCategories = UnitCategory::all();
 
-        return view('App.product.product.productAdd', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', ));
+        return view('App.product.product.productAdd', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations',));
     }
-    public function quickAdd() {
+    public function quickAdd()
+    {
         $brands = Brand::all();
         $categories = Category::with('parentCategory', 'childCategory')->get();
         $manufacturers = Manufacturer::all();
@@ -156,14 +157,14 @@ class ProductController extends Controller
     {
 
         DB::beginTransaction();
-        try{
+        try {
             $img_name = $this->saveProductImage($request);
             $productData = $this->prepareProductData($request, $img_name);
-            $nextProduct=Product::create($productData);
+            $nextProduct = Product::create($productData);
             $nextProductId = $nextProduct->id;
             $this->insertProductVariations($request, $nextProduct);
 
-            if ($request->additional_product_details){
+            if ($request->additional_product_details) {
                 $this->createAdditionalProducts($request->additional_product_details, $nextProduct);
             }
 
@@ -175,16 +176,16 @@ class ProductController extends Controller
             ]);
 
             DB::commit();
-            if($request->save === "save"){
+            if ($request->save === "save") {
                 return redirect('/product')->with('message', 'Created sucessfully product');
             }
-            if($request->save === "save_and_another"){
+            if ($request->save === "save_and_another") {
                 return redirect()->route('product.add');
             }
-            if($request->input('form_type') === 'from_pos'){
+            if ($request->input('form_type') === 'from_pos') {
                 return response()->json(['success' => true, 'message' => 'Product created sucessfully']);
             }
-            if($request->save === "app_opening_stock"){
+            if ($request->save === "app_opening_stock") {
                 $stockin_persons = BusinessUser::with('personal_info')->get();
                 $locations = businessLocation::all();
 
@@ -193,7 +194,7 @@ class ProductController extends Controller
                     'locations' => $locations,
                 ]);
             }
-        } catch(Exception $e){
+        } catch (Exception $e) {
             dd($e);
             DB::rollBack();
             return back()->with('message', $e->getMessage());
@@ -210,25 +211,26 @@ class ProductController extends Controller
         $variations = VariationTemplates::all();
         $productVariation = ProductVariation::with('product', 'variationTemplateValue')->where('product_id', $product->id)->get();
         $additional_products =   AdditionalProduct::with([
-            'productVariation'=>function($q){
-                $q->select('id','product_id','variation_template_value_id','default_purchase_price','profit_percent','default_selling_price')
+            'productVariation' => function ($q) {
+                $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
                     ->with(
                         [
-                            'variationTemplateValue'=>function($q){
-                                $q->select('id','name');
+                            'variationTemplateValue' => function ($q) {
+                                $q->select('id', 'name');
                             },
-                            'product'=>function($q){
-                            $q->with([
-                                'uom'=>function($q){
-                                    $q->with(['unit_category' => function ($q) {
-                                        $q->with('uomByCategory');
-                                    }]);
-                                }
-                            ]);
-                        }
-                        ]);
+                            'product' => function ($q) {
+                                $q->with([
+                                    'uom' => function ($q) {
+                                        $q->with(['unit_category' => function ($q) {
+                                            $q->with('uomByCategory');
+                                        }]);
+                                    }
+                                ]);
+                            }
+                        ]
+                    );
             }
-        ])->where('primary_product_id',$product->id)->get();
+        ])->where('primary_product_id', $product->id)->get();
 
 
         return view('App.product.product.productEdit', compact('product', 'brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
@@ -236,9 +238,9 @@ class ProductController extends Controller
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
-//        return $request;
+        //        return $request;
         DB::beginTransaction();
-        try{
+        try {
             // Update Product
             $img_name = $this->saveProductImage($request, $product->image);
             $productData = $this->prepareProductData($request, $img_name, false);
@@ -247,7 +249,7 @@ class ProductController extends Controller
             // Update Product Variationn
             $this->insertProductVariations($request, $product, false);
 
-            if ($request->additional_product_details){
+            if ($request->additional_product_details) {
                 $this->createAdditionalProducts($request->additional_product_details, $product, false);
             }
 
@@ -259,10 +261,10 @@ class ProductController extends Controller
             ]);
 
             DB::commit();
-            if($request->has('save')){
+            if ($request->has('save')) {
                 return redirect('/product');
             }
-        } catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
             return back()->with('message', $e->getMessage());
         }
@@ -271,13 +273,13 @@ class ProductController extends Controller
     public function delete(Product $product)
     {
         DB::beginTransaction();
-        try{
+        try {
             $productVariationIds = ProductVariation::where('product_id', $product->id)->get()->pluck('id'); // to delete
             ProductVariation::whereIn('id', $productVariationIds)->update(['deleted_by' => Auth::user()->id]);
 
             $product->deleted_by = Auth::user()->id;
             $product->save();
-            if($product->image){
+            if ($product->image) {
                 Storage::delete('product-image/' . $product->image);
             }
 
@@ -291,7 +293,7 @@ class ProductController extends Controller
 
             DB::commit();
             return response()->json(['message' => 'Deleted Sucessfully Product']);
-        } catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
         }
     }
@@ -300,7 +302,7 @@ class ProductController extends Controller
     public function deleteProductVariation($id)
     {
         DB::beginTransaction();
-        try{
+        try {
             $productVariation = ProductVariation::find($id);
             $productVariation->deleted_by = Auth::user()->id;
             $productVariation->save();
@@ -313,14 +315,14 @@ class ProductController extends Controller
 
             DB::commit();
             return response()->json(['message' => 'Deleted Sucessfully Product variation']);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
         }
     }
 
     private function saveProductImage($request, $existingImagePath = null)
     {
-        if($request->hasFile('avatar')){
+        if ($request->hasFile('avatar')) {
             if ($existingImagePath) {
                 Storage::delete('product-image/' . $existingImagePath);
             }
@@ -337,12 +339,11 @@ class ProductController extends Controller
             } else {
                 return null;
             }
-
-        }else {
-            if($request->avatar_remove == 1 && $existingImagePath){
+        } else {
+            if ($request->avatar_remove == 1 && $existingImagePath) {
                 Storage::delete('product-image/' . $existingImagePath);
                 return null;
-            }else{
+            } else {
                 return $existingImagePath;
             }
         }
@@ -386,13 +387,14 @@ class ProductController extends Controller
         return $productData;
     }
 
-    private function createAdditionalProducts(array $datas , $nextProduct, $isCreating = true){
+    private function createAdditionalProducts(array $datas, $nextProduct, $isCreating = true)
+    {
         $nextProductId = $nextProduct->id;
         $productVariation = ProductVariation::where('product_id', $nextProductId)->first();
-        if(!$isCreating) {
+        if (!$isCreating) {
 
-            $additionalDetailsIds = array_filter($datas, function ($item){
-               return isset($item['additional_detail_id']);
+            $additionalDetailsIds = array_filter($datas, function ($item) {
+                return isset($item['additional_detail_id']);
             });
             $oldDetailsIds = array_column($additionalDetailsIds, 'additional_detail_id');
 
@@ -404,10 +406,10 @@ class ProductController extends Controller
                 AdditionalProduct::where('primary_product_id', $nextProductId)
                     ->where('id', $data['additional_detail_id'])
                     ->update([
-                    'additional_product_variation_id' => $data['variation_id'],
-                    'uom_id' => $data['uom_id'],
-                    'quantity' => $data['quantity'],
-                ]);
+                        'additional_product_variation_id' => $data['variation_id'],
+                        'uom_id' => $data['uom_id'],
+                        'quantity' => $data['quantity'],
+                    ]);
             }
 
             $detailsWithoutAdId = array_filter($datas, function ($item) {
@@ -424,7 +426,6 @@ class ProductController extends Controller
                 ]);
             }
             return;
-
         }
 
 
@@ -439,7 +440,6 @@ class ProductController extends Controller
             ]);
         }
         return;
-
     }
 
     private function insertProductVariations($request, $nextProduct, $isCreating = true)
@@ -447,9 +447,9 @@ class ProductController extends Controller
         $nextProductId = $nextProduct->id;
         $has_variation = $isCreating ? $request->has_variation : $request->has_variation_hidden;
         $variation_template_id = $isCreating ? $request->variation_name : $request->variation_template_id_hidden;
-        $priceListId = getData('defaultPriceListId');
+        $priceListId = getSystemData('defaultPriceListId');
         if ($has_variation === "variable") {
-            if(!$isCreating){
+            if (!$isCreating) {
                 // Get all variation IDs of the product from the database
                 $dbVariationIds = ProductVariation::where('product_id', $nextProductId)->pluck('id');
 
@@ -466,9 +466,9 @@ class ProductController extends Controller
                 }
             }
             $variationTemplateValuesQuery = $this->variation_template_values
-                                            ->where('variation_template_id', $variation_template_id)
-                                            ->select('id', 'name')
-                                            ->get();
+                ->where('variation_template_id', $variation_template_id)
+                ->select('id', 'name')
+                ->get();
 
             $lowercaseVariationNames = $variationTemplateValuesQuery->pluck('name')->map(fn ($v) => strtolower($v))->toArray();
 
@@ -479,7 +479,7 @@ class ProductController extends Controller
             $productVariationCount = ProductVariation::withTrashed()->count();
             $productVariations = [];
 
-            foreach($request->variation_value as $index => $value){
+            foreach ($request->variation_value as $index => $value) {
                 $variationName = strtolower($value);
 
                 if (in_array($variationName, $lowercaseVariationNames)) {
@@ -494,7 +494,7 @@ class ProductController extends Controller
                 //   $productVariationSku = $request->variation_sku[$index] ?? sprintf('%07d', ($productVariationCount + ($index + 1)));
                 $variationData = [
                     'product_id' => $nextProductId,
-                    'variation_sku' => $nextProduct['sku'].'-0'.$index,
+                    'variation_sku' => $nextProduct['sku'] . '-0' . $index,
                     'variation_template_value_id' => $variationTemplateValueId,
                     'default_purchase_price' => $request->exc_purchase[$index],
                     'profit_percent' => $request->profit_percentage[$index],
@@ -506,7 +506,7 @@ class ProductController extends Controller
                     $variationData['created_by'] = auth()->id();
                     $variationData['created_at'] = now();
                 }
-                if(!$isCreating) {
+                if (!$isCreating) {
                     $variationData['id'] = $request->product_variation_id[$index] ?? null;
                     $variationData['updated_by'] = auth()->id();
                     $variationData['updated_at'] = now();
@@ -515,13 +515,13 @@ class ProductController extends Controller
                 $productVariations[] = $variationData;
             }
 
-            if($isCreating){
+            if ($isCreating) {
                 foreach ($productVariations as $productVariation) {
                     $variationData = ProductVariation::create($productVariation);
                     $this->createOrUpdatePriceListDetail('Variation', $variationData->id, $variationData['default_selling_price']);
                 }
             }
-            if(!$isCreating){
+            if (!$isCreating) {
                 foreach ($productVariations as $variation) {
                     ProductVariation::updateOrCreate(['id' => $variation['id']], $variation);
                     $this->createOrUpdatePriceListDetail('Variation', $variation['id'], $variationData['default_selling_price']);
@@ -532,20 +532,20 @@ class ProductController extends Controller
             $productSingle = [
                 'product_id' => $nextProductId,
                 'variation_sku' => $nextProduct['sku'],
-//                'variation_template_value_id' => $nextProduct['sku'],
+                //                'variation_template_value_id' => $nextProduct['sku'],
                 'default_purchase_price' => $request->single_exc,
                 'profit_percent' => $request->single_profit,
                 'default_selling_price' => $request->single_selling,
                 'alert_quantity' => $request->single_alert_quantity,
             ];
             $this->createOrUpdatePriceListDetail('Product', $nextProductId, $productSingle['default_selling_price']);
-            if($isCreating){
+            if ($isCreating) {
                 $productSingle['created_by'] = auth()->id();
                 $productSingle['created_at'] = now();
-                $variation=DB::table('product_variations')->insert($productSingle);
+                $variation = DB::table('product_variations')->insert($productSingle);
             }
 
-            if(!$isCreating){
+            if (!$isCreating) {
                 $productVariationId = ProductVariation::where('product_id', $nextProductId)->first()->id;
                 $productSingle['updated_by'] = auth()->id();
                 $productSingle['updated_at'] = now();
@@ -554,19 +554,20 @@ class ProductController extends Controller
         }
     }
 
-    public function createOrUpdatePriceListDetail($type,$value,$defaultSellingPrice){
-        $priceListId = getData('defaultPriceListId');
+    public function createOrUpdatePriceListDetail($type, $value, $defaultSellingPrice)
+    {
+        $priceListId = getSystemData('defaultPriceListId');
 
         $pricelistDetailQuery = PriceListDetails::where('pricelist_id', $priceListId)
             ->where('applied_type', $type)
             ->where('applied_value', $value);
-        $pricelistDetailCheck= $pricelistDetailQuery->exists();
+        $pricelistDetailCheck = $pricelistDetailQuery->exists();
 
-        if($pricelistDetailCheck){
+        if ($pricelistDetailCheck) {
             $pricelistDetailQuery->update([
                 'cal_value' => $defaultSellingPrice,
             ]);
-        }else{
+        } else {
             PriceListDetails::create([
                 'pricelist_id' => $priceListId,
                 'applied_type' => $type,
