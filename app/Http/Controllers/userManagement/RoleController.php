@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\userManagement;
 
+use App\Actions\userManagement\RoleAction;
 use App\Http\Controllers\Controller;
-use App\Models\BusinessUser;
-use App\Models\Feature;
-use App\Models\Permission;
-use App\Models\Role;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Jobs\RoleAndPermission\RolePermissionJob;
+use App\Models\BusinessUser;
+use App\Models\Feature;
+use App\Models\Role;
 use App\Models\RolePermission;
-use App\Rules\CheckAtLeastOneCheckbox;
-use Ramsey\Uuid\Rfc4122\Validator;
 
 class RoleController extends Controller
 {
@@ -31,10 +30,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-
-        $roles = Role::all();
-
-        return view('App.userManagement.roles.index', compact('roles'));
+        return view('App.userManagement.roles.index', [
+            'roles' => Role::all(),
+        ]);
     }
 
     /**
@@ -44,11 +42,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-
-
-        $features = Feature::with('permissions')->get();
-
-        return view('App.userManagement.roles.add', compact('features'));
+        return view('App.userManagement.roles.add', [
+            'features' =>  Feature::with('permissions')->get(),
+        ]);
     }
 
     /**
@@ -57,9 +53,8 @@ class RoleController extends Controller
      * @param \App\Http\Requests\StoreRoleRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRoleRequest $request)
+    public function store(StoreRoleRequest $request, RoleAction $createRoleAction)
     {
-        $validatedData = $request->validated();
         $permissionsId = $request->except('_token', 'name');
         $permissions = array_values($permissionsId);
 
@@ -68,18 +63,10 @@ class RoleController extends Controller
             return back()->with(['permissionError' => 'At least one permission must be specified']);
         }
 
-        //role name create and return role_id
-        $role_id = Role::create([
-            'name' => $request->name
-        ])->id;
+        $role = $createRoleAction->create(['name' => $request->name]);
+        $role_id = $role->id;
 
-        // permission create
-        foreach ($permissions as $permission) {
-            RolePermission::create([
-                'role_id' => $role_id,
-                'permission_id' => $permission
-            ]);
-        }
+        dispatch(new RolePermissionJob($role_id, $permissions));
 
         return redirect(route('roles.index'))->with('scuuess-toastr', 'New role created successfully');
 
@@ -125,19 +112,10 @@ class RoleController extends Controller
      * @param \App\Models\Role $role
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRoleRequest $request, Role $role)
+    public function update(UpdateRoleRequest $request, Role $role, RoleAction $roleAction)
     {
         $permissionsId = $request->except('_token', '_method', 'key', 'name');
-
-        //update role name
-        $role = Role::where('id', $role->id)->first();
-        $role->update([
-            'name' => $request->name,
-        ]);
-
-        //update role permissions
-        $role = Role::where('id', $role->id)->first();
-        $role->permissions()->sync($permissionsId);
+        $roleAction->update($role->id, $request->name, $permissionsId);
 
         return redirect(route('roles.index'))->with(['scuuess-toastr' => 'Role Successfully Updated']);
     }
@@ -148,17 +126,17 @@ class RoleController extends Controller
      * @param \App\Models\Role $role
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy(Role $role, RoleAction $roleAction)
     {
 
         $role_id = isset(BusinessUser::where('role_id', $role->id)->first()->role_id) ? BusinessUser::where('role_id', $role->id)->first()->role_id : true;
 
         if ($role_id === true) {
-            RolePermission::where('role_id', $role->id)->delete();
-            Role::find($role->id)->delete();
-            return back()->with('success', 'Role delete successfully');
+            $roleAction->delete($role->id);
+            return back()->with('success', 'Role deleted successfully');
         } else {
-            return back()->with('error', 'This role is associated with one or more user accounts. Delete the user accounts or associate them with different role.');
+            return back()->with('error-message', 'This role is associated with one or more user accounts. Delete the user accounts or associate them with a different role.');
         }
+
     }
 }

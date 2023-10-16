@@ -37,26 +37,26 @@ var KTUsersUpdatePermissions = function () {
 
         // Close button handler
         const closeButton = element.querySelector('[data-kt-roles-modal-action="close"]');
-        closeButton.addEventListener('click', e => {
-            e.preventDefault();
-
-            Swal.fire({
-                text: "Are you sure you would like to close?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, close it!",
-                cancelButtonText: "No, return",
-                customClass: {
-                    confirmButton: "btn btn-primary",
-                    cancelButton: "btn btn-active-light"
-                }
-            }).then(function (result) {
-                if (result.value) {
-                    modal.hide(); // Hide modal
-                }
-            });
-        });
+        // closeButton.addEventListener('click', e => {
+        //     e.preventDefault();
+        //
+        //     Swal.fire({
+        //         text: "Are you sure you would like to close?",
+        //         icon: "warning",
+        //         showCancelButton: true,
+        //         buttonsStyling: false,
+        //         confirmButtonText: "Yes, close it!",
+        //         cancelButtonText: "No, return",
+        //         customClass: {
+        //             confirmButton: "btn btn-primary",
+        //             cancelButton: "btn btn-active-light"
+        //         }
+        //     }).then(function (result) {
+        //         if (result.value) {
+        //             modal.hide(); // Hide modal
+        //         }
+        //     });
+        // });
 
 
         // Submit button handler

@@ -26,7 +26,6 @@ class StoreRoleRequest extends FormRequest
     {
         return [
             'name'=>'required|unique:roles,name',
-//            'permissions' => ['required', new CheckAtLeastOneCheckbox],
         ];
     }
 
@@ -34,7 +33,6 @@ class StoreRoleRequest extends FormRequest
     {
         return [
             'name.unique' => 'Role name has already been taken.',
-//            'permissions.required' => 'Please check at least one permission must be specified.',
         ];
     }
 }

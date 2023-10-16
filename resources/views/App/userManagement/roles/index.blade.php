@@ -159,10 +159,10 @@
     <script src="assets/js/custom/apps/user-management/roles/list/table.js"></script>
     <script src="customJs/toaster.js"></script>
     <script>
-        @if(session('error'))
+        @if(session('error-message'))
             Swal.fire({
                 title: 'Oops...',
-                text: '{{session('error')}}',
+                text: '{{session('error-message')}}',
                 icon: "warning",
                 buttonsStyling: false,
                 showCancelButton: false,
