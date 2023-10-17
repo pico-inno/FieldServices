@@ -29,7 +29,7 @@
 
 @section('content')
     <!--begin::Content-->
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="content d-flex flex-column flex-column-fluid" id="product_content">
         <!--begin::Container-->
         <div class="container-xxl" id="kt_content_container">
             <!--begin::Form-->
@@ -86,25 +86,25 @@
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="can_sale">
-                                                            <input class="form-check-input" name="can_sale" type="checkbox" value="1" id="can_sale" checked/>
+                                                            <input class="form-check-input" name="can_sale" type="checkbox" value="1" id="can_sale" checked {{ old('can_sale') ? 'checked' : '' }}/>
                                                             <strong class="ms-4 h5">{{ __('product/product.can_sale') }}</strong>
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="can_purchase">
-                                                            <input class="form-check-input" name="can_purchase" type="checkbox" value="1" id="can_purchase" checked/>
+                                                            <input class="form-check-input" name="can_purchase" type="checkbox" value="1" id="can_purchase" {{ old('can_purchase') === '1' || old('can_purchase') === null ? 'checked' : '' }} />
                                                             <strong class="ms-4 h5">{{ __('product/product.can_purchase') }}</strong>
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="can_expense">
-                                                            <input class="form-check-input" name="can_expense" type="checkbox" value="1" id="can_expense"/>
+                                                            <input class="form-check-input" name="can_expense" type="checkbox" value="1" id="can_expense" {{ old('can_expense') ? 'checked' : '' }}/>
                                                             <strong class="ms-4 h5">{{ __('product/product.can_expense') }}</strong>
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="is_recurring">
-                                                            <input class="form-check-input" name="is_recurring" type="checkbox" value="1" id="is_recurring"/>
+                                                            <input class="form-check-input" name="is_recurring" type="checkbox" value="1" id="is_recurring" {{ old('is_recurring') ? 'checked' : '' }}/>
                                                             <strong class="ms-4 h5">{{ __('product/product.is_recurring') }}</strong>
                                                         </label>
                                                     </div>
@@ -137,9 +137,9 @@
                                                             <div class="overflow-hidden flex-grow-1">
                                                                 <select name="product_type" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Product Type">
                                                                     <option></option>
-                                                                    <option value="consumeable">Consumeable</option>
-                                                                    <option selected value="storable">Storable</option>
-                                                                    <option value="service">Service</option>
+                                                                    <option value="consumeable" {{ old('product_type') == 'consumeable' ? 'selected' : '' }}>Consumeable</option>
+                                                                    <option value="storable" {{ old('product_type') == 'storable' || old('product_type') === null ? 'selected' : '' }}>Storable</option>
+                                                                    <option value="service" {{ old('product_type') == 'service' ? 'selected' : '' }}>Service</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -153,9 +153,9 @@
 
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4 mb-5">
+                                                <div class="col-md-4 mb-5 fv-row">
                                                     <label class="required form-label">{{ __('product/product.product_name') }}</label>
-                                                    <input type="text" name="product_name" class="form-control form-control-sm mb-2" placeholder="Product name" value="" />
+                                                    <input type="text" name="product_name" class="form-control form-control-sm mb-2" placeholder="Product name" value="{{old('product_name')}}" />
                                                     @error('product_name')
                                                         <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
@@ -165,7 +165,7 @@
                                                         <label class="form-label">
                                                             {{ __('product/product.product_code') }}
                                                         </label>
-                                                        <input type="text" name="product_code" class="form-control form-control-sm mb-2" placeholder="Product code" value="" />
+                                                        <input type="text" name="product_code" class="form-control form-control-sm mb-2" placeholder="Product code" value="{{old('product_code')}}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
@@ -184,7 +184,7 @@
                                                             <select name="brand" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select brand">
                                                                 <option></option>
                                                                 @foreach ($brands as $brand)
-                                                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                                    <option value="{{ $brand->id }}" @selected(old('brand') == $brand->id)>{{ $brand->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -202,7 +202,7 @@
                                                     <select id="categorySelect" name="category" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select category">
                                                         <option></option>
                                                         @foreach ($categories as $category)
-                                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                            <option value="{{ $category->id }}" @selected(old('category') == $category->id)>{{ $category->name }}</option>
                                                         @endforeach
                                                     </select>
                                                     </div>
@@ -230,7 +230,7 @@
                                                             <select name="manufacturer" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select manufacturer">
                                                                 <option></option>
                                                                 @foreach ($manufacturers as $manufacturer)
-                                                                    <option value="{{ $manufacturer->id }}">{{ $manufacturer->name }}</option>
+                                                                    <option value="{{ $manufacturer->id }}" @selected(old('manufacturer') == $manufacturer->id)>{{ $manufacturer->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -247,7 +247,7 @@
                                                             <select name="generic" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select generic">
                                                                 <option></option>
                                                                 @foreach ($generics as $generic)
-                                                                    <option value="{{ $generic->id }}">{{ $generic->name }}</option>
+                                                                    <option value="{{ $generic->id }}" @selected(old('generic') == $generic->id)>{{ $generic->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -281,7 +281,7 @@
                                                                 <select name="uom_id" class="form-select form-select-sm" data-control="select2" data-placeholder="Select UoM">
                                                                     <option></option>
                                                                     @foreach ($uoms as $uom)
-                                                                        <option value="{{ $uom->id }}">{{ $uom->name }}</option>
+                                                                        <option value="{{ $uom->id }}" @selected(old('uom_id') == $uom->id)>{{ $uom->name }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
@@ -315,7 +315,7 @@
                                                                 {{ __('product/product.alert_quantity') }}
                                                             </label>
 
-                                                                    <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+                                                                    <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="{{old('single_alert_quantity')}}" />
 
                                                         </div>
 
@@ -324,15 +324,15 @@
                                             <div class="row advance-toggle-class">
                                                 <div class="col-md-4 mb-5">
                                                     <label class="form-label">{{ __('product/product.purchase_price') }}</label>
-                                                    <input type="text" name="purchase_price_for_single" class="form-control form-control-sm mb-2" placeholder="Purchase price" value="" />
+                                                    <input type="text" name="purchase_price_for_single" class="form-control form-control-sm mb-2" placeholder="Purchase price" value="{{old('purchase_price_for_single')}}" />
                                                 </div>
                                                 <div class="col-md-4 mb-5">
                                                     <label class="form-label">{{ __('product/product.profit_margin') }}</label>
-                                                    <input type="text" name="profit_margin_for_single" class="form-control form-control-sm mb-2" placeholder="Profit mergin (%)" value="" />
+                                                    <input type="text" name="profit_margin_for_single" class="form-control form-control-sm mb-2" placeholder="Profit mergin (%)" value="{{old('profit_margin_for_single')}}" />
                                                 </div>
                                                 <div class="col-md-4 mb-5">
                                                     <label class="form-label">{{ __('product/product.sell_price') }}</label>
-                                                    <input type="text" name="sell_price_for_single" class="form-control form-control-sm mb-2" placeholder="Sell price" value="" />
+                                                    <input type="text" name="sell_price_for_single" class="form-control form-control-sm mb-2" placeholder="Sell price" value="{{old('sell_price_for_single')}}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -350,8 +350,8 @@
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
                                                 <div class="mb-3">
                                                     <select class="form-select form-select-sm" name="has_variation" data-control="select2" id="has_variation" data-hide-search="true">
-                                                        <option value="single" selected>Single</option>
-                                                        <option value="variable">Variable</option>
+                                                        <option value="single" {{ old('has_variation') == 'single' || old('has_variation') === null ? 'selected' : '' }}>Single</option>
+                                                        <option value="variable" {{old('has_variation') == 'variable' ? 'selected' : ''}}>Variable</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -588,7 +588,7 @@
                             {{-- <button type="submit" class="btn btn-warning btn-sm">Save & Add Selling-Price-Group Prices</button> --}}
                             <button type="submit" class="btn btn-info btn-sm" name="save" value="app_opening_stock">Save & Add Opening Stock</button>
                             <button type="submit" class="btn btn-warning btn-sm" name="save" value="save_and_another">Save & Add Another</button>
-                            <button type="submit" class="btn btn-primary btn-sm" name="save" value="save">Save</button>
+                            <button type="submit" data-adjustment-create-action="submit" class="btn btn-primary btn-sm" name="save" value="save">Save</button>
                           </div>
                     </div>
                 </div>
@@ -606,7 +606,7 @@
 @endsection
 
 @push('scripts')
-
+    <script src="{{asset('customJs/product/addValidation.js')}}"></script>
     <script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
     @include('App.product.JS.productQuickSearch')
