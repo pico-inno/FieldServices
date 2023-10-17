@@ -38,7 +38,7 @@ $(document).ready(function() {
 
     let results=[];
     numberOnly();
-
+    let throttleTimeout;
     $('.quick-search-form input').on('input', function() {
         var query = $(this).val().trim();
         if (query.length >= 2) {
@@ -51,63 +51,69 @@ $(document).ready(function() {
             //     let sku=result.sku?result.sku.toLowerCase().includes(query.toLowerCase()):false;console.log(sku);
             //     return result.name.toLowerCase().includes(query.toLowerCase()) || sku;
             // });
-            $.ajax({
-                url: `/purchase/get/product`,
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    data:query
-                },
-                error:function(e){
-                    status=e.status;
-                    if(status==405){
-                        warning('Method Not Allow!');
-                    }else if(status==419){
-                        error('Session Expired')
-                    }else{
-                        error(' Something Went Wrong! Error Status: '+status )
-                    };
-                },success:function(e){
-                    results=e;
-                    products=e;
-                    var html = '';
-                    // products=results;
-                    if (results.length > 0) {
-                        console.log(results);
-                        results.forEach(function(result,key) {
-                            html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
-                            html += `<h4 class="fs-6 ps-10 pt-3">
-                                ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :''}`;
-                            if(result.has_variation=='sub_variable'){
-                                html +=  `<span class="text-gray-700 fw-semibold p-1 fs-5">(${result.variation_name??''})</span>`;
-                            }
 
-                            html+='</h4>'
-                            html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
+            clearTimeout(throttleTimeout);
+            throttleTimeout = setTimeout(function() {
+                $.ajax({
+                    url: `/purchase/get/product`,
+                    type: 'POST',
+                    delay:150,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        data:query
+                    },
+                    error:function(e){
+                        status=e.status;
+                        if(status==405){
+                            warning('Method Not Allow!');
+                        }else if(status==419){
+                            error('Session Expired')
+                        }else{
+                            error(' Something Went Wrong! Error Status: '+status )
+                        };
+                    },success:function(e){
+                        results=e;
+                        products=e;
+                        var html = '';
+                        // products=results;
+                        if (results.length > 0) {
+                            console.log(results);
+                            results.forEach(function(result,key) {
+                                html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
+                                html += `<h4 class="fs-6 ps-10 pt-3">
+                                    ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :''}`;
+                                if(result.has_variation=='sub_variable'){
+                                    html +=  `<span class="text-gray-700 fw-semibold p-1 fs-5">(${result.variation_name??''})</span>`;
+                                }
 
-                            html += '</div>';
+                                html+='</h4>'
+                                html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
 
-                            //
-                        });
-                        if (results.length == 1) {
-                        $('.quick-search-results').show();
-                            setTimeout(() => {
-                                $(`.result[data-name|='${results[0].name}']`).click();
-                                $('.quick-search-results').hide();
-                            }, 100);
-                        } else {
+                                html += '</div>';
+
+                                //
+                            });
+                            if (results.length == 1) {
                             $('.quick-search-results').show();
+                                setTimeout(() => {
+                                    $(`.result[data-name|='${results[0].name}']`).click();
+                                    $('.quick-search-results').hide();
+                                }, 100);
+                            } else {
+                                $('.quick-search-results').show();
+                            }
+                        } else {
+                            html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
                         }
-                    } else {
-                        html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
-                    }
-                    $('.quick-search-results').removeClass('d-none')
-                    $('.quick-search-results').html(html);
+                        $('.quick-search-results').removeClass('d-none')
+                        $('.quick-search-results').html(html);
 
-                }
-            });
+                    }
+                });
+            },300)
+
 
 
         } else {
@@ -338,9 +344,6 @@ $(document).ready(function() {
                         // Get the data in the row
                         var name = row.find('td[data-id="' + id + '"]').text();
 
-                        // Do something with the data, e.g. display in console
-                        console.log('Deleted row with ID ' + id + ', name: ' + name);
-
                         // Remove the row from the table
                         var rowCount = $('#openingStockTable tbody tr').length;
                         console.log(rowCount);
@@ -348,11 +351,12 @@ $(document).ready(function() {
                             $('.dataTables_empty').removeClass('d-none');
                         }
                         row.remove();
-                        totalItem();
+                        // totalItem();
                         itemCal();
-                        net_purchase_total_amount_cal();
-                        total_purchase_amount_cal() ;
-                        total_balance_amount_cal();
+                        totalOpeningAmountCal();
+                        // net_purchase_total_amount_cal();
+                        // total_purchase_amount_cal() ;
+                        // total_balance_amount_cal();
                     }
                 });
     });

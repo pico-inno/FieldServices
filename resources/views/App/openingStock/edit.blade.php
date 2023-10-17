@@ -112,9 +112,9 @@
                                             style="max-height: 300px;z-index: 100;"></div>
                                     </div>
                                 </div>
-                                <div class="col-6 col-md-3 btn-light-primary btn add_new_product_modal my-5 my-lg-0"
-                                     data-bs-toggle="modal" type="button"
-                                     {{--  data-bs-target="#add_new_product_modal" --}} data-href="{{ url('purchase/add/supplier')}}">
+                                <div class="col-6 col-md-3 btn-light-primary btn productQuickAdd my-5 my-lg-0"
+                                      type="button"
+                                     {{--  data-bs-target="#add_new_product_modal" --}}data-href="{{route('product.quickAdd')}}">
                                     <i class="fa-solid fa-plus me-2 "></i> Add new product
                                 </div>
                             </div>
@@ -218,9 +218,9 @@
         </div>
         <!--end::Container-->
     </div>
-
-    @include('App.purchase.contactAdd')
-    @include('App.purchase.newProductAdd')
+    <div class="modal modal-lg fade " tabindex="-1" data-bs-focus="false" id="quick_add_product_modal"></div>
+    {{-- @include('App.purchase.contactAdd')
+    @include('App.purchase.newProductAdd') --}}
 @endsection
 
 @push('scripts')
@@ -234,6 +234,16 @@
         $('[data-kt-repeater="datepicker"]').flatpickr({
             dateFormat: "Y-m-d",
         });
+        $(document).on('click', '.productQuickAdd', function(){
+            $url=$(this).data('href');
+
+            loadingOn();
+            $('#quick_add_product_modal').load($url, function() {
+                $(this).modal('show');
+                loadingOff();
+            });
+        });
+
     </script>
     @include('App.openingStock.JS.openingStockJs')
 @endpush

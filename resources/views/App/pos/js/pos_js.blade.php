@@ -913,6 +913,7 @@
 
                             }
                         })
+
                     }
                 },
 
@@ -930,7 +931,7 @@
         // when select search item / add new tr to tbody
         $('#search_container').on('click', '.pos-product-search', function(event) {
             if($(event.target).hasClass('not-use')) return;
-
+            $('input[name="pos_product_search"]').val('');
             $(this).closest(`.pos-product-search`).remove();
             let index = $(this).attr('data-index');
 

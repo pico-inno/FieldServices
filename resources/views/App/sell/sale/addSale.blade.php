@@ -377,7 +377,7 @@
     var credit_limit=0;
     $(document).on('change','[name="contact_id"]',function(){
         let contact_id=contacts.find(c=>c.id==$(this).val());
-        credit_limit=parseFloat(contact_id.credit_limit ?? 0) ;
+        credit_limit=parseFloat(contact_id ?contact_id.credit_limit: 0) ;
         $('.credit_limit_txt').text(credit_limit.toFixed(2));
         $('credit_limit').val(credit_limit);
     })

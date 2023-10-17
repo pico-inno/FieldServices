@@ -93,7 +93,7 @@
                                         <div class="p-2 text-danger">* {{$message}}</div>
                                     @enderror
                                 </div> --}}
-                                <div class="mb-7 mt-3 col-4">
+                                <div class="mb-7 mt-3 col-md-4 col-12">
                                     <label class="form-label fs-6">
                                     Note
                                     </label>
@@ -107,7 +107,7 @@
                         <div class="card-body">
                             <div class="row align-items-center mb-8">
 
-                                <div class="col-6 col-md-9">
+                                <div class="col-12  col-md-9">
                                     <div class="input-group quick-search-form p-0">
                                         <div class="input-group-text">
                                             <i class="fa-solid fa-magnifying-glass"></i>
