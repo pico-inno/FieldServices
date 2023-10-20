@@ -95,24 +95,26 @@
         <div class="card">
             <div class="card-body user-select-none">
                 <!--begin::Form-->
-                <form class="form" action="{{route('barcode.store')}}" method="POST" id="location_form">
+                <form class="form" action="{{route('barcode.store')}}" method="POST" id="template_form">
                     @csrf
 
                     <div class="d-flex">
-                        <div class="col-6">
+                        <div class="col-12 col-lg-6">
                             <div class="mb-3 ">
                                 <div class="mb-10">
                                     <h3 class="text-gray-700">Template Info</h3>
                                 </div>
-                                <div class="mb-7">
-                                    <label for="name" class="form-label text-gray-700">Template Name</label>
-                                    <x-forms.input class="mt-2" placeholder="Eg : 32x19 template" id="name" name="name">
-                                    </x-forms.input>
-                                </div>
-                                <div class="mb-7">
-                                    <label for="description" class="form-label text-gray-700">Description</label>
-                                    <x-forms.input class="mt-2" placeholder="description" name="description">
-                                    </x-forms.input>
+                                <div class="row d-block d-lg-flex">
+                                    <div class="mb-7 col-lg-6 fv-row">
+                                        <label for="name" class="form-label text-gray-700 required">Template Name</label>
+                                        <x-forms.input class="mt-2" placeholder="Eg : 32x19 template" id="name" name="name">
+                                        </x-forms.input>
+                                    </div>
+                                    <div class="mb-7 col-lg-6">
+                                        <label for="description" class="form-label text-gray-700">Description</label>
+                                        <x-forms.input class="mt-2" placeholder="description" name="description">
+                                        </x-forms.input>
+                                    </div>
                                 </div>
                             </div>
                             <div class="mt-10">
@@ -121,13 +123,13 @@
                                 </div>
                                 <div class="mb-7">
                                     <div class="row mb-10">
-                                        <div class="fv-row col-12  d-flex mb-5 mt-3  align-items-end">
+                                        <div class="fv-row col-12 d-block  d-md-flex mb-5 mt-3  align-items-end">
                                             <!--begin::Label-->
                                             <div class="">
-                                                <label class=" fs-6 fw-semibold mb-2">Paper Type :</label>
+                                                <label class=" fs-6 fw-semibold mb-2 required">Paper Type :</label>
                                             </div>
-                                            <div class=" ms-5 min-w-100px">
-                                                <x-forms.nob-select placeholder="Select Location Type" class="min-w-200px" attr="data-hide-search='true'" name="paper_type" id="paper_type">
+                                            <div class=" ms-md-5 min-w-100px">
+                                                <x-forms.nob-select placeholder="Select Paper Type" class="min-w-200px" attr="data-hide-search='true'" name="paper_type" id="paper_type">
                                                     <option value="cf">Continous feed or rolls</option>
                                                     <option value="fixed">fixed</option>
                                                 </x-forms.nob-select>
@@ -135,23 +137,23 @@
                                         </div>
                                     </div>
                                     <div class="row ">
-                                        <div class="col-6 pe-3 mt-5">
-                                            <label for="description" class="form-label text-gray-700 required">
+                                        <div class="col-md-6 col-12 pe-3 mt-5">
+                                            <label for="description" class="form-label text-gray-700 ">
                                                 <i class="fa-solid fa-arrow-up-from-bracket mx-2"></i>
                                                 Margin Top Of The Paper (mm)
                                             </label>
                                             <x-forms.input class="mt-2" placeholder="Eg : 2" id="name"
                                                 name="paperMarginTop"></x-forms.input>
                                         </div>
-                                        <div class="col-6 ps-3  mt-5">
-                                            <label for="description" class="form-label text-gray-700 required">
+                                        <div class="col-md-6 col-12 ps-3  mt-5">
+                                            <label for="description" class="form-label text-gray-700 ">
                                                 <i class="fa-solid fa-right-to-bracket fa-flip-both mx-2"></i>
                                                 Margin Left Of The Paper (mm)
                                             </label>
                                             <x-forms.input class="mt-2" placeholder="Eg : 2" id="name"
                                                 name="paperMarginLeft"></x-forms.input>
                                         </div>
-                                        <div class="col-6 pe-3 mt-10">
+                                        <div class="col-md-6 col-12 pe-3 mt-10 fv-row">
                                             <label for="description" class="form-label text-gray-700 required">
                                                 <i class="fa-solid fa-left-right mx-2"></i>
                                                 Paper width (mm)
@@ -159,7 +161,7 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 32" id="name"
                                                 name="paperWidth"></x-forms.input>
                                         </div>
-                                        <div class="col-6 ps-3  mt-10 paper_fix d-none">
+                                        <div class="col-md-6 col-12 ps-3  mt-10 paper_fix d-none fv-row">
                                             <label for="description" class="form-label text-gray-700">
                                                 <i class="fa-solid fa-arrows-up-down mx-2"></i>
                                                 Paper height (mm)
@@ -167,7 +169,7 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 2" id="name"
                                                 name="paperHeight"></x-forms.input>
                                         </div>
-                                        <div class="col-6 pe-3 mt-10">
+                                        <div class="col-md-6 col-12 pe-3 mt-10 fv-row">
                                             <label for="description" class="form-label text-gray-700 required">
                                                 <i class="fa-solid fa-arrows-left-right-to-line mx-2"></i>
                                                 Sticker width (mm)
@@ -175,7 +177,7 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 32" id="name"
                                                 name="stickerWidth"></x-forms.input>
                                         </div>
-                                        <div class="col-6 ps-3  mt-10">
+                                        <div class="col-md-6 col-12 ps-3  mt-10 fv-row">
                                             <label for="description" class="form-label text-gray-700">
                                                 <i class="fa-solid fa-arrows-left-right-to-line fa-rotate-90 mx-2"></i>
                                                 Sticker height (mm)
@@ -183,7 +185,7 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 2" id="name"
                                                 name="stickerHeight"></x-forms.input>
                                         </div>
-                                        <div class="col-6 pe-3 mt-10 paper_fix d-none">
+                                        <div class="col-md-6 col-12 pe-3 mt-10 paper_fix d-none fv-row">
                                             <label for="description" class="form-label text-gray-700 required">
                                                 <i class="fa-solid fa-arrows-left-right-to-line mx-2"></i>
                                                 Row Count
@@ -191,15 +193,15 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 32" id="name" name="rowCount">
                                             </x-forms.input>
                                         </div>
-                                        <div class="col-6 ps-3  mt-10">
-                                            <label for="description" class="form-label text-gray-700">
+                                        <div class="col-md-6 col-12 ps-3  mt-10 fv-row">
+                                            <label for="description" class="form-label text-gray-700 required">
                                                 <i class="fa-solid fa-arrows-left-right-to-line fa-rotate-90 mx-2"></i>
                                                 Column Count
                                             </label>
                                             <x-forms.input class="mt-2" placeholder="Eg : 2" id="name"
                                                 name="columnCount"></x-forms.input>
                                         </div>
-                                        <div class="col-6 pe-3 mt-10">
+                                        <div class="col-md-6 col-12 pe-3 mt-10">
                                             <label for="description" class="form-label text-gray-700 required">
                                                 <i class="fa-solid fa-arrows-up-to-line mx-2"></i>
                                                 Row Gap (mm)
@@ -207,7 +209,7 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 32" id="name" name="rowGap">
                                             </x-forms.input>
                                         </div>
-                                        <div class="col-6 ps-3  mt-10">
+                                        <div class="col-md-6 col-12 ps-3  mt-10">
                                             <label for="description" class="form-label text-gray-700">
                                                 <i class="fa-solid fa-arrows-up-to-line fa-rotate-270 mx-2"></i>
                                                 Column Gap (mm)
@@ -215,7 +217,7 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 2" id="name" name="columnGap">
                                             </x-forms.input>
                                         </div>
-                                        <div class="col-6 pe-3 mt-10">
+                                        <div class="col-md-6 col-12 pe-3 mt-10">
                                             <label for="description" class="form-label text-gray-700 required">
                                                 <i class="fa-solid fa-barcode mx-2"></i>
                                                 Barcode Height (mm)
@@ -223,7 +225,7 @@
                                             <x-forms.input class="mt-2" placeholder="Eg : 32" id="name"
                                                 name="barcodeHeight"></x-forms.input>
                                         </div>
-                                        <div class="col-6 ps-3  mt-10">
+                                        <div class="col-md-6 col-12 ps-3  mt-10">
                                             <label for="description" class="form-label text-gray-700">
                                                 <i class="fa-solid fa-maximize mx-2"></i>
                                                 Inner Padding Of Sticker (mm)
@@ -233,12 +235,12 @@
                                         </div>
                                     </div>
                                     <div class="col-6 mt-10">
-                                        <button class="btn btn-sm btn-primary col-6">Save</button>
+                                        <button class="btn btn-sm btn-primary col-6" id="submit" type="submit">Save</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card col-6 shadow-none p-2 ps-5 rounded rounded-1">
+                        <div class="d-none d-md-block card col-12 col-lg-6  shadow-none p-2 ps-5 rounded rounded-1">
                             <div class="wrap">
                                 <div class="text">
                                     Comming Sooon ! ....
@@ -312,5 +314,99 @@
             $('.paper_fix').addClass('d-none');
         }
     })
+    // Define form element
+const form = document.getElementById('template_form');
+
+// Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
+var validator = FormValidation.formValidation(
+    form,
+    {
+        fields: {
+            'name': {
+                validators: {
+                    notEmpty: {
+                        message: 'Template Name is required'
+                    }
+                }
+            },
+            'paper_type':{
+                validators: {
+                    notEmpty: {
+                        message: 'Paper is required'
+                    }
+                }
+            },
+            'paperWidth': {
+                validators: {
+                    notEmpty: {
+                        message: 'Paper width is required'
+                    }
+                }
+            },
+
+            'stickerWidth': {
+                validators: {
+                    notEmpty: {
+                        message: 'Sticker width is required'
+                    }
+                }
+            },
+
+
+            // 'rowCount': {
+            //     validators: {
+            //         notEmpty: {
+            //             message: 'Row count is required'
+            //         }
+            //     }
+            // },
+
+             'columnCount': {
+                validators: {
+                    notEmpty: {
+                        message: 'Column cout is required'
+                    }
+                }
+            }
+
+        },
+
+        plugins: {
+            trigger: new FormValidation.plugins.Trigger(),
+            bootstrap: new FormValidation.plugins.Bootstrap5({
+                rowSelector: '.fv-row',
+                eleInvalidClass: '',
+                eleValidClass: ''
+            })
+        }
+    }
+);
+
+// Submit button handler
+const submitButton = document.getElementById('submit');
+submitButton.addEventListener('click', function (e) {
+
+    // Validate form before submit
+    if (validator) {
+        validator.validate().then(function (status) {
+            if (status == 'Valid') {
+                e.currentTarget=true;
+                return true;
+            } else {
+                e.preventDefault();
+                // Show popup warning. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                Swal.fire({
+                    text: "Sorry, looks like there are some errors detected, please try again.",
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn btn-primary"
+                    }
+                });
+            }
+        });
+    }
+});
 </script>
 @endpush

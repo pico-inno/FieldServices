@@ -586,6 +586,8 @@ class purchaseController extends Controller
                 } else {
                     $variation_id = $product['product_variations'][0]['id'];
                     $lastPurchase = purchase_details::where('per_ref_uom_price', '!=', '0')->where('variation_id', $variation_id)->orderBy('id', 'DESC')->first();
+                    $products[$i]['variation_id'] = $variation_id;
+                    $products[$i]['default_selling_price'] = $product['product_variations'][0]['default_selling_price'];
                     if ($lastPurchase) {
                         $lastPurchasePrice = priceChangeByUom($lastPurchase->ref_uom_id, $lastPurchase->per_ref_uom_price, $product['purchase_uom_id']);
                         $products[$i]['lastPurchasePrice'] = $lastPurchasePrice;

@@ -38,13 +38,13 @@
                 <!--begin::Form-->
                 <form class="form" action="{{route('barcode.print')}}" method="POST" id="location_form">
                     @csrf
-                    <div class="row">
-                        <div class="col-6" style="">
+                    <div class="row ">
+                        <div class="col-12 col-md-6 mb-10 mb-md-2" style="">
                             <div class="mt-4">
                                 <h3>Add Product Sku</h3>
                             </div>
                             <div class="mt-5 position-relative">
-                                <select name="price_list" class="form-select form-select-sm form-select-solid mb-3" id="" data-control="select2" placeholder="Select Price List">
+                                <select name="price_list" id="price_list" class="form-select form-select-sm form-select-solid mb-3" id="" data-control="select2" placeholder="Select Price List">
                                     @foreach ($priceLists as $p)
                                         <option value="{{$p->id}}">{{$p->name}}</option>
                                     @endforeach
@@ -80,7 +80,7 @@
                                 @endforeach --}}
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-12 col-md-6">
                             <div class="mt-4">
                                 <h3>Label Setting</h3>
                             </div>
@@ -149,7 +149,7 @@
                                                 <input class="form-check-input" type="checkbox" value="on" id="flexCheckDefault" name="date" />
                                             </div>
                                         </div>
-                                        <input type="text" class="form-control form-control-sm" placeholder="Font-size" name="date_fs" aria-label="Font-size"
+                                        <input type="text" class="form-control form-control-sm" placeholder="Font-size" name="date_fs" value="10" aria-label="Font-size"
                                             aria-describedby="basic-addon1" />
                                     </div>
                                 </div>
@@ -171,11 +171,14 @@
 @endsection
 
 @push('scripts')
-<script src="{{Module::asset('Barcode:Resources/assets/js/app.js')}}"></script>
+
 <script>
     let throttleTimeout;
     var product;
-    var productOnSelect;
+    var productsOnSelectData=[];
+    var rowKey=1;
+    var currentCurrency=@json($business->currency);
+    var businessName=@json($business->name);
     $('#searchInput').on('input', function() {
         let input=$(this);
         var query = $(this).val().trim();
@@ -284,32 +287,38 @@
 
     });
     function append_row(selected_product){
-        $('.productlist').append(`
-        <div class="p-2 pb-3 border border-start-0 border-top-0 border-end-0  border-dotted item_row">
+       let list= $('.productlist').prepend(`
+        <div class="p-2 pb-3 border border-start-0 border-top-0 border-end-0 border-bottom-1  border-dashed item_row" key="${rowKey}">
             <div class="row justify-content-center align-items-center">
                 <input name="index[]" value='index' class="d-none" />
-                <div class=" col-4 d-flex">
+                <div class="col-12 col-md-4 ">
                     <div>
-                        <div>
-                            ${selected_product.name}
-                            <input name="product_name[]" class="d-none" value="${selected_product.name}" />
-                            <input name="variation_name[]" class="d-none" value="${selected_product.has_variation !='single' ?selected_product.variation_name :''}" />
-                        </div>
-                        <div class="text-gray-500 mt-2">
+                        <span class="fw-bold">${selected_product.name}</span>
+                        <input name="product_name[]" class="d-none" value="${selected_product.name}" />
+                        <input name="variation_name[]" class="d-none" value="${selected_product.has_variation !='single' ?selected_product.variation_name :''}" />
+                        <input type="hidden" name="product_id" class="product_id" value=${selected_product.id} />
+                        <input type="hidden" name="variation_id" class="variation_id" value=${selected_product.variation_id} />
+                    </div>
+                    <div class="d-flex d-md-block justify-content-between align-items-center mb-3">
+                        <div class="text-gray-500 mt-2 ">
                             sku : ${selected_product.sku}
                             <input name="product_sku[]" class="d-none" value="${selected_product.sku}" />
                         </div>
+                        <div class="text-gray-500 mt-2">
+                            price : <span class="price_txt"></span>
+                            <input name="product_price[]" class="d-none price_input" value="0" />
+                        </div>
                     </div>
                 </div>
-                <div class="actions col-8 row ">
-                    <div class="col-5">
-                        <x-forms.input placeholder="Label count to print" name="count[]" value='1'></x-forms.input>
+                <div class="actions col-12 col-md-8 row ">
+                    <div class="col-5 col-md-5">
+                        <input placeholder="Label count to print" class="form-control form-control-sm form-control-solid" name="count[]" value='1' />
                     </div>
-                    <div class="col-5">
-                        <x-forms.input placeholder="Select Packaging Date" name="date[]" value="{{now()}}" class='date'>
-                        </x-forms.input>
+                    <div class="col-6 col-md-5">
+                        <input placeholder="Select Packaging Date" name="date[]" value="{{now()}}" class='date form-control form-control-sm form-control-solid' />
+
                     </div>
-                    <div class="col-2 cursor-pointer removeItem" id=""> <i class="fa-solid fa-trash text-danger"></i></div>
+                    <div class="col-1 pt-1 col-md-2 cursor-pointer removeItem" id=""> <i class="fa-solid fa-trash text-danger"></i></div>
                 </div>
             </div>
         </div>
@@ -319,6 +328,282 @@
             let parent=$(this).closest('.item_row');
             parent.remove();
         })
+        let newProductData = {
+            'product_id':selected_product.id,
+            'variation_id':selected_product.variation_id,
+            'qty':1,
+            'uom_id':selected_product.uom_id,
+        }
+        const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
+        if(indexToReplace !== -1){
+            productsOnSelectData[indexToReplace] = newProductData;
+        }else{
+            productsOnSelectData=[...productsOnSelectData,newProductData];
+        }
+
+        getPrice($(`[key="${rowKey}"]`));
+        rowKey++;
+    }
+
+
+
+
+
+
+
+
+    var priceList;
+    var currentPriceList=$('#price_list').val();
+    var exchangeRates=@json($exchangeRates ?? []);
+    getPriceList($('#price_list').val());
+    $('[name="price_list"]').change(function(){
+        currentPriceList=priceLists.find((p)=>{
+            return p.id == $(this).val();
+        });
+        getPriceList($(this).val());
+    })
+    function getPriceList(priceListId){
+        $.ajax({
+            url: `/sell/${priceListId}/price/list`,
+            type: 'GET',
+            error:function(e){
+                status=e.status;
+                if(status==405){
+                    warning('Method Not Allow!');
+                }else if(status==419){
+                    error('Session Expired')
+                }else{
+                    console.log(' Something Went Wrong! Error Status: '+status )
+                };
+            },
+            success: function(results){
+                priceList=results;
+            }
+        })
+    }
+    function getPrice(e){
+        if(priceList){
+            let parent = $(e);
+            let mainPriceLists = priceList.mainPriceList ?? [];
+            let mainPriceStatus=false;
+            mainPriceLists.forEach((mainPriceList) => {
+                if (mainPriceStatus == true) {
+                    priceSetting(mainPriceList, parent,false);
+                }else{
+
+                mainPriceStatus = priceSetting(mainPriceList, parent,true);
+                }
+            })
+
+            let basePriceLists=priceList.basePriceList ?? [];
+            if(!mainPriceStatus){
+                if(basePriceLists.length > 0){
+                    let i = 0;
+                    while (i < basePriceLists.length) {
+                        let basePriceList = basePriceLists[i];
+                        let priceStatus = false;
+                        basePriceList.forEach((bp) => {
+                            if (priceStatus == true) {
+                                priceSetting(bp, parent,false);
+                                return;
+                            }
+                            priceStatus = priceSetting(bp, parent,true);
+                        })
+                        if (priceStatus) {
+                            break;
+                        }
+                        i++;
+                    }
+                }else{
+                    let productId=parent.find('.product_id').val();
+                    let variationId=parent.find('.variation_id').val();
+                    let product=productsOnSelectData.filter(function(p){
+                        return p.product_id==productId && variationId == p.variation_id;
+                    })[0];
+                    let result=product?product.default_selling_price:0;
+                    let price=isNullOrNan(result);
+                    if(price == 0){
+                        let uomPirce=parent.find('.uom_price').val();
+                        parent.find('.uom_price').val(uomPirce ?? 0);
+
+                    }else{
+                        parent.find('.uom_price').val(price);
+                    }
+                }
+            }
+        }
+    }
+    function priceSetting(priceStage,parentDom,dfs){
+        let productId=parentDom.find('.product_id').val();
+        let variationId=parentDom.find('.variation_id').val();
+        let product=productsOnSelectData.filter(function(p){
+            return p.product_id==productId && variationId == p.variation_id;
+        });
+        if(priceStage.applied_type=='All'){
+            if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
+                return false
+            }else{
+                return true;
+            };
+        }else if(priceStage.applied_type=='Category'){
+            let categoryId=product.category_id;
+            if(priceStage.applied_value==categoryId){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
+                    return false
+                }else{
+                    return true;
+                };
+            }
+        }else if(priceStage.applied_type=='Product'){
+            if(priceStage.applied_value==productId){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
+                    return false
+                }else{
+                return true;
+            };
+            }
+        }else if(priceStage.applied_type=='Variation'){
+            if(priceStage.applied_value==variationId){
+                if(!priceSettingToUi(priceStage,parentDom,product,dfs)){
+                    return false
+                }else{
+                    return true;
+                };
+            }
+        }else{
+            return false;
+        }
+    }
+    function priceSettingToUi(priceStage,parentDom,product,dfs=true){
+        let checkDate=checkAvailableDate(priceStage);
+        if(!checkDate){
+            return false;
+        }
+        let quantity=isNullOrNan(1);
+        let price=priceStage.cal_value;
+        if (priceStage.cal_type == 'percentage') {
+            let basePriceLists=priceList.basePriceList;
+            let i = 0;
+            let finalBasePrice=null;//final base price means when current price is  percentage on base price, the loop reach the base price that is fix price;
+            let calPers=[];
+            while (i < basePriceLists.length) {
+                let bps = basePriceLists[i];//base prices
+                i++;
+                let bp = null;
+                bps.forEach(basePrice => {
+                    if (basePrice.applied_type == 'All') {
+                        bp = basePrice;
+                        return;
+                    } else if (basePrice.applied_type == 'Category') {
+                        let categoryId=product.category_id;
+                        if (basePrice.applied_value == categoryId) {
+                            bp = basePrice;
+                            return;
+                        }
+                    } else if (basePrice.applied_type == 'Product') {
+                        let productId=product.product_id;
+                        if (basePrice.applied_value == productId) {
+                            bp = basePrice;
+                            return;
+                        }
+                    } else if (basePrice.applied_type == 'Variation') {
+                        let variationId=product.variation_id;
+                        if (basePrice.applied_value == variationId) {
+                            bp = basePrice;
+                            return;
+                        }
+                    }
+                });
+                if(bp){
+                    if(bp.cal_type=='percentage'){
+                        if(bp.id==priceStage.id){
+                            calPers=[];
+                        }else{
+                            calPers=[bp.cal_value,...calPers];
+                        }
+                    }else{
+                        if(calPers.length>0){
+                            let currentPrcie=bp.cal_value;
+                            calPers.forEach(per => {
+                                percentagePrice=currentPrcie * (per/100);
+                                currentPrcie=isNullOrNan(currentPrcie)+isNullOrNan(percentagePrice);
+                            });
+                        finalBasePrice= currentPrcie
+                        }else{
+                            finalBasePrice=bp.cal_value;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(finalBasePrice !== null){
+                percentagePrice=finalBasePrice * (priceStage.cal_value/100);
+                price = isNullOrNan(finalBasePrice) + isNullOrNan(percentagePrice);
+
+            }else{
+                let lastIndexOfStock=product.stock.length-1;
+                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
+                percentagePrice=refPrice * (priceStage.cal_value/100);
+                price = isNullOrNan(refPrice) + isNullOrNan(percentagePrice);
+            }
+        }
+
+        let qtyByPriceStage=isNullOrNan(priceStage.min_qty);
+        // const uoms=product.uom.unit_category.uom_by_category;
+        // let inputUomId=parentDom.find('.uom_select').val();
+        // const inputUom =uoms.filter(function ($u) {
+        //         return $u.id ==inputUomId;
+        // })[0];
+        let resultPrice=price;
+        console.log(quantity , qtyByPriceStage);
+        if(quantity >= qtyByPriceStage){
+            console.log(currentPriceList);
+            if(currentPriceList.currency_id != currentCurrency.id){
+                console.log(currentPriceList.currency_id , currentCurrency.id);
+                let fromCurrency=exchangeRates.find(xr=>xr.currency_id==currentPriceList.currency_id);
+                let toCurrency=exchangeRates.find(xr=>xr.currency_id==currentCurrency.id);
+                if(fromCurrency !=null && toCurrency != null){
+                    let adjustCurrency = price / fromCurrency.rate;
+                    let convertedAmount = adjustCurrency * toCurrency.rate ;
+                    resultPrice = convertedAmount;
+                }
+            }
+            console.log(pDecimal(resultPrice));
+            parentDom.find('.price_input').val(pDecimal(resultPrice));
+            parentDom.find('.price_txt').text(pDecimal(resultPrice));
+            return true;
+        }else{
+            // if(dfs){
+            //     let lastIndexOfStock=product.stock.length-1;
+            //     let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
+            //     let result=refPrice * isNullOrNan( inputUom.value);
+            //     parentDom.find('.uom_price').val(result);
+            //     console.log(pDecimal(result));
+            // }
+        }
+        return false;
+    }
+
+
+
+
+    const checkAvailableDate = (pricelist) => {
+        let availableDate = false;
+        const from_date = pricelist.from_date === null ? null : new Date(pricelist.from_date);
+        const to_date = pricelist.to_date === null ? null : new Date(pricelist.to_date);
+        const current_date = new Date();
+        if (current_date >= from_date && current_date <= to_date) {
+            availableDate = true;
+        } else if(from_date === null && to_date === null){
+            availableDate = true;
+        }else if(from_date === null && current_date <= to_date){
+            availableDate = true;
+        }else if(current_date >= from_date && to_date === null){
+            availableDate = true;
+        }else {
+            availableDate = false;
+        }
+        return availableDate;
     }
 </script>
 @endpush

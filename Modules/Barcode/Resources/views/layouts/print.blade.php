@@ -148,8 +148,12 @@
         text-align: center;
         padding:1px 0;
     }
+    .img{
+        align-self: bottom;
+    }
 </style>
 @php
+
     if ($templateData->paper_type == 'fixed') {
         $rowCount=1;
         if($templateData->rowCount){
@@ -158,7 +162,7 @@
     }else{
         $rowCount=ceil(array_sum($data['count']) / $templateData->columnCount);
     }
-    $dataCount=count($data['index']);
+
     $index=0;
     $items=[];
     foreach ($data['index'] as $i=>$d) {
@@ -180,6 +184,7 @@
                     'product_name'=>$productName,
                     'date'=>$data['date'][$i],
                     'product_sku'=>$data['product_sku'][$i],
+                    'product_price'=>$data['product_price'][$i],
                 ]
             ];
         };
@@ -197,10 +202,12 @@
                                 <div class="ft product-name  {{$data['product'] == 'on' || $data['variation'] == 'on' ?'':'d-none'}}">{{$items[$index]['product_name']}}</div>
                                 <div class="priceTag ">
                                     <div class="priceTag-text">Price</div>
-                                    <div class="priceTag-text">10000ks</div>
+                                    <div class="priceTag-text">{{$items[$index]['product_price']}}ks</div>
                                 </div>
                                 <div class="ft date ">{{$items[$index]['date']}}</div>
-                                <img class="img" src="data:image/png;base64, {{DNS1D::getBarcodePNG($items[$index]['product_sku'], 'C128',2,40,array(0,0,4),true)}}" alt="barcode" width="100%" height="40px" />
+                                <div class="img">
+                                    <img class="img" src="data:image/png;base64, {{DNS1D::getBarcodePNG($items[$index]['product_sku'], 'C128',2,40,array(0,0,4),true)}}"  alt="barcode" width="100%" height="40px" />
+                                    </div>
                             </div>
                             @php
                                 $index++;

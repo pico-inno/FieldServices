@@ -407,7 +407,7 @@
         var clone=$(this).clone();
         $('.main_div').append(clone);
          clone.css({
-            "animation-name": "example",
+            "animation-name": "example",k
             "animation-duration": "0.5s",
         });
         setTimeout(()=>{

@@ -2,13 +2,16 @@
 
 namespace Modules\Barcode\Http\Controllers;
 
-use App\Models\Product\PriceLists;
 use Illuminate\Http\Request;
+use App\Models\Product\PriceLists;
 use Illuminate\Routing\Controller;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\settings\businessSettings;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Support\Facades\Auth;
 use Modules\Barcode\Actions\Barcode\Barcode;
 use Modules\Barcode\Entities\BarcodeTemplate;
+use Modules\ExchangeRate\Entities\exchangeRates;
 
 class BarcodeController extends Controller
 {
@@ -129,7 +132,12 @@ class BarcodeController extends Controller
     public function prepare(){
         $barcodeTemplates=BarcodeTemplate::get();
         $priceLists=PriceLists::get();
-        return view('barcode::layouts.prepare',compact('barcodeTemplates', 'priceLists'));
+        $business= businessSettings::where('id',Auth::user()->business_id)->select("name",'currency_id')->with('currency')->first();
+        $exchangeRates = [];
+        if (class_exists('Modules\ExchangeRate\Entities\exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
+            $exchangeRates = exchangeRates::get();
+        }
+        return view('barcode::layouts.prepare',compact('barcodeTemplates', 'priceLists', 'business', 'exchangeRates'));
     }
 
     public function print(Request $request){
@@ -138,8 +146,9 @@ class BarcodeController extends Controller
         $template=BarcodeTemplate::where('id',$request->template_type)->first();
         $templateData = json_decode($template->template_data);
         // dd($templateData);
+        if (!isset($data['index'])) {
+            return back()->with(['error' => 'Please Add some product to print']);
+        }
         return view('barcode::layouts.print',compact('data', 'template', 'templateData'));
-        dd($template);
-        dd($request->toArray());
     }
 }
