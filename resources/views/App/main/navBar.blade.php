@@ -2488,7 +2488,7 @@
                                             <a class="menu-link @yield('barcode_template_list_active_show')"
                                                 href="{{route('barcode.index')}}">
                                                 <span class="menu-icon">
-                                                    <i class="fa-solid fa-barcode fs-3"></i>
+                                                    <i class="fa-solid fa-list fs-3"></i>
                                                 </span>
                                                 <span class="menu-title">Barcode Template List</span>
                                             </a>
@@ -2497,7 +2497,7 @@
                                             <a class="menu-link @yield('barcode_template_list_active_show')"
                                                 href="{{route('barcode.prepare')}}">
                                                 <span class="menu-icon">
-                                                    <i class="fa-solid fa-qrcode fs-3"></i>
+                                                    <i class="fa-solid fa-barcode fs-3"></i>
                                                 </span>
                                                 <span class="menu-title">Generate Product Barcode</span>
                                             </a>
