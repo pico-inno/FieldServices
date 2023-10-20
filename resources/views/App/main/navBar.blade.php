@@ -406,6 +406,19 @@
                                     </a>
                                     <!--end::Nav link-->
                                 </li>
+                                @if(hasModule('Barcode') && isEnableModule('Barcode'))
+                                    <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right"
+                                        data-bs-dismiss="click" title="Settings">
+                                        <!--begin::Nav link-->
+                                        <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('barcode_active')"
+                                            data-bs-toggle="tab" href="#kt_aside_nav_tab_barcode">
+                                            <!--begin::Svg Icon | path: icons/duotune/general/gen048.svg-->
+                                            <i class="fa-solid fa-barcode fs-6"></i>
+                                            <!--end::Svg Icon-->
+                                        </a>
+                                        <!--end::Nav link-->
+                                    </li>
+                                @endif
                                 <!--end::Nav item-->
                                 @if(hasView('Module'))
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -2451,6 +2464,42 @@
                                                 <span class="menu-title">Floor</span>
                                             </a>
                                             <!--end::Menu link-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end::Wrapper-->
+                            </div>
+                            <div class="tab-pane fade @yield('barcode_active_show')" id="kt_aside_nav_tab_barcode"
+                                role="tabpanel">
+                                <!--begin::Wrapper-->
+                                <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
+                                    id="kt_aside_menu" data-kt-menu="true">
+                                    <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                        <div class="menu-item pt-2">
+                                            <!--begin:Menu content-->
+                                            <div class="menu-content">
+                                                <span class="menu-heading fw-bold text-uppercase fs-7">Barcode</span>
+                                            </div>
+                                            <!--end:Menu content-->
+                                        </div>
+
+                                        <div class="menu-item menu-accordion ">
+                                            <a class="menu-link @yield('barcode_template_list_active_show')"
+                                                href="{{route('barcode.index')}}">
+                                                <span class="menu-icon">
+                                                    <i class="fa-solid fa-barcode fs-3"></i>
+                                                </span>
+                                                <span class="menu-title">Barcode Template List</span>
+                                            </a>
+                                        </div>
+                                        <div class="menu-item menu-accordion ">
+                                            <a class="menu-link @yield('barcode_template_list_active_show')"
+                                                href="{{route('barcode.prepare')}}">
+                                                <span class="menu-icon">
+                                                    <i class="fa-solid fa-qrcode fs-3"></i>
+                                                </span>
+                                                <span class="menu-title">Generate Product Barcode</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

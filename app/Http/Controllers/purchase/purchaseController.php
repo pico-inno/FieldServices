@@ -539,7 +539,7 @@ class purchaseController extends Controller
             ->with(
                 [
                     'productVariations' => function ($query) {
-                        $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price')
+                        $query->select('id', 'product_id', 'variation_template_value_id', 'variation_sku', 'default_purchase_price', 'default_selling_price')
                             ->with([
                                 'variationTemplateValue' => function ($query) {
                                     $query->select('id', 'name');
@@ -569,7 +569,7 @@ class purchaseController extends Controller
                         $variation_product = [
                             'id' => $product['id'],
                             'name' => $product['name'],
-                            'sku' => $product['sku'],
+                            'sku' => $variation['variation_sku'],
                             'purchase_uom_id' => $product['purchase_uom_id'],
                             'uom_id' => $product['uom_id'],
                             'uom' => $product['uom'],

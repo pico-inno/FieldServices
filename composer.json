@@ -16,6 +16,7 @@
         "laravel/ui": "^4.2",
         "maatwebsite/excel": "^3.1",
         "mike42/escpos-php": "^4.0",
+        "milon/barcode": "^10.0",
         "nwidart/laravel-modules": "^10.0",
         "twilio/sdk": "^7.9",
         "yajra/laravel-datatables": "^9.0"

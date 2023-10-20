@@ -1316,7 +1316,6 @@
                     }
                 });
                 if(bp){
-
                     if(bp.cal_type=='percentage'){
                         if(bp.id==priceStage.id){
                             calPers=[];
@@ -1366,14 +1365,12 @@
                     let convertedAmount = adjustCurrency * toCurrency.rate ;
                     resultPrice = convertedAmount;
                 }
-            console.log(fromCurrency,toCurrency);
             }
             parentDom.find('.uom_price').val(pDecimal(resultPrice));
             parentDom.find('.price_list').val(priceStage.pricelist_id).trigger('change');
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
-            console.log(dfs);
             if(dfs){
                 let lastIndexOfStock=product.stock.length-1;
                 let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';

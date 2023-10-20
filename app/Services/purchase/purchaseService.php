@@ -149,8 +149,8 @@ class purchaseService
 
                 return (hasView('purchase') && hasPrint('purchase') && hasUpdate('purchase') && hasDelete('purchase') ? $html : 'No Access');
             })
-            ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
-            ->make(true);
+        ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
+        ->make(true);
     }
 
 
