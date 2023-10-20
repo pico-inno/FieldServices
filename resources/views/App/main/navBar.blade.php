@@ -2469,6 +2469,7 @@
                                 </div>
                                 <!--end::Wrapper-->
                             </div>
+                            @if(hasModule('Barcode') && isEnableModule('Barcode'))
                             <div class="tab-pane fade @yield('barcode_active_show')" id="kt_aside_nav_tab_barcode"
                                 role="tabpanel">
                                 <!--begin::Wrapper-->
@@ -2505,6 +2506,7 @@
                                 </div>
                                 <!--end::Wrapper-->
                             </div>
+                            @endif
 
                             <div class="tab-pane fade @yield('fa_active_show')" id="kt_aside_nav_tab_fa"
                                 role="tabpanel">
