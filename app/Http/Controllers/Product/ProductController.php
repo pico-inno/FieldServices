@@ -28,6 +28,7 @@ use App\Models\Product\ProductVariationsTemplates;
 use App\Http\Requests\Product\Product\ProductCreateRequest;
 use App\Http\Requests\Product\Product\ProductUpdateRequest;
 use App\Models\Product\PriceListDetails;
+use App\Services\packaging\packagingServices;
 
 class ProductController extends Controller
 {
@@ -167,14 +168,16 @@ class ProductController extends Controller
             if ($request->additional_product_details) {
                 $this->createAdditionalProducts($request->additional_product_details, $nextProduct);
             }
-
             DB::table('product_variations_tmplates')->insert([
                 'product_id' => $nextProductId,
                 'variation_template_id' => $request->variation_name,
                 'created_by' => Auth::user()->id,
                 'created_at' => now()
             ]);
-
+            if($request->packaging_repeater){
+               $packagingServices= new packagingServices();
+               $packagingServices->createWithBulk($request->packaging_repeater, $nextProduct);
+            }
             DB::commit();
             if ($request->save === "save") {
                 return redirect('/product')->with('message', 'Created sucessfully product');
@@ -195,9 +198,9 @@ class ProductController extends Controller
                 ]);
             }
         } catch (Exception $e) {
-            dd($e);
+            // dd($e);
             DB::rollBack();
-            return back()->with('message', $e->getMessage());
+            return back()->with(['error'=>$e->getMessage()]);
         }
     }
 

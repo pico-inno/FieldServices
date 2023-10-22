@@ -173,11 +173,21 @@ $(document).ready(function() {
             default_purchase_price=selected_product.product_variations[0].default_purchase_price;
             variation_id=selected_product.product_variations[0].id;
             lastPurchasePrice=selected_product.lastPurchasePrice;
+            variation=selected_product.product_variations[0];
         }else if(selected_product.has_variation=='sub_variable'){
             default_purchase_price=selected_product.default_purchase_price;
             variation_id=selected_product.variation_id;
             lastPurchasePrice=selected_product.lastPurchasePrice;
+            variation=selected_product.product_variations;
 
+        }
+        let packagingOption='';
+        if(variation.packaging){
+            variation.packaging.forEach((pk)=>{
+                packagingOption+=`
+                    <option value="${pk.id}" data-qty="${pk.quantity}">${pk.packaging_name}</option>
+                `;
+            })
         }
         let lot_serial_no_input=lotControl=="on" ? `
             <td>
@@ -202,6 +212,17 @@ $(document).ready(function() {
             <td>
                 <select  name="purchase_details[${unique_name_id}][purchase_uom_id]" class="form-select form-select-sm unit_id" data-kt-repeater="uom_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true" data-placeholder="Select unit"   placeholder="select unit" required>
                     <option value="">Select UOM</option>
+                </select>
+            </td>
+            <td class="fv-row">
+                <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity" name="purchase_details[${unique_name_id}][package_qty]" value="1.00">
+            </td>
+            <td class="fv-row">
+                <select name="purchase_details[${unique_name_id}][package_id]" class="form-select form-select-sm package_id"
+                    data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
+                    data-placeholder="Select unit" placeholder="select unit" required>
+                    <option value="">Select Package</option>
+                    ${packagingOption}
                 </select>
             </td>
             <td>
@@ -265,6 +286,9 @@ $(document).ready(function() {
             minimumResultsForSearch: Infinity,
             data:uomsData,
         });
+        $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
+            minimumResultsForSearch: Infinity
+        });
         optionSelected(selected_product.purchase_uom_id,$(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`));
         finalsubTotalCal(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`);
         //  $('[data-kt-repeater="uom_select2"]').select2({
@@ -289,8 +313,38 @@ $(document).ready(function() {
         // Select the text in the input field
             $(this).select();
         });
+
         // getUomByUnit(selected_product.unit_id,selected_product.uomset_id,$(`[name="purchase_details[${unique_name_id}][uomset_id]"]`));
         // purchaseValidator.init();
+    }
+    $(document).on('change','.package_id',function(){
+        packaging($(this));
+        // let selectedOption = $(this).find(':selected');
+        // let dataQty = selectedOption.data('qty');
+        // let selectedOptionText = selectedOption.text();
+        // let parent = $(this).closest('.cal-gp');
+        // let qty=parent.find('.purchase_quantity').val();
+
+    })
+    $(document).on('change','.purchase_quantity',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('change','.package_qty',function(){
+            packaging($(this),'*');
+    })
+    const packaging=(e,operator)=>{
+        let parent = $(e).closest('.cal-gp');
+        let unitQtyVal=parent.find('.purchase_quantity').val();
+        let selectedOption =parent.find('.package_id').find(':selected');
+        let packageInputQty=parent.find('.package_qty').val();
+        let packageQtyForCal = selectedOption.data('qty');
+        if(packageQtyForCal){
+            if(operator=='/'){
+                $('.package_qty').val(isNullOrNan(unitQtyVal) / isNullOrNan(packageQtyForCal));
+            }else{
+                $('.purchase_quantity').val(isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty));
+            }
+        }
     }
 // ==================================================== Events ================================
 

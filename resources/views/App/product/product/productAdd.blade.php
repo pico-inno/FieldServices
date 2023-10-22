@@ -298,7 +298,7 @@
                                                         </label>
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select class="form-select form-select-sm" name="purchase_uom_id" id="unitOfUom" data-control="select2" data-hide-search="true" data-placeholder="Select purchase UoM">
+                                                                <select class="form-select form-select-sm unitOfUom" name="purchase_uom_id" id="unitOfUom" data-control="select2" data-hide-search="true" data-placeholder="Select purchase UoM">
 
                                                                 </select>
                                                             </div>
@@ -521,58 +521,148 @@
                                         </div>
                                         <!--end::Input group-->
 
-                                        <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
-                                            <div class="col-6 col-md-2 fs-4  fw-semibold  text-primary">
-                                                Additional Products
+                                        <div class="ad_pd">
+                                            <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
+                                                <div class="col-6 col-md-2 fs-4  fw-semibold  text-primary">
+                                                    Additional Products
+                                                </div>
+                                                <div class="separator   border-primary-subtle col-md-10 col-6"></div>
                                             </div>
-                                            <div class="separator   border-primary-subtle col-md-10 col-6"></div>
-                                        </div>
-                                        <!--end::Additional product-->
-                                        <div class="row align-items-center mb-8">
-                                            <div class="col-12">
-                                                <div class="input-group quick-search-form p-0">
-                                                    <div class="input-group-text">
-                                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                            <!--end::Additional product-->
+                                            <div class="row align-items-center mb-8">
+                                                <div class="col-12">
+                                                    <div class="input-group quick-search-form p-0">
+                                                        <div class="input-group-text">
+                                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                                        </div>
+                                                        <input type="text" class="form-control form-control-sm rounded-end-3" id="searchInput"
+                                                            placeholder="Search...">
+                                                        <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow"
+                                                            id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                                     </div>
-                                                    <input type="text" class="form-control form-control-sm rounded-end-3" id="searchInput" placeholder="Search...">
-                                                    <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
+                                                </div>
+
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-rounded table-striped border gy-4 gs-4" id="additional_product_table">
+                                                    <!--begin::Table head-->
+                                                    <thead class="bg-light rounded-3">
+                                                        <!--begin::Table row-->
+                                                        <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                            <th class="min-w-125px" style="max-width: 125px">Product</th>
+                                                            <th class="w-200px">Quantity</th>
+                                                            <th class="w-300px">UOM</th>
+                                                            <th class="text-center"><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+                                                        </tr>
+                                                        <!--end::Table row-->
+                                                    </thead>
+                                                    <!--end::Table head-->
+                                                    <!--begin::Table body-->
+                                                    <tbody class="fw-semibold text-gray-600 data-table-body">
+                                                        <tr class="dataTables_empty text-center">
+                                                            <td colspan="8 ">There is no data to show</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!--end::Additional product-->
+
+                                            {{-- Product Disable --}}
+                                            <div class="row advance-toggle-class d-none">
+                                                <div class="col-md-3 mb-8">
+                                                    <div class="form-check form-check-custom form-check-solid mt-8">
+                                                        <label class="" for="tab2_check1">
+                                                            <input class="form-check-input" name="product_inactive" type="checkbox" value="1" id="tab2_check1" />
+                                                            <strong class="ms-4 h5">{{ __('product/product.disable') }}</strong>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
-
                                         </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-rounded table-striped border gy-4 gs-4" id="additional_product_table">
-                                                <!--begin::Table head-->
-                                                <thead class="bg-light rounded-3">
-                                                <!--begin::Table row-->
-                                                <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
-                                                    <th class="min-w-125px" style="max-width: 125px">Product</th>
-                                                    <th class="w-200px">Quantity</th>
-                                                    <th class="w-300px">UOM</th>
-                                                    <th class="text-center" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
-                                                </tr>
-                                                <!--end::Table row-->
-                                                </thead>
-                                                <!--end::Table head-->
-                                                <!--begin::Table body-->
-                                                <tbody class="fw-semibold text-gray-600 data-table-body">
-                                                <tr class="dataTables_empty text-center">
-                                                    <td colspan="8 " >There is no data to show</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <!--end::Additional product-->
-
-                                        {{-- Product Disable --}}
-                                        <div class="row advance-toggle-class d-none">
-                                            <div class="col-md-3 mb-8">
-                                                <div class="form-check form-check-custom form-check-solid mt-8">
-                                                    <label class="" for="tab2_check1">
-                                                        <input class="form-check-input" name="product_inactive" type="checkbox" value="1" id="tab2_check1"/>
-                                                        <strong class="ms-4 h5">{{ __('product/product.disable') }}</strong>
-                                                    </label>
+                                        <div class="packaging_pd">
+                                            <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
+                                                <div class="col-6 col-md-2 fs-4  fw-semibold  text-primary">
+                                                    Products Packaging
                                                 </div>
+                                                <div class="separator   border-primary-subtle col-md-10 col-6"></div>
+                                            </div>
+                                            <div class="form">
+                                                <!--begin::Repeater-->
+                                                <div id="packaging_repeater">
+                                                    <!--begin::Form group-->
+                                                    <div class="form-group">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-rounded table-striped border gy-4 gs-4" id="packaging_table">
+                                                                <!--begin::Table head-->
+                                                                <thead class="bg-light rounded-3">
+                                                                    <!--begin::Table row-->
+                                                                    <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                                        <th class="min-w-100px" >Packaging Name</th>
+                                                                        <th class="min-w-100px">Quantity</th>
+                                                                        <th class="min-w-100px">UOM</th>
+                                                                        <th class="min-w-100px">For Purchase</th>
+                                                                        <th class="min-w-100px">For Sale</th>
+                                                                        <th class="text-center"><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+                                                                    </tr>
+                                                                    <!--end::Table row-->
+                                                                </thead>
+                                                                <!--end::Table head-->
+                                                                <!--begin::Table body-->
+                                                                <tbody class="fw-semibold text-gray-600 data-table-body" data-repeater-list="packaging_repeater">
+                                                                    <tr class=" text-center p-row" data-repeater-item>
+                                                                        <td class="fv-row">
+                                                                            <div class="fv-row text-start">
+                                                                                <input type="text" class="form-control form-control-sm " name="packaging_name" placeholder="Packaging Name" data-placeholder="Packaging Name">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="fv-row text-start">
+                                                                                <input type="text" class="form-control form-control-sm " name="packaging_quantity" placeholder="Qty" data-placeholder="Packaging Name">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="fv-row text-start">
+                                                                                <select class="form-select form-select-sm unitOfUom" name="packaging_uom_id"  data-control="select2" data-kt-select2="true"
+                                                                                    data-hide-search="true" data-placeholder="Select UoM">
+                                                                                </select>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="form-check float-start  user-select-none">
+                                                                                <input class="form-check-input" type="checkbox"  name="for_purchase"  />
+                                                                                <label class="form-check-label text-start" for="forPurchase">
+                                                                                    For Purchase
+                                                                                </label>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="form-check justify-content-start user-select-none float-start">
+                                                                                <input class="form-check-input" type="checkbox"  name="for_sale"  />
+                                                                                <label class="form-check-label text-start" for="forSale">
+                                                                                    For Sale
+                                                                                </label>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td  class="text-danger cursor-pointer user-select-none" p-remove>
+                                                                            <i class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <!--end::Form group-->
+
+                                                    <!--begin::Form group-->
+                                                    <div class="form-group mt-5">
+                                                        <a href="javascript:;" data-repeater-create class="btn btn-light-primary btn-sm">
+                                                            <i class="ki-duotone ki-plus fs-3"></i>
+                                                            Add
+                                                        </a>
+                                                    </div>
+                                                    <!--end::Form group-->
+                                                </div>
+                                                <!--end::Repeater-->
                                             </div>
                                         </div>
                                     </div>
@@ -586,9 +676,9 @@
 
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                             {{-- <button type="submit" class="btn btn-warning btn-sm">Save & Add Selling-Price-Group Prices</button> --}}
-                            <button type="submit" class="btn btn-info btn-sm" name="save" value="app_opening_stock">Save & Add Opening Stock</button>
-                            <button type="submit" class="btn btn-warning btn-sm" name="save" value="save_and_another">Save & Add Another</button>
-                            <button type="submit" class="btn btn-primary btn-sm" name="save" value="save">Save</button>
+                            <button type="submit" class="btn btn-info btn-sm submit" name="save" value="app_opening_stock">Save & Add Opening Stock</button>
+                            <button type="submit" class="btn btn-warning btn-sm submit" name="save" value="save_and_another">Save & Add Another</button>
+                            <button type="submit" class="btn btn-primary btn-sm submit" name="save" value="save">Save</button>
                           </div>
                     </div>
                 </div>
@@ -609,8 +699,36 @@
 
     <script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
+    <script src="{{ asset('customJs/product/packagingValidation.js') }}"></script>
     @include('App.product.JS.productQuickSearch')
     <script>
+        var currentUoMData=[];
+        $('#packaging_repeater').repeater({
+            initEmpty: true,
+
+            defaultValues: {
+                'text-input': 'foo'
+            },
+
+            show: function () {
+                $(this).slideDown();
+
+                $(this).find('[data-control="select2"]').select2({
+                    data:currentUoMData,
+                    minimumResultsForSearch: Infinity
+                });
+                const index = $(this).closest("[data-repeater-item]").index();
+
+                addFields(index);
+            },
+
+            hide: function (deleteElement) {
+                $(this).slideUp(deleteElement);
+            }
+        });
+        $(document).on('click','[p-remove]',function(){
+            $(this).closest('.p-row').remove();
+        })
     toastr.options = {
         "closeButton": false,
         "debug": false,
@@ -1007,22 +1125,28 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(results){
-                    const purchaseUoM = $('#unitOfUom')[0];
-                    purchaseUoM.innerHTML = '';
+                    $('.unitOfUom').empty();
+                    // const purchaseUoM = $('.unitOfUom');
+                    // purchaseUoM.innerHTML = '';
 
-                    const defaultOption = document.createElement('option'); // Create default option
-                    defaultOption.value = '';
-                    defaultOption.text = 'Select an option';
-                    $(purchaseUoM).append(defaultOption);
-
+                    // const defaultOption = document.createElement('option'); // Create default option
+                    // defaultOption.value = '';
+                    // defaultOption.text = 'Select an option';
+                    // $(purchaseUoM).append(defaultOption);
+                    let data=[];
                     for (let item of results) {
-                        let option = document.createElement('option');
-                        option.value = item.id;
-                        option.text = item.name;
-                        purchaseUoM.append(option);
+                        // let option = document.createElement('option');
+                        data=[...data,
+                        {
+                            'id':item.id,
+                            'text':item.name
+                        }]
                     }
-
-                    $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                    currentUoMData=data;
+                    $('.unitOfUom').select2({
+                        data,
+                        minimumResultsForSearch: Infinity
+                    }); // Initialize select2 plugin
                 },
                 error: function(e){
                     console.log(e.responseJSON.error);

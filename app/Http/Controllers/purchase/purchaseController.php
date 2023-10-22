@@ -540,11 +540,7 @@ class purchaseController extends Controller
                 [
                     'productVariations' => function ($query) {
                         $query->select('id', 'product_id', 'variation_template_value_id', 'variation_sku', 'default_purchase_price', 'default_selling_price')
-                            ->with([
-                                'variationTemplateValue' => function ($query) {
-                                    $query->select('id', 'name');
-                                }
-                            ]);
+                            ->with('variationTemplateValue:id:name', 'packaging');
                     }, 'uom' => function ($q) {
                         $q->with(['unit_category' => function ($q) {
                             $q->with('uomByCategory');
@@ -579,6 +575,7 @@ class purchaseController extends Controller
                             'default_purchase_price' => $variation['default_purchase_price'],
                             'default_selling_price' => $variation['default_selling_price'],
                             'lastPurchasePrice' => $lastPurchase ? $lastPurchasePrice : 0,
+                            'packaging'=> $variation['packaging'],
                         ];
                         // dd($variation_product)
                         array_push($products, $variation_product);
