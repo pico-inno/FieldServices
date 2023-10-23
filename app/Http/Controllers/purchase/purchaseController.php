@@ -98,7 +98,6 @@ class purchaseController extends Controller
         try {
             // create purchase from service
             $purchase = $service->createPurchase($request);
-
             if ($request->save == 'save_&_print') {
                 return redirect()->route('purchase_list')->with([
                     'success' => 'Successfully Created Purchase',
@@ -540,7 +539,7 @@ class purchaseController extends Controller
                 [
                     'productVariations' => function ($query) {
                         $query->select('id', 'product_id', 'variation_template_value_id', 'variation_sku', 'default_purchase_price', 'default_selling_price')
-                            ->with('variationTemplateValue:id:name', 'packaging');
+                            ->with('variationTemplateValue:id,name', 'packaging');
                     }, 'uom' => function ($q) {
                         $q->with(['unit_category' => function ($q) {
                             $q->with('uomByCategory');
@@ -576,6 +575,7 @@ class purchaseController extends Controller
                             'default_selling_price' => $variation['default_selling_price'],
                             'lastPurchasePrice' => $lastPurchase ? $lastPurchasePrice : 0,
                             'packaging'=> $variation['packaging'],
+                            'product_variations'=> $variation
                         ];
                         // dd($variation_product)
                         array_push($products, $variation_product);

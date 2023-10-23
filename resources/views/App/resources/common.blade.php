@@ -21,6 +21,7 @@
         return isNullOrNan(price).toFixed(settings.currency_decimal_places);
     }
     const qDecimal=(price)=>{
+        console.log(settings.quantity_decimal_places,'--------------------------------------------------------');
         return isNullOrNan(price).toFixed(settings.quantity_decimal_places);
     }
     const fpDecimal=(number,reqs)=>{

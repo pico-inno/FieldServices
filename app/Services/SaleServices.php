@@ -13,6 +13,7 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
+use App\Services\packaging\packagingServices;
 use Carbon\Carbon;
 
 class SaleServices
@@ -71,6 +72,9 @@ class SaleServices
      */
     public function saleDetailCreation($request, Object $sale_data, array $sale_details, $resOrderData = null)
     {
+
+        $packaging=new packagingServices();
+
         $parentSaleItems=[];
         foreach ($sale_details as $key=>$sale_detail) {
             // dd($sale_details);
@@ -118,6 +122,8 @@ class SaleServices
                 $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;
             }
             $created_sale_details = sale_details::create($sale_details_data);
+
+            $packaging->packagingForTx($sale_detail, $created_sale_details, 'sale');
             if (isset($sale_detail['isParent'])) {
                 $parentSaleItems[$sale_detail['isParent']]= $created_sale_details;
             }

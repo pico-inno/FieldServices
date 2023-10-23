@@ -32,8 +32,7 @@
 <!--end::Head-->
 <!--begin::Body-->
 
-<body id="kt_body" style="background-image:"
-    class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-enabled" data-kt-aside-minimize="on">
+<body id="kt_body" style="background-image:"   class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-enabled" data-kt-aside-minimize="on">
     <!--begin::Theme mode setup on page load-->
     <script>
         var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ){ if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }
@@ -3645,11 +3644,11 @@
 
     <script src={{asset('customJs/general.js')}}></script>
 
-        <script src={{asset('customJs/loading/miniLoading.js')}}></script>
-        <script src={{asset('customJs/toastrAlert/alert.js')}}></script>
-        @include('App.alert.alert');
-        <script src={{asset('customJs/loading/miniLoading.js')}}></script>
-        @stack('scripts')
-	</body>
+    <script src={{asset('customJs/loading/miniLoading.js')}}></script>
+    <script src={{asset('customJs/toastrAlert/alert.js')}}></script>
+    @include('App.alert.alert');
+    <script src={{asset('customJs/loading/miniLoading.js')}}></script>
+    @stack('scripts')
+</body>
 <!--end::Body-->
 </html>

@@ -7,6 +7,7 @@ use App\Models\purchases\purchases;
 use Illuminate\Notifications\Action;
 use Yajra\DataTables\Facades\DataTables;
 use App\Actions\purchase\purchaseActions;
+use App\Services\packaging\packagingServices;
 use App\Services\paymentServices;
 
 class purchaseService
@@ -21,9 +22,9 @@ class purchaseService
      * @return void
      */
     public function createPurchase($request){
-
         $action=new purchaseActions();
         $payment = new paymentServices();
+        $packaging=new packagingServices();
         // create obj
         $purchase= $action->create($this->purchaseData($request));
 
@@ -31,7 +32,8 @@ class purchaseService
         $purchases_details = $request->purchase_details;
         if ($purchases_details) {
             foreach ($purchases_details as $pd) {
-                $action->detailCreate($pd, $purchase);
+               $createdPd= $action->detailCreate($pd, $purchase);
+               $packaging->packagingForTx($pd,$createdPd,'purchase');
             }
         }
         if ($request->paid_amount > 0) {

@@ -170,6 +170,8 @@
                                         <th class="min-w-250px ps-3">Product </th>
                                         <th class="min-w-200px ">Quantity </th>
                                         <th class="min-w-100px">UOM </th>
+                                        <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
+                                        <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-100px" style="max-width: 100px;">Price List</th>
                                         <th class="min-w-200px">Uom Price</th>
                                         <th class="min-w-200px">Subtotal</th>
@@ -407,7 +409,7 @@
         var clone=$(this).clone();
         $('.main_div').append(clone);
          clone.css({
-            "animation-name": "example",k
+            "animation-name": "example",
             "animation-duration": "0.5s",
         });
         setTimeout(()=>{

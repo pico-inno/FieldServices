@@ -902,7 +902,7 @@ class saleController extends Controller
                         ->when($variation_id, function ($query) use ($variation_id) {
                             $query->where('id', $variation_id);
                         })
-                        ->with('variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue');
+                        ->with('packaging','variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue');
                 },
                 'stock' => function ($query) use ($business_location_id) {
                     $locationIds = childLocationIDs($business_location_id);

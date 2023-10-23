@@ -314,7 +314,11 @@ function getParentName($parentLocation){
 }
 
 function arr($array,$key,$seperator='') {
-    return isset($array[$key])? $array[$key].$seperator:'';
+    if(isset($array[$key])){
+        return $seperator != '' ? $array[$key].$seperator: $array[$key];
+    }else{
+        return '';
+    }
 }
 function businessLocationName($bl)
 {
