@@ -1,6 +1,24 @@
 <script>
 $(document).ready(function() {
     let prodcuts;
+    let productsOnSelectData=[];
+    let osdDetails=@json($openingStockDetails?? []) ;
+    if(osdDetails.length>0){
+        osdDetails.forEach(function(osd,index){
+            let newProductData={
+                'id':osd.product.id,
+                'variation_id':osd.product_variation.id,
+                'product_variations':osd.product_variation,
+                'uoms':osd.product.uom.unit_category.uom_by_category
+            };
+            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
+            if(indexToReplace !== -1){
+                productsOnSelectData[indexToReplace] = newProductData;
+            }else{
+                productsOnSelectData=[...productsOnSelectData,newProductData];
+            }
+        })
+    }
     const itemCal=()=>{
         let total=0;
         $('.quantity').each(function() {
@@ -18,7 +36,6 @@ $(document).ready(function() {
         });
         $('.total_opening_amount').val(total);
     }
-    itemCal();
 
     $('#contact_id').on('change',function(){
         var selected_supplier =$(this).val();
@@ -56,11 +73,11 @@ $(document).ready(function() {
             throttleTimeout = setTimeout(function() {
                 $.ajax({
                     url: `/purchase/get/product`,
-                    type: 'POST',
+                    type: 'GET',
                     delay:150,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
+                    // headers: {
+                    //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    // },
                     data: {
                         data:query
                     },
@@ -155,27 +172,65 @@ $(document).ready(function() {
         let default_purchase_price,variation_id;
         if(selected_product.has_variation=='single'){
             default_purchase_price=selected_product.product_variations[0].default_purchase_price;
-            variation_id=selected_product.product_variations[0].id;
+            variation=selected_product.product_variations[0];
+            variation_id=variation.id;
         }else if(selected_product.has_variation=='sub_variable'){
             default_purchase_price=selected_product.default_purchase_price;
-            variation_id=selected_product.variation_id;
+            variation=selected_product.product_variations;
+            variation_id=variation.variation_id;
+        }
+        let newProductData={
+            'id':selected_product.id,
+            'variation_id':variation.id,
+            'product_variations':variation,
+            'uoms':selected_product.uom.unit_category.uom_by_category
+        };
+        const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
+        if(indexToReplace !== -1){
+            productsOnSelectData[indexToReplace] = newProductData;
+        }else{
+            productsOnSelectData=[...productsOnSelectData,newProductData];
+        }
+        let packagingOption='';
+        if(variation.packaging){
+            variation.packaging.forEach((pk)=>{
+                packagingOption+=`
+                    <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name}</option>
+                `;
+            })
         }
         let newRow = `<tr class='cal-gp'>
             <td class="d-none">
                 <a href='' class='text-gray-800 text-hover-primary mb-1'>${unique_name_id}</a>
-                <input type="hidden" class="input_number " value="${selected_product.id}" name="opening_stock_details[${unique_name_id}][product_id]">
+                <input type="hidden" class="input_number product_id" value="${selected_product.id}" name="opening_stock_details[${unique_name_id}][product_id]">
             </td>
             <td class="d-none">
-                <input type="hidden" class="input_number" value="${variation_id}" name="opening_stock_details[${unique_name_id}][variation_id]">
+                <input type="hidden" class="input_number variation_id" value="${variation_id}" name="opening_stock_details[${unique_name_id}][variation_id]">
             </td>
             <td>
                 <a href="#" class="text-gray-600 text-hover-primary mb-1 ">${selected_product.name}</a><br>
                 <span class="text-gray-500 fw-semibold fs-5">${selected_product.variation_name??''}</span>
             </td>
             <td class="fv-row">
-                <input type="text" class="form-control form-control-sm mb-3 quantity input_number" placeholder="Quantity" name="opening_stock_details[${unique_name_id}][quantity]" value="1.00">
-                <select  name="opening_stock_details[${unique_name_id}][uom_id]" class="form-select form-select-sm unit_id mt-2" data-kt-repeater="uom_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true" data-placeholder="Select unit"   placeholder="select unit" required>
+                <input type="text" class="form-control form-control-sm  quantity input_number" placeholder="Quantity" name="opening_stock_details[${unique_name_id}][quantity]" value="1.00">
+
+            </td>
+            <td class="fv-row">
+                <select name="opening_stock_details[${unique_name_id}][uom_id]" class="form-select form-select-sm unit_id " data-kt-repeater="uom_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
+                    data-placeholder="Select unit" placeholder="select unit" required>
                     <option value="">Select UOM</option>
+                </select>
+            </td>
+            <td class="fv-row">
+                <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                    name="opening_stock_details[${unique_name_id}][packaging_quantity]" value="1.00">
+            </td>
+            <td class="fv-row">
+                <select name="opening_stock_details[${unique_name_id}][packaging_id]" class="form-select form-select-sm package_id"
+                    data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
+                    data-placeholder="Select Package" placeholder="select Package" required>
+                    <option value="">Select Package</option>
+                    ${packagingOption}
                 </select>
             </td>
             <td>
@@ -221,6 +276,9 @@ $(document).ready(function() {
             data:uomsData,
         }).val(selected_product.purchase_uom_id)
         .trigger('change');
+        $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
+            minimumResultsForSearch: Infinity
+        });
         subtotalCal(`[data-kt-repeater="uom_select_${unique_name_id}"]`);
         //  $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).select2({
         //         data:uom_set
@@ -310,6 +368,40 @@ $(document).ready(function() {
             }
         };
     }();
+    $(document).on('change','.package_id',function(){
+        packaging($(this));
+    })
+    $(document).on('change','.unit_id',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('input','.quantity',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('input','.package_qty',function(){
+            packaging($(this),'*');
+    })
+    const packaging=(e,operator)=>{
+        let parent = $(e).closest('.cal-gp');
+        let unitQty=parent.find('.quantity').val();
+        let selectedOption =parent.find('.package_id').find(':selected');
+        let packageInputQty=parent.find('.package_qty').val();
+        let packagingUom=selectedOption.data('uomid');
+        let packageQtyForCal = selectedOption.data('qty');
+
+        let unit_id=parent.find('.unit_id').val();
+        let variation_id=parent.find('.variation_id').val();
+        let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+        if(packageQtyForCal && packagingUom){
+            if(operator=='/'){
+                let unitQtyValByUom=changeQtyOnUom(product.uoms,unitQty,unit_id,packagingUom);
+                parent.find('.package_qty').val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
+            }else{
+                let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
+                let qtyByCurrentUnit= changeQtyOnUom(product.uoms,result,packagingUom,unit_id);
+                parent.find('.quantity').val(qDecimal(qtyByCurrentUnit));
+            }
+        }
+    }
     // On document ready
     KTUtil.onDOMContentLoaded(function () {
         openingStockValidator.init();
@@ -424,7 +516,7 @@ $(document).ready(function() {
     autosize(autosize_elements);
 }
 
-  function isNullOrNan(val,d=0){
+    function isNullOrNan(val,d=0){
         let v=parseFloat(val);
 
         if(v=='' || v==null || isNaN(v)){
@@ -432,6 +524,55 @@ $(document).ready(function() {
         }else{
             return v;
         }
+    }
+
+    function changeQtyOnUom(uoms,currentQty,currentUomId,newUomId) {
+        let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
+        let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
+        console.log(newUomInfo,currentUomInfo,newUomId,currentUomId);
+        let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
+        let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
+        let currentUomType = currentUomInfo.unit_type;
+        let newUomType = newUomInfo.unit_type;
+        let newUomRounded = newUomInfo.rounded_amount || 1;
+        let newUomValue=newUomInfo.value;
+        let currentUomValue=currentUomInfo.value;
+        let resultQty;
+        let resultPrice;
+
+        if ( newUomType == 'bigger') {
+            resultQty = currentRefQty / newUomInfo.value;
+        } else if (newUomType == 'smaller') {
+            resultQty = currentRefQty * newUomInfo.value;
+        } else {
+            resultQty = currentRefQty;
+        }
+        return resultQty;
+
+    }
+
+    function getReferenceUomInfoByCurrentUomQty(qty, currentUom, referenceUom) {
+        const currentUomType = currentUom.unit_type;
+        const currentUomValue = currentUom.value;
+        const referenceUomId = referenceUom.id;
+        const referenceRoundedAmount = isNullOrNan(referenceUom.rounded_amount,4) ;
+        const referenceValue = referenceUom.value;
+
+        let result;
+        if (currentUomType === 'reference') {
+            result = qty * referenceValue;
+        } else if (currentUomType === 'bigger') {
+            result = qty * currentUomValue;
+        } else if (currentUomType === 'smaller') {
+            result = qty / currentUomValue;
+        } else {
+            result = qty;
+        }
+        let roundedResult=result;
+        return {
+            qtyByReferenceUom: roundedResult,
+            referenceUomId: referenceUomId
+        };
     }
 });
 </script>

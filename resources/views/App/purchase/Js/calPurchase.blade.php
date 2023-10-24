@@ -19,6 +19,18 @@ $(document).ready(function() {
                 total_balance_amount_cal();
                 finalsubTotalCal($(`[name="purchase_details[${index}][per_item_expense]"]`));
             }, 500);
+            let newProductData={
+                'id':purchase.product.id,
+                'variation_id':purchase.product_variation.id,
+                'product_variations':purchase.product_variation,
+                'uoms':purchase.product.uom.unit_category.uom_by_category
+            };
+            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
+            if(indexToReplace !== -1){
+                productsOnSelectData[indexToReplace] = newProductData;
+            }else{
+                productsOnSelectData=[...productsOnSelectData,newProductData];
+            }
         })
     }
     $('#contact_id').on('change',function(){
@@ -72,11 +84,11 @@ $(document).ready(function() {
             throttleTimeout = setTimeout(function() {
                 $.ajax({
                     url: `/purchase/get/product`,
-                    type: 'POST',
+                    type: 'GET',
                     delay: 150,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
+                    // headers: {
+                    //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    // },
                     data: {
                         data:query
                     },

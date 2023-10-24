@@ -86,6 +86,7 @@
                                     <tr class="border-bottom  border-primary fs-7 fw-bold  text-gray-500 x">
                                         <th class="min-w-10 text-start ps-2">#</th>
                                         <th class="min-w-175px pb-2 text-start">Description</th>
+                                        <th class="min-w-100px text-end ">Quantity In Packaging</th>
                                         <th class="min-w-100px text-end ">Purchase Quantity</th>
                                         <th class="min-w-100px text-end ">UOM</th>
                                         <th class="min-w-100px text-end ">UOM Price</th>
@@ -128,6 +129,7 @@
                                             </span>
                                             @endif
                                         </td>
+                                        <td class="pt-6">{{round($pd->packagingTx->quantity,$quantityDp)}}({{$pd->packagingTx->packaging->packaging_name}})</td>
                                         <td class="pt-6">{{round($pd->quantity,$quantityDp)}}</td>
                                         <td class="pt-6">{{$pd->toArray()['purchase_uom']['name']}}</td>
                                         <td class="pt-6">{{price($pd->uom_price ?? 0,$pd->currency_id)}}</td>

@@ -501,10 +501,10 @@ $(document).ready(function(){
     $('.expenseProduct').select2({
             ajax: {
                 url: `/purchase/get/product`,
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
+                type: 'GET',
+                // headers: {
+                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                // },
                 dataType: 'json',
                 delay: 250,
                 processResults: function(data) {

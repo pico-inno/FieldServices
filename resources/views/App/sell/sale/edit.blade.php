@@ -164,6 +164,8 @@
                                         <th class="min-w-150px ps-3">Product </th>
                                         <th class="min-w-125px">Quantity </th>
                                         <th class="min-w-125px">UOM </th>
+                                        <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
+                                        <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-80px" style="max-width: 100px;">Price List</th>
                                         <th class="min-w-125px">Uom Price</th>
                                         <th class="min-w-125px">Subtotal</th>
@@ -241,6 +243,22 @@
                                                 <select name="sale_details[{{$key}}][uom_id]" id="" class="form-select form-select-sm  unit_input uom_select" data-kt-repeater="uom_select"  data-hide-search="true"  data-placeholder="Select Unit" required>
                                                     @foreach ($product->toArray()['uom']['unit_category']['uom_by_category'] as $uom)
                                                         <option value="{{$uom['id']}}" @selected($uom['id']==$sale_detail->uom_id)>{{$uom['name']}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="fv-row">
+                                                <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                                                    name="sale_details[{{$key}}][packaging_quantity]" value="{{$sale_detail['packagingTx']['quantity']}}">
+                                            </td>
+                                            <td class="fv-row">
+                                                <select name="sale_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
+                                                    data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
+                                                    data-placeholder="Select Package" placeholder="select Package" required>
+                                                    <option value="">Select Package</option>
+                                                    @foreach ($product_variation['packaging'] as $package)
+                                                    <option @selected($package['id']==$sale_detail['packagingTx']['product_packaging_id'])
+                                                        data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
+                                                        {{$package['packaging_name']}}</option>
                                                     @endforeach
                                                 </select>
                                             </td>

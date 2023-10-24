@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\productPackaging;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class productPackagingTransactions extends Model
 {
@@ -22,4 +23,8 @@ class productPackagingTransactions extends Model
         'deleted_at' ,
         'deleted_by' ,
     ];
+
+    public function packaging(){
+        return $this->hasOne(productPackaging::class,'id', 'product_packaging_id');
+    }
 }

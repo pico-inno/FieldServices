@@ -249,6 +249,8 @@
                                         <th class="min-w-125px ps-1" style="max-width: 125px">Product Name</th>
                                         <th class="min-w-125px">Qty </th>
                                         <th class="min-w-100px">Unit</th>
+                                        <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
+                                        <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-125px">UOM Price</th>
                                         <th class="min-w-80px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Disc Type</th>
                                         <th class="min-w-125px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">Disc Amount</th>
@@ -297,10 +299,10 @@
                                         <tr class='cal-gp'>
                                             <td class="d-none">
                                                 {{-- <a href='' class='text-gray-800 text-hover-primary mb-1'>{{$key+1}}</a> --}}
-                                                <input type="hidden" class="input_number" value="{{$pd->product_id}}" name="purchase_details[{{$key}}][product_id]">
+                                                <input type="hidden" class="input_number product_id" value="{{$pd->product_id}}" name="purchase_details[{{$key}}][product_id]">
                                             </td>
                                             <td class="d-none">
-                                                <input type="hidden" class="input_number" value="{{$pd->variation_id }}" name="purchase_details[{{$key}}][variation_id]">
+                                                <input type="hidden" class="input_number variation_id" value="{{$pd->variation_id }}" name="purchase_details[{{$key}}][variation_id]">
                                                 <input type="hidden" class="input_number" value="{{$pd->id}}" name="purchase_details[{{$key}}][purchase_detail_id]">
                                             </td>
                                             <td>
@@ -321,6 +323,20 @@
                                                 <select  name="purchase_details[{{$key}}][purchase_uom_id]" class="form-select form-select-sm unit_id " data-kt-repeater="unit_select" data-hide-search="false" data-placeholder="Select unit"   placeholder="select unit">
                                                     @foreach ($product->toArray()['uom']['unit_category']['uom_by_category'] as $unit)
                                                         <option value="{{$unit['id']}}" @selected($unit['id']==$pd['purchase_uom_id'])>{{$unit['name']}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="fv-row">
+                                                <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                                                    name="purchase_details[{{$key}}][packaging_quantity]" value="{{$pd['packagingTx']['quantity']}}">
+                                            </td>
+                                            <td class="fv-row">
+                                                <select name="purchase_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
+                                                    data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
+                                                    data-placeholder="Select Package" placeholder="select Package" required>
+                                                    <option value="">Select Package</option>
+                                                    @foreach ($product_variation['packaging'] as $package)
+                                                        <option @selected($package['id'] == $pd['packagingTx']['product_packaging_id']) data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">{{$package['packaging_name']}}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
@@ -492,8 +508,8 @@
 </div>
 
 <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
-@include('App.purchase.contactAdd')
-@include('App.purchase.newProductAdd')
+{{-- @include('App.purchase.contactAdd') --}}
+{{-- @include('App.purchase.newProductAdd') --}}
 @endsection
 
 @push('scripts')
@@ -501,21 +517,19 @@
 <script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
 <script src={{asset('customJs/Purchases/purchaseValidator.js')}}></script>
     <script>
-        var quill = new Quill('#kt_docs_quill_basic', {
-            modules: {
-                toolbar: [
-                    [{
-                        header: [1, 2, false]
-                    }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            },
-            placeholder: 'Type your text here...',
-            theme: 'snow' // or 'bubble'
-        });
-    </script>
-<script>
+        // var quill = new Quill('#kt_docs_quill_basic', {
+        //     modules: {
+        //         toolbar: [
+        //             [{
+        //                 header: [1, 2, false]
+        //             }],
+        //             ['bold', 'italic', 'underline'],
+        //             ['image', 'code-block']
+        //         ]
+        //     },
+        //     placeholder: 'Type your text here...',
+        //     theme: 'snow' // or 'bubble'
+        // });
     // $("#kt_datepicker_1").flatpickr({
     //     dateFormat: "d-m-Y",
     // });
@@ -623,10 +637,7 @@
     }
 
 
-</script>
-{{-- <script src={{asset('customJs/customFileInput.js')}}></script> --}}
-{{-- <script src="{{asset('customJs/Purchases/purchaseAdd.js')}}"></script> --}}
-<script>
+
 $(document).ready(function() {
         $('[data-kt-repeater="select2"]').select2();
         $('[data-kt-repeater="unit_select"]').select2();

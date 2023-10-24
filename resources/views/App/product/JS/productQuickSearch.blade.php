@@ -27,11 +27,11 @@
                 throttleTimeout = setTimeout(function() {
                     $.ajax({
                         url: `/purchase/get/product`,
-                        type: 'POST',
+                        type: 'GET',
                         delay: 150,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
+                        // headers: {
+                        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        // },
                         data: {
                             data:query
                         },

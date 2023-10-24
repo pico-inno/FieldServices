@@ -2,16 +2,17 @@
 
 namespace App\Models\sale;
 
-use App\Models\BusinessUser;
 use App\Models\Currencies;
-use App\Models\CurrentStockBalance;
+use App\Models\Product\UOM;
+use App\Models\BusinessUser;
 use App\Models\Product\Unit;
 use App\Models\Product\UOMSet;
 use App\Models\Product\Product;
+use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductVariation;
-use App\Models\Product\UOM;
+use App\Models\productPackagingTransactions;
 use App\Models\Product\VariationTemplateValues;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -99,5 +100,11 @@ class sale_details extends Model
     public function currency()
     {
         return $this->hasOne(Currencies::class, 'id', 'currency_id');
+    }
+
+    public function packagingTx()
+    {
+        return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'id')
+            ->where('transaction_type', 'sale');
     }
 }

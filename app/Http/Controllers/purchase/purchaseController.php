@@ -33,6 +33,7 @@ use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
 use App\Services\purchase\purchaseService;
+use App\Services\packaging\packagingServices;
 use App\Models\Product\VariationTemplateValues;
 
 class purchaseController extends Controller
@@ -137,10 +138,12 @@ class purchaseController extends Controller
             ->get();
         $currencies = Currencies::get();
         $purchase_detail = purchase_details::with([
+            'packagingTx',
             'productVariation' => function ($q) {
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
                     ->with(
-                        [
+                    [
+                            'packaging',
                             'variationTemplateValue' => function ($q) {
                                 $q->select('id', 'name');
                             }
@@ -156,7 +159,7 @@ class purchaseController extends Controller
                 ]);
             }
         ])->where('purchases_id', $id)->where('is_delete', 0)->get();
-
+            // dd($purchase_detail->toArray());
         $setting = $this->setting;
         return view('App.purchase.editPurchase', compact('purchase', 'locations', 'purchase_detail', 'suppliers', 'setting', 'currency', 'currencies'));
     }
@@ -246,7 +249,6 @@ class purchaseController extends Controller
                             //    }
                         }
                     } else {
-
                         $currentStock = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase');
 
                         $purchase_quantity = (int) $currentStock->get()->first()->ref_uom_quantity;
@@ -290,6 +292,10 @@ class purchaseController extends Controller
                         // purchase details will update last because in update diff qty of stock need to check
                         $purchase_details->update($pd);
                     }
+
+                    // update packaging
+                    $packagingService=new packagingServices();
+                    $packagingService->updatePackagingForTx($pd,$purchase_detail_id,'purchase');
                 }
                 //get added purchase_details_ids from database
                 $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get()->toArray();
@@ -366,7 +372,7 @@ class purchaseController extends Controller
                         $q->select('id', 'name');
                     }
                 ]);
-        }, 'product', 'purchaseUom', 'currency'])
+        }, 'product', 'purchaseUom', 'currency', 'packagingTx'])
             ->where('purchases_id', $id)->where('is_delete', 0)->get();
         $setting = $this->setting;
         return view('App.purchase.DetailView.purchaseDetail', compact(
@@ -374,7 +380,7 @@ class purchaseController extends Controller
             'location',
             'purchase_details',
             'setting',
-            'addresss'
+            'addresss',
         ));
     }
 
@@ -445,31 +451,11 @@ class purchaseController extends Controller
 
     protected function purchase_detail_creation(array $purchases_details, $purchase_id, $purchase)
     {
-
-        foreach ($purchases_details as $key => $pd) {
-            $product = Product::where('id', $pd['product_id'])->select('purchase_uom_id')->first();
-            $referencteUom = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'], $pd['purchase_uom_id']);
-            $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom['referenceUomId']);
-            $default_selling_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
-            $pd['purchases_id'] = $purchase_id;
-            $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
-            $pd['subtotal_with_discount'] = $pd['subtotal_with_discount'];
-            $pd['currency_id'] = $purchase->currency_id;
-            $pd['expense'] = $pd['per_item_expense'] * $pd['quantity'];
-            $pd['ref_uom_id'] = $referencteUom['referenceUomId'];
-            $pd['per_ref_uom_price'] = $per_ref_uom_price;
-            $pd['batch_no'] = UomHelper::generateBatchNo($pd['variation_id']);
-            $pd['per_item_tax'] = 0;
-            $pd['tax_amount'] = 0;
-            $pd['subtotal_wit_tax'] = $pd['per_item_expense'] * $pd['quantity'] + 0;
-            $pd['created_by'] = Auth::user()->id;
-            $pd['purchased_by'] = Auth::user()->id;
-            $pd['updated_by'] = Auth::user()->id;
-            $pd['deleted_by'] = Auth::user()->id;
-            $pd['is_delete'] = 0;
-            $pd = purchase_details::create($pd);
-            $this->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
-            $this->currentStockBalanceCreation($pd, $purchase, 'purchase');
+        $action = new purchaseActions();
+        $packaging = new packagingServices();
+        foreach ($purchases_details as $pd) {
+            $createdPd = $action->detailCreate($pd, $purchase);
+            $packaging->packagingForTx($pd, $createdPd, 'purchase');
         }
     }
 

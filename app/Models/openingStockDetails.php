@@ -61,4 +61,9 @@ class openingStockDetails extends Model
     public function openingStock(){
         return $this->belongsTo(openingStocks::class);
     }
+    public function packagingTx()
+    {
+        return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'id')
+            ->where('transaction_type', 'opening_stock');
+    }
 }

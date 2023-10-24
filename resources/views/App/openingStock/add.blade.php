@@ -18,6 +18,11 @@
 @endsection
 
 @section('styles')
+    <style>
+        .opening_stock_tbody tr td{
+            padding: 3px;
+        }
+    </style>
     <link href="{{asset("assets/plugins/global/plugins.bundle.css")}}" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href={{asset("customCss/businessSetting.css")}}>
     <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>
@@ -131,7 +136,10 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-7 text-uppercase gs-0 ">
                                         <th class="min-w-125px">Product Name</th>
-                                        <th class="min-w-150px">Qty & Unit</th>
+                                        <th class="min-w-150px">Qty </th>
+                                        <th class="min-w-150px">Unit </th>
+                                        <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
+                                        <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-150px">Purchase Price</th>
                                         <th class="min-w-150px">Subtotal</th>
                                         <th class="min-w-200px">EXP Date</th>

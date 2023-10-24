@@ -18,12 +18,14 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\locationAddress;
 use App\Models\openingStockDetails;
+use App\Models\productPackagingTransactions;
 use App\Models\purchases\purchases;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
+use App\Services\packaging\packagingServices;
 
 class openingStockController extends Controller
 {
@@ -106,6 +108,8 @@ class openingStockController extends Controller
                 'opening_date.required' => 'Opening Date is required!',
             ])->validate();
             if($opening_stock_details){
+                $packagingService=new packagingServices();
+
                 $opening_stock_data=$this->dataForOpeningStock($request);
                 $opening_stock_data['created_by']=Auth::user()->id;
                 $opening_stock_data['updated_at']=null;
@@ -118,7 +122,7 @@ class openingStockController extends Controller
                         $data['updated_at']= null;
                         // dd($data);
                         $openingStockDetailData=openingStockDetails::create($data);
-
+                        $packagingService->packagingForTx($detail, $openingStockDetailData,'opening_stock');
                         $current_stock_data = $this->currentStockBalanceData($openingStockDetailData, $created_opening_data, 'opening_stock');
                         CurrentStockBalance::create($current_stock_data);
                     }
@@ -148,11 +152,12 @@ class openingStockController extends Controller
                         [
                             'variationTemplateValue' => function ($q) {
                                 $q->select('id', 'name');
-                            }
+                            },'packaging'
                         ]
                     );
-            }, 'product',
+            }, 'product', 'packagingTx'
         ])->where('opening_stock_id', $id)->where('is_delete', 0)->get();
+        // dd($openingStockDetails->toArray(),productPackagingTransactions::get()->toArray);
         return view('App.openingStock.edit', compact('openingStock', 'locations',  'openingStockDetails'));
     }
     public function update($id,Request $request)
@@ -190,6 +195,9 @@ class openingStockController extends Controller
                     $osd['updated_by'] = Auth::user()->id;
 
                     $opening_stock_detail = openingStockDetails::where('id', $opening_stock_detail_id)->where('is_delete', 0)->first();
+
+                    $packagingService = new packagingServices();
+                    $packagingService->updatePackagingForTx($osd, $opening_stock_detail_id, 'opening_stock');
                     $opening_stock_detail->update($updateOpeningStockData);
                     // dd($opening_stock_detail->toArray());
                     $referencteUom= UomHelper::getReferenceUomInfoByCurrentUnitQty($updateOpeningStockData['quantity'],$updateOpeningStockData['uom_id']);
@@ -244,6 +252,9 @@ class openingStockController extends Controller
                         $data['updated_at']= null;
                         $data['opening_stock_id']= $id;
                         $createdOpeningStock=openingStockDetails::create($data);
+
+                        $packagingService = new packagingServices();
+                        $packagingService->packagingForTx($detail, $createdOpeningStock, 'opening_stock');
                         $updatedStock = $selectOpeningStock->first();
                         $data = $this->currentStockBalanceData($createdOpeningStock, $updatedStock, 'opening_stock');
                         CurrentStockBalance::create($data);
@@ -260,7 +271,7 @@ class openingStockController extends Controller
                     'deleted_by' => Auth::user()->id,
                 ]);
             }
-
+            // dd('herde');
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

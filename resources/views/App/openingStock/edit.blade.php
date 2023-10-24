@@ -22,6 +22,11 @@
     <link href="{{asset("assets/plugins/global/plugins.bundle.css")}}" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href={{asset("customCss/businessSetting.css")}}>
     <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>
+    <style>
+            #opening_stock_tbody tr td {
+                padding: 3px;
+            }
+        </style>
 @endsection
 
 
@@ -125,7 +130,10 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-7 text-uppercase gs-0 ">
                                         <th class="min-w-125px">Product Name</th>
-                                        <th class="min-w-150px">Qty & Unit</th>
+                                        <th class="min-w-150px">Qty</th>
+                                        <th class="min-w-150px">Unit</th>
+                                        <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
+                                        <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-150px">Purchase Price</th>
                                         <th class="min-w-150px">Subtotal</th>
                                         <th class="min-w-200px">EXP Date</th>
@@ -138,7 +146,7 @@
                                     </thead>
                                     <!--end::Table head-->
                                     <!--begin::Table body-->
-                                    <tbody class="fw-semibold text-gray-600">
+                                    <tbody class="fw-semibold text-gray-600" id="opening_stock_tbody">
                                         <tr class="dataTables_empty text-center d-none">
                                             <td colspan="8 ">There is no data to show</td>
                                         </tr>
@@ -149,8 +157,8 @@
                                             @endphp
                                             <tr class='cal-gp'>
                                                 <td class="d-none">
-                                                    <input type="hidden" class="input_number " value="{{$osd->product_id}}" name="opening_stock_details[{{$key}}][product_id]">
-                                                    <input type="hidden" class="input_number " value="{{$osd->variation_id}}" name="opening_stock_details[{{$key}}][variation_id]">
+                                                    <input type="hidden" class="input_number product_id" value="{{$osd->product_id}}" name="opening_stock_details[{{$key}}][product_id]">
+                                                    <input type="hidden" class="input_number variation_id" value="{{$osd->variation_id}}" name="opening_stock_details[{{$key}}][variation_id]">
                                                     <input type="hidden" class="input_number" value="{{$osd->id}}" name="opening_stock_details[{{$key}}][opening_stock_detail_id]">
                                                 </td>
                                                 <td>
@@ -162,10 +170,32 @@
                                                     @endif
                                                 </td>
                                                 <td class="fv-row">
-                                                    <input type="text" class="form-control form-control-sm mb-3 quantity input_number" placeholder="Quantity" name="opening_stock_details[{{$key}}][quantity]" value="{{round($osd->quantity,2)}}">
-                                                    <select  name="opening_stock_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id mt-3" data-kt-repeater="unit_select" data-hide-search="true" data-control="select2" data-hide-search="false" data-placeholder="Select unit"   placeholder="select unit">
+                                                    <input type="text" class="form-control form-control-sm quantity input_number" placeholder="Quantity" name="opening_stock_details[{{$key}}][quantity]" value="{{round($osd->quantity,2)}}">
+
+                                                </td>
+                                                <td>
+                                                    <select name="opening_stock_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id "
+                                                        data-kt-repeater="unit_select" data-hide-search="true" data-control="select2" data-hide-search="false"
+                                                        data-placeholder="Select unit" placeholder="select unit">
                                                         @foreach ($product->uom->unit_category->uomByCategory as $unit)
-                                                            <option value="{{$unit['id']}}" @selected($unit['id']==$osd['uom_id'])>{{$unit['name']}}</option>
+                                                        <option value="{{$unit['id']}}" @selected($unit['id']==$osd['uom_id'])>{{$unit['name']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td class="fv-row">
+                                                    <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                                                        name="opening_stock_details[{{$key}}][packaging_quantity]" value="{{arr($osd['packagingTx'],'quantity')}}">
+                                                </td>
+                                                <td class="fv-row">
+                                                    <select name="opening_stock_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
+                                                        data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
+                                                        data-placeholder="Select Package" placeholder="select Package" required>
+                                                        <option value="">Select Package</option>
+                                                        @foreach ($product_variation['packaging'] as $package)
+                                                            <option @selected($package['id']==arr($osd['packagingTx'],'product_packaging_id'))
+                                                                data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
+                                                                {{$package['packaging_name']}}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </td>

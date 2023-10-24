@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Product\UnitCategory;
+use App\Models\Product\UOM;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class productPackaging extends Model
 {
@@ -20,4 +22,9 @@ class productPackaging extends Model
         'for_purchase',
         'for_sale',
     ];
+
+    public function uom()
+    {
+       return $this->hasOne(UOM::class,'id','uom_id');
+    }
 }

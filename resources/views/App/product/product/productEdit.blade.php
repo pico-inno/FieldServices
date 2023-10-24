@@ -639,6 +639,105 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <div class="packaging_pd">
+                                            <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
+                                                <div class="col-6 col-md-2 fs-4  fw-semibold  text-primary">
+                                                    Products Packaging
+                                                </div>
+                                                <div class="separator   border-primary-subtle col-md-10 col-6"></div>
+                                            </div>
+                                            <div class="form">
+                                                <!--begin::Repeater-->
+                                                <div id="packaging_repeater">
+                                                    <!--begin::Form group-->
+                                                    <div class="form-group">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-rounded table-striped border gy-4 gs-4" id="packaging_table">
+                                                                <!--begin::Table head-->
+                                                                <thead class="bg-light rounded-3">
+                                                                    <!--begin::Table row-->
+                                                                    <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                                        <th class="min-w-100px">Packaging Name</th>
+                                                                        <th class="min-w-100px">Quantity</th>
+                                                                        <th class="min-w-100px">UOM</th>
+                                                                        <th class="min-w-100px">For Purchase</th>
+                                                                        <th class="min-w-100px">For Sale</th>
+                                                                        <th class="text-center"><i class="fa-solid fa-trash text-primary" type="button"></i>
+                                                                        </th>
+                                                                    </tr>
+                                                                    <!--end::Table row-->
+                                                                </thead>
+                                                                <!--end::Table head-->
+                                                                <!--begin::Table body-->
+                                                                <tbody class="fw-semibold text-gray-600 data-table-body"
+                                                                    data-repeater-list="packaging_repeater">
+                                                                    @foreach ($packagings as $i=>$packaging)
+                                                                        <tr class=" text-center p-row" data-repeater-item>
+                                                                            <td class="fv-row">
+                                                                                <div class="fv-row text-start">
+                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->packaging_name}}" name="packaging_repeater[{{$i}}][packaging_name]"
+                                                                                        placeholder="Packaging Name" data-placeholder="Packaging Name">
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="fv-row text-start">
+                                                                                    <input type="text" class="form-control form-control-sm d-none" value="{{$packaging->id}}" name="packaging_repeater[{{$i}}][packaging_id]" placeholder="Qty"
+                                                                                        data-placeholder="Packaging Name">
+                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->quantity}}"
+                                                                                        name="packaging_repeater[{{$i}}][packaging_quantity]" placeholder="Qty"
+                                                                                        data-placeholder="Packaging Name">
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <select class="form-select form-select-sm unitOfUom" name="packaging_repeater[{{$i}}][packaging_uom_id]"
+                                                                                    data-control="select2" data-kt-select2="true" data-hide-search="true"
+                                                                                    data-placeholder="Select UoM">
+                                                                                    @foreach ($packaging->uom->unit_category->uomByCategory as $uom)
+                                                                                        <option value="{{$uom->id}}" @selected($uom->id == $packaging->uom_id)>{{$uom->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="form-check float-start  user-select-none">
+                                                                                    <input class="form-check-input" type="checkbox" name="packaging_repeater[{{$i}}][for_purchase]" @checked($packaging->for_purchase) />
+                                                                                    <label class="form-check-label text-start" for="forPurchase">
+                                                                                        For Purchase
+                                                                                    </label>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="form-check justify-content-start user-select-none float-start">
+                                                                                    <input class="form-check-input" type="checkbox" name="for_sale" @checked($packaging->for_sale) />
+                                                                                    <label class="form-check-label text-start" for="forSale">
+                                                                                        For Sale
+                                                                                    </label>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td class="text-danger cursor-pointer user-select-none" p-remove>
+                                                                                <i class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                            </td>
+                                                                        </tr>
+
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <!--end::Form group-->
+
+                                                    <!--begin::Form group-->
+                                                    <div class="form-group mt-5">
+                                                        <a href="javascript:;" data-repeater-create class="btn btn-light-primary btn-sm">
+                                                            <i class="ki-duotone ki-plus fs-3"></i>
+                                                            Add
+                                                        </a>
+                                                    </div>
+                                                    <!--end::Form group-->
+                                                </div>
+                                                <!--end::Repeater-->
+                                            </div>
+                                        </div>
+
 
                                         {{-- Product Disable  --}}
                                         <div class="row advance-toggle-class d-none">
@@ -691,9 +790,37 @@
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
     @include('App.product.JS.productQuickSearch')
 <script>
+
     $(document).ready(function (){
         $('[data-kt-repeater="uom_select"]').select2();
     });
+    $(document).on('click','[p-remove]',function(){
+    $(this).closest('.p-row').remove();
+    })
+    var currentUoMData=[];
+        $('#packaging_repeater').repeater({
+            initEmpty: false,
+
+            defaultValues: {
+                'text-input': 'foo'
+            },
+
+            show: function () {
+                $(this).slideDown();
+
+                $(this).find('[data-control="select2"]').select2({
+                    data:currentUoMData,
+                    minimumResultsForSearch: Infinity
+                });
+                const index = $(this).closest("[data-repeater-item]").index();
+
+                addFields(index);
+            },
+
+            hide: function (deleteElement) {
+                $(this).slideUp(deleteElement);
+            }
+        });
 
     toastr.options = {
         "closeButton": false,
@@ -1226,6 +1353,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(results){
+
                     const purchaseUoM = $('#unitOfUom')[0];
                     purchaseUoM.innerHTML = '';
 
@@ -1233,14 +1361,19 @@
                     defaultOption.value = '';
                     defaultOption.text = 'Select an option';
                     $(purchaseUoM).append(defaultOption);
-
+                    let data=[];
                     for (let item of results) {
                         let option = document.createElement('option');
                         option.value = item.id;
                         option.text = item.name;
                         purchaseUoM.append(option);
+                        data=[...data,
+                        {
+                            'id':item.id,
+                            'text':item.name
+                        }]
                     }
-
+                    currentUoMData=data;
                     $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
                 },
                 error: function(e){

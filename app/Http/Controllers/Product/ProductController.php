@@ -28,6 +28,7 @@ use App\Models\Product\ProductVariationsTemplates;
 use App\Http\Requests\Product\Product\ProductCreateRequest;
 use App\Http\Requests\Product\Product\ProductUpdateRequest;
 use App\Models\Product\PriceListDetails;
+use App\Models\productPackaging;
 use App\Services\packaging\packagingServices;
 
 class ProductController extends Controller
@@ -174,6 +175,7 @@ class ProductController extends Controller
                 'created_by' => Auth::user()->id,
                 'created_at' => now()
             ]);
+            // for packaging
             if($request->packaging_repeater){
                $packagingServices= new packagingServices();
                $packagingServices->createWithBulk($request->packaging_repeater, $nextProduct);
@@ -234,9 +236,9 @@ class ProductController extends Controller
                     );
             }
         ])->where('primary_product_id', $product->id)->get();
+        $packagings=productPackaging::where('product_id',$product->id)->with('uom')->get();
 
-
-        return view('App.product.product.productEdit', compact('product', 'brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
+        return view('App.product.product.productEdit', compact('product', 'packagings','brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
@@ -255,7 +257,11 @@ class ProductController extends Controller
             if ($request->additional_product_details) {
                 $this->createAdditionalProducts($request->additional_product_details, $product, false);
             }
-
+            // for packaging
+            if ($request->packaging_repeater) {
+                $packagingServices = new packagingServices();
+                $packagingServices->update($request->packaging_repeater, $product);
+            }
             // Update Product Variation Template
             ProductVariationsTemplates::where('product_id', $product->id)->update([
                 'product_id' => $product->id,
@@ -269,6 +275,7 @@ class ProductController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             return back()->with('message', $e->getMessage());
         }
     }

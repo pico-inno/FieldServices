@@ -86,7 +86,7 @@
                 let diaO = new KTDialer(e, {
                     min: 0,
                     step: 1,
-                    // decimals: 2
+                    decimals: 2
                 });
 
                 diaO.on('kt.dialer.change',function(ev) {
@@ -434,7 +434,6 @@
                     `;
                 })
             }
-            console.log(packagingOption);
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
             let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
