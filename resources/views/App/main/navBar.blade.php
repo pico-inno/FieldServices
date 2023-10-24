@@ -408,7 +408,7 @@
                                 </li>
                                 @if(hasModule('Barcode') && isEnableModule('Barcode'))
                                     <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right"
-                                        data-bs-dismiss="click" title="Settings">
+                                        data-bs-dismiss="click" title="Barcode">
                                         <!--begin::Nav link-->
                                         <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('barcode_active')"
                                             data-bs-toggle="tab" href="#kt_aside_nav_tab_barcode">
@@ -2497,7 +2497,8 @@
                                             <a class="menu-link @yield('barcode_template_list_active_show')"
                                                 href="{{route('barcode.prepare')}}">
                                                 <span class="menu-icon">
-                                                    <i class="fa-solid fa-barcode fs-3"></i>
+                                                    <i class="fa-solid fa-qrcode fs-3"></i>
+                                                    {{-- <i class="fa-solid fa-barcode fs-3"></i> --}}
                                                 </span>
                                                 <span class="menu-title">Generate Product Barcode</span>
                                             </a>
