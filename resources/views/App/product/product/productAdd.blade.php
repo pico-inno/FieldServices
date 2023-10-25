@@ -579,7 +579,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="packaging_pd">
+                                        <div class="packaging_pd advance-toggle-class d-none">
                                             <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
                                                 <div class="col-6 col-md-2 fs-4  fw-semibold  text-primary">
                                                     Products Packaging
