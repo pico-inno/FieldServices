@@ -122,7 +122,7 @@ class openingStockController extends Controller
                         $data['updated_at']= null;
                         // dd($data);
                         $openingStockDetailData=openingStockDetails::create($data);
-                        $packagingService->packagingForTx($detail, $openingStockDetailData,'opening_stock');
+                        $packagingService->packagingForTx($detail, $openingStockDetailData['id'],'opening_stock');
                         $current_stock_data = $this->currentStockBalanceData($openingStockDetailData, $created_opening_data, 'opening_stock');
                         CurrentStockBalance::create($current_stock_data);
                     }
@@ -254,7 +254,7 @@ class openingStockController extends Controller
                         $createdOpeningStock=openingStockDetails::create($data);
 
                         $packagingService = new packagingServices();
-                        $packagingService->packagingForTx($detail, $createdOpeningStock, 'opening_stock');
+                        $packagingService->packagingForTx($detail, $createdOpeningStock['id'], 'opening_stock');
                         $updatedStock = $selectOpeningStock->first();
                         $data = $this->currentStockBalanceData($createdOpeningStock, $updatedStock, 'opening_stock');
                         CurrentStockBalance::create($data);

@@ -455,7 +455,7 @@ class purchaseController extends Controller
         $packaging = new packagingServices();
         foreach ($purchases_details as $pd) {
             $createdPd = $action->detailCreate($pd, $purchase);
-            $packaging->packagingForTx($pd, $createdPd, 'purchase');
+            $packaging->packagingForTx($pd, $createdPd['id'], 'purchase');
         }
     }
 
@@ -525,7 +525,12 @@ class purchaseController extends Controller
                 [
                     'productVariations' => function ($query) {
                         $query->select('id', 'product_id', 'variation_template_value_id', 'variation_sku', 'default_purchase_price', 'default_selling_price')
-                            ->with('variationTemplateValue:id,name', 'packaging');
+                            ->with(['variationTemplateValue:id,name',
+                            'packaging'=>function($q){
+                                $q->where('for_purchase',1);
+                            }
+                            ]);
+
                     }, 'uom' => function ($q) {
                         $q->with(['unit_category' => function ($q) {
                             $q->with('uomByCategory');

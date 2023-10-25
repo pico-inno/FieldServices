@@ -328,15 +328,15 @@
                                             </td>
                                             <td class="fv-row">
                                                 <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
-                                                    name="purchase_details[{{$key}}][packaging_quantity]" value="{{$pd['packagingTx']['quantity']}}">
+                                                    name="purchase_details[{{$key}}][packaging_quantity]" value="{{arr($pd['packagingTx'],'quantity')}}">
                                             </td>
                                             <td class="fv-row">
                                                 <select name="purchase_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
                                                     data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
-                                                    data-placeholder="Select Package" placeholder="select Package" required>
+                                                    data-placeholder="Select Package" placeholder="select Package" >
                                                     <option value="">Select Package</option>
                                                     @foreach ($product_variation['packaging'] as $package)
-                                                        <option @selected($package['id'] == $pd['packagingTx']['product_packaging_id']) data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">{{$package['packaging_name']}}</option>
+                                                        <option @selected($package['id'] == arr($pd['packagingTx'],"product_packaging_id")) data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">{{$package['packaging_name']}}</option>
                                                     @endforeach
                                                 </select>
                                             </td>

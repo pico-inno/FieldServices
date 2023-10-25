@@ -92,9 +92,9 @@ class packagingServices
      * @param  transaction_type $tx_type
      * @return void
      */
-    public function packagingForTx($data,$txd,$tx_type){
+    public function packagingForTx($data, $txd_id,$tx_type){
         if ($data['packaging_id'] && $data['packaging_quantity']) {
-            $packagingData = $this->packagingDataForTx($data, $txd, $tx_type);
+            $packagingData = $this->packagingDataForTx($data, $txd_id, $tx_type);
             $createdData = productPackagingTransactions::create($packagingData);
             return $createdData;
         }
@@ -103,18 +103,18 @@ class packagingServices
      * packagingDataForTx
      *
      * @param  array $data packaging data
-     * @param  array|collection $txd transaction detail data
+     * @param  array|collection $txd_id transaction detail id
      * @param  string $tx_type type of transaction
      * @return void
      */
-    public function packagingDataForTx($data, $txd, $tx_type){
+    public function packagingDataForTx($data, $txd_id, $tx_type){
        return [
             'product_packaging_id' => arr($data, 'packaging_id'),
             'quantity' => arr($data, 'packaging_quantity'),
 
             'packaging_quantity' => arr($data, 'packaging_quantity'),
             'transaction_type' => $tx_type,
-            'transaction_details_id' => arr($txd, 'id'),
+            'transaction_details_id' => $txd_id,
             'created_at' => now(),
             'created_by' => Auth::user()->id,
 
@@ -135,9 +135,20 @@ class packagingServices
                             'updated_by' => Auth::user()->id,
                             'updated_at' => now(),
                         ]);
+            }else{
+                $this->packagingForTx($data,$txd_id,$type);
             }
 
         }
         return 0;
+    }
+
+    public function deletePackagingForTx($txd_id,$type){
+        return productPackagingTransactions::where('transaction_details_id',$txd_id)->where('transaction_type',$type)
+                ->first()->update([
+                    'is_delete'=>1,
+                    'deleted_at'=>now(),
+                    'deleted_by'=>Auth::user()->id,
+                ]);
     }
 }

@@ -129,12 +129,11 @@
                                             </span>
                                             @endif
                                         </td>
-                                        <td class="pt-6">{{round($pd->packagingTx->quantity,$quantityDp)}}({{$pd->packagingTx->packaging->packaging_name}})</td>
+                                        <td class="pt-6">{{$pd->packagingTx ? round(arr($pd->packagingTx,'quantity') ,$quantityDp): ''}} {{$pd->packagingTx ? '('.$pd->packagingTx->packaging->packaging_name.')' : ''}}</td>
                                         <td class="pt-6">{{round($pd->quantity,$quantityDp)}}</td>
                                         <td class="pt-6">{{$pd->toArray()['purchase_uom']['name']}}</td>
                                         <td class="pt-6">{{price($pd->uom_price ?? 0,$pd->currency_id)}}</td>
-                                        <td
-                                            class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                        <td class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
                                             {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{
                                             $pd->discount_type=='percentage'?'%':$pdCurrency }}</td>
                                         <td

@@ -33,7 +33,7 @@ class purchaseService
         if ($purchases_details) {
             foreach ($purchases_details as $pd) {
                $createdPd= $action->detailCreate($pd, $purchase);
-               $packaging->packagingForTx($pd,$createdPd,'purchase');
+               $packaging->packagingForTx($pd,$createdPd['id'],'purchase');
             }
         }
         if ($request->paid_amount > 0) {

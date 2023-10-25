@@ -23,9 +23,9 @@
     </ul>
 <!--end::Breadcrumb-->
 @endsection
-{{-- @section('products_icon', 'active') --}}
+@section('products_icon', 'active')
 @section('products_show', 'active show')
-{{-- @section('add_product_menu_link', 'active') --}}
+@section('add_product_menu_link', 'active')
 
 @section('content')
     <!--begin::Content-->

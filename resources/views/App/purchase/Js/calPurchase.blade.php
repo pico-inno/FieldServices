@@ -11,6 +11,7 @@ $(document).ready(function() {
     let lotControl=setting.lot_control;
     let purchaseDetails=@json($purchase_detail?? []) ;
     if(purchaseDetails.length>0){
+        $('.package_id').select2();
         purchaseDetails.forEach(function(purchase,index){
             setTimeout(() => {
                 totalItem();
@@ -245,7 +246,7 @@ $(document).ready(function() {
             <td class="fv-row">
                 <select name="purchase_details[${unique_name_id}][packaging_id]" class="form-select form-select-sm package_id"
                     data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
-                    data-placeholder="Select Package" placeholder="select Package" required>
+                    data-placeholder="Select Package" placeholder="select Package" >
                     <option value="">Select Package</option>
                     ${packagingOption}
                 </select>
@@ -351,10 +352,13 @@ $(document).ready(function() {
         // let qty=parent.find('.purchase_quantity').val();
 
     })
-    $(document).on('change','.purchase_quantity,.unit_id',function(){
+    $(document).on('change','.unit_id',function(){
         packaging($(this),'/');
     })
-    $(document).on('change','.package_qty',function(){
+    $(document).on('input','.purchase_quantity',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('input','.package_qty',function(){
             packaging($(this),'*');
     })
     const packaging=(e,operator)=>{

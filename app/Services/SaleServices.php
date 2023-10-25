@@ -123,7 +123,7 @@ class SaleServices
             }
             $created_sale_details = sale_details::create($sale_details_data);
 
-            $packaging->packagingForTx($sale_detail, $created_sale_details, 'sale');
+            $packaging->packagingForTx($sale_detail, $created_sale_details['id'], 'sale');
             if (isset($sale_detail['isParent'])) {
                 $parentSaleItems[$sale_detail['isParent']]= $created_sale_details;
             }
