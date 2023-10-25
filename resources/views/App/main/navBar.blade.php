@@ -3286,7 +3286,7 @@
                         <!--begin::Menu toggle-->
                         <!--begin::Menu-->
                         <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-color fw-semibold py-4 fs-base w-150px"
-                            data-kt-menu="true" data-kt-element="theme-mode-menu">
+                            data-kt-menu="true" >
 
                             <!--begin::Menu item-->
                             <div class="menu-item px-3">
