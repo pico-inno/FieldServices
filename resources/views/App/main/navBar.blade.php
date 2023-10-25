@@ -3266,6 +3266,55 @@
                             <span class="d-none d-md-inline">New Member</span>
                         </a>
                     </div>
+                    <div class="d-flex align-items-center ms-3">
+                        <!--begin::Menu toggle-->
+                        <a href="#" class="d-flex btn btn-icon flex-center btn-sm bg-body btn-color-gray-600 px-5 btn-active-color-primary h-40px w-auto"
+                            data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
+                            data-kt-menu-placement="bottom-end">
+                            @php
+                                $lang=Auth::user()->personal_info->language;
+                            @endphp
+                            @if ($lang=='en')
+                                English <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
+                            @elseif ($lang=='my')
+                                မြန်မာ <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/myanmar.svg")}} alt="" />
+                            @elseif ($lang=='th')
+                                ภาษาไทย <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/thailand.svg")}} alt="" />
+                            @endif
+
+                        </a>
+                        <!--begin::Menu toggle-->
+                        <!--begin::Menu-->
+                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-color fw-semibold py-4 fs-base w-150px"
+                            data-kt-menu="true" data-kt-element="theme-mode-menu">
+
+                            <!--begin::Menu item-->
+                            <div class="menu-item px-3">
+                                <a href="{{route('lang.change','my')}}" class="menu-link d-flex px-5  {{Auth::user()->personal_info->language == 'my' ? 'active':''}}">
+                                    <span class="symbol symbol-20px me-4">
+                                        <img class="rounded-1" src={{asset("assets/media/flags/myanmar.svg")}} alt="" />
+                                    </span>
+                                    မြန်မာ
+                                </a>
+                            </div>
+                            <!--begin::Menu item-->
+                            <div class="menu-item px-3">
+                                <a href="{{route('lang.change','en')}}" class="menu-link d-flex px-5 {{Auth::user()->personal_info->language == 'en' ? 'active':''}}">
+                                    <span class="symbol symbol-20px me-4">
+                                        <img class="rounded-1" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
+                                    </span>
+                                    English
+                                </a>
+                            </div>
+                            <div class="menu-item px-3">
+                                <a href="{{route('lang.change','th')}}" class="menu-link d-flex px-5  {{Auth::user()->personal_info->language == 'th' ? 'active':''}}">
+                                    <span class="symbol symbol-20px me-4">
+                                        <img class="rounded-1" src={{asset("assets/media/flags/thailand.svg")}} alt="" />
+                                    </span>ภาษาไทย</a>
+                            </div>
+                        </div>
+                        <!--end::Menu-->
+                    </div>
                     <!--end::Invite user-->
                     <div class="d-flex align-items-center ms-3">
                         <a href="{{ route('pos.selectPos')}}"

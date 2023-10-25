@@ -81,6 +81,7 @@ use App\Http\Controllers\Contact\ImportContactsController;
 use App\Http\Controllers\configurationController;
 use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\import\priceListImportController;
+use App\Http\Controllers\languageController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\settings\businessLocationController;
@@ -132,7 +133,7 @@ Route::controller(DashboardController::class)->group(function () {
     Route::post('/dashboard/total-sale-purchase-order-widget', 'totalSaleAndPurchaseOrder');
 });
 //End: Dashboard
-
+Route::get('lang/{code}',[languageController::class, 'change'])->name('lang.change');
 //_Being: Users
 Route::resource('users', BusinessUserController::class);
 //_End: Users
