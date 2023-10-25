@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Product\UnitCategory;
+use App\Models\Product\UOM;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class product_packaging extends Model
+class productPackaging extends Model
 {
     use HasFactory;
-    protected $table = 'packaging';
+    protected $table = 'product_packagings';
 
     protected $fillable = [
         'packaging_name',
@@ -20,4 +22,9 @@ class product_packaging extends Model
         'for_purchase',
         'for_sale',
     ];
+
+    public function uom()
+    {
+       return $this->hasOne(UOM::class,'id','uom_id');
+    }
 }

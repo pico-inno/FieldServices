@@ -61,4 +61,8 @@ return [
     'sub_category' => 'Sub Category',
 
     'uom' => 'UoM',
+
+    // new update
+    'package'=>'Package',
+    'package_qty'=>'Package Qty'
 ];

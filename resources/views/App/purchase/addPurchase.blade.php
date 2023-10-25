@@ -155,7 +155,9 @@
                                         {{-- <th class="min-w-50px">#</th> --}}
                                         <th class="min-w-125px ps-1" style="max-width: 125px">{{__('product/product.product_name')}}</th>
                                         <th class="min-w-80px">{{__('report.quantity')}} </th>
-                                        <th class="min-w-100px">{{__('product/unit-and-uom.unit')}}</th>
+                                        <th class="min-w-125px">{{__('product/unit-and-uom.unit')}}</th>
+                                        <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
+                                        <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-125px">{{__('report.uom_price')}}</th>
                                         <th class="min-w-80px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}"> {{__('service.discount_amount')}} </th>
                                         <th class="min-w-125px {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">{{__('service.discount_amount')}} </th>

@@ -10,6 +10,8 @@ use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductVariation;
 use App\Models\Product\VariationTemplateValues;
+use App\Models\productPackaging;
+use App\Models\productPackagingTransactions;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -69,6 +71,10 @@ class purchase_details extends Model
     public function currency(): HasOne
     {
         return $this->hasOne(Currencies::class, 'id', 'currency_id');
+    }
+    public function packagingTx() {
+        return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'id')
+                ->where('transaction_type','purchase');
     }
 }
 

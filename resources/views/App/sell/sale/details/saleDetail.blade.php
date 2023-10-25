@@ -89,6 +89,7 @@
                                         <tr class="border-bottom  border-primary fs-7 fw-bold  text-gray-500 x">
                                             <th class="min-w-10 text-start ps-2">#</th>
                                             <th class="min-w-175px pb-2 text-start">Description</th>
+                                            <th class="min-w-100px text-end ">Quantity In Packaging</th>
                                             <th class="min-w-100px text-end">Quantity</th>
                                             @if ($sale['status']=='partial')
                                                 <th class="min-w-100px text-end">Deivered Quantity</th>
@@ -132,6 +133,7 @@
                                                 </span>
                                                 @endif
                                             </td>
+                                            <td class="pt-6">{{round($sd->packagingTx->quantity,$quantityDp)}}({{$sd->packagingTx->packaging->packaging_name}})</td>
                                             <td class="pt-6">{{round($sd->quantity,$quantityDp)}}</td>
                                             @if ($sale['status']=='partial')
                                                 <td class="min-w-100px">{{round($sd->delivered_quantity ?? 0,$currencyDp)}}</td>

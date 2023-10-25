@@ -5,9 +5,11 @@ namespace App\Models\Product;
 use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\AdditionalProduct;
+use App\Models\productPackaging;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductVariation extends Model
 {
@@ -41,7 +43,10 @@ class ProductVariation extends Model
     {
         return $this->belongsTo(VariationTemplateValues::class, 'variation_template_value_id', 'id');
     }
-
+    public function packaging(): HasMany
+    {
+        return $this->hasMany(productPackaging::class, 'product_variation_id', 'id');
+    }
     // scope
 
     public function scopeByProductId($query, $productId)

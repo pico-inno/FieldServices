@@ -44,6 +44,7 @@ use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
+use App\Services\packaging\packagingServices;
 use Modules\Reservation\Entities\Reservation;
 use App\Models\posSession\posRegisterSessions;
 use Modules\Reservation\Entities\FolioInvoice;
@@ -219,7 +220,7 @@ class saleController extends Controller
                         }
                     ]);
             },
-            'product', 'uom', 'currency'
+            'product', 'uom', 'currency', 'packagingTx'
         ])
             ->where('sales_id', $id)->where('is_delete', 0);
 
@@ -271,10 +272,12 @@ class saleController extends Controller
         $sale = sales::with('currency')->where('id', $id)->get()->first();
         $business_location_id = $sale->business_location_id;
         $sale_details_query = sale_details::with([
+            'packagingTx',
             'currency',
             'productVariation' => function ($q) {
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                     ->with([
+                        'packaging',
                         'product' => function ($q) {
                             $q->select('id', 'name', 'has_variation');
                         },
@@ -718,8 +721,9 @@ class saleController extends Controller
                         'note' => $request_old_sale['item_detail_note'] ?? null,
                     ];
                     // dd($request_sale_details_data);
-                    // dd($request_sale_details_data);
 
+                    $packagingService = new packagingServices();
+                    $packagingService->updatePackagingForTx($request_old_sale, $sale_details->id,'sale');
                     if ($request_old_sale['quantity'] <= 0) {
                         $request_sale_details_data['is_delete']  = 1;
                         $request_sale_details_data['deleted_at']  = now();
@@ -902,7 +906,10 @@ class saleController extends Controller
                         ->when($variation_id, function ($query) use ($variation_id) {
                             $query->where('id', $variation_id);
                         })
-                        ->with('variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue');
+                        ->with(['packaging'=>function($q){
+                            $q->where('for_purchase', 1);
+                        },
+                        'variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue']);
                 },
                 'stock' => function ($query) use ($business_location_id) {
                     $locationIds = childLocationIDs($business_location_id);

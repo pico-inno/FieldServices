@@ -28,6 +28,8 @@ use App\Models\Product\ProductVariationsTemplates;
 use App\Http\Requests\Product\Product\ProductCreateRequest;
 use App\Http\Requests\Product\Product\ProductUpdateRequest;
 use App\Models\Product\PriceListDetails;
+use App\Models\productPackaging;
+use App\Services\packaging\packagingServices;
 
 class ProductController extends Controller
 {
@@ -167,14 +169,17 @@ class ProductController extends Controller
             if ($request->additional_product_details) {
                 $this->createAdditionalProducts($request->additional_product_details, $nextProduct);
             }
-
             DB::table('product_variations_tmplates')->insert([
                 'product_id' => $nextProductId,
                 'variation_template_id' => $request->variation_name,
                 'created_by' => Auth::user()->id,
                 'created_at' => now()
             ]);
-
+            // for packaging
+            if($request->packaging_repeater){
+               $packagingServices= new packagingServices();
+               $packagingServices->createWithBulk($request->packaging_repeater, $nextProduct);
+            }
             DB::commit();
             if ($request->save === "save") {
                 return redirect('/product')->with('message', 'Created sucessfully product');
@@ -195,9 +200,9 @@ class ProductController extends Controller
                 ]);
             }
         } catch (Exception $e) {
-            dd($e);
+            // dd($e);
             DB::rollBack();
-            return back()->with('message', $e->getMessage());
+            return back()->with(['error'=>$e->getMessage()]);
         }
     }
 
@@ -231,9 +236,9 @@ class ProductController extends Controller
                     );
             }
         ])->where('primary_product_id', $product->id)->get();
+        $packagings=productPackaging::where('product_id',$product->id)->with('uom')->get();
 
-
-        return view('App.product.product.productEdit', compact('product', 'brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
+        return view('App.product.product.productEdit', compact('product', 'packagings','brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
@@ -252,7 +257,11 @@ class ProductController extends Controller
             if ($request->additional_product_details) {
                 $this->createAdditionalProducts($request->additional_product_details, $product, false);
             }
-
+            // for packaging
+            if ($request->packaging_repeater) {
+                $packagingServices = new packagingServices();
+                $packagingServices->update($request->packaging_repeater, $product);
+            }
             // Update Product Variation Template
             ProductVariationsTemplates::where('product_id', $product->id)->update([
                 'product_id' => $product->id,
@@ -266,6 +275,7 @@ class ProductController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             return back()->with('message', $e->getMessage());
         }
     }

@@ -86,7 +86,7 @@
                 let diaO = new KTDialer(e, {
                     min: 0,
                     step: 1,
-                    // decimals: 2
+                    decimals: 2
                 });
 
                 diaO.on('kt.dialer.change',function(ev) {
@@ -370,14 +370,12 @@
 
         //append table row for product to sell
         function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false,parentSaleDetailId=null) {
+            console.log(selected_product);
             allSelectedProduct[selected_product.product_variations.id]=selected_product;
-            console.log(setting.enable_row,forceSplit);
             if(setting.enable_row == 0 && !forceSplit){
-                // alert('here');
                let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
                if(checkProduct){
                     let selectQtyInput=document.querySelectorAll(`.quantity-${selected_product.product_variations.id}`);
-                    // console.log(selectQtyInput);
                     let qtyInput=selectQtyInput[0];
                     let val=isNullOrNan(qtyInput.value);
                     qtyInput.value=val+1;
@@ -426,7 +424,16 @@
 
                 //     <input type="hidden" name="sale_details[${unique_name_id}][stock_id_by_lot_serial_no]" class="lot_no" value="${value.id}">
                 // `
-                }
+            }
+            variation=selected_product.product_variations;
+            let packagingOption='';
+            if(variation.packaging){
+                variation.packaging.forEach((pk)=>{
+                    packagingOption+=`
+                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name}</option>
+                    `;
+                })
+            }
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
             let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
@@ -457,11 +464,6 @@
                         <div>
                             <input type='hidden' value="${selected_product.id}" class="product_id"  name="sale_details[${unique_name_id}][product_id]"  />
                             <input type='hidden' value="${selected_product.product_variations.id}" class="variation_id" name="sale_details[${unique_name_id}][variation_id]"  />
-                            @if ($setting->lot_control=='on')
-                                <input type='hidden' value="0" class="uom_set_id"  />
-                            @else
-                                <input type='hidden' value="${isStorable ? selected_product.stock[0].id :null}" class="uom_set_id"  />
-                            @endif
                         </div>
 
                     </td>
@@ -480,6 +482,18 @@
                     <td>
                         <select name="sale_details[${unique_name_id}][uom_id]" id="" class="form-select form-select-sm  unit_input uom_select" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" required>
 
+                        </select>
+                    </td>
+                    <td class="fv-row">
+                        <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                            name="sale_details[${unique_name_id}][packaging_quantity]" value="1.00">
+                    </td>
+                    <td class="fv-row">
+                        <select name="sale_details[${unique_name_id}][packaging_id]" class="form-select form-select-sm package_id"
+                            data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
+                            data-placeholder="Select Package" placeholder="select Package" required>
+                            <option value="">Select Package</option>
+                            ${packagingOption}
                         </select>
                     </td>
                     <td class="fv-row">
@@ -561,6 +575,9 @@
             $('.total_item').text(rowCount-1);
             // searching disable in select 2
             $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity});
+            $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
+            minimumResultsForSearch: Infinity
+            });
             // $(`[data-uomSet-select-${unique_name_id}="select2"]`).select2();
             $(`[data-lot-select-${unique_name_id}="select2"]`).select2({
                 // data,
@@ -650,6 +667,43 @@
                 showSuggestion(additionalProduct,parentuiqId,parentSaleDetailId);
             })
 
+    }
+    $(document).on('change','.package_id',function(){
+        packaging($(this));
+    })
+    $(document).on('input','.quantity',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('change','.uom_select',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('input','.package_qty',function(){
+        packaging($(this),'*');
+    })
+    const packaging=(e,operator)=>{
+        let parent = $(e).closest('.sale_row');
+        let unitQty=parent.find('.quantity').val();
+        let selectedOption =parent.find('.package_id').find(':selected');
+        let packageInputQty=parent.find('.package_qty').val();
+        let packagingUom=selectedOption.data('uomid');
+        let packageQtyForCal = selectedOption.data('qty');
+
+        let currentUomId=parent.find('.uom_select').val();
+        let variation_id=parent.find('.variation_id').val();
+        let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+        let uoms=product.uom.unit_category.uom_by_category;
+        if(packageQtyForCal && packagingUom){
+            if(operator=='/'){
+                // function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='')
+                let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
+                parent.find('.package_qty').val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
+            }else{
+                // function changeQtyOnUom(uoms,currentQty,currentUomId,newUomId) {
+                let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
+                let qtyByCurrentUnit= changeQtyOnUom2(packagingUom,currentUomId,result,uoms).resultQty;
+                parent.find('.quantity').val(qDecimal(qtyByCurrentUnit));
+            }
+        }
     }
 
     function optionSelected(value,select){
@@ -1403,6 +1457,7 @@
     function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='') {
         let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
         let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
+        console.log(newUomInfo,currentUomInfo,newUomId,currentUomId,'--');
         let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
         let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
         let currentUomType = currentUomInfo.unit_type;
@@ -1420,27 +1475,29 @@
         } else {
             resultQty = currentRefQty;
         }
-
-        if(currentUomId==newUomId){
-            resultPrice = currentUomPrice ;
-            return {resultQty,resultPrice};
-        }
-        if (currentUomType == 'reference' && newUomType == 'smaller') {
-            resultPrice = currentUomPrice /(newUomInfo.value * currentUomInfo.value);
-        }else if (currentUomType == 'reference' && newUomType == 'bigger') {
-            resultPrice = currentUomPrice * newUomValue;
-        }else if (currentUomType == 'bigger' && newUomType == 'reference') {
-            resultPrice = currentUomPrice / currentUomValue;
-        }else if (currentUomType == 'bigger' && newUomType == 'bigger') {
-            resultPrice = currentUomPrice *( newUomInfo / currentUomValue);
-        }else if (currentUomType == 'smaller' && newUomType == 'bigger') {
-            resultPrice = currentUomPrice * (currentUomValue * newUomValue) ;
-        }else if (currentUomType == 'smaller' && newUomType == 'smaller') {
-            resultPrice = currentUomPrice / newUomValue;
-        }else if (currentUomType == 'smaller' && newUomType == 'reference') {
-            resultPrice = currentUomPrice * currentUomValue ;
-        }else{
-            resultPrice = currentUomPrice  ;
+        resultPrice='';
+        if(currentUomPrice != ''){
+            if(currentUomId==newUomId){
+                resultPrice = currentUomPrice ;
+                return {resultQty,resultPrice};
+            }
+            if (currentUomType == 'reference' && newUomType == 'smaller') {
+                resultPrice = currentUomPrice /(newUomInfo.value * currentUomInfo.value);
+            }else if (currentUomType == 'reference' && newUomType == 'bigger') {
+                resultPrice = currentUomPrice * newUomValue;
+            }else if (currentUomType == 'bigger' && newUomType == 'reference') {
+                resultPrice = currentUomPrice / currentUomValue;
+            }else if (currentUomType == 'bigger' && newUomType == 'bigger') {
+                resultPrice = currentUomPrice *( newUomInfo / currentUomValue);
+            }else if (currentUomType == 'smaller' && newUomType == 'bigger') {
+                resultPrice = currentUomPrice * (currentUomValue * newUomValue) ;
+            }else if (currentUomType == 'smaller' && newUomType == 'smaller') {
+                resultPrice = currentUomPrice / newUomValue;
+            }else if (currentUomType == 'smaller' && newUomType == 'reference') {
+                resultPrice = currentUomPrice * currentUomValue ;
+            }else{
+                resultPrice = currentUomPrice  ;
+            }
         }
         return {resultQty,resultPrice};
     }

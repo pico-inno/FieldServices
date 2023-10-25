@@ -1,6 +1,7 @@
 <script>
 $(document).ready(function() {
     let products;
+    let productsOnSelectData=[];
     var suppliers=@json($suppliers);
     let setting=@json($setting);
     let currency=@json($currency);
@@ -10,6 +11,7 @@ $(document).ready(function() {
     let lotControl=setting.lot_control;
     let purchaseDetails=@json($purchase_detail?? []) ;
     if(purchaseDetails.length>0){
+        $('.package_id').select2();
         purchaseDetails.forEach(function(purchase,index){
             setTimeout(() => {
                 totalItem();
@@ -18,6 +20,18 @@ $(document).ready(function() {
                 total_balance_amount_cal();
                 finalsubTotalCal($(`[name="purchase_details[${index}][per_item_expense]"]`));
             }, 500);
+            let newProductData={
+                'id':purchase.product.id,
+                'variation_id':purchase.product_variation.id,
+                'product_variations':purchase.product_variation,
+                'uoms':purchase.product.uom.unit_category.uom_by_category
+            };
+            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
+            if(indexToReplace !== -1){
+                productsOnSelectData[indexToReplace] = newProductData;
+            }else{
+                productsOnSelectData=[...productsOnSelectData,newProductData];
+            }
         })
     }
     $('#contact_id').on('change',function(){
@@ -71,11 +85,11 @@ $(document).ready(function() {
             throttleTimeout = setTimeout(function() {
                 $.ajax({
                     url: `/purchase/get/product`,
-                    type: 'POST',
+                    type: 'GET',
                     delay: 150,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
+                    // headers: {
+                    //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    // },
                     data: {
                         data:query
                     },
@@ -168,16 +182,38 @@ $(document).ready(function() {
     });
 
     function append_row(selected_product,unique_name_id) {
-        let default_purchase_price,variation_id;
+        let default_purchase_price,variation_id,variation;
         if(selected_product.has_variation=='single'){
             default_purchase_price=selected_product.product_variations[0].default_purchase_price;
-            variation_id=selected_product.product_variations[0].id;
+            variation=selected_product.product_variations[0];
+            variation_id=variation.id;
             lastPurchasePrice=selected_product.lastPurchasePrice;
         }else if(selected_product.has_variation=='sub_variable'){
             default_purchase_price=selected_product.default_purchase_price;
+            variation=selected_product.product_variations;
             variation_id=selected_product.variation_id;
             lastPurchasePrice=selected_product.lastPurchasePrice;
 
+        }
+        let newProductData={
+            'id':selected_product.id,
+            'variation_id':variation.id,
+            'product_variations':variation,
+            'uoms':selected_product.uom.unit_category.uom_by_category
+        };
+        const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
+        if(indexToReplace !== -1){
+            productsOnSelectData[indexToReplace] = newProductData;
+        }else{
+            productsOnSelectData=[...productsOnSelectData,newProductData];
+        }
+        let packagingOption='';
+        if(variation.packaging){
+            variation.packaging.forEach((pk)=>{
+                packagingOption+=`
+                    <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name}</option>
+                `;
+            })
         }
         let lot_serial_no_input=lotControl=="on" ? `
             <td>
@@ -190,7 +226,7 @@ $(document).ready(function() {
                 <input type="hidden" class="input_number " value="${selected_product.id}" name="purchase_details[${unique_name_id}][product_id]">
             </td>
             <td class="d-none">
-                <input type="hidden" class="input_number" value="${variation_id}" name="purchase_details[${unique_name_id}][variation_id]">
+                <input type="hidden" class="input_number variation_id" value="${variation_id}" name="purchase_details[${unique_name_id}][variation_id]">
             </td>
             <td>
                 <span  class="text-gray-600 text-hover-primary mb-1 ">${selected_product.name}</span><br>
@@ -202,6 +238,17 @@ $(document).ready(function() {
             <td>
                 <select  name="purchase_details[${unique_name_id}][purchase_uom_id]" class="form-select form-select-sm unit_id" data-kt-repeater="uom_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true" data-placeholder="Select unit"   placeholder="select unit" required>
                     <option value="">Select UOM</option>
+                </select>
+            </td>
+            <td class="fv-row">
+                <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity" name="purchase_details[${unique_name_id}][packaging_quantity]" value="1.00">
+            </td>
+            <td class="fv-row">
+                <select name="purchase_details[${unique_name_id}][packaging_id]" class="form-select form-select-sm package_id"
+                    data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
+                    data-placeholder="Select Package" placeholder="select Package" >
+                    <option value="">Select Package</option>
+                    ${packagingOption}
                 </select>
             </td>
             <td>
@@ -265,6 +312,9 @@ $(document).ready(function() {
             minimumResultsForSearch: Infinity,
             data:uomsData,
         });
+        $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
+            minimumResultsForSearch: Infinity
+        });
         optionSelected(selected_product.purchase_uom_id,$(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`));
         finalsubTotalCal(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`);
         //  $('[data-kt-repeater="uom_select2"]').select2({
@@ -289,8 +339,49 @@ $(document).ready(function() {
         // Select the text in the input field
             $(this).select();
         });
+
         // getUomByUnit(selected_product.unit_id,selected_product.uomset_id,$(`[name="purchase_details[${unique_name_id}][uomset_id]"]`));
         // purchaseValidator.init();
+    }
+    $(document).on('change','.package_id',function(){
+        packaging($(this));
+        // let selectedOption = $(this).find(':selected');
+        // let dataQty = selectedOption.data('qty');
+        // let selectedOptionText = selectedOption.text();
+        // let parent = $(this).closest('.cal-gp');
+        // let qty=parent.find('.purchase_quantity').val();
+
+    })
+    $(document).on('change','.unit_id',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('input','.purchase_quantity',function(){
+        packaging($(this),'/');
+    })
+    $(document).on('input','.package_qty',function(){
+            packaging($(this),'*');
+    })
+    const packaging=(e,operator)=>{
+        let parent = $(e).closest('.cal-gp');
+        let unitQty=parent.find('.purchase_quantity').val();
+        let selectedOption =parent.find('.package_id').find(':selected');
+        let packageInputQty=parent.find('.package_qty').val();
+        let packagingUom=selectedOption.data('uomid');
+        let packageQtyForCal = selectedOption.data('qty');
+
+        let unit_id=parent.find('.unit_id').val();
+        let variation_id=parent.find('.variation_id').val();
+        let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+        if(packageQtyForCal && packagingUom){
+            if(operator=='/'){
+                let unitQtyValByUom=changeQtyOnUom(product.uoms,unitQty,unit_id,packagingUom);
+                parent.find('.package_qty').val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
+            }else{
+                let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
+                let qtyByCurrentUnit= changeQtyOnUom(product.uoms,result,packagingUom,unit_id);
+                parent.find('.purchase_quantity').val(qDecimal(qtyByCurrentUnit));
+            }
+        }
     }
 // ==================================================== Events ================================
 
@@ -598,6 +689,54 @@ $(document).ready(function() {
         });
     }
 
+function changeQtyOnUom(uoms,currentQty,currentUomId,newUomId) {
+    let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
+    let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
+    console.log(newUomInfo,currentUomInfo,newUomId,currentUomId);
+    let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
+    let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
+    let currentUomType = currentUomInfo.unit_type;
+    let newUomType = newUomInfo.unit_type;
+    let newUomRounded = newUomInfo.rounded_amount || 1;
+    let newUomValue=newUomInfo.value;
+    let currentUomValue=currentUomInfo.value;
+    let resultQty;
+    let resultPrice;
+
+    if ( newUomType == 'bigger') {
+        resultQty = currentRefQty / newUomInfo.value;
+    } else if (newUomType == 'smaller') {
+        resultQty = currentRefQty * newUomInfo.value;
+    } else {
+        resultQty = currentRefQty;
+    }
+    return resultQty;
+
+}
+
+function getReferenceUomInfoByCurrentUomQty(qty, currentUom, referenceUom) {
+    const currentUomType = currentUom.unit_type;
+    const currentUomValue = currentUom.value;
+    const referenceUomId = referenceUom.id;
+    const referenceRoundedAmount = isNullOrNan(referenceUom.rounded_amount,4) ;
+    const referenceValue = referenceUom.value;
+
+    let result;
+    if (currentUomType === 'reference') {
+        result = qty * referenceValue;
+    } else if (currentUomType === 'bigger') {
+        result = qty * currentUomValue;
+    } else if (currentUomType === 'smaller') {
+        result = qty / currentUomValue;
+    } else {
+        result = qty;
+    }
+    let roundedResult=result;
+    return {
+        qtyByReferenceUom: roundedResult,
+        referenceUomId: referenceUomId
+    };
+}
 
 });
 

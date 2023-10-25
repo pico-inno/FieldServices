@@ -48,7 +48,6 @@ class businessSettingController extends Controller
             'start_date' => $request->start_date,
 
         ];
-
         if (businessSettings::exists()) {
             businessSettings::first()->update($data);
             return redirect()->back()->with(['success' => 'Successfully updated setting']);

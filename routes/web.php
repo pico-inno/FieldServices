@@ -357,7 +357,7 @@ Route::prefix('purchase')->group(function () {
 
 
         Route::get('{id}/units', 'getUnits');
-        Route::post('/get/product', 'getProductForPurchase');
+        Route::get('/get/product', 'getProductForPurchase');
     });
 });
 

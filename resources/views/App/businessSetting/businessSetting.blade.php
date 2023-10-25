@@ -682,7 +682,7 @@
                                             </x-setting.setting-row>
 
                                             <x-setting.setting-row
-                                                :firstLabel="__('business_settings.quantity_decimal_places')" firstFor="quantity_precision"
+                                                :firstLabel="__('business_settings.quantity_decimal_places')" firstFor="quantity_decimal_places"
                                                 :secLabel="__('business_settings.currency_rounded_method')" secFor="currency_rounded_method"
                                             >
                                                 <x-slot:firstInput>
@@ -695,9 +695,9 @@
                                                     </x-forms.nob-select>
                                                 </x-slot>
                                                 <x-slot:secInput>
-                                                    <x-forms.nob-select name="quantity_decimal_places" id="quantity_decimal_places" :placeholder="__('business_settings.quantity_decimal_places')" >
-                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>RoundUp</option>
-                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>RoundDown</option>
+                                                    <x-forms.nob-select name="currency_rounded_method" id="currency_rounded_method" :placeholder="__('business_settings.quantity_decimal_places')" >
+                                                        <option value="0" @selected($settingData['currency_rounded_method']==0)>RoundUp</option>
+                                                        <option value="1" @selected($settingData['currency_rounded_method']==1)>RoundDown</option>
                                                     </x-forms.nob-select>
                                                 </x-slot>
                                             </x-setting.setting-row>
