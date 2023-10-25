@@ -1,4 +1,4 @@
-
+<script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
     var productsOnSelectData=[];
     $(document).ready(function () {
@@ -129,7 +129,7 @@
 
         // for quick search
         let throttleTimeout;
-        $('.quick-search-form input').on('input', function() {
+        $('.quick-search-form input').on('input',debounce( function() {
             var query = $(this).val().trim();
             let business_location_id = $('#business_location_id').val();
             let data = {
@@ -143,8 +143,9 @@
                 <span><span class="spinner-border spinner-border-sm align-middle me-2"></span>Loading</span>
                 </div>
                 `);
-                clearTimeout(throttleTimeout);
-                throttleTimeout = setTimeout(function() {
+                // clearTimeout(throttleTimeout);
+                // throttleTimeout =
+                setTimeout(function() {
                     $.ajax({
                         url: `/sell/get/product`,
                         type: 'GET',
@@ -223,7 +224,7 @@
                 $('.quick-search-results').addClass('d-none');
                 $('.quick-search-results').empty();
             }
-        });
+        }));
         $('input').off('focus').on('focus', function() {
             // Select the text in the input field
             $(this).select();

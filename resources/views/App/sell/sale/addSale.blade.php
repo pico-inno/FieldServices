@@ -375,6 +375,10 @@
 @push('scripts')
 
 <script>
+    const myModalEl = document.getElementById('suggestionModal')
+    myModalEl.addEventListener('hidden.bs.modal', event => {
+        $('.modal-backdrop').remove();
+    })
     let contacts=@json($customers ?? []);
     var credit_limit=0;
     $(document).on('change','[name="contact_id"]',function(){

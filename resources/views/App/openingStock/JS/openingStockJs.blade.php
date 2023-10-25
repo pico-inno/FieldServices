@@ -1,3 +1,4 @@
+<script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
 $(document).ready(function() {
     let prodcuts;
@@ -56,7 +57,7 @@ $(document).ready(function() {
     let results=[];
     numberOnly();
     let throttleTimeout;
-    $('.quick-search-form input').on('input', function() {
+    $('.quick-search-form input').on('input', debounce(function() {
         var query = $(this).val().trim();
         if (query.length >= 2) {
             $('.quick-search-results').removeClass('d-none');
@@ -69,8 +70,9 @@ $(document).ready(function() {
             //     return result.name.toLowerCase().includes(query.toLowerCase()) || sku;
             // });
 
-            clearTimeout(throttleTimeout);
-            throttleTimeout = setTimeout(function() {
+            // clearTimeout(throttleTimeout);
+            // throttleTimeout =
+            setTimeout(function() {
                 $.ajax({
                     url: `/purchase/get/product`,
                     type: 'GET',
@@ -145,7 +147,7 @@ $(document).ready(function() {
             }
         });
 
-    });
+    }));
     $('#autocomplete').on('click', '.result', function() {
         $('.dataTables_empty').remove();
         $('.quick-search-results').addClass('d-none')
