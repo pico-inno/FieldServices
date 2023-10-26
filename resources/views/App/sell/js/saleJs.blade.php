@@ -492,7 +492,7 @@
                     <td class="fv-row">
                         <select name="sale_details[${unique_name_id}][packaging_id]" class="form-select form-select-sm package_id"
                             data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
-                            data-placeholder="Select Package" placeholder="select Package" required>
+                            data-placeholder="Select Package" placeholder="select Package" >
                             <option value="">Select Package</option>
                             ${packagingOption}
                         </select>

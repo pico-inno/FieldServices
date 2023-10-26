@@ -3,6 +3,7 @@
 namespace App\Models\Product;
 
 use App\Models\Product\UOM;
+use App\Models\productPackaging;
 use App\Models\CurrentStockBalance;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductVariation;
@@ -11,6 +12,7 @@ use App\Models\Product\ProductVariationsTemplates;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -64,6 +66,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariationsTemplates::class);
     }
+    public function product_variations():HasOne
+    {
+        return $this->hasOne(ProductVariation::class,'id', 'variation_id');
+    }
 
     public function category() : BelongsTo
     {
@@ -97,5 +103,14 @@ class Product extends Model
     public function stock()
     {
         return $this->hasMany(CurrentStockBalance::class);
+    }
+    public function variationTemplateValue(): BelongsTo
+    {
+        return $this->belongsTo(VariationTemplateValues::class, 'variation_template_value_id', 'id');
+    }
+
+    public function productPackaging(): HasOne
+    {
+        return $this->hasOne(productPackaging::class, 'product_variation_id', 'id');
     }
 }

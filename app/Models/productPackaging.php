@@ -21,6 +21,7 @@ class productPackaging extends Model
         'package_barcode',
         'for_purchase',
         'for_sale',
+        'package_barcode',
     ];
 
     public function uom()

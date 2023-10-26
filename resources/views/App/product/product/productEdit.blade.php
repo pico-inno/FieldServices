@@ -671,54 +671,97 @@
                                                                 <!--begin::Table body-->
                                                                 <tbody class="fw-semibold text-gray-600 data-table-body"
                                                                     data-repeater-list="packaging_repeater">
-                                                                    @foreach ($packagings as $i=>$packaging)
-                                                                        <tr class=" text-center p-row" data-repeater-item>
-                                                                            <td class="fv-row">
-                                                                                <div class="fv-row text-start">
-                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->packaging_name}}" name="packaging_repeater[{{$i}}][packaging_name]"
-                                                                                        placeholder="Packaging Name" data-placeholder="Packaging Name">
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div class="fv-row text-start">
-                                                                                    <input type="text" class="form-control form-control-sm d-none" value="{{$packaging->id}}" name="packaging_repeater[{{$i}}][packaging_id]" placeholder="Qty"
-                                                                                        data-placeholder="Packaging Name">
-                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->quantity}}"
-                                                                                        name="packaging_repeater[{{$i}}][packaging_quantity]" placeholder="Qty"
-                                                                                        data-placeholder="Packaging Name">
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <select class="form-select form-select-sm unitOfUom" name="packaging_repeater[{{$i}}][packaging_uom_id]"
-                                                                                    data-control="select2" data-kt-select2="true" data-hide-search="true"
-                                                                                    data-placeholder="Select UoM">
-                                                                                    @foreach ($packaging->uom->unit_category->uomByCategory as $uom)
-                                                                                        <option value="{{$uom->id}}" @selected($uom->id == $packaging->uom_id)>{{$uom->name}}</option>
-                                                                                    @endforeach
-                                                                                </select>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div class="form-check float-start  user-select-none">
-                                                                                    <input class="form-check-input" type="checkbox" name="packaging_repeater[{{$i}}][for_purchase]" @checked($packaging->for_purchase) />
-                                                                                    <label class="form-check-label text-start" for="forPurchase">
-                                                                                        For Purchase
-                                                                                    </label>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div class="form-check justify-content-start user-select-none float-start">
-                                                                                    <input class="form-check-input" type="checkbox" name="for_sale" @checked($packaging->for_sale) />
-                                                                                    <label class="form-check-label text-start" for="forSale">
-                                                                                        For Sale
-                                                                                    </label>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td class="text-danger cursor-pointer user-select-none" p-remove>
-                                                                                <i class="fa-solid fa-trash text-danger deleteRow"></i>
-                                                                            </td>
-                                                                        </tr>
+                                                                    @if (count($packagings) >0)
+                                                                        @foreach ($packagings as $i=>$packaging)
+                                                                            <tr class=" text-center p-row" data-repeater-item>
+                                                                                <td class="fv-row">
+                                                                                    <div class="fv-row text-start">
+                                                                                        <input type="text" class="form-control form-control-sm " value="{{$packaging->packaging_name}}" name="packaging_repeater[{{$i}}][packaging_name]"
+                                                                                            placeholder="Packaging Name" data-placeholder="Packaging Name">
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="fv-row text-start">
+                                                                                        <input type="text" class="form-control form-control-sm d-none" value="{{$packaging->id}}" name="packaging_repeater[{{$i}}][packaging_id]" placeholder="Qty"
+                                                                                            data-placeholder="Packaging Name">
+                                                                                        <input type="text" class="form-control form-control-sm " value="{{$packaging->quantity}}"
+                                                                                            name="packaging_repeater[{{$i}}][packaging_quantity]" placeholder="Qty"
+                                                                                            data-placeholder="Packaging Name">
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <select class="form-select form-select-sm unitOfUom" name="packaging_repeater[{{$i}}][packaging_uom_id]"
+                                                                                        data-control="select2" data-kt-select2="true" data-hide-search="true"
+                                                                                        data-placeholder="Select UoM">
+                                                                                        @foreach ($packaging->uom->unit_category->uomByCategory as $uom)
+                                                                                            <option value="{{$uom->id}}" @selected($uom->id == $packaging->uom_id)>{{$uom->name}}</option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="form-check float-start  user-select-none">
+                                                                                        <input class="form-check-input" type="checkbox" name="packaging_repeater[{{$i}}][for_purchase]" @checked($packaging->for_purchase) />
+                                                                                        <label class="form-check-label text-start" for="forPurchase">
+                                                                                            For Purchase
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="form-check justify-content-start user-select-none float-start">
+                                                                                        <input class="form-check-input" type="checkbox" name="for_sale" @checked($packaging->for_sale) />
+                                                                                        <label class="form-check-label text-start" for="forSale">
+                                                                                            For Sale
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="text-danger cursor-pointer user-select-none" p-remove>
+                                                                                    <i class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                                </td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    @else
+                                                                            <tr class=" text-center p-row" data-repeater-item>
+                                                                                <td class="fv-row">
+                                                                                    <div class="fv-row text-start">
+                                                                                        <input type="text" class="form-control form-control-sm " name="packaging_name" placeholder="Packaging Name"
+                                                                                            data-placeholder="Packaging Name">
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="fv-row text-start">
+                                                                                        <input type="text" class="form-control form-control-sm " name="packaging_quantity" placeholder="Qty"
+                                                                                            data-placeholder="Packaging Name">
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="fv-row text-start">
+                                                                                        <select class="form-select form-select-sm unitOfUom" name="packaging_uom_id" data-control="select2"
+                                                                                            data-kt-select2="true" data-hide-search="true" data-placeholder="Select UoM">
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="form-check float-start  user-select-none">
+                                                                                        <input class="form-check-input" type="checkbox" name="for_purchase" />
+                                                                                        <label class="form-check-label text-start" for="forPurchase">
+                                                                                            For Purchase
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="form-check justify-content-start user-select-none float-start">
+                                                                                        <input class="form-check-input" type="checkbox" name="for_sale" />
+                                                                                        <label class="form-check-label text-start" for="forSale">
+                                                                                            For Sale
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="text-danger cursor-pointer user-select-none" p-remove>
+                                                                                    <i class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                                </td>
+                                                                            </tr>
+                                                                    @endif
 
-                                                                    @endforeach
                                                                 </tbody>
                                                             </table>
                                                         </div>
@@ -786,20 +829,20 @@
 @endsection
 
 @push('scripts')
-    <script src="/assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+    <script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
     @include('App.product.JS.productQuickSearch')
 <script>
-
+    let packagingCount=@json(count($packagings));
     $(document).ready(function (){
         $('[data-kt-repeater="uom_select"]').select2();
     });
     $(document).on('click','[p-remove]',function(){
-    $(this).closest('.p-row').remove();
+        $(this).closest('.p-row').remove();
     })
     var currentUoMData=[];
         $('#packaging_repeater').repeater({
-            initEmpty: false,
+            initEmpty: packagingCount > 0 ?false :true,
 
             defaultValues: {
                 'text-input': 'foo'
@@ -1188,7 +1231,7 @@
 
             let toShowSubCategory = false;
             if(!toShowSubCategory){
-                let id = cateSelect.val();
+                let id = cateSelect.val() ?? 0;
                 $.ajax({
                     url: '/category/sub-category/'+id,
                     type: 'GET',
@@ -1324,6 +1367,7 @@
                     $(purchaseUoM).append(defaultOption);
 
                     let oldUoMId = @json($product->purchase_uom_id ?? null);
+                    let data=[];
                     for (let item of results) {
                         let option = document.createElement('option');
                         option.value = item.id;
@@ -1331,8 +1375,14 @@
                         if(item.id == oldUoMId){
                             option.selected = true;
                         }
+                        data=[...data,
+                        {
+                            'id':item.id,
+                            'text':item.name
+                        }]
                         purchaseUoM.append(option);
                     }
+                    currentUoMData=data;
 
                     $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
                 },

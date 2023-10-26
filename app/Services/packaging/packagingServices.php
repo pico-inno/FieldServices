@@ -43,7 +43,7 @@ class packagingServices
         }
 
         foreach ($requests  as $request) {
-            if(productPackaging::where('id', $request['packaging_id'])->exists()){
+            if(productPackaging::where('id', arr($request, 'packaging_id'))->exists()){
                 productPackaging::where('id',$request['packaging_id'])
                 ->first()
                 ->update($this->dataForUpdate($request));
