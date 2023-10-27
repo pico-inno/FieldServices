@@ -1,4 +1,5 @@
 <script>
+    let defaultPriceListId=@json(getSystemData('defaultPriceListId'));
     let locations=@json($locations);
     let setting=@json($setting);
     let symbol=@json($currencySymbol);
@@ -784,7 +785,7 @@
             }).then(()=>{
                 setTimeout(() => {
                     let currentCustomer=customers.find(c=>c.id==id) ?? '';
-                    let priceListId=currentCustomer.price_list_id;
+                    let priceListId=currentCustomer.price_list_id ?? defaultPriceListId;
                     $('#selling_price_group').val(priceListId).trigger('change');
                 }, 500);
             });
@@ -1977,7 +1978,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(results){
-                    // console.log(results)
                     if(results.status === 200){
                         price_lists_with_location = [];
                         price_lists_with_location = results;
@@ -1997,16 +1997,11 @@
                             selectedElement.append(optionForSelectedElement);
                         });
 
-                        var defaultOption = $("<option>")
-                                .val('default_selling_price')
-                                .text('defalut selling price');
-                        selectedElement.append(defaultOption);
-
                         // Add default option
                         if(results.default_price_list){
                             selectedElement.val(results.default_price_list.id).trigger("change");
                         }else{
-                            selectedElement.val('default_selling_price').trigger("change");
+                            selectedElement.val(defaultPriceListId).trigger("change");
                         }
                     }
                 },

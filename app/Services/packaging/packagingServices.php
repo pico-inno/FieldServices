@@ -93,10 +93,12 @@ class packagingServices
      * @return void
      */
     public function packagingForTx($data, $txd_id,$tx_type){
-        if ($data['packaging_id'] && $data['packaging_quantity']) {
-            $packagingData = $this->packagingDataForTx($data, $txd_id, $tx_type);
-            $createdData = productPackagingTransactions::create($packagingData);
-            return $createdData;
+        if(isset($data['packaging_id']) && isset($data['packaging_quantity'])){
+            if ($data['packaging_id'] && $data['packaging_quantity']) {
+                $packagingData = $this->packagingDataForTx($data, $txd_id, $tx_type);
+                $createdData = productPackagingTransactions::create($packagingData);
+                return $createdData;
+            }
         }
     }
     /**

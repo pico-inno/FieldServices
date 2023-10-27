@@ -98,6 +98,7 @@
                     checkStock($(ev.inputElement));
                     cal_balance_amount();
                     getPrice($(ev.inputElement));
+                    packaging($(ev.inputElement),'/');
                 })
             });
                          $('.sale_row').hover(
@@ -213,7 +214,7 @@
                                     });
                                     if (results.length == 1 || (results[0].has_variation =='variable' && results.length== 2)) {
                                         $('.quick-search-results').show();
-                                        if(results[0].total_current_stock_qty>0 || results[0].product_type!="storable"){
+                                        if(results[0].stock_sum_current_quantity>0 || results[0].product_type!="storable"){
                                             setTimeout(() => {
                                                 $(`.result[data-name|='${results[0].name}']`).click();
                                                 $('.quick-search-results').hide();
@@ -620,8 +621,20 @@
             // searching disable in select 2
             $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity});
             $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
-            minimumResultsForSearch: Infinity
+                minimumResultsForSearch: Infinity
             });
+
+            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).select2({
+                minimumResultsForSearch: Infinity,
+                data:uomsData,
+            });
+            if(selected_product.product_packaging){
+                // setTimeout(() => {
+                    console.log(selected_product.product_packaging.id);
+                    $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.product_packaging.uom_id).trigger('change');
+                    $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selected_product.product_packaging.id).trigger('change');
+                // }, 100)
+            };
             // $(`[data-uomSet-select-${unique_name_id}="select2"]`).select2();
             $(`[data-lot-select-${unique_name_id}="select2"]`).select2({
                 // data,
@@ -648,6 +661,7 @@
                     // </td>
             dialerObject.on('kt.dialer.change',function(e) {
                 // checkStock($(`[name="sale_details[${unique_name_id}][quantity]"]`));
+                packaging($(e.inputElement),'/');
                 sale_amount_cal() ;
                 cal_total_sale_amount();
                 subtotalCalculation($(e.inputElement))
@@ -657,10 +671,6 @@
 
 
             })
-            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).select2({
-                minimumResultsForSearch: Infinity,
-                data:uomsData,
-            });
             // optionSelected(selected_product.lot_serial_nos[0],$(`[data-lot-select-${unique_name_id}="select2"]`));
             // optionSelected(selected_product.uom_id,$(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`));
             if(suggestUom){
@@ -774,13 +784,14 @@
             'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
             'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
             'total_current_stock_qty':newSelectedProduct.stock_sum_current_quantity,
-            'aviable_qty':newSelectedProduct.total_current_stock_qty,
+            'aviable_qty':newSelectedProduct.stock_sum_current_quantity,
             'validate':true,
             'uom':newSelectedProduct.uom,
             'uom_id':newSelectedProduct.uom_id,
             'additional_product':newSelectedProduct.product_variations.additional_product,
             'stock':newSelectedProduct.stock,
         };
+        console.log(newProductData,'-------');
         const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
         if(indexToReplace !== -1){
             productsOnSelectData[indexToReplace] = newProductData;
@@ -1002,14 +1013,14 @@
 
         // Attach click event listener to all delete buttons in the table
         $(document).on('click', '#sale_table .deleteRow', function (e) {
-                if ($('#sale_table tbody tr').length-1 == 1) {
-                    $(this).css({
-                        'cursor': 'not-allowed',
-                        'opacity': 0.5
-                    });
-                    event.preventDefault();
-                    return false;
-                }
+                // if ($('#sale_table tbody tr').length-1 == 1) {
+                //     $(this).css({
+                //         'cursor': 'not-allowed',
+                //         'opacity': 0.5
+                //     });
+                //     event.preventDefault();
+                //     return false;
+                // }
                 e.preventDefault();
                         // let id = $(this).data('id');
                         Swal.fire({
@@ -1245,7 +1256,11 @@
 
 
     var priceList;
-    getPriceList(locations[0].price_lists_id);
+    if(locations[0].price_lists_id){
+        getPriceList(locations[0].price_lists_id);
+    }else{
+        getPriceList($('.priceList').val());
+    }
     $('[name="price_list"]').val(locations[0].price_lists_id ?? defaultPriceListId).trigger('change');
     $('[name="price_list"]').change(function(){
         currentPriceList=priceLists.find((p)=>{
@@ -1277,6 +1292,7 @@
             },
             success: function(results){
                 priceList=results;
+                currentPriceList=results;
             }
         })
     }

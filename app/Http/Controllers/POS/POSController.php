@@ -139,7 +139,7 @@ class POSController extends Controller
                     'variationTemplateValue' => function ($q) {
                         $q->select('id', 'name');
                     }, 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
-                    
+
                 ]);
             },
             'stock' => function ($q) use ($business_location_id) {
@@ -442,122 +442,15 @@ class POSController extends Controller
             // \DB::enableQueryLog();
             $default_price_list = businessLocation::with('pricelist')->find($id)->pricelist ?? null;
             $price_lists = PriceLists::with('priceListDetails')->get();
-            $pricelist_details = $price_lists->map->priceListDetails->flatten()->all();
-            $raw_products_with_pricelist = [];
-            foreach($pricelist_details as $index => $value){
-                $apply_type = $value['applied_type'];
-                $apply_value = $value['applied_value'];
-                if($apply_type === 'All'){
-                    $product_with_variations = Product::with('productVariations')->get();
-                    $products = [];
-                    foreach($product_with_variations as $inner_val){
-                        if($inner_val->has_variation === 'single'){
-                            $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
-                        }
-                        if($inner_val->has_variation === 'variable'){
-                            $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
-                        }
-                        $inner_val['pricelist_detail_id'] = $value['id'];
-                        $inner_val['pricelist_id'] = $value['pricelist_id'];
-                        $inner_val['applied_type'] = $value['applied_type'];
-                        $inner_val['applied_value'] = $value['applied_value'];
-                        $inner_val['min_qty'] = $value['min_qty'];
-                        $inner_val['from_date'] = $value['from_date'];
-                        $inner_val['to_date'] = $value['to_date'];
-                        $inner_val['cal_type'] = $value['cal_type'];
-                        $inner_val['cal_value'] = $value['cal_value'];
-                        $inner_val['base_price'] = $value['base_price'];
-                        $products[] = $inner_val;
-                    }
-                    $raw_products_with_pricelist[] = collect($products)->toArray();
-                }
-                if($apply_type === 'Product'){
-                    $product = Product::with('productVariations')->where('id', $apply_value)->first();
-                    if($product && $product->has_variation === 'single'){
-                        $product['product_variation_id'] = $product->productVariations[0]->id;
-                        $product['pricelist_detail_id'] = $value['id'];
-                        $product['pricelist_id'] = $value['pricelist_id'];
-                        $product['applied_type'] = $value['applied_type'];
-                        $product['applied_value'] = $value['applied_value'];
-                        $product['min_qty'] = $value['min_qty'];
-                        $product['from_date'] = $value['from_date'];
-                        $product['to_date'] = $value['to_date'];
-                        $product['cal_type'] = $value['cal_type'];
-                        $product['cal_value'] = $value['cal_value'];
-                        $product['base_price'] = $value['base_price'];
-                        $raw_products_with_pricelist[] = $product;
-                    }
-                    if($product->has_variation === 'variable'){
-                        $product['product_variation_id'] = $product->productVariations->pluck('id')->toArray();
-                        $product['pricelist_detail_id'] = $value['id'];
-                        $product['pricelist_id'] = $value['pricelist_id'];
-                        $product['applied_type'] = $value['applied_type'];
-                        $product['applied_value'] = $value['applied_value'];
-                        $product['min_qty'] = $value['min_qty'];
-                        $product['from_date'] = $value['from_date'];
-                        $product['to_date'] = $value['to_date'];
-                        $product['cal_type'] = $value['cal_type'];
-                        $product['cal_value'] = $value['cal_value'];
-                        $product['base_price'] = $value['base_price'];
-                        $raw_products_with_pricelist[] = $product;
-                    }
-                }
-                if($apply_type === 'Variation'){
-                    $variation = ProductVariation::with('product')->where('id', $apply_value)->first();
-                    if($variation){
-                        $variationData = $variation->toArray();
-                        $variationData['product_variation_id'] = $variation->id;
-                        $variationData['uom_id'] = $variation->product->uom_id;
-                        $variationData['purchase_uom_id'] = $variation->product->purchase_uom_id;
-                        $variationData['pricelist_detail_id'] = $value['id'];
-                        $variationData['pricelist_id'] = $value['pricelist_id'];
-                        $variationData['applied_type'] = $value['applied_type'];
-                        $variationData['applied_value'] = $value['applied_value'];
-                        $variationData['min_qty'] = $value['min_qty'];
-                        $variationData['from_date'] = $value['from_date'];
-                        $variationData['to_date'] = $value['to_date'];
-                        $variationData['cal_type'] = $value['cal_type'];
-                        $variationData['cal_value'] = $value['cal_value'];
-                        $variationData['base_price'] = $value['base_price'];
-                    }
-                    $raw_products_with_pricelist[][0] = $variationData;
-                }
-                if($apply_type === 'Category'){
-                    $raw_products = Product::with('productVariations')->where('category_id', $apply_value)->get();
-                    $products = [];
-                    foreach($raw_products as $inner_val){
-                        if($inner_val->has_variation === 'single'){
-                            $inner_val['product_variation_id'] = $inner_val->productVariations[0]->id;
-                        }
-                        if($inner_val->has_variation === 'variable'){
-                            $inner_val['product_variation_id'] = $inner_val->productVariations->pluck('id')->toArray();
-                        }
-                        $inner_val['pricelist_detail_id'] = $value['id'];
-                        $inner_val['pricelist_id'] = $value['pricelist_id'];
-                        $inner_val['applied_type'] = $value['applied_type'];
-                        $inner_val['applied_value'] = $value['applied_value'];
-                        $inner_val['min_qty'] = $value['min_qty'];
-                        $inner_val['from_date'] = $value['from_date'];
-                        $inner_val['to_date'] = $value['to_date'];
-                        $inner_val['cal_type'] = $value['cal_type'];
-                        $inner_val['cal_value'] = $value['cal_value'];
-                        $inner_val['base_price'] = $value['base_price'];
-                        $products[] = $inner_val;
-                    }
-                    $raw_products_with_pricelist[] = collect($products)->toArray();
-                }
-            }
-            $products_with_pricelist = collect($raw_products_with_pricelist)->flatten(1)->toArray();
             return response()->json([
                 'status' => 200,
                 'default_price_list' => $default_price_list,
                 'price_lists' => $price_lists,
-                'pricelist_details' => $pricelist_details,
-                'products_with_pricelist' => $products_with_pricelist
             ]);
             // $queries = \DB::getQueryLog();
             // Log::error(count($queries));
         } catch (\Exception $e){
+            logger($e);
             return response()->json(['error' => $e->getMessage()], 404);
         }
     }
