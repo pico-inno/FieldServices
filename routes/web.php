@@ -359,6 +359,7 @@ Route::prefix('purchase')->group(function () {
 
         Route::get('{id}/units', 'getUnits');
         Route::get('/get/product', 'getProductForPurchase');
+        Route::get('/get/product/v2', 'getProductForPurchaseV2');
     });
 });
 
@@ -386,6 +387,8 @@ Route::prefix('sell')->group(function () {
         Route::post('/${id}/update', 'update')->name('update_sale');
 
         Route::get('get/product', 'getProduct');
+
+        Route::get('get/product/v2', 'getProductV2');
         Route::get('get/suggestion/product', 'getSuggestionProduct');
         Route::get('{id}/price/list', 'getpriceList');
 

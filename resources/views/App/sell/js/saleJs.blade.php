@@ -147,7 +147,7 @@
                 // throttleTimeout =
                 setTimeout(function() {
                     $.ajax({
-                        url: `/sell/get/product`,
+                        url: `/sell/get/product/v2`,
                         type: 'GET',
                         delay: 150,
                         data: {
@@ -169,22 +169,41 @@
                             products=results;
                                 var html = '';
                                     if (results.length > 0) {
+                                        console.log(results);
+                                        let sku;
+                                        let addedSku=[];
                                         results.forEach(function(result,key) {
+                                            let checkSku=addedSku.find((s)=>s==result.sku);
+                                            if(sku && result.sku==sku && !checkSku){
+                                                html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                                    style="z-index:100;">`;
+                                                    html += `<h4 class="fs-6 ps-10 pt-3">
+                                                        ${result.name}-(selectAll)`;
+                                                    html+='</h4>'
+                                                    // html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
+
+                                                    html += '</div>';
+                                                addedSku=[...addedSku,result.sku];
+                                                $('.quick-search-results').html(html);
+                                            }else{
+                                                sku=result.sku;
+                                            }
                                             if(result.has_variation =='variable' && results.length== 2){
                                                 return;
                                             }
-                                            let total_current_stock_qty=Number(result.total_current_stock_qty);
-                                            let css_class=result.total_current_stock_qty<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
+                                            let total_current_stock_qty=Number(result.stock_sum_current_quantity);
+                                            let css_class=isNullOrNan(result.stock_sum_current_quantity)<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
 
-                                            html += `<div class="quick-search-result result  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
-                                            html += `<h4 class="fs-6  pt-3 ${css_class}">
-                                                    ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :result.sku??'' }`;
-                                                    if(result.has_variation=='sub_variable'){
+                                            html += `<div class="quick-search-result result ps-10  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
+                                            html += `<h4 class="fs-6  pt-3 ${css_class} ">
+                                                    ${result.name} `;
+                                                    if(result.has_variation=='variable'){
                                                         html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
                                                     }
                                             html+='</h4>'
+                                            html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${result.has_variation=='variable'?'SKU : '+result.variation_sku :'SKU : '+result.sku} </span>`
                                             if(result.product_type=="storable"){
-                                                if(result.total_current_stock_qty>0){
+                                                if(result.stock_sum_current_quantity>0){
                                                     html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
                                                 }else{
                                                     html += '<p>Out of Stocks</p>';
@@ -230,24 +249,48 @@
             $(this).select();
         });
         $('#autocomplete').on('click', '.result', function() {
-            let id = $(this).attr('data-id');
-            let selected_product= products[id];
-            let isStorable=selected_product.product_type=="storable";
-            if((selected_product.total_current_stock_qty==0 || selected_product.total_current_stock_qty==null) && isStorable){
-                return;
-            }
 
-            $('.dataTables_empty').addClass('d-none');
-            if(selected_product.has_variation==='variable')
+
+            // $('.dataTables_empty').addClass('d-none');
+            // if(selected_product.has_variation==='variable')
+            // {
+            //     let variation=selected_product.product_variations;
+            //     variation.forEach(v => {
+            //         let t=products.filter(p=>{
+            //             return p.variation_id==v.id
+            //         });
+            //         append_row(t[0],false);
+            //         unique_name_id+=1;
+            //         $('#searchInput').focus();
+            //     });
+            //     return;
+            // }
+            // append_row(selected_product,false);
+            // unique_name_id+=1;
+            // $('#searchInput').focus();
+
+
+            $('.dataTables_empty').remove();
+            $('.quick-search-results').addClass('d-none')
+            let id = $(this).attr('data-id');
+            let name = $(this).attr('data-name');
+            let selected_product;
+            if(id!="selectAll"){
+                selected_product= products[id];
+                let isStorable=selected_product.product_type=="storable";
+                if((selected_product.stock_sum_current_quantity==0 || selected_product.stock_sum_current_quantity==null) && isStorable){
+                    return;
+                }
+            }
+            if(id=="selectAll")
             {
-                let variation=selected_product.product_variations;
-                variation.forEach(v => {
-                    let t=products.filter(p=>{
-                        return p.variation_id==v.id
-                    });
-                    append_row(t[0],false);
+                let productid=$(this).data('productid');
+                let pds=products.filter(p=>{
+                    return p.id==productid
+                });
+                pds.forEach(p => {
+                    append_row(p,unique_name_id);
                     unique_name_id+=1;
-                    $('#searchInput').focus();
                 });
                 return;
             }
@@ -435,7 +478,7 @@
                     `;
                 })
             }
-            $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
+            $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.stock_sum_current_quantity).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
             let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
                 <tr class="sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selected_product.product_variations.id}">
@@ -730,7 +773,7 @@
             'category_id':newSelectedProduct.category_id,
             'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
             'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
-            'total_current_stock_qty':newSelectedProduct.total_current_stock_qty,
+            'total_current_stock_qty':newSelectedProduct.stock_sum_current_quantity,
             'aviable_qty':newSelectedProduct.total_current_stock_qty,
             'validate':true,
             'uom':newSelectedProduct.uom,

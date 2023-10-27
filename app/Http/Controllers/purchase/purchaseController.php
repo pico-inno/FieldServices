@@ -35,6 +35,7 @@ use App\Models\purchases\purchase_details;
 use App\Services\purchase\purchaseService;
 use App\Services\packaging\packagingServices;
 use App\Models\Product\VariationTemplateValues;
+use App\Models\productPackaging;
 
 class purchaseController extends Controller
 {
@@ -583,6 +584,38 @@ class purchaseController extends Controller
                 }
             }
         }
+        return response()->json($products, 200);
+    }
+
+    public function getProductForPurchaseV2(Request $request)
+    {
+        $q = $request->data;
+        $products = Product::select(
+            'products.*',
+            'product_variations.*',
+            'variation_template_values.*',
+            'variation_template_values.name as variation_name',
+            'products.name as name',
+            'products.id as id',
+            'product_variations.id as variation_id'
+        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where('products.name', 'like', '%' . $q . '%')
+            ->orWhere('sku', 'like', '%' . $q . '%')
+            ->orWhere('variation_sku', 'like', '%' . $q . '%')
+            ->orWhereHas('varPackaging', function ($query) use ($q) {
+                $query->where('package_barcode',$q);
+            })
+            ->with([
+                'product_packaging' => function ($query) use ($q) {
+                    $query->where('package_barcode',$q);
+                },
+                'uom' => function ($q) {
+                    $q->with('unit_category.uomByCategory');
+                },
+                'product_variations.packaging'
+            ])
+            ->get()->toArray();
+            // dd(productPackaging::with('product_variations')->get()->toArray());
         return response()->json($products, 200);
     }
 }

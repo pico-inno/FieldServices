@@ -151,7 +151,7 @@
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
                                     <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
-                                    <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card  autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
+                                    <div class="quick-search-results overflow-scroll rounded-1 p-3 position-absolute d-none card w-100 mt-18  card  autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
                             <button class="col-md-3 col-12 p-3 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal  productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button">

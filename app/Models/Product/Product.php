@@ -109,8 +109,12 @@ class Product extends Model
         return $this->belongsTo(VariationTemplateValues::class, 'variation_template_value_id', 'id');
     }
 
-    public function productPackaging(): HasOne
+    public function varPackaging(): HasOne
     {
-        return $this->hasOne(productPackaging::class, 'product_variation_id', 'id');
+        return $this->hasOne(productPackaging::class, 'product_variation_id', 'product_variations.id');
+    }
+    public function product_packaging(): HasOne
+    {
+        return $this->hasOne(productPackaging::class, 'product_id', 'id');
     }
 }

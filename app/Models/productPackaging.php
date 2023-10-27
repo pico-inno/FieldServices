@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\Product\UnitCategory;
 use App\Models\Product\UOM;
+use App\Models\Product\UnitCategory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Product\ProductVariation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class productPackaging extends Model
@@ -21,11 +22,14 @@ class productPackaging extends Model
         'package_barcode',
         'for_purchase',
         'for_sale',
-        'package_barcode',
     ];
 
     public function uom()
     {
        return $this->hasOne(UOM::class,'id','uom_id');
+    }
+    public function product_variations()
+    {
+        return $this->belongsTo(ProductVariation::class, 'product_variation_id', 'id');
     }
 }

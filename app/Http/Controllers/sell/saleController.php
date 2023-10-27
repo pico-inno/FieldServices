@@ -990,6 +990,58 @@ class saleController extends Controller
 
         return response()->json($result, 200);
     }
+    public function getProductV2(Request $request)
+    {
+        $business_location_id = $request->data['business_location_id'];
+        $q = $request->data['query'];
+        $variation_id = $request->data['variation_id'] ?? null;
+
+        $products = Product::select(
+            'products.*',
+            'product_variations.*',
+            'variation_template_values.*',
+            'variation_template_values.name as variation_name',
+            'products.name as name',
+            'products.id as id',
+            'product_variations.id as variation_id',
+            'variation_template_values.id as variation_template_values_id'
+        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where('can_sale', 1)
+            ->where('products.name', 'like', '%' . $q . '%')
+            ->orWhere('products.sku', 'like', '%' . $q . '%')
+            ->whereNull('products.deleted_at')
+            ->orWhere('variation_sku', 'like', '%' . $q . '%')
+            ->orWhereHas('varPackaging', function ($query) use ($q) {
+                $query->where('package_barcode',$q);
+            })
+            ->when($variation_id, function ($query) use ($variation_id) {
+                $query->where('product_variations.id', $variation_id);
+            })
+            ->with([
+                'product_packaging' => function ($query) use ($q) {
+                    $query->where('package_barcode',$q);
+                },
+                'uom',
+                'uom.unit_category.uomByCategory',
+                'product_variations.packaging',
+                'product_variations.additionalProduct.productVariation.product',
+                'product_variations.additionalProduct.uom',
+                'product_variations.additionalProduct.productVariation.variationTemplateValue',
+                'stock' => function ($query) use ($business_location_id) {
+                    $locationIds = childLocationIDs($business_location_id);
+                    $query->where('current_quantity', '>', 0)
+                    ->whereIn('business_location_id', $locationIds);
+                }
+            ])
+            ->withSum(['stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->whereIn('business_location_id', $locationIds);
+            }], 'current_quantity')
+            ->get()->toArray();
+            // dd(productPackaging::with('product_variations')->get()->toArray());
+        return response()->json($products, 200);
+    }
     public function getSuggestionProduct(Request $request)
     {
         $locationId = $request['locationId'];
