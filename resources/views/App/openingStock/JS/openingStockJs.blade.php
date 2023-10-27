@@ -74,7 +74,7 @@ $(document).ready(function() {
             // throttleTimeout =
             setTimeout(function() {
                 $.ajax({
-                    url: `/purchase/get/product`,
+                    url: `/purchase/get/product/v2`,
                     type: 'GET',
                     delay:150,
                     // headers: {
@@ -93,39 +93,54 @@ $(document).ready(function() {
                             error(' Something Went Wrong! Error Status: '+status )
                         };
                     },success:function(e){
-                        results=e;
+                           results=e;
                         products=e;
                         var html = '';
                         // products=results;
-                        if (results.length > 0) {
-                            console.log(results);
+                        console.log(results.length);
+                        if (results.length > 0 && Array.isArray(results)) {
+                            let sku;
+                            let addedSku=[];
+
                             results.forEach(function(result,key) {
-                                html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
-                                html += `<h4 class="fs-6 ps-10 pt-3">
-                                    ${result.name} ${result.has_variation==='variable'?'-('+result.product_variations.length+') select all' :''}`;
-                                if(result.has_variation=='sub_variable'){
-                                    html +=  `<span class="text-gray-700 fw-semibold p-1 fs-5">(${result.variation_name??''})</span>`;
+                                let checkSku=addedSku.find((s)=>s==result.sku);
+                                if(sku && result.sku==sku && !checkSku){
+                                    html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                        style="z-index:100;">`;
+                                        html += `<h4 class="fs-6 ps-10 pt-3">
+                                            ${result.name}-(selectAll)`;
+                                        html+='</h4>'
+                                        // html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
+
+                                        html += '</div>';
+                                    addedSku=[...addedSku,result.sku];
+                                    $('.quick-search-results').html(html);
+                                }else{
+                                    sku=result.sku;
                                 }
 
+                                html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
+                                html += `<h4 class="fs-6 ps-10 pt-3">
+                                    ${result.name}-${result.variation_name ? '('+result.variation_name+')': ''}`;
                                 html+='</h4>'
                                 html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
 
                                 html += '</div>';
-
-                                //
                             });
                             if (results.length == 1) {
-                            $('.quick-search-results').show();
-                                setTimeout(() => {
-                                    $(`.result[data-name|='${results[0].name}']`).click();
-                                    $('.quick-search-results').hide();
-                                }, 100);
+                                $('.quick-search-results').show();
+                                    setTimeout(() => {
+                                        $(`.result[data-name|='${results[0].name}']`).click();
+                                        $('.quick-search-results').hide();
+                                    }, 100);
+                                } else {
+                                    $('.quick-search-results').show();
+                                }
+
                             } else {
                                 $('.quick-search-results').show();
+                                html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
                             }
-                        } else {
-                            html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
-                        }
                         $('.quick-search-results').removeClass('d-none')
                         $('.quick-search-results').html(html);
 
@@ -149,19 +164,19 @@ $(document).ready(function() {
 
     }));
     $('#autocomplete').on('click', '.result', function() {
-        $('.dataTables_empty').remove();
+         $('.dataTables_empty').remove();
         $('.quick-search-results').addClass('d-none')
         let id = $(this).attr('data-id');
         let name = $(this).attr('data-name');
         let selected_product= results[id] ?? results[0];
-        if(selected_product.has_variation==='variable')
+        if(id=="selectAll")
         {
-            let variation=selected_product.product_variations;
-            variation.forEach(v => {
-                let t=products.filter(p=>{
-                    return p.variation_id==v.id
-                });
-                append_row(t[0],unique_name_id);
+            let productid=$(this).data('productid');
+            let pds=products.filter(p=>{
+                return p.id==productid
+            });
+            pds.forEach(p => {
+                append_row(p,unique_name_id);
                 unique_name_id+=1;
             });
             return;
@@ -172,18 +187,12 @@ $(document).ready(function() {
 
     function append_row(selected_product,unique_name_id) {
         let default_purchase_price,variation_id;
-        if(selected_product.has_variation=='single'){
-            default_purchase_price=selected_product.product_variations[0].default_purchase_price;
-            variation=selected_product.product_variations[0];
-            variation_id=variation.id;
-        }else if(selected_product.has_variation=='sub_variable'){
-            default_purchase_price=selected_product.default_purchase_price;
-            variation=selected_product.product_variations;
-            variation_id=variation.variation_id;
-        }
+        default_purchase_price=selected_product.default_purchase_price;
+        variation=selected_product.product_variations;
+        variation_id=selected_product.variation_id;
         let newProductData={
             'id':selected_product.id,
-            'variation_id':variation.id,
+            'variation_id':variation_id,
             'product_variations':variation,
             'uoms':selected_product.uom.unit_category.uom_by_category
         };
@@ -281,6 +290,13 @@ $(document).ready(function() {
         $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
             minimumResultsForSearch: Infinity
         });
+
+        if(selected_product.product_packaging){
+            setTimeout(() => {
+                    $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.product_packaging.uom_id).trigger('change');
+                    $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selected_product.product_packaging.id).trigger('change');
+            }, 100)
+        };
         subtotalCal(`[data-kt-repeater="uom_select_${unique_name_id}"]`);
         //  $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).select2({
         //         data:uom_set

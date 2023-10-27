@@ -133,18 +133,19 @@
                                 html += '</div>';
                             });
                             if (results.length == 1) {
-                            $('.quick-search-results').show();
-                                setTimeout(() => {
-                                    $(`.result[data-name|='${results[0].name}']`).click();
-                                    $('.quick-search-results').hide();
-                                }, 100);
+                                $('.quick-search-results').show();
+                                    setTimeout(() => {
+                                        $(`.result[data-name|='${results[0].name}']`).click();
+                                        $('.quick-search-results').hide();
+                                    }, 100);
+                                } else {
+                                    $('.quick-search-results').show();
+                                }
+
                             } else {
                                 $('.quick-search-results').show();
+                                html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
                             }
-                        } else {
-                            $('.quick-search-results').show();
-                            html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
-                        }
                         $('.quick-search-results').removeClass('d-none')
                         $('.quick-search-results').html(html);
 
@@ -189,8 +190,6 @@
     });
 
     function append_row(selected_product,unique_name_id) {
-        console.log(selected_product);
-        console.log(selected_product.variation_id,'sdfsdfs');
         let default_purchase_price,variation_id,variation;
         // if(selected_product.has_variation=='single'){
         //     default_purchase_price=selected_product.product_variations.default_purchase_price;
