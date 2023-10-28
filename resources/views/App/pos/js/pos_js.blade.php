@@ -808,7 +808,7 @@
                     // Loop through each item in the response data
                     $.each(result, function(index, item) {
                         productsHtml += `
-                        <div class="p-1 col-lg-2 col-md-2 col-2 min-w-125px cursor-pointer each_product">
+                        <div class="p-1 col-lg-2 col-md-2 col-2 min-w-125px cursor-pointer each_product user-select-none">
                             <div class="card">
                                 <input type="hidden" name="category_id" value="${item.category_id}">
                                 <input type="hidden" name="sub_category_id" value="${item.sub_category_id}">
@@ -971,6 +971,7 @@
         })
 
         $('#all_product_list').on('click', '.each_product', function(e) {
+            console.log('click');
             let variation_id = $(this).find('input[name="product_variation_id"]').val();
             let checkProduct= productsOnSelectData.find(p=>p.variation_id==variation_id);
             if(setting.enable_row == 0 ){
@@ -1068,11 +1069,11 @@
         }
 
         function showSuggestion(additionalProduct,unique_name_id,parentSaleDetailId=null) {
-            var modal = $('#suggestionModal');
-            var isModalOpen = modal.hasClass('show');
+            let modal = $('#suggestionModal');
+            let isModalOpen = modal.hasClass('show');
             if(additionalProduct.length>0 && !isModalOpen){
                 $('#suggestionProducts').html('');
-                var modal = new bootstrap.Modal($('#suggestionModal'));
+                modal = new bootstrap.Modal($('#suggestionModal'));
                 additionalProduct.forEach(ap => {
                     let productInfo=ap.product_variation.product;
                     let product={name:productInfo.name,id:productInfo.id};
@@ -1142,8 +1143,8 @@
                                     uniqueNameId++;
                                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                                     setTimeout(() => {
-                                        console.log(newInvoiceSidebar);
                                         changeQtyOnUom(newInvoiceSidebar, product.uom.id);
+                                        suggestionProductEvent()
                                         totalSubtotalAmountCalculate();
                                         totalDisPrice();
                                     }, 50);
@@ -1792,6 +1793,7 @@
 
         // Sale With Payment
         $(document).on('click', '.payment_save_btn', function() {
+            console.log('click');
             if(checkContact()){
                 let dataForSale = datasForSale('delivered',false,true,true);
 
