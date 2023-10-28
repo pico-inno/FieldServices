@@ -80,7 +80,9 @@
                                 @foreach ($openingStockDetails as $key=>$osd)
                                     @php
                                         $p=$osd->product;
-                                        $product_variation =$osd->toArray()['product_variation'];
+                                        if($p){
+                                            $product_variation =$osd->toArray()['product_variation'];
+                                        }
                                     @endphp
                                     <tr class="text-center">
                                         <!--begin::Name=-->
@@ -90,7 +92,7 @@
                                         <!--end::Name=-->
                                         <!--begin::Email=-->
                                         <td>
-                                            {{$p->name}}
+                                            {{arr($p,'name','','Unknown Product')}}
                                             @if(isset($product_variation['variation_template_value']))
                                                 <span class="my-2 d-block">
                                                     ({{ $product_variation['variation_template_value']['name'] }})

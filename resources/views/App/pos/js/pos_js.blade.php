@@ -31,9 +31,9 @@
 <script src="{{ asset('customJs/pos/filter_products.js') }}"></script>
 
 <script>
-const myModalEl = document.getElementById('suggestionModal')
+    const myModalEl = document.getElementById('suggestionModal')
     myModalEl.addEventListener('hidden.bs.modal', event => {
-    $('.modal-backdrop').remove();
+        $('.modal-backdrop').remove();
     })
 
         let getReferenceUomInfoByCurrentUomQty = (qty, currentUom, referenceUom) => {
@@ -900,7 +900,6 @@ const myModalEl = document.getElementById('suggestionModal')
                     products = results;
                     if(results.length > 0){
                         $(results).each(function(index, element){
-                            console.log(element,'----------');
                             let css_class='';
                             if(element.product_type=='storable'){
                                  css_class = element.stock_sum_current_quantity !== 0  ? " " : " text-gray-500 order-3 not-use";
@@ -946,21 +945,21 @@ const myModalEl = document.getElementById('suggestionModal')
                 return;
             }
 
-            if(selected_product.has_variation === 'variable'){
-                let variation = selected_product.product_variations;
-                variation.forEach(variation => {
-                    let filteredId = products.filter( p => p.variation_id === variation.id);
-                    let newInvoiceSidebar = $(invoiceSidebar(filteredId[0]));
-                    $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
-                    suggestionProductEvent();
-                    uniqueNameId++;
-                    $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
-                    changeQtyOnUom(newInvoiceSidebar, filteredId[0].uom.id);
-                });
-                totalSubtotalAmountCalculate();
-                totalDisPrice();
-                return;
-            }
+            // if(selected_product.has_variation === 'variable'){
+            //     let variation = selected_product.product_variations;
+            //     variation.forEach(variation => {
+            //         let filteredId = products.filter( p => p.variation_id === variation.id);
+            //         let newInvoiceSidebar = $(invoiceSidebar(filteredId[0]));
+            //         $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
+            //         suggestionProductEvent();
+            //         uniqueNameId++;
+            //         $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
+            //         changeQtyOnUom(newInvoiceSidebar, filteredId[0].uom.id);
+            //     });
+            //     totalSubtotalAmountCalculate();
+            //     totalDisPrice();
+            //     return;
+            // }
             let newInvoiceSidebar = $(invoiceSidebar(selected_product));
             $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
             suggestionProductEvent();
@@ -1069,7 +1068,9 @@ const myModalEl = document.getElementById('suggestionModal')
         }
 
         function showSuggestion(additionalProduct,unique_name_id,parentSaleDetailId=null) {
-            if(additionalProduct.length>0){
+            var modal = $('#suggestionModal');
+            var isModalOpen = modal.hasClass('show');
+            if(additionalProduct.length>0 && !isModalOpen){
                 $('#suggestionProducts').html('');
                 var modal = new bootstrap.Modal($('#suggestionModal'));
                 additionalProduct.forEach(ap => {

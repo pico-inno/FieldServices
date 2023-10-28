@@ -72,10 +72,10 @@ class purchaseService
                 ';
             })
             ->editColumn('location', function ($purchase) {
-                return businessLocationName($purchase->businessLocation);
+                return businessLocationName(arr($purchase, 'businessLocation'));
             })
             ->editColumn('supplier', function ($purchase) {
-                return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
+                return arr($purchase->supplier, 'company_name') ?? arr($purchase->supplier, 'first_name');
             })
 
             ->editColumn('date', function ($purchase) {

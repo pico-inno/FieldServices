@@ -248,7 +248,7 @@
                                             </td>
                                             <td class="fv-row">
                                                 <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
-                                                    name="sale_details[{{$key}}][packaging_quantity]" value="{{$sale_detail['packagingTx']['quantity']}}">
+                                                    name="sale_details[{{$key}}][packaging_quantity]" value="{{arr($sale_detail['packagingTx'],'quantity')}}">
                                             </td>
                                             <td class="fv-row">
                                                 <select name="sale_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
@@ -256,7 +256,7 @@
                                                     data-placeholder="Select Package" placeholder="select Package" required>
                                                     <option value="">Select Package</option>
                                                     @foreach ($product_variation['packaging'] as $package)
-                                                    <option @selected($package['id']==$sale_detail['packagingTx']['product_packaging_id'])
+                                                    <option @selected($package['id']==arr($sale_detail['packagingTx'],'product_packaging_id'))
                                                         data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
                                                         {{$package['packaging_name']}}</option>
                                                     @endforeach

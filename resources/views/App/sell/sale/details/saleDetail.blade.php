@@ -115,7 +115,9 @@
                                         @php
                                             // dd($sd);
                                             $p=$sd->product;
-                                            $product_variation =$sd->toArray()['product_variation'];
+                                            if($p){
+                                                $product_variation =$sd->toArray()['product_variation'];
+                                            }
                                             $currency=$sd->currency['symbol'] ?? ' ';
                                             $quantityDp=getSettingValue('quantity_decimal_places');
                                         @endphp
@@ -124,16 +126,16 @@
                                             <td class="d-flex align-items-center pt-6">
                                                 <div href="" class="symbol symbol-40px me-2">
                                                     <span class="symbol-label" style="background-image:url({{asset("
-                                                        storage/product-image/$p->image")}});"></span>
+                                                        storage/product-image/arr($p,'image')")}});"></span>
                                                 </div>
-                                                {{$p->name}}
+                                                {{arr($p,'name','','Unknown Product')}}
                                                 @if(isset($product_variation['variation_template_value']))
                                                 <span class="my-2 d-block">
                                                     ({{ $product_variation['variation_template_value']['name'] }})
                                                 </span>
                                                 @endif
                                             </td>
-                                            <td class="pt-6">{{round($sd->packagingTx->quantity,$quantityDp)}}({{$sd->packagingTx->packaging->packaging_name}})</td>
+                                            <td class="pt-6">{{$sd->packagingTx ? round(arr($sd->packagingTx,'quantity') ,$quantityDp): ''}} {{$sd->packagingTx ? '('.$sd->packagingTx->packaging->packaging_name.')' : ''}}</td>
                                             <td class="pt-6">{{round($sd->quantity,$quantityDp)}}</td>
                                             @if ($sale['status']=='partial')
                                                 <td class="min-w-100px">{{round($sd->delivered_quantity ?? 0,$currencyDp)}}</td>

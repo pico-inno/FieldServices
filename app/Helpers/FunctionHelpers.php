@@ -313,11 +313,11 @@ function getParentName($parentLocation){
     }
 }
 
-function arr($array,$key,$seperator='') {
+function arr($array,$key,$seperator='',$noneVal='') {
     if(isset($array[$key])){
         return $seperator != '' ? $array[$key].$seperator: $array[$key];
     }else{
-        return '';
+        return $noneVal;
     }
 }
 function businessLocationName($bl)

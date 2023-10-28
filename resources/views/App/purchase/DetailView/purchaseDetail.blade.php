@@ -108,42 +108,45 @@
                                     @foreach ($purchase_details as $key=>$pd)
                                     @php
                                     // dd($pd);
-                                    $p=$pd->product;
-                                    $product_variation =$pd->toArray()['product_variation'];
-                                    // dd($pd->toArray());
-                                    $pdCurrency=$pd->currency['symbol'] ?? ' ';
-
-                                    $quantityDp=getSettingValue('quantity_decimal_places');
+                                        $p=$pd->product;
+                                        if($p){
+                                            $product_variation =$pd->toArray()['product_variation'];
+                                        }
+                                            // dd($pd->toArray());
+                                        $pdCurrency=$pd->currency['symbol'] ?? ' ';
+                                        $quantityDp=getSettingValue('quantity_decimal_places');
                                     @endphp
-                                    <tr class="fw-bold text-gray-700 fs-7 text-end">
-                                        <td class="pt-6 text-start ps-2">{{$key+1}}</td>
-                                        <td class="d-flex align-items-center pt-6">
-                                            <div href="" class="symbol symbol-40px me-2">
-                                                <span class="symbol-label" style="background-image:url({{asset("
-                                                    storage/product-image/$p->image")}});"></span>
-                                            </div>
-                                            {{$p->name}}
-                                            @if(isset($product_variation['variation_template_value']))
-                                            <span class="my-2 d-block">
-                                                ({{ $product_variation['variation_template_value']['name'] }})
-                                            </span>
-                                            @endif
-                                        </td>
-                                        <td class="pt-6">{{$pd->packagingTx ? round(arr($pd->packagingTx,'quantity') ,$quantityDp): ''}} {{$pd->packagingTx ? '('.$pd->packagingTx->packaging->packaging_name.')' : ''}}</td>
-                                        <td class="pt-6">{{round($pd->quantity,$quantityDp)}}</td>
-                                        <td class="pt-6">{{$pd->toArray()['purchase_uom']['name']}}</td>
-                                        <td class="pt-6">{{price($pd->uom_price ?? 0,$pd->currency_id)}}</td>
-                                        <td class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
-                                            {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{
-                                            $pd->discount_type=='percentage'?'%':$pdCurrency }}</td>
-                                        <td
-                                            class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
-                                            {{price($pd->subtotal_with_discount,$pd->currency_id)}}</td>
-                                        <td class="pt-6">{{price($pd->per_item_expense,$pd->currency_id)}}</td>
-                                        <td class="pt-6 text-dark fw-bolder">
-                                            {{price($pd->subtotal_with_tax,$pd->currency_id)}}</td>
-                                        {{-- <td class="pt-6 text-dark fw-bolder">$3200.00</td> --}}
-                                    </tr>
+                                    {{-- @if($p) --}}
+                                        <tr class="fw-bold text-gray-700 fs-7 text-end">
+                                            <td class="pt-6 text-start ps-2">{{$key+1}}</td>
+                                            <td class="d-flex align-items-center pt-6">
+                                                <div href="" class="symbol symbol-40px me-2">
+                                                    <span class="symbol-label" style="background-image:url({{asset("
+                                                        storage/product-image/arr($p,'image')")}});"></span>
+                                                </div>
+                                                {{arr($p,'name','','Unknown Product')}}
+                                                @if(isset($product_variation['variation_template_value']))
+                                                <span class="my-2 d-block">
+                                                    ({{ $product_variation['variation_template_value']['name'] }})
+                                                </span>
+                                                @endif
+                                            </td>
+                                            <td class="pt-6">{{$pd->packagingTx ? round(arr($pd->packagingTx,'quantity') ,$quantityDp): ''}} {{$pd->packagingTx ? '('.$pd->packagingTx->packaging->packaging_name.')' : ''}}</td>
+                                            <td class="pt-6">{{round($pd->quantity,$quantityDp)}}</td>
+                                            <td class="pt-6">{{$pd->toArray()['purchase_uom']['name']}}</td>
+                                            <td class="pt-6">{{price($pd->uom_price ?? 0,$pd->currency_id)}}</td>
+                                            <td class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                                {{round($pd->per_item_discount ?? 0,2)}}&nbsp;{{
+                                                $pd->discount_type=='percentage'?'%':$pdCurrency }}</td>
+                                            <td
+                                                class="pt-6 {{$setting->enable_line_discount_for_purchase == 1 ? '' :'d-none'}}">
+                                                {{price($pd->subtotal_with_discount,$pd->currency_id)}}</td>
+                                            <td class="pt-6">{{price($pd->per_item_expense,$pd->currency_id)}}</td>
+                                            <td class="pt-6 text-dark fw-bolder">
+                                                {{price($pd->subtotal_with_tax,$pd->currency_id)}}</td>
+                                            {{-- <td class="pt-6 text-dark fw-bolder">$3200.00</td> --}}
+                                        </tr>
+                                    {{-- @endif --}}
                                     @endforeach
 
 

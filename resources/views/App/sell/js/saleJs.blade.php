@@ -709,19 +709,19 @@
         }
 
 
-    // function suggestionProductEvent() {
-    //         $('.suggestProductBtn').off('click').on('click',function(){
-    //             let variationId=$(this).data('varid');
-    //             let parentuiqId=$(this).data('uniquenameid');
-    //             let parentSaleDetailId=$(this).data('parentsaledetailid')?? null;
-    //             let product = productsOnSelectData.find(function(pd) {
-    //                 return  variationId == pd.variation_id;
-    //             });
-    //             let additionalProduct=product.additional_product;
-    //             showSuggestion(additionalProduct,parentuiqId,parentSaleDetailId);
-    //         })
+    function suggestionProductEvent() {
+            $('.suggestProductBtn').off('click').on('click',function(){
+                let variationId=$(this).data('varid');
+                let parentuiqId=$(this).data('uniquenameid');
+                let parentSaleDetailId=$(this).data('parentsaledetailid')?? null;
+                let product = productsOnSelectData.find(function(pd) {
+                    return  variationId == pd.variation_id;
+                });
+                let additionalProduct=product.additional_product;
+                showSuggestion(additionalProduct,parentuiqId,parentSaleDetailId);
+            })
 
-    // }
+    }
     $(document).on('change','.suggestProductBtn',function() {
             let variationId=$(this).data('varid');
             let parentuiqId=$(this).data('uniquenameid');
