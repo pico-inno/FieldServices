@@ -31,7 +31,10 @@
 <script src="{{ asset('customJs/pos/filter_products.js') }}"></script>
 
 <script>
-
+const myModalEl = document.getElementById('suggestionModal')
+    myModalEl.addEventListener('hidden.bs.modal', event => {
+    $('.modal-backdrop').remove();
+    })
 
         let getReferenceUomInfoByCurrentUomQty = (qty, currentUom, referenceUom) => {
             const currentUomType = currentUom.unit_type;
