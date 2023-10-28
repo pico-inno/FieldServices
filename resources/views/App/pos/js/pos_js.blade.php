@@ -815,8 +815,9 @@
                                 <input type="hidden" name="product_id" value="${item.id}">
                                 <input type="hidden" name="product_variation_id" value="${item.product_variation_id}">
                                 <div class="card-body text-center p-3">
-                                    ${item.image ? `<img src="/storage/product-image/${item.image}" class="rounded-3 mb-4 w-80px h-80px w-xxl-100px h-xxl-100px" alt="" />` :
-                                    `<img src="{{asset('assets/media/svg/files/blank-image.svg')}}" class="rounded-3 mb-4 w-80px h-80px w-xxl-100px h-xxl-100px" alt="" />`}
+                                  ${item.image ? `<img src="/storage/product-image/${item.image}" class="rounded-3 mb-4 w-60px h-60px w-xxl-100px h-xxl-100px" alt="" />` :
+                                    `<img src="{{asset('assets/media/svg/files/blank-image.svg')}}" class="rounded-3 theme-light-show mb-4 w-60px h-60px w-xxl-100px h-xxl-100px" alt="" />
+                                    <img src="{{asset('assets/media/svg/files/blank-image-dark.svg')}}" class="rounded-3 theme-dark-show mb-4 w-60px h-60px w-xxl-100px h-xxl-100px" alt="" />`}
                                     <div class="mb-2">
                                         <div class="text-center">
                                             <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-7 mb-3 pos-product-name">${item.name}</span>
@@ -877,7 +878,7 @@
             }
 
             $.ajax({
-                url: `/sell/get/product`,
+                url: `/sell/get/product/v2`,
                 type: 'GET',
                 data: {
                     data,
@@ -896,14 +897,14 @@
                     products = results;
                     if(results.length > 0){
                         $(results).each(function(index, element){
-                            // console.log(element)
+                            console.log(element,'----------');
                             let css_class='';
                             if(element.product_type=='storable'){
-                                 css_class = element.total_current_stock_qty !== 0  ? " " : " text-gray-500 order-3 not-use";
+                                 css_class = element.stock_sum_current_quantity !== 0  ? " " : " text-gray-500 order-3 not-use";
                             }
-                            let product_countOrSku = element.has_variation === 'variable' ? element.product_variations.length : element.sku;
+                            let product_countOrSku = element.has_variation === 'variable' ? element.variation_sku : element.sku;
                             // let stock_qty = element.total_current_stock_qty !== 0 ? element.total_current_stock_qty * 1 + ' ' + element.smallest_unit : 'Out of Stocks';
-                            let vari_name_or_selectAll = element.has_variation === 'sub_variable' ? element.variation_name : 'select all';
+                            let vari_name_or_selectAll = element.has_variation === 'variable' ? element.variation_name : 'select all';
                             let unit = element.uom.name;
 
                             $('#search_container').append(searchNewRow(index, element.id, element.has_variation, element.variation_id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
