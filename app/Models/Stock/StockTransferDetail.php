@@ -10,6 +10,7 @@ use App\Models\Product\Unit;
 use App\Models\Product\UOM;
 use App\Models\Product\UOMSet;
 use App\Models\Product\VariationTemplateValues;
+use App\Models\productPackagingTransactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -87,6 +88,11 @@ class StockTransferDetail extends Model
     public function currency()
     {
         return $this->hasOne(Currencies::class, 'id', 'currency_id');
+    }
+
+    public function packagingTx() {
+        return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'id')
+            ->where('transaction_type','transfer');
     }
 
 }

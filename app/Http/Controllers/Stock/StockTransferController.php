@@ -14,6 +14,7 @@ use App\Models\Product\Product;
 use App\Models\Product\Unit;
 use App\Models\Product\UOM;
 use App\Models\Product\UOMSet;
+use App\Models\productPackagingTransactions;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Stock\Stockout;
@@ -86,6 +87,7 @@ class StockTransferController extends Controller
      */
     public function store(StoreStockTransferRequest $request)
     {
+
         DB::transaction(function () use ($request) {
             $settings = businessSettings::all()->first();
             $transfer_details = $request->transfer_details;
@@ -128,7 +130,7 @@ class StockTransferController extends Controller
                     'created_at' => now(),
                     'created_by' => Auth::id(),
                 ]);
-
+                $this->createProductPackagingTransaction($action = 'create', $transfer_detail, $transferDetail->id);
                 $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($transfer_detail['quantity'], $transfer_detail['uom_id']);
                 $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
                 $qtyToIncrease = $referenceUomInfo['qtyByReferenceUom'];
@@ -305,10 +307,13 @@ class StockTransferController extends Controller
                 $currency=$this->currency;
                 $transfer = StockTransfer::with('currency')->where('id', $stockTransfer->id)->get()->first();
                 $business_location_id=$transfer->from_location;
-                $stock_transfer_details = StockTransferDetail::with(['currency',
+                $stock_transfer_details = StockTransferDetail::with([
+                    'packagingTx',
+                    'currency',
                     'productVariation' => function ($q) {
                         $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                             ->with([
+                                'packaging',
                                 'product' => function ($q) {
                                     $q->select('id', 'name', 'product_type');
                                 },
@@ -335,6 +340,7 @@ class StockTransferController extends Controller
                     }], 'current_quantity');
                 $transfer_details= $stock_transfer_details->get();
 
+
                 return view('App.stock.transfer.edit', [
                     'stockTransfer' => $stockTransfer,
                     'stock_transfer_details' => $transfer_details,
@@ -356,10 +362,13 @@ class StockTransferController extends Controller
             $currency=$this->currency;
             $transfer = StockTransfer::with('currency')->where('id', $stockTransfer->id)->get()->first();
             $business_location_id=$transfer->from_location;
-            $stock_transfer_details = StockTransferDetail::with(['currency',
+            $stock_transfer_details = StockTransferDetail::with([
+                'packagingTx',
+                'currency',
                 'productVariation' => function ($q) {
                     $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                         ->with([
+                            'packaging',
                             'product' => function ($q) {
                                 $q->select('id', 'name', 'product_type');
                             },
@@ -400,11 +409,6 @@ class StockTransferController extends Controller
 
 
 
-
-
-
-
-
     }
 
     /**
@@ -419,9 +423,10 @@ class StockTransferController extends Controller
 
         $settings =  businessSettings::all()->first();
 
-
+//return $requestStocktransferDetails;
         DB::beginTransaction();
         try {
+
             if($oldStatus != 'completed'){
                 $existingTransferDetailIds = [];
 
@@ -443,7 +448,7 @@ class StockTransferController extends Controller
                 // ========== Being:: Update existing row ==========
                 foreach ($existingTransferDetails as $transferDetail) {
                     $transferDetailId = $transferDetail['transfer_detail_id'];
-
+                    $this->createProductPackagingTransaction($action = 'edit',$requestStocktransferDetails, $transferDetailId);
 
                     $newQty = $transferDetail['quantity'];
                     $beforeEditQty = $transferDetail['before_edit_quantity'];
@@ -994,6 +999,30 @@ class StockTransferController extends Controller
 
         return response()->json($data, 200);
 
+    }
+
+    public function createProductPackagingTransaction($action,$details, $transaction_details_id = null){
+        foreach ($details as $detail){
+            if($action == 'create'){
+                productPackagingTransactions::create([
+                    'transaction_type' => 'transfer',
+                    'transaction_details_id' => $transaction_details_id,
+                    'product_packaging_id' => $detail['packaging_id'],
+                    'quantity' => $detail['packaging_quantity'],
+                    'created_by' => Auth::id(),
+                ]);
+            }
+            if($action == 'edit'){
+                productPackagingTransactions::where('transaction_type', 'transfer')
+                    ->where('transaction_details_id', $transaction_details_id)
+                    ->update([
+                        'product_packaging_id' => $detail['packaging_id'],
+                        'quantity' => $detail['packaging_quantity'],
+                        'created_by' => Auth::id(),
+                        'updated_by' => Auth::id(),
+                    ]);
+            }
+        }
     }
 
     public function recordHistories($location, $recordDetails, $quantity, $qtyStatus, $remainBalanceQty){
