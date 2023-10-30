@@ -7,11 +7,13 @@ use App\Models\BusinessUser;
 use App\Models\Contact\Contact;
 use App\Models\CurrentStockBalance;
 use App\Models\lotSerialDetails;
+use App\Models\productPackagingTransactions;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockAdjustment;
 use App\Models\Stock\StockAdjustmentDetail;
 use App\Models\Stock\StockTransferDetail;
 use App\Models\stock_history;
+use App\Services\packaging\packagingServices;
 use DateTime;
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
@@ -29,6 +31,8 @@ class StockAdjustmentController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'isActive']);
+
+
     }
     /**
      * Display a listing of the resource.
@@ -87,6 +91,8 @@ class StockAdjustmentController extends Controller
 
         DB::beginTransaction();
         try {
+            $packaging = new packagingServices();
+
             $prefix = 'SA';
             $voucherNumber = $this->generateVoucherNumber($prefix);
             $stockAdjustment = StockAdjustment::create([
@@ -132,7 +138,7 @@ class StockAdjustmentController extends Controller
                         'created_at' => now(),
                         'created_by' => Auth::id(),
                     ]);
-
+                    $packaging->packagingForTx($adjustmentDetail, $stockAdjustmentDetail->id,'adjustment');
 
 
                     if ($request->status == 'completed' && $adjustQty != 0){
@@ -186,6 +192,7 @@ class StockAdjustmentController extends Controller
                         'created_at' => now(),
                         'created_by' => Auth::id(),
                     ]);
+                    $packaging->packagingForTx($adjustmentDetail, $stockAdjustmentDetail->id,'adjustment');
 
                     $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty(abs($adjustmentDetail['adj_quantity']), $adjustmentDetail['uom_id']);
                     $adjustQty = $referenceUomInfo['qtyByReferenceUom'];
@@ -347,9 +354,12 @@ class StockAdjustmentController extends Controller
 
         $stockAdjustment = StockAdjustment::where('id', $id)->get()->first();
         $business_location_id=$stockAdjustment->business_location;
-        $stock_adjustment_details = StockAdjustmentDetail::with(['productVariation' => function ($q) {
+        $stock_adjustment_details = StockAdjustmentDetail::with([
+            'packagingTx',
+            'productVariation' => function ($q) {
             $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                 ->with([
+                    'packaging',
                     'product' => function ($q) {
                         $q->select('id', 'name', 'product_type');
                     },
@@ -397,11 +407,10 @@ class StockAdjustmentController extends Controller
         $requestAdjustmentDetails = $request->adjustment_details;
         $settings =  businessSettings::all()->first();
 
-//return $request;
 
         DB::beginTransaction();
         try {
-
+            $packagingService=new packagingServices();
             $existingAdjustmentDetailIds = [];
 
             $existingAdjustmentDetails = array_filter($requestAdjustmentDetails, function ($detail) {
@@ -418,7 +427,7 @@ class StockAdjustmentController extends Controller
 
             // ========== Being:: Update existing row ==========
             foreach ($existingAdjustmentDetails as $adjustmentDetail){
-
+                $packagingService->updatePackagingForTx($adjustmentDetail,$adjustmentDetail['adjustment_detail_id'],'adjustment');
                 $adjustmentType = $adjustmentDetail['adj_quantity'] < 0 ? 'decrease' : 'increase';
                 $oldAdjustmentType = $adjustmentDetail['old_adjustment_type'];
 
@@ -427,6 +436,9 @@ class StockAdjustmentController extends Controller
 
                 $updateToAdjustmentDetail->uom_id = $adjustmentDetail['uom_id'];
                 $updateToAdjustmentDetail->gnd_quantity = $adjustmentDetail['gnd_quantity'];
+
+
+
 
                 if ($request->old_status == 'prepared' && $request->status == 'completed'){
 

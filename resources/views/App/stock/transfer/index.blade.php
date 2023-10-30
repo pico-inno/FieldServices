@@ -182,7 +182,7 @@
                                 {{-- <button class="accordion-button fs-4 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#kt_accordion_1_body_1" aria-expanded="true" aria-controls="kt_accordion_1_body_1">
                                     Accordion Item #1
                                 </button> --}}
-                                <button type="button" class="btn btn-light-primary me-3 collapsed" type="button"
+                                <button type="button" class="btn btn-sm btn-light-primary me-3 collapsed" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#kt_accordion_1_body_2"
                                         aria-expanded="false" aria-controls="kt_accordion_1_body_2">
                                     <!--begin::Svg Icon | path: icons/duotune/general/gen031.svg-->
@@ -234,7 +234,7 @@
                             <!--end::Filter-->
                            @if(hasExport('stock transfer'))
                             <!--begin::Export-->
-                            <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-sm btn-light-primary me-3" data-bs-toggle="modal"
                                     data-bs-target="#kt_customers_export_modal">
                                 <!--begin::Svg Icon | path: icons/duotune/arrows/arr078.svg-->
                                 <span class="svg-icon svg-icon-2">
@@ -257,7 +257,7 @@
                             @if(hasCreate('stock transfer'))
                             <!--begin::Add customer-->
                             <button onclick="window.location.href='{{route('stock-transfer.create')}}'" type="button"
-                                    class="btn btn-primary">{{__('transfer.create')}}
+                                    class="btn btn-sm btn-primary">{{__('transfer.create')}}
                             </button>
                             <!--end::Add customer-->
                                 @endif
@@ -269,7 +269,7 @@
                             <div class="fw-bold me-5">
                                 <span class="me-2" data-kt-customer-table-select="selected_count"></span>Selected
                             </div>
-                            <button type="button" class="btn btn-danger"
+                            <button type="button" class="btn btn-sm btn-danger"
                                     data-kt-customer-table-select="delete_selected">Delete Selected
                             </button>
                         </div>

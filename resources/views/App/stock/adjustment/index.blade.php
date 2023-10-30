@@ -181,7 +181,7 @@
                         @if(hasCreate('stock transfer'))
                             <!--begin::Add customer-->
                             <button onclick="window.location.href='{{route('stock-adjustment.create')}}'" type="button"
-                                    class="btn btn-primary">{{__('adjustment.create')}}
+                                    class="btn btn-sm btn-primary">{{__('adjustment.create')}}
                             </button>
                             <!--end::Add customer-->
                         @endif

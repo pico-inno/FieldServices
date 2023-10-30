@@ -22,6 +22,7 @@ use App\Models\Stock\StockoutDetail;
 use App\Models\Stock\StockTransfer;
 use App\Models\Stock\StockTransferDetail;
 use App\Models\stock_history;
+use App\Services\packaging\packagingServices;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -130,7 +131,12 @@ class StockTransferController extends Controller
                     'created_at' => now(),
                     'created_by' => Auth::id(),
                 ]);
-                $this->createProductPackagingTransaction($action = 'create', $transfer_detail, $transferDetail->id);
+
+                $packaging=new packagingServices();
+                $packaging->packagingForTx($transfer_detail,$transferDetail->id,'transfer');
+
+
+
                 $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($transfer_detail['quantity'], $transfer_detail['uom_id']);
                 $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
                 $qtyToIncrease = $referenceUomInfo['qtyByReferenceUom'];
@@ -426,7 +432,7 @@ class StockTransferController extends Controller
 //return $requestStocktransferDetails;
         DB::beginTransaction();
         try {
-
+            $packagingService=new packagingServices();
             if($oldStatus != 'completed'){
                 $existingTransferDetailIds = [];
 
@@ -448,8 +454,8 @@ class StockTransferController extends Controller
                 // ========== Being:: Update existing row ==========
                 foreach ($existingTransferDetails as $transferDetail) {
                     $transferDetailId = $transferDetail['transfer_detail_id'];
-                    $this->createProductPackagingTransaction($action = 'edit',$requestStocktransferDetails, $transferDetailId);
 
+                    $packagingService->updatePackagingForTx($transferDetail,$transferDetailId,'transfer');
                     $newQty = $transferDetail['quantity'];
                     $beforeEditQty = $transferDetail['before_edit_quantity'];
 
@@ -1001,29 +1007,6 @@ class StockTransferController extends Controller
 
     }
 
-    public function createProductPackagingTransaction($action,$details, $transaction_details_id = null){
-        foreach ($details as $detail){
-            if($action == 'create'){
-                productPackagingTransactions::create([
-                    'transaction_type' => 'transfer',
-                    'transaction_details_id' => $transaction_details_id,
-                    'product_packaging_id' => $detail['packaging_id'],
-                    'quantity' => $detail['packaging_quantity'],
-                    'created_by' => Auth::id(),
-                ]);
-            }
-            if($action == 'edit'){
-                productPackagingTransactions::where('transaction_type', 'transfer')
-                    ->where('transaction_details_id', $transaction_details_id)
-                    ->update([
-                        'product_packaging_id' => $detail['packaging_id'],
-                        'quantity' => $detail['packaging_quantity'],
-                        'created_by' => Auth::id(),
-                        'updated_by' => Auth::id(),
-                    ]);
-            }
-        }
-    }
 
     public function recordHistories($location, $recordDetails, $quantity, $qtyStatus, $remainBalanceQty){
 
@@ -1154,7 +1137,7 @@ class StockTransferController extends Controller
                     $html .= '      <a href="'.route('stock-transfer.edit', $transfer->id).'" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a> ';
                 }
                 if (hasDelete('stock transfer')){
-                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$transfer->id.' data-transfer-voucher-no='.$transfer->adjustment_voucher_no.' data-transfer-status='.$transfer->status.' data-kt-transferItem-table="delete_row">Delete</a>';
+                        $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$transfer->id.' data-voucherno='.$transfer->adjustment_voucher_no.' data-transfer-status='.$transfer->status.' data-kt-transferItem-table="delete_row">Delete</a>';
                 }
                 $html .= '</ul></div></div>';
 
