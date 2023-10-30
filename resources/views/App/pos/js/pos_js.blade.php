@@ -185,10 +185,12 @@
             <input type="hidden" value="${parentUniqueNameId ?? null}" name="parentUniqueNameId" />
             <input type="hidden" value="${parentSaleDetailId ?? null}" name="parentSaleDetailId" />
             `;
-            let stockBalanceText=product.product_type =="storable" ? `<span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">${product.uom.value * 1}</span> - <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">${product.uom.name}</span>` : ''
+            let stockBalanceText=product.product_type =="storable" ?
+            `<span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">
+                ${product.stock_sum_current_quantity * 1}</span> - <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">
+                    ${product.uom.name}</span>` : ''
             return `
-                <tr class="fs-9 mb-3 invoiceRow invoice_row_${product.product_variations.id} cursor-pointer invoice_sidebar_row_${uniqueNameId}">
-
+                <tr class="p-5 fs-9  invoiceRow invoice_row_${product.product_variations.id} cursor-pointer invoice_sidebar_row_${uniqueNameId} " >
                     <input type="hidden" name="product_id" value="${product.id}" />
                     <input type="hidden" name="lot_no" value="0" />
                     <input type="hidden" name="variation_id" value="${product.product_variations.id}" />
@@ -197,15 +199,25 @@
                     <input type="hidden" name="per_item_discount" value="" />
                     <input type="hidden" name="subtotal_with_discount" value="" />
                     <input type="hidden" name="item_detail_note" value="" />
+                    <input type="hidden" name="packaging_quantity" class='packaging_quantity' value="" />
+                    <input type="hidden" name="packaging_id" class='packaging_id' value="" />
+                    <input type="hidden" name="packagingUom" class="form-control packagingUom">
+                    <input type="hidden" name="packageQtyForCal" class="form-control packageQtyForCal">
+                    <input type="hidden" name="pkgname" class="form-control pkgname">
                     <input type="hidden" name="cost_price" value="${product.stock[0] ?product.stock[0].ref_uom_price : 0}" />
                     <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
 
                     <td class=" text-break text-start fw-bold fs-6 text-gray-700 "><span class="product-name">${product.name}</span>
                         <br>
-                        <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : ${product.sku}</span>
-                        <br>
-                        ${variation_value_and_name !== undefined ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">${variation_value_and_name}</span><br>` : ''}
                         ${stockBalanceText}
+                        <br>
+                        ${product.has_variation !== 'single' ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">${variation_value_and_name}</span><br>` : ''}
+                        <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : ${product.has_variation == 'single' ?product.sku : product.variation_sku}</span>
+                        <br>
+                        <div>
+                            <span class="pkg-qty"></span>
+                            <span class="pkg"></span>
+                        </div>
                     </td>
                     <td class="min-w-50px ps-0 pe-0 exclude-modal">
                         <input type="text" name="selling_price[]" class="form-control form-control-sm" value="${product.product_variations.default_selling_price * 1}">
@@ -418,7 +430,7 @@
             let variationId = parent.find('input[name="variation_id"]').val();
 
             let product = productsOnSelectData.find( product => product.variation_id == variationId );
-            let quantity = isNullOrNan(product.total_current_stock_qty);
+            let quantity = isNullOrNan(product.stock_sum_current_quantity);
 
             const uoms = product.uom.unit_category.uom_by_category;
 
@@ -457,13 +469,14 @@
                 'variation_id':newSelectedProduct.product_variations.id,
                 'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
                 'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
-                'total_current_stock_qty':newSelectedProduct.total_current_stock_qty,
-                'aviable_qty':newSelectedProduct.total_current_stock_qty,
+                'stock_sum_current_quantity':newSelectedProduct.stock_sum_current_quantity,
+                'aviable_qty':newSelectedProduct.stock_sum_current_quantity,
                 'validate':true,
                 'uom':newSelectedProduct.uom,
                 'uom_id':newSelectedProduct.uom_id,
                 'stock':newSelectedProduct.stock,
                 'additional_product':newSelectedProduct.product_variations.additional_product,
+                'packaging':newSelectedProduct.product_variations.packaging,
             };
             if(productsOnSelectData.length>0){
                 const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
@@ -509,7 +522,7 @@
                 result += isNullOrNan(refQty)
             })
             if(product.product_type == 'storable'){
-                if(result > productsOnSelectData[index].total_current_stock_qty){
+                if(result > productsOnSelectData[index].stock_sum_current_quantity){
                     productsOnSelectData[index].validate=false;
                     $(`.stock_alert_${variationId}`).removeClass('d-none');
                 }else{
@@ -579,7 +592,6 @@
                 error('Products Are Out Of Stock');
                 return;
             }
-            console.log(dataForSale,'----here------');
             let url=saleId ?route : `/sell/create`;
             $.ajax({
                 url,
@@ -725,6 +737,10 @@
                 let per_item_discount = parent.find('input[name="per_item_discount"]').val();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 let item_detail_note = parent.find('input[name="item_detail_note"]').val();
+
+                let packaging_id = parent.find('input[name="packaging_id"]').val();
+                let packaging_quantity = parent.find('input[name="packaging_quantity"]').val();
+
                 let isParent = parent.find('input[name="isParent"]') ? parent.find('input[name="isParent"]').val():null;
                 let parentUniqueNameId = parent.find('input[name="parentUniqueNameId"]')?parent.find('input[name="parentUniqueNameId"]').val():'';
                 let parentSaleDetailId = parent.find('input[name="parentSaleDetailId"]')?parent.find('input[name="parentSaleDetailId"]').val():'';
@@ -734,6 +750,8 @@
                     isParent,
                     parentUniqueNameId,
                     parentSaleDetailId,
+                    packaging_quantity,
+                    packaging_id,
                     'product_id': product_id,
                     'variation_id': variation_id,
                     'uom_id': uom_id,
@@ -749,6 +767,7 @@
                     'currency_id': null,
                     'delivered_quantity': null
                 };
+                console.log(raw_sale_details);
                 sale_details.push(raw_sale_details);
             })
             let type = 'pos';
@@ -828,6 +847,7 @@
                                         </div>
                                     </div>
                                     <span class="text-primary text-end fw-bold fs-6">${item.default_selling_price ?? ''}</span>
+
                                 </div>
                             </div>
                         </div>
@@ -905,7 +925,7 @@
                                  css_class = element.stock_sum_current_quantity !== 0  ? " " : " text-gray-500 order-3 not-use";
                             }
                             let product_countOrSku = element.has_variation === 'variable' ? element.variation_sku : element.sku;
-                            // let stock_qty = element.total_current_stock_qty !== 0 ? element.total_current_stock_qty * 1 + ' ' + element.smallest_unit : 'Out of Stocks';
+                            // let stock_qty = element.stock_sum_current_quantity !== 0 ? element.stock_sum_current_quantity * 1 + ' ' + element.smallest_unit : 'Out of Stocks';
                             let vari_name_or_selectAll = element.has_variation === 'variable' ? element.variation_name : 'select all';
                             let unit = element.uom.name;
 
@@ -941,7 +961,7 @@
 
             let selected_product = products[index];
 
-            if(selected_product.product_type =='storable' && selected_product.total_current_stock_qty === 0 || selected_product.total_current_stock_qty === null){
+            if(selected_product.product_type =='storable' && selected_product.stock_sum_current_quantity === 0 || selected_product.stock_sum_current_quantity === null){
                 return;
             }
 
@@ -971,12 +991,11 @@
         })
 
         $('#all_product_list').on('click', '.each_product', function(e) {
-            console.log('click');
             let variation_id = $(this).find('input[name="product_variation_id"]').val();
             let checkProduct= productsOnSelectData.find(p=>p.variation_id==variation_id);
             if(setting.enable_row == 0 ){
-               if(checkProduct){
-                    let ParentRow=$(`.invoice_row_${variation_id}`);
+                let ParentRow=$(`.invoice_row_${variation_id}`);
+               if(checkProduct && ParentRow.length){
                     let qtyInput=ParentRow.find(`.quantity_input`);
                     let selectQtyInputVal=qtyInput.val();
                     let val=isNullOrNan(selectQtyInputVal);
@@ -1003,7 +1022,7 @@
             }
 
             $.ajax({
-                url: `/sell/get/product`,
+                url: `/sell/get/product/v2`,
                 type: 'GET',
                 // headers: {
                 //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1023,12 +1042,11 @@
                 },
                 success: function(results){
                     if(results.length>0 && results[0].product_type=="storable"){
-                        if(results[0].total_current_stock_qty == 0 || results[0].total_current_stock_qty == ''){
+                        if(results[0].stock_sum_current_quantity == 0 || results[0].stock_sum_current_quantity == '' || results[0].stock_sum_current_quantity == null){
                             error('Out of stock');
                             return;
                         }
                     }
-
                     if(results[0].has_variation === "single"){
                         let product = results[0];
                         let newInvoiceSidebar = $(invoiceSidebar(product));
@@ -1041,7 +1059,7 @@
                         totalDisPrice();
                         return;
                     }
-                    let product = results[1];
+                    let product = results[0];
                     let newInvoiceSidebar = $(invoiceSidebar(product));
                     uniqueNameId++;
                     $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
@@ -1078,7 +1096,7 @@
                     let productInfo=ap.product_variation.product;
                     let product={name:productInfo.name,id:productInfo.id};
                     let variation_id=ap.product_variation.id;
-                    let total_current_stock_qty=ap.total_current_stock_qty;
+                    let stock_sum_current_quantity=ap.stock_sum_current_quantity;
                     let variation_template_value=ap.product_variation.variation_template_value;
                     let qty=ap.quantity;
                     let uom=ap.uom;
@@ -1137,6 +1155,10 @@
                                 },
                                 success: function(results){
                                     let product=results;
+                                    if(results.total_current_stock_qty == 0 ||results.total_current_stock_qty == null || results.total_current_stock_qty ==undefined){
+                                        error('Product Out Of Stock');
+                                        return;
+                                    }
                                     let newInvoiceSidebar = $(invoiceSidebar(product,false,unique_name_id,parentSaleDetailId));
                                     $(`#${tableBodyId} .invoice_sidebar_row_${unique_name_id}`).after(newInvoiceSidebar);
                                     // $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
@@ -1188,6 +1210,7 @@
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
             let selected_uom_id = $(this).val();
             let product_id = parent.find('input[name="product_id"]').val();
+            packaging($(this),'*');
             checkStock($(this));
             changeQtyOnUom($(this), selected_uom_id);
             calPrice($(this));
@@ -1202,6 +1225,7 @@
             let incVal = parent.find('input[name="quantity[]"]');
             let value = parseInt(incVal.val()) + 1;
             incVal.val(value);
+            packaging($(this),'/');
             getPrice($(this));
             // false ? getPriceByEachRow() : getPrice();
             calPrice($(this));
@@ -1216,6 +1240,7 @@
             getPrice($(this));
             checkStock($(this));
             hideCalDisPrice($(this));
+            packaging($(this),'/');
             totalDisPrice();
         })
         $(document).on('click', '#decrease', function() {
@@ -1225,6 +1250,7 @@
             let value = parseInt(decVal.val()) - 1;
             decVal.val(value >= 1 ? value : 1);
             // false ? getPriceByEachRow() : getPrice();
+            packaging($(this),'/');
             calPrice($(this));
             totalSubtotalAmountCalculate();
             checkStock($(this));
@@ -1265,8 +1291,20 @@
             let uom_id = current_tr.find('.invoice_unit_select').val();
             let item_detail_note = current_tr.find('input[name="item_detail_note"]').val();
             // let filtered_product = productsOnSelectData.filter( item => item.product_id == product_id && item.variation_id == variation_id);
-
-
+            $('#packaging_modal').empty();
+            let product=productsOnSelectData.find(p=>p.variation_id==variation_id);
+            let packagingOption='';
+            if(product.packaging){
+                product.packaging.forEach((pk)=>{
+                    packagingOption+=`
+                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}" data-pkgname="${pk.packaging_name}">${pk.packaging_name}</option>
+                    `;
+                })
+            }
+            $('#packaging_modal').append(packagingOption)
+            // $('#packaging_modal').select2({
+            //     data: productPackaging
+            // })
             $('#invoice_row_discount').find('input[name="discount_amount"]').val(per_item_dis!='' ?per_item_dis: 0);
             $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').val(subtotal_with_dis !='' ?subtotal_with_dis: price);
             $('#invoice_row_discount').find('.modal-title').text(`${product_name} - ${product_sku}`);
@@ -1344,7 +1382,13 @@
             let dis_type = parent.find('select[name="invoice_row_discount_type"]').val();
             let dis_amount = parent.find('input[name="discount_amount"]').val();
             let subtotal_with_dis = parent.find('input[name="subtotal_with_discount"]').val();
+            let packaging_id = parent.find('select[name="packaging_id"]').val();
+            let packaging_quantity = parent.find('input[name="packaging_quantity"]').val();
 
+            let selectedOption =parent.find('select[name="packaging_id"]').find(':selected');
+            let packagingUom=selectedOption.data('uomid');
+            let packageQtyForCal = selectedOption.data('qty');
+            let pkgname = selectedOption.data('pkgname');
             // current_tr.find('input[name="each_selling_price"]').val(selling_price_group);
             current_tr.find('input[name="discount_type"]').val(dis_type);
             if(dis_type.toLowerCase() == 'foc'){
@@ -1357,17 +1401,56 @@
                 current_tr.find('input[name="subtotal_with_discount"]').val(subtotal_with_dis);
                 current_tr.find('input[name="item_detail_note"]').val(item_detail_note);
             }
+            current_tr.find('input[name="packaging_id"]').val(packaging_id);
+            current_tr.find('input[name="packaging_quantity"]').val(packaging_quantity);
+            current_tr.find('input[name="packagingUom"]').val(packagingUom);
+            current_tr.find('input[name="packageQtyForCal"]').val(packageQtyForCal);
+            current_tr.find('input[name="pkgname"]').val(pkgname);
+            packaging(current_tr,'*');
             calPrice(current_tr);
             totalDisPrice();
         });
         // End
+        const packaging=(e,operator)=>{
+            let parent = $(e).closest('tr');
+            let unitQty=parent.find('.quantity_input').val();
+            let packagingUom=parent.find('input[name="packagingUom"]').val();
+            let packageQtyForCal = parent.find('input[name="packageQtyForCal"]').val();
+            let packageInputQty=parent.find('.packaging_quantity').val();
+            let pkgname=parent.find('.pkgname').val();
+
+            let currentUomId=parent.find('.invoice_unit_select').val();
+            let variation_id=parent.find('input[name="variation_id"]').val();
+            let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+            let uoms=product.uom.unit_category.uom_by_category;
+            if(packageQtyForCal && packagingUom){
+                if(operator=='/'){
+                    // function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='')
+                    let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
+                    let result=qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal));
+                    parent.find('.packaging_quantity').val(result);
+                    $('.pkg-qty').text(result);
+                    $('.pkg').text(pkgname);
+                    checkStock(e);
+                }else{
+                // function changeQtyOnUom(uoms,currentQty,currentUomId,newUomId) {
+                    let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
+                    let qtyByCurrentUnit= changeQtyOnUom2(packagingUom,currentUomId,result,uoms).resultQty;
+                    parent.find('.quantity_input').val(qDecimal(qtyByCurrentUnit));
+                    $('.pkg-qty').text(packageInputQty);
+                    $('.pkg').text(pkgname);
+                    checkStock(e);
+                }
+            }
+        }
 
         // for delete item
         $(document).on('click', '#delete-item', function() {
-            $(this).closest('tr').remove();
             checkStock($(this));
             totalSubtotalAmountCalculate();
             totalDisPrice();
+
+            $(this).closest('tr').remove();
         })
 
         // for small and medium size table
@@ -2068,7 +2151,7 @@
                             'defaultSellingPrices':saleDetail.product_variation.default_selling_price,
                             'variation_name':saleDetail.product_variation.variation_template_value ? saleDetail.product_variation.variation_template_value.name:'',
                             'sellingPrices':saleDetail.product_variation.uom_selling_price,
-                            'total_current_stock_qty':saleDetail.stock_sum_current_quantity,
+                            'stock_sum_current_quantity':saleDetail.stock_sum_current_quantity,
                             'aviable_qty':editSale.status=='delivered' ? isNullOrNan(saleDetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saleDetail.stock_sum_current_quantity) ,
                             'validate':true,
                             'uom':saleDetail.product.uom,
@@ -2079,7 +2162,7 @@
                         productsOnSelectData=[...productsOnSelectData,newProductData];
                     }else{
                         if(editSale.status=='delivered'){
-                            productsOnSelectData[secIndex].total_current_stock_qty=isNullOrNan(productsOnSelectData[secIndex].total_current_stock_qty)+ saleQty;
+                            productsOnSelectData[secIndex].stock_sum_current_quantity=isNullOrNan(productsOnSelectData[secIndex].stock_sum_current_quantity)+ saleQty;
                         }
                     }
                 })

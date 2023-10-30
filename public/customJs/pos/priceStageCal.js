@@ -73,15 +73,17 @@
                         let product=productsOnSelectData.filter(function(p){
                             return p.product_id==productId && variationId == p.variation_id;
                         })[0];
-                        let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices ?? 0);
-                        let price=isNullOrNan(result.resultPrice);
-                        if(price == 0){
-                            let uomPirce=parent.find('input[name="selling_price[]"]').val();
-                            parent.find('input[name="selling_price[]"]').val(pDecimal(uomPirce ?? 0));
-                            parent.find('.subtotal_price').text(pDecimal(uomPirce?? 0) );
-                        }else{
-                            parent.find('input[name="selling_price[]"]').val(pDecimal(price));
-                            parent.find('.subtotal_price').text(pDecimal(price) );
+                        if (product){
+                            let result=getPriceByUOM(parent,product,'',product.defaultSellingPrices ?? 0);
+                            let price=isNullOrNan(result.resultPrice);
+                            if(price == 0){
+                                let uomPirce=parent.find('input[name="selling_price[]"]').val();
+                                parent.find('input[name="selling_price[]"]').val(pDecimal(uomPirce ?? 0));
+                                parent.find('.subtotal_price').text(pDecimal(uomPirce?? 0) );
+                            }else{
+                                parent.find('input[name="selling_price[]"]').val(pDecimal(price));
+                                parent.find('.subtotal_price').text(pDecimal(price) );
+                            }
                         }
                     }
                 }

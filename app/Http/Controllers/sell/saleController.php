@@ -995,7 +995,6 @@ class saleController extends Controller
         $business_location_id = $request->data['business_location_id'];
         $q = $request->data['query'];
         $variation_id = $request->data['variation_id'] ?? null;
-
         $products = Product::select(
             'products.*',
             'product_variations.*',
@@ -1007,13 +1006,15 @@ class saleController extends Controller
             'variation_template_values.id as variation_template_values_id'
         )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
         ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
-            ->where('can_sale', 1)
-            ->where('products.name', 'like', '%' . $q . '%')
-            ->orWhere('products.sku', 'like', '%' . $q . '%')
-            ->whereNull('products.deleted_at')
-            ->orWhere('variation_sku', 'like', '%' . $q . '%')
-            ->orWhereHas('varPackaging', function ($query) use ($q) {
-                $query->where('package_barcode',$q);
+            ->where(function ($query) use ($q) {
+                $query->where('can_sale', 1)
+                    ->where('products.name', 'like', '%' . $q . '%')
+                    ->orWhere('products.sku', 'like', '%' . $q . '%')
+                    ->whereNull('products.deleted_at')
+                    ->orWhere('variation_sku', 'like', '%' . $q . '%')
+                    ->orWhereHas('varPackaging', function ($query) use ($q) {
+                        $query->where('package_barcode', $q);
+                    });
             })
             ->when($variation_id, function ($query) use ($variation_id) {
                 $query->where('product_variations.id', $variation_id);

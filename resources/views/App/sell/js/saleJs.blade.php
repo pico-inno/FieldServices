@@ -380,7 +380,6 @@
                                 success: function(results){
                                     append_row(results,false,qty,dataUomId,parentUniqueNameId,parentSaleDetailId);
                                     unique_name_id++;
-
                                 }
                             })
                             // suggestionProductDiv.remove();

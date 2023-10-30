@@ -29,6 +29,10 @@
         <link rel="stylesheet" href={{asset("customCss/scrollbar.css")}}>
         <style>
 
+            #invoice_with_sidebar tr td{
+                padding: 3px;
+                }
+
             .search-item-container {
                 max-height: 250px;
                 overflow-y: auto;
@@ -111,6 +115,12 @@
     <!--begin::Body-->
     <body >
         <div style="height: 100vh; overflow: hidden; ">
+            <div class="">
+                <div id="spinnerWrapper" class="spinner-wrapper">
+                    <div class="spinner">
+                    </div>
+                </div>
+            </div>
             <div class="row bg-primary px-2 mh-80px ">
                 <div class=" d-flex  justify-content-between align-items-center ">
                     {{-- <button class="btn btn-sm p-2 btn-light">Home</button> --}}
@@ -142,12 +152,6 @@
                 </div>
             </div>
             <!--begin::Content-->
-            <div class="">
-                <div id="spinnerWrapper" class="spinner-wrapper">
-                    <div class="spinner">
-                    </div>
-                </div>
-            </div>
             <div class="content d-flex flex-column flex-column-fluid ms-8 " id="pos_kt_content" style="height:100%;">
                 <!--begin::container-->
                 <div class="container-fluid  pe-1 h-100" id="kt_content_container">
@@ -202,7 +206,7 @@
                         </div>
                         <!--end::Content-->
                         <!--begin::Sidebar-->
-                        <div class="flex-row-auto w-lg-550px w-xl-5500px mt-3 d-none d-md-none d-sm-none d-lg-block d-xl-block mb-5 pe-3" id="invoice_side_bar" style="height: 100vh;" >
+                        <div class="flex-row-auto w-lg-550px w-xl-650px mt-3 d-none d-md-none d-sm-none d-lg-block d-xl-block mb-5 pe-3" id="invoice_side_bar" style="height: 100vh;" >
 
                             <div class="row mb-1" style="max-height: 5%;z-index: 200;">
                                 <div class="input-group input-group-solid flex-nowrap">
@@ -839,7 +843,7 @@
 
         {{-- Each Invoice Row Discount --}}
         <div class="modal fade custom-modal" tabindex="-1" id="invoice_row_discount">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
@@ -852,6 +856,22 @@
                     </div>
 
                     <div class="modal-body">
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5 mb-1">Packaging</label>
+                                <select class="form-select mb-2 form-select-sm rounded-0" id="packaging_modal" name="packaging_id"
+                                    data-control="select2" data-placeholder="-" placeholder="-" data-hide-search="true">
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5 mb-1">Packaging Qty</label>
+                                <input type="text" name="packaging_quantity" class="form-control packaging_quantity">
+
+                            </div>
+                        </div>
                         <div class="row mb-5">
                             <div class="col-12">
                                 <label for="" class="fs-5">Selling Price</label>
