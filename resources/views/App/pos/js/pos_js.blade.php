@@ -529,7 +529,13 @@
                     return $u.id == uom_id;
                 })[0];
                 let refQty = getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
-                result += isNullOrNan(refQty)
+                if(product.sale_qty){
+                    const saleUoM = uoms.filter(function ($u) {
+                        return $u.id == product.uom_id;
+                    })[0];
+                    refQty -= getReferenceUomInfoByCurrentUomQty(product.sale_qty,saleUoM,referenceUom)['qtyByReferenceUom'];
+                }
+                result += isNullOrNan(refQty);
             })
             if(product.product_type == 'storable'){
                 if(result > productsOnSelectData[index].stock_sum_current_quantity){
@@ -2175,6 +2181,7 @@
                             'stock':saleDetail.stock,
                             'additional_product':saleDetail.product_variation.additional_product,
                             'packaging':saleDetail.product_variation.packaging,
+                            'sale_qty':saleDetail.quantity,
                         };
                         productsOnSelectData=[...productsOnSelectData,newProductData];
                     }else{
