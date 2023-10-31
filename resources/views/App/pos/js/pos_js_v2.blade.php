@@ -749,7 +749,7 @@
                     // Loop through each item in the response data
                     $.each(result, function(index, item) {
                         productsHtml += `
-                        <div class="p-1 col-lg-2 col-md-2 col-2 min-w-125px cursor-pointer each_product">
+                        <div class=" col-lg-2 col-md-2 col-2 min-w-100px cursor-pointer each_product">
                             <div class="card">
                                 <input type="hidden" name="category_id" value="${item.category_id}">
                                 <input type="hidden" name="sub_category_id" value="${item.sub_category_id}">

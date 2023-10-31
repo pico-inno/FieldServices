@@ -29,6 +29,9 @@
         <link rel="stylesheet" href={{asset("customCss/scrollbar.css")}}>
         <style>
 
+            #invoice_with_sidebar tr td{
+            padding: 3px;
+            }
             .search-item-container {
                 max-height: 250px;
                 overflow-y: auto;
@@ -185,7 +188,7 @@
                             <!--begin::Pos product-->
                             <div class=" bg-transparent border-0 my-3 mb-10" style="height: 85%; overflow: scroll;">
                                 <!--begin::Nav-->
-                                <div class="row mb-10 p-5  flex-wrap" id="all_product_list">
+                                <div class="row mb-10 p-5  flex-wrap justify-content-center" id="all_product_list">
 
                                 </div>
                                 <!--end::Nav-->
@@ -194,7 +197,7 @@
                         </div>
                         <!--end::Content-->
                         <!--begin::Sidebar-->
-                        <div class="flex-row-auto w-lg-550px w-xl-5500px mt-3 d-none d-md-none d-sm-none d-lg-block d-xl-block mb-5 pe-3" id="invoice_side_bar" style="height: 100vh;" >
+                        <div class="flex-row-auto w-lg-550px w-xl-650px mt-3 d-none d-md-none d-sm-none d-lg-block d-xl-block mb-5 pe-3" id="invoice_side_bar" style="height: 100vh;" >
 
                             <div class="row mb-1" style="max-height: 5%;z-index: 200;">
                                 <div class="input-group input-group-solid flex-nowrap">
@@ -259,22 +262,30 @@
                                                     <input type="hidden" name="cost_price" value="{{$sd->uom_price}}" />
                                                     <input type="hidden" name="_default_sell_price" value="{{$sd->uom_price * 1}}" />
 
+                                                    <input type="hidden" name="packaging_quantity" class='packaging_quantity' value="{{arr($sd->toArray()['packaging_tx'],'quantity')}}" />
+                                                    <input type="hidden" name="packaging_id" class='packaging_id' value="{{arr($sd->toArray()['packaging_tx']['packaging'],'id')}}" />
+                                                    <input type="hidden" name="packagingUom" class="form-control packagingUom" value="{{arr($sd->toArray()['packaging_tx']['packaging'],'uom_id')}}">
+                                                    <input type="hidden" name="packageQtyForCal" class="form-control packageQtyForCal" value="{{arr($sd->toArray()['packaging_tx']['packaging'],'quantity')}}">
+                                                    <input type="hidden" name="pkgname" class="form-control pkgname" value="{{arr($sd->toArray()['packaging_tx']['packaging'],'packaging_name')}}">
                                                     <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
                                                         <span class="product-name">
                                                             {{$product->name}}
                                                                 @if ($posRegister->use_for_res=='1')
                                                                     {{$status ? '('.$status.')' : ''}}
                                                                 @endif
-                                                            <br>
                                                             {{
-                                                             $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$sd->productVariation->variationTemplateValue?'('.$sd->productVariation->variationTemplateValue->name.')':''.`</span><br>`: ''
+                                                             $variationTemplateId  ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">`.$sd->productVariation->variationTemplateValue?'('.$sd->productVariation->variationTemplateValue->name.')':''.`</span>`: ''
                                                             }}
                                                         </span>
                                                         <br>
-                                                        <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : {{$product->sku ?? ''}}</span>
+                                                            <span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_{{$sd->variation_id}}">{{$sd->stock_sum_current_quantity }}</span> -
+                                                            <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_{{$sd->variation_id}}">{{$product->uom->name}}</span>
                                                         <br>
-                                                        <span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_{{$sd->variation_id}}">{{$sd->stock_sum_current_quantity }}</span> -
-                                                        <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_{{$sd->variation_id}}">{{$product->uom->name}}</span>
+                                                        <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : {{$product->sku ?? ''}}</span>
+                                                        <div>
+                                                            <span class="pkg-qty">{{$sd->toArray()['packaging_tx']['quantity']}}</span>
+                                                            <span class="pkg">{{$sd->toArray()['packaging_tx']['packaging']['packaging_name']}}</span>
+                                                        </div>
                                                     </td>
                                                     <td class="min-w-50px ps-0 pe-0 exclude-modal">
                                                         <input type="text" name="selling_price[]" class="form-control form-control-sm" value="{{fprice($sd->uom_price)}}" >
@@ -988,7 +999,7 @@
 
         {{-- Each Invoice Row Discount --}}
         <div class="modal fade custom-modal" tabindex="-1" id="invoice_row_discount">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
@@ -999,8 +1010,25 @@
                         </div>
                         <!--end::Close-->
                     </div>
-
                     <div class="modal-body">
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5 mb-1">Packaging</label>
+                                <select class="form-select mb-2 form-select-sm rounded-0" id="packaging_modal" name="packaging_id"
+                                    data-control="select2" data-placeholder="Select Packaging" placeholder="Select Packaging"
+                                    data-hide-search="true" data-allow-clear="true">
+
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5 mb-1">Packaging Qty</label>
+                                <input type="text" name="packaging_quantity" class="form-control packaging_quantity">
+
+                            </div>
+                        </div>
                         <div class="row mb-5">
                             <div class="col-12">
                                 <label for="" class="fs-5">Selling Price</label>
@@ -1051,7 +1079,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="saveExtraSetting">Save</button>
                     </div>
                 </div>
             </div>

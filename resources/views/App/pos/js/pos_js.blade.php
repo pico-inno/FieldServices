@@ -82,11 +82,11 @@
         // let price_lists_with_location = [];
 
         let products = null;
-        let isNullOrNan = (val) => {
+        let isNullOrNan = (val,defVal=0) => {
             let v=parseFloat(val);
 
             if(v === '' || v === null || isNaN(v)){
-                return 0;
+                return defVal;
             }else{
                 return v;
             }
@@ -174,6 +174,16 @@
             showSuggestion(additionalProduct,uniqueNameId);
             // console.log(product)
             // getProducts(1, );
+            let packaging_id,packagingUom,packaging_quantity,packageQtyForCal,pkgname;
+            if(product.product_packaging){
+                let packaging=product.product_packaging;
+                packaging_id=packaging.id,
+                packagingUom=packaging.uom_id,
+                packaging_quantity=1,
+                packageQtyForCal=packaging.quantity,
+                pkgname=packaging.packaging_name
+            }
+            console.log(product,'dsfds---------');
             let additionProductLink=additionalProduct.length >0 ?
              `
                 <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
@@ -199,11 +209,11 @@
                     <input type="hidden" name="per_item_discount" value="" />
                     <input type="hidden" name="subtotal_with_discount" value="" />
                     <input type="hidden" name="item_detail_note" value="" />
-                    <input type="hidden" name="packaging_quantity" class='packaging_quantity' value="" />
-                    <input type="hidden" name="packaging_id" class='packaging_id' value="" />
-                    <input type="hidden" name="packagingUom" class="form-control packagingUom">
-                    <input type="hidden" name="packageQtyForCal" class="form-control packageQtyForCal">
-                    <input type="hidden" name="pkgname" class="form-control pkgname">
+                    <input type="hidden" name="packaging_quantity" class='packaging_quantity' value="${isNullOrNan(packaging_quantity,1)}" />
+                    <input type="hidden" name="packaging_id" class='packaging_id' value="${packaging_id ?? ''}" />
+                    <input type="hidden" name="packagingUom" class="form-control packagingUom" value="${packagingUom ?? ''}">
+                    <input type="hidden" name="packageQtyForCal" class="form-control packageQtyForCal" value="${packageQtyForCal ?? ''}">
+                    <input type="hidden" name="pkgname" class="form-control pkgname" value=${pkgname ?? ''}>
                     <input type="hidden" name="cost_price" value="${product.stock[0] ?product.stock[0].ref_uom_price : 0}" />
                     <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
 
@@ -215,8 +225,8 @@
                         <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : ${product.has_variation == 'single' ?product.sku : product.variation_sku}</span>
                         <br>
                         <div>
-                            <span class="pkg-qty"></span>
-                            <span class="pkg"></span>
+                            <span class="pkg-qty">${packaging_quantity?? ''}</span>
+                            <span class="pkg">${pkgname?? ''}</span>
                         </div>
                     </td>
                     <td class="min-w-50px ps-0 pe-0 exclude-modal">
@@ -230,7 +240,7 @@
                                     <i class="fas fa-minus fs-7"></i>
                                 </button>
 
-                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input" name="quantity[]"  value="1" />
+                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input" name="quantity[]"  value="${isNullOrNan(packageQtyForCal,1) }" />
 
                                 <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-600 border-end-0" id="increase">
                                     <i class="fas fa-plus"></i>
@@ -239,7 +249,7 @@
                             </div>
                             <span class="text-danger-emphasis  stock_alert_${product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
                             <select class=" form-select form-select-sm invoice_unit_select" data-control="select2">
-                                ${uomsData.map(unit => `<option value="${unit.id}" ${unit.id === product.uom.id ? 'selected' : ''}>${unit.text}</option>`).join('')}
+                                ${uomsData.map(unit => `<option value="${unit.id}" ${unit.id === (packagingUom ?? product.uom.id) ? 'selected' : ''}>${unit.text}</option>`).join('')}
                             </select>
 
                         </div>
@@ -1290,6 +1300,9 @@
             let variation_id = current_tr.find('input[name="variation_id"]').val();
             let uom_id = current_tr.find('.invoice_unit_select').val();
             let item_detail_note = current_tr.find('input[name="item_detail_note"]').val();
+
+            let packaging_id = current_tr.find('input[name="packaging_id"]').val();
+            let packaging_quantity = current_tr.find('input[name="packaging_quantity"]').val();
             // let filtered_product = productsOnSelectData.filter( item => item.product_id == product_id && item.variation_id == variation_id);
             $('#packaging_modal').empty();
             let product=productsOnSelectData.find(p=>p.variation_id==variation_id);
@@ -1297,10 +1310,12 @@
             if(product.packaging){
                 product.packaging.forEach((pk)=>{
                     packagingOption+=`
-                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}" data-pkgname="${pk.packaging_name}">${pk.packaging_name}</option>
+                        <option value="${pk.id}" ${packaging_id == pk.id ?'selected' :''} data-qty="${pk.quantity}" data-uomid="${pk.uom_id}" data-pkgname="${pk.packaging_name}">${pk.packaging_name}</option>
                     `;
                 })
             }
+            let defaultOption="<option value='' disabled selected>Select Packaging</option>"
+            $('#packaging_modal').append(defaultOption)
             $('#packaging_modal').append(packagingOption)
             // $('#packaging_modal').select2({
             //     data: productPackaging
@@ -1311,6 +1326,7 @@
             $('#invoice_row_discount').find('select[name="each_selling_price"]').val(each_selling_price).trigger('change');
             $('#invoice_row_discount').find('input[name="modal_price_without_dis"]').val(price);
             $('#invoice_row_discount').find('#item_detail_note_input').val(item_detail_note);
+            $('#invoice_row_discount').find('.packaging_quantity').val(packaging_quantity);
 
             if(dis_type !== ''){
                 $('#invoice_row_discount').find('select[name="invoice_row_discount_type"]').val(dis_type).trigger('change');
@@ -2158,6 +2174,7 @@
                             'uom_id':saleDetail.uom_id,
                             'stock':saleDetail.stock,
                             'additional_product':saleDetail.product_variation.additional_product,
+                            'packaging':saleDetail.product_variation.packaging,
                         };
                         productsOnSelectData=[...productsOnSelectData,newProductData];
                     }else{

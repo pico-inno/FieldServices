@@ -45,7 +45,7 @@
                                         @foreach ($saleDelivered as $sd)
                                             <tr>
                                                 <td>{{$sd->sales_voucher_no}}</td>
-                                                <td>{{$sd->customer->first_name}}</td>
+                                                <td>{{arr($sd->customer,'first_name')}}</td>
                                                 <td>{{price($sd->total_sale_amount,$sd->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
                                                     <span class="me-5 view_detail"  type="button" data-href="{{ route('saleDetail',$sd->id)}}"><i class="fa-regular fa-eye fs-5"></i></span>
@@ -113,7 +113,7 @@
                                         @foreach ($saleDrafts as $sdf)
                                             <tr>
                                                 <td>{{$sdf->sales_voucher_no}}</td>
-                                                <td>{{$sdf->customer->first_name}}</td>
+                                                <td>{{arr($sdf->customer,'first_name')}}</td>
                                                 <td>{{price($sdf->total_sale_amount,$sdf->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
                                                     <span class="me-5 view_detail"  type="button" data-href="{{ route('saleDetail',$sdf->id)}}"><i class="fa-regular fa-eye fs-5"></i></span>
@@ -189,7 +189,7 @@
                                         @foreach ($saleOrders as $so)
                                             <tr>
                                                 <td>{{$so->sales_voucher_no}}</td>
-                                                <td>{{$so->customer->first_name}}</td>
+                                                <td>{{arr($so->customer,'first_name')}}</td>
                                                 <td>{{price($so->total_sale_amount,$so->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
                                                     <span class="me-5 view_detail"  type="button" data-href="{{ route('saleDetail',$so->id)}}"><i class="fa-regular fa-eye fs-5"></i></span>

@@ -130,9 +130,11 @@ class POSController extends Controller
         $business_location_id = $sale->business_location_id;
         $sale_details_query = sale_details::with([
             'currency',
+            'packagingTx.packaging',
             'productVariation' => function ($q) {
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                 ->with([
+                    'packaging',
                     'product' => function ($q) {
                         $q->select('id', 'name', 'has_variation');
                     },
@@ -152,13 +154,14 @@ class POSController extends Controller
                         $q->with('uomByCategory');
                     }]);
                 }]);
-            },
+            }
         ])
         ->where('sales_id', $saleId)->where('is_delete', 0)
         ->withSum(['stock' => function ($q) use ($business_location_id) {
             $q->where('business_location_id', $business_location_id);
         }], 'current_quantity');
         $saleDetails = $sale_details_query->get();
+        // dd($saleDetails->toArray());
 
         $locations = businessLocation::all();
         $price_lists = PriceLists::all();
