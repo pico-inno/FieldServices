@@ -128,6 +128,17 @@
                                 </select>
                             </div>
                             <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-5 col-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold">Type</label>
+                                <select class="form-select form-select-sm  fw-bold filter_type" data-kt-select2="true"
+                                        data-placeholder="Select View Option" data-allow-clear="true" data-hide-search="true">
+                                    <option></option>
+                                    <option value="1" selected>UOM</option>
+                                    <option value="2">Packaging</option>
+                                </select>
+                            </div>
+                            <!--end::Input group-->
                         </div>
                     </div>
                 </div>
@@ -233,7 +244,7 @@
                                     Current Qty
 {{--                                </span>--}}
                             </th>
-                            <th>UOM</th>
+                            <th class="view-type">UOM</th>
 
                         </tr>
                         <!--end::Table row-->
@@ -439,4 +450,14 @@
     <script src="customJs/reports/inventory/currentStockBalanceExport.js"></script>
     <script src="customJs/reports/inventory/currentStockBalanceFilter.js"></script>
     <script src="customJs/toaster.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('.filter_type').on('change', function () {
+                $('.view-type').text($(this).val() == 2 ? 'Package' : 'UOM');
+            });
+        });
+
+    </script>
 @endpush

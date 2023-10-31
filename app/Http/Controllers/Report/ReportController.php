@@ -987,13 +987,19 @@ class ReportController extends Controller
         $filterCategory = $request->data['filter_category'];
         $filterBrand = $request->data['filter_brand'];
         $dateRange = $request->data['filter_date'];
+        $filterType = $request->data['filter_type'];
         $dates = explode(' - ', $dateRange);
 
         $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
         $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
 
 
-        $query = CurrentStockBalance::with(['uom','location:id,name,parent_location_id'])
+
+        $query = CurrentStockBalance::with([
+            'uom',
+            'location:id,name,parent_location_id',
+            'packagingtx.packaging'
+        ])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->where('current_quantity', '>', 0);
         if ($request->data['filter_locations'] != 0) {
@@ -1001,15 +1007,16 @@ class ReportController extends Controller
             $query->whereIn('business_location_id', $locationId);
         }
 
+
         $currentStocks = $query->get();
         $productIds = $currentStocks->pluck('product_id')->unique()->toArray();
 
-        $result = [];
+//        $result = [];
 
         $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
             ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
                 $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
-                    ->with(['variationTemplateValue' => function ($query) {
+                    ->with(['packaging','variationTemplateValue' => function ($query) {
                         $query->select('id', 'name', 'variation_template_id')
                             ->with(['variationTemplate:id,name']);
                     }]);
@@ -1029,14 +1036,34 @@ class ReportController extends Controller
         }
 
         $finalProduct = $finalProduct->get()->toArray();
-
+//        return response()->json( $currentStocks, 200);
         if($filterView == 1){
 
                 foreach ($currentStocks as $currentStock) {
-
+//                    $package_tx =$currentStock['packaging_tx'];
+//
+//                    $filteredPackageTx = array_filter($package_tx, function ($item) use ($currentStock) {
+//                        return $item['transaction_type'] === $currentStock['transaction_type'];
+//                    });
                     $batchNo = $currentStock['batch_no'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
+                    $currentQty = $currentStock['current_quantity'];
+                    $refQty =  $currentStock['ref_uom_quantity'];
+                    $package_qty = $currentStock['packagingtx']['packaging']['quantity'];
+//                    $package_qty = $filteredPackageTx['packaging']['quantity'];
+
+
+                    $package_currentQty = $currentQty / $package_qty;
+                    $package_refQty = $refQty / $package_qty;
+
+                    if($filterType == 2){
+                        $new_current_qty = $package_currentQty;
+                        $new_purchase_qty = $package_refQty;
+                    }else{
+                        $new_current_qty = $currentQty;
+                        $new_purchase_qty = $refQty;
+                    }
 
 
                     $key = $batchNo . '_' . $variationId . '_' . $locationId;
@@ -1045,11 +1072,13 @@ class ReportController extends Controller
                     if (!isset($mergedStocks[$key])) {
                         $mergedStocks[$key] = $currentStock;
                         $mergedStocks[$key]['batch_number'] =  $batchNo;
+                        $mergedStocks[$key]['ref_uom_quantity'] = $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] = $new_current_qty;
                     } else {
 
                         $mergedStocks[$key]['batch_number'] =  $batchNo. '(merged)';
-                        $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                        $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+                        $mergedStocks[$key]['ref_uom_quantity'] += $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] += $new_current_qty;
 
                     }
                 }
@@ -1061,6 +1090,21 @@ class ReportController extends Controller
                     $transactionID = $currentStock['transaction_detail_id'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
+                   $currentQty = $currentStock['current_quantity'];
+                   $refQty =  $currentStock['ref_uom_quantity'];
+                   $package_qty = $currentStock['packagingtx']['packaging']['quantity'];
+
+
+                   $package_currentQty = $currentQty / $package_qty;
+                   $package_refQty = $refQty / $package_qty;
+
+                   if($filterType == 2){
+                       $new_current_qty = $package_currentQty;
+                       $new_purchase_qty = $package_refQty;
+                   }else{
+                       $new_current_qty = $currentQty;
+                       $new_purchase_qty = $refQty;
+                   }
 
 
 
@@ -1070,11 +1114,13 @@ class ReportController extends Controller
                     if (!isset($mergedStocks[$key])) {
                         $mergedStocks[$key] = $currentStock;
                         $mergedStocks[$key]['batch_number'] =  $currentStock['batch_no'];
+                        $mergedStocks[$key]['ref_uom_quantity'] = $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] =   $new_current_qty;
                     } else {
 
                         $mergedStocks[$key]['batch_number'] =  $currentStock['batch_no']. '(merged)';
-                        $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                        $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+                        $mergedStocks[$key]['ref_uom_quantity'] += $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] +=   $new_current_qty;
 
                     }
                 }
@@ -1085,8 +1131,25 @@ class ReportController extends Controller
         } else{
             if($currentStocks->count() > 0){
                 foreach($currentStocks as $currentStock){
+
+
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
+                    $currentQty = $currentStock['current_quantity'];
+                    $refQty =  $currentStock['ref_uom_quantity'];
+                    $package_qty = $currentStock['packagingtx']['packaging']['quantity'];
+
+                    $package_currentQty = $currentQty / $package_qty;
+                    $package_refQty = $refQty / $package_qty;
+
+                    if($filterType == 2){
+                        $new_current_qty = $package_currentQty;
+                        $new_purchase_qty = $package_refQty;
+                    }else{
+                        $new_current_qty = $currentQty;
+                        $new_purchase_qty = $refQty;
+                    }
+
 
 
                     $key = $variationId;
@@ -1094,11 +1157,13 @@ class ReportController extends Controller
                     if (!isset($mergeAllBatchs[$key])) {
                         $mergeAllBatchs[$key] = $currentStock;
                         $mergeAllBatchs[$key]['batch_number'] =  '-';
+                        $mergeAllBatchs[$key]['ref_uom_quantity'] = $new_purchase_qty;
+                        $mergeAllBatchs[$key]['current_quantity'] = $new_current_qty;
                     } else {
 
                         $mergeAllBatchs[$key]['batch_number'] =  '-';
-                        $mergeAllBatchs[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                        $mergeAllBatchs[$key]['current_quantity'] += $currentStock['current_quantity'];
+                        $mergeAllBatchs[$key]['ref_uom_quantity'] += $new_purchase_qty;
+                        $mergeAllBatchs[$key]['current_quantity'] += $new_current_qty;
 
                     }
 
@@ -1115,6 +1180,11 @@ class ReportController extends Controller
             $productId = $currentStock['product_id'];
             $variationId = $currentStock['variation_id'];
             $locationId = $currentStock['location']['id'];
+            $packageName = $currentStock['packagingtx']['packaging']['packaging_name'];
+
+
+
+
 
             // Generate a unique key for the product, variation, and location combination
             $key = $productId . '_' . $variationId . '_' . $locationId;
@@ -1153,6 +1223,7 @@ class ReportController extends Controller
                                 'ref_uom_short_name' => $currentStock['uom']['short_name'],
                                 'purchase_qty' => $currentStock['ref_uom_quantity'],
                                 'current_qty' => $currentStock['current_quantity'],
+                                'package_name' =>  $packageName,
                             ];
                             $result[] = $variationProduct;
                         }
@@ -1161,7 +1232,6 @@ class ReportController extends Controller
             }
         }
         logger($result);
-
 
         return response()->json( $result, 200);
     }

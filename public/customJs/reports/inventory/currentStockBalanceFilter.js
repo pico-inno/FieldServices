@@ -10,7 +10,7 @@
     var filterBrand = filterCard.find('.filter_brand');
     var filterDate = filterCard.find('.filter_date');
     var filterView = filterCard.find('.filter_view');
-
+    var filterType = filterCard.find('.filter_type');
 
      var handleSearchDatatable = () => {
 
@@ -31,15 +31,16 @@
         var filterBrandVal = filterBrand.val();
         var filterDateVal = filterDate.val();
         var filterViewVal = filterView.val();
+        var filterTypeVal = filterType.val();
         stockReportsTableBody.empty();
-        filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal);
+        filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal, filterTypeVal);
     });
 
 
     var filterDateVal = filterDate.val();
-    filterData( 0, 0, 0, 0, filterDateVal, 0);
+    filterData( 0, 0, 0, 0, filterDateVal, 0, 0);
 
-    async function filterData( filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterViewVal) {
+    async function filterData( filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterViewVal, filterTypeVal) {
         var data = {
             filter_locations: filterLocations,
             filter_product: filterProductVal,
@@ -47,6 +48,7 @@
             filter_brand: filterBrandVal,
             filter_date: filterDate,
             filter_view: filterViewVal,
+            filter_type: filterTypeVal,
         };
         try {
             $.ajax({
@@ -73,9 +75,15 @@
                     }
                 },
                 success: function (results) {
+console.log(results);
                     dataTable.clear();
 
                     results.forEach(function(item) {
+
+
+                        var short_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name : '') : (item.ref_uom_short_name !== undefined ? item.ref_uom_short_name : '');
+
+                        var long_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name : '') : (item.ref_uom_name !== undefined ? item.ref_uom_name  : '');
 
                         var rowData = [
                             item.variation_sku ? item.variation_sku : item.sku,
@@ -85,9 +93,9 @@
                             item.location_name,
                             item.category_name ? item.category_name : '-',
                             item.brand_name ?  item.brand_name : '-',
-                            Number(item.purchase_qty).toFixed(2)+' '+item.ref_uom_short_name ?? '',
-                            Number(item.current_qty).toFixed(2)+' '+item.ref_uom_short_name ?? '',
-                            item.ref_uom_name ?? '',
+                            Number(item.purchase_qty).toFixed(2)+' '+short_name,
+                            Number(item.current_qty).toFixed(2)+' '+short_name,
+                            long_name,
                         ];
                         // if (filterViewVal == 3) {
                         //     rowData.splice(3, 0, item.lot_no);
@@ -111,13 +119,13 @@
 
 function enableLotSerialColumn(showLotSerial){
     var tableHeader = document.getElementById("current_stock_balance_reports_table").getElementsByTagName("thead")[0];
-    var lotSerialTh = tableHeader.querySelector("th:nth-child(4)"); 
+    var lotSerialTh = tableHeader.querySelector("th:nth-child(4)");
 
     if (showLotSerial) {
-       
+
         lotSerialTh.style.display = "table-cell";
     } else {
-        
+
         lotSerialTh.style.display = "none";
     }
 
