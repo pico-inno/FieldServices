@@ -969,6 +969,22 @@ class ReportController extends Controller
         $products = Product::select('id', 'name')->get();
         $enableLotSerial = businessSettings::find(1)->lot_control;
 
+        $startDate = '2023-10-01'; // Example start date
+        $endDate = '2023-10-31'; // Example end date
+
+        $query = CurrentStockBalance::with(['uom', 'location:id,name,parent_location_id'])
+            ->select('current_stock_balance.*', 'product_packaging_transactions.*', 'product_packagings.*', 'current_stock_balance.created_at as csb_created_at')
+            ->leftJoin('product_packaging_transactions', function ($join) {
+                $join->on('current_stock_balance.transaction_type', '=', 'product_packaging_transactions.transaction_type')
+                    ->on('current_stock_balance.transaction_detail_id', '=', 'product_packaging_transactions.transaction_details_id');
+            })
+            ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id', '=', 'product_packagings.id')
+            ->whereBetween('current_stock_balance.created_at', [$startDate, $endDate]);
+
+        $results = $query->get();
+
+
+//        return $results;
 
         return view('App.report.inventory.stock.currentBalance', [
             'locations' => $locations,
@@ -995,20 +1011,25 @@ class ReportController extends Controller
 
 
 
-        $query = CurrentStockBalance::with([
-            'uom',
-            'location:id,name,parent_location_id',
-            'packagingtx.packaging'
-        ])
-            ->whereBetween('created_at', [$startDate, $endDate])
+        $query = CurrentStockBalance::with(['uom', 'location:id,name,parent_location_id'])
+            ->select('current_stock_balance.*', 'product_packaging_transactions.*', 'product_packagings.*', 'current_stock_balance.created_at as csb_created_at')
+            ->leftJoin('product_packaging_transactions', function ($join) {
+                $join->on('current_stock_balance.transaction_type', '=', 'product_packaging_transactions.transaction_type')
+                    ->on('current_stock_balance.transaction_detail_id', '=', 'product_packaging_transactions.transaction_details_id');
+            })
+            ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id', '=', 'product_packagings.id')
+            ->whereBetween('current_stock_balance.created_at', [$startDate, $endDate])
             ->where('current_quantity', '>', 0);
+
         if ($request->data['filter_locations'] != 0) {
-            $locationId=childLocationIDs($request->data['filter_locations']);
+            $locationId = childLocationIDs($request->data['filter_locations']);
             $query->whereIn('business_location_id', $locationId);
         }
 
-
         $currentStocks = $query->get();
+
+
+//        return response()->json( $currentStocks, 200);
         $productIds = $currentStocks->pluck('product_id')->unique()->toArray();
 
 //        $result = [];
@@ -1040,11 +1061,6 @@ class ReportController extends Controller
         if($filterView == 1){
 
                 foreach ($currentStocks as $currentStock) {
-//                    $package_tx =$currentStock['packaging_tx'];
-//
-//                    $filteredPackageTx = array_filter($package_tx, function ($item) use ($currentStock) {
-//                        return $item['transaction_type'] === $currentStock['transaction_type'];
-//                    });
                     $batchNo = $currentStock['batch_no'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
@@ -1132,12 +1148,12 @@ class ReportController extends Controller
             if($currentStocks->count() > 0){
                 foreach($currentStocks as $currentStock){
 
-
+                    $product_package_id = $currentStock['product_packaging_id'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
                     $currentQty = $currentStock['current_quantity'];
                     $refQty =  $currentStock['ref_uom_quantity'];
-                    $package_qty = $currentStock['packagingtx']['packaging']['quantity'];
+                    $package_qty = $currentStock['quantity'];
 
                     $package_currentQty = $currentQty / $package_qty;
                     $package_refQty = $refQty / $package_qty;
@@ -1152,7 +1168,9 @@ class ReportController extends Controller
 
 
 
-                    $key = $variationId;
+                    $key = $filterType == 2 ? $variationId.'_'.$product_package_id : $variationId;
+
+
 
                     if (!isset($mergeAllBatchs[$key])) {
                         $mergeAllBatchs[$key] = $currentStock;
@@ -1180,7 +1198,7 @@ class ReportController extends Controller
             $productId = $currentStock['product_id'];
             $variationId = $currentStock['variation_id'];
             $locationId = $currentStock['location']['id'];
-            $packageName = $currentStock['packagingtx']['packaging']['packaging_name'];
+            $packageName = $currentStock['packaging_name'];
 
 
 
