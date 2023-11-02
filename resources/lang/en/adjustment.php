@@ -31,6 +31,8 @@ return [
     'total_current_qty' => 'Total Current Qty',
     'on_ground_qty' => 'On Ground Qty',
     'difference_qty' => 'Difference Qty',
+    'package_qty' => 'Package Qty',
+    'package' => 'Package',
     'unit' => 'Unit',
     'save' => 'Save',
 

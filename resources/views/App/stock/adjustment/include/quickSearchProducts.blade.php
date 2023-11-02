@@ -45,6 +45,8 @@
 
             editAdjustmentDetails.forEach(function(detail,index){
                 let uom=$(`[name="adjustment_details[${index}][uom_id]"]`);
+                let initPackage = $(`[name="adjustment_details[${index}][packaging_id]"]`);
+                initPackage.select2();
                 uom.select2();
                 let uom_select=uom.val();
 
@@ -78,7 +80,7 @@
                 business_location_id,
                 query //text from search bar
             }
-            if (query.length >= 3) {
+            if (query.length >= 2) {
                 $('.quick-search-results').removeClass('d-none');
                 $('.quick-search-results').html(`
                 <div class="quick-search-result result cursor-pointer">
@@ -88,11 +90,8 @@
                 clearTimeout(throttleTimeout);
                 throttleTimeout = setTimeout(function() {
                     $.ajax({
-                        url: `/sell/get/product`,
+                        url: `/sell/get/product/v2`,
                         type: 'GET',
-                        // headers: {
-                        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        // },
                         data: {
                             data,
                         },
@@ -112,27 +111,51 @@
                             products=results;
                             var html = '';
                             if (results.length > 0) {
+                                console.log(results);
+                                let sku;
+                                let addedSku=[];
                                 results.forEach(function(result,key) {
-                                    let total_current_stock_qty=Number(result.total_current_stock_qty);
-                                    let css_class=result.total_current_stock_qty<=0?" text-gray-600 order-3":'';
+                                    let checkSku=addedSku.find((s)=>s==result.sku);
+                                    if(sku && result.sku==sku && !checkSku){
+                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                                    style="z-index:100;">`;
+                                        html += `<h4 class="fs-6 ps-10 pt-3">
+                                                        ${result.name}-(selectAll)`;
+                                        html+='</h4>'
+                                        // html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
 
-                                    html += `<div class="quick-search-result result  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
-                                    html += `<h4 class="fs-6  pt-3 ${css_class}">
-                                                ${result.name} ${result.product_type==='variable'?'-('+result.product_variations.length+') select all' :result.sku??'' }`;
-                                    if(result.product_type=='sub_variable'){
+                                        html += '</div>';
+                                        addedSku=[...addedSku,result.sku];
+                                        $('.quick-search-results').html(html);
+                                    }else{
+                                        sku=result.sku;
+                                    }
+                                    if(result.has_variation =='variable' && results.length== 2){
+                                        return;
+                                    }
+                                    let total_current_stock_qty=Number(result.stock_sum_current_quantity);
+                                    let css_class=isNullOrNan(result.stock_sum_current_quantity)<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
+
+                                    html += `<div class="quick-search-result result ps-10  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
+                                    html += `<h4 class="fs-6  pt-3 ${css_class} ">
+                                                    ${result.name} `;
+                                    if(result.has_variation=='variable'){
                                         html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
                                     }
                                     html+='</h4>'
-                                    if(result.total_current_stock_qty>0){
-                                        html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
-                                    }else{
-                                        html += '<p>Out of Stocks</p>';
+                                    html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${result.has_variation=='variable'?'SKU : '+result.variation_sku :'SKU : '+result.sku} </span>`
+                                    if(result.product_type=="storable"){
+                                        if(result.stock_sum_current_quantity>0){
+                                            html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
+                                        }else{
+                                            html += '<p>Out of Stocks</p>';
+                                        }
                                     }
                                     html += '</div>';
                                 });
-                                if (results.length == 1) {
+                                if (results.length == 1 || (results[0].has_variation =='variable' && results.length== 2)) {
                                     $('.quick-search-results').show();
-                                    if(results[0].total_current_stock_qty>0){
+                                    if(results[0].stock_sum_current_quantity>0 || results[0].product_type!="storable"){
                                         setTimeout(() => {
                                             $(`.result[data-name|='${results[0].name}']`).click();
                                             $('.quick-search-results').hide();
@@ -153,7 +176,6 @@
                                 }
                             });
 
-
                         },
 
                     })
@@ -166,30 +188,34 @@
         });
 
         $('#autocomplete').on('click', '.result', function() {
+
+            // $('.dataTables_empty').remove();
+            $('.quick-search-results').addClass('d-none')
             let id = $(this).attr('data-id');
-            let selected_product= products[id];
-            console.log(selected_product)
-            if(selected_product.total_current_stock_qty==0 || selected_product.total_current_stock_qty==null){
-                return;
+            let name = $(this).attr('data-name');
+            let selected_product;
+            if(id!="selectAll"){
+                selected_product= products[id];
+                let isStorable=selected_product.product_type=="storable";
+                if((selected_product.stock_sum_current_quantity==0 || selected_product.stock_sum_current_quantity==null) && isStorable){
+                    return;
+                }
             }
-
-            $('.dataTables_empty').addClass('d-none');
-            if(selected_product.product_type==='variable')
+            if(id=="selectAll")
             {
-                let variation=selected_product.product_variations;
-                variation.forEach(v => {
-                    let t=products.filter(p=>{
-                        return p.variation_id==v.id
-                    });
-
-                    append_row(t[0],unique_name_id);
+                let productid=$(this).data('productid');
+                let pds=products.filter(p=>{
+                    return p.id==productid
+                });
+                pds.forEach(p => {
+                    append_row(p,unique_name_id);
                     unique_name_id+=1;
                 });
                 return;
             }
-            append_row(selected_product,unique_name_id);
+            append_row(selected_product, unique_name_id);
             unique_name_id+=1;
-
+            $('#searchInput').focus();
 
         });
 
@@ -210,28 +236,16 @@
                 uomsData= [...uomsData,{'id':e.id,'text':e.name}]
             })
 
-            // var lotSelector;
-            // if(lotControl=="on"){
-            //     let stock=selected_product.stock[0];
-            //     let lotOption='';
-            //     selected_product.stock.forEach((s,key) => {
-            //         lotOption+=` <option value="${s.id}" >Lot-${s.lot_serial_no ?? '-'}</option>`
-            //     });
-            //     lotSelector=`
-            //         <td>
-            //             <select name="adjustment_details[${unique_name_id}][stock_id_by_lot_serial_no]" id="" class="form-select form-select-sm mt-3 lot_no" data-lot-select-${unique_name_id}="select2"  data-hide-search="true">
-            //                 ${lotOption}
-            //             </select>
-            //         </td>
-            //         `
-            // }else{
-            //     let value=selected_product.lot_serial_nos[0];
-            //
-            //
-            //     lotSelector=`
-            //                         <input type="hidden" name="adjustment_details[${unique_name_id}][stock_id_by_lot_serial_no]" class="lot_no" value="${value.id}">
-            //                     `
-            // }
+            variation=selected_product.product_variations;
+            let packagingOption='';
+            if(variation.packaging){
+                variation.packaging.forEach((pk)=>{
+                    packagingOption+=`
+                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name}</option>
+                    `;
+                })
+            }
+
             var newRow = `
                 <tr class="adjustment_row">
                     <td>
@@ -270,7 +284,18 @@
                         </select>
                         <input type="hidden" name="adjustment_details[${unique_name_id}][ref_uom_id]" value="${selected_product.stock[0].ref_uom_id}">
                     </td>
-
+ <td class="fv-row">
+                        <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                            name="adjustment_details[${unique_name_id}][packaging_quantity]" value="1.00">
+                    </td>
+                          <td class="fv-row">
+                        <select name="adjustment_details[${unique_name_id}][packaging_id]" class="form-select form-select-sm package_id"
+                            data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
+                            data-placeholder="Select Package" placeholder="select Package" >
+                            <option value="">Select Package</option>
+                            ${packagingOption}
+                        </select>
+                    </td>
                     <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
                 </tr>
             `;
@@ -305,6 +330,9 @@
             $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).select2({
                 minimumResultsForSearch: Infinity,
                 data:uomsData,
+            });
+            $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
+                minimumResultsForSearch: Infinity
             });
             optionSelected(selected_product.uom_id,$(`[name="adjustment_details[${unique_name_id}][uom_id]"]`));
 
@@ -345,8 +373,8 @@
                 'variation_id':newSelectedProduct.product_variations.id,
                 'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
                 'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
-                'total_current_stock_qty':newSelectedProduct.total_current_stock_qty,
-                'aviable_qty':newSelectedProduct.total_current_stock_qty,
+                'total_current_stock_qty':newSelectedProduct.stock_sum_current_quantity,
+                'aviable_qty':newSelectedProduct.stock_sum_current_quantity,
                 'validate':true,
                 'uom':newSelectedProduct.uom,
                 'uom_id':newSelectedProduct.uom_id,
@@ -367,6 +395,112 @@
                 productsOnSelectData=[...productsOnSelectData,newProductData];
             }
             console.log(productsOnSelectData);
+        }
+
+
+        $(document).on('change','.package_id',function(){
+            packaging($(this));
+            changeQtyOnUom($(this));
+            calDifferenceQty($(this));
+        })
+        // $(document).on('input','.quantity',function(){
+        //     packaging($(this),'/');
+        // })
+        $(document).on('change','.uom_select',function(){
+            packaging($(this),'/');
+
+        })
+        $(document).on('input','.package_qty',function(){
+            packaging($(this),'*');
+
+            changeQtyOnUom($(this));
+            calDifferenceQty($(this));
+        })
+        $(document).on('input', '.gnd_quantity', function (){
+            packaging($(this),'/');
+            // changeQtyOnUom($(this));
+            // calDifferenceQty($(this));
+        })
+        const packaging=(e,operator)=>{
+            let parent = $(e).closest('.adjustment_row');
+            let unitQty=parent.find('.gnd_quantity').val();
+            let selectedOption =parent.find('.package_id').find(':selected');
+            let packageInputQty=parent.find('.package_qty').val();
+            let packagingUom=selectedOption.data('uomid');
+            let packageQtyForCal = selectedOption.data('qty');
+
+            let currentUomId=parent.find('.uom_select').val();
+            let variation_id=parent.find('.variation_id').val();
+            let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+            let uoms=product.uom.unit_category.uom_by_category;
+
+
+            if(packageQtyForCal && packagingUom){
+                if(operator=='/'){
+                    let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
+                    console.log(unitQty+'unitQtyUOM');
+                    console.log(packageQtyForCal+'packageQty');
+                    parent.find('.package_qty').val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
+                }else{
+                    let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
+                    let qtyByCurrentUnit= changeQtyOnUom2(packagingUom,currentUomId,result,uoms).resultQty;
+
+                    parent.find('.gnd_quantity').val(qDecimal(qtyByCurrentUnit));
+                }
+            }
+        }
+
+        function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='') {
+
+            let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
+            let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
+            console.log(newUomInfo,currentUomInfo,newUomId,currentUomId,'--');
+            let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
+
+            let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
+            let currentUomType = currentUomInfo.unit_type;
+            let newUomType = newUomInfo.unit_type;
+            let newUomRounded = newUomInfo.rounded_amount || 1;
+            let newUomValue=newUomInfo.value;
+            let currentUomValue=currentUomInfo.value;
+            let resultQty;
+            let resultPrice;
+
+            if ( newUomType == 'bigger') {
+                resultQty = currentRefQty / newUomInfo.value;
+            } else if (newUomType == 'smaller') {
+                resultQty = currentRefQty * newUomInfo.value;
+            } else {
+                resultQty = currentRefQty;
+            }
+
+
+            resultPrice='';
+            if(currentUomPrice != ''){
+                if(currentUomId==newUomId){
+                    resultPrice = currentUomPrice ;
+                    return {resultQty,resultPrice};
+                }
+                if (currentUomType == 'reference' && newUomType == 'smaller') {
+                    resultPrice = currentUomPrice /(newUomInfo.value * currentUomInfo.value);
+                }else if (currentUomType == 'reference' && newUomType == 'bigger') {
+                    resultPrice = currentUomPrice * newUomValue;
+                }else if (currentUomType == 'bigger' && newUomType == 'reference') {
+                    resultPrice = currentUomPrice / currentUomValue;
+                }else if (currentUomType == 'bigger' && newUomType == 'bigger') {
+                    resultPrice = currentUomPrice *( newUomInfo / currentUomValue);
+                }else if (currentUomType == 'smaller' && newUomType == 'bigger') {
+                    resultPrice = currentUomPrice * (currentUomValue * newUomValue) ;
+                }else if (currentUomType == 'smaller' && newUomType == 'smaller') {
+                    resultPrice = currentUomPrice / newUomValue;
+                }else if (currentUomType == 'smaller' && newUomType == 'reference') {
+                    resultPrice = currentUomPrice * currentUomValue ;
+                }else{
+                    resultPrice = currentUomPrice  ;
+                }
+            }
+            return {resultQty,resultPrice};
+
         }
 
 
@@ -394,8 +528,9 @@
 
 
         $(document).on('input','.adjustment_row input',function () {
-            changeQtyOnUom($(this));
-            calDifferenceQty($(this));
+
+            // changeQtyOnUom($(this));
+            // calDifferenceQty($(this));
         })
 
 
@@ -502,48 +637,6 @@
                 referenceUomId: referenceUomId
             };
         }
-        //
-        // function checkStock(e){
-        //     let parent = e.closest('.adjustment_row');
-        //     let variationId=parent.find('.variation_id').val();
-        //     let index;
-        //     let product = productsOnSelectData.find(function(pd,i) {
-        //         index=i;
-        //         return  variationId == pd.variation_id;
-        //     });
-        //
-        //     const uoms=product.uom.unit_category.uom_by_category;
-        //
-        //     const referenceUom =uoms.filter(function ($u) {
-        //         return $u.unit_type == "reference";
-        //     })[0];
-        //     // let refQty=getReferenceUomInfoByCurrentUomQty(quantity,uom_select,referenceUom)['qtyByReferenceUom'];
-        //     let result=0;
-        //     $(`.gnd_quantity-${variationId}`).each(function(){
-        //         let parent =  $(this).closest('.adjustment_row');
-        //         let gnd_quantity=Number(parent.find('.gnd_quantity').val());
-        //         let uom_id=Number(parent.find('.uom_select').val());
-        //         const currentUom =uoms.filter(function ($u) {
-        //             return $u.id ==uom_id;
-        //         })[0];
-        //         let refQty=getReferenceUomInfoByCurrentUomQty(gnd_quantity,currentUom,referenceUom)['qtyByReferenceUom'];
-        //         let transferQty=getReferenceUomInfoByCurrentUomQty(gnd_quantity,currentUom,referenceUom)['qtyByReferenceUom'];
-        //         result+=isNullOrNan(refQty)
-        //
-        //     })
-        //     if(result > productsOnSelectData[index].total_current_stock_qty){
-        //         productsOnSelectData[index].validate=false;
-        //         parent.find('.current_stock_qty_txt').addClass('text-danger');
-        //         parent.find('.smallest_unit_txt').addClass('text-danger');
-        //         parent.find('.gnd_quantity').addClass('text-danger');
-        //     }else{
-        //         productsOnSelectData[index].validate=true;
-        //         parent.find('.current_stock_qty_txt').removeClass('text-danger');
-        //         parent.find('.smallest_unit_txt').removeClass('text-danger');
-        //         parent.find('.gnd_quantity').removeClass('text-danger');
-        //     }
-        //     console.log(productsOnSelectData[0].validate);
-        // }
 
         function getCurrentAndRefUom(uoms,currentUomId){
             const currentUom =uoms.filter(function ($u) {

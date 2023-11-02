@@ -33,6 +33,8 @@ return [
     'product' => 'Product',
     'total_current_qty' => 'Total Current Qty',
     'transfer_qty' => 'Transfer Qty',
+    'package_qty' => 'Package Qty',
+    'package' => 'Package',
     'unit' => 'Unit',
     'remark' => 'Remark',
     'save' => 'Save',

@@ -214,6 +214,8 @@
                                         <td class="min-w-100px">{{__('transfer.total_current_qty')}}</td>
                                         <th class="w-125px">{{__('transfer.transfer_qty')}}</th>
                                         <th class="min-w-100px">{{__('transfer.unit')}}</th>
+                                        <th class="w-125px">{{__('transfer.package_qty')}}</th>
+                                        <th class="min-w-100px">{{__('transfer.package')}}</th>
                                         <th class="min-w-200px">{{__('transfer.remark')}}</th>
                                         <th>
                                             <i class="fas fa-trash fw-bold"></i>
@@ -265,6 +267,22 @@
                                                 <select {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} name="transfer_details[{{$key}}][uom_id]" id="" class="form-select form-select-sm  unit_input uom_select" data-kt-repeater="uom_select_{{$key}}"  data-hide-search="true"  data-placeholder="Select Unit" required>
                                                     @foreach ($product->toArray()['uom']['unit_category']['uom_by_category'] as $uom)
                                                         <option value="{{$uom['id']}}" @selected($uom['id']==$detail->uom_id)>{{$uom['name']}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="fv-row">
+                                                <input type="text"  {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                                                       name="transfer_details[{{$key}}][packaging_quantity]" value="{{$detail['packagingTx']['quantity']}}">
+                                            </td>
+                                            <td class="fv-row">
+                                                <select  {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} name="transfer_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
+                                                        data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
+                                                        data-placeholder="Select Package" placeholder="select Package" required>
+                                                    <option value="">Select Package</option>
+                                                    @foreach ($product_variation['packaging'] as $package)
+                                                        <option @selected($package['id']==$detail['packagingTx']['product_packaging_id'])
+                                                                data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
+                                                            {{$package['packaging_name']}}</option>
                                                     @endforeach
                                                 </select>
                                             </td>

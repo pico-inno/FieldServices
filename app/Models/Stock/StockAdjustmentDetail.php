@@ -7,6 +7,7 @@ use App\Models\Product\Product;
 use App\Models\Product\ProductVariation;
 use App\Models\Product\UOM;
 use App\Models\Product\VariationTemplateValues;
+use App\Models\productPackagingTransactions;
 use App\Models\Stock\StockAdjustment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -71,5 +72,10 @@ class StockAdjustmentDetail extends Model
     public function Currentstock()
     {
         return $this->hasOne(CurrentStockBalance::class, 'transaction_detail_id', 'id');
+    }
+
+    public function packagingTx() {
+        return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'id')
+            ->where('transaction_type','adjustment');
     }
 }
