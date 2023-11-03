@@ -69,4 +69,9 @@ class CurrentStockBalance extends Model
         return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'transaction_detail_id')
             ->where('transaction_type', 'purchase');
     }
+
+    public function packaging_uom() : BelongsTo
+    {
+        return $this->belongsTo(UOM::class, 'uom_id', 'id');
+    }
 }

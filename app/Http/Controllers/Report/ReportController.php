@@ -1011,7 +1011,7 @@ class ReportController extends Controller
 
 
 
-        $query = CurrentStockBalance::with(['uom', 'location:id,name,parent_location_id'])
+        $query = CurrentStockBalance::with(['uom', 'packaging_uom', 'location:id,name,parent_location_id'])
             ->select('current_stock_balance.*', 'product_packaging_transactions.*', 'product_packagings.*', 'current_stock_balance.created_at as csb_created_at')
             ->leftJoin('product_packaging_transactions', function ($join) {
                 $join->on('current_stock_balance.transaction_type', '=', 'product_packaging_transactions.transaction_type')
@@ -1027,12 +1027,8 @@ class ReportController extends Controller
         }
 
         $currentStocks = $query->get();
-
-
-//        return response()->json( $currentStocks, 200);
+//        return response()->json($currentStocks, 200);
         $productIds = $currentStocks->pluck('product_id')->unique()->toArray();
-
-//        $result = [];
 
         $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
             ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
@@ -1057,7 +1053,6 @@ class ReportController extends Controller
         }
 
         $finalProduct = $finalProduct->get()->toArray();
-//        return response()->json( $currentStocks, 200);
         if($filterView == 1){
 
                 foreach ($currentStocks as $currentStock) {
@@ -1067,7 +1062,6 @@ class ReportController extends Controller
                     $currentQty = $currentStock['current_quantity'];
                     $refQty =  $currentStock['ref_uom_quantity'];
                     $package_qty = $currentStock['packagingtx']['packaging']['quantity'];
-//                    $package_qty = $filteredPackageTx['packaging']['quantity'];
 
 
                     $package_currentQty = $currentQty / $package_qty;
@@ -1191,7 +1185,7 @@ class ReportController extends Controller
                 $mergeAllBatchStocks = $currentStocks;
             }
         }
-
+//        return response()->json($mergeAllBatchStocks, 200);
         $lotCounts = [];
         $result = [];
         foreach ($mergeAllBatchStocks as $currentStock) {
@@ -1200,11 +1194,6 @@ class ReportController extends Controller
             $locationId = $currentStock['location']['id'];
             $packageName = $currentStock['packaging_name'];
 
-
-
-
-
-            // Generate a unique key for the product, variation, and location combination
             $key = $productId . '_' . $variationId . '_' . $locationId;
 
             // Check if the key exists in the lotCounts array
@@ -1242,6 +1231,8 @@ class ReportController extends Controller
                                 'purchase_qty' => $currentStock['ref_uom_quantity'],
                                 'current_qty' => $currentStock['current_quantity'],
                                 'package_name' =>  $packageName,
+                                'package_qty' => $currentStock['quantity'],
+                                'packaging_uom_short_name' => $currentStock['packaging_uom']['short_name'],
                             ];
                             $result[] = $variationProduct;
                         }

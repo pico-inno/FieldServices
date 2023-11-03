@@ -75,15 +75,14 @@
                     }
                 },
                 success: function (results) {
-console.log(results);
+                console.log(results);
                     dataTable.clear();
 
                     results.forEach(function(item) {
 
 
                         var short_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name : '') : (item.ref_uom_short_name !== undefined ? item.ref_uom_short_name : '');
-
-                        var long_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name : '') : (item.ref_uom_name !== undefined ? item.ref_uom_name  : '');
+                        var long_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name + '(' + Number(item.package_qty).toFixed(2)+ ' '+item.packaging_uom_short_name + ')' : '') : (item.ref_uom_name !== undefined ? item.ref_uom_name  : '');
 
                         var rowData = [
                             item.variation_sku ? item.variation_sku : item.sku,
