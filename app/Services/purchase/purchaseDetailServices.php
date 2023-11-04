@@ -1,0 +1,211 @@
+<?php
+
+namespace App\Services\purchase;
+
+use purchase;
+use Carbon\Carbon;
+use App\Helpers\UomHelper;
+use App\Models\stock_history;
+use App\Models\Product\Product;
+use App\Models\CurrentStockBalance;
+use App\Models\purchases\purchases;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Product\ProductVariation;
+use App\Repositories\CurrencyRepository;
+use App\Repositories\LocationRepository;
+use App\Models\purchases\purchase_details;
+use App\Services\purchase\purchasingService;
+use App\Services\packaging\packagingServices;
+use App\Actions\purchase\purchaseDetailActions;
+use App\Services\stockhistory\stockHistoryServices;
+use App\Repositories\interfaces\CurrencyRepositoryInterface;
+
+class purchaseDetailServices
+{
+
+    public  $currency;
+    public function __construct()
+    {
+        $currency = new CurrencyRepository();
+        $this->currency = $currency->defaultCurrency();
+    }
+
+    public function create(array $purchases_details, $purchase)
+    {
+        $action = new purchaseDetailActions();
+        $packaging = new packagingServices();
+        foreach ($purchases_details as $pd) {
+            $createdPd = $action->detailCreate($pd, $purchase);
+            $packaging->packagingForTx($pd, $createdPd['id'], 'purchase');
+        }
+    }
+    public function update($id,$purchasesDatas,$request){
+
+        $befUpdatedPurchaseData = $purchasesDatas['befUpdateData'];
+        $purchasesData= $purchasesDatas['updatedData'];
+
+        $location = new LocationRepository();
+        $stockHistory = new stockHistoryServices();
+        $purchaseDetailService = new purchaseDetailServices();
+
+        $request_purchase_details = $request->purchase_details;
+        $businessLocation = $location->find($purchasesData['business_location_id']);
+        if ($request_purchase_details) {
+
+            //get old purchase_details
+            $requestDetailDataForUpdate = array_filter($request_purchase_details, function ($item) {
+                return isset($item['purchase_detail_id']);
+            });
+
+            // get old purchase_details ids from client [1,2,]
+            $requestDetialIdForUpdate = array_column($requestDetailDataForUpdate, 'purchase_detail_id');
+            // update purchase detail's data and related current stock
+            foreach ($requestDetailDataForUpdate as $pd) {
+                $purchase_detail_id = $pd['purchase_detail_id'];
+                unset($pd["purchase_detail_id"]);
+                $purchase_details = purchase_details::where('id', $purchase_detail_id)->where('is_delete', 0)->first();
+
+                if ($befUpdatedPurchaseData['status'] == 'received' && $purchasesData['status'] != "received") {
+                    CurrentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase')->delete();
+                    stock_history::where('transaction_details_id', $purchase_detail_id)->where('transaction_type', 'purchase')->first()->delete();
+                }
+
+                $product = Product::where('id', $pd['product_id'])->select('purchase_uom_id')->first();
+                $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'], $pd['purchase_uom_id']);
+                $requestQty = $referencUomInfo['qtyByReferenceUom'];
+                $referencteUom = $referencUomInfo['referenceUomId'];
+
+                $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
+                $default_selling_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
+                $purchaseDetailService->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
+
+                $stock_check = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase')->exists();
+                // dd($stock_check);
+                if (!$stock_check) {
+                    $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
+                    $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
+                    $pd['per_ref_uom_price'] = $per_ref_uom_price;
+                    $purchase_details->update($pd);
+                    if ($befUpdatedPurchaseData->status != 'received' && $request->status == 'received') {
+                        $data = $purchaseDetailService->currentStockBalanceData($purchase_details, $purchasesData, 'purchase');
+                        if ($businessLocation->allow_purchase_order == 0) {
+                            CurrentStockBalance::create($data);
+                            $stockHistory->create($data, $purchase_detail_id, $data['ref_uom_quantity'], 'purchase', 'increase');
+                        }
+                    }
+                } else {
+                    $currentStock = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase');
+
+                    $purchase_quantity = (int) $currentStock->get()->first()->ref_uom_quantity;
+                    $current_qty_from_db = (int)  $currentStock->get()->first()->current_quantity;
+
+                    $diff_qty = $purchase_quantity - $current_qty_from_db;
+                    $currentResultQty = $requestQty - $diff_qty;
+                    $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
+                    $pd['subtotal_with_discount'] = $pd['subtotal_with_discount'];
+                    $pd['expense'] = $pd['per_item_expense'] * $pd['quantity'];
+                    $pd['ref_uom_id'] = $referencteUom;
+                    $pd['per_item_tax'] = 0;
+                    $pd['tax_amount'] = 0;
+                    $pd['subtotal_wit_tax'] = $pd['per_item_expense'] * $pd['quantity'] + 0;
+                    $pd['per_ref_uom_price'] = $per_ref_uom_price;
+                    $pd['updated_by'] = Auth::user()->id;
+                    $pd['updated_at'] = now();
+
+                    if ($request->status == 'received') {
+                        if ($businessLocation->allow_purchase_order == 0) {
+                            $currentStock->first()->update([
+                                "business_location_id" => $request->business_location_id,
+                                "ref_uom_id" => $referencteUom,
+                                "batch_no" => $request->batch_no,
+                                "ref_uom_price" => $pd['per_ref_uom_price'],
+                                "ref_uom_quantity" => $requestQty,
+                                "current_quantity" => $currentResultQty >= 0 ? $currentResultQty :  0,
+                            ]);
+                            stock_history::where('transaction_details_id', $purchase_detail_id)->where('transaction_type', 'purchase')->first()->update([
+                                'increase_qty' => $requestQty,
+                                "business_location_id" => $request->business_location_id,
+                            ]);
+                        } else {
+
+                            return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);
+                            // $te=$currentStock->whereColumn('column_b', '>=', 'column_a');
+                            // dd($te);
+                        }
+                    }
+
+                    // purchase details will update last because in update diff qty of stock need to check
+                    $purchase_details->update($pd);
+                }
+
+                // update packaging
+                $packagingService = new packagingServices();
+                $packagingService->updatePackagingForTx($pd, $purchase_detail_id, 'purchase');
+            }
+
+            //get added purchase_details_ids from database
+            $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get()->toArray();
+            $get_fetched_purchase_details_id = array_column($fetch_purchase_details, 'id');
+
+            //to remove edited purchase_detais that are already created
+            $requestDetailDataForUpdate_id_for_delete = array_diff($get_fetched_purchase_details_id, $requestDetialIdForUpdate); //for delete row
+            foreach ($requestDetailDataForUpdate_id_for_delete as $p_id) {
+                purchase_details::where('id', $p_id)->update([
+                    'is_delete' => 1,
+                    'deleted_at' => now(),
+                    'deleted_by' => Auth::user()->id,
+                ]);
+                CurrentStockBalance::where('transaction_detail_id', $p_id)->where('transaction_type', 'purchase')->delete();
+            }
+
+            //to create purchase details
+            $new_purchase_details = array_filter($request_purchase_details, function ($item) {
+                return !isset($item['purchase_detail_id']);
+            });
+            if (count($new_purchase_details) > 0) {
+                $purchaseDetailService->create($new_purchase_details, $purchasesData);
+            }
+        } else {
+            $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get();
+            foreach ($fetch_purchase_details as $p) {
+                CurrentStockBalance::where('trnasaction_detail_id', $p->id)->where('transaction_type', 'purchase')->delete();
+            }
+            purchase_details::where('purchases_id', $id)->update([
+                'is_delete' => 1,
+                'deleted_at' => now(),
+                'deleted_by' => Auth::user()->id,
+            ]);
+        }
+    }
+
+    public function changeDefaultPurchasePrice($variation_id, $default_selling_price)
+    {
+        $variation_product = ProductVariation::where('id', $variation_id)->first();
+        if ($variation_product) {
+            $variation_product->update(['default_purchase_price' => $default_selling_price]);
+        }
+    }
+
+    public function currentStockBalanceData($purchase_detail_data, $purchase, $type)
+    {
+        $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($purchase_detail_data->quantity, $purchase_detail_data->purchase_uom_id);
+        $batchNo = UomHelper::generateBatchNo($purchase_detail_data['variation_id']);
+        $per_ref_uom_price_by_default_currency = exchangeCurrency($purchase_detail_data->per_ref_uom_price, $purchase->currency_id, $this->currency->id) ?? 0;
+        return [
+            "business_location_id" => $purchase->business_location_id,
+            "product_id" => $purchase_detail_data->product_id,
+            "variation_id" => $purchase_detail_data->variation_id,
+            "transaction_type" => $type,
+            "transaction_detail_id" => $purchase_detail_data->id,
+            "batch_no" => $purchase_detail_data->batch_no,
+            "expired_date" => $purchase_detail_data->expired_date,
+            "uomset_id" => $purchase_detail_data->uomset_id,
+            'batch_no' => $batchNo,
+            "ref_uom_id" => $referencUomInfo['referenceUomId'],
+            "ref_uom_quantity" => $referencUomInfo['qtyByReferenceUom'],
+            "ref_uom_price" => $per_ref_uom_price_by_default_currency,
+            "current_quantity" => $referencUomInfo['qtyByReferenceUom'],
+            'currency_id' => $purchase->currency_id,
+        ];
+    }
+}

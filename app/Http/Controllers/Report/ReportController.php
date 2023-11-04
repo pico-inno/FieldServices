@@ -1152,7 +1152,7 @@ class ReportController extends Controller
                                 'ref_uom_name' => $currentStock['uom']['name'],
                                 'ref_uom_short_name' => $currentStock['uom']['short_name'],
                                 'purchase_qty' => $currentStock['ref_uom_quantity'],
-                                'current_qty' => $currentStock['current_quantity'],
+                                'current_qty' => $currkentStock['current_quantity'],
                             ];
                             $result[] = $variationProduct;
                         }

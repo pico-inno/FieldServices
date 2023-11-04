@@ -2,15 +2,25 @@
 
 namespace App\Services\purchase;
 
+use Carbon\Carbon;
 use App\Models\Contact\Contact;
+use App\Services\paymentServices;
 use App\Models\purchases\purchases;
 use Illuminate\Notifications\Action;
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\LocationRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Actions\purchase\purchaseActions;
 use App\Services\packaging\packagingServices;
-use App\Services\paymentServices;
+use App\Actions\purchase\purchaseDetailActions;
+use App\Helpers\UomHelper;
+use App\Models\CurrentStockBalance;
+use App\Models\Product\Product;
+use App\Models\purchases\purchase_details;
+use App\Models\stock_history;
+use App\Services\stockhistory\stockHistoryServices;
 
-class purchaseService
+class purchasingService
 {
 
 
@@ -23,22 +33,23 @@ class purchaseService
      */
     public function createPurchase($request){
         $action=new purchaseActions();
+        $detailServices=new purchaseDetailServices();
         $payment = new paymentServices();
-        $packaging=new packagingServices();
-        // create obj
+
+        // store purchase data
         $purchase= $action->create($this->purchaseData($request));
 
-        //create purchaseDetail
+        // store purchaseDetail data
         $purchases_details = $request->purchase_details;
         if ($purchases_details) {
-            foreach ($purchases_details as $pd) {
-               $createdPd= $action->detailCreate($pd, $purchase);
-               $packaging->packagingForTx($pd,$createdPd['id'],'purchase');
-            }
+            $detailServices->create($purchases_details, $purchase);
         }
+
         if ($request->paid_amount > 0) {
+            //store the payment transactions
             $payment->makePayment($purchase, $request->payment_account,'purchase');
         } else {
+            // update customer's payableAmount
             $suppliers = Contact::where('id', $request->contact_id)->first();
             $suppliers_payable = $suppliers->payable_amount;
             $suppliers->update([
@@ -48,16 +59,78 @@ class purchaseService
         return $purchase;
     }
 
+    public function update($id, $request)
+    {
+
+        //initial class
+        $action = new purchaseActions();
+        $detailServices = new purchaseDetailServices();
+
+        // update purchase data
+        $purchasesData = $this->purchaseData($request);
+        $purchase=$action->update($id, $purchasesData);
+        //update purchase detail data
+        $detailServices->update($id,$purchase, $request);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     *prepare data to create purchase
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function purchaseData($request)
+    {
+        if ($request->paid_amount == 0) {
+            $payment_status = 'due';
+        } elseif ($request->paid_amount >= $request->total_purchase_amount) {
+            $payment_status = 'paid';
+        } else {
+            $payment_status = 'partial';
+        }
+        return [
+            'business_location_id' => $request->business_location_id,
+            'contact_id' => $request->contact_id,
+            'status' => $request->status,
+            'purchase_amount' => $request->purchase_amount,
+            'total_line_discount' => $request->total_line_discount,
+            'extra_discount_type' => $request->extra_discount_type,
+            'extra_discount_amount' => $request->extra_discount_amount,
+            'total_discount_amount' => $request->total_discount_amount,
+            'purchase_expense' => $request->purchase_expense,
+            'total_purchase_amount' => $request->total_purchase_amount,
+            'currency_id' => $request->currency_id,
+            'paid_amount' => $request->paid_amount,
+            'purchased_at' => $request->purchased_at,
+            'total_purchase_amount' => $request->total_purchase_amount,
+            'balance_amount' => $request->balance_amount,
+            'payment_status' => $payment_status
+        ];
+    }
+
+
     /**
      * Data for list that show using datatable
      *
      * @param  mixed data from Request $request
      * @return void
      */
-    public function listData($request){
+    public function listData($request)
+    {
         $purchases = purchases::where('is_delete', 0)
-            ->with('business_location_id', 'businessLocation', 'supplier')
-            ->OrderBy('id', 'desc');
+        ->with('business_location_id', 'businessLocation', 'supplier')
+        ->OrderBy('id', 'desc');
         if ($request->filled('form_data') && $request->filled('to_date')) {
             $purchases = $purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
         }
@@ -151,47 +224,8 @@ class purchaseService
 
                 return (hasView('purchase') && hasPrint('purchase') && hasUpdate('purchase') && hasDelete('purchase') ? $html : 'No Access');
             })
-        ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
-        ->make(true);
+            ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
+            ->make(true);
     }
-
-
-
-
-    /**
-     *prepare data to create purchase
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function purchaseData($request)
-    {
-        if ($request->paid_amount == 0) {
-            $payment_status = 'due';
-        } elseif ($request->paid_amount >= $request->total_purchase_amount) {
-            $payment_status = 'paid';
-        } else {
-            $payment_status = 'partial';
-        }
-        return [
-            'business_location_id' => $request->business_location_id,
-            'contact_id' => $request->contact_id,
-            'status' => $request->status,
-            'purchase_amount' => $request->purchase_amount,
-            'total_line_discount' => $request->total_line_discount,
-            'extra_discount_type' => $request->extra_discount_type,
-            'extra_discount_amount' => $request->extra_discount_amount,
-            'total_discount_amount' => $request->total_discount_amount,
-            'purchase_expense' => $request->purchase_expense,
-            'total_purchase_amount' => $request->total_purchase_amount,
-            'currency_id' => $request->currency_id,
-            'paid_amount' => $request->paid_amount,
-            'purchased_at' => $request->purchased_at,
-            'total_purchase_amount' => $request->total_purchase_amount,
-            'balance_amount' => $request->balance_amount,
-            'payment_status' => $payment_status
-        ];
-    }
-
 
 }

@@ -28,7 +28,6 @@ use App\Models\sale\sale_details;
 use App\Services\paymentServices;
 use App\Models\Product\PriceGroup;
 use App\Models\Product\PriceLists;
-use App\repositories\locationRepo;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
@@ -52,6 +51,7 @@ use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
 use App\Http\Controllers\posSession\posSessionController;
+use App\Repositories\locationRepository;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -236,7 +236,7 @@ class saleController extends Controller
     // sale create page
     public function createPage()
     {
-        $locations = locationRepo::getTransactionLocation();
+        $locations = locationRepository::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
@@ -254,7 +254,7 @@ class saleController extends Controller
     // for edit page
     public function saleEdit($id)
     {
-        $locations = locationRepo::getTransactionLocation();
+        $locations = locationRepository::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description')->get();
