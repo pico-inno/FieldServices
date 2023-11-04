@@ -20,8 +20,8 @@ class purchaseDetailActions
     public  $currency;
     public function __construct()
     {
-        $currency=new CurrencyRepository();
-        $this->currency=$currency->defaultCurrency();
+        $currency = new CurrencyRepository();
+        $this->currency = $currency->defaultCurrency();
     }
     public function detailCreate($pd, $purchase)
     {
@@ -47,7 +47,7 @@ class purchaseDetailActions
         $pd['is_delete'] = 0;
         $pd = purchase_details::create($pd);
         $this->updateDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
-        $this->currentStockBalanceCreation($pd, $purchase, 'purchase');
+        $this->currentStockBalanceAndStockHistoryCreation($pd, $purchase, 'purchase');
         return $pd;
     }
 
@@ -61,7 +61,7 @@ class purchaseDetailActions
 
 
 
-    protected function currentStockBalanceCreation($purchase_detail_data, $purchase, $type)
+    public function currentStockBalanceAndStockHistoryCreation($purchase_detail_data, $purchase, $type)
     {
         $stockHistoryServices = new stockHistoryServices();
         $data = $this->currentStockBalanceData($purchase_detail_data, $purchase, $type);

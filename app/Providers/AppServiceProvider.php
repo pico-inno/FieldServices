@@ -29,7 +29,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
         $this->app->bind(LocationRepositoryInterface::class, LocationRepository::class);
         $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
         $this->app->bind(CurrencyRepositoryInterface::class, CurrencyRepository::class);

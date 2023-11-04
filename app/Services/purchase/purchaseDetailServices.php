@@ -46,7 +46,7 @@ class purchaseDetailServices
 
         $location = new LocationRepository();
         $stockHistory = new stockHistoryServices();
-        $purchaseDetailService = new purchaseDetailServices();
+        $purchaseDetailActions = new purchaseDetailActions();
 
         $request_purchase_details = $request->purchase_details;
         $businessLocation = $location->find($purchasesData['business_location_id']);
@@ -75,9 +75,10 @@ class purchaseDetailServices
                 $requestQty = $referencUomInfo['qtyByReferenceUom'];
                 $referencteUom = $referencUomInfo['referenceUomId'];
 
+                // change default purchase price
                 $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
                 $default_selling_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
-                $purchaseDetailService->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
+                $this->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
 
                 $stock_check = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase')->exists();
                 // dd($stock_check);
@@ -87,11 +88,7 @@ class purchaseDetailServices
                     $pd['per_ref_uom_price'] = $per_ref_uom_price;
                     $purchase_details->update($pd);
                     if ($befUpdatedPurchaseData->status != 'received' && $request->status == 'received') {
-                        $data = $purchaseDetailService->currentStockBalanceData($purchase_details, $purchasesData, 'purchase');
-                        if ($businessLocation->allow_purchase_order == 0) {
-                            CurrentStockBalance::create($data);
-                            $stockHistory->create($data, $purchase_detail_id, $data['ref_uom_quantity'], 'purchase', 'increase');
-                        }
+                        $purchaseDetailActions->currentStockBalanceAndStockHistoryCreation($purchase_details, $purchasesData, 'purchase');
                     }
                 } else {
                     $currentStock = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase');
@@ -163,7 +160,7 @@ class purchaseDetailServices
                 return !isset($item['purchase_detail_id']);
             });
             if (count($new_purchase_details) > 0) {
-                $purchaseDetailService->create($new_purchase_details, $purchasesData);
+                $this->create($new_purchase_details, $purchasesData);
             }
         } else {
             $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get();
@@ -186,26 +183,5 @@ class purchaseDetailServices
         }
     }
 
-    public function currentStockBalanceData($purchase_detail_data, $purchase, $type)
-    {
-        $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($purchase_detail_data->quantity, $purchase_detail_data->purchase_uom_id);
-        $batchNo = UomHelper::generateBatchNo($purchase_detail_data['variation_id']);
-        $per_ref_uom_price_by_default_currency = exchangeCurrency($purchase_detail_data->per_ref_uom_price, $purchase->currency_id, $this->currency->id) ?? 0;
-        return [
-            "business_location_id" => $purchase->business_location_id,
-            "product_id" => $purchase_detail_data->product_id,
-            "variation_id" => $purchase_detail_data->variation_id,
-            "transaction_type" => $type,
-            "transaction_detail_id" => $purchase_detail_data->id,
-            "batch_no" => $purchase_detail_data->batch_no,
-            "expired_date" => $purchase_detail_data->expired_date,
-            "uomset_id" => $purchase_detail_data->uomset_id,
-            'batch_no' => $batchNo,
-            "ref_uom_id" => $referencUomInfo['referenceUomId'],
-            "ref_uom_quantity" => $referencUomInfo['qtyByReferenceUom'],
-            "ref_uom_price" => $per_ref_uom_price_by_default_currency,
-            "current_quantity" => $referencUomInfo['qtyByReferenceUom'],
-            'currency_id' => $purchase->currency_id,
-        ];
-    }
+
 }

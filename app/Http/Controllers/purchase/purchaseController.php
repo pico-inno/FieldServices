@@ -317,7 +317,7 @@ class purchaseController extends Controller
         }
     }
 
-    protected function currentStockBalanceCreation($purchase_detail_data, $purchase, $type)
+    protected function currentStockBalanceAndStockHistoryCreation($purchase_detail_data, $purchase, $type)
     {
         $data = $this->currentStockBalanceData($purchase_detail_data, $purchase, $type);
         $businessLocation = businessLocation::where('id', $data['business_location_id'])->first();
