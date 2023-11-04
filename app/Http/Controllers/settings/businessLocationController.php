@@ -96,7 +96,7 @@ class businessLocationController extends Controller
         $bl= $businessLocation;
         $priceLists=PriceLists::get();
         $locationType = locationType::get();
-        $locations = businessLocation::orderBy('id', 'DESC')->get();
+        $locations = businessLocation::orderBy('id', 'DESC')->where('id','!=',$bl->id)->get();
         $address = locationAddress::where('location_id',$bl->id)->first();
         return view('App.businessSetting.location.edit',compact('bl','priceLists','locationType','locations', 'address'));
 
@@ -109,12 +109,16 @@ class businessLocationController extends Controller
     public function update(Request $request,$id)
     {
         $bl = businessLocation::where('id', $id)->first();
-        $request['is_active'] = $request['is_active']?? 0;
-        $request['allow_purchase_order']= $request['allow_purchase_order'] ?? 0;
-        $request['allow_sale_order'] = $request['allow_sale_order'] ?? 0;
-        $data=request()->except('_token');
-        $bl->update($data);
-        return redirect()->route('business_location')->with(['success' => 'Successfully Updted Location']);
+        if($bl->parent_location_id != $id){
+            $request['is_active'] = $request['is_active'] ?? 0;
+            $request['allow_purchase_order'] = $request['allow_purchase_order'] ?? 0;
+            $request['allow_sale_order'] = $request['allow_sale_order'] ?? 0;
+            $data = request()->except('_token');
+            $bl->update($data);
+            return redirect()->route('business_location')->with(['success' => 'Successfully Updted Location']);
+        }else{
+            return redirect()->route('business_location')->with(['error' => 'Cant Join locations']);
+        }
     }
 
     // destory each items
