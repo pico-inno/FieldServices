@@ -244,7 +244,7 @@
                                     Current Qty
 {{--                                </span>--}}
                             </th>
-                            <th class="view-type">UOM</th>
+                            <th class="view-type min-w-100px">UOM</th>
 
                         </tr>
                         <!--end::Table row-->

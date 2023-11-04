@@ -1,16 +1,18 @@
 
 <script>
-    var productsOnSelectData=[];
+
     $(document).ready(function () {
         var products;
+        var productsOnSelectData=[];
+        let setting=@json($setting);
+        let lotControl=setting.lot_control;
         let unique_name_id=1;
         let products_length=$('#transfer_table tbody tr').length-1;
-        let productQty=[];
-        let setting=@json($setting);
-        let currency=@json($currency);
-        let lotControl=setting.lot_control;
+        unique_name_id+=products_length;
 
 
+
+        //Edit data row load
         let editTransferDetails=@json($stock_transfer_details ?? []);
         let editTransfer=@json($stockTransfer ?? []);
         if (editTransferDetails.length>0) {
@@ -42,7 +44,6 @@
             })
 
 
-
             editTransferDetails.forEach(function(detail,index){
                 let initPackage = $(`[name="transfer_details[${index}][packaging_id]"]`);
                 let uom=$(`[name="transfer_details[${index}][uom_id]"]`);
@@ -55,29 +56,19 @@
 
 
         }
-
-        unique_name_id+=products_length;
-
-        $('#business_location_id').on('change',function(){
-            $('#transfer_table').find('tbody').empty();
-
-        })
+        //Edit data row load
 
 
 
-
-
-
-
-        // for quick search
-        let throttleTimeout;
+        //quick search
         $('.quick-search-form input').on('input', function() {
-            var query = $(this).val().trim();
+            var query = $(this).val().trim(); //input search query
             let business_location_id = $('#business_location_id').val();
             let data = {
                 business_location_id,
-                query //text from search bar
+                query
             }
+
             if (query.length >= 2) {
                 $('.quick-search-results').removeClass('d-none');
                 $('.quick-search-results').html(`
@@ -85,16 +76,13 @@
                 <span><span class="spinner-border spinner-border-sm align-middle me-2"></span>Loading</span>
                 </div>
                 `);
-                // clearTimeout(throttleTimeout);
-                // throttleTimeout =
+
                 setTimeout(function() {
                     $.ajax({
                         url: `/sell/get/product/v2`,
                         type: 'GET',
                         delay: 150,
-                        data: {
-                            data,
-                        },
+                        data: {data},
                         error:function(e){
                             status=e.status;
                             if(status==405){
@@ -107,22 +95,19 @@
                             };
                         },
                         success: function(results){
-                            // console.log(results);
                             products=results;
                             var html = '';
                             if (results.length > 0) {
-                                console.log(results);
                                 let sku;
                                 let addedSku=[];
                                 results.forEach(function(result,key) {
                                     let checkSku=addedSku.find((s)=>s==result.sku);
                                     if(sku && result.sku==sku && !checkSku){
-                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}'
                                                     style="z-index:100;">`;
                                         html += `<h4 class="fs-6 ps-10 pt-3">
                                                         ${result.name}-(selectAll)`;
                                         html+='</h4>'
-                                        // html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
 
                                         html += '</div>';
                                         addedSku=[...addedSku,result.sku];
@@ -186,48 +171,17 @@
                 $('.quick-search-results').empty();
             }
         });
-
-        // $('input').off('focus').on('focus', function() {
-        //     // Select the text in the input field
-        //     $(this).select();
-        // });
-
-        // $('#autocomplete').on('click', '.result', function() {
-        //     let id = $(this).attr('data-id');
-        //     let selected_product= products[id];
-        //     console.log(selected_product)
-        //     if(selected_product.total_current_stock_qty==0 || selected_product.total_current_stock_qty==null){
-        //         return;
-        //     }
-        //
-        //     $('.dataTables_empty').addClass('d-none');
-        //     if(selected_product.product_type==='variable')
-        //     {
-        //         let variation=selected_product.product_variations;
-        //         variation.forEach(v => {
-        //             let t=products.filter(p=>{
-        //                 return p.variation_id==v.id
-        //             });
-        //
-        //             append_row(t[0],unique_name_id);
-        //             unique_name_id+=1;
-        //         });
-        //         return;
-        //     }
-        //     append_row(selected_product,unique_name_id);
-        //     unique_name_id+=1;
-        //
-        //
-        // });
+        //quick search
 
 
+        //quick search data click or autocomplete
         $('#autocomplete').on('click', '.result', function() {
 
-            // $('.dataTables_empty').remove();
             $('.quick-search-results').addClass('d-none')
+
             let id = $(this).attr('data-id');
-            let name = $(this).attr('data-name');
             let selected_product;
+
             if(id!="selectAll"){
                 selected_product= products[id];
                 let isStorable=selected_product.product_type=="storable";
@@ -235,8 +189,8 @@
                     return;
                 }
             }
-            if(id=="selectAll")
-            {
+
+            if(id=="selectAll"){
                 let productid=$(this).data('productid');
                 let pds=products.filter(p=>{
                     return p.id==productid
@@ -247,35 +201,35 @@
                 });
                 return;
             }
+
             append_row(selected_product, unique_name_id);
             unique_name_id+=1;
             $('#searchInput').focus();
 
         });
+        //quick search data click or autocomplete
 
-        //append table row for product to sell
+
+        //append row to transfer table
         function append_row(selected_product,unique_name_id) {
 
 
-            let default_purchase_price,variation_id;
-
-            let uomIds=[];
-
+            //check selected product is storable
             let isStorable=selected_product.product_type=="storable";
-            // if the item is out of stock reutrn do nothing;
             if(selected_product.total_current_stock_qty==0 && isStorable){
                 warning('Products are out of stock')
                 return;
             }
+            //check selected product is storable
 
-
-            let uomByCategory=selected_product['uom']['unit_category']['uom_by_category'];
             let uomsData=[];
+            let uomByCategory=selected_product['uom']['unit_category']['uom_by_category'];
             uomByCategory.forEach(function(e){
                 uomsData= [...uomsData,{'id':e.id,'text':e.name}]
             })
 
-            variation=selected_product.product_variations;
+
+            let variation=selected_product.product_variations;
             let packagingOption='';
             if(variation.packaging){
                 variation.packaging.forEach((pk)=>{
@@ -287,32 +241,28 @@
 
             var newRow = `
                 <tr class="transfer_row">
+                     <td class="d-none">
+                        <input type='hidden' value="${selected_product.id}" class="product_id"  name="transfer_details[${unique_name_id}][product_id]"  />
+                        <input type='hidden' value="${selected_product.product_variations.id}" class="variation_id" name="transfer_details[${unique_name_id}][variation_id]"  />
+                        <input type='hidden' value="${selected_product.product_variations.id}" name="transfer_details[${unique_name_id}][currency_id]"/>
+
+                        @if ($setting->lot_control=='on')
+                        <input type='hidden' value="0" class="uom_set_id"  />
+                        @else
+                        <input type='hidden' value="${selected_product.stock[0].id}" class="uom_set_id"  />
+                        @endif
+                    </td>
                     <td>
                         <div class="my-5 mt-2">
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
-
                         </div>
                     </td>
                     <td>
                         <span class="current_stock_qty_txt">${parseFloat(selected_product.stock_sum_current_quantity).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>
-                         <p class="text-danger-emphasis  stock_alert_${selected_product.product_variations.id} d-none fs-7 p-2">* Out of Stock</p>
-                     </td>
-
-                    <td class="d-none">
-                        <div>
-                            <input type='hidden' value="${selected_product.id}" class="product_id"  name="transfer_details[${unique_name_id}][product_id]"  />
-                            <input type='hidden' value="${selected_product.product_variations.id}" class="variation_id" name="transfer_details[${unique_name_id}][variation_id]"  />
-                            <input type='hidden' value="${selected_product.product_variations.id}" name="transfer_details[${unique_name_id}][currency_id]"/>
-
-                            @if ($setting->lot_control=='on')
-                                <input type='hidden' value="0" class="uom_set_id"  />
-                            @else
-                                <input type='hidden' value="${selected_product.stock[0].id}" class="uom_set_id"  />
-                            @endif
-                        </div>
+                        <p class="text-danger-emphasis  stock_alert_${selected_product.product_variations.id} d-none fs-7 p-2">* Out of Stock</p>
                     </td>
-                     <td>
+                    <td>
                         <div class="input-group transfer_dialer_${unique_name_id}" >
                             <input type="text" class="form-control form-control-sm quantity form-control-sm quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="transfer_details[${unique_name_id}][quantity]" value="1" data-kt-dialer-control="input"/>
                         </div>
@@ -322,11 +272,10 @@
                         </select>
                         <input type="hidden" name="transfer_details[${unique_name_id}][ref_uom_id]" value="${selected_product.stock[0].ref_uom_id}">
                     </td>
-                      <td class="fv-row">
-                        <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
-                            name="transfer_details[${unique_name_id}][packaging_quantity]" value="1.00">
+                    <td class="fv-row">
+                        <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity" name="transfer_details[${unique_name_id}][packaging_quantity]" value="1.00">
                     </td>
-                          <td class="fv-row">
+                    <td class="fv-row">
                         <select name="transfer_details[${unique_name_id}][packaging_id]" class="form-select form-select-sm package_id"
                             data-kt-repeater="package_select_${unique_name_id}" data-kt-repeater="select2" data-hide-search="true"
                             data-placeholder="Select Package" placeholder="select Package" >
@@ -334,12 +283,14 @@
                             ${packagingOption}
                         </select>
                     </td>
-                     <td>
+                    <td>
                         <input type="text" class="form-control form-control-sm" name="transfer_details[${unique_name_id}][remark]">
                     </td>
-                    <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
+                    <th>
+                        <i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i>
+                    </th>
                 </tr>
-            `;
+                `;
 
             // new row append
             $('#transfer_table tbody').prepend(newRow);
@@ -347,30 +298,26 @@
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
             $('#searchInput').val('');
+
             checkAndStoreSelectedProduct(selected_product);
-            let rowCount = $('#transfer_table tbody tr').length;
 
-            // $('.total_item').text(rowCount-1);
-            // searching disable in select 2
             $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity});
-
             $(`[data-lot-select-${unique_name_id}="select2"]`).select2({
-                // data,
                 minimumResultsForSearch: Infinity
-            })
+            });
+
             // Dialer container element
-            let name=`.transfer_dialer_${unique_name_id}`;
-            let dialerElement = document.querySelector(name);
+            // let dialer_name=`.transfer_dialer_${unique_name_id}`;
+            // let dialerElement = document.querySelector(dialer_name);
+            // let dialerObject = new KTDialer(dialerElement);
+            //
+            // dialerObject.on('kt.dialer.change',function(e) {
+            //
+            //     packaging($(e.inputElement),'/');
+            //     checkStock($(e.inputElement));
+            //
+            // });
 
-            // Create dialer object and initialize a new instance
-            let dialerObject = new KTDialer(dialerElement);
-
-            dialerObject.on('kt.dialer.change',function(e) {
-
-                packaging($(e.inputElement),'/');
-                checkStock($(e.inputElement));
-
-            })
             $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).select2({
                 minimumResultsForSearch: Infinity,
                 data:uomsData,
@@ -393,10 +340,25 @@
             }
             $('.price_group').select2({minimumResultsForSearch: Infinity});
 
+            $('input').off('focus').on('focus', function() {
+                // Select the text in the input field
+                $(this).select();
+            });
+
+
         }
 
 
+        $('input').off('focus').on('focus', function() {
+            // Select the text in the input field
+            $(this).select();
+        });
 
+
+        $('#business_location_id').on('change',function(){
+            $('#transfer_table').find('tbody').empty();
+
+        })
 
         function optionSelected(value,select){
 

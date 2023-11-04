@@ -1081,18 +1081,18 @@
                                                         </div>
                                                         @endif
                                                         @if(hasPrint('product'))
-                                                        <div class="menu-item">
-                                                            <!--begin:Menu link-->
-                                                            <a class="menu-link @yield('print_labels_menu_link')"
-                                                                href="{{ url('/printLabel') }}">
-                                                                <span class="menu-icon">
-                                                                    <i class="fa-solid fa-barcode"></i>
-                                                                </span>
-                                                                <span class="menu-title fs-6">{{
-                                                                    __('product/product.print_label') }}</span>
-                                                            </a>
-                                                            <!--end:Menu link-->
-                                                        </div>
+{{--                                                        <div class="menu-item">--}}
+{{--                                                            <!--begin:Menu link-->--}}
+{{--                                                            <a class="menu-link @yield('print_labels_menu_link')"--}}
+{{--                                                                href="{{ url('/printLabel') }}">--}}
+{{--                                                                <span class="menu-icon">--}}
+{{--                                                                    <i class="fa-solid fa-barcode"></i>--}}
+{{--                                                                </span>--}}
+{{--                                                                <span class="menu-title fs-6">{{--}}
+{{--                                                                    __('product/product.print_label') }}</span>--}}
+{{--                                                            </a>--}}
+{{--                                                            <!--end:Menu link-->--}}
+{{--                                                        </div>--}}
                                                         @endif
                                                         @if(hasView('variation'))
                                                         <div class="menu-item">

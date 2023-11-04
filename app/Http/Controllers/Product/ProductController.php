@@ -210,6 +210,7 @@ class ProductController extends Controller
     {
         $brands = Brand::all();
         $categories = Category::with('parentCategory', 'childCategory')->get();
+        $unitCategories = UnitCategory::all();
         $manufacturers = Manufacturer::all();
         $generics = Generic::all();
         $uoms = UOM::all();
@@ -238,7 +239,10 @@ class ProductController extends Controller
         ])->where('primary_product_id', $product->id)->get();
         $packagings=productPackaging::where('product_id',$product->id)->with('uom')->get();
 
-        return view('App.product.product.productEdit', compact('product', 'packagings','brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
+        $unit_category_id = UOM::where('id', $product->uom_id)->first()->unit_category_id;
+
+
+        return view('App.product.product.productEdit', compact('product', 'packagings', 'unit_category_id','unitCategories','brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
