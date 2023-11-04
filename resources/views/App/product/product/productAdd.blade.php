@@ -149,19 +149,6 @@
                                                     @enderror
                                                 </div>
 
-                                                <div class="col md-4 mb-5">
-
-                                                    <div id="single_alert_qty_ui"  class="fv-row">
-                                                        <label class="form-label">
-                                                            {{ __('product/product.alert_quantity') }}
-                                                        </label>
-
-                                                        <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="{{old('single_alert_quantity')}}" />
-
-                                                    </div>
-
-                                                </div>
-
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4 mb-5 fv-row">
@@ -322,6 +309,7 @@
                                                         <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+
                                                 <div class="col-md-4 mb-5">
                                                     <div class="fv-row">
                                                         <label class="form-label required">
@@ -341,6 +329,20 @@
                                                     @enderror
                                                 </div>
 
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4 mb-5">
+
+                                                    <div id="single_alert_qty_ui"  class="fv-row">
+                                                        <label class="form-label">
+                                                            {{ __('product/product.alert_quantity') }}
+                                                        </label>
+
+                                                        <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="{{old('single_alert_quantity')}}" />
+
+                                                    </div>
+
+                                                </div>
                                             </div>
                                             <div class="row advance-toggle-class">
                                                 <div class="col-md-4 mb-5">

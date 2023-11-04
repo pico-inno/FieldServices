@@ -262,6 +262,26 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-5">
                                             <div class="fv-row">
+                                                <label class="form-label required">
+                                                    Unit Category
+                                                </label>
+                                                <div class="input-group mb-5 flex-nowrap">
+                                                    <div class="overflow-hidden flex-grow-1">
+                                                        <select name="unit_categories" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Unit Categories">
+                                                            <option></option>
+                                                            @foreach ($unitCategories as $unitCategorie)
+                                                                <option value="{{ $unitCategorie->id }}" @selected(old('uom_id') == $unitCategorie->id)>{{ $unitCategorie->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @error('uom_id')
+                                            <div class="text-danger my-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-4 mb-5">
+                                            <div class="fv-row">
                                                 <!--begin::Label-->
                                                 <label class="form-label required">
                                                     {{ __('product/product.uom') }}
@@ -269,12 +289,12 @@
                                                 <!--end::Label-->
                                                 <div class="input-group mb-5 flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select name="uom_id" class="form-select form-select-sm"
+                                                        <select name="uom_id" class="form-select form-select-sm uomDatas"
                                                             data-control="select2" data-placeholder="Select UoM">
                                                             <option></option>
-                                                            @foreach ($uoms as $uom)
-                                                            <option value="{{ $uom->id }}">{{ $uom->name }}</option>
-                                                            @endforeach
+{{--                                                            @foreach ($uoms as $uom)--}}
+{{--                                                            <option value="{{ $uom->id }}">{{ $uom->name }}</option>--}}
+{{--                                                            @endforeach--}}
                                                         </select>
                                                     </div>
                                                 </div>
@@ -305,7 +325,10 @@
                                             <div class="text-danger my-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="col md-4 mb-5">
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-5">
 
                                             <div id="single_alert_qty_ui"  class="fv-row">
                                                 <label class="form-label">
@@ -320,7 +343,7 @@
                                     </div>
                                     <div class="row advance-toggle-class">
                                         <div class="col-md-4 mb-5">
-                                            <label class="form-label">{{ __('product/product.purchase_price') }}</label>
+                                            <label class="form-label">{{ __('product/product.purchase_price') }}   <span class="uom-label"></span></label>
                                             <input type="text" name="purchase_price_for_single"
                                                 class="form-control form-control-sm mb-2" placeholder="Purchase price"
                                                 value="" />
@@ -332,7 +355,7 @@
                                                 placeholder="Profit mergin (%)" value="" />
                                         </div>
                                         <div class="col-md-4 mb-5">
-                                            <label class="form-label">{{ __('product/product.sell_price') }}</label>
+                                            <label class="form-label">{{ __('product/product.sell_price') }}   <span class="uom-label"></span></label>
                                             <input type="text" name="sell_price_for_single"
                                                 class="form-control form-control-sm mb-2" placeholder="Sell price"
                                                 value="" />
@@ -1140,6 +1163,61 @@
                     });
                 })
             // ============= > End:: For Sub Category Select Box  < ==================
+
+
+            $(document).on('change', 'select[name="unit_categories"]', function (){
+                let unit_category_id = $(this).val();
+                $('.unitOfUom').empty();
+
+                $.ajax({
+                    url: `/uom/category/get/${unit_category_id}`,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(results){
+                        console.log(results);
+                        $('.uomDatas').empty();
+                        let data=[];
+                        for (let item of results) {
+
+                            data=[...data,
+                                {
+                                    'id':item.id,
+                                    'text':item.name,
+                                    'data-uom-name': item.name
+                                }]
+                        }
+                        currentUoMData=data;
+
+                        let selectElement = $('.uomDatas');
+                        selectElement.empty(); // Clear existing options
+                        for (let item of data) {
+                            let option = $('<option></option>').val(item.id).text(item.text).attr('data-uom-name', item.text);
+                            selectElement.append(option);
+                        }
+
+
+                        $('.uomDatas').select2({
+                            minimumResultsForSearch: Infinity,
+                        });
+
+
+                        setTimeout(function (){
+                            let selectedOption = $('select[name="uom_id"]').find('option:selected');
+                            let uomName = selectedOption.attr('data-uom-name');
+
+
+                            $('.uom-label').text('('+uomName+')');
+
+                        }, 150);
+                        $('[name="uom_id"]').val(data[0].id).trigger('change');
+                    },
+                    error: function(e){
+                        console.log(e.responseJSON.error);
+                    }
+                });
+            });
 
             $(document).on('change', 'select[name="uom_id"]', function() {
                 let uom_id = $(this).val();
