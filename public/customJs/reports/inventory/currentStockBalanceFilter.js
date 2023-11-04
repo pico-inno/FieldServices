@@ -82,8 +82,17 @@
 
 
                         var short_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name : '') : (item.ref_uom_short_name !== undefined ? item.ref_uom_short_name : '');
-                        var long_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name + '(' + Number(item.package_qty).toFixed(2)+ ' '+item.packaging_uom_short_name + ')' : '') : (item.ref_uom_name !== undefined ? item.ref_uom_name  : '');
+                        // var long_name = filterTypeVal == 2 ? (item.package_name !== undefined ? item.package_name + '(' + Number(item.package_qty).toFixed(2)+ ' '+item.packaging_uom_short_name + ')' : '') : (item.ref_uom_name !== undefined ? item.ref_uom_name  : '');
 
+                        if(filterTypeVal == 2){
+                          if(item.product_packaging_id == 0){
+                              var long_name = item.ref_uom_name !== undefined ?item.ref_uom_name : '';
+                          }else{
+                              var long_name = (item.package_name !== undefined ? item.package_name + '(' + Number(item.package_qty).toFixed(2)+ ' '+item.packaging_uom_short_name + ')' : '');
+                          }
+                        }else{
+                            var long_name = item.ref_uom_name !== undefined ?item.ref_uom_name : '';
+                        }
                         var rowData = [
                             item.variation_sku ? item.variation_sku : item.sku,
                             item.name+'<br><span class="fs-7 text-muted">'+item.variation_template_name+' -    '+item.variation_value_name+'</span>',
