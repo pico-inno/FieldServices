@@ -85,8 +85,12 @@
                                         attr='data-allow-clear="true"'>
                                         <option value=""></option>
                                         @foreach ($locations as $l)
+
                                         @php
-                                        $parentName=getParentName($l->parentLocation);
+                                            $parentName=getParentName($l->parentLocation);
+                                            if($l->parent_location_id ==$bl->id){
+                                                continue;
+                                            }
                                         @endphp
                                         <option value="{{$l->id}}" @selected($l->id==$bl->parent_location_id)>{{$parentName ? substr($parentName,2).' / ' : ''}}
                                             {{$l->name}}</option>
