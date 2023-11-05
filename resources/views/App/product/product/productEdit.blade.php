@@ -354,7 +354,7 @@
                                                         <!--end::Label-->
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="purchase_uom_id" id="unitOfUom" class="form-select form-select-sm" data-control="select2" data-placeholder="Select purchase UoM">
+                                                                <select name="purchase_uom_id" id="unitOfUom" class="form-select form-select-sm unitOfUom" data-control="select2" data-placeholder="Select purchase UoM">
 
                                                                 </select>
                                                             </div>
@@ -1410,7 +1410,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(results){
-                console.log(results);
                 $('.uomDatas').empty();
                 let data=[];
                 for (let item of results) {
@@ -1490,7 +1489,7 @@
                     }
                     currentUoMData=data;
 
-                    $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                    $('.unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
                 },
                 error: function(e){
                     console.log(e.responseJSON.error);
@@ -1510,19 +1509,9 @@
                 },
                 success: function(results){
 
-                    const purchaseUoM = $('#unitOfUom')[0];
-                    purchaseUoM.innerHTML = '';
-
-                    const defaultOption = document.createElement('option'); // Create default option
-                    defaultOption.value = '';
-                    defaultOption.text = 'Select an option';
-                    $(purchaseUoM).append(defaultOption);
                     let data=[];
                     for (let item of results) {
-                        let option = document.createElement('option');
-                        option.value = item.id;
-                        option.text = item.name;
-                        purchaseUoM.append(option);
+                        // let option = document.createElement('option');
                         data=[...data,
                         {
                             'id':item.id,
@@ -1530,7 +1519,10 @@
                         }]
                     }
                     currentUoMData=data;
-                    $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                    $('.unitOfUom').select2({
+                        data,
+                        minimumResultsForSearch: Infinity
+                    }); // Initialize select2 plugin
                 },
                 error: function(e){
                     console.log(e.responseJSON.error);

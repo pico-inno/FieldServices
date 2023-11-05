@@ -144,7 +144,7 @@ class purchaseController extends Controller
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
                     ->with(
                     [
-                            'packaging',
+                            'packaging.uom',
                             'variationTemplateValue' => function ($q) {
                                 $q->select('id', 'name');
                             }
@@ -612,10 +612,10 @@ class purchaseController extends Controller
                 'uom' => function ($q) {
                     $q->with('unit_category.uomByCategory');
                 },
-                'product_variations.packaging'
+                'product_variations.packaging.uom'
             ])
             ->get()->toArray();
-            // dd(productPackaging::with('product_variations')->get()->toArray());
+            // dd($products);
         return response()->json($products, 200);
     }
 }

@@ -74,12 +74,20 @@ function price($price, $currencyId = 'default')
     }
 }
 
+
 function fprice($price)
 {
     // $loadSetting=SettingHelpers::load();
     $setting = getSettings();
     $formattedPrice = number_format($price, $setting->currency_decimal_places, '.', '');
     return $formattedPrice;
+}
+function fquantity($qty)
+{
+    // $loadSetting=SettingHelpers::load();
+    $setting = getSettings();
+    $formattedQty = number_format($qty, $setting->quantity_decimal_places, '.', '');
+    return $formattedQty;
 }
 
 function fDate($date, $br = false, $time = true)

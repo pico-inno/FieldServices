@@ -15,7 +15,7 @@ class locationActions
 
         try {
             DB::beginTransaction();
-            $location_code = businessLocationCode();
+            $location_code = $data['location_code']?? businessLocationCode();
             // dd(Auth::user());
             $locationData = [
                 'business_id' => Auth::user()->business_id,

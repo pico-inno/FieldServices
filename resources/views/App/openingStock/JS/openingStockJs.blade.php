@@ -206,7 +206,7 @@ $(document).ready(function() {
         if(variation.packaging){
             variation.packaging.forEach((pk)=>{
                 packagingOption+=`
-                    <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name}</option>
+                    <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name} (${qDecimal(pk.quantity)} ${pk.uom.short_name})</option>
                 `;
             })
         }
