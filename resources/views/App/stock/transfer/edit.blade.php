@@ -282,7 +282,7 @@
                                                     @foreach ($product_variation['packaging'] as $package)
                                                         <option @selected($package['id']==$detail['packagingTx']['product_packaging_id'])
                                                                 data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
-                                                            {{$package['packaging_name']}}</option>
+                                                            {{$package['packaging_name']}} ({{ number_format($package['quantity'], 2, '.', '') }} {{$package['uom']['short_name']}})</option>
                                                     @endforeach
                                                 </select>
                                             </td>

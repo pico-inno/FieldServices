@@ -240,12 +240,13 @@
             let packagingOption='';
             if(variation.packaging){
                 variation.packaging.forEach((pk)=>{
+                    let package_uom_name = uomByCategory.find((item) => item.id === pk.uom_id).short_name;
                     packagingOption+=`
-                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name}</option>
+                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name} (${Number(pk.quantity).toFixed(2)} ${package_uom_name})</option>
                     `;
                 })
             }
-
+            // console.log(variation.packaging+'package--------');
             var newRow = `
                 <tr class="adjustment_row">
                     <td>

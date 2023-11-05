@@ -319,7 +319,7 @@ class StockTransferController extends Controller
                     'productVariation' => function ($q) {
                         $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                             ->with([
-                                'packaging',
+                                'packaging' => function($q) { $q->with('uom'); },
                                 'product' => function ($q) {
                                     $q->select('id', 'name', 'product_type');
                                 },

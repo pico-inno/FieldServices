@@ -1238,7 +1238,7 @@ class ReportController extends Controller
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
                                 'batch_no' => $filterView == 3 ? $currentStock['batch_no'] : $currentStock['batch_number'],
                                 'lot_no' => $filterView == 3 ? $currentStock['lot_serial_no'] : '-',
-                                'location_name' => businessLocationName($currentStock->location),
+                                'location_name' => $request->data['filter_locations'] == 0 ? 'All Location' : businessLocationName($currentStock->location),
                                 'category_id' => $product['category']['id'] ?? '',
                                 'category_name' => $product['category']['name'] ?? '',
                                 'brand_name' => $product['brand']['name'] ?? '',
