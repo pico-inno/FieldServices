@@ -1,18 +1,17 @@
-
 <script>
-
     $(document).ready(function () {
+        var unique_name_id=1;
+        var quickSearchResults = $('.quick-search-results');
         var products;
         var productsOnSelectData=[];
-        let setting=@json($setting);
-        let lotControl=setting.lot_control;
-        let unique_name_id=1;
+        var setting=@json($setting);
+        var lotControl=setting.lot_control;
+        var business_location_id = $('[name="from_location"]').val();
         let products_length=$('#transfer_table tbody tr').length-1;
         unique_name_id+=products_length;
 
 
-
-        //Edit data row load
+        //Begin: edit row data load
         let editTransferDetails=@json($stock_transfer_details ?? []);
         let editTransfer=@json($stockTransfer ?? []);
         if (editTransferDetails.length>0) {
@@ -56,25 +55,23 @@
 
 
         }
-        //Edit data row load
+        //End: edit row data load
 
 
-
-        //quick search
+        //Begin: quick search
         $('.quick-search-form input').on('input', function() {
             var query = $(this).val().trim(); //input search query
-            let business_location_id = $('#business_location_id').val();
             let data = {
                 business_location_id,
                 query
             }
 
             if (query.length >= 2) {
-                $('.quick-search-results').removeClass('d-none');
-                $('.quick-search-results').html(`
-                <div class="quick-search-result result cursor-pointer">
-                <span><span class="spinner-border spinner-border-sm align-middle me-2"></span>Loading</span>
-                </div>
+                quickSearchResults.removeClass('d-none');
+                quickSearchResults.html(`
+                    <div class="quick-search-result result cursor-pointer">
+                    <span><span class="spinner-border spinner-border-sm align-middle me-2"></span>Loading</span>
+                    </div>
                 `);
 
                 setTimeout(function() {
@@ -84,15 +81,7 @@
                         delay: 150,
                         data: {data},
                         error:function(e){
-                            status=e.status;
-                            if(status==405){
-                                warning('Method Not Allow!');
-                            }else if(status==419){
-                                error('Session Expired')
-                            }else{
-                                console.log(e);
-                                console.log(' Something Went Wrong! Error Status: '+status )
-                            };
+                            console.log(' Something Went Wrong! Error Status: '+ e.status )
                         },
                         success: function(results){
                             products=results;
@@ -100,146 +89,177 @@
                             if (results.length > 0) {
                                 let sku;
                                 let addedSku=[];
-                                results.forEach(function(result,key) {
-                                    let checkSku=addedSku.find((s)=>s==result.sku);
-                                    if(sku && result.sku==sku && !checkSku){
-                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}'
-                                                    style="z-index:100;">`;
-                                        html += `<h4 class="fs-6 ps-10 pt-3">
-                                                        ${result.name}-(selectAll)`;
-                                        html+='</h4>'
 
+                                results.forEach(function(result,key) {
+
+                                    let checkSku = addedSku.find((s) => s === result.sku);
+
+                                    if(sku && result.sku==sku && !checkSku){
+                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' style="z-index:100;">`;
+                                        html += `<h4 class="fs-6 ps-10 pt-3">${result.name}-(selectAll)</h4>`;
                                         html += '</div>';
                                         addedSku=[...addedSku,result.sku];
-                                        $('.quick-search-results').html(html);
+                                        quickSearchResults.html(html);
                                     }else{
                                         sku=result.sku;
                                     }
-                                    if(result.has_variation =='variable' && results.length== 2){
+
+                                    if (result.has_variation === 'variable' && results.length === 2) {
                                         return;
                                     }
-                                    let total_current_stock_qty=Number(result.stock_sum_current_quantity);
-                                    let css_class=isNullOrNan(result.stock_sum_current_quantity)<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
+
+                                    let total_current_stock_qty = Number(result.stock_sum_current_quantity);
+                                    let css_class = isNullOrNan(result.stock_sum_current_quantity) <=0 && result.product_type === "storable" ? "order-3" : '';
 
                                     html += `<div class="quick-search-result result ps-10  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
-                                    html += `<h4 class="fs-6  pt-3 ${css_class} ">
-                                                    ${result.name} `;
-                                    if(result.has_variation=='variable'){
-                                        html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
+                                    html += `<h4 class="fs-6  pt-3 ${css_class} "> ${result.name}`;
+
+                                    if (result.has_variation === 'variable') {
+                                        html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">( ${result.variation_name??''})</span>`;
                                     }
+
                                     html+='</h4>'
-                                    html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${result.has_variation=='variable'?'SKU : '+result.variation_sku :'SKU : '+result.sku} </span>`
-                                    if(result.product_type=="storable"){
-                                        if(result.stock_sum_current_quantity>0){
-                                            html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
+                                    html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8"> ${result.has_variation === 'variable' ? 'SKU : '+result.variation_sku : 'SKU : '+result.sku} </span>`
+
+                                    if (result.product_type === "storable") {
+                                        if (result.stock_sum_current_quantity > 0) {
+                                            html += `<p>${total_current_stock_qty.toFixed(2)} ${result.uom.name}(s/es)</p>`;
                                         }else{
-                                            html += '<p>Out of Stocks</p>';
+                                            html += '<p class="text-danger">Out of Stocks</p>';
                                         }
                                     }
                                     html += '</div>';
                                 });
-                                if (results.length == 1 || (results[0].has_variation =='variable' && results.length== 2)) {
-                                    $('.quick-search-results').show();
-                                    if(results[0].stock_sum_current_quantity>0 || results[0].product_type!="storable"){
+
+                                if (results.length === 1 || (results[0].has_variation === 'variable' && results.length === 2)) {
+                                    quickSearchResults.show();
+                                    if(results[0].stock_sum_current_quantity > 0 || results[0].product_type !== "storable"){
                                         setTimeout(() => {
                                             $(`.result[data-name|='${results[0].name}']`).click();
-                                            $('.quick-search-results').hide();
+                                            quickSearchResults.hide();
                                         }, 100);
                                     }
                                 } else {
-                                    $('.quick-search-results').show();
+                                    quickSearchResults.show();
                                 }
                             } else{
                                 html = '<p>No results found.</p>';
-                                $('.quick-search-results').show();
+                                quickSearchResults.show();
                             }
-                            $('.quick-search-results').removeClass('d-none')
-                            $('.quick-search-results').html(html);
+
+                            quickSearchResults.removeClass('d-none')
+                            quickSearchResults.html(html);
+
                             $(document).click(function(event) {
                                 if (!$(event.target).closest('.quick-search-results').length) {
-                                    $('.quick-search-results').addClass('d-none')
+                                    quickSearchResults.addClass('d-none')
                                 }
                             });
 
 
                         },
-                    })
+                    });
                 },300)
 
             }else {
-                $('.quick-search-results').addClass('d-none');
-                $('.quick-search-results').empty();
+                quickSearchResults.addClass('d-none');
+                quickSearchResults.empty();
             }
         });
-        //quick search
+        //End: quick search
 
 
-        //quick search data click or autocomplete
+        //Begin: quick search results to click and autocomplete
         $('#autocomplete').on('click', '.result', function() {
+            const quickSearchResults = $(this);
+            quickSearchResults.addClass('d-none');
 
-            $('.quick-search-results').addClass('d-none')
-
-            let id = $(this).attr('data-id');
+            const id = $(this).attr('data-id');
             let selected_product;
 
-            if(id!="selectAll"){
-                selected_product= products[id];
-                let isStorable=selected_product.product_type=="storable";
-                if((selected_product.stock_sum_current_quantity==0 || selected_product.stock_sum_current_quantity==null) && isStorable){
+            if (id !== "selectAll") {
+                selected_product = products[id];
+                const isStorable = selected_product.product_type === "storable";
+                const stockQuantity = selected_product.stock_sum_current_quantity;
+
+                if ((stockQuantity === 0 || stockQuantity === null) && isStorable) {
                     return;
                 }
             }
 
-            if(id=="selectAll"){
-                let productid=$(this).data('productid');
-                let pds=products.filter(p=>{
-                    return p.id==productid
+            if (id === "selectAll") {
+                const productid = $(this).data('productid');
+                const filteredProducts = products.filter(p => p.id === productid);
+
+                filteredProducts.forEach(p => {
+                    append_row(p, unique_name_id);
+                    unique_name_id += 1;
                 });
-                pds.forEach(p => {
-                    append_row(p,unique_name_id);
-                    unique_name_id+=1;
-                });
+
                 return;
             }
 
             append_row(selected_product, unique_name_id);
-            unique_name_id+=1;
+            unique_name_id += 1;
             $('#searchInput').focus();
-
         });
-        //quick search data click or autocomplete
+        //End: quick search results to click and autocomplete
 
 
-        //append row to transfer table
-        function append_row(selected_product,unique_name_id) {
-
-
-            //check selected product is storable
-            let isStorable=selected_product.product_type=="storable";
-            if(selected_product.total_current_stock_qty==0 && isStorable){
-                warning('Products are out of stock')
+        //Begin: append row to transfer table
+        function append_row(selected_product, unique_name_id) {
+            let isStorable = selected_product.product_type === "storable";
+            if (selected_product.total_current_stock_qty === 0 && isStorable) {
+                warning('Products are out of stock');
                 return;
             }
-            //check selected product is storable
 
-            let uomsData=[];
-            let uomByCategory=selected_product['uom']['unit_category']['uom_by_category'];
-            uomByCategory.forEach(function(e){
-                uomsData= [...uomsData,{'id':e.id,'text':e.name}]
-            })
+            let uomByCategory = selected_product['uom']['unit_category']['uom_by_category'];
+            let uomsData = createUomsData(uomByCategory);
+            let packagingOption = createPackagingOptions(selected_product.product_variations, uomByCategory);
+
+            let newRow = createNewRow(selected_product, unique_name_id, uomsData, packagingOption);
+
+            $('#transfer_table tbody').prepend(newRow);
+            $('.dataTables_empty').addClass('d-none');
+            quickSearchResults.addClass('d-none');
+            quickSearchResults.empty();
+            $('#searchInput').val('');
 
 
-            let variation=selected_product.product_variations;
-            let packagingOption='';
-            if(variation.packaging){
-                variation.packaging.forEach((pk)=>{
+            checkAndStoreSelectedProduct(selected_product);
+
+            initializeSelect2(unique_name_id, uomsData);
+
+            $(`[name="transfer_details[${unique_name_id}][uom_id]"]`).val(selected_product.uom_id).trigger('change');
+
+            enableDeleteRowButton();
+        }
+        //End: append row to transfer table
+
+
+        function createUomsData(uomByCategory) {
+            let uomsData = [];
+            uomByCategory.forEach(function (e) {
+                uomsData = [...uomsData, { 'id': e.id, 'text': e.name }];
+            });
+            return uomsData;
+        }
+
+        function createPackagingOptions(variation, uomByCategory) {
+            let packagingOption = '';
+            if (variation.packaging) {
+                variation.packaging.forEach((pk) => {
                     let package_uom_name = uomByCategory.find((item) => item.id === pk.uom_id).short_name;
-                    packagingOption+=`
-                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name} (${Number(pk.quantity).toFixed(2)} ${package_uom_name})</option>
-                    `;
-                })
+                    packagingOption += `
+                <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name} (${Number(pk.quantity).toFixed(2)} ${package_uom_name})</option>
+            `;
+                });
             }
+            return packagingOption;
+        }
 
+        function createNewRow(selected_product, unique_name_id, uomsData, packagingOption) {
             var newRow = `
                 <tr class="transfer_row">
                      <td class="d-none">
@@ -248,13 +268,13 @@
                         <input type='hidden' value="${selected_product.product_variations.id}" name="transfer_details[${unique_name_id}][currency_id]"/>
 
                         @if ($setting->lot_control=='on')
-                        <input type='hidden' value="0" class="uom_set_id"  />
+                            <input type='hidden' value="0" class="uom_set_id"  />
                         @else
                         <input type='hidden' value="${selected_product.stock[0].id}" class="uom_set_id"  />
                         @endif
                     </td>
                     <td>
-                        <div class="my-5 mt-2">
+                         <div class="my-5 mt-2">
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                         </div>
@@ -292,85 +312,33 @@
                     </th>
                 </tr>
                 `;
+            return newRow;
+        }
 
-            // new row append
-            $('#transfer_table tbody').prepend(newRow);
-            $('.dataTables_empty').addClass('d-none');
-            $('.quick-search-results').addClass('d-none');
-            $('.quick-search-results').empty();
-            $('#searchInput').val('');
-
-            checkAndStoreSelectedProduct(selected_product);
-
-            $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity});
-            $(`[data-lot-select-${unique_name_id}="select2"]`).select2({
-                minimumResultsForSearch: Infinity
-            });
-
-            // Dialer container element
-            // let dialer_name=`.transfer_dialer_${unique_name_id}`;
-            // let dialerElement = document.querySelector(dialer_name);
-            // let dialerObject = new KTDialer(dialerElement);
-            //
-            // dialerObject.on('kt.dialer.change',function(e) {
-            //
-            //     packaging($(e.inputElement),'/');
-            //     checkStock($(e.inputElement));
-            //
-            // });
-
+        function initializeSelect2(unique_name_id, uomsData) {
+            $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity });
             $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).select2({
                 minimumResultsForSearch: Infinity,
-                data:uomsData,
+                data: uomsData,
             });
             $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
                 minimumResultsForSearch: Infinity
             });
+        }
 
-            optionSelected(selected_product.uom_id,$(`[name="transfer_details[${unique_name_id}][uom_id]"]`));
-
-
-
-
+        function enableDeleteRowButton() {
             if ($('#transfer_table tbody tr').length > 1) {
-                $('.deleteRow').removeClass('disable');
-                $('.deleteRow').css({
+                $('.deleteRow').removeClass('disable').css({
                     'cursor': 'pointer',
                     'opacity': 1
                 });
             }
-            $('.price_group').select2({minimumResultsForSearch: Infinity});
-
-            $('input').off('focus').on('focus', function() {
-                // Select the text in the input field
-                $(this).select();
-            });
-
-
         }
-
-
-        $('input').off('focus').on('focus', function() {
-            // Select the text in the input field
-            $(this).select();
-        });
 
 
         $('#business_location_id').on('change',function(){
             $('#transfer_table').find('tbody').empty();
-
         })
-
-        function optionSelected(value,select){
-
-            var valueToSelect = value;
-            var $select = select;
-
-            $select.val(valueToSelect);
-            var $option = $select.find('option[value="' + valueToSelect + '"]');
-            $option.prop('selected', true);
-            $select.trigger('change');
-        }
 
         function checkAndStoreSelectedProduct(newSelectedProduct) {
             let newProductData={
@@ -399,7 +367,6 @@
             }else{
                 productsOnSelectData=[...productsOnSelectData,newProductData];
             }
-            console.log(productsOnSelectData);
         }
 
 

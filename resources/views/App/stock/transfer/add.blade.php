@@ -13,7 +13,7 @@
 
 @section('styles')
     <link href="{{asset("assets/plugins/global/plugins.bundle.css")}}" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>
+{{--    <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>--}}
 @endsection
 
 @section('title')
@@ -202,22 +202,6 @@
                                     </tbody>
                                 </table>
                             </div>
-{{--                            <div class="separator my-5"></div>--}}
-{{--                            <div class="col-4 float-end mt-3">--}}
-{{--                                <table class="col-12 ">--}}
-{{--                                    <tbody>--}}
-{{--                                    <tr>--}}
-{{--                                        <th>Total Item:</th>--}}
-{{--                                        <td class="rowcount text-left fs-4" id="total_item">0</td>--}}
-{{--                                    </tr>--}}
-{{--                                    <tr>--}}
-{{--                                        <th>Net Total Amount</th>--}}
-{{--                                        <td class="rowSum text-left fs-4 net_purchase_total_amount_text" id=''>0</td>--}}
-{{--                                    </tr>--}}
-{{--                                    </tbody>--}}
-{{--                                </table>--}}
-{{--                            </div>--}}
-
                         </div>
                     </div>
 
@@ -235,37 +219,33 @@
 
 @push('scripts')
     <script>
-        const date = new Date();
-
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-
+        //Begin:  initialize transfer date
         $("#kt_datepicker_2").flatpickr({
             dateFormat: "d-m-Y",
+            defaultDate: new Date(),
             conjunction: ""
         });
+        //End:  initialize transfer date
 
-        let query = document.querySelector('#kt_datepicker_2');
-        query.value = `${day}-${month}-${year}`;
-
-
+        //Begin: Disable to Location(To) option
         $(document).ready(function() {
+            var fromLocationSelect = $('select[name="from_location"]');
+            var toLocationSelect = $('select[name="to_location"]');
 
-            var $fromLocationSelect = $('select[name="from_location"]');
-            var $toLocationSelect = $('select[name="to_location"]');
+            disableToLocation(fromLocationSelect.val());
 
-
-            $fromLocationSelect.on('change', function() {
+            fromLocationSelect.on('change', function() {
                 var selectedLocation = $(this).val();
-
-                $toLocationSelect.find('option').prop('disabled', false);
-                $toLocationSelect.find('option[value="' + selectedLocation + '"]').prop('disabled', true);
-                $toLocationSelect.trigger('change');
+                disableToLocation(selectedLocation);
             });
+
+            function disableToLocation(selectedLocation){
+                toLocationSelect.find('option').prop('disabled', false);
+                toLocationSelect.find('option[value="' + selectedLocation + '"]').prop('disabled', true);
+                toLocationSelect.trigger('change');
+            }
         });
-
-
+        //End:  Disable to Location(To) option
     </script>
     @include('App.stock.transfer.include.quickSearchProducts')
 @endpush
