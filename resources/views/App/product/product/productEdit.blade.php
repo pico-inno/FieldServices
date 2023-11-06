@@ -1372,14 +1372,17 @@
         // ============= > End:: For Show advance  < ==================
 
         $(document).ready(function(){
-
             $('[name="unit_categories"]').val(JSON.parse('{{ json_encode($unit_category_id) }}')).trigger('change');
-            $('[name="uom_id"]').val(JSON.parse('{{ json_encode($product->uom_id) }}')).trigger('change');
+
             setTimeout(function (){
-            $('[name="purchase_uom_id"]').val(JSON.parse('{{ json_encode($product->purchase_uom_id) }}')).trigger('change');
+                $('[name="uom_id"]').val(JSON.parse('{{ json_encode($product->uom_id) }}')).trigger('change');
             }, 300);
 
+            setTimeout(function (){
+                $('[name="purchase_uom_id"]').val(JSON.parse('{{ json_encode($product->purchase_uom_id) }}')).trigger('change');
+            }, 500);
         });
+
         $(document).on('change', 'select[name="unit_categories"]', function (){
             let unit_category_id = $(this).val();
            unitCategory(unit_category_id);
