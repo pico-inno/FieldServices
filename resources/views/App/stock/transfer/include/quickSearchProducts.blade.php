@@ -23,6 +23,7 @@
                     return detail.product_variation.id== pd.variation_id;
                 });
                 let uoms=getCurrentAndRefUom(detail.product.uom.unit_category.uom_by_category,detail.uom_id)
+
                 let transferQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(detail.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
                 if(!product){
                     newProductData={
@@ -335,10 +336,68 @@
             }
         }
 
+        function inputs(e) {
+            let parent = $(e).closest('.transfer_row');
+            let quantity = parent.find('.quantity');
+            let package_id = parent.find('.package_id');
+            let package_qty = parent.find('.package_qty');
+            let before_edit_quantity = parent.find('.before_edit_quantity');
+            let smallest_unit_txt = parent.find('.smallest_unit_txt');
+            let current_stock_qty_txt = parent.find('.current_stock_qty_txt');
+            let uom_select = parent.find('.uom_select');
+            let variation_id = parent.find('.variation_id');
+            let product_id = parent.find('product_id');
+
+
+            return {
+                parent,
+                product_id,
+                variation_id,
+                uom_select,
+                quantity,
+                package_id,
+                package_qty,
+                before_edit_quantity,
+                smallest_unit_txt,
+                current_stock_qty_txt,
+            }
+        }
+
+
 
         $('#business_location_id').on('change',function(){
             $('#transfer_table').find('tbody').empty();
-        })
+        });
+
+        $(document).on('change','.package_id',function(){
+            packaging($(this));
+            checkStock($(this));
+        });
+
+        $(document).on('input','.quantity',function(){
+            packaging($(this),'/');
+            checkQty($(this));
+            checkStock($(this));
+        });
+
+        $(document).on('change','.uom_select',function(){
+            let parent=$(this).closest('.transfer_row');
+            let unit_selcted_txt=parent.find('.unit_input option:selected').text();
+            let smallest_unit_txt=parent.find('.smallest_unit_txt');
+            smallest_unit_txt.text(unit_selcted_txt);
+
+            changeQtyOnUom($(this),$(this).val());
+            checkStock($(this));
+            packaging($(this),'/');
+
+        });
+
+        $(document).on('input','.package_qty',function(){
+            packaging($(this),'*');
+            checkStock($(this));
+            checkQty($(this));
+        });
+
 
         function checkAndStoreSelectedProduct(newSelectedProduct) {
             let newProductData={
@@ -369,84 +428,49 @@
             }
         }
 
+        function packaging(e, operator) {
+            const i = inputs(e);
+            const unitQty = Number(i.quantity.val());
+            const packageInputQty = Number(i.package_qty.val());
+            const currentUomId = Number(i.uom_select.val());
+            const variation_id = Number(i.variation_id.val());
 
-        function inputs(e) {
-            let parent = $(e).closest('.transfer_row');
-            let quantity = parent.find('.quantity');
-            let before_edit_quantity = parent.find('.before_edit_quantity');
-            let smallest_unit_txt = parent.find('.smallest_unit_txt');
-            let current_stock_qty_txt = parent.find('.current_stock_qty_txt');
+            const selectedOption = i.package_id.find(':selected');
+            const packagingUom = selectedOption.data('uomid');
+            const packageQtyForCal = selectedOption.data('qty');
 
+            const product = productsOnSelectData.find(pod => pod.variation_id === variation_id);
+            const uoms = product.uom.unit_category.uom_by_category;
 
-            return {
-                parent,
-                quantity,
-                before_edit_quantity,
-                smallest_unit_txt,
-                current_stock_qty_txt,
-            }
-        }
-
-        $(document).on('change','.package_id',function(){
-            packaging($(this));
-            checkStock($(this));
-        })
-        $(document).on('input','.quantity',function(){
-            packaging($(this),'/');
-            checkStock($($(this).inputElement));
-        })
-        $(document).on('change','.uom_select',function(){
-            packaging($(this),'/');
-
-        })
-        $(document).on('input','.package_qty',function(){
-            packaging($(this),'*');
-            checkStock($($(this).inputElement));
-        })
-        const packaging=(e,operator)=>{
-            let parent = $(e).closest('.transfer_row');
-            let unitQty=parent.find('.quantity').val();
-            let selectedOption =parent.find('.package_id').find(':selected');
-            let packageInputQty=parent.find('.package_qty').val();
-            let packagingUom=selectedOption.data('uomid');
-            let packageQtyForCal = selectedOption.data('qty');
-
-            let currentUomId=parent.find('.uom_select').val();
-            let variation_id=parent.find('.variation_id').val();
-            let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
-            let uoms=product.uom.unit_category.uom_by_category;
-            if(packageQtyForCal && packagingUom){
-                if(operator=='/'){
-                    let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
-                    parent.find('.package_qty').val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
-                }else{
-                    let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
-                    let qtyByCurrentUnit= changeQtyOnUom2(packagingUom,currentUomId,result,uoms).resultQty;
-
-                    parent.find('.quantity').val(qDecimal(qtyByCurrentUnit));
+            if (packageQtyForCal && packagingUom) {
+                if (operator === '/') {
+                    const unitQtyValByUom = changeQtyOnUom2(currentUomId, packagingUom, unitQty, uoms).resultQty;
+                    i.package_qty.val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
+                } else {
+                    const result = isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
+                    const qtyByCurrentUnit = changeQtyOnUom2(packagingUom, currentUomId, result, uoms).resultQty;
+                    i.quantity.val(qDecimal(qtyByCurrentUnit));
                 }
             }
         }
 
         function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='') {
 
-            let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
-            let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
-            console.log(newUomInfo,currentUomInfo,newUomId,currentUomId,'--');
-            let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
+            let newUomInfo = uoms.find((uomItem) => uomItem.id === newUomId);
+            let currentUomInfo = uoms.find((uomItem) => uomItem.id === currentUomId);
+            let refUomInfo = uoms.find((uomItem) => uomItem.unit_type === "reference");
 
             let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
             let currentUomType = currentUomInfo.unit_type;
             let newUomType = newUomInfo.unit_type;
-            let newUomRounded = newUomInfo.rounded_amount || 1;
             let newUomValue=newUomInfo.value;
             let currentUomValue=currentUomInfo.value;
             let resultQty;
             let resultPrice;
 
-            if ( newUomType == 'bigger') {
+            if ( newUomType === 'bigger') {
                 resultQty = currentRefQty / newUomInfo.value;
-            } else if (newUomType == 'smaller') {
+            } else if (newUomType === 'smaller') {
                 resultQty = currentRefQty * newUomInfo.value;
             } else {
                 resultQty = currentRefQty;
@@ -454,24 +478,24 @@
 
 
             resultPrice='';
-            if(currentUomPrice != ''){
-                if(currentUomId==newUomId){
+            if(currentUomPrice !== ''){
+                if(currentUomId === newUomId){
                     resultPrice = currentUomPrice ;
                     return {resultQty,resultPrice};
                 }
-                if (currentUomType == 'reference' && newUomType == 'smaller') {
+                if (currentUomType === 'reference' && newUomType === 'smaller') {
                     resultPrice = currentUomPrice /(newUomInfo.value * currentUomInfo.value);
-                }else if (currentUomType == 'reference' && newUomType == 'bigger') {
+                }else if (currentUomType === 'reference' && newUomType === 'bigger') {
                     resultPrice = currentUomPrice * newUomValue;
-                }else if (currentUomType == 'bigger' && newUomType == 'reference') {
+                }else if (currentUomType === 'bigger' && newUomType === 'reference') {
                     resultPrice = currentUomPrice / currentUomValue;
-                }else if (currentUomType == 'bigger' && newUomType == 'bigger') {
+                }else if (currentUomType === 'bigger' && newUomType === 'bigger') {
                     resultPrice = currentUomPrice *( newUomInfo / currentUomValue);
-                }else if (currentUomType == 'smaller' && newUomType == 'bigger') {
+                }else if (currentUomType === 'smaller' && newUomType === 'bigger') {
                     resultPrice = currentUomPrice * (currentUomValue * newUomValue) ;
-                }else if (currentUomType == 'smaller' && newUomType == 'smaller') {
+                }else if (currentUomType === 'smaller' && newUomType === 'smaller') {
                     resultPrice = currentUomPrice / newUomValue;
-                }else if (currentUomType == 'smaller' && newUomType == 'reference') {
+                }else if (currentUomType === 'smaller' && newUomType === 'reference') {
                     resultPrice = currentUomPrice * currentUomValue ;
                 }else{
                     resultPrice = currentUomPrice  ;
@@ -481,18 +505,11 @@
 
         }
 
-        $(document).on('input','.transfer_row input',function () {
-            checkQty($(this));
-            checkStock($(this));
-        })
-
-
         function checkQty(e) {
             const i = inputs(e);
             var quantity = Number(i.quantity.val());
-            var before_edit_quantity = Number(i.before_edit_quantity.val());
+            var before_edit_quantity = Number(i.before_edit_quantity.val() ?? 0);
             var current_stock_qty_txt = Number(i.current_stock_qty_txt.text());
-
 
 
             setTimeout(function() {
@@ -503,74 +520,100 @@
                 i.smallest_unit_txt.toggleClass('text-danger', isQtyInvalid);
                 $('.update_btn').prop('disabled', isQtyInvalid || isQtyNull);
             }, 700)
-
-
         }
 
-        function changeQtyOnUom(e,newUomId) {
-            try {
-                let parent = e.closest('.transfer_row');
-                let productId=parent.find('.product_id').val();
-                let variationId=parent.find('.variation_id').val();
+        function checkStock(e){
+            let parent = e.closest('.transfer_row');
+            let variationId=parent.find('.variation_id').val();
+            let index;
 
-                let product = productsOnSelectData.filter(function(pd) {
-                    return productId == pd.product_id && variationId == pd.variation_id;
-                });
-                product=product[0]
-                console.log(product,'product');
-                let qty=product.total_current_stock_qty;
+            let product = productsOnSelectData.find(function(pd,i) {
+                index=i;
+                return  variationId == pd.variation_id;
+            });
 
-                let currentUomId;
-                let currentUom;
+            const uoms=product.uom.unit_category.uom_by_category;
 
-                const uoms=product.uom.unit_category.uom_by_category;
-                const newUomInfo = uoms.filter(function(nu){
-                    return nu.id==newUomId;
+            const referenceUom =uoms.filter(function ($u) {
+                return $u.unit_type == "reference";
+            })[0];
+
+            let result=0;
+            $(`.quantity-${variationId}`).each(function(){
+
+                let quantity=Number(parent.find('.quantity').val());
+                let uom_id=Number(parent.find('.uom_select').val());
+                const currentUom =uoms.filter(function ($u) {
+                    return $u.id ==uom_id;
                 })[0];
-                const newUomType = newUomInfo.unit_type;
+                let refQty=getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
 
-                const referenceUom =uoms.filter(function ($u) {
-                    return $u.unit_type == "reference";
-                })[0];
-                const refUomType =referenceUom.unit_type;
-                const refUomId =referenceUom.id;
-                let currentRefQty;
-                if(lotControl=='on'){
-                    currentRefQty =getReferenceUomInfoByCurrentUomQty(qty,currentUom,referenceUom)['qtyByReferenceUom'];
-                }else{
-                    currentRefQty =getReferenceUomInfoByCurrentUomQty(qty,referenceUom,referenceUom)['qtyByReferenceUom'];
-                }
+                result+=isNullOrNan(refQty)
 
+            })
 
-                let result=0;
-                if (refUomType === 'reference' && newUomType === 'bigger') {
-                    result = currentRefQty / newUomInfo.value;
-                } else if (refUomType === 'reference' && newUomType === 'smaller') {
-                    result = currentRefQty * newUomInfo.value;
-                } else {
-                    result = currentRefQty;
-                }
+            if(result > productsOnSelectData[index].total_current_stock_qty){
 
-                let rounded_amount=newUomInfo.rounded_amount ?? 2;
-                let roundedResult= floor(isNullOrNan(result),rounded_amount);
+                productsOnSelectData[index].validate=false;
+                parent.find('.current_stock_qty_txt').addClass('text-danger');
+                parent.find('.smallest_unit_txt').addClass('text-danger');
+                parent.find('.quantity').addClass('text-danger');
+                $('.save_btn').addClass('disabled');
+            }else{
 
-                parent.find('.current_stock_qty_txt').text(roundedResult);
-                parent.find('.smallest_unit_txt').text(newUomInfo.name);
-
-
-            } catch (error) {
-                console.log(error);
+                productsOnSelectData[index].validate=true;
+                parent.find('.current_stock_qty_txt').removeClass('text-danger');
+                parent.find('.smallest_unit_txt').removeClass('text-danger');
+                parent.find('.quantity').removeClass('text-danger');
+                $('.save_btn').removeClass('disabled');
             }
 
         }
 
+        function changeQtyOnUom(e, newUomId) {
+            try {
+                const parent = e.closest('.transfer_row');
+                const productId = Number(parent.find('.product_id').val());
+                const variationId = Number(parent.find('.variation_id').val());
+
+                const product = productsOnSelectData.find(pd => pd.product_id === productId && pd.variation_id === variationId);
+
+                const { total_current_stock_qty: qty, uom } = product;
+                const { unit_category: { uom_by_category: uoms } } = uom;
+
+                const newUomInfo = uoms.find(nu => nu.id === Number(newUomId));
+                const { unit_type: newUomType } = newUomInfo;
+
+                const referenceUom = uoms.find($u => $u.unit_type === "reference");
+                const { unit_type: refUomType } = referenceUom;
+
+                const { qtyByReferenceUom } = getReferenceUomInfoByCurrentUomQty(qty, referenceUom, referenceUom);
+
+                let result = 0;
+                if (refUomType === 'reference' && newUomType === 'bigger') {
+                    result = qtyByReferenceUom / newUomInfo.value;
+                } else if (refUomType === 'reference' && newUomType === 'smaller') {
+                    result = qtyByReferenceUom * newUomInfo.value;
+                } else {
+                    result = qtyByReferenceUom;
+                }
+
+                const rounded_amount = newUomInfo.rounded_amount ?? 2;
+                const roundedResult = Math.floor(isNullOrNan(result), rounded_amount);
+
+                parent.find('.current_stock_qty_txt').text(roundedResult);
+                parent.find('.smallest_unit_txt').text(newUomInfo.name);
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
 
 
         function getReferenceUomInfoByCurrentUomQty(qty, currentUom, referenceUom) {
             const currentUomType = currentUom.unit_type;
             const currentUomValue = currentUom.value;
             const referenceUomId = referenceUom.id;
-            const referenceRoundedAmount = isNullOrNan(referenceUom.rounded_amount,4) ;
             const referenceValue = referenceUom.value;
 
             let result;
@@ -584,61 +627,11 @@
                 result = qty;
             }
             let roundedResult=result;
-            // console.log(roundedResult,result,referenceRoundedAmount,'================');
+
             return {
                 qtyByReferenceUom: roundedResult,
                 referenceUomId: referenceUomId
             };
-        }
-
-        function checkStock(e){
-            let parent = e.closest('.transfer_row');
-            let variationId=parent.find('.variation_id').val();
-            let index;
-            let product = productsOnSelectData.find(function(pd,i) {
-                index=i;
-                return  variationId == pd.variation_id;
-            });
-
-            const uoms=product.uom.unit_category.uom_by_category;
-
-            const referenceUom =uoms.filter(function ($u) {
-                return $u.unit_type == "reference";
-            })[0];
-            // let refQty=getReferenceUomInfoByCurrentUomQty(quantity,uom_select,referenceUom)['qtyByReferenceUom'];
-            let result=0;
-            $(`.quantity-${variationId}`).each(function(){
-                let parent =  $(this).closest('.transfer_row');
-                let quantity=Number(parent.find('.quantity').val());
-                let uom_id=Number(parent.find('.uom_select').val());
-                const currentUom =uoms.filter(function ($u) {
-                    return $u.id ==uom_id;
-                })[0];
-                let refQty=getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
-                let transferQty=getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
-                result+=isNullOrNan(refQty)
-
-            })
-
-            // console.log(result +"result");
-            // console.log(productsOnSelectData[index].total_current_stock_qty + 'pod');
-            // if(product.product_type =='storable'){
-                if(result > productsOnSelectData[index].total_current_stock_qty){
-
-                    productsOnSelectData[index].validate=false;
-                    parent.find('.current_stock_qty_txt').addClass('text-danger');
-                    parent.find('.smallest_unit_txt').addClass('text-danger');
-                    parent.find('.quantity').addClass('text-danger');
-                }else{
-
-                    productsOnSelectData[index].validate=true;
-                    parent.find('.current_stock_qty_txt').removeClass('text-danger');
-                    parent.find('.smallest_unit_txt').removeClass('text-danger');
-                    parent.find('.quantity').removeClass('text-danger');
-                }
-            // }
-
-
         }
 
         function getCurrentAndRefUom(uoms,currentUomId){
@@ -651,96 +644,51 @@
             return {currentUom,referenceUom};
         }
 
-
-        //============================================================== Start: Event to use calculation function ===========================================
-
-
-        $(document).on('change','.lot_no',function (e) {
-            let parent = $(this).closest('.transfer_row');
-            let uom_select=parent.find('.uom_select').val();
-            changeQtyOnUom($(this),uom_select);
-        })
-
-
-        $(document).on('change','.uom_select',function(e){
-            console.log($(this).val());
-            changeQtyOnUom($(this),$(this).val());
-
-            checkStock($(this));
-
-        })
+        function isNullOrNan(val) {
+            const v = parseFloat(val);
+            return isNaN(v) ? 0 : v;
+        }
 
 
 
         // Attach click event listener to all delete buttons in the table
         $(document).on('click', '#transfer_table .deleteRow', function (e) {
-                if ($('#transfer_table tbody tr').length-1 == 1) {
-                    $(this).css({
-                        'cursor': 'not-allowed',
-                        'opacity': 0.5
-                    });
-                    event.preventDefault();
-                    return false;
-                }
+            const $row = $(this).closest('tr');
+            const rowCount = $('#transfer_table tbody tr').length - 1; // Subtract one to account for the header row.
+
+            if (rowCount === 1) {
+                $(this).css({
+                    'cursor': 'not-allowed',
+                    'opacity': 0.5
+                });
                 e.preventDefault();
-                        // let id = $(this).data('id');
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "You want to remove it!",
-                            type: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#f1416c',
-                            confirmButtonText: 'Yes, delete it!'
-                        }).then((result) => {
-                            if (result.value) {
-                                // Get the parent row (tr) of the clicked button
-                                var row = $(this).closest('tr');
-                                // Get the data-id attribute value of the row
-                                var id = row.attr('data-id');
-                                // Get the data in the row
-                                var name = row.find('td[data-id="' + id + '"]').text();
-
-                                // Do something with the data, e.g. display in console
-
-                                // Remove the row from the table
-                                var rowCount = $('#transfer_table tbody tr').length;
-                                if (rowCount == 2) {
-                                    $('.dataTables_empty').removeClass('d-none');
-                                }
-                                row.remove();
-                                checkStock($(this));
-                                rowCount = $('#transfer_table tbody tr').length;
-                                $('.total_item').text(rowCount-1);
-                            }
-                        });
-        });
-
-
-
-        $(document).on('change','.unit_input',function(){
-            let parent=$(this).closest('.transfer_row');
-            let unit_selcted_txt=parent.find('.unit_input option:selected').text();
-            let smallest_unit_txt=parent.find('.smallest_unit_txt');
-            smallest_unit_txt.text(unit_selcted_txt);
-
-            checkStock($(this));
-
-        })
-
-
-
-
-        function isNullOrNan(val){
-            let v=parseFloat(val);
-
-            if(v=='' || v==null || isNaN(v)){
-                return 0;
-            }else{
-                return v;
+                return false;
             }
-        }
 
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You want to remove it!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#f1416c',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    const id = $row.attr('data-id');
+                    $row.remove();
+
+                    if (rowCount === 2) {
+                        $('.dataTables_empty').removeClass('d-none');
+                    }
+
+                    checkStock($(this));
+                    $('.total_item').text(rowCount - 1);
+                }
+            });
+        });
 
     });
 </script>

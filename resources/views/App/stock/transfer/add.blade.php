@@ -13,7 +13,6 @@
 
 @section('styles')
     <link href="{{asset("assets/plugins/global/plugins.bundle.css")}}" rel="stylesheet" type="text/css"/>
-{{--    <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>--}}
 @endsection
 
 @section('title')

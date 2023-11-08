@@ -339,8 +339,6 @@
             dateFormat: "Y-m-d",
         });
 
-
-        // $(`[data-kt-repeater="uom_select"]`).select2();
     </script>
     @include('App.stock.transfer.include.quickSearchProducts')
 @endpush
