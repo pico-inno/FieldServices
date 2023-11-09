@@ -62,7 +62,7 @@ class purchaseDetailServices
             // update purchase detail's data and related current stock
             foreach ($requestDetailDataForUpdate as $pd) {
                 $purchase_detail_id = $pd['purchase_detail_id'];
-                unset($pd["purchase_detail_id"]);
+                // unset($pd["purchase_detail_id"]);
                 $purchase_details = purchase_details::where('id', $purchase_detail_id)->where('is_delete', 0)->first();
 
                 if ($befUpdatedPurchaseData['status'] == 'received' && $purchasesData['status'] != "received") {
@@ -81,12 +81,19 @@ class purchaseDetailServices
                 $this->changeDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
 
                 $stock_check = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase')->exists();
-                // dd($stock_check);
+
+                $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
+                $pd['subtotal_with_discount'] = $pd['subtotal_with_discount'];
+                $pd['expense'] = $pd['per_item_expense'] * $pd['quantity'];
+                $pd['ref_uom_id'] = $referencteUom;
+                $pd['per_item_tax'] = 0;
+                $pd['tax_amount'] = 0;
+                $pd['subtotal_wit_tax'] = $pd['per_item_expense'] * $pd['quantity'] + 0;
+                $pd['per_ref_uom_price'] = $per_ref_uom_price;
+                $pd['updated_by'] = Auth::user()->id;
+                $pd['updated_at'] = now();
+
                 if (!$stock_check) {
-                    $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
-                    $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom);
-                    $pd['per_ref_uom_price'] = $per_ref_uom_price;
-                    $purchase_details->update($pd);
                     if ($befUpdatedPurchaseData->status != 'received' && $request->status == 'received') {
                         $purchaseDetailActions->currentStockBalanceAndStockHistoryCreation($purchase_details, $purchasesData, 'purchase');
                     }
@@ -98,17 +105,6 @@ class purchaseDetailServices
 
                     $diff_qty = $purchase_quantity - $current_qty_from_db;
                     $currentResultQty = $requestQty - $diff_qty;
-                    $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
-                    $pd['subtotal_with_discount'] = $pd['subtotal_with_discount'];
-                    $pd['expense'] = $pd['per_item_expense'] * $pd['quantity'];
-                    $pd['ref_uom_id'] = $referencteUom;
-                    $pd['per_item_tax'] = 0;
-                    $pd['tax_amount'] = 0;
-                    $pd['subtotal_wit_tax'] = $pd['per_item_expense'] * $pd['quantity'] + 0;
-                    $pd['per_ref_uom_price'] = $per_ref_uom_price;
-                    $pd['updated_by'] = Auth::user()->id;
-                    $pd['updated_at'] = now();
-
                     if ($request->status == 'received') {
                         if ($businessLocation->allow_purchase_order == 0) {
                             $currentStock->first()->update([
@@ -124,17 +120,14 @@ class purchaseDetailServices
                                 "business_location_id" => $request->business_location_id,
                             ]);
                         } else {
-
                             return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);
-                            // $te=$currentStock->whereColumn('column_b', '>=', 'column_a');
-                            // dd($te);
                         }
                     }
 
-                    // purchase details will update last because in update diff qty of stock need to check
-                    $purchase_details->update($pd);
                 }
 
+                // purchase details will update last because in update diff qty of stock need to check
+                $purchase_details->update($pd);
                 // update packaging
                 $packagingService = new packagingServices();
                 $packagingService->updatePackagingForTx($pd, $purchase_detail_id, 'purchase');

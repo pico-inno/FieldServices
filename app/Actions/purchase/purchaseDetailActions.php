@@ -8,8 +8,10 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
 use App\Repositories\CurrencyRepository;
+use App\Repositories\LocationRepository;
 use App\Models\settings\businessLocation;
 use App\Models\purchases\purchase_details;
+use App\Models\stock_history;
 use App\Services\packaging\packagingServices;
 use App\Services\stockhistory\stockHistoryServices;
 use App\Repositories\interfaces\CurrencyRepositoryInterface;
@@ -50,6 +52,8 @@ class purchaseDetailActions
         $this->currentStockBalanceAndStockHistoryCreation($pd, $purchase, 'purchase');
         return $pd;
     }
+
+
 
     public function updateDefaultPurchasePrice($variation_id, $default_selling_price)
     {
@@ -95,5 +99,13 @@ class purchaseDetailActions
             "current_quantity" => $referencUomInfo['qtyByReferenceUom'],
             'currency_id' => $purchase->currency_id,
         ];
+    }
+
+    public function changeDefaultPurchasePrice($variation_id, $default_selling_price)
+    {
+        $variation_product = ProductVariation::where('id', $variation_id)->first();
+        if ($variation_product) {
+            $variation_product->update(['default_purchase_price' => $default_selling_price]);
+        }
     }
 }

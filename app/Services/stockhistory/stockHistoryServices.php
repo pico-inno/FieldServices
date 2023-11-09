@@ -31,4 +31,5 @@ class stockHistoryServices
             'ref_uom_id' => $data['ref_uom_id'],
         ]);
     }
+    
 }

@@ -66,6 +66,7 @@ class purchaseController extends Controller
 
     public function index()
     {
+        logger('this is loggin from localhost');
         $locations = businessLocation::all();
         $suppliers = Contact::where('type', 'Supplier')
             ->orWhere('type', 'Both')

@@ -71,13 +71,13 @@ return [
             'days' => 14,
         ],
 
-        'slack' => [
-            'driver' => 'slack',
-            'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => 'Laravel Log',
-            'emoji' => ':boom:',
-            'level' => env('LOG_LEVEL', 'critical'),
-        ],
+        // 'slack' => [
+        //     'driver' => 'slack',
+        //     'url' => env('LOG_SLACK_WEBHOOK_URL'),
+        //     'username' => 'Laravel Log',
+        //     'emoji' => ':boom:',
+        //     'level' => env('LOG_LEVEL', 'critical'),
+        // ],
 
         'papertrail' => [
             'driver' => 'monolog',
@@ -118,14 +118,14 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
-        // 'slack' => [
-        //     'driver' => 'slack',
-        //     'url' => env('SLACK_WEBHOOK_URL'),
-        //     'channel' => '#logs',
-        //     'username' => 'Pico SBS',
-        //     'emoji' => ':bomb:', // Customize the emoji as needed
-        //     'level' => 'error',
-        // ],
+        'slack' => [
+            'driver' => 'slack',
+            'url' => env('SLACK_WEBHOOK_URL'),
+            'channel' => '#erppos_logs',
+            'username' => env('APP_NAME'),
+            'emoji' => ':bomb:', // Customize the emoji as needed
+            'level' => 'critical',
+        ],
     ],
 
 ];
