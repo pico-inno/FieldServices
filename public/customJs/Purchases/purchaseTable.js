@@ -139,7 +139,7 @@ var KTCustomersList = function () {
             if (value === 'all') {
                 value = '';
             }
-            datatable.column(6).search(value).draw();
+            datatable.column(5).search(value).draw();
         });
     }
     // supplierFilter

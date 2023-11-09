@@ -152,7 +152,7 @@ class openingStockController extends Controller
                         [
                             'variationTemplateValue' => function ($q) {
                                 $q->select('id', 'name');
-                            },'packaging'
+                            },'packaging.uom'
                         ]
                     );
             }, 'product', 'packagingTx'

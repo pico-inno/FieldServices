@@ -67,7 +67,7 @@
                             <div class="fv-row col-12 col-md-6 d-flex pe-lg-19 mb-10 mt-3 justify-content-between align-items-end">
                                 <!--begin::Label-->
                                 <div class="">
-                                    <label class="required fs-6 fw-semibold mb-2">Parent Location Name</label>
+                                    <label class=" fs-6 fw-semibold mb-2">Parent Location Name</label>
                                 </div>
                                 <!--end::Label-->
                                 <!--begin::Input-->

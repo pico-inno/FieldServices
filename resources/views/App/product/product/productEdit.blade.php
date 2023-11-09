@@ -304,6 +304,25 @@
                                                 </div> --}}
                                             </div>
                                             <div class="row mb-5">
+
+                                                <div class="col-md-4 mb-5">
+                                                    <div class="fv-row">
+                                                        <label class="form-label required">
+                                                            Unit Category
+                                                        </label>
+                                                        <div class="input-group mb-5 flex-nowrap">
+                                                            <div class="overflow-hidden flex-grow-1">
+                                                                <select name="unit_categories" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Unit Categories">
+                                                                    <option></option>
+                                                                    @foreach ($unitCategories as $unitCategorie)
+                                                                        <option value="{{ $unitCategorie->id }}" @selected(old('uom_id') == $unitCategorie->id)>{{ $unitCategorie->name }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-4 mb-5">
                                                     <div class="fv-row">
                                                         <!--begin::Label-->
@@ -313,11 +332,11 @@
                                                         <!--end::Label-->
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="uom_id" class="form-select form-select-sm " data-control="select2" data-placeholder="Select unit">
+                                                                <select name="uom_id" class="form-select form-select-sm uomDatas" data-control="select2" data-placeholder="Select unit">
                                                                     <option></option>
-                                                                    @foreach ($uoms as $uom)
-                                                                        <option value="{{ $uom->id }}" @selected($uom->id === $product->uom_id)>{{ $uom->name }}</option>
-                                                                    @endforeach
+{{--                                                                    @foreach ($uoms as $uom)--}}
+{{--                                                                        <option value="{{ $uom->id }}" @selected($uom->id === $product->uom_id)>{{ $uom->name }}</option>--}}
+{{--                                                                    @endforeach--}}
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -335,7 +354,7 @@
                                                         <!--end::Label-->
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="purchase_uom_id" id="unitOfUom" class="form-select form-select-sm" data-control="select2" data-placeholder="Select purchase UoM">
+                                                                <select name="purchase_uom_id" id="unitOfUom" class="form-select form-select-sm unitOfUom" data-control="select2" data-placeholder="Select purchase UoM">
 
                                                                 </select>
                                                             </div>
@@ -345,7 +364,10 @@
                                                         <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
-                                                <div class="col md-4 mb-5">
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4 mb-5">
 
                                                     <div id="single_alert_qty_ui"  class="fv-row">
                                                         <label class="form-label">
@@ -360,7 +382,9 @@
                                             </div>
                                             <div class="row advance-toggle-class">
                                                 <div class="col-md-4 mb-5">
-                                                    <label class="form-label">{{ __('product/product.purchase_price') }}</label>
+                                                    <label class="form-label">{{ __('product/product.purchase_price') }}
+                                                        <span class="uom-label"></span>
+                                                    </label>
                                                     <input type="text" name="purchase_price_for_single" class="form-control form-control-sm mb-2" placeholder="Purchase price" value="" />
                                                 </div>
                                                 <div class="col-md-4 mb-5">
@@ -368,7 +392,9 @@
                                                     <input type="text" name="profit_margin_for_single" class="form-control form-control-sm mb-2" placeholder="Profit mergin (%)" value="" />
                                                 </div>
                                                 <div class="col-md-4 mb-5">
-                                                    <label class="form-label">{{ __('product/product.sell_price') }}</label>
+                                                    <label class="form-label">{{ __('product/product.sell_price') }}
+                                                        <span class="uom-label"></span>
+                                                    </label>
                                                     <input type="text" name="sell_price_for_single" class="form-control form-control-sm mb-2" placeholder="Sell price" value="" />
                                                 </div>
                                             </div>
@@ -1354,6 +1380,78 @@
         })
     // ============= > End:: For Show advance  < ==================
 
+
+
+
+    {{--$('[name="uom_id"]').val(@json($product->uom_id)).trigger('change');--}}
+
+    $(document).ready(function () {
+        let oldUoMId = @json($product->purchase_uom_id ?? null);
+        $('[name="unit_categories"]').val(@json($unit_category_id)).trigger('change');
+        unitCategory(@json($unit_category_id));
+
+        setTimeout(function(){
+            $('[name="purchase_uom_id"]').val(@json($product->purchase_uom_id)).trigger('change');
+        },600);
+    });
+
+    $(document).on('change', 'select[name="unit_categories"]', function (){
+        let unit_category_id = $(this).val();
+        $('.unitOfUom').empty();
+        unitCategory(unit_category_id);
+
+    });
+
+    function unitCategory(unit_category_id){
+        $.ajax({
+            url: `/uom/category/get/${unit_category_id}`,
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(results){
+                $('.uomDatas').empty();
+                let data=[];
+                for (let item of results) {
+
+                    data=[...data,
+                        {
+                            'id':item.id,
+                            'text':item.name,
+                            'data-uom-name': item.name
+                        }]
+                }
+                currentUoMData=data;
+
+                let selectElement = $('.uomDatas');
+                selectElement.empty(); // Clear existing options
+                for (let item of data) {
+                    let option = $('<option></option>').val(item.id).text(item.text).attr('data-uom-name', item.text);
+                    selectElement.append(option);
+                }
+
+
+                $('.uomDatas').select2({
+                    minimumResultsForSearch: Infinity,
+                });
+
+
+                setTimeout(function (){
+                    let selectedOption = $('select[name="uom_id"]').find('option:selected');
+                    let uomName = selectedOption.attr('data-uom-name');
+
+
+                    $('.uom-label').text('('+uomName+')');
+
+                }, 150);
+                $('[name="uom_id"]').val(data[0].id).trigger('change');
+            },
+            error: function(e){
+                console.log(e.responseJSON.error);
+            }
+        });
+    }
+
     // ============= > Begin:: For UOM  < ==================
         let isSelectUoM = false;
         if(!isSelectUoM){
@@ -1391,7 +1489,7 @@
                     }
                     currentUoMData=data;
 
-                    $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                    $('.unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
                 },
                 error: function(e){
                     console.log(e.responseJSON.error);
@@ -1411,19 +1509,9 @@
                 },
                 success: function(results){
 
-                    const purchaseUoM = $('#unitOfUom')[0];
-                    purchaseUoM.innerHTML = '';
-
-                    const defaultOption = document.createElement('option'); // Create default option
-                    defaultOption.value = '';
-                    defaultOption.text = 'Select an option';
-                    $(purchaseUoM).append(defaultOption);
                     let data=[];
                     for (let item of results) {
-                        let option = document.createElement('option');
-                        option.value = item.id;
-                        option.text = item.name;
-                        purchaseUoM.append(option);
+                        // let option = document.createElement('option');
                         data=[...data,
                         {
                             'id':item.id,
@@ -1431,7 +1519,10 @@
                         }]
                     }
                     currentUoMData=data;
-                    $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                    $('.unitOfUom').select2({
+                        data,
+                        minimumResultsForSearch: Infinity
+                    }); // Initialize select2 plugin
                 },
                 error: function(e){
                     console.log(e.responseJSON.error);

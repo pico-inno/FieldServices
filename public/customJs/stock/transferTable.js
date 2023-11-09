@@ -191,7 +191,7 @@ var KTCustomersList = function () {
                 e.preventDefault();
 
                 var id = $(this).data('id');
-                var voucherNo = $(this).data('transfer-voucher-no');
+                var voucherNo = $(this).data('voucherno');
                 var status = $(this).data('transfer-status');
 
                 console.log('ID:', id);

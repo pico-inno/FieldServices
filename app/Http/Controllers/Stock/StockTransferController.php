@@ -14,6 +14,7 @@ use App\Models\Product\Product;
 use App\Models\Product\Unit;
 use App\Models\Product\UOM;
 use App\Models\Product\UOMSet;
+use App\Models\productPackagingTransactions;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Models\Stock\Stockout;
@@ -21,6 +22,7 @@ use App\Models\Stock\StockoutDetail;
 use App\Models\Stock\StockTransfer;
 use App\Models\Stock\StockTransferDetail;
 use App\Models\stock_history;
+use App\Services\packaging\packagingServices;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -86,6 +88,7 @@ class StockTransferController extends Controller
      */
     public function store(StoreStockTransferRequest $request)
     {
+
         DB::transaction(function () use ($request) {
             $settings = businessSettings::all()->first();
             $transfer_details = $request->transfer_details;
@@ -128,6 +131,11 @@ class StockTransferController extends Controller
                     'created_at' => now(),
                     'created_by' => Auth::id(),
                 ]);
+
+                $packaging=new packagingServices();
+                $packaging->packagingForTx($transfer_detail,$transferDetail->id,'transfer');
+
+
 
                 $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($transfer_detail['quantity'], $transfer_detail['uom_id']);
                 $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
@@ -305,10 +313,13 @@ class StockTransferController extends Controller
                 $currency=$this->currency;
                 $transfer = StockTransfer::with('currency')->where('id', $stockTransfer->id)->get()->first();
                 $business_location_id=$transfer->from_location;
-                $stock_transfer_details = StockTransferDetail::with(['currency',
+                $stock_transfer_details = StockTransferDetail::with([
+                    'packagingTx',
+                    'currency',
                     'productVariation' => function ($q) {
                         $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                             ->with([
+                                'packaging',
                                 'product' => function ($q) {
                                     $q->select('id', 'name', 'product_type');
                                 },
@@ -335,6 +346,7 @@ class StockTransferController extends Controller
                     }], 'current_quantity');
                 $transfer_details= $stock_transfer_details->get();
 
+
                 return view('App.stock.transfer.edit', [
                     'stockTransfer' => $stockTransfer,
                     'stock_transfer_details' => $transfer_details,
@@ -356,10 +368,13 @@ class StockTransferController extends Controller
             $currency=$this->currency;
             $transfer = StockTransfer::with('currency')->where('id', $stockTransfer->id)->get()->first();
             $business_location_id=$transfer->from_location;
-            $stock_transfer_details = StockTransferDetail::with(['currency',
+            $stock_transfer_details = StockTransferDetail::with([
+                'packagingTx',
+                'currency',
                 'productVariation' => function ($q) {
                     $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                         ->with([
+                            'packaging',
                             'product' => function ($q) {
                                 $q->select('id', 'name', 'product_type');
                             },
@@ -400,11 +415,6 @@ class StockTransferController extends Controller
 
 
 
-
-
-
-
-
     }
 
     /**
@@ -419,9 +429,10 @@ class StockTransferController extends Controller
 
         $settings =  businessSettings::all()->first();
 
-
+//return $requestStocktransferDetails;
         DB::beginTransaction();
         try {
+            $packagingService=new packagingServices();
             if($oldStatus != 'completed'){
                 $existingTransferDetailIds = [];
 
@@ -444,7 +455,7 @@ class StockTransferController extends Controller
                 foreach ($existingTransferDetails as $transferDetail) {
                     $transferDetailId = $transferDetail['transfer_detail_id'];
 
-
+                    $packagingService->updatePackagingForTx($transferDetail,$transferDetailId,'transfer');
                     $newQty = $transferDetail['quantity'];
                     $beforeEditQty = $transferDetail['before_edit_quantity'];
 
@@ -996,6 +1007,7 @@ class StockTransferController extends Controller
 
     }
 
+
     public function recordHistories($location, $recordDetails, $quantity, $qtyStatus, $remainBalanceQty){
 
         $currentStockData = $recordDetails->toArray();
@@ -1125,7 +1137,7 @@ class StockTransferController extends Controller
                     $html .= '      <a href="'.route('stock-transfer.edit', $transfer->id).'" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a> ';
                 }
                 if (hasDelete('stock transfer')){
-                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$transfer->id.' data-transfer-voucher-no='.$transfer->adjustment_voucher_no.' data-transfer-status='.$transfer->status.' data-kt-transferItem-table="delete_row">Delete</a>';
+                        $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$transfer->id.' data-voucherno='.$transfer->adjustment_voucher_no.' data-transfer-status='.$transfer->status.' data-kt-transferItem-table="delete_row">Delete</a>';
                 }
                 $html .= '</ul></div></div>';
 

@@ -336,7 +336,7 @@
                                                     data-placeholder="Select Package" placeholder="select Package" >
                                                     <option value="">Select Package</option>
                                                     @foreach ($product_variation['packaging'] as $package)
-                                                        <option @selected($package['id'] == arr($pd['packagingTx'],"product_packaging_id")) data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">{{$package['packaging_name']}}</option>
+                                                        <option @selected($package['id'] == arr($pd['packagingTx'],"product_packaging_id")) data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">{{$package['packaging_name']}} ({{fquantity($package['quantity'])}}-{{$package['uom']['short_name']}})</option>
                                                     @endforeach
                                                 </select>
                                             </td>

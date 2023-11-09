@@ -776,6 +776,7 @@ Route::controller(UoMController::class)->group(function () {
     Route::delete('/uom/delete/{uom}', 'delete')->name('uom.delete');
 
     Route::get('/uom/check-uom/{id}', 'checkUoM')->name('check-uom');
+    Route::get('/uom/category/get/{id}', 'getUomCategoryByUomId');
     Route::get('/uom/get/{id}', 'getUomByUomId');
 });
 

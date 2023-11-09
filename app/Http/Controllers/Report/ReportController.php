@@ -969,6 +969,22 @@ class ReportController extends Controller
         $products = Product::select('id', 'name')->get();
         $enableLotSerial = businessSettings::find(1)->lot_control;
 
+        $startDate = '2023-10-01'; // Example start date
+        $endDate = '2023-10-31'; // Example end date
+
+        $query = CurrentStockBalance::with(['uom', 'location:id,name,parent_location_id'])
+            ->select('current_stock_balance.*', 'product_packaging_transactions.*', 'product_packagings.*', 'current_stock_balance.created_at as csb_created_at')
+            ->leftJoin('product_packaging_transactions', function ($join) {
+                $join->on('current_stock_balance.transaction_type', '=', 'product_packaging_transactions.transaction_type')
+                    ->on('current_stock_balance.transaction_detail_id', '=', 'product_packaging_transactions.transaction_details_id');
+            })
+            ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id', '=', 'product_packagings.id')
+            ->whereBetween('current_stock_balance.created_at', [$startDate, $endDate]);
+
+        $results = $query->get();
+
+
+//        return $results;
 
         return view('App.report.inventory.stock.currentBalance', [
             'locations' => $locations,
@@ -987,29 +1003,53 @@ class ReportController extends Controller
         $filterCategory = $request->data['filter_category'];
         $filterBrand = $request->data['filter_brand'];
         $dateRange = $request->data['filter_date'];
+        $filterType = $request->data['filter_type'];
         $dates = explode(' - ', $dateRange);
 
         $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
         $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
 
 
-        $query = CurrentStockBalance::with(['uom','location:id,name,parent_location_id'])
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('current_quantity', '>', 0);
+
+
+
+        if ($filterType == 2){
+            $query = CurrentStockBalance::with(['uom', 'packaging_uom', 'location:id,name,parent_location_id'])
+                ->select(
+                    'current_stock_balance.*',
+                    'product_packaging_transactions.*',
+                    'product_packagings.*',
+                    'current_stock_balance.created_at as csb_created_at',
+                    'current_stock_balance.product_id as csb_product_id',
+                    'current_stock_balance.variation_id as csb_variation_id',
+
+                )
+                ->whereBetween('current_stock_balance.created_at', [$startDate, $endDate])
+                ->where('current_quantity', '>', 0)
+                ->leftJoin('product_packaging_transactions', function ($join) {
+                $join->on('current_stock_balance.transaction_type', '=', 'product_packaging_transactions.transaction_type')
+                    ->on('current_stock_balance.transaction_detail_id', '=', 'product_packaging_transactions.transaction_details_id');
+            })
+                ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id', '=', 'product_packagings.id');
+        }else{
+            $query = CurrentStockBalance::with(['uom','location:id,name,parent_location_id'])
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->where('current_quantity', '>', 0);
+        }
+
         if ($request->data['filter_locations'] != 0) {
-            $locationId=childLocationIDs($request->data['filter_locations']);
+            $locationId = childLocationIDs($request->data['filter_locations']);
             $query->whereIn('business_location_id', $locationId);
         }
 
         $currentStocks = $query->get();
-        $productIds = $currentStocks->pluck('product_id')->unique()->toArray();
-
-        $result = [];
+//        return response()->json($currentStocks, 200);
+        $productIds = $filterType ==2 ? $currentStocks->pluck('csb_product_id')->unique()->toArray() : $currentStocks->pluck('product_id')->unique()->toArray();
 
         $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
             ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
                 $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
-                    ->with(['variationTemplateValue' => function ($query) {
+                    ->with(['packaging','variationTemplateValue' => function ($query) {
                         $query->select('id', 'name', 'variation_template_id')
                             ->with(['variationTemplate:id,name']);
                     }]);
@@ -1029,14 +1069,27 @@ class ReportController extends Controller
         }
 
         $finalProduct = $finalProduct->get()->toArray();
-
         if($filterView == 1){
 
                 foreach ($currentStocks as $currentStock) {
-
                     $batchNo = $currentStock['batch_no'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
+                    $currentQty = $currentStock['current_quantity'];
+                    $refQty =  $currentStock['ref_uom_quantity'];
+                    $package_qty = $currentStock['packagingtx']['packaging']['quantity'] ?? 1;
+
+
+                    $package_currentQty = $currentQty / $package_qty;
+                    $package_refQty = $refQty / $package_qty;
+
+                    if($filterType == 2){
+                        $new_current_qty = $package_currentQty;
+                        $new_purchase_qty = $package_refQty;
+                    }else{
+                        $new_current_qty = $currentQty;
+                        $new_purchase_qty = $refQty;
+                    }
 
 
                     $key = $batchNo . '_' . $variationId . '_' . $locationId;
@@ -1045,11 +1098,13 @@ class ReportController extends Controller
                     if (!isset($mergedStocks[$key])) {
                         $mergedStocks[$key] = $currentStock;
                         $mergedStocks[$key]['batch_number'] =  $batchNo;
+                        $mergedStocks[$key]['ref_uom_quantity'] = $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] = $new_current_qty;
                     } else {
 
                         $mergedStocks[$key]['batch_number'] =  $batchNo. '(merged)';
-                        $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                        $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+                        $mergedStocks[$key]['ref_uom_quantity'] += $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] += $new_current_qty;
 
                     }
                 }
@@ -1061,6 +1116,21 @@ class ReportController extends Controller
                     $transactionID = $currentStock['transaction_detail_id'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
+                   $currentQty = $currentStock['current_quantity'];
+                   $refQty =  $currentStock['ref_uom_quantity'];
+                   $package_qty = $currentStock['packagingtx']['packaging']['quantity'] ?? 1;
+
+
+                   $package_currentQty = $currentQty / $package_qty;
+                   $package_refQty = $refQty / $package_qty;
+
+                   if($filterType == 2){
+                       $new_current_qty = $package_currentQty;
+                       $new_purchase_qty = $package_refQty;
+                   }else{
+                       $new_current_qty = $currentQty;
+                       $new_purchase_qty = $refQty;
+                   }
 
 
 
@@ -1070,11 +1140,13 @@ class ReportController extends Controller
                     if (!isset($mergedStocks[$key])) {
                         $mergedStocks[$key] = $currentStock;
                         $mergedStocks[$key]['batch_number'] =  $currentStock['batch_no'];
+                        $mergedStocks[$key]['ref_uom_quantity'] = $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] =   $new_current_qty;
                     } else {
 
                         $mergedStocks[$key]['batch_number'] =  $currentStock['batch_no']. '(merged)';
-                        $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                        $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+                        $mergedStocks[$key]['ref_uom_quantity'] += $new_purchase_qty;
+                        $mergedStocks[$key]['current_quantity'] +=   $new_current_qty;
 
                     }
                 }
@@ -1085,20 +1157,41 @@ class ReportController extends Controller
         } else{
             if($currentStocks->count() > 0){
                 foreach($currentStocks as $currentStock){
-                    $variationId = $currentStock['variation_id'];
+
+                    $product_package_id = $currentStock['product_packaging_id'];
+                    $variationId = $filterType == 2 ? $currentStock['csb_variation_id'] : $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
+                    $currentQty = $currentStock['current_quantity'];
+                    $refQty =  $currentStock['ref_uom_quantity'];
+                    $package_qty = $currentStock['quantity'] ?? 1;
+
+                    $package_currentQty = $currentQty / $package_qty;
+                    $package_refQty = $refQty / $package_qty;
+
+                    if($filterType == 2){
+                        $new_current_qty = $package_currentQty;
+                        $new_purchase_qty = $package_refQty;
+                    }else{
+                        $new_current_qty = $currentQty;
+                        $new_purchase_qty = $refQty;
+                    }
 
 
-                    $key = $variationId;
+
+                    $key = $filterType == 2 ? $variationId.'_'.$product_package_id : $variationId;
+
+
 
                     if (!isset($mergeAllBatchs[$key])) {
                         $mergeAllBatchs[$key] = $currentStock;
                         $mergeAllBatchs[$key]['batch_number'] =  '-';
+                        $mergeAllBatchs[$key]['ref_uom_quantity'] = $new_purchase_qty;
+                        $mergeAllBatchs[$key]['current_quantity'] = $new_current_qty;
                     } else {
 
                         $mergeAllBatchs[$key]['batch_number'] =  '-';
-                        $mergeAllBatchs[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                        $mergeAllBatchs[$key]['current_quantity'] += $currentStock['current_quantity'];
+                        $mergeAllBatchs[$key]['ref_uom_quantity'] += $new_purchase_qty;
+                        $mergeAllBatchs[$key]['current_quantity'] += $new_current_qty;
 
                     }
 
@@ -1108,15 +1201,15 @@ class ReportController extends Controller
                 $mergeAllBatchStocks = $currentStocks;
             }
         }
-
+//        return response()->json($mergeAllBatchStocks, 200);
         $lotCounts = [];
         $result = [];
         foreach ($mergeAllBatchStocks as $currentStock) {
-            $productId = $currentStock['product_id'];
-            $variationId = $currentStock['variation_id'];
+            $productId = $filterType == 2 ? $currentStock['csb_product_id'] : $currentStock['product_id'];
+            $variationId = $filterType == 2 ? $currentStock['csb_variation_id'] : $currentStock['variation_id'];
             $locationId = $currentStock['location']['id'];
+            $packageName = $currentStock['packaging_name'] ?? $currentStock['uom']['short_name'];
 
-            // Generate a unique key for the product, variation, and location combination
             $key = $productId . '_' . $variationId . '_' . $locationId;
 
             // Check if the key exists in the lotCounts array
@@ -1135,6 +1228,7 @@ class ReportController extends Controller
 
                             $variationProduct = [
                                 'id' => $product['id'],
+                                'product_packaging_id' => $currentStock['product_packaging_id'] ?? 0,
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
                                 'variation_id' => $variation['id'],
@@ -1152,7 +1246,10 @@ class ReportController extends Controller
                                 'ref_uom_name' => $currentStock['uom']['name'],
                                 'ref_uom_short_name' => $currentStock['uom']['short_name'],
                                 'purchase_qty' => $currentStock['ref_uom_quantity'],
-                                'current_qty' => $currkentStock['current_quantity'],
+                                'current_qty' => $currentStock['current_quantity'],
+                                'package_name' =>  $packageName,
+                                'package_qty' => $currentStock['quantity'],
+                                'packaging_uom_short_name' => $currentStock['packaging_uom']['short_name'] ?? '',
                             ];
                             $result[] = $variationProduct;
                         }
@@ -1161,7 +1258,6 @@ class ReportController extends Controller
             }
         }
         logger($result);
-
 
         return response()->json( $result, 200);
     }

@@ -81,6 +81,12 @@ class UoMController extends Controller
         return response()->json($uom);
     }
 
+    public function getUomCategoryByUomId($id){
+        $uoms = UOM::where('unit_category_id', $id)->get();
+
+        return response()->json($uoms);
+    }
+
     public function getUomByUomId($id)
     {
         $unitCategoryId = UOM::whereId($id)->first()->unit_category_id;

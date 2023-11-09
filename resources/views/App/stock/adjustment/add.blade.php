@@ -119,6 +119,8 @@
                                         <th class="w-175px">{{__('adjustment.on_ground_qty')}}</th>
                                         <th class="w-175px">{{__('adjustment.difference_qty')}}</th>
                                         <th class="min-w-100px">{{__('adjustment.unit')}}</th>
+                                        <th class="w-125px">{{__('adjustment.package_qty')}}</th>
+                                        <th class="min-w-100px">{{__('adjustment.package')}}</th>
                                         <th>
                                             <i class="fas fa-trash fw-bold"></i>
                                         </th>

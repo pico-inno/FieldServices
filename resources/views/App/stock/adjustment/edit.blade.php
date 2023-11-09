@@ -136,6 +136,8 @@
                                         <th class="w-175px">{{__('adjustment.on_ground_qty')}}</th>
                                         <th class="w-175px">{{__('adjustment.difference_qty')}}</th>
                                         <th class="min-w-100px">{{__('adjustment.unit')}}</th>
+                                        <th class="w-125px">{{__('adjustment.package_qty')}}</th>
+                                        <th class="min-w-100px">{{__('adjustment.package')}}</th>
                                         <th>
                                             <i class="fas fa-trash fw-bold"></i>
                                         </th>
@@ -191,6 +193,22 @@
                                                         @endphp
                                                         <option value="{{$uom['id']}}" @if ($isSelected) selected @endif @if ($isDisabled) disabled @endif>{{$uom['name']}}</option>
 {{--                                                        <option value="{{$uom['id']}}" @selected($uom['id']==$detail->uom_id)  >{{$uom['name']}}</option>--}}
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="fv-row">
+                                                <input type="text"  class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                                                       name="adjustment_details[{{$key}}][packaging_quantity]" value="{{$detail['packagingTx']['quantity']}}">
+                                            </td>
+                                            <td class="fv-row">
+                                                <select  name="adjustment_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
+                                                         data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
+                                                         data-placeholder="Select Package" placeholder="select Package" required>
+                                                    <option value="">Select Package</option>
+                                                    @foreach ($product_variation['packaging'] as $package)
+                                                        <option @selected($package['id']==$detail['packagingTx']['product_packaging_id'])
+                                                                data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
+                                                            {{$package['packaging_name']}}</option>
                                                     @endforeach
                                                 </select>
                                             </td>

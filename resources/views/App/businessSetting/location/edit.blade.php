@@ -73,7 +73,7 @@
                                 class="fv-row col-12 col-md-6 d-flex pe-lg-19 mb-10 mt-3 justify-content-between align-items-end">
                                 <!--begin::Label-->
                                 <div class="">
-                                    <label class="required fs-6 fw-semibold mb-2">Parent Location Name</label>
+                                    <label class=" fs-6 fw-semibold mb-2">Parent Location Name</label>
                                 </div>
                                 <!--end::Label-->
                                 <!--begin::Input-->
@@ -85,8 +85,12 @@
                                         attr='data-allow-clear="true"'>
                                         <option value=""></option>
                                         @foreach ($locations as $l)
+
                                         @php
-                                        $parentName=getParentName($l->parentLocation);
+                                            $parentName=getParentName($l->parentLocation);
+                                            if($l->parent_location_id ==$bl->id){
+                                                continue;
+                                            }
                                         @endphp
                                         <option value="{{$l->id}}" @selected($l->id==$bl->parent_location_id)>{{$parentName ? substr($parentName,2).' / ' : ''}}
                                             {{$l->name}}</option>
