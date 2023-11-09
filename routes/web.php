@@ -344,7 +344,7 @@ Route::prefix('purchase')->group(function () {
         Route::get('/list/data', 'listData');
 
         Route::get('/add', 'add')->name('purchase_add');
-        Route::get('/new/add', 'purchase_new_add')->name('purchase_new_add');
+        // Route::get('/new/add', 'purchase_new_add')->name('purchase_new_add');
         Route::post('/store', 'store')->name('purchase_store');
 
         Route::get('{id}/edit', 'edit')->name('purchase_edit');

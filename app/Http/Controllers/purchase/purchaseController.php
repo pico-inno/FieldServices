@@ -52,15 +52,14 @@ class purchaseController extends Controller
         LocationRepositoryInterface $locationRepository,
         SettingRepositoryInterface $setting,
         CurrencyRepositoryInterface $currency
-    )
-    {
+    ) {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:purchase')->only(['index', 'listData']);
         $this->middleware('canCreate:purchase')->only(['add', 'store']);
         $this->middleware('canUpdate:purchase')->only(['edit', 'update']);
         $this->middleware('canDelete:purchase')->only('softOneItemDelete', 'softSelectedDelete');
         $this->setting = $setting;
-        $this->locations= $locationRepository;
+        $this->locations = $locationRepository;
         $this->currency = $currency;
     }
 
@@ -89,18 +88,18 @@ class purchaseController extends Controller
         return view('App.purchase.addPurchase', compact('locations', 'suppliers', 'setting', 'currency', 'currencies'));
     }
 
-    public function purchase_new_add()
-    {
-        $locations = businessLocation::all();
-        $currency = $this->currency->defaultCurrency();
-        $suppliers = Contact::where('type', 'Supplier')
-            ->orWhere('type', 'Both')
-            ->select('id', 'company_name', 'prefix', 'first_name', 'last_name', 'middle_name', 'address_line_1', 'address_line_2', 'zip_code', 'city', 'state', 'country')
-            ->get();
-        $currencies = Currencies::get();
-        $setting = $this->setting->getByUser();
-        return view('App.purchase.addNewPurchase', compact('locations', 'suppliers', 'setting', 'currency', 'currencies'));
-    }
+    // public function purchase_new_add()
+    // {
+    //     $locations = businessLocation::all();
+    //     $currency = $this->currency->defaultCurrency();
+    //     $suppliers = Contact::where('type', 'Supplier')
+    //         ->orWhere('type', 'Both')
+    //         ->select('id', 'company_name', 'prefix', 'first_name', 'last_name', 'middle_name', 'address_line_1', 'address_line_2', 'zip_code', 'city', 'state', 'country')
+    //         ->get();
+    //     $currencies = Currencies::get();
+    //     $setting = $this->setting->getByUser();
+    //     return view('App.purchase.addNewPurchase', compact('locations', 'suppliers', 'setting', 'currency', 'currencies'));
+    // }
     public function store(Request $request, purchasingService $purchasingService)
     {
         Validator::make(['details' => $request->purchase_details], ['details' => 'required'])->validate();
@@ -151,27 +150,11 @@ class purchaseController extends Controller
         $currencies = Currencies::get();
         $purchase_detail = purchase_details::with([
             'packagingTx',
-            'productVariation' => function ($q) {
-                $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
-                    ->with(
-                    [
-                            'packaging',
-                            'variationTemplateValue' => function ($q) {
-                                $q->select('id', 'name');
-                            }
-                        ]
-                    );
-            }, 'product' => function ($q) {
-                $q->with([
-                    'uom' => function ($q) {
-                        $q->with(['unit_category' => function ($q) {
-                            $q->with('uomByCategory');
-                        }]);
-                    }
-                ]);
-            }
+            'productVariation',
+            'productVariation.variationTemplateValue',
+            'productVariation.packaging',
+            'product.uom.unit_category.uomByCategory'
         ])->where('purchases_id', $id)->where('is_delete', 0)->get();
-            // dd($purchase_detail->toArray());
         $setting = $this->setting->getByUser();
         return view('App.purchase.editPurchase', compact('purchase', 'locations', 'purchase_detail', 'suppliers', 'setting', 'currency', 'currencies'));
     }
@@ -188,11 +171,11 @@ class purchaseController extends Controller
         ])->validate();
         DB::beginTransaction();
         try {
-            $service->update($id,$request);
-            // dd('here');
+            $service->update($id, $request);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);
             throw $e;
         }
@@ -376,12 +359,12 @@ class purchaseController extends Controller
                 [
                     'productVariations' => function ($query) {
                         $query->select('id', 'product_id', 'variation_template_value_id', 'variation_sku', 'default_purchase_price', 'default_selling_price')
-                            ->with(['variationTemplateValue:id,name',
-                            'packaging'=>function($q){
-                                $q->where('for_purchase',1);
-                            }
+                            ->with([
+                                'variationTemplateValue:id,name',
+                                'packaging' => function ($q) {
+                                    $q->where('for_purchase', 1);
+                                }
                             ]);
-
                     }, 'uom' => function ($q) {
                         $q->with(['unit_category' => function ($q) {
                             $q->with('uomByCategory');
@@ -416,8 +399,8 @@ class purchaseController extends Controller
                             'default_purchase_price' => $variation['default_purchase_price'],
                             'default_selling_price' => $variation['default_selling_price'],
                             'lastPurchasePrice' => $lastPurchase ? $lastPurchasePrice : 0,
-                            'packaging'=> $variation['packaging'],
-                            'product_variations'=> $variation
+                            'packaging' => $variation['packaging'],
+                            'product_variations' => $variation
                         ];
                         // dd($variation_product)
                         array_push($products, $variation_product);
@@ -453,11 +436,11 @@ class purchaseController extends Controller
             ->orWhere('sku', 'like', '%' . $q . '%')
             ->orWhere('variation_sku', 'like', '%' . $q . '%')
             ->orWhereHas('varPackaging', function ($query) use ($q) {
-                $query->where('package_barcode',$q);
+                $query->where('package_barcode', $q);
             })
             ->with([
                 'product_packaging' => function ($query) use ($q) {
-                    $query->where('package_barcode',$q);
+                    $query->where('package_barcode', $q);
                 },
                 'uom' => function ($q) {
                     $q->with('unit_category.uomByCategory');
@@ -465,7 +448,7 @@ class purchaseController extends Controller
                 'product_variations.packaging'
             ])
             ->get()->toArray();
-            // dd(productPackaging::with('product_variations')->get()->toArray());
+        // dd(productPackaging::with('product_variations')->get()->toArray());
         return response()->json($products, 200);
     }
 }

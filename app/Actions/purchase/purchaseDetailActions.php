@@ -108,4 +108,17 @@ class purchaseDetailActions
             $variation_product->update(['default_purchase_price' => $default_selling_price]);
         }
     }
+
+    public function delete($detialId)  {
+        purchase_details::where('id', $detialId)->update([
+            'is_delete' => 1,
+            'deleted_at' => now(),
+            'deleted_by' => Auth::user()->id,
+        ]);
+        CurrentStockBalance::where('transaction_detail_id', $detialId)->where('transaction_type', 'purchase')->delete();
+    }
+    public function removeStock($detailId,$type="purchase"){
+        CurrentStockBalance::where('transaction_detail_id', $detailId)->where('transaction_type', $type)->delete();
+        stock_history::where('transaction_details_id', $detailId)->where('transaction_type', $type)->first()->delete();
+    }
 }
