@@ -19,8 +19,8 @@
                 $('.quick-search-results').removeClass('d-none');
                 $('.quick-search-results').html(`<div class="quick-search-result result cursor-pointer p-2 ps-10 fw-senubold fs-5">
                 <span><span class="spinner-border spinner-border-sm align-middle me-2"></span>Loading</span>
-            </div>
-            `);
+                </div>
+                `);
 
 
                 clearTimeout(throttleTimeout);
@@ -28,10 +28,7 @@
                     $.ajax({
                         url: `/purchase/get/product`,
                         type: 'GET',
-                        delay: 150,
-                        // headers: {
-                        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        // },
+                        delay: 300,
                         data: {
                             data:query
                         },
@@ -84,7 +81,7 @@
 
                         }
                     });
-                },300)
+                },600)
 
             } else {
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Models\Product\AdditionalProduct;
+use App\Services\product\productServices;
 use Exception;
 use App\Models\Product\UOM;
 use App\Models\BusinessUser;
@@ -167,7 +168,8 @@ class ProductController extends Controller
             $this->insertProductVariations($request, $nextProduct);
 
             if ($request->additional_product_details) {
-                $this->createAdditionalProducts($request->additional_product_details, $nextProduct);
+                $productService = new productServices();
+                $productService->createAdditionalProducts($request->additional_product_details, $nextProduct,true);
             }
             DB::table('product_variations_tmplates')->insert([
                 'product_id' => $nextProductId,
@@ -247,7 +249,7 @@ class ProductController extends Controller
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
-        //        return $request;
+
         DB::beginTransaction();
         try {
             // Update Product
@@ -258,9 +260,9 @@ class ProductController extends Controller
             // Update Product Variationn
             $this->insertProductVariations($request, $product, false);
 
-            if ($request->additional_product_details) {
-                $this->createAdditionalProducts($request->additional_product_details, $product, false);
-            }
+            $productService = new productServices();
+            $productService->createAdditionalProducts($request->additional_product_details, $product,false);
+
             // for packaging
             if ($request->packaging_repeater) {
                 $packagingServices = new packagingServices();
@@ -401,60 +403,6 @@ class ProductController extends Controller
         return $productData;
     }
 
-    private function createAdditionalProducts(array $datas, $nextProduct, $isCreating = true)
-    {
-        $nextProductId = $nextProduct->id;
-        $productVariation = ProductVariation::where('product_id', $nextProductId)->first();
-        if (!$isCreating) {
-
-            $additionalDetailsIds = array_filter($datas, function ($item) {
-                return isset($item['additional_detail_id']);
-            });
-            $oldDetailsIds = array_column($additionalDetailsIds, 'additional_detail_id');
-
-            AdditionalProduct::where('primary_product_id', $nextProductId)
-                ->whereNotIn('id', $oldDetailsIds)
-                ->delete();
-
-            foreach ($additionalDetailsIds as $data) {
-                AdditionalProduct::where('primary_product_id', $nextProductId)
-                    ->where('id', $data['additional_detail_id'])
-                    ->update([
-                        'additional_product_variation_id' => $data['variation_id'],
-                        'uom_id' => $data['uom_id'],
-                        'quantity' => $data['quantity'],
-                    ]);
-            }
-
-            $detailsWithoutAdId = array_filter($datas, function ($item) {
-                return !isset($item['additional_detail_id']);
-            });
-
-            foreach ($detailsWithoutAdId as $data) {
-                AdditionalProduct::create([
-                    'primary_product_id' => $nextProduct->id,
-                    'primary_product_variation_id' => $productVariation->id,
-                    'additional_product_variation_id' => $data['variation_id'],
-                    'uom_id' => $data['uom_id'],
-                    'quantity' => $data['quantity'],
-                ]);
-            }
-            return;
-        }
-
-
-
-        foreach ($datas as $data) {
-            AdditionalProduct::create([
-                'primary_product_id' => $nextProduct->id,
-                'primary_product_variation_id' => $productVariation->id,
-                'additional_product_variation_id' => $data['variation_id'],
-                'uom_id' => $data['uom_id'],
-                'quantity' => $data['quantity'],
-            ]);
-        }
-        return;
-    }
 
     private function insertProductVariations($request, $nextProduct, $isCreating = true)
     {

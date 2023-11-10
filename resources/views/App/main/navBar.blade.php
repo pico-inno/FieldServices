@@ -261,6 +261,9 @@
                                     <!-- end::Nav link -->
                                 </li>
                                 @endif
+                                @if(hasModule('Manufacturing') && isEnableModule('Manufacturing'))
+                                    @include('manufacturing::layouts.master', ['navbarType' => 'main_icon'])
+                                @endif
                                 {{-- @if(hasAll('stockin') || hasAll('stockout'))
                                 <!--begin::Nav item-->
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -1844,6 +1847,26 @@
                                     </div>
                                     <!--end::Tab pane-->
                                     @endif --}}
+                                    <div class="tab-pane fade  @yield('manufacturing_active_show')" id="kt_aside_nav_tab_manufacturing" role="tabpanel">
+                                        <!--begin::Wrapper-->
+                                        <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0" id="kt_aside_menu" data-kt-menu="true">
+                                            <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                                <div class="menu-item pt-2">
+                                                    <!--begin:Menu content-->
+                                                    <div class="menu-content">
+                                                        <span class="menu-heading fw-bold text-uppercase fs-8">Manufacturing</span>
+                                                    </div>
+                                                    <!--end:Menu content-->
+                                                </div>
+                                            </div>
+                                            @if(hasModule('Manufacturing') && isEnableModule('Manufacturing'))
+                                                @include('manufacturing::layouts.master', ['navbarType' => 'main_link'])
+                                            @endif
+                                        </div>
+                                        <!--end::Wrapper-->
+                                    </div><!--begin::Tab pane-->
+
+
                                     <!--begin::Tab pane-->
                                     <div class="tab-pane fade @yield('reports_active_show')"
                                         id="kt_aside_nav_tab_reports" role="tabpanel">
