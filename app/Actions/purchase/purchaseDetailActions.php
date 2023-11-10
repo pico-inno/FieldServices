@@ -80,18 +80,17 @@ class purchaseDetailActions
     }
     protected function currentStockBalanceData($purchase_detail_data, $purchase, $type)
     {
-        $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($purchase_detail_data->quantity, $purchase_detail_data->purchase_uom_id);
+        $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($purchase_detail_data['quantity'], $purchase_detail_data['purchase_uom_id']);
         $batchNo = UomHelper::generateBatchNo($purchase_detail_data['variation_id']);
-        $per_ref_uom_price_by_default_currency = exchangeCurrency($purchase_detail_data->per_ref_uom_price, $purchase->currency_id, $this->currency->id) ?? 0;
+        $per_ref_uom_price_by_default_currency = exchangeCurrency($purchase_detail_data['per_ref_uom_price'], $purchase['currency_id'], $this->currency->id) ?? 0;
         return [
-            "business_location_id" => $purchase->business_location_id,
-            "product_id" => $purchase_detail_data->product_id,
-            "variation_id" => $purchase_detail_data->variation_id,
+            "business_location_id" => $purchase['business_location_id'],
+            "product_id" => $purchase_detail_data['product_id'],
+            "variation_id" => $purchase_detail_data['variation_id'],
             "transaction_type" => $type,
-            "transaction_detail_id" => $purchase_detail_data->id,
-            "batch_no" => $purchase_detail_data->batch_no,
-            "expired_date" => $purchase_detail_data->expired_date,
-            "uomset_id" => $purchase_detail_data->uomset_id,
+            "transaction_detail_id" => $purchase_detail_data['id'],
+            "batch_no" => $purchase_detail_data['batch_no'],
+            "expired_date" => $purchase_detail_data['expired_date'],
             'batch_no' => $batchNo,
             "ref_uom_id" => $referencUomInfo['referenceUomId'],
             "ref_uom_quantity" => $referencUomInfo['qtyByReferenceUom'],
@@ -119,6 +118,6 @@ class purchaseDetailActions
     }
     public function removeStock($detailId,$type="purchase"){
         CurrentStockBalance::where('transaction_detail_id', $detailId)->where('transaction_type', $type)->delete();
-        stock_history::where('transaction_details_id', $detailId)->where('transaction_type', $type)->first()->delete();
+        stock_history::where('transaction_details_id', $detailId)->where('transaction_type', $type)->delete();
     }
 }

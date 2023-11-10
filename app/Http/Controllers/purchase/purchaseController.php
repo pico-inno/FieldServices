@@ -150,32 +150,10 @@ class purchaseController extends Controller
         $currencies = Currencies::get();
         $purchase_detail = purchase_details::with([
             'packagingTx',
-<<<<<<< HEAD
             'productVariation',
             'productVariation.variationTemplateValue',
             'productVariation.packaging',
             'product.uom.unit_category.uomByCategory'
-=======
-            'productVariation' => function ($q) {
-                $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
-                    ->with(
-                    [
-                            'packaging.uom',
-                            'variationTemplateValue' => function ($q) {
-                                $q->select('id', 'name');
-                            }
-                        ]
-                    );
-            }, 'product' => function ($q) {
-                $q->with([
-                    'uom' => function ($q) {
-                        $q->with(['unit_category' => function ($q) {
-                            $q->with('uomByCategory');
-                        }]);
-                    }
-                ]);
-            }
->>>>>>> 523d7d1f2cf995724b12e10cb5218f8621e79309
         ])->where('purchases_id', $id)->where('is_delete', 0)->get();
         $setting = $this->setting->getByUser();
         return view('App.purchase.editPurchase', compact('purchase', 'locations', 'purchase_detail', 'suppliers', 'setting', 'currency', 'currencies'));
@@ -470,11 +448,7 @@ class purchaseController extends Controller
                 'product_variations.packaging.uom'
             ])
             ->get()->toArray();
-<<<<<<< HEAD
         // dd(productPackaging::with('product_variations')->get()->toArray());
-=======
-            // dd($products);
->>>>>>> 523d7d1f2cf995724b12e10cb5218f8621e79309
         return response()->json($products, 200);
     }
 }

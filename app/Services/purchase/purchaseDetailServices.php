@@ -88,16 +88,18 @@ class purchaseDetailServices
                 $pd['updated_by'] = Auth::user()->id;
                 $pd['updated_at'] = now();
 
+                // purchase details will update last because in update diff qty of stock need to check
+                // dd($purchase_details);
                 // remove stock on status
                 if ($befUpdatedPurchaseData['status'] == 'received' && $purchasesData['status'] != "received") {
                     $purchaseDetailActions->removeStock($purchase_detail_id);
                 }elseif($befUpdatedPurchaseData['status'] != 'received' && $request['status'] == 'received'){
-                    $purchaseDetailActions->currentStockBalanceAndStockHistoryCreation($purchase_details, $purchasesData, 'purchase');
+                    $purchaseDetailActions->currentStockBalanceAndStockHistoryCreation($pd, $purchasesData, 'purchase');
                 }
 
                 $stock_check = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase')->exists();
                 if (!$stock_check && $befUpdatedPurchaseData['status'] != 'received' && $request['status'] == 'received') {
-                    $purchaseDetailActions->currentStockBalanceAndStockHistoryCreation($purchase_details, $purchasesData, 'purchase');
+                    $purchaseDetailActions->currentStockBalanceAndStockHistoryCreation($pd, $purchasesData, 'purchase');
                 }elseif($stock_check && $befUpdatedPurchaseData['status'] == 'received' && $request['status'] == 'received'){
                         $currentStock = currentStockBalance::where('transaction_detail_id', $purchase_detail_id)->where('transaction_type', 'purchase');
 
@@ -111,7 +113,7 @@ class purchaseDetailServices
                                     "business_location_id" => $request->business_location_id,
                                     "ref_uom_id" => $referencteUom,
                                     "batch_no" => $request->batch_no,
-                                    "ref_uom_price" => $pd['per_ref_uom_price'],
+                                    "ref_uom_price" => $per_ref_uom_price,
                                     "ref_uom_quantity" => $requestQty,
                                     "current_quantity" => $currentResultQty >= 0 ? $currentResultQty :  0,
                                 ]);
@@ -126,11 +128,11 @@ class purchaseDetailServices
                 }else{
                     if ($befUpdatedPurchaseData['status'] == 'received' && $purchasesData['status'] != "received") {
                         $purchaseDetailActions->removeStock($purchase_detail_id);
-                    } 
+                    }
                 }
 
-                // purchase details will update last because in update diff qty of stock need to check
                 $purchase_details->update($pd);
+
                 // update packaging
                 $packagingService = new packagingServices();
                 $packagingService->updatePackagingForTx($pd, $purchase_detail_id, 'purchase');
