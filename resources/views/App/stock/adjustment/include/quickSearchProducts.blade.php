@@ -419,8 +419,8 @@
         })
         $(document).on('input', '.gnd_quantity', function (){
             packaging($(this),'/');
-            // changeQtyOnUom($(this));
-            // calDifferenceQty($(this));
+            changeQtyOnUom($(this));
+            calDifferenceQty($(this));
         })
         const packaging=(e,operator)=>{
             let parent = $(e).closest('.adjustment_row');
@@ -528,11 +528,11 @@
         }
 
 
-        $(document).on('input','.adjustment_row input',function () {
-
-            // changeQtyOnUom($(this));
-            // calDifferenceQty($(this));
-        })
+        // $(document).on('input','.gnd_quantity',function () {
+        //
+        //     changeQtyOnUom($(this));
+        //     calDifferenceQty($(this));
+        // })
 
 
         function calDifferenceQty(e) {
