@@ -1072,12 +1072,13 @@ class ReportController extends Controller
         if($filterView == 1){
 
                 foreach ($currentStocks as $currentStock) {
+                    $product_package_id = $currentStock['product_packaging_id'];
                     $batchNo = $currentStock['batch_no'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
                     $currentQty = $currentStock['current_quantity'];
                     $refQty =  $currentStock['ref_uom_quantity'];
-                    $package_qty = $currentStock['packagingtx']['packaging']['quantity'] ?? 1;
+                    $package_qty = $currentStock['quantity'] ?? 1;
 
 
                     $package_currentQty = $currentQty / $package_qty;
@@ -1092,7 +1093,7 @@ class ReportController extends Controller
                     }
 
 
-                    $key = $batchNo . '_' . $variationId . '_' . $locationId;
+                    $key = $filterType == 2 ? $batchNo . '_' . $variationId . '_' . $locationId.'_'.$product_package_id : $batchNo . '_' . $variationId . '_' . $locationId;
 
 
                     if (!isset($mergedStocks[$key])) {
@@ -1113,12 +1114,14 @@ class ReportController extends Controller
         }elseif ($filterView == 2){
 
                foreach ($currentStocks as $currentStock) {
+                   $product_package_id = $currentStock['product_packaging_id'];
+                   $batchNo = $currentStock['batch_no'];
                     $transactionID = $currentStock['transaction_detail_id'];
                     $variationId = $currentStock['variation_id'];
                     $locationId = $currentStock['location']['id'];
                    $currentQty = $currentStock['current_quantity'];
                    $refQty =  $currentStock['ref_uom_quantity'];
-                   $package_qty = $currentStock['packagingtx']['packaging']['quantity'] ?? 1;
+                   $package_qty = $currentStock['quantity'] ?? 1;
 
 
                    $package_currentQty = $currentQty / $package_qty;
@@ -1133,9 +1136,7 @@ class ReportController extends Controller
                    }
 
 
-
-                    $key = $currentStock['batch_no'] . '_' .$variationId . '_' . $locationId .'-'. $transactionID;
-
+                   $key = $filterType == 2 ? $batchNo . '_' . $variationId . '_' . $locationId.'-'. $transactionID.'_'.$product_package_id : $batchNo . '_' . $variationId . '_' . $locationId.'-'. $transactionID;
 
                     if (!isset($mergedStocks[$key])) {
                         $mergedStocks[$key] = $currentStock;

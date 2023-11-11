@@ -76,5 +76,11 @@ class purchase_details extends Model
         return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'id')
                 ->where('transaction_type','purchase');
     }
+
+    public function product_packaging(): HasOne
+    {
+        return $this->hasOne(productPackaging::class, 'product_id', 'id');
+    }
+
 }
 
