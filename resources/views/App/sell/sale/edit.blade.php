@@ -196,8 +196,7 @@
                                                     <span>{{$product->name}}</span>
                                                     <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
                                                     <br>
-
-                                                    @if ($product->type =='storeable')
+                                                    @if ($product->product_type =='storable')
                                                         <span class="current_stock_qty_txt">{{$sale_detail->stock_sum_current_quantity}}</span> <span
                                                             class='smallest_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
                                                     @endif
@@ -253,7 +252,7 @@
                                             <td class="fv-row">
                                                 <select name="sale_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
                                                     data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
-                                                    data-placeholder="Select Package" placeholder="select Package" required>
+                                                    data-placeholder="Select Package" placeholder="select Package" >
                                                     <option value="">Select Package</option>
                                                     @foreach ($product_variation['packaging'] as $package)
                                                     <option @selected($package['id']==arr($sale_detail['packagingTx'],'product_packaging_id'))
@@ -439,29 +438,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="suggestionProducts">
-                <div class="border border-1 rounded px-2 py-3 d-flex mb-2">
-                    <div class="img bg-light w-50px h-50px rounded">
-
-                    </div>
-                    <div class="product-info ms-4 pt-1">
-                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span
-                                class="text-gray-700 fw-semibold">(Cherry Mx blue switch)</span></span>
-                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30
-                                pcs</span></span>
-                    </div>
-                </div>
-                <div class="border border-1 rounded px-2 py-3 d-flex">
-                    <div class="img bg-light w-50px h-50px rounded">
-
-                    </div>
-                    <div class="product-info ms-4 pt-1">
-                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span
-                                class="text-gray-700 fw-semibold">(Cherry Mx
-                                blue switch)</span></span>
-                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30
-                                pcs</span></span>
-                    </div>
-                </div>
 
             </div>
             <div class="modal-footer">
@@ -470,13 +446,15 @@
         </div>
     </div>
 </div>
+
 @include('App.purchase.newProductAdd')
 @include('App.sell.sale.subscribeModel')
+
 @endsection
 
 @push('scripts')
-<script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
-@include('App.purchase.contactAdd')
+{{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
+{{-- @include('App.purchase.contactAdd') --}}
     <script>
         $('[data-kt-select2="select2"]').select2();
         $('#subscribe').change(function() {

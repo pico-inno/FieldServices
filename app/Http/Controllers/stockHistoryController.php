@@ -63,10 +63,13 @@ class stockHistoryController extends Controller
                 return $history->business_location->name;
             })
             ->editColumn('product', function ($history) {
-                $variation=$history->productVariation->variationTemplateValue;
-                $variationName=$variation ? ' ('.$variation->name.')':'';
-                $productName=$history->product['name'];
-                return $productName . $variationName ;
+                $variation = $history->productVariation;
+                if ($variation) {
+                    $variationTemplateValue = $variation->variationTemplateValue;
+                    $variationName = $variationTemplateValue ? ' (' . $variationTemplateValue->name . ')' : '';
+                    $productName = $history->product['name'];
+                    return $productName . $variationName;
+                }
             })
             ->editColumn('date', function ($history) {
                 if($history->transaction_type=='sale'){

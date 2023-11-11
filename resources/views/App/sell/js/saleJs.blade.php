@@ -26,7 +26,6 @@
         let exchangeRates=@json($exchangeRates ?? []);
         let currentPriceList;
         var currentCurrency=@json($defaultCurrency);
-        $('[name="contact_id"]').val(3).trigger('change');
         $('#currency_id').change(function(e){
             currentCurrency=currencies.find(c=>c.id==$(this).val());
             currentCurrencySymbol=currentCurrency.symbol;
@@ -67,6 +66,9 @@
                 }else{
                     productsOnSelectData=[...productsOnSelectData,newProductData];
                 }
+                setTimeout(() => {
+                    checkStock($(`.sale_row_${index}`))
+                }, 1000);
             })
             let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
             getPriceList(CurrentPriceListId);
@@ -111,6 +113,8 @@
                     $(`[data-unid=${unid}]`).removeClass('bg-light')
                 }
             );
+        }else{
+            $('[name="contact_id"]').val(3).trigger('change');
         }
 
         unique_name_id+=products_length;
@@ -414,7 +418,6 @@
 
         //append table row for product to sell
         function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false,parentSaleDetailId=null) {
-            console.log(selected_product);
             allSelectedProduct[selected_product.product_variations.id]=selected_product;
             if(setting.enable_row == 0 && !forceSplit){
                let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
@@ -431,7 +434,7 @@
             }
             let default_purchase_price,variation_id;
             let isStorable=selected_product.product_type=="storable";
-
+            // alert(isStorable);
             let additionalProduct=selected_product.product_variations.additional_product;
             showSuggestion(additionalProduct,unique_name_id);
             // let uomSetOption=""
@@ -913,6 +916,7 @@
             index=i;
             return  variationId == pd.variation_id;
         });
+        console.log(parent,'===============');
 
         const uoms=product.uom.unit_category.uom_by_category;
         const referenceUom =uoms.filter(function ($u) {

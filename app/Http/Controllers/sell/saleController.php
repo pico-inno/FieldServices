@@ -386,7 +386,7 @@ class saleController extends Controller
             } else {
                 $sdcStatus = $saleService->saleDetailCreation($request, $sale_data, $sale_details);
                 if ($sdcStatus == 'outOfStock') {
-                    return redirect()->back()->withInput()->with(['error' => 'Product Out Of Stock']);
+                    return back()->withInput()->with(['error' => 'Product Out Of Stock']);
                 }
             }
 
@@ -418,7 +418,7 @@ class saleController extends Controller
                     'message' => 'Something wrong'
                 ], 500);
             } else {
-                return redirect()->back()->with(['warning' => 'Something Went Wrong While creating sale']);
+                return back()->with(['warning' => 'Something Went Wrong While creating sale']);
             }
         }
     }
@@ -566,8 +566,8 @@ class saleController extends Controller
                         if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
                             $changeQtyStatus = $saleService->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
                             if ($changeQtyStatus == false) {
-
-                                return redirect()->back()->withInput()->with(['warning' => "product Out of Stock"]);
+                                dd($changeQtyStatus);
+                                return back()->with(['error' => "product Out of Stock"]);
                             } else {
                                 // if ($this->setting->lot_control == "off") {
                                 $datas = $changeQtyStatus;
@@ -704,8 +704,8 @@ class saleController extends Controller
                             }
                         };
                     }
+                    // dd('d');
                     // dd($request_old_sale);
-
                     $request_sale_details_data = [
                         'uom_id' => $request_old_sale['uom_id'],
                         'quantity' => $request_old_sale['quantity'],
@@ -723,7 +723,7 @@ class saleController extends Controller
                     // dd($request_sale_details_data);
 
                     $packagingService = new packagingServices();
-                    $packagingService->updatePackagingForTx($request_old_sale, $sale_details->id,'sale');
+                    $packagingService->updatePackagingForTx($request_old_sale, $sale_details->id, 'sale');
                     if ($request_old_sale['quantity'] <= 0) {
                         $request_sale_details_data['is_delete']  = 1;
                         $request_sale_details_data['deleted_at']  = now();
@@ -813,10 +813,8 @@ class saleController extends Controller
 
             DB::commit();
         } catch (Exception $e) {
-
-            logger($e);
-            dd($e);
             DB::rollBack();
+            return back()->with(['warning' => 'Something Went Wrong While update sale voucher']);
         }
         // dd($request->toArray());
         if ($request->type == 'pos') {
@@ -906,10 +904,12 @@ class saleController extends Controller
                         ->when($variation_id, function ($query) use ($variation_id) {
                             $query->where('id', $variation_id);
                         })
-                        ->with(['packaging'=>function($q){
-                            $q->where('for_purchase', 1);
-                        },
-                        'variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue']);
+                        ->with([
+                            'packaging' => function ($q) {
+                                $q->where('for_purchase', 1);
+                            },
+                            'variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
+                        ]);
                 },
                 'stock' => function ($query) use ($business_location_id) {
                     $locationIds = childLocationIDs($business_location_id);
@@ -1005,7 +1005,7 @@ class saleController extends Controller
             'product_variations.id as variation_id',
             'variation_template_values.id as variation_template_values_id'
         )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where(function ($query) use ($q) {
                 $query->where('can_sale', 1)
                     ->where('products.name', 'like', '%' . $q . '%')
@@ -1021,7 +1021,7 @@ class saleController extends Controller
             })
             ->with([
                 'product_packaging' => function ($query) use ($q) {
-                    $query->where('package_barcode',$q);
+                    $query->where('package_barcode', $q);
                 },
                 'uom',
                 'uom.unit_category.uomByCategory',
@@ -1032,7 +1032,7 @@ class saleController extends Controller
                 'stock' => function ($query) use ($business_location_id) {
                     $locationIds = childLocationIDs($business_location_id);
                     $query->where('current_quantity', '>', 0)
-                    ->whereIn('business_location_id', $locationIds);
+                        ->whereIn('business_location_id', $locationIds);
                 }
             ])
             ->withSum(['stock' => function ($query) use ($business_location_id) {
@@ -1040,7 +1040,7 @@ class saleController extends Controller
                 $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()->toArray();
-            // dd(productPackaging::with('product_variations')->get()->toArray());
+        // dd(productPackaging::with('product_variations')->get()->toArray());
         return response()->json($products, 200);
     }
     public function getSuggestionProduct(Request $request)
@@ -1051,7 +1051,13 @@ class saleController extends Controller
         $product = Product::where('id', $productId)->with('uom.unit_category.uomByCategory')->first();
         $variation = ProductVariation::where('id', $variationId)
             ->where('product_id', $productId)
-            ->with('additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue', 'variationTemplateValue')
+            ->with(
+                'packaging.uom',
+                'additionalProduct.productVariation.product',
+                'additionalProduct.uom',
+                'additionalProduct.productVariation.variationTemplateValue',
+                'variationTemplateValue'
+            )
             ->first();
         $stockQuery = CurrentStockBalance::where('variation_id', $variationId)->where('current_quantity', '>', 0)
             ->where('business_location_id', $locationId);
@@ -1068,6 +1074,7 @@ class saleController extends Controller
             'name' => $product->name,
             'sku' => $product->sku,
             'total_current_stock_qty' => $total_current_stock_qty,
+            'stock_sum_current_quantity' => $total_current_stock_qty,
             'variation_name' => $variation['variationTemplateValue'] ? $variation['variationTemplateValue']['name'] : '',
             'stock' => $stocks,
             'uom_id' => $product->uom_id,
@@ -1081,6 +1088,7 @@ class saleController extends Controller
             'has_variation' => 'sub_variable',
             'product_type' => $product->product_type,
         ];
+        // dd($result);
         return response()->json($result, 200);
     }
 
@@ -1337,7 +1345,7 @@ class saleController extends Controller
 
             $originalSale = sales::find($saleId);
             if (!$originalSale) {
-                return redirect()->back()->with('error', 'Sales voucher not found.');
+                return back()->with('error', 'Sales voucher not found.');
             }
 
             $currentDetailCount = sale_details::where('sales_id', $saleId)->count();
@@ -1350,7 +1358,7 @@ class saleController extends Controller
                     }
                 }
                 if ($currentDetailCount == $splitLineCount) {
-                    return redirect()->back()->with('warning', "Can't Split All Item.");
+                    return back()->with('warning', "Can't Split All Item.");
                 }
             }
 
