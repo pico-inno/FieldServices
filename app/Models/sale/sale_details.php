@@ -9,6 +9,7 @@ use App\Models\Product\Unit;
 use App\Models\Product\UOMSet;
 use App\Models\Product\Product;
 use App\Models\CurrentStockBalance;
+use App\Models\productPackaging;
 use App\Models\purchases\purchases;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductVariation;
