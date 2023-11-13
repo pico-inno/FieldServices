@@ -436,17 +436,19 @@
             //----------------------------- start::rom -----------------------------------------------
             let romTags='';
             let locationId=$('[name="business_location_id"]').val();
-            if(selected_product.rom.length >0){
-                let rom=selected_product.rom[0];
-                if(rom){
-                    rom.rom_details.forEach(rd=>{
-                        romTags+=
-                        `
-                        <span class="badge badge-light">
-                            ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
-                        </span>
-                        `;
-                    })
+            if(selected_product.rom){
+                if(selected_product.rom.length >0){
+                    let rom=selected_product.rom[0];
+                    if(rom){
+                        rom.rom_details.forEach(rd=>{
+                            romTags+=
+                            `
+                            <span class="badge badge-light">
+                                ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
+                            </span>
+                            `;
+                        })
+                    }
                 }
             }
 
@@ -503,11 +505,13 @@
                             </span>
                             <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)`
                              : '';
-            if(selected_product.rom.length >0){
-                $currentQtyText=`
-                <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
-                <span class='smallest_unit_txt smallest_rom_unit_txt'>${selected_product.rom[0].uom.short_name}</span>(s/es)
-                `
+            if(selected_product.rom){
+                if(selected_product.rom.length >0){
+                    $currentQtyText=`
+                    <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
+                    <span class='smallest_unit_txt smallest_rom_unit_txt'>${selected_product.rom[0].uom.short_name}</span>(s/es)
+                    `
+                }
             }
             let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
@@ -633,9 +637,11 @@
             }else{
                 $(`.sale_row_${parentUniqueNameId}`).after(newRow);
             }
-            if(selected_product.rom.length >0){
+            if(selected_product.rom){
+                if(selected_product.rom.length >0){
                 let rom=selected_product.rom[0];
                 romAviableQtyCheck(locationId,selected_product.id,rom.uom,$('.current_rom_stock_qty_txt'),$('.smallest_rom_unit_txt'));
+                }
             }
             suggestionProductEvent();
             $('.dataTables_empty').addClass('d-none');

@@ -996,6 +996,29 @@ class saleController extends Controller
         $business_location_id = $request->data['business_location_id'];
         $q = $request->data['query'];
         $variation_id = $request->data['variation_id'] ?? null;
+        $relations= [
+            'product_packaging' => function ($query) use ($q) {
+                $query->where('package_barcode', $q);
+            },
+            'uom',
+            'uom.unit_category.uomByCategory',
+            'product_variations.packaging.uom',
+            'product_variations.additionalProduct.productVariation.product',
+            'product_variations.additionalProduct.uom',
+            'product_variations.additionalProduct.productVariation.variationTemplateValue',
+            'stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->where('current_quantity', '>', 0)
+                    ->whereIn('business_location_id', $locationIds);
+            }
+        ];
+        if(hasModule('Manufacturing') && isEnableModule('Manufacturing')){
+            $relations=[
+                'rom.uom',
+                'rom.rom_details.productVariation.product',
+                'rom.rom_details.uom',
+                ...$relations];
+        }
         $products = Product::select(
             'products.*',
             'product_variations.*',
@@ -1020,25 +1043,7 @@ class saleController extends Controller
             ->when($variation_id, function ($query) use ($variation_id) {
                 $query->where('product_variations.id', $variation_id);
             })
-            ->with([
-                'product_packaging' => function ($query) use ($q) {
-                    $query->where('package_barcode', $q);
-                },
-                'uom',
-                'uom.unit_category.uomByCategory',
-                'rom.uom',
-                'rom.rom_details.productVariation.product',
-                'rom.rom_details.uom',
-                'product_variations.packaging.uom',
-                'product_variations.additionalProduct.productVariation.product',
-                'product_variations.additionalProduct.uom',
-                'product_variations.additionalProduct.productVariation.variationTemplateValue',
-                'stock' => function ($query) use ($business_location_id) {
-                    $locationIds = childLocationIDs($business_location_id);
-                    $query->where('current_quantity', '>', 0)
-                        ->whereIn('business_location_id', $locationIds);
-                }
-            ])
+            ->with($relations)
             ->withSum(['stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
                 $query->whereIn('business_location_id', $locationIds);
