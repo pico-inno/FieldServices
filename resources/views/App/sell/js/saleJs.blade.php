@@ -497,9 +497,17 @@
                     `;
                 })
             }
-            $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.stock_sum_current_quantity).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
+            $currentQtyText=isStorable ?
+                            `<span class="current_stock_qty_txt">
+                                    ${parseFloat(selected_product.stock_sum_current_quantity).toFixed(2)}
+                            </span>
+                            <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)`
+                             : '';
             if(selected_product.rom.length >0){
-                $currentQtyText=`<span class="current_rom_stock_qty_txt fs-7">Calculating Qty....</span>`
+                $currentQtyText=`
+                <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
+                <span class='smallest_unit_txt smallest_rom_unit_txt'>${selected_product.rom[0].uom.short_name}</span>(s/es)
+                `
             }
             let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
@@ -627,7 +635,7 @@
             }
             if(selected_product.rom.length >0){
                 let rom=selected_product.rom[0];
-                romAviableQtyCheck(locationId,selected_product.id,$('.current_rom_stock_qty_txt'),rom.uom);
+                romAviableQtyCheck(locationId,selected_product.id,rom.uom,$('.current_rom_stock_qty_txt'),$('.smallest_rom_unit_txt'));
             }
             suggestionProductEvent();
             $('.dataTables_empty').addClass('d-none');
@@ -959,7 +967,7 @@
             result+=isNullOrNan(refQty)
 
         })
-        if(product.product_type =='storable'){
+        if(product.product_type =='storable' || (product.product_type =='consumeable' && product.total_current_stock_qty != null)){
             if(result > productsOnSelectData[index].total_current_stock_qty){
                         productsOnSelectData[index].validate=false;
                 $(`.stock_alert_${variationId}`).removeClass('d-none');
@@ -981,7 +989,7 @@
         return {currentUom,referenceUom};
     }
 
-    function romAviableQtyCheck(locationId,productId,DOM,uom){
+    function romAviableQtyCheck(locationId,productId,uom,DOM,uomTextDOM){
         $.ajax({
             url: `/sell/rom/aviable/qty/check`,
             data:{
@@ -999,7 +1007,12 @@
                 };
             },
             success: function(results){
-                DOM.text(results +' '+ uom.short_name);
+                DOM.text(results);
+                uomTextDOM.text(uom.short_name);
+                let selectedProduct=productsOnSelectData.find((p)=>p.id=productId);
+                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === productId);
+                productsOnSelectData[indexToReplace].total_current_stock_qty=results;
+                console.log(productsOnSelectData[indexToReplace]);
             }
         })
     }
