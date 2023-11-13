@@ -55,6 +55,7 @@ use App\Http\Controllers\posSession\posSessionController;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
+use Modules\Manufacturing\Services\RoMService;
 
 class saleController extends Controller
 {
@@ -410,8 +411,8 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
-            logger($e);
             DB::rollBack();
+            dd($e);
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',
@@ -1025,6 +1026,9 @@ class saleController extends Controller
                 },
                 'uom',
                 'uom.unit_category.uomByCategory',
+                'rom.uom',
+                'rom.rom_details.productVariation.product',
+                'rom.rom_details.uom',
                 'product_variations.packaging.uom',
                 'product_variations.additionalProduct.productVariation.product',
                 'product_variations.additionalProduct.uom',
@@ -1040,7 +1044,6 @@ class saleController extends Controller
                 $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()->toArray();
-        // dd(productPackaging::with('product_variations')->get()->toArray());
         return response()->json($products, 200);
     }
     public function getSuggestionProduct(Request $request)
@@ -1447,5 +1450,8 @@ class saleController extends Controller
                 'error' => 'Something Went Wrongs'
             ]);
         }
+    }
+    public function romAviaQtyCheck(Request $request){
+        return RoMService::getKitAvailableQty($request->locationId,$request->productId);
     }
 }

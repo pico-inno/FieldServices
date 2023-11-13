@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Helpers\UomHelper;
 use App\Models\sale\sales;
 use App\Models\stock_history;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use App\Services\packaging\packagingServices;
-use Carbon\Carbon;
+use Modules\Manufacturing\Services\RoMService;
 
 class SaleServices
 {
@@ -123,6 +124,18 @@ class SaleServices
             }
             $created_sale_details = sale_details::create($sale_details_data);
 
+            $romCheck = RoMService::isKit($created_sale_details['product_id']);
+
+            if ($romCheck === 'kit') {
+                RoMService::decreaseConsumeDetailsFromCSB(
+                    $created_sale_details['id'],
+                    'kit_sale_detail',
+                    $request->business_location_id,
+                    $created_sale_details['product_id'],
+                    $created_sale_details['variation_id'],
+                    $created_sale_details['out_quantity'],
+                );
+            }
             $packaging->packagingForTx($sale_detail, $created_sale_details['id'], 'sale');
             if (isset($sale_detail['isParent'])) {
                 $parentSaleItems[$sale_detail['isParent']]= $created_sale_details;

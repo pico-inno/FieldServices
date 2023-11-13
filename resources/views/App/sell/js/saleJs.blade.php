@@ -174,7 +174,6 @@
                             products=results;
                                 var html = '';
                                     if (results.length > 0) {
-                                        console.log(results);
                                         let sku;
                                         let addedSku=[];
                                         results.forEach(function(result,key) {
@@ -193,7 +192,7 @@
                                             }else{
                                                 sku=result.sku;
                                             }
-                                            if(result.has_variation =='variable' && results.length== 2){
+                                            if(result.has_variation =='variable' && results.length== 1){
                                                 return;
                                             }
                                             let total_current_stock_qty=Number(result.stock_sum_current_quantity);
@@ -216,7 +215,7 @@
                                             }
                                             html += '</div>';
                                     });
-                                    if (results.length == 1 || (results[0].has_variation =='variable' && results.length== 2)) {
+                                    if (results.length == 1 || (results[0].has_variation =='variable' && results.length== 1)) {
                                         $('.quick-search-results').show();
                                         if(results[0].stock_sum_current_quantity>0 || results[0].product_type!="storable"){
                                             setTimeout(() => {
@@ -434,11 +433,28 @@
             }
             let default_purchase_price,variation_id;
             let isStorable=selected_product.product_type=="storable";
-            // alert(isStorable);
-            let additionalProduct=selected_product.product_variations.additional_product;
-            showSuggestion(additionalProduct,unique_name_id);
-            // let uomSetOption=""
+            //----------------------------- start::rom -----------------------------------------------
+            let romTags='';
+            let locationId=$('[name="business_location_id"]').val();
+            if(selected_product.rom.length >0){
+                let rom=selected_product.rom[0];
+                if(rom){
+                    rom.rom_details.forEach(rd=>{
+                        romTags+=
+                        `
+                        <span class="badge badge-light">
+                            ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
+                        </span>
+                        `;
+                    })
+                }
+            }
+
+            //----------------------------- end::rom -----------------------------------------------
             let uomIds=[];
+            let additionalProduct=selected_product.product_variations.additional_product;
+
+            showSuggestion(additionalProduct,unique_name_id);
             // if the item is out of stock reutrn do nothing;
             if(selected_product.total_current_stock_qty==0 && isStorable){
                 warning('Products are out of stock')
@@ -472,8 +488,8 @@
                 //     <input type="hidden" name="sale_details[${unique_name_id}][stock_id_by_lot_serial_no]" class="lot_no" value="${value.id}">
                 // `
             }
-            variation=selected_product.product_variations;
             let packagingOption='';
+            variation=selected_product.product_variations;
             if(variation.packaging){
                 variation.packaging.forEach((pk)=>{
                     packagingOption+=`
@@ -482,6 +498,9 @@
                 })
             }
             $currentQtyText=isStorable ? `<span class="current_stock_qty_txt">${parseFloat(selected_product.stock_sum_current_quantity).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)` : '';
+            if(selected_product.rom.length >0){
+                $currentQtyText=`<span class="current_rom_stock_qty_txt fs-7">Calculating Qty....</span>`
+            }
             let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
             var newRow = `
                 <tr class="sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selected_product.product_variations.id}">
@@ -492,6 +511,9 @@
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                             <br>
                             ${$currentQtyText}
+                            <div>
+                                ${romTags}
+                            </div>
                             ${additionalProduct.length >0 ?
                                 `
                                 <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none" data-varid="${selected_product.product_variations.id}"
@@ -603,6 +625,10 @@
             }else{
                 $(`.sale_row_${parentUniqueNameId}`).after(newRow);
             }
+            if(selected_product.rom.length >0){
+                let rom=selected_product.rom[0];
+                romAviableQtyCheck(locationId,selected_product.id,$('.current_rom_stock_qty_txt'),rom.uom);
+            }
             suggestionProductEvent();
             $('.dataTables_empty').addClass('d-none');
             $('.quick-search-results').addClass('d-none');
@@ -632,7 +658,6 @@
             });
             if(selected_product.product_packaging){
                 // setTimeout(() => {
-                    console.log(selected_product.product_packaging.id);
                     $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.product_packaging.uom_id).trigger('change');
                     $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selected_product.product_packaging.id).trigger('change');
                 // }, 100)
@@ -707,7 +732,7 @@
             $('input').off('focus').on('focus', function() {
                 // Select the text in the input field
                 $(this).select();
-                });
+            });
         }
 
 
@@ -803,7 +828,6 @@
             'additional_product':newSelectedProduct.product_variations.additional_product,
             'stock':newSelectedProduct.stock,
         };
-        console.log(newProductData,'-------');
         const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
         if(indexToReplace !== -1){
             productsOnSelectData[indexToReplace] = newProductData;
@@ -916,7 +940,6 @@
             index=i;
             return  variationId == pd.variation_id;
         });
-        console.log(parent,'===============');
 
         const uoms=product.uom.unit_category.uom_by_category;
         const referenceUom =uoms.filter(function ($u) {
@@ -958,6 +981,28 @@
         return {currentUom,referenceUom};
     }
 
+    function romAviableQtyCheck(locationId,productId,DOM,uom){
+        $.ajax({
+            url: `/sell/rom/aviable/qty/check`,
+            data:{
+                locationId,productId
+            },
+            type: 'GET',
+            error:function(e){
+                status=e.status;
+                if(status==405){
+                    warning('Method Not Allow!');
+                }else if(status==419){
+                    error('Session Expired')
+                }else{
+                    console.log(' Something Went Wrong! Error Status: '+status )
+                };
+            },
+            success: function(results){
+                DOM.text(results +' '+ uom.short_name);
+            }
+        })
+    }
 
 
 // ----------------------------------------------------------------   Start::Sale Calculation  -----------------------------------------------------------
@@ -1530,7 +1575,6 @@
     function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='') {
         let newUomInfo = uoms.find((uomItem) => uomItem.id == newUomId);
         let currentUomInfo = uoms.find((uomItem) => uomItem.id == currentUomId);
-        console.log(newUomInfo,currentUomInfo,newUomId,currentUomId,'--');
         let refUomInfo = uoms.find((uomItem) => uomItem.unit_type =="reference");
         let currentRefQty = isNullOrNan(getReferenceUomInfoByCurrentUomQty(currentQty,currentUomInfo,refUomInfo).qtyByReferenceUom);
         let currentUomType = currentUomInfo.unit_type;

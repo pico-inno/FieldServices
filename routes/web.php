@@ -406,6 +406,8 @@ Route::prefix('sell')->group(function () {
 
 
         Route::post('/split/', 'saleSplitForPos')->name('saleSplitForPos');
+
+        Route::get('/rom/aviable/qty/check', 'romAviaQtyCheck')->name('romAviaQtyCheck');
     });
 });
 
