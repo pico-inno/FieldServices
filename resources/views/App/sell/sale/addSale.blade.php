@@ -424,7 +424,7 @@
 @include('App.sell.js.saleJs')
 <script src={{asset('customJs/Ajax/getAccountByCurrency.js')}}></script>
 <script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
-<script src="{{asset('customJs/sell/saleValidator.js')}}"></script>
+<script src={{asset('customJs/sell/saleValidator.js')}}></script>
 <script>
 
 </script>

@@ -1,4 +1,5 @@
-    // user update validation
+$(document).ready(function () {
+        // user update validation
     var saleValidator = function () {
         // Shared variables
 
@@ -41,6 +42,7 @@
             const submitButton = element.querySelectorAll('[data-kt-sale-action="submit"]');
             submitButton.forEach((btn) => {
                 btn.addEventListener('click', function (e) {
+                    check();
                     let qtyValidate = productsOnSelectData.find(function (pd) {
                         return pd.validate==false;
                     });
@@ -112,3 +114,14 @@
     KTUtil.onDOMContentLoaded(function () {
         saleValidator.init();
     });
+
+    function check()
+    {
+        let saleRow = document.querySelectorAll('.sale_row');
+        saleRow.forEach((sr) => {
+            checkStock($(sr));
+        })
+    }
+
+
+})
