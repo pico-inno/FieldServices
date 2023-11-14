@@ -38,6 +38,7 @@ class Product extends Model
         'can_expense',
         'can_expense',
         'is_recurring',
+        'receipe_of_material_id',
         'product_custom_field1',
         'product_custom_field2',
         'product_custom_field3',
