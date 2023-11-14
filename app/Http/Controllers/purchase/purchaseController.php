@@ -204,18 +204,12 @@ class purchaseController extends Controller
         $purchase = purchases::with('business_location_id', 'purchased_by', 'confirm_by', 'supplier', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
         $location = businessLocation::where("id", $purchase['business_location_id'])->first();
         $addresss = locationAddress::where('location_id', $location['id'])->first();
-        $purchase_details = purchase_details::with(['productVariation' => function ($q) {
-            $q->select('id', 'product_id', 'variation_template_value_id')
-                ->with([
-                    'product' => function ($q) {
-                        $q->select('id', 'name', 'has_variation', 'uom_id');
-                    },
-                    'variationTemplateValue' => function ($q) {
-                        $q->select('id', 'name');
-                    }
-                ]);
-        }, 'product', 'purchaseUom', 'currency', 'packagingTx'])
-            ->where('purchases_id', $id)->where('is_delete', 0)->get();
+        $purchase_details = purchase_details::with(
+            'productVariation:id,product_id,variation_template_value_id',
+            'productVariation.product:id,name,has_variation,uom_id',
+            'productVariation.variationTemplateValue:id,name',
+            'product', 'purchaseUom', 'currency', 'packagingTx')
+        ->where('purchases_id', $id)->where('is_delete', 0)->get();
         $setting = $this->setting->getByUser();
         return view('App.purchase.DetailView.purchaseDetail', compact(
             'purchase',
