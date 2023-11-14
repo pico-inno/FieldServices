@@ -977,7 +977,8 @@
 
             let selected_product = products[index];
 
-            if(selected_product.product_type =='storable' && selected_product.stock_sum_current_quantity === 0 || selected_product.stock_sum_current_quantity === null){
+            if(selected_product.product_type =='storable'
+            && (selected_product.stock_sum_current_quantity === 0 || selected_product.stock_sum_current_quantity === null)){
                 return;
             }
 

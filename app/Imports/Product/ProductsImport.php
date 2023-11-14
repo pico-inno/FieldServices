@@ -139,29 +139,34 @@ class ProductsImport implements
         // if (!$unitCategoryName) {
         //     throw new \Exception("Unit Category Required");
         // }
-        $uomName = $rowData['uom'];
-        $purchaseUoMName = $rowData['purchase_uom'];
+        try {
+            $uomName = $rowData['uom'];
+            $purchaseUoMName = $rowData['purchase_uom'];
 
-        // $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
-        $uom = $this->uom->where('name', $uomName)->select('id', 'unit_category_id')->first();
-        $uomId=$uom->id;
-        $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $uom->unit_category_id)->pluck('id')->first();
-        // dd($purchaseUoMId);
-        if(($uomId && !$purchaseUoMId) || (!$uomId && $purchaseUoMId) || (!$uomId && !$purchaseUoMId)) {
-            throw new \Exception("UOM and Purchase uom do not match cateogry.");
-        }
-        if (!$uomId) {
-            throw new \Exception("UoM doesn't exist");
-        }
-        if (!$purchaseUoMId) {
-            throw new \Exception("Purchase UoM doesn't exist");
-        }
+            // $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
+            $uom = $this->uom->where('name', $uomName)->select('id', 'unit_category_id')->first();
+            $uomId = $uom->id;
+            $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $uom->unit_category_id)->pluck('id')->first();
+            // dd($purchaseUoMId);
+            if (($uomId && !$purchaseUoMId) || (!$uomId && $purchaseUoMId) || (!$uomId && !$purchaseUoMId)) {
+                throw new \Exception("UOM and Purchase uom do not match cateogry.");
+            }
+            if (!$uomId) {
+                throw new \Exception("UoM doesn't exist");
+            }
+            if (!$purchaseUoMId) {
+                throw new \Exception("Purchase UoM doesn't exist");
+            }
 
-        if ($uomId && $purchaseUoMId) {
-            return [
-                'uom_id' => $uomId,
-                'purchaseUoM_id' => $purchaseUoMId
-            ];
+            if ($uomId && $purchaseUoMId) {
+                return [
+                    'uom_id' => $uomId,
+                    'purchaseUoM_id' => $purchaseUoMId
+                ];
+            }
+        } catch (\Throwable $th) {
+            throw new Exception("UOM not found! Check to ensure the UOM exists", 1);
+
         }
     }
 
@@ -287,10 +292,9 @@ class ProductsImport implements
             }
             DB::commit();
         } catch (Exception $e) {
-            $errorMessage = $e->getMessage();
             DB::rollBack();
-            return back()->withErrors($errorMessage)->withInput();
-            Log::error($errorMessage);
+            $errorMessage = $e->getMessage();
+            throw new Exception($errorMessage);
         }
     }
 
