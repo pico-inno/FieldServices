@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Modules\ComboKit\Entities\ReceipeOfMaterial;
 
 class Product extends Model
 {
@@ -118,4 +119,10 @@ class Product extends Model
     {
         return $this->hasOne(productPackaging::class, 'product_id', 'id');
     }
+
+    public function rom(): HasOne
+    {
+        return $this->hasOne(ReceipeOfMaterial::class, 'id', 'receipe_of_material_id');
+    }
+
 }
