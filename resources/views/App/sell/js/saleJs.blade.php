@@ -507,10 +507,24 @@
                             : '';
         if(selected_product.rom){
             if(selected_product.rom.length >0){
+                let rdInput='';
+                selected_product.rom[0].rom_details.forEach(rd=>{
+                    console.log(rd);
+                    rdInput+=`
+                        <div class='rdMainDiv'>
+                            <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty=${rd.product_variation.id} value="${rd.quantity}" />
+                            <input type="hidden" class="romQty" data-romvaridqty=${rd.product_variation.id} value="${rd.quantity}"  />
+                            <input type="hidden" class="romUom" data-romvariduom=${rd.product_variation.id} value="${rd.uom_id}"  />
+                        </div>
+                    `
+                })
                 $currentQtyText=`
                 <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
                 <span class='smallest_unit_txt smallest_rom_unit_txt'>${selected_product.rom[0].uom.short_name}</span>(s/es)
-                `
+                    <div>
+                        ${rdInput}
+                    </div>
+                `;
             }
         }
         let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
@@ -670,12 +684,6 @@
             minimumResultsForSearch: Infinity,
             data:uomsData,
         });
-        if(selected_product.product_packaging){
-            // setTimeout(() => {
-                $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.product_packaging.uom_id).trigger('change');
-                $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selected_product.product_packaging.id).trigger('change');
-            // }, 100)
-        };
         // $(`[data-uomSet-select-${unique_name_id}="select2"]`).select2();
         $(`[data-lot-select-${unique_name_id}="select2"]`).select2({
             // data,
@@ -691,15 +699,6 @@
             step: 1,
             // decimals: 2
         });
-                // <td>
-                //     <div>
-                //         <span class="subtotal_discount fs-6 fw-semibold">0</span>${currency['symbol']}
-                //     </div>
-                // </td>
-                // <td>
-                //     <span class="final_sub_text fs-6 fw-semibold">0</span>
-                //     <input  type="hidden" value="0" class="sale_price form-control form-control-sm final_sub" name="sale_details[${unique_name_id}][final_sale_price]" />
-                // </td>
         dialerObject.on('kt.dialer.change',function(e) {
             // checkStock($(`[name="sale_details[${unique_name_id}][quantity]"]`));
             packaging($(e.inputElement),'/');
@@ -718,6 +717,16 @@
             optionSelected(suggestUom,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
         }else{
             optionSelected(selected_product.uom_id,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
+        }
+
+        if(selected_product.product_packaging){
+            // setTimeout(() => {
+                $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.product_packaging.uom_id).trigger('change');
+                $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selected_product.product_packaging.id).trigger('change');
+            // }, 100)
+        };
+        if(selected_product.rom.length >0){
+            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.rom[0].uom_id).trigger('change');
         }
 
         // getLotByUom($(`[data-uomSet-select-${unique_name_id}="select2"]`));
@@ -749,12 +758,16 @@
         });
     }
 
-
-    const romRow=()=>{
-        
-    }
-
-
+    $(document).on('change','.quantity',function(){
+        let parent=$(this).closest('.sale_row');
+        let rdMainDiv=parent.find('.rdMainDiv');
+        if(rdMainDiv){
+            // let resu =rdMainDiv.find('.currentRomConsuQty').val();
+            let romQty =rdMainDiv.find('.romQty').val();
+            rdMainDiv.find('.currentRomConsuQty').val(romQty*$(this).val());
+            // alert(romQty*$(this).val());
+        }
+    })
 
         function suggestionProductEvent() {
                 $('.suggestProductBtn').off('click').on('click',function(){
@@ -977,8 +990,15 @@
                 let refQty=getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
                 let saleQty=getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
                 result+=isNullOrNan(refQty)
-
             })
+            let rdQty=0;
+            $('.rdMainDiv').each(function(d){
+                if($(this).find(`[data-currentromconsuqty=${variationId}]`)){
+                    rdQty+=$(this).find(`[data-currentromconsuqty=${variationId}]`).val();
+                }
+            })
+            result+=isNullOrNan(rdQty);
+            console.log(result,rdQty);
             if(product.product_type =='storable' || (product.product_type =='consumeable' && product.total_current_stock_qty != null)){
                 if(result > productsOnSelectData[index].total_current_stock_qty){
                             productsOnSelectData[index].validate=false;
@@ -1023,8 +1043,8 @@
                     uomTextDOM.text(uom.short_name);
                     let selectedProduct=productsOnSelectData.find((p)=>p.id=productId);
                     const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === productId);
-                    productsOnSelectData[indexToReplace].total_current_stock_qty=results;
-                    console.log(productsOnSelectData[indexToReplace]);
+                    let cf=getCurrentAndRefUom(uom.unit_category.uom_by_category,uom.id);
+                    productsOnSelectData[indexToReplace].total_current_stock_qty=getReferenceUomInfoByCurrentUomQty(results,cf.currentUom,cf.referenceUom).qtyByReferenceUom;
                 }
             })
         }

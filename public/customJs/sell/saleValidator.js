@@ -77,8 +77,33 @@ $(document).ready(function () {
                             validator.validate().then(function (status) {
                                 console.log(status);
                                 if (status == 'Valid') {
-                                    e.currentTarget=true;
-                                    return true;
+                                                $.ajax({
+                url: `/sell/rom/aviable/qty/check`,
+                data:{
+                    locationId:1,productId:12
+                },
+                type: 'GET',
+                error:function(e){
+                    status=e.status;
+                    if(status==405){
+                        warning('Method Not Allow!');
+                    }else if(status==419){
+                        error('Session Expired')
+                    }else{
+                        console.log(' Something Went Wrong! Error Status: '+status )
+                    };
+                },
+                                                    success: function (results) {
+                    e.preventDefault()
+;                    console.log('got thisdddddd');
+                    setTimeout(() => {
+                        //  e.currentTarget=true;
+                        //             return true;
+                    }, 2000);
+                }
+            })
+                                    // e.currentTarget=true;
+                                    // return true;
                                 } else {
                                     e.preventDefault();
                                     // Show popup warning. For more info check the plugin's official documentation: https://sweetalert2.github.io/

@@ -1014,7 +1014,7 @@ class saleController extends Controller
         ];
         if(hasModule('Manufacturing') && isEnableModule('Manufacturing')){
             $relations=[
-                'rom.uom',
+                'rom.uom.unit_category.uomByCategory',
                 'rom.rom_details.productVariation.product',
                 'rom.rom_details.uom',
                 ...$relations];
