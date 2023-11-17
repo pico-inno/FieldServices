@@ -209,7 +209,7 @@
 
                             <div class="row mb-1" style="max-height: 5%;z-index: 200;">
                                 <div class="input-group input-group-solid flex-nowrap">
-                                    <x-customerSearch placeholder='Select customer name' id="sb_pos_customer" name="pos_customer"
+                                    <x-customersearch placeholder='Select customer name' id="sb_pos_customer" name="pos_customer"
                                         className="form-select rounded-end-0 border-start border-end" />
                                     <span class="input-group-text border-gray-300 cursor-pointer" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
                                         <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
@@ -377,7 +377,7 @@
                                 <div class="col-12">
                                     <div class="input-group input-group-solid input-group-sm mb-2 flex-nowrap">
 
-                                        <x-customerSearch placeholder='Select customer name' id="pos_customer" name="pos_customer" className="form-select rounded-end-0 border-start border-end" />
+                                        <x-customersearch placeholder='Select customer name' id="pos_customer" name="pos_customer" className="form-select rounded-end-0 border-start border-end" />
                                         <span class="input-group-text border-gray-300 cursor-pointer " data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
                                             <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
                                         </span>

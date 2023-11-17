@@ -29,6 +29,6 @@ class customerSearch extends Component
     public function render(): View|Closure|string
     {
 
-        return view('components.customer-search');
+        return view('components.customersearch');
     }
 }

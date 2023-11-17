@@ -1,7 +1,7 @@
 
-<select class="form-select contactSelect {{$className}}" name="{{$name}}"
-    data-hide-search="false" data-placeholder="{{$placeholder}}" data-allow-clear="true"
-    data-kt-user-table-filter="role" data-hide-search="true" id='{{isset($id) ? $id : ''}}'>
+<select class="form-select contactSelect {{isset($className) ? $className : ''}}" name="{{isset($name) ? $name : ''}}"
+        data-hide-search="false" data-placeholder="{{isset($placeholder) ? $placeholder : ''}}" data-allow-clear="true"
+        data-kt-user-table-filter="role" data-hide-search="true" id='{{isset($id) ? $id : ''}}'>
     {{ $defaultOption ?? '' }}
 </select>
 @push('scripts')

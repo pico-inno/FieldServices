@@ -86,11 +86,11 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
-                                        <x-customerSearch placeholder='Select customer name' name="contact_id" className=" form-selecet contact_id fw-bold rounded-start-0" >
+                                        <x-customersearch placeholder='Select customer name' name="contact_id" className=" form-selecet contact_id fw-bold rounded-start-0" >
                                             <x-slot:defaultOption>
                                                 <option value="{{$sale->customer->id}}" selected>{{$sale->customer->getFullNameAttribute()}}-{{'('.arr($sale->customer,'mobile','-').')'}}</option>
                                             </x-slot>
-                                        </x-customerSearch>
+                                        </x-customersearch>
 
                                     </div>
                                     <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
