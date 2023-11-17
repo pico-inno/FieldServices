@@ -90,7 +90,12 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
-                                        <x-customersearch placeholder='Select customer name' name="contact_id" className=" form-select-sm contact_id fw-bold rounded-start-0" />
+                                        <x-customersearch placeholder='Select customer name' name="contact_id" className=" form-select-sm contact_id fw-bold rounded-start-0" >
+                                            <x-slot:defaultOption>
+                                                <option value="{{$walkInCustomer->id}}" selected>
+                                                    {{$walkInCustomer->getFullNameAttribute()}}-{{'('.arr($walkInCustomer,'mobile','-').')'}}</option>
+                                            </x-slot>
+                                        </x-customersearch>
                                     </div>
                                     {{-- <button class="input-group-text  add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>

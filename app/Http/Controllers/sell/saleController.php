@@ -238,7 +238,7 @@ class saleController extends Controller
     {
         $locations = locationRepo::getTransactionLocation();
         $products = Product::with('productVariations')->get();
-        $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
+        $walkInCustomer = optional(Contact::where('type', 'Customer')->orWhere('type', 'Both')->where('first_name', 'Walk-In Customer')->first());
         $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
         $paymentAccounts = paymentAccounts::get();
         $setting = businessSettings::where('id', Auth::user()->business_id)->first();
@@ -249,7 +249,7 @@ class saleController extends Controller
         if (class_exists('Modules\ExchangeRate\Entities\exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
             $exchangeRates = exchangeRates::get();
         }
-        return view('App.sell.sale.addSale', compact('defaultPriceListId', 'locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
+        return view('App.sell.sale.addSale', compact('defaultPriceListId','walkInCustomer','locations', 'products', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
     }
     // for edit page
     public function saleEdit($id)
@@ -899,17 +899,25 @@ class saleController extends Controller
     {
         $saleDetailQuery = sale_details::where('sales_id', $id);
         $allSaleDetailIdToRemove = $saleDetailQuery->get();
+
+
         foreach ($allSaleDetailIdToRemove as   $sd) {
-            $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id)->OrderBy('id', 'DESC');
-            if ($lotSerials->exists()) {
-                if (request('restore') == 'true') {
-                    $this->adjustStock($lotSerials->get());
-                }
-                foreach ($lotSerials->get() as $lotSerial) {
-                    $lotSerial->delete();
-                }
-            };
+            $romCheck = RoMService::isKit($sd['product_id']);
+            if ($romCheck == 'kit') {
+                RoMService::removeRomTransactions($sd->id, 'kit_sale_detail');
+            } else {
+                $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id)->OrderBy('id', 'DESC');
+                if ($lotSerials->exists()) {
+                    if (request('restore') == 'true') {
+                        $this->adjustStock($lotSerials->get());
+                    }
+                    foreach ($lotSerials->get() as $lotSerial) {
+                        $lotSerial->delete();
+                    }
+                };
+            }
         }
+
         stock_history::where('transaction_details_id', $id)->where('transaction_type', 'sale')->delete();
         $saleDetailQuery->update([
             'is_delete' => 1,
