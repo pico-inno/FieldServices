@@ -12,6 +12,12 @@
         pre {
             margin: 5px;
         }
+        .logo{
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         @media print {
             pre {
@@ -23,21 +29,26 @@
 </head>
 
 <body>
-    <pre>
+<pre>
 @php
-dd($invoice_row);
-echo printFormat('Voucher No','',$invoice_no);
-echo printFormat('Casher','',Auth::user()->username);
-echo printFormat('Customer','',$totalPriceAndOtherData['customer_name']);
+// echo printFormat('Voucher No','',$sale['sales_voucher_no']);
+// echo '<center>'.getSettingsValue('name').'<center>';
+echo '<br>';
+echo printFormat('Date','',fDate($sale['created_now'],'',false));
+echo printFormat('Customer','',$sale->customer->getFullNameAttribute());
 echo '<br><br>';
 echo printFormat('Product','Qty','Price');
 echo '---------------------------------------------------<br>';
 echo '<br>';
-foreach ($invoice_row as  $item) {
-    $variation=$item['variation']?'('.$item['variation'].')':'';
-    $productName=$item['product_name'].$variation;
-    echo printFormat($productName,$item['quantity'].' '.$item['uomName'],$item['subtotal']);
+foreach ($sale_details as  $sd) {
+    $variation=$sd['product_variation']?'('.$sd['product_variation']['variation_template_value']['name'].')':'';
+    $productName=$sd['product']['name'].$variation;
+    echo printFormat($productName,$sd['quantity'].' '.$sd['uomName'],$sd['subtotal']);
 }
+echo '<br>';
+echo '---------------------------------------------------<br>';
+echo printFormat('','Total',$sale['total_sale_amount']);
+// die;
 @endphp
 </pre>
 

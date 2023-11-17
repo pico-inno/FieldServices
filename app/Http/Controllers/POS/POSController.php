@@ -225,31 +225,17 @@ class POSController extends Controller
         });
     }
 
-    public function paymentPrintLayout(Request $request)
+    public function paymentPrintLayout($id)
     {
-        $business_name = businessSettings::first()->name;
-        $user_name = Auth::user()->username;
-        $invoice_row = $request->invoice_row_data;
-        $invoice_no = $request->invoice_no;
-        $totalPriceAndOtherData = $request->totalPriceAndOtherData;
-        $posRegisterId=$totalPriceAndOtherData['posRegisterId'];
-        $printer=posRegisters::where('id', $posRegisterId)->select('printer_id')->with('printer');
-        // if($printer->exists()){
-        //     $printerInfo= $printer->first()->printer;
-        //     dd($printerInfo);
-        //     if($printerInfo->printer_type=='network'){
-        //         $networkPrinter=new networkPrinterController();
-        //         $status=$networkPrinter->print($printerInfo,['voucherData'=>$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, 'invoice_no'=> $invoice_no]);
 
-        //         // dd($invoice_row);
-                // $html= view('App.pos.print.payment', compact('invoice_row', 'invoice_no','voucherData'))->render();
-        //         return response()->json([$status,'type'=>'network']);
-        //     }
-        // }
-
-        $voucherData = $totalPriceAndOtherData;
-        $invoice_row = $invoice_row;
-        $html = view('App.pos.print.payment2', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no', 'voucherData'))->render();
+        $sale = sales::with('sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
+        // dd($sale);
+        $location = businessLocation::where('id', $sale['business_location_id'])->first();
+        $address = $location->locationAddress;
+        $sale_details = sale_details::with('productVariation.product', 'productVariation.variationTemplateValue', 'product', 'uom', 'currency')
+                        ->where('sales_id', $id)->where('is_delete', 0)->get();
+                        // dd($sale);
+        $html = view('App.pos.print.payment2', compact('sale_details','address','location','sale'))->render();
 
         return response()->json(['html' => $html]);
     }

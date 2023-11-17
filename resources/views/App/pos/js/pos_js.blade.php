@@ -822,7 +822,6 @@
                     selectedElement.empty();
                     $.each(result, function(index, item) {
                         let text=item.full_name+'-'+'('+ `${item.mobile !=null ? item.mobile :'-'} ` +')';
-                        console.log(text,'tie');
                         var option = $("<option>")
                             .val(item.id)
                             .text(text);
@@ -1571,25 +1570,14 @@
                         },
                         data: dataForSale,
                         success: function(results){
+                            let id=results.data;
                             if(results.status==200){
-                                let invoice_no = results.data;
-                                $(`#${tableBodyId} tr`).remove();
-                                totalSubtotalAmountCalculate();
-                                totalDisPrice();
-                                $('#payment_info .print_paid').text(0);
-                                $('#payment_info .print_change').text(0);
-                                $('#payment_info .print_balance').text(0);
-                                $('input[name="pay_amount"]').val(0);
-
-                                let data = { invoice_row_data, totalPriceAndOtherData , invoice_no };
                                 $.ajax({
-                                    url: '/pos/payment-print-layout',
+                                    url: `/pos/${id}/payment-print-layout`,
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                     },
-                                    data: data,
                                     success: function(response){
-
                                         if(response.type=='network'){
                                             success('successfully sell and print!')
                                         }else{

@@ -403,7 +403,7 @@ class saleController extends Controller
             // response
             if ($request->type == 'pos') {
                 return response()->json([
-                    'data' => $sale_data->sales_voucher_no,
+                    'data' => $sale_data['id'],
                     'status' => '200',
                     'message' => 'successfully Created'
                 ], 200);
