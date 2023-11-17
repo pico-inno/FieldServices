@@ -729,16 +729,16 @@ class saleController extends Controller
                         'note' => $request_old_sale['item_detail_note'] ?? null,
                     ];
                     // updateQTy
-                    $requestQty = $request_sale_details_data['quantity'];
-                    if ($request_sale_details_data['uom_id'] != $product['uom_id']) {
-                        $requestQty = UomHelper::changeQtyOnUom($request_sale_details_data['uom_id'], $product['uom_id'], $requestQty);
-                    };
+                    // $requestQty = $request_sale_details_data['quantity'];
+                    // if ($request_sale_details_data['uom_id'] != $product['uom_id']) {
+                    //     $requestQty = UomHelper::changeQtyOnUom($request_sale_details_data['uom_id'], $product['uom_id'], $requestQty);
+                    // };
 
                     //oldQty
-                    $quantity = $sale_details['quantity'];
-                    if ($sale_details['uom_id'] != $product['uom_id']) {
-                        $quantity = UomHelper::changeQtyOnUom($sale_details['uom_id'], $product['uom_id'], $sale_details['quantity']);
-                    };
+                    // $quantity = $sale_details['quantity'];
+                    // if ($sale_details['uom_id'] != $product['uom_id']) {
+                    //     $quantity = UomHelper::changeQtyOnUom($sale_details['uom_id'], $product['uom_id'], $sale_details['quantity']);
+                    // };
 
                     RoMService::updateRomTransactions(
                         $sale_details->id,
@@ -746,8 +746,10 @@ class saleController extends Controller
                         $sales->business_location_id,
                         $request_old_sale['product_id'],
                         $request_old_sale['variation_id'],
-                        $requestQty,
-                        $quantity
+                        $request_sale_details_data['quantity'],
+                        $request_sale_details_data['uom_id'],
+                        $sale_details['quantity'],
+                        $sale_details['uom_id']
                     );
                     $packagingService = new packagingServices();
                     $packagingService->updatePackagingForTx($request_old_sale, $sale_details->id, 'sale');

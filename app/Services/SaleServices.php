@@ -129,18 +129,19 @@ class SaleServices
                 // dd($romCheck);
                 if ($romCheck == 'kit') {
 
-                    $quantity= $created_sale_details['quantity'];
-                    if($created_sale_details['uom_id'] != $product['uom_id']){
-                        $quantity= UomHelper::changeQtyOnUom($created_sale_details['uom_id'], $product['uom_id'], $quantity);
-                    };
-                    
+                    // $quantity= $created_sale_details['quantity'];
+                    // if($created_sale_details['uom_id'] != $product['uom_id']){
+                    //     $quantity= UomHelper::changeQtyOnUom($created_sale_details['uom_id'], $product['uom_id'], $quantity);
+                    // };
+
                     RoMService::createRomTransactions(
                         $created_sale_details['id'],
                         'kit_sale_detail',
                         $request->business_location_id,
                         $created_sale_details['product_id'],
                         $created_sale_details['variation_id'],
-                        $quantity,
+                        $created_sale_details['quantity'],
+                        $created_sale_details['uom_id'],
                     );
                 }
             }
