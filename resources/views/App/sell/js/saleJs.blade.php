@@ -46,6 +46,12 @@
             if(uoms.currentUom){
                 saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(saledetail.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
             }
+            let totalCurrentStockQty=0;
+            if(saledetail.kit_sale_details){
+                totalCurrentStockQty=$(`.aviaQty_${index}`).val();
+            }else{
+                totalCurrentStockQty=editSale.status=='delivered' ? isNullOrNan(saledetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saledetail.stock_sum_current_quantity) ;
+            }
             newProductData={
                 'product_id':saledetail.product.id,
                 'product_type':saledetail.product.product_type,
@@ -53,13 +59,14 @@
                 'category_id':saledetail.product.category_id,
                 'defaultSellingPrices':saledetail.product_variation.default_selling_price,
                 'sellingPrices':saledetail.product_variation.uom_selling_price,
-                'total_current_stock_qty':editSale.status=='delivered' ? isNullOrNan(saledetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saledetail.stock_sum_current_quantity) ,
+                'total_current_stock_qty':totalCurrentStockQty,
                 'validate':true,
                 'additional_product':saledetail.product_variation.additional_product,
                 'uom':saledetail.product.uom,
                 'uom_id':saledetail.uom_id,
                 'stock':saledetail.stock,
             };
+            console.log(newProductData);
             const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
             if(indexToReplace !== -1){
                 productsOnSelectData[indexToReplace] = newProductData;
@@ -67,7 +74,7 @@
                 productsOnSelectData=[...productsOnSelectData,newProductData];
             }
             setTimeout(() => {
-                checkStock($(`.sale_row_${index}`))
+                // checkStock($(`.sale_row_${index}`));
             }, 1000);
         })
         let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
@@ -436,19 +443,18 @@
         //----------------------------- start::rom -----------------------------------------------
         let romTags='';
         let locationId=$('[name="business_location_id"]').val();
+        console.log(selected_product,'--d');
         if(selected_product.rom){
-            if(selected_product.rom.length >0){
-                let rom=selected_product.rom[0];
-                if(rom){
-                    rom.rom_details.forEach(rd=>{
-                        romTags+=
-                        `
-                        <span class="badge badge-light">
-                            ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
-                        </span>
-                        `;
-                    })
-                }
+            let rom=selected_product.rom;
+            if(rom){
+                rom.rom_details.forEach(rd=>{
+                    romTags+=
+                    `
+                    <span class="badge badge-light">
+                        ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
+                    </span>
+                    `;
+                })
             }
         }
 
@@ -506,26 +512,24 @@
                         <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)`
                             : '';
         if(selected_product.rom){
-            if(selected_product.rom.length >0){
-                let rdInput='';
-                selected_product.rom[0].rom_details.forEach(rd=>{
-                    console.log(rd);
-                    rdInput+=`
-                        <div class='rdMainDiv'>
-                            <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty=${rd.product_variation.id} value="${rd.quantity}" />
-                            <input type="hidden" class="romQty" data-romvaridqty=${rd.product_variation.id} value="${rd.quantity}"  />
-                            <input type="hidden" class="romUom" data-romvariduom=${rd.product_variation.id} value="${rd.uom_id}"  />
-                        </div>
-                    `
-                })
-                $currentQtyText=`
-                <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
-                <span class='smallest_unit_txt smallest_rom_unit_txt'>${selected_product.rom[0].uom.short_name}</span>(s/es)
-                    <div>
-                        ${rdInput}
+            let rdInput='';
+            selected_product.rom.rom_details.forEach(rd=>{
+                console.log(rd);
+                rdInput+=`
+                    <div class='rdMainDiv'>
+                        <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty=${rd.product_variation.id} value="${rd.quantity}" />
+                        <input type="hidden" class="romQty" data-romvaridqty=${rd.product_variation.id} value="${rd.quantity}"  />
+                        <input type="hidden" class="romUom" data-romvariduom=${rd.product_variation.id} value="${rd.uom_id}"  />
                     </div>
-                `;
-            }
+                `
+            })
+            $currentQtyText=`
+            <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
+            <span class='smallest_unit_txt smallest_rom_unit_txt'>${selected_product.rom.uom.short_name}</span>(s/es)
+                <div>
+                    ${rdInput}
+                </div>
+            `;
         }
         let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
         var newRow = `
@@ -652,10 +656,10 @@
             $(`.sale_row_${parentUniqueNameId}`).after(newRow);
         }
         if(selected_product.rom){
-            if(selected_product.rom.length >0){
-            let rom=selected_product.rom[0];
-            romAviableQtyCheck(locationId,selected_product.id,rom.uom,$('.current_rom_stock_qty_txt'),$('.smallest_rom_unit_txt'));
-            }
+            let rom=selected_product.rom;
+            sale_amount_cal() ;
+            sale_amount_cal() ;
+            romAviableQtyCheck(locationId,selected_product.id,rom.uom,$(`.sale_row_${unique_name_id}`).find('.current_rom_stock_qty_txt'),$(`.sale_row_${unique_name_id}`).find('.smallest_rom_unit_txt'));
         }
         suggestionProductEvent();
         $('.dataTables_empty').addClass('d-none');
@@ -708,6 +712,7 @@
             checkStock($(e.inputElement));
             cal_balance_amount();
             getPrice($(e.inputElement));
+            changeRdQty($(e.inputElement));
 
 
         })
@@ -725,9 +730,10 @@
                 $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selected_product.product_packaging.id).trigger('change');
             // }, 100)
         };
-        if(selected_product.rom.length >0){
-            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.rom[0].uom_id).trigger('change');
+        if (selected_product.rom) {
+            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.rom.uom_id).trigger('change');
         }
+
 
         // getLotByUom($(`[data-uomSet-select-${unique_name_id}="select2"]`));
         setTimeout(() => {
@@ -758,17 +764,19 @@
         });
     }
 
-    $(document).on('change','.quantity',function(){
-        let parent=$(this).closest('.sale_row');
+
+
+    const changeRdQty=(e)=>{
+        let parent=e.closest('.sale_row');
         let rdMainDiv=parent.find('.rdMainDiv');
         if(rdMainDiv){
-            // let resu =rdMainDiv.find('.currentRomConsuQty').val();
-            let romQty =rdMainDiv.find('.romQty').val();
-            rdMainDiv.find('.currentRomConsuQty').val(romQty*$(this).val());
-            // alert(romQty*$(this).val());
+        // let resu =rdMainDiv.find('.currentRomConsuQty').val();
+        let romQty =rdMainDiv.find('.romQty').val();
+        let quantity =parent.find('.quantity').val();
+        rdMainDiv.find('.currentRomConsuQty').val(isNullOrNan(romQty) * isNullOrNan(quantity));
+        // alert(romQty*$(this).val());
         }
-    })
-
+    }
         function suggestionProductEvent() {
                 $('.suggestProductBtn').off('click').on('click',function(){
                     let variationId=$(this).data('varid');
@@ -797,6 +805,7 @@
         })
         $(document).on('input','.quantity',function(){
             packaging($(this),'/');
+            changeRdQty($(this));
         })
         $(document).on('change','.uom_select',function(){
             packaging($(this),'/');
@@ -870,21 +879,21 @@
         }
 
         function changeQtyOnUom(e,newUomId) {
-        try {
-                let parent = e.closest('.sale_row');
-                let productId=parent.find('.product_id').val();
-                let variationId=parent.find('.variation_id').val();
-                let product = productsOnSelectData.filter(function(pd) {
-                    return productId == pd.product_id && variationId == pd.variation_id;
-                });
-                product=product[0];
-                let qty=product.total_current_stock_qty;
-                let result=changeQty(e,newUomId,qty,product)
-                parent.find('.current_stock_qty_txt').text(result.roundedResult);
-                parent.find('.smallest_unit_txt').text(result.newUomInfo.name);
-        } catch (error) {
-                console.log(error);
-        }
+            try {
+                    let parent = e.closest('.sale_row');
+                    let productId=parent.find('.product_id').val();
+                    let variationId=parent.find('.variation_id').val();
+                    let product = productsOnSelectData.filter(function(pd) {
+                        return productId == pd.product_id && variationId == pd.variation_id;
+                    });
+                    product=product[0];
+                    let qty=product.total_current_stock_qty;
+                    let result=changeQty(e,newUomId,qty,product)
+                    parent.find('.current_stock_qty_txt').text(result.roundedResult);
+                    parent.find('.smallest_unit_txt').text(result.newUomInfo.name);
+            } catch (error) {
+                    console.log(error);
+            }
 
         }
         function changeQty(e,newUomId,refQty,product){
@@ -997,6 +1006,7 @@
                     rdQty+=$(this).find(`[data-currentromconsuqty=${variationId}]`).val();
                 }
             })
+            console.log(rdQty);
             result+=isNullOrNan(rdQty);
             console.log(result,rdQty);
             if(product.product_type =='storable' || (product.product_type =='consumeable' && product.total_current_stock_qty != null)){

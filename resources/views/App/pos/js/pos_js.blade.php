@@ -183,7 +183,6 @@
                 packageQtyForCal=packaging.quantity,
                 pkgname=packaging.packaging_name
             }
-            console.log(product,'dsfds---------');
             let additionProductLink=additionalProduct.length >0 ?
              `
                 <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
@@ -240,7 +239,7 @@
                                     <i class="fas fa-minus fs-7"></i>
                                 </button>
 
-                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input" name="quantity[]"  value="${isNullOrNan(packageQtyForCal,1) }" />
+                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input qtyInp" name="quantity[]"  value="${isNullOrNan(packageQtyForCal,1) }" />
 
                                 <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-600 border-end-0" id="increase">
                                     <i class="fas fa-plus"></i>
@@ -320,6 +319,18 @@
 
             $(`#${infoPriceId} .sb-item-quantity`).text(itemCount);
             $(`#${infoPriceId} .sb-total`).text(pDecimal(totalSum));
+        }
+
+        // cal
+        const itemCal=()=>{
+            let total=0;
+
+            $(`#${tableBodyId} .invoiceRow`).each(function() {
+                let parent = $(this).closest('tr');
+                let quantity = parent.find('.quantity_input').val();
+                total+=isNullOrNan($(this).find('.qtyInp').val());
+            })
+            $(`#${infoPriceId} .sb-item-quantity`).text(total);
         }
 
         // let getPrice = () => {
@@ -810,9 +821,11 @@
                     // Clear existing options
                     selectedElement.empty();
                     $.each(result, function(index, item) {
+                        let text=item.full_name+'-'+'('+ `${item.mobile !=null ? item.mobile :'-'} ` +')';
+                        console.log(text,'tie');
                         var option = $("<option>")
                             .val(item.id)
-                            .text(item.full_name);
+                            .text(text);
                         selectedElement.append(option);
                     });
                     selectedElement.val(id).trigger("change");
@@ -1250,6 +1263,7 @@
             checkStock($(this));
             hideCalDisPrice($(this));
             totalDisPrice();
+            itemCal();
         })
         $(document).on('change', '.quantity_input', function() {
             calPrice($(this));
@@ -1259,6 +1273,7 @@
             hideCalDisPrice($(this));
             packaging($(this),'/');
             totalDisPrice();
+            itemCal();
         })
         $(document).on('click', '#decrease', function() {
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
@@ -1273,6 +1288,7 @@
             checkStock($(this));
             hideCalDisPrice($(this));
             totalDisPrice();
+            itemCal();
         })
         function processTableRows() {
             $(`#${tableBodyId} tr`).each(function() {
@@ -1432,6 +1448,7 @@
             packaging(current_tr,'*');
             calPrice(current_tr);
             totalDisPrice();
+            itemCal();
         });
         // End
         const packaging=(e,operator)=>{

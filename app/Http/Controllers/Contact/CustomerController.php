@@ -356,4 +356,22 @@ class CustomerController extends Controller
         }
 
     }
+
+    public function getCusForSelect(Request $request){
+        $q = $request->q;
+        $customers = Contact::where(function ($query) use ($q) {
+            if($q!=''){
+                $query->where('first_name', 'like', '%' . $q . '%')
+                ->orWhere('middle_name', 'like', '%' . $q . '%')
+                ->orWhere('last_name', 'like', '%' . $q . '%')
+                ->orWhere('mobile', 'like', '%' . $q . '%')
+                ->orWhere('contact_id', 'like', '%' . $q . '%');
+            }{
+                return $query;
+            }
+        })
+        ->whereIn('type', ['Customer', 'Both'])
+        ->paginate(20);
+        return response()->json($customers, 200);
+    }
 }

@@ -14,8 +14,8 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
+use Modules\ComboKit\Services\RoMService;
 use App\Services\packaging\packagingServices;
-use Modules\Manufacturing\Services\RoMService;
 
 class SaleServices
 {
@@ -79,7 +79,7 @@ class SaleServices
         $parentSaleItems=[];
         foreach ($sale_details as $key=>$sale_detail) {
             // dd($sale_details);
-            $product = Product::where('id', $sale_detail['product_id'])->select('product_type')->first();
+            $product = Product::where('id', $sale_detail['product_id'])->select('product_type','id','uom_id')->with('uom')->first();
             // dd($product);
             $stock = CurrentStockBalance::where('product_id', $sale_detail['product_id'])
             ->where('business_location_id', $sale_data->business_location_id)
@@ -124,18 +124,23 @@ class SaleServices
             }
             $created_sale_details = sale_details::create($sale_details_data);
 
-
-            if(hasModule('Manufacturing') && isEnableModule('Manufacturing')){
+            if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
                 $romCheck = RoMService::isKit($created_sale_details['product_id']);
+                // dd($romCheck);
+                if ($romCheck == 'kit') {
 
-                if ($romCheck === 'kit') {
-                    RoMService::decreaseConsumeDetailsFromCSB(
+                    $quantity= $created_sale_details['quantity'];
+                    if($created_sale_details['uom_id'] != $product['uom_id']){
+                        $quantity= UomHelper::changeQtyOnUom($created_sale_details['uom_id'], $product['uom_id'], $quantity);
+                    };
+                    
+                    RoMService::createRomTransactions(
                         $created_sale_details['id'],
                         'kit_sale_detail',
                         $request->business_location_id,
                         $created_sale_details['product_id'],
                         $created_sale_details['variation_id'],
-                        $created_sale_details['out_quantity'],
+                        $quantity,
                     );
                 }
             }

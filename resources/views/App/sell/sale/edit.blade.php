@@ -86,13 +86,12 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
-                                        <select class="form-select  form-select-sm   fw-bold rounded-0"  name="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select customer name" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
-                                            <option value=""></option>
-                                            {{-- <option value="2">Aung Aung</option> --}}
-                                            @foreach ($customers as $customer)
-                                                <option value="{{$customer->id}}" @selected($customer->id==$sale->contact_id) priceList={{$customer->pricelist_id}}>{{ $customer->first_name ?? $customer->company_name}}</option>
-                                            @endforeach
-                                        </select>
+                                        <x-customerSearch placeholder='Select customer name' name="contact_id" className=" form-selecet contact_id fw-bold rounded-start-0" >
+                                            <x-slot:defaultOption>
+                                                <option value="{{$sale->customer->id}}" selected>{{$sale->customer->getFullNameAttribute()}}-{{'('.arr($sale->customer,'mobile','-').')'}}</option>
+                                            </x-slot>
+                                        </x-customerSearch>
+
                                     </div>
                                     <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
@@ -188,6 +187,9 @@
                                             $product_variation =$sale_detail->toArray()['product_variation'];
                                             $additionalProduct=$sale_detail->productVariation->additionalProduct;
                                             $parentkey=$sale_detail->parent_id ?array_search($sale_detail->parent_id,array_column($sale_details->toArray(),'id')) +1:$key;
+                                            $kitSaleDetails=$sale_detail['kitSaleDetails'];
+                                            $avilQty=getKitAvailableQty($sale->business_location_id,$product->id);
+                                            $conusmeQty=getConsumeQty($product->id);
                                         @endphp
                                         <tr class="sale_row sale_row_{{$key}}" data-unid="{{$parentkey}}" data-product="{{$sale_detail->variation_id}}">
                                             <td class="d-flex ps-2">
@@ -196,9 +198,27 @@
                                                     <span>{{$product->name}}</span>
                                                     <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
                                                     <br>
-                                                    @if ($product->product_type =='storable')
+                                                    @if (isset($sale_detail['kitSaleDetails']))
+                                                        <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">{{$avilQty +round($sale_detail->quantity,2) }}</span>
+                                                        <span class='smallest_unit_txt smallest_rom_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
+                                                        <input type="hidden" class="aviaQty_{{$key}}" value="{{$avilQty +round($sale_detail->quantity,2) }}" >
+                                                    @elseif ($product->product_type =='storable')
                                                         <span class="current_stock_qty_txt">{{$sale_detail->stock_sum_current_quantity}}</span> <span
                                                             class='smallest_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
+                                                    @endif
+
+                                                    @if (isset($sale_detail['kitSaleDetails']))
+                                                        @foreach ($kitSaleDetails as $ksd)
+                                                            <span class="badge badge-secondary">
+                                                                {{$ksd['product']['name']}} x {{$ksd['quantity']}}{{$ksd['uom']['short_name']}}
+                                                            </span>
+                                                            <div class='rdMainDiv'>
+                                                                <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty={{$sale_detail->variation_id}}
+                                                                value="{{$ksd['quantity']}}" />
+                                                                <input type="hidden" class="romQty" data-romvaridqty={{$sale_detail->variation_id}} value="{{$ksd['quantity']}}" />
+                                                                <input type="hidden" class="romUom" data-romvariduom={{$sale_detail->variation_id}} value="{{$ksd['uom_id']}}" />
+                                                            </div>
+                                                        @endforeach
                                                     @endif
                                                     @if (count($additionalProduct) >0)
                                                         <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-non" data-varid="{{$sale_detail->variation_id}}"

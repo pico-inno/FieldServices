@@ -1,4 +1,3 @@
-//cal purchase
 <script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
     $(document).ready(function() {

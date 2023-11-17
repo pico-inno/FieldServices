@@ -100,9 +100,9 @@ class stockHistoryController extends Controller
                     return $history->business_location->name;
                 }else{
                     if($history->transaction_type=='purchase'){
-                        return  $history->purchaseDetail->purchase->supplier->company_name;
+                        return  arr($history->purchaseDetail->purchase->supplier,'company_name','','no supplier found');
                     }else if($history->transaction_type=='stock_in'){
-                        return  $history->stockInDetail->purchaseDetail->purchase->supplier->company_name;
+                        return  arr($history->stockInDetail->purchaseDetail->purchase->supplier, 'company_name', '', 'no supplier found');
                     }
                 }
                 return $history->business_location->name;

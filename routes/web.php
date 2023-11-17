@@ -907,6 +907,7 @@ Route::get('/download/contact-excel-template', [ImportContactsController::class,
 
 Route::get('customers/quickadd', [CustomerController::class, 'quickCreateCustomer']);
 Route::post('customers', [CustomerController::class, 'quickStoreCustomer']);
+Route::get('customers/get', [CustomerController::class, 'getCusForSelect']);
 
 Route::resource('customer-group', CustomerGroupController::class);
 

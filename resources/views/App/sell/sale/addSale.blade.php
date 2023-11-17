@@ -90,13 +90,7 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
-                                        <select class="form-select form-select-sm  fw-bold rounded-start-0"  name="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select customer name" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
-                                            <option value=""></option>
-                                            {{-- <option value="2">Aung Aung</option> --}}
-                                            @foreach ($customers as $customer)
-                                                <option value="{{$customer->id}}" @selected(old('contact_id')==$customer->id)  priceList={{$customer->pricelist_id}}>{{ $customer->company_name ?? $customer->getFullNameAttribute() }}</option>
-                                            @endforeach
-                                        </select>
+                                        <x-customerSearch placeholder='Select customer name' name="contact_id" className=" form-select-sm contact_id fw-bold rounded-start-0" />
                                     </div>
                                     {{-- <button class="input-group-text  add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
@@ -368,7 +362,6 @@
         </div>
     </div>
 </div>
-{{-- @include('App.purchase.contactAdd')o --}}
 @include('App.purchase.newProductAdd')
 @endsection
 
@@ -384,8 +377,8 @@
     $(document).on('change','[name="contact_id"]',function(){
         let contact_id=contacts.find(c=>c.id==$(this).val());
         credit_limit=parseFloat(contact_id ?contact_id.credit_limit: 0) ;
-        $('.credit_limit_txt').text(credit_limit.toFixed(2));
-        $('credit_limit').val(credit_limit);
+        $('.credit_limit_txt').text(credit_limit ? credit_limit.toFixed(2) : 0);
+        $('credit_limit').val(credit_limit ?? 0);
     })
     $("#kt_datepicker_1").flatpickr({
         dateFormat: "d-m-Y",
@@ -423,11 +416,8 @@
 </script>
 @include('App.sell.js.saleJs')
 <script src={{asset('customJs/Ajax/getAccountByCurrency.js')}}></script>
-<script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
+{{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
 <script src={{asset('customJs/sell/saleValidator.js')}}></script>
-<script>
-
-</script>
 @endpush
 
 

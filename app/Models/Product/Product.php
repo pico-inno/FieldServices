@@ -8,12 +8,12 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductVariation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\ComboKit\Entities\ReceipeOfMaterial;
 use App\Models\Product\ProductVariationsTemplates;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Modules\Manufacturing\Entities\ReceipeOfMaterial;
 
 class Product extends Model
 {

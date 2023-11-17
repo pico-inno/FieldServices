@@ -62,11 +62,11 @@
     })
 
     function off() {
-        $('#alertIcon').html('<i class="fa-solid fa-volume-xmark fs-3"></i>')
+        $('#alertIcon').html('<i class="fa-solid fa-volume-xmark  fs-sm-7 fs-8"></i>')
         localStorage.setItem('alertSound','off');
     }
     function on() {
-        $('#alertIcon').html('<i class="fa-solid fa-volume-low text-primary fs-3"></i>')
+        $('#alertIcon').html('<i class="fa-solid fa-volume-low text-primary  fs-sm-7 fs-8"></i>')
         localStorage.setItem('alertSound','on');
     }
     function _init_sound(){

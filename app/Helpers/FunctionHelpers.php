@@ -13,7 +13,7 @@ use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
-use Modules\Manufacturing\Services\RoMService;
+use Modules\ComboKit\Services\RoMService;
 
 function hasModule($moduleName)
 {
@@ -396,8 +396,16 @@ function printFormat($productName, $quantity, $price)
 }
 
 function getKitAvailableQty($locationId,$productId){
-    if(hasModule('Manufacturing') && isEnableModule('Manufacturing')){
+    if(hasModule('ComboKit') && isEnableModule('ComboKit')){
         return RoMService::getKitAvailableQty($locationId,$productId);
     }
     return $productId;
+}
+
+function getConsumeQty($product_id){
+    try {
+        return RoMService::getKitConsumeDetails($product_id);
+    } catch (\Throwable $th) {
+        return [];
+    }
 }

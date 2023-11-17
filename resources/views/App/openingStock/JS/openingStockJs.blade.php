@@ -388,15 +388,19 @@ $(document).ready(function() {
     }();
     $(document).on('change','.package_id',function(){
         packaging($(this));
+        itemCal();
     })
     $(document).on('change','.unit_id',function(){
         packaging($(this),'/');
+        itemCal();
     })
     $(document).on('input','.quantity',function(){
         packaging($(this),'/');
+        itemCal();
     })
     $(document).on('input','.package_qty',function(){
-            packaging($(this),'*');
+        packaging($(this),'*');
+        itemCal();
     })
     const packaging=(e,operator)=>{
         let parent = $(e).closest('.cal-gp');

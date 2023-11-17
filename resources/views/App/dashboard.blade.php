@@ -59,6 +59,18 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        @media only screen and (max-width: 600px) {
+            .loader {
+                border: 1px solid #f3f3f3;
+                border-top: 1px solid #009ef7;
+                width: 50px;
+                height: 50px;
+            }
+            .loadingLogo img{
+                width: 25px;
+            }
+        }
+
     </style>
 @endsection
 
@@ -68,7 +80,7 @@
 
         </div>
         <div class="loadingLogo">
-            <img src="https://picosbs.com/img/logo.png" alt="" width="50px">
+            <img src="https://picosbs.com/img/logo.png"  alt="" width="50px">
         </div>
     </div>
 	<div class="content d-flex flex-column flex-column-fluid" id="kt_content">

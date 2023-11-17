@@ -250,7 +250,7 @@ class POSController extends Controller
         $voucherData = $totalPriceAndOtherData;
         $invoice_row = $invoice_row;
         // dd($invoice_row);
-        $html = view('App.pos.print.payment', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no', 'voucherData'))->render();
+        $html = view('App.pos.print.payment2', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no', 'voucherData'))->render();
 
         return response()->json(['html' => $html]);
     }

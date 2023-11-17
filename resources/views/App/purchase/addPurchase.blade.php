@@ -37,8 +37,8 @@
             @csrf
             {{-- <input type="hidden" name="currency_id" value="{{$currency->id}}"> --}}
             <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5" id="payment">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card px-3 px-sm-5">
+                    <div class="card-body px-3 px-sm-5">
                         @error('details')
                             <div class="alert-danger alert">
                                 At least one purchase item is required to complete purchase!
@@ -54,7 +54,7 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden flex-grow-1">
-                                        <select name="contact_id" class="form-select form-select-sm fw-bold rounded-start-0" id="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
+                                        <select name="contact_id" class="form-select form-select-sm fw-bold rounded-start-0 rounded-end-0" id="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select supplier" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
                                             <option></option>
                                             @foreach($suppliers as $supplier)
                                                 <option value="{{$supplier->id}}" @selected(old('contact_id')==$supplier->id)>{{$supplier->company_name ?? $supplier->getFullNameAttribute() }}</option>
@@ -132,7 +132,7 @@
                 </div>
                 <div class="card border border-primary-subtle border-top-2 border-left-0 border-right-0 border-bottom-0">
                     <div class="card-body px-5">
-                        <div class="row align-items-center mb-8">
+                        <div class="row align-items-center mb-sm-8">
                             <div class="col-12 col-md-9">
                                 <div class="input-group quick-search-form p-0">
                                     <div class="input-group-text">
@@ -259,9 +259,9 @@
                         </div>
                         <div class="row">
                             <div class="my-15 col-12 col-md-4 fw-semibold fs-6 offset-md-8 d-flex justify-content-between align-items-end">
-                                <span class=" " for="">
+                                <div class=" " for="">
                                         total Purchase Amount:(=)
-                                </span>
+                                </div>
                                 <div class="">
                                     <span id="total_purchase_amount_txt">{{old('total_purchase_amount',0)}}</span><span class="currencySymbol"> {{$currency['symbol']}}</span>
                                 </div>
@@ -301,7 +301,7 @@
                     <div class="card-body">
                         <div class="row ">
                             <div class="fv-row fs-6 fw-semibold col-12 col-md-4 mb-4 mb-md-0">
-                                <label class="form-label fs-6 fw-semibold required" for="">
+                                <label class="form-label fs-6 fw-semibold " for="">
                                     Payment Account
                                 </label>
                                 <select name="payment_account" id="payment_accounts" class="form-select form-select-sm" data-kt-select2="true" data-hide-search="true" placeholder="select payment account"  data-placeholder="select payment account">
@@ -316,18 +316,18 @@
                                     Account current balance :<span id="currentAccBalanceTxt">0</span> <span id="currencySymbol"></span>
                                 </div>
                             </div>
-                            <div class="mb-7  fs-6 fw-semibold col-12 col-md-4 offset-md-4 d-flex justify-content-between align-items-start">
-                                <span class="" for="">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start mb-7  fs-6 fw-semibold col-12 col-md-4 offset-md-4">
+                                <label class="form-label" for="">
                                          Paid Amount:(-)
-                                </span>
-                                <div class="fv-row">
-                                    <input type="text" class="form-control input_number form-select-sm" name="paid_amount" id="paid_amount" value="{{old('paid_amount',0)}}">
+                                </label>
+                                <div class="fv-row w-100">
+                                    <input type="text" class="form-control input_number form-control-sm" name="paid_amount" id="paid_amount" value="{{old('paid_amount',0)}}">
                                     {{-- <span id="paid_amount_txt">{{old('paid_amount',0)}}</span><span class="currencySymbol">{{$currency['symbol']}}</span> --}}
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="my-15 fs-6 fw-semibold col-12 col-md-4 offset-md-8 d-flex justify-content-between align-items-start">
+                            <div class="my-sm-15 my-5 fs-6 fw-semibold col-12 col-md-4 offset-md-8 d-flex justify-content-between align-items-start">
                                 <span class="" for="">
                                          Balance Amount:(=)
                                 </span>

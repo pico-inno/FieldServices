@@ -61,6 +61,10 @@ class UomHelper
             $result = $currentRefQty /  $newUomInfo->value;
         } elseif ($currentUomType == "smaller" &&  $newUomType == "smaller") {
             $result = $currentRefQty *  $newUomInfo->value;
+        } elseif ($currentUomType == "bigger" &&  $newUomType == "reference") {
+            $result = $currentRefQty;
+        } elseif ($currentUomType == "smaller" &&  $newUomType == "reference") {
+            $result = $currentRefQty;
         } else {
             // dd('here');
             $result = $currentQty;

@@ -151,7 +151,6 @@
                 let bps = basePriceLists[i];//base prices
                 i++;
                 let bp = null;
-                console.log(product);
                 bps.forEach(basePrice => {
                     if (basePrice.applied_type == 'All') {
                         bp = basePrice;
@@ -220,7 +219,6 @@
 
             parentDom.find('.subtotal_price').text(pDecimal(resultAfterUomChange.resultPrice) );
             parentDom.find('input[name="selling_price[]"]').val(pDecimal(resultAfterUomChange.resultPrice));
-            console.log(resultAfterUomChange.resultPrice);
             parentDom.find('input[name="each_selling_price"]').val(priceStage.pricelist_id);
             parentDom.find('.price_list_id').val(priceStage.id);
             return true;

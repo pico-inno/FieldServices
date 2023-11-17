@@ -9,6 +9,7 @@ use App\Models\Product\Unit;
 use App\Models\Product\UOMSet;
 use App\Models\Product\Product;
 use App\Models\CurrentStockBalance;
+use App\Models\kitSaleDetails;
 use App\Models\productPackaging;
 use App\Models\purchases\purchases;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ use App\Models\productPackagingTransactions;
 use App\Models\Product\VariationTemplateValues;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Currency;
 
 class sale_details extends Model
@@ -113,4 +115,8 @@ class sale_details extends Model
     {
         return $this->hasOne(productPackaging::class, 'product_id', 'id');
     }
+    public function kitSaleDetails():HasMany{
+        return $this->hasMany(kitSaleDetails::class, 'sale_details_id','id');
+    }
 }
+
