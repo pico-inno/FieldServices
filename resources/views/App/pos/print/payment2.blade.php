@@ -25,7 +25,8 @@
 <body>
     <pre>
 @php
-echo printFormat('Voucher No','','123456');
+dd($invoice_row);
+echo printFormat('Voucher No','',$invoice_no);
 echo printFormat('Casher','',Auth::user()->username);
 echo printFormat('Customer','',$totalPriceAndOtherData['customer_name']);
 echo '<br><br>';
@@ -35,7 +36,7 @@ echo '<br>';
 foreach ($invoice_row as  $item) {
     $variation=$item['variation']?'('.$item['variation'].')':'';
     $productName=$item['product_name'].$variation;
-    echo printFormat($productName,$item['quantity'].$item['uomName'],$item['subtotal']);
+    echo printFormat($productName,$item['quantity'].' '.$item['uomName'],$item['subtotal']);
 }
 @endphp
 </pre>
