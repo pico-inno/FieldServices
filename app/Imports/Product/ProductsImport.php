@@ -2,6 +2,7 @@
 
 namespace App\Imports\Product;
 
+use App\Models\productPackaging;
 use Exception;
 use App\Models\Product\Brand;
 use App\Models\Product\Generic;
@@ -45,7 +46,7 @@ class ProductsImport implements
     private $uom;
     private $variations;
     private $variation_values;
-
+    private  $packageing;
     private $realtionId = [];
 
     private $imageCoordinates = [];
@@ -114,9 +115,9 @@ class ProductsImport implements
                     }
                 }
             }
-            if(trim($variation_sku[$key]) == '') {
-                $vari_sku =$product_sku . '-' . $key + 1;
-            }else {
+            if (trim($variation_sku[$key]) == '') {
+                $vari_sku = $product_sku . '-' . $key + 1;
+            } else {
                 $vari_sku = $variation_sku[$key];
             };
             $format_data[] = [
@@ -132,6 +133,7 @@ class ProductsImport implements
 
         return $format_data;
     }
+
 
     private function processUoM($rowData)
     {
@@ -166,7 +168,6 @@ class ProductsImport implements
             }
         } catch (\Throwable $th) {
             throw new Exception("UOM not found! Check to ensure the UOM exists", 1);
-
         }
     }
 
@@ -218,6 +219,7 @@ class ProductsImport implements
             // dd($imageArrays);
             $count = 1;
             foreach ($rows as $key => $row) {
+
                 $currentRow = 'P' . ++$count;
                 $imageName = null;
                 if (array_key_exists($currentRow, $imageArrays)) {
@@ -259,17 +261,53 @@ class ProductsImport implements
                 ]);
                 $product->save();
                 $product_id = $product->fresh()->id;
-                $createdProduct=$product->fresh();
+                $createdProduct = $product->fresh();
 
-                ProductVariationsTemplates::create([
+                $productVariationsTemplates = ProductVariationsTemplates::create([
                     'product_id' => $product_id,
                     'variation_template_id' => $variation_id,
                     'created_by' => auth()->id()
                 ]);
 
+                //Product Packaging
+                if (isset($row['packaging_info_package_qty_unit'])){
+                    $packageRaw = $row['packaging_info_package_qty_unit'];
+                    if ($packageRaw !== null) {
+                        $packages = explode('|', $packageRaw);
+
+                        foreach ($packages as $package) {
+
+                            if (!preg_match('/^([^=]+)=(\d+)-([^=]+)$/', $package, $matches)) {
+
+                                throw new \Exception('Invalid package format: ' . $package);
+                            }
+
+                            $name = $matches[1];
+                            $quantity = $matches[2];
+                            $uom_name = $matches[3];
+
+                            $uom = $this->uom->where('name', trim($uom_name))->select('id', 'unit_category_id')->first();
+                            $uomId = $uom->id;
+
+                            // Create instance of ProductPackaging
+                            productPackaging::create([
+                                'packaging_name' => $name,
+                                'product_id' => $product_id,
+                                'product_variation_id' => $productVariationsTemplates->id,
+                                'quantity' => $quantity,
+                                'uom_id' => $uomId,
+                                'for_purchase' => true,
+                                'for_sale' => true,
+                            ]);
+                        }
+                    }
+                }
+                //Product Packaging
+
+
                 // for product variation
                 $hasVariation = $row['has_variation_single_or_variable'];
-                if (trim($hasVariation) === "variable") {
+                if (strtolower(trim($hasVariation)) === "variable") {
                     $raw_variation_value = $row['variation_values_seperated_values_blank_if_product_type_if_single'];
                     $variation_value_array = array_map(fn ($value) => trim($value), explode("|", $raw_variation_value));
 
@@ -279,10 +317,10 @@ class ProductsImport implements
                     ProductVariation::insert($insert_data);
                 }
 
-                if (trim($hasVariation) === "single") {
+                if (strtolower(trim($hasVariation)) === "single") {
                     ProductVariation::create([
                         'product_id' => $product_id,
-                        'variation_sku'=>$createdProduct->sku,
+                        'variation_sku' => $createdProduct->sku,
                         'default_purchase_price' => $row['purchase_price'],
                         'profit_percent' => $row['profit_margin'],
                         'default_selling_price' => $row['selling_price'],
@@ -320,6 +358,3 @@ class ProductsImport implements
         ];
     }
 }
-
-
-
