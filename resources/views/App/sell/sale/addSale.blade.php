@@ -97,9 +97,9 @@
                                             </x-slot>
                                         </x-customersearch>
                                     </div>
-                                    {{-- <button class="input-group-text  add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
+                                    <button class="input-group-text  add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
-                                    </button> --}}
+                                    </button>
 
                                 </div>
                                 <div class="text-gray-600 ms-2 fw-semibold mt-3">Credit Limit : <span class="credit_limit_txt">0</span></div>
@@ -407,7 +407,6 @@
         });
     });
     $('.disappearing-div').click(function(){
-        alert('hello')
         var clone=$(this).clone();
         $('.main_div').append(clone);
          clone.css({
@@ -420,8 +419,9 @@
     })
 </script>
 @include('App.sell.js.saleJs')
+@include('App.pos.contactAdd')
 <script src={{asset('customJs/Ajax/getAccountByCurrency.js')}}></script>
-{{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
+<script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
 <script src={{asset('customJs/sell/saleValidator.js')}}></script>
 @endpush
 

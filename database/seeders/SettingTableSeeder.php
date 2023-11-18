@@ -24,6 +24,7 @@ class SettingTableSeeder extends Seeder
             'name' => 'demo business',
             'lot_control' =>  'off',
             'currency_id' =>  1,
+            'use_paymentAccount'=>0
         ];
         businessSettings::create($data);
         return redirect()->back()->with(['success' => 'Successfully activate setting']);

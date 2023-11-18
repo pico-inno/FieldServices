@@ -189,7 +189,7 @@
                                                 <td class="fv-row">
                                                     <select name="opening_stock_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
                                                         data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
-                                                        data-placeholder="Select Package" placeholder="select Package" required>
+                                                        data-placeholder="Select Package" placeholder="select Package" >
                                                         <option value="">Select Package</option>
                                                         @foreach ($product_variation['packaging'] as $package)
                                                             <option @selected($package['id']==arr($osd['packagingTx'],'product_packaging_id'))

@@ -219,7 +219,7 @@ class POSController extends Controller
         })->flatten();
 
         // return response()->json($product_with_variations);
-        $product_with_variations->chunk(100)->each(function ($chunk) {
+        $product_with_variations->chunk(1000)->each(function ($chunk) {
             $response = response()->json($chunk);
             $response->send();
         });

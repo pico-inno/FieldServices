@@ -810,7 +810,6 @@
                     'currency_id': null,
                     'delivered_quantity': null
                 };
-                console.log(raw_sale_details);
                 sale_details.push(raw_sale_details);
             })
             let type = 'pos';
@@ -1087,6 +1086,7 @@
                     };
                 },
                 success: function(results){
+                    console.log(results);
                     if(results.length>0 && results[0].product_type=="storable"){
                         if(results[0].stock_sum_current_quantity == 0 || results[0].stock_sum_current_quantity == '' || results[0].stock_sum_current_quantity == null){
                             error('Out of stock');
@@ -1115,6 +1115,9 @@
                     totalSubtotalAmountCalculate();
                     totalDisPrice();
                 },
+                error:function(e){
+                    console.log(e);
+                }
 
             })
         })
@@ -1964,7 +1967,7 @@
             event.preventDefault();
 
             var formData = $(this).serialize();
-
+            console.log($(this).attr('action'));
             $.ajax({
                 url: $(this).attr('action'),
                 type: $(this).attr('method'),
