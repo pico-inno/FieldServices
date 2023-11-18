@@ -348,14 +348,14 @@
     </div>
     <!--end::Container-->
 </div>
-{{--
-@include('App.purchase.contactAdd')
-@include('App.purchase.newProductAdd') --}}
+
+{{-- @include('App.purchase.contactAdd') --}}
+{{-- @include('App.purchase.newProductAdd') --}}
 <div class="modal modal-lg fade " tabindex="-1"  data-bs-focus="false"  id="quick_add_product_modal" ></div>
 @endsection
 
 @push('scripts')
-{{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
+<script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
 @include('App.purchase.contactAdd')
 <script>
 

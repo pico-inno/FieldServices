@@ -365,7 +365,7 @@
         display: none;
     }
 </style>
-<div class="modal fade" tabindex="-1" id="add_supplier_modal">
+<div class="modal fade" tabindex="-1" id="contact_add_modal">
     <div class="modal-dialog">
         <div class="modal-content ">
             <form action="/customers" method="POST" id="add_contact_form">
