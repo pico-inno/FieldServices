@@ -12,7 +12,8 @@
         pre {
             margin: 5px;
         }
-        .logo{
+
+        .logo {
 
             display: flex;
             justify-content: center;
@@ -29,10 +30,11 @@
 </head>
 
 <body>
-<pre>
+    <pre>
 @php
 // echo printFormat('Voucher No','',$sale['sales_voucher_no']);
-// echo '<center>'.getSettingsValue('name').'<center>';
+$name=getSettingsValue('name') ?? '';
+echo '<center>'.$name.'<center>';
 echo '<br>';
 echo printFormat('Date','',fDate($sale['created_now'],'',false));
 echo printFormat('Customer','',$sale->customer->getFullNameAttribute());
@@ -43,11 +45,11 @@ echo '<br>';
 foreach ($sale_details as  $sd) {
     $variation=$sd['product_variation']?'('.$sd['product_variation']['variation_template_value']['name'].')':'';
     $productName=$sd['product']['name'].$variation;
-    echo printFormat($productName,$sd['quantity'].' '.$sd['uomName'],$sd['subtotal']);
+    echo printFormat($productName,fquantity($sd['quantity']).' '.$sd['uomName'],fprice($sd['subtotal']));
 }
 echo '<br>';
 echo '---------------------------------------------------<br>';
-echo printFormat('','Total',$sale['total_sale_amount']);
+echo printFormat('','Total',fprice($sale['total_sale_amount']));
 // die;
 @endphp
 </pre>

@@ -189,7 +189,7 @@ class POSController extends Controller
     {
         $products = Product::with('productVariations')
                 ->where('can_sale',1)
-                ->select('id', 'name', 'sku', 'has_variation','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image')->get();
+                ->select('id', 'name', 'sku', 'has_variation','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image', 'receipe_of_material_id')->get();
 
         $product_with_variations = $products->map(function ($item, $key){
 

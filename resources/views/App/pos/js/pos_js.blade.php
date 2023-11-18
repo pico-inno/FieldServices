@@ -183,6 +183,20 @@
                 packageQtyForCal=packaging.quantity,
                 pkgname=packaging.packaging_name
             }
+            let romTags='';
+            if(product.rom){
+                let rom=product.rom;
+                if(rom){
+                    rom.rom_details.forEach(rd=>{
+                        romTags+=
+                        `
+                        <span class="badge badge-secondary">
+                            ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
+                        </span>
+                        `;
+                    })
+                }
+            }
             let additionProductLink=additionalProduct.length >0 ?
              `
                 <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
@@ -216,10 +230,12 @@
                     <input type="hidden" name="cost_price" value="${product.stock[0] ?product.stock[0].ref_uom_price : 0}" />
                     <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
 
-                    <td class=" text-break text-start fw-bold fs-6 text-gray-700 "><span class="product-name">${product.name}</span>
-                        <br>
-                        ${stockBalanceText}
-                        <br>
+                    <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
+                        <span class="product-name">
+                            ${product.name}
+                        </span>
+                        <div>${romTags}</div>
+                        <div>${stockBalanceText}</div>
                         ${product.has_variation !== 'single' ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">${variation_value_and_name}</span><br>` : ''}
                         <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : ${product.has_variation == 'single' ?product.sku : product.variation_sku}</span>
                         <br>
@@ -870,6 +886,7 @@
                                     <img src="{{asset('assets/media/svg/files/blank-image-dark.svg')}}" class="rounded-3 theme-dark-show mb-4 w-60px h-60px w-xxl-100px h-xxl-100px" alt="" />`}
                                     <div class="mb-2">
                                         <div class="text-center">
+                                            ${item.receipe_of_material_id?'<i class="fa-solid fa-cubes text-gray-500 fs-9 "></i>':''}
                                             <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-7 mb-3 pos-product-name">${item.name}</span>
                                             <span class="text-gray-400 fw-semibold d-block fs-8 mt-n1">${item.vari_tem_name ? item.vari_tem_name : ''} - ${item.vari_tem_val_name ? item.vari_tem_val_name : ''}</span>
                                         </div>
@@ -1578,9 +1595,7 @@
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                     },
                                     success: function(response){
-                                        if(response.type=='network'){
-                                            success('successfully sell and print!')
-                                        }else{
+                                        success('successfully sell and print!')
                                             var iframe = $('<iframe>', {
                                                     'height': '0px',
                                                     'width': '0px',
@@ -1600,9 +1615,24 @@
                                                 setTimeout(() => {
                                                     iframe.contentWindow.print();
                                                 }, 500);
-                                        }
-                                    }
+                                    },
+                                    error:function(e){
+                                        error('Something Wrong On printing');
+                                    },
                                 })
+                                $(`#${tableBodyId} tr`).remove();
+                                totalSubtotalAmountCalculate();
+                                totalDisPrice();
+                                $('#payment_info .print_paid').text(pDecimal(0));
+                                $('#payment_info .print_change').text(pDecimal(0));
+                                $('#payment_info .print_balance').text(pDecimal(0));
+                                $('input[name="pay_amount"]').val(pDecimal(0));
+                                $('#payment_row_body').html('');
+                                $('#payment_row_body').append(paymentRow);
+                                $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
+                                $('.reservation_id').val('').trigger('change')
+                                $('#paymentForm')[0].reset();
+                                ajaxOnContactChange($(`#${contact_id}`).val());
                             }
                         },
                         error:function(e){
