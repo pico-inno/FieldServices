@@ -531,7 +531,10 @@
             </div>
 
             <div class="app-engage-secondary" style="z-index: 700;">
-                <button class="app-engage-btn hover-gray d-lg-none d-xl-none d-xxl-none btn bg-primary btn-lg me-2" id="pos_shopping_cart">
+                <button class="app-engage-btn hover-gray d-lg-none d-xl-none d-xxl-none btn bg-primary btn-lg me-2 position-relative" id="pos_shopping_cart">
+                    <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger badgeQtyCount">
+                        0
+                    </span>
                     <i class="fa-sharp fa-solid fa-cart-shopping text-white fs-3"></i>
                 </button>
             </div>

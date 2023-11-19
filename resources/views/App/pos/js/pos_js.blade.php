@@ -270,9 +270,9 @@
                         </div>
                     </td>
                     <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} "><span class="subtotal_price">${product.product_variations.default_selling_price * 1}</span> ${symbol}</td>
-                    <td class="exclude-modal text-end">
+                    <td class="exclude-modal text-end" id="delete-item">
                             <div>
-                            <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
+                            <i class="fas fa-trash me-3 text-danger cursor-pointer" ></i>
                             </div>
                             ${additionProductLink}
                     </td>
@@ -326,26 +326,25 @@
         }
 
         let totalSubtotalAmountCalculate = () => {
-            let itemCount = $(`#${tableBodyId} tr`).length;
             let totalSum = 0;
             $(`#${tableBodyId} .subtotal_price`).each(function() {
                 let value = isNullOrNan($(this).text());
                 totalSum += value;
             });
 
-            $(`#${infoPriceId} .sb-item-quantity`).text(itemCount);
             $(`#${infoPriceId} .sb-total`).text(pDecimal(totalSum));
+            itemCal();
         }
 
         // cal
         const itemCal=()=>{
             let total=0;
-
             $(`#${tableBodyId} .invoiceRow`).each(function() {
                 let parent = $(this).closest('tr');
                 let quantity = parent.find('.quantity_input').val();
                 total+=isNullOrNan($(this).find('.qtyInp').val());
             })
+            $('.badgeQtyCount').text(total);
             $(`#${infoPriceId} .sb-item-quantity`).text(total);
         }
 
@@ -1510,6 +1509,7 @@
             totalDisPrice();
 
             $(this).closest('tr').remove();
+            itemCal();
         })
 
         // for small and medium size table
