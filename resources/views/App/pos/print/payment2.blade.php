@@ -50,7 +50,6 @@ foreach ($sale_details as  $sd) {
 echo '<br>';
 echo '---------------------------------------------------<br>';
 echo printFormat('','Total',fprice($sale['total_sale_amount']));
-// die;
 @endphp
 </pre>
 

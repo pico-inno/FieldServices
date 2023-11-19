@@ -236,7 +236,7 @@ class POSController extends Controller
                         ->where('sales_id', $id)->where('is_delete', 0)->get();
                         // dd($sale);
         $html = view('App.pos.print.payment2', compact('sale_details','address','location','sale'))->render();
-
+        logger('--');
         return response()->json(['html' => $html]);
     }
 
