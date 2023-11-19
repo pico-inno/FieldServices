@@ -1284,6 +1284,7 @@
             itemCal();
         })
         $(document).on('change', '.quantity_input', function() {
+            itemCal();
             calPrice($(this));
             totalSubtotalAmountCalculate();
             getPrice($(this));
@@ -1291,7 +1292,6 @@
             hideCalDisPrice($(this));
             packaging($(this),'/');
             totalDisPrice();
-            itemCal();
         })
         $(document).on('click', '#decrease', function() {
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
