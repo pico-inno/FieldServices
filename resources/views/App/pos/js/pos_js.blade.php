@@ -615,7 +615,6 @@
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 if(subtotal_with_discount !== ''){
                     let result =isNullOrNan(subtotal) - isNullOrNan(subtotal_with_discount);
-                    console.log(result,isNullOrNan(subtotal) , isNullOrNan(subtotal_with_discount));
                     totalDisPrice += result;
                 }
                 subTotalPrice += isNullOrNan(subtotal);
@@ -1284,14 +1283,15 @@
             itemCal();
         })
         $(document).on('change', '.quantity_input', function() {
-            itemCal();
+            packaging($(this),'/');
+            getPrice($(this));
             calPrice($(this));
             totalSubtotalAmountCalculate();
-            getPrice($(this));
             checkStock($(this));
             hideCalDisPrice($(this));
-            packaging($(this),'/');
             totalDisPrice();
+            itemCal();
+
         })
         $(document).on('click', '#decrease', function() {
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
@@ -1504,12 +1504,21 @@
 
         // for delete item
         $(document).on('click', '#delete-item', function() {
-            checkStock($(this));
+            let thisDom=$(this);
+            $(this).closest('tr').remove();
+            itemCal();
+            totalSubtotalAmountCalculate();
+            checkStock(thisDom);
+            hideCalDisPrice(thisDom);
+            packaging(thisDom,'/');
+            totalDisPrice();
+
+            checkStock(thisDom);
             totalSubtotalAmountCalculate();
             totalDisPrice();
 
-            $(this).closest('tr').remove();
-            itemCal();
+
+
         })
 
         // for small and medium size table
