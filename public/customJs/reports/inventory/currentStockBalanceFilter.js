@@ -33,6 +33,7 @@
         var filterViewVal = filterView.val();
         var filterTypeVal = filterType.val();
         stockReportsTableBody.empty();
+        console.log(filterProductVal + 'ffffffffffffffffffffffffffffffff')
         filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal, filterTypeVal);
     });
 

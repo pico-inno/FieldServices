@@ -55,7 +55,7 @@
                                             @if(count($locations) > 0)
                                                 <option selected value="0">All Locations</option>
                                                 @foreach($locations as $location)
-                                                    <option value="{{$location->id}}">{{$location->name}}</option>
+                                                    <option value="{{$location->id}}">{{businessLocationName($location)}}</option>
                                                 @endforeach
                                             @else
                                                 <option selected disabled value="null">No locations</option>
@@ -259,7 +259,7 @@
                         <!--begin::Modal header-->
                         <div class="modal-header">
                             <!--begin::Modal title-->
-                            <h2 class="fw-bold">Export Customers</h2>
+                            <h2 class="fw-bold">Export Sales Details</h2>
                             <!--end::Modal title-->
                             <!--begin::Close-->
                             <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">

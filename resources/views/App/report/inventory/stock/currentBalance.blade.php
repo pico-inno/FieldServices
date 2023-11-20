@@ -57,18 +57,26 @@
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
                                 <label class="form-label fs-6 fw-semibold">Product</label>
-                                <select class="form-select form-select-sm  fw-bold filter_product" data-kt-select2="true"
-                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">
-                                    <option></option>
-                                    @if(count($products) > 0)
-                                        <option selected value="0">All Products</option>
-                                        @foreach($products as $product)
-                                            <option value="{{$product->id}}">{{$product->name}}</option>
-                                        @endforeach
-                                    @else
-                                        <option selected disabled value="null">No Product</option>
-                                    @endif
-                                </select>
+
+                                <div class="overflow-hidden  flex-grow-1">
+                                    <x-productsearch placeholder='Select Product' name="contact_id" className="form-select form-select-sm  fw-bold filter_product" >
+                                        <x-slot:defaultOption>
+                                            <option selected value="0">All Products</option>
+                                            </x-slot>
+                                    </x-productsearch>
+                                </div>
+{{--                                <select class="form-select form-select-sm  fw-bold filter_product" data-kt-select2="true"--}}
+{{--                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">--}}
+{{--                                    <option></option>--}}
+{{--                                    @if(count($products) > 0)--}}
+{{--                                        <option selected value="0">All Products</option>--}}
+{{--                                        @foreach($products as $product)--}}
+{{--                                            <option value="{{$product->id}}">{{$product->name}}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    @else--}}
+{{--                                        <option selected disabled value="null">No Product</option>--}}
+{{--                                    @endif--}}
+{{--                                </select>--}}
                             </div>
                             <!--end::Input group-->
                             <!--begin::Input group-->
@@ -272,7 +280,7 @@
                         <!--begin::Modal header-->
                         <div class="modal-header">
                             <!--begin::Modal title-->
-                            <h2 class="fw-bold">Export Customers</h2>
+                            <h2 class="fw-bold">Export Current Stock Balance</h2>
                             <!--end::Modal title-->
                             <!--begin::Close-->
                             <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">

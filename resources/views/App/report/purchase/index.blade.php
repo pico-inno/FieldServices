@@ -49,10 +49,15 @@
                                 <div class="mb-5 col-4 col-sm12 col-md-3 ">
                                     <label class="form-label fs-6 fw-semibold">{{__('report.business_locations')}}</label>
                                     <select class="form-select form-select-sm fw-bold filter_locations" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-saleItem-table-filter="businesslocation" data-hide-search="true">
-                                        <option value="0">{{__('report.all')}}</option>
-                                        @foreach ($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
-                                        @endforeach
+                                        <option></option>
+                                        @if(count($locations) > 0)
+                                            <option selected value="0">All Locations</option>
+                                            @foreach($locations as $location)
+                                                <option value="{{$location->id}}">{{businessLocationName($location)}}</option>
+                                            @endforeach
+                                        @else
+                                            <option selected disabled value="null">No locations</option>
+                                        @endif
                                     </select>
                                 </div>
                                 <!--end::Input group-->
@@ -210,7 +215,7 @@
                             <!--begin::Modal header-->
                             <div class="modal-header">
                                 <!--begin::Modal title-->
-                                <h2 class="fw-bold">Export Customers</h2>
+                                <h2 class="fw-bold">Export purchases summary</h2>
                                 <!--end::Modal title-->
                                 <!--begin::Close-->
                                 <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">
