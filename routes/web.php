@@ -88,6 +88,7 @@ use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
+use App\Services\Report\reportServices;
 
 // use App\Models\Manufacturer;
 
@@ -962,5 +963,7 @@ Route::get('/pos/edit', function () {
     return view('App.pos.edit');
 });
 Route::get('/profit-loss/report',function(){
-    return 'hello world';
+    $grossProfit=reportServices::grossProfit();
+    $netProfit=reportServices::netProfit();
+    return view('App.report.profitLoss.index',compact('grossProfit', 'netProfit'));
 })->name('plReport');

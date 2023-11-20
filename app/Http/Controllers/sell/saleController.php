@@ -516,7 +516,6 @@ class saleController extends Controller
 
                         $suppliers = Contact::where('id', $sales->contact_id)->first();
                         $suppliers_receivable = $suppliers->receivable_amount;
-                        logger(($suppliers_receivable - $saleBeforeUpdate->balance_amount) +  $sales->balance_amount);
                         $suppliers->update([
                             'receivable_amount' => ($suppliers_receivable - $saleBeforeUpdate->balance_amount) +  $sales->balance_amount
                         ]);
@@ -739,18 +738,19 @@ class saleController extends Controller
                     // if ($sale_details['uom_id'] != $product['uom_id']) {
                     //     $quantity = UomHelper::changeQtyOnUom($sale_details['uom_id'], $product['uom_id'], $sale_details['quantity']);
                     // };
-
-                    RoMService::updateRomTransactions(
-                        $sale_details->id,
-                        'kit_sale_detail',
-                        $sales->business_location_id,
-                        $request_old_sale['product_id'],
-                        $request_old_sale['variation_id'],
-                        $request_sale_details_data['quantity'],
-                        $request_sale_details_data['uom_id'],
-                        $sale_details['quantity'],
-                        $sale_details['uom_id']
-                    );
+                    if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+                        RoMService::updateRomTransactions(
+                            $sale_details->id,
+                            'kit_sale_detail',
+                            $sales->business_location_id,
+                            $request_old_sale['product_id'],
+                            $request_old_sale['variation_id'],
+                            $request_sale_details_data['quantity'],
+                            $request_sale_details_data['uom_id'],
+                            $sale_details['quantity'],
+                            $sale_details['uom_id']
+                        );
+                    }
                     $packagingService = new packagingServices();
                     $packagingService->updatePackagingForTx($request_old_sale, $sale_details->id, 'sale');
                     if ($request_old_sale['quantity'] <= 0) {
@@ -819,7 +819,10 @@ class saleController extends Controller
                 $allSaleDetailIdToRemove = $saleDetailQuery->get();
                 foreach ($allSaleDetailIdToRemove as   $sd) {
                     // dd($sd['product_id']);
-                    $romCheck = RoMService::isKit($sd['product_id']);
+                    $romCheck='';
+                    if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+                        $romCheck = RoMService::isKit($sd['product_id']);
+                    }
                     if ($romCheck == 'kit') {
                         RoMService::removeRomTransactions($sd->id, 'kit_sale_detail');
                     }else{
@@ -902,7 +905,10 @@ class saleController extends Controller
 
 
         foreach ($allSaleDetailIdToRemove as   $sd) {
-            $romCheck = RoMService::isKit($sd['product_id']);
+            $romCheck='';
+            if (hasModule('ComboKit') && isEnableModule('ComboKit')){
+                $romCheck = RoMService::isKit($sd['product_id']);
+            }
             if ($romCheck == 'kit') {
                 RoMService::removeRomTransactions($sd->id, 'kit_sale_detail');
             } else {
@@ -1501,6 +1507,10 @@ class saleController extends Controller
         }
     }
     public function romAviaQtyCheck(Request $request){
-        return RoMService::getKitAvailableQty($request->locationId,$request->productId);
+
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            return RoMService::getKitAvailableQty($request->locationId,$request->productId);
+        }
+        return '';
     }
 }

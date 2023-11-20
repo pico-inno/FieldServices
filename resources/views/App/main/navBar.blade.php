@@ -1869,10 +1869,7 @@
                                                     <!--end:Menu content-->
                                                 </div>
                                                 <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('plReport_here_show')" href="{{route('plReport')}}">
-                                                        <span class=" menu-icon">
-                                                            <i class="fa-solid fa-clock-rotate-left fs-6"></i>
-                                                        </span>
+                                                    <a class="menu-link @yield('plReport_active_show')" href="{{route('plReport')}}">
                                                         <span class="menu-title ">Profit/Loss Report</span>
                                                     </a>
                                                 </div>

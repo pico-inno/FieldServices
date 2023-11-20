@@ -3,10 +3,15 @@
 use App\Models\data;
 use App\Helpers\UomHelper;
 use App\Models\Currencies;
+use App\Models\sale\sales;
 use App\Models\Product\UOM;
+use App\Models\openingStocks;
 use App\Models\systemSetting;
 use App\Helpers\SettingHelpers;
 use App\Helpers\generatorHelpers;
+use Illuminate\Support\Facades\DB;
+use App\Models\CurrentStockBalance;
+use App\Models\expenseTransactions;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
@@ -408,4 +413,26 @@ function getConsumeQty($product_id){
     } catch (\Throwable $th) {
         return [];
     }
+}
+
+function totalPurchaseAmount(){
+    return purchases::where('is_delete', 0)->sum('total_purchase_amount');
+}
+function totalOSAmount()
+{
+    return openingStocks::where('is_delete', 0)->sum('total_opening_amount');
+}
+function totalExpenseAmount(){
+   return expenseTransactions::sum('expense_amount');
+}
+
+
+function totalSaleAmount()
+{
+    return sales::where('is_delete', 0)->sum('total_sale_amount');
+}
+
+function closingStocks()
+{
+    return CurrentStockBalance::sum(DB::raw('ref_uom_price * current_quantity'));
 }

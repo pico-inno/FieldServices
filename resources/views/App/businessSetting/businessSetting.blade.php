@@ -602,8 +602,8 @@
                                             >
                                                 <x-slot:firstInput>
                                                     <x-forms.nob-select name="currency_symbol_placement" id="currency_symbol_placement" placeholder="Currency Symbol Placement">
-                                                        <option value="before" @selected($settingData['currency_symbol_placement']='before')>Before Amount</option>
-                                                        <option value="after" @selected($settingData['currency_symbol_placement']='after')>After Amount</option>
+                                                        <option value="before" @selected($settingData['currency_symbol_placement']=='before')>Before Amount</option>
+                                                        <option value="after" @selected($settingData['currency_symbol_placement']=='after')>After Amount</option>
                                                     </x-forms.nob-select>
                                                 </x-slot>
                                                 <x-slot:secInput>
