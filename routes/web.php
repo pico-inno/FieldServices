@@ -961,5 +961,5 @@ Route::get('/pos/edit', function () {
     return view('App.pos.edit');
 });
 Route::get('/profit-loss/report',function(){
-    return view('App.building.create');
+    return 'hello world';
 })->name('plReport');
