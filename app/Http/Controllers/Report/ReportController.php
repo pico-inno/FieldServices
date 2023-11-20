@@ -33,7 +33,7 @@ class ReportController extends Controller
 
     //Start: Sale
     public function saleIndex(){
-        $locations = businessLocation::select('id', 'name')->get();
+        $locations = businessLocation::select('id', 'name', 'parent_location_id')->get();
         $customers = Contact::where('type', 'Customer')->get();
 
         return view('App.report.sale.index', [
@@ -68,8 +68,13 @@ class ReportController extends Controller
             ->with('business_location_id', 'customer')
             ->whereBetween('sold_at', [$startDate, $endDate]);
 
+//        if ($request->data['filter_locations'] != 0) {
+//            $query->where('business_location_id', $request->data['filter_locations']);
+//        }
+
         if ($request->data['filter_locations'] != 0) {
-            $query->where('business_location_id', $request->data['filter_locations']);
+            $locationId = childLocationIDs($request->data['filter_locations']);
+            $query->whereIn('business_location_id', $locationId);
         }
 
         if ($request->data['filter_customers'] != 0) {
@@ -87,7 +92,7 @@ class ReportController extends Controller
     }
 
     public function saleDetailsIndex(){
-        $locations = businessLocation::select('id', 'name')->get();
+        $locations = businessLocation::select('id', 'name', 'parent_location_id')->get();
         $customers = Contact::where('type', 'Customer')->get();
 
         $categories = Category::select('id', 'name', 'parent_id')->get();
@@ -117,8 +122,13 @@ class ReportController extends Controller
             ->with('saleDetails', 'customer', 'business_location_id')
             ->whereBetween('sold_at', [$startDate, $endDate]);
 
+//        if ($request->data['filter_locations'] != 0) {
+//            $query->where('business_location_id', $request->data['filter_locations']);
+//        }
+
         if ($request->data['filter_locations'] != 0) {
-            $query->where('business_location_id', $request->data['filter_locations']);
+            $locationId = childLocationIDs($request->data['filter_locations']);
+            $query->whereIn('business_location_id', $locationId);
         }
 
         $sales = $query->get();
@@ -203,7 +213,7 @@ class ReportController extends Controller
 
     //Being: Purchase
     public function purchaseIndex(){
-        $locations = businessLocation::select('id', 'name')->get();
+        $locations = businessLocation::select('id', 'name', 'parent_location_id')->get();
         $suppliers = Contact::where('type', 'Supplier')->get();
 
         return view('App.report.purchase.index', [
@@ -223,7 +233,8 @@ class ReportController extends Controller
             ->whereBetween('purchased_at', [$startDate, $endDate]);
 
         if ($request->data['filter_locations'] != 0) {
-            $query->where('business_location_id', $request->data['filter_locations']);
+            $locationId = childLocationIDs($request->data['filter_locations']);
+            $query->whereIn('business_location_id', $locationId);
         }
 
         if ($request->data['filter_customers'] != 0) {
@@ -241,7 +252,7 @@ class ReportController extends Controller
     }
 
     public function purchaseDetailsIndex(){
-        $locations = businessLocation::select('id', 'name')->get();
+        $locations = businessLocation::select('id', 'name', 'parent_location_id')->get();
         $customers = Contact::where('type', 'Customer')->get();
 
         $categories = Category::select('id', 'name', 'parent_id')->get();
@@ -269,17 +280,24 @@ class ReportController extends Controller
         $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
 
         $query = purchases::where('is_delete', 0)
-            ->with('purchase_details', 'supplier', 'business_location_id')
+            ->with([
+                'purchase_details' => function ($purchase_detail){
+                $purchase_detail->with('purchaseUom:id,name,short_name');
+                },
+                'supplier',
+                'businessLocation'])
             ->whereBetween('purchased_at', [$startDate, $endDate]);
 
         if ($request->data['filter_locations'] != 0) {
-            $query->where('business_location_id', $request->data['filter_locations']);
+            $locationId = childLocationIDs($request->data['filter_locations']);
+            $query->whereIn('business_location_id', $locationId);
         }
 
-        $sales = $query->get();
-        $saleDetails = $query->get()->pluck('purchase_details')->flatten();
+        $purchase = $query->get();
 
-        $productIds = $saleDetails->pluck('product_id')->unique()->toArray();
+        $purchaseDetails = $query->get()->pluck('purchase_details')->flatten();
+
+        $productIds = $purchaseDetails->pluck('product_id')->unique()->toArray();
 
         $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
             ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
@@ -312,7 +330,7 @@ class ReportController extends Controller
 
         $result = [];
 
-        foreach ($saleDetails as $detail) {
+        foreach ($purchaseDetails as $detail) {
             $productId = $detail['product_id'];
             $variationId = $detail['variation_id'];
 
@@ -322,11 +340,13 @@ class ReportController extends Controller
 
                     foreach ($variations as $variation) {
                         if ($variation['id'] == $variationId) {
-                            $sale = $sales->firstWhere('id', $detail['purchases_id']);
+                            $purchase = $purchase->firstWhere('id', $detail['purchases_id']);
 
                             $variationProduct = [
                                 'id' => $product['id'],
-                                'sale_data' => $sale,
+//                                'purchase_data' => $purchase,
+                                'location_name' => $purchase['businessLocation']['name'],
+                                'supplier_name' => $purchase['supplier']['company_name'] ??  $purchase['supplier']['company_name']['first_name'],
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
                                 'variation_id' => $variation['id'],
@@ -338,8 +358,8 @@ class ReportController extends Controller
                                 'brand_id' => $product['brand']['id'] ?? '',
                                 'quantity' => $detail['quantity'],
                                 'uom_price' => $detail['uom_price'],
-//                                'uom_name' => $detail['uom']['name'],
-//                                'uom_short_name' => $detail['uom']['short_name'],
+                                'uom_name' => $detail['purchaseUom']['name'],
+                                'uom_short_name' => $detail['purchaseUom']['short_name'],
                             ];
 
                             $result[] = $variationProduct;
@@ -681,9 +701,19 @@ class ReportController extends Controller
             $query->where('from_location', $request->data['filter_locations_from']);
         }
 
+//        if ($request->data['filter_locations_from'] != 0) {
+//            $locationId = childLocationIDs($request->data['filter_locations_from']);
+//            $query->whereIn('from_location', $locationId);
+//        }
+
         if ($request->data['filter_locations_to'] != 0) {
             $query->where('to_location', $request->data['filter_locations_to']);
         }
+
+//        if ($request->data['filter_locations_to'] != 0) {
+//            $locationId = childLocationIDs($request->data['filter_locations_to']);
+//            $query->whereIn('to_location', $locationId);
+//        }
 
         if ($request->data['filter_stocktransferperson'] != 0) {
             $query->where('transfered_person', $request->data['filter_stocktransferperson']);

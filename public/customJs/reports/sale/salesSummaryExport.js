@@ -226,6 +226,8 @@ var KTCustomersExport = function () {
 		});
     }
 
+
+
     var initForm = function () {
         const datepicker = form.querySelector("[name=date]");
 
@@ -242,7 +244,7 @@ var KTCustomersExport = function () {
         // Public functions
         init: function () {
             // Elements
-            element = document.querySelector('#kt_customers_export_modal');
+            element = document.querySelector('#sale_summary_export_modal');
             modal = new bootstrap.Modal(element);
 
             form = document.querySelector('#kt_customers_export_form');
@@ -252,6 +254,7 @@ var KTCustomersExport = function () {
 
             handleForm();
             initForm();
+
         }
     };
 }();

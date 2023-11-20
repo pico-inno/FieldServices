@@ -540,4 +540,19 @@ class ProductController extends Controller
             ]);
         }
     }
+
+
+    public function getProducts(Request $request){
+        $q = $request->q;
+        $porducts = Product::where(function ($query) use ($q) {
+            if($q!=''){
+                $query->where('name', 'like', '%' . $q . '%');
+//                    ->orWhere('name', 'like', '%' . $q . '%');
+            }{
+                return $query;
+            }
+        })
+            ->paginate(10);
+        return response()->json($porducts, 200);
+    }
 }

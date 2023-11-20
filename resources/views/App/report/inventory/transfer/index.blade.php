@@ -37,9 +37,9 @@
                         <div class="card-body filter-card">
                             <div class="row mb-5 flex-wrap">
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4 ">
+                                <div class="mb-5 col-6 col-md-3">
                                     <label class="form-label fs-6 fw-semibold">Location (From)</label>
-                                    <select class="form-select  fw-bold filter_locations_from" data-kt-select2="true"
+                                    <select class="form-select form-select-sm  fw-bold filter_locations_from" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-stockins-table-filter="location" data-hide-search="true">
                                         <option></option>
@@ -52,9 +52,9 @@
                                 </div>
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4 ">
+                                <div class="mb-5 col-6 col-md-3">
                                     <label class="form-label fs-6 fw-semibold">Location (To)</label>
-                                    <select class="form-select  fw-bold filter_locations_to" data-kt-select2="true"
+                                    <select class="form-select form-select-sm fw-bold filter_locations_to" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-stockins-table-filter="location" data-hide-search="true">
                                         <option></option>
@@ -67,9 +67,37 @@
                                 </div>
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4">
+                                <div class="mb-5 col-6 col-md-3">
+                                    <label class="form-label fs-6 fw-semibold">Transfer Person</label>
+                                    <select class="form-select form-select-sm fw-bold filter_transferperosn" data-kt-select2="true"
+                                            data-placeholder="Select option" data-allow-clear="true"
+                                            data-kt-user-table-filter="two-step" data-hide-search="true">
+                                        <option selected value="0">All</option>
+                                        @foreach($stocksperson as $person)
+                                            <option value="{{$person->id}}">{{$person->username}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!--end::Input group-->
+                                <!--begin::Input group-->
+                                <div class="mb-5 col-6 col-md-3">
+                                    <label class="form-label fs-6 fw-semibold">Receive Person</label>
+                                    <select class="form-select form-select-sm fw-bold filter_receiveperosn" data-kt-select2="true"
+                                            data-placeholder="Select option" data-allow-clear="true"
+                                            data-kt-user-table-filter="two-step" data-hide-search="true">
+                                        <option selected value="0">All</option>
+                                        @foreach($stocksperson as $person)
+                                            <option value="{{$person->id}}">{{$person->username}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!--end::Input group-->
+                            </div>
+                            <div class="row mb-5">
+                                <!--begin::Input group-->
+                                <div class="mb-5 col-6 col-md-3">
                                     <label class="form-label fs-6 fw-semibold">Status</label>
-                                    <select class="form-select  fw-bold filter_status" data-kt-select2="true"
+                                    <select class="form-select form-select-sm fw-bold filter_status" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-user-table-filter="role" data-hide-search="true">
                                         <option></option>
@@ -79,38 +107,10 @@
                                     </select>
                                 </div>
                                 <!--end::Input group-->
-                            </div>
-                            <div class="row mb-5">
                                 <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4">
-                                    <label class="form-label fs-6 fw-semibold">Transfer Person</label>
-                                    <select class="form-select  fw-bold filter_transferperosn" data-kt-select2="true"
-                                            data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="two-step" data-hide-search="true">
-                                        <option selected value="0">All</option>
-                                        @foreach($stocksperson as $person)
-                                            <option value="{{$person->id}}">{{$person->username}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
-                                <div class="mb-5 col-6 col-md-4">
-                                    <label class="form-label fs-6 fw-semibold">Receive Person</label>
-                                    <select class="form-select  fw-bold filter_receiveperosn" data-kt-select2="true"
-                                            data-placeholder="Select option" data-allow-clear="true"
-                                            data-kt-user-table-filter="two-step" data-hide-search="true">
-                                        <option selected value="0">All</option>
-                                        @foreach($stocksperson as $person)
-                                            <option value="{{$person->id}}">{{$person->username}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <!--end::Input group-->
-                                <!--begin::Input group-->
-                                <div class="mb-10 col-6 col-md-4 ">
+                                <div class="mb-10 col-6 col-md-3">
                                     <label class="form-label fs-6 fw-semibold">Date</label>
-                                    <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
+                                    <input class="form-control form-control-sm form-control-solid filter_date" placeholder="Pick date rage"
                                            id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
                                 </div>
                                 <!--end::Input group-->

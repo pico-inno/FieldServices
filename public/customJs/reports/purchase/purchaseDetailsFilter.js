@@ -71,8 +71,8 @@
                         var rowData = [
                             item.name ?? '',
                             item.sku ?? '',
-                            item.sale_data.business_location_id.name ?? '-',
-                            item.sale_data.supplier.company_name ?? '-',
+                            item.location_name ?? '-',
+                            item.supplier_name,
                             item.category_name ?? '',
                             item.brand_name ?? '',
                             parseFloat(item.quantity).toFixed(2) + (item.uom_short_name ? ' (' + item.uom_short_name + ')' : ''),
