@@ -1779,8 +1779,6 @@
                                                 </a>
                                             </div>
                                             <div class="menu-item menu-accordion ">
-                                                <!--begin:Menu link-->
-                                                <!--begin:Menu link-->
                                                 <a class="menu-link @yield('stock_history_active_show')"
                                                     href="{{route('stockHistory_list')}}">
                                                     <span class=" menu-icon">
@@ -1869,6 +1867,14 @@
                                                             class="menu-heading fw-bold text-uppercase fs-7">Reports</span>
                                                     </div>
                                                     <!--end:Menu content-->
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('plReport_here_show')" href="{{route('plReport')}}">
+                                                        <span class=" menu-icon">
+                                                            <i class="fa-solid fa-clock-rotate-left fs-6"></i>
+                                                        </span>
+                                                        <span class="menu-title ">Profit/Loss Report</span>
+                                                    </a>
                                                 </div>
                                                 @if(hasAll('sell'))
                                                 <!--begin:Menu item-->
