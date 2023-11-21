@@ -82,6 +82,16 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="row mt-3">
+                                                    <div class="col-md-12 fv-row">
+                                                        <!--begin::Label-->
+                                                        <label class="fs-6 fw-semibold mb-2">Remark</label>
+                                                        <!--end::Label-->
+                                                        <!--begin::Input-->
+                                                        <textarea name="remark" class="form-control " cols="10" rows="3"></textarea>
+                                                        <!--end::Input-->
+                                                    </div>
+                                                </div>
                                             </div>
                                             <!--end::Card header-->
                                         </div>
@@ -121,6 +131,7 @@
                                         <th class="min-w-100px">{{__('adjustment.unit')}}</th>
                                         <th class="w-125px">{{__('adjustment.package_qty')}}</th>
                                         <th class="min-w-100px">{{__('adjustment.package')}}</th>
+                                        <th class="w-200px">Remark</th>
                                         <th>
                                             <i class="fas fa-trash fw-bold"></i>
                                         </th>

@@ -70,7 +70,6 @@ class StockAdjustmentController extends Controller
             'transfer_persons' => $transfer_persons,
             'locations' => $locations,
             'products' => $products,
-
             'currency' => $currency,
             'setting' => $setting,
         ]);
@@ -81,6 +80,7 @@ class StockAdjustmentController extends Controller
      */
     public function store(Request $request)
     {
+
         Validator::make([
             'details'=>$request->adjustment_details,
         ],[
@@ -101,6 +101,7 @@ class StockAdjustmentController extends Controller
                 'status' => $request->status,
                 'increase_subtotal' => 0,
                 'decrease_subtotal' => 0,
+                'remark' => $request->remark,
                 'created_at' => now(),
                 'created_by' => Auth::id(),
             ]);
@@ -135,6 +136,7 @@ class StockAdjustmentController extends Controller
                         'adj_quantity' => $adjustmentDetail['adj_quantity'],
                         'uom_price' => $request->status == 'completed' ? $currentStockBalances->ref_uom_price : 0,
                         'subtotal' => $subtotal,
+                        'reamk' => $adjustmentDetail['remark'],
                         'created_at' => now(),
                         'created_by' => Auth::id(),
                     ]);
@@ -404,6 +406,7 @@ class StockAdjustmentController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
         $requestAdjustmentDetails = $request->adjustment_details;
         $settings =  businessSettings::all()->first();
 
@@ -423,10 +426,12 @@ class StockAdjustmentController extends Controller
 
             $stockAdjustment = StockAdjustment::where('id', $id)->get()->first();
             $stockAdjustment->status = $request->status;
+            $stockAdjustment->remark = $request->remark;
 
 
             // ========== Being:: Update existing row ==========
             foreach ($existingAdjustmentDetails as $adjustmentDetail){
+
                 $packagingService->updatePackagingForTx($adjustmentDetail,$adjustmentDetail['adjustment_detail_id'],'adjustment');
                 $adjustmentType = $adjustmentDetail['adj_quantity'] < 0 ? 'decrease' : 'increase';
                 $oldAdjustmentType = $adjustmentDetail['old_adjustment_type'];
@@ -436,12 +441,9 @@ class StockAdjustmentController extends Controller
 
                 $updateToAdjustmentDetail->uom_id = $adjustmentDetail['uom_id'];
                 $updateToAdjustmentDetail->gnd_quantity = $adjustmentDetail['gnd_quantity'];
-
-
-
+                $updateToAdjustmentDetail->remark = $adjustmentDetail['remark'];
 
                 if ($request->old_status == 'prepared' && $request->status == 'completed'){
-
 
                     $adjustmentType = $adjustmentDetail['adj_quantity'] < 0 ? 'decrease' : 'increase';
 
@@ -608,7 +610,7 @@ class StockAdjustmentController extends Controller
                                 $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($adjustQtyToDecrease, $adjustmentDetail['uom_id']);
                                 $remainToDecrease = $referenceUomInfo['qtyByReferenceUom'];
                                 $adjQty = $referenceUomInfo['qtyByReferenceUom'];
-//                                    return 'update'.$remainToDecrease; break;
+
                                 CurrentStockBalance::where('transaction_type', 'adjustment')
                                     ->where('transaction_detail_id', $adjustmentDetail['adjustment_detail_id'])->delete();
 
@@ -971,9 +973,8 @@ class StockAdjustmentController extends Controller
                     }
                 }
 
-
-
                 $existingAdjustmentDetailIds[] = $adjustmentDetail['adjustment_detail_id'];
+
             }
             // ========== End:: Update existing row ==========
 
@@ -1031,6 +1032,7 @@ class StockAdjustmentController extends Controller
                         ->where('current_quantity', '>', 0)
                         ->latest()
                         ->first();
+
                     //1-500
                     $subtotal = $request->status == 'completed' ? $currentStockBalances->ref_uom_price * $adjustQty : 0;
                     $stockAdjustmentDetail = StockAdjustmentDetail::create([
@@ -1044,6 +1046,7 @@ class StockAdjustmentController extends Controller
                         'adj_quantity' => $adjustmentDetail['adj_quantity'],
                         'uom_price' => $request->status == 'completed' ? $currentStockBalances->ref_uom_price : 0,
                         'subtotal' => $subtotal,
+                        'remark' => $adjustmentDetail['remark'],
                         'created_at' => now(),
                         'created_by' => Auth::id(),
                     ]);
@@ -1098,6 +1101,7 @@ class StockAdjustmentController extends Controller
                         'adj_quantity' => $adjustmentDetail['adj_quantity'],
                         'uom_price' => 0,
                         'subtotal' => 0,
+                        'remark' => $adjustmentDetail['remark'],
                         'created_at' => now(),
                         'created_by' => Auth::id(),
                     ]);
@@ -1179,7 +1183,6 @@ class StockAdjustmentController extends Controller
                     }
 
 
-
                     //Solution 1
                     $averageRefUomPrice = $totalRefUomPrice / $adjustQty;
                     $subtotal = $averageRefUomPrice * $adjustQty;
@@ -1194,22 +1197,6 @@ class StockAdjustmentController extends Controller
 
             }
             // ========== End:: Create new rows ==========
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             $stockAdjustment->save();
             DB::commit();
