@@ -100,8 +100,8 @@
                                     <td class="text-end fw-bold">{{price(totalSaleAmount())}}</td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-bold fs-7">&nbsp;</td>
-                                    <td class="text-end fw-bold">&nbsp;</td>
+                                    <td class="fw-bold fs-7">Total Other Income Amount</td>
+                                    <td class="text-end fw-bold">{{price(0)}}</td>
                                 </tr>
                                 <tr>
                                     <td class="fw-bold fs-6">Total</td>

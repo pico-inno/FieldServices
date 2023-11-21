@@ -167,6 +167,10 @@ class ProductsImport implements
                 ];
             }
         } catch (\Throwable $th) {
+
+
+            $uomName = $rowData['uom'];
+            dd($th, $uomName,$rowData);
             throw new Exception("UOM not found! Check to ensure the UOM exists", 1);
         }
     }
