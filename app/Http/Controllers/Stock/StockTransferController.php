@@ -104,6 +104,7 @@ class StockTransferController extends Controller
                 'transfered_person' => $request->transfered_person,
                 'status' => $request->status,
                 'received_person' => $request->received_person,
+                'remark' => $request->remark,
                 'created_at' => now(),
                 'created_by' => Auth::id(),
             ]);
@@ -448,6 +449,7 @@ class StockTransferController extends Controller
                 StockTransfer::where('id', $stockTransfer->id)->update([
                     'to_location' => $request->to_location,
                     'status' => $request->status,
+                    'remark' => $request->remark,
                 ]);
 
 

@@ -178,6 +178,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12 fv-row">
+                                    <!--begin::Label-->
+                                    <label class="fs-6 fw-semibold mb-2">Remark</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <textarea name="remark" class="form-control " cols="10" rows="3">{{$stockTransfer->remark ?? ''}}</textarea>
+                                    <!--end::Input-->
+                                </div>
+                            </div>
 
                         </div>
                         <!--end::Card header-->
@@ -272,12 +282,12 @@
                                             </td>
                                             <td class="fv-row">
                                                 <input type="text"  {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
-                                                       name="transfer_details[{{$key}}][packaging_quantity]" value="{{$detail['packagingTx']['quantity']}}">
+                                                       name="transfer_details[{{$key}}][packaging_quantity]" value="{{$detail['packagingTx']['quantity'] ?? 1}}">
                                             </td>
                                             <td class="fv-row">
                                                 <select  {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} name="transfer_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
                                                         data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
-                                                        data-placeholder="Select Package" placeholder="select Package" required>
+                                                        data-placeholder="Select Package" placeholder="select Package">
                                                     <option value="">Select Package</option>
                                                     @foreach ($product_variation['packaging'] as $package)
                                                         <option @selected($package['id']==$detail['packagingTx']['product_packaging_id'])
