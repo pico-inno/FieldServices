@@ -1873,6 +1873,21 @@
                                                         <span class="menu-title ">Profit/Loss Report</span>
                                                     </a>
                                                 </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('spReport_active_show')" href="{{route('spReport')}}">
+                                                        <span class="menu-title ">Purchase & Sale Report</span>
+                                                    </a>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('expenseReport_active_show')" href="{{route('expenseReport')}}">
+                                                        <span class="menu-title ">Expense Report</span>
+                                                    </a>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('itemReport_active_show')" href="{{route('itemReport')}}">
+                                                        <span class="menu-title ">Item Report</span>
+                                                    </a>
+                                                </div>
                                                 @if(hasAll('sell'))
                                                 <!--begin:Menu item-->
                                                 <div data-kt-menu-trigger="click"

@@ -569,7 +569,6 @@
         i.subtotal_with_discount.val(pDecimal(price_after_discount));
 
         result=pDecimal(price_after_discount+(per_item_expense*quantity));
-
         i.subtotal_with_tax.text(result);
         i.subtotal_with_tax_input.val(result)
         InsertPurchaseItemTotalPrice(i,result);

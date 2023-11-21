@@ -348,7 +348,7 @@
                                 <!--begin::Title-->
                                 <h1 class="fw-semibold text-gray-900 text-center lh-lg">Try out our
                                     <br />new
-                                    <span class="fw-bolder text-primary">Updated Location</span></h1>
+                                    <span class="fw-bolder text-primary">Developing Reports</span></h1>
                                 <!--end::Title-->
                                 <!--begin::Illustration-->
                                 <div class="py-10 text-center">
@@ -359,8 +359,9 @@
                                         <span class="path3"></span>
                                         <span class="path4"></span>
                                     </i>
-                                    {{-- <img src="assets/media/svg/illustrations/easy/2.svg" class="theme-light-show w-200px" alt="" />
-                                    <img src="assets/media/svg/illustrations/easy/2-dark.svg" class="theme-dark-show w-200px" alt="" /> --}}
+
+                                    <img src="assets/media/svg/illustrations/easy/2.svg" class="theme-light-show w-200px" alt="" />
+                                    <img src="assets/media/svg/illustrations/easy/2-dark.svg" class="theme-dark-show w-200px" alt="" />
                                 </div>
                                 <!--end::Illustration-->
                             </div>

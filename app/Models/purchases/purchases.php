@@ -25,7 +25,7 @@ class purchases extends Model
         'extra_discount_type',
         'extra_discount_amount',
         'totid_amount',
-        'baal_discount_amount',
+        'total_discount_amount',
         'purchase_expense',
         'total_purchase_amount',
         'balance_amount',

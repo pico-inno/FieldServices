@@ -88,6 +88,7 @@ use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
+use App\Models\Product\Product;
 use App\Services\Report\reportServices;
 
 // use App\Models\Manufacturer;
@@ -967,3 +968,47 @@ Route::get('/profit-loss/report',function(){
     $netProfit=reportServices::netProfit();
     return view('App.report.profitLoss.index',compact('grossProfit', 'netProfit'));
 })->name('plReport');
+
+Route::get('/sale-purchase/report', function () {
+    return view('App.report.purchaseSale.index');
+})->name('spReport');
+
+Route::get('/expense/report', function () {
+    return view('App.report.expense.index');
+})->name('expenseReport');
+
+Route::get('/items/report', function () {
+    $productCount=Product::select('products.id')
+                    ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+                    ->count();
+    $productCountExcVaria=Product::select('id')->count();
+    return view('App.report.item.index',compact('productCount', 'productCountExcVaria'));
+})->name('itemReport');
+
+
+Route::get('/items/report/data',function(){
+    $data=Product::select(
+                    'products.*',
+                    'product_variations.*',
+                    'products.id as id',
+                    'product_variations.id as variation_id',
+                    'sale_details.*',
+                    'sale_details.id as sale_details_id',
+                    'sales.*',
+                    'sales.id as sale_id',
+                    'contacts.*',
+                    'lot_serial_details',
+                    )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+                    ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
+                    ->leftJoin('sales', 'variation_id', '=', 'sales.id')
+                    ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
+                    ->leftJoin('lot_serial_details as lsd', function ($join) {
+                        $join->on('lsd.transaction_type', '=', 'sale')
+                            ->where('lsd.transaction_detail_id', '=', 'sales.id');
+                    })
+                    ->get();
+                    dd($data->toArray());
+     return response()->json($data, 200);
+});
+
+

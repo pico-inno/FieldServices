@@ -18,8 +18,8 @@
 <!--end::Heading-->
 <!--begin::Breadcrumb-->
 <ul class="breadcrumb fw-semibold fs-base my-1 fs-5">
+    <li class="breadcrumb-item text-dark">Report</li>
     <li class="breadcrumb-item text-dark">Profit / Loss</li>
-    {{-- <li class="breadcrumb-item text-dark">Account</li> --}}
 </ul>
 <!--end::Breadcrumb-->
 @endsection
@@ -121,18 +121,6 @@
 <!--end::Content-->
 
 
-<div class="modal  fade " tabindex="-1" id="withdrawlModal">
-
-</div>
-<div class="modal  fade " tabindex="-1" id="depositModal">
-
-</div>
-<div class="modal  fade " tabindex="-1" id="transferModal">
-
-</div>
-<div class="modal modal-lg fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" id="editModal">
-
-</div>
 
 @endsection
 @push('scripts')

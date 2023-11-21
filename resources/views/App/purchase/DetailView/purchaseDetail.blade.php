@@ -179,7 +179,7 @@
                                     <!--end::Accountname-->
                                     <!--begin::Label-->
                                     <div class="text-end fw-bold fs-6 text-gray-800">
-                                        {{round($purchase['extra_discount'] ?? 0,2)}}
+                                        {{round($purchase['extra_discount_amount'] ?? 0,2)}}
                                         &nbsp;{{$purchase['extra_discount_type']=='percentage'?'%':$purchaseCurrency}}
                                     </div>
                                     <!--end::Label-->

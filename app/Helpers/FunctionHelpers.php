@@ -415,9 +415,30 @@ function getConsumeQty($product_id){
     }
 }
 
+
+
+
+//purchase transactions
 function totalPurchaseAmount(){
     return purchases::where('is_delete', 0)->sum('total_purchase_amount');
 }
+
+function totalPurchaseDueAmount()
+{
+    return purchases::where('is_delete', 0)->sum('balance_amount');
+}
+
+function totalPurchaseAmountWithoutDis()
+{
+    return purchases::where('is_delete', 0)->sum(DB::raw('total_line_discount + purchase_amount'));
+}
+
+function totalPurchaseDiscountAmt()
+{
+    return purchases::where('is_delete', 0)->sum('total_discount_amount');
+}
+
+
 function totalOSAmount()
 {
     return openingStocks::where('is_delete', 0)->sum('total_opening_amount');
@@ -425,14 +446,33 @@ function totalOSAmount()
 function totalExpenseAmount(){
    return expenseTransactions::sum('expense_amount');
 }
+function totalExpenseDueAmount(){
+    return expenseTransactions::sum('balance_amount');
+}
 
 
+//  sale transactions
 function totalSaleAmount()
 {
     return sales::where('is_delete', 0)->sum('total_sale_amount');
+}
+
+function totalSaleDueAmount()
+{
+    return sales::where('is_delete', 0)->sum('balance_amount');
+}
+function totalSaleAmountWithoutDis()
+{
+    return sales::where('is_delete', 0)->sum('sale_amount');
+}
+
+function totalSaleDiscount()
+{
+    return sales::where('is_delete', 0)->sum(DB::raw('total_item_discount + COALESCE(extra_discount_amount, 0)'));
 }
 
 function closingStocks()
 {
     return CurrentStockBalance::sum(DB::raw('ref_uom_price * current_quantity'));
 }
+

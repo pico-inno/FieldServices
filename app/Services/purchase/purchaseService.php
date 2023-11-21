@@ -27,7 +27,6 @@ class purchaseService
         $packaging=new packagingServices();
         // create obj
         $purchase= $action->create($this->purchaseData($request));
-
         //create purchaseDetail
         $purchases_details = $request->purchase_details;
         if ($purchases_details) {
@@ -45,6 +44,7 @@ class purchaseService
                 'payable_amount' => $suppliers_payable + $request['balance_amount']
             ]);
         }
+        // dd($purchase);
         return $purchase;
     }
 
@@ -183,7 +183,6 @@ class purchaseService
             'extra_discount_amount' => $request->extra_discount_amount,
             'total_discount_amount' => $request->total_discount_amount,
             'purchase_expense' => $request->purchase_expense,
-            'total_purchase_amount' => $request->total_purchase_amount,
             'currency_id' => $request->currency_id,
             'paid_amount' => $request->paid_amount,
             'purchased_at' => $request->purchased_at,
