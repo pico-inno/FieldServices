@@ -263,6 +263,13 @@ Route::controller(ReportController::class)->group(function () {
         Route::get('/transfer-details-report', 'transfer_details_index')->name('report.transfer.details.index');
         Route::post('/transfer-details/filter-list', 'transferDetailsFilter');
 
+        //Stock adjustment summary
+        Route::get('/stock-adjustment-report', 'adjustmentIndex')->name('report.adjustment.index');
+        Route::post('/adjustment-report/filter-list', 'adjustmentFilter');
+        //Stock adjustment details
+        Route::get('/adjustment-details-report', 'adjustmentDetails')->name('report.adjustment.details');
+        Route::post('/adjustment-details/filter-list', 'adjustmentDetailsFilter');
+
         //Current Stock Balance
         Route::get('/current-stock-balance', 'currentStockBalanceIndex')->name('report.currentstockbalance.index');
         Route::post('/current-stock-balance/filter-list', 'currentStockBalanceFilter');

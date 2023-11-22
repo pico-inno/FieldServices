@@ -2109,6 +2109,36 @@
                                                         </div>
                                                         <!--end:Menu item-->
                                                         @endif
+
+                                                        @if(hasView('stock adjustment') && hasExport('stock adjustment'))
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link  @yield('stock_adjustment_summary_active_show')"
+                                                                   href="{{route('report.adjustment.index')}}">
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+                                                                    <span class="menu-title">Stock Adjustment Summary</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link  @yield('stock_adjustment_details_active_show')"
+                                                                   href="{{route('report.adjustment.details')}}">
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+                                                                    <span class="menu-title">Stock Adjustment Details</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                        @endif
+
                                                         @if(multiHasAll(['stockin', 'stockout', 'stock transfer', 'stock
                                                         adjustment', 'opening stock']))
                                                         <!--begin:Menu item-->
