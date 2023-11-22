@@ -128,8 +128,8 @@
                     // orderable: false,
                 },
                 {
-                    name: 'purchase_voucher_no',
-                    data: 'purchase_voucher_no',
+                    name: 'purchase_date',
+                    data: 'purchase_date',
                 },
                 {
                     data: 'purchase_voucher_no',
@@ -171,23 +171,13 @@
             datatable = $(table).DataTable({
                 pageLength: 30,
                 lengthMenu: [10, 20, 30, 50,40,80],
-                // 'columnDefs': [
-                // // Disable ordering on column 0 (checkbox)
-                //     // { orderable: false, targets: 0 },
-                //     // { orderable: false, targets: 1 },
-                //     // {    targets: [2],
-                //     //     visible: false,
-                //     //     searchable: true
-                //     // }
-                // ],
                 order: [[1, 'desc']],
                 processing: true,
                 serverSide: true,
                 columns,
                 ajax: {
                     url: '/items/report/data'
-                },
-
+                }
             });
 
             // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw

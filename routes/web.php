@@ -971,9 +971,72 @@ Route::get('/profit-loss/report',function(){
     return view('App.report.profitLoss.index',compact('grossProfit', 'netProfit'));
 })->name('plReport');
 
+Route::get('/report/pl/data',function(Request $request){
+    $filterData= $request->toArray();
+    $grossProfit = price(reportServices::grossProfit($filterData));
+    $netProfit = price(reportServices::netProfit($filterData));
+    // outcome
+    $tlOsAmount= totalOSAmount($filterData);
+    $tlPAmount = totalPurchaseAmount($filterData);
+    $tlExAmount = totalExpenseAmount($filterData);
+    $tlOutcome = $tlOsAmount+ $tlPAmount+ $tlExAmount;
+
+    //income
+    $tlCsAmount = closingStocks($filterData);
+    $tlSAmount = totalSaleAmount($filterData);
+    $tlIncome = $tlCsAmount + $tlSAmount;
+
+    $data=[
+        'grossProfit'=>$grossProfit,
+        'netProfit'=>$netProfit,
+        'tlOsAmount'=> price($tlOsAmount),
+        'tlPAmount'=> price($tlPAmount),
+        'tlExAmount'=> price($tlExAmount),
+        'tlOutcome'=> price($tlOutcome),
+
+        'tlCsAmount' => price($tlCsAmount),
+        'tlSAmount' => price($tlSAmount),
+        'tlOIAmount' => price(0),
+        'tlIncome' => price($tlIncome),
+    ];
+    return response()->json($data ,200);
+});
+
 Route::get('/sale-purchase/report', function () {
     return view('App.report.purchaseSale.index');
 })->name('spReport');
+
+Route::get('/report/sale-purchase/data', function (Request $request) {
+    $filterData = $request->toArray();
+
+    $tsa = totalSaleAmount($filterData);
+    $tpa = totalPurchaseAmount($filterData);
+    $diffTSPA=$tsa - $tpa;
+
+
+    $tpwd = totalPurchaseAmountWithoutDis($filterData);
+    $tpd = totalPurchaseDiscountAmt($filterData);
+    $tpda = totalPurchaseDueAmount($filterData);
+
+
+    $tswd = totalSaleAmountWithoutDis($filterData);
+    $tsd = totalSaleDiscount($filterData);
+    $tsda = totalSaleDueAmount($filterData);
+    $data = [
+        'tsa' => price($tsa),
+        'tpa' => price($tpa),
+        'diffTSPA' => price($diffTSPA),
+
+        'tpwd' => price($tpwd),
+        'tpd' => price($tpd),
+        'tpda' => price($tpda),
+
+        'tswd' => price($tswd),
+        'tsd' => price($tsd),
+        'tpda' => price($tsda),
+    ];
+    return response()->json($data, 200);
+});
 
 Route::get('/expense/report', function () {
     return view('App.report.expense.index');
@@ -990,51 +1053,24 @@ Route::get('/items/report', function () {
 
 Route::get('/items/report/data',function(){
     $data=Product::select(
-                    'products.*',
-                    'products.id as id',
-
-                    'product_variations.*',
-                    'product_variations.id as variation_id',
-
-                    'sale_details.*',
-                    'sale_details.id as sale_details_id',
-
-                    'sales.*',
-                    'sales.id as sale_id',
-
-                    'supplier.*',
-                    'supplier.id as supplier_id',
-
-                    'customer.*',
-                    'customer.id as customer_id',
-
-                    'lot_serial_details.*',
-                    'lot_serial_details.id as lsd_id',
-
-                    'current_stock_balance.*',
-                    'current_stock_balance.id as csb_id',
-
-                    'purchase_details.*',
-                    'purchase_details.id as pd_id',
-
-                    'purchases.*',
-                    'purchases.id as p_id',
-
-                    'business_locations.*',
-                    'business_locations.id as bl_id',
-
+                    // 'products.id as id',
                     'products.name as product',
                     'products.sku as product_sku',
-
-                    'supplier.company_name as supplier',
-
-                    'customer.first_name as customer_name',
-
-                    'purchase_details.uom_price as purchase_price',
                     'sale_details.quantity as sell_qty',
                     'sale_details.uom_price as selling_price',
                     'sale_details.subtotal_with_tax as sale_subtotal',
-                    'business_locations.name as location'
+                    'sales_voucher_no',
+                    'supplier.company_name as supplier',
+                    'customer.first_name as customer_name',
+                    'openingPerson.username as openingPerson',
+                    'purchase_details.uom_price as purchase_price',
+                    'current_stock_balance.transaction_type as csbT',
+                    'purchase_voucher_no',
+                    'purchases.created_at as purchase_date',
+                    'opening_stocks.created_at as osDate',
+                    'business_locations.name as location',
+                    'opening_stock_voucher_no',
+                    'opening_date'
                     )
                     ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
                     ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
@@ -1046,11 +1082,43 @@ Route::get('/items/report/data',function(){
                             ->where('lot_serial_details.transaction_detail_id', '=', DB::raw('sale_details.id'));
                     })
                     ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+
                     ->leftJoin('purchase_details', 'current_stock_balance.transaction_detail_id', '=', 'purchase_details.id')
                     ->leftJoin('purchases', 'purchase_details.purchases_id', '=', 'purchases.id')
+
+                    ->leftJoin('opening_stock_details', 'current_stock_balance.transaction_detail_id', '=', 'opening_stock_details.id')
+                    ->leftJoin('opening_stocks', 'opening_stock_details.opening_stock_id', '=', 'opening_stocks.id')
+
                     ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
+                    ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
                     ->whereNotNull('sales.id');
-            return DataTables::of($data)->make(true);
+            return DataTables::of($data)
+                ->editColumn('purchase_voucher_no',function($data){
+                    if($data->csbT=='purchase'){
+                        return $data->purchase_voucher_no;
+                    }elseif($data->csbT == 'opening_stock'){
+                        return $data->opening_stock_voucher_no;
+                    }
+                    return '';
+                })
+
+                ->editColumn('purchase_date',function($data){
+                    if($data->csbT== 'purchase'){
+                       return fDate($data->purchase_date, false,false);
+                    }elseif($data->csbT == 'opening_stock'){
+                       return fDate($data->osDate, false,false);
+                    }
+                    return '';
+                })
+                ->editColumn('supplier',function($data){
+                    if($data->csbT== 'purchase'){
+                       return $data->supplier;
+                    }elseif($data->csbT == 'opening_stock'){
+                       return $data->openingPerson;
+                    }
+                    return '';
+                })
+                ->rawColumns(['purchase_date'])->make(true);
 });
 
 
