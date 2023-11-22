@@ -1316,8 +1316,8 @@ class StockAdjustmentController extends Controller
 //            })
             ->editColumn('status', function($adjustment) {
                 $html='';
-                if($adjustment->status== 'prepared'){
-                    $html= "<span class='badge badge-light-warning> $adjustment->status </span>";
+                if($adjustment->status == 'prepared'){
+                    $html= "<span class='badge badge-light-warning'> $adjustment->status </span>";
                 }elseif($adjustment->status == 'completed'){
                     $html = "<span class='badge badge-light-success'>$adjustment->status</span>";
                 }

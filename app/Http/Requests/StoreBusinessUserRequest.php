@@ -25,7 +25,7 @@ class StoreBusinessUserRequest extends FormRequest
     {
 
         return [
-            'first_name' => 'required|string',
+            'first_name' => 'required|string|min:2',
             'username'=>'required|unique:business_users,username',
             'email'=> 'nullable|unique:business_users,email',
         ];
