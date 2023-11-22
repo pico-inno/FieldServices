@@ -1341,7 +1341,9 @@ class StockAdjustmentController extends Controller
                     $html .= ' <a class="dropdown-item p-2  px-3  text-gray-600 print-invoice rounded-2"  data-href="' . route('adjustment.print',$adjustment->id) .'">print</a>';
                 }
                 if (hasUpdate('stock transfer')){
-                    $html .= '      <a href="'.route('stock-adjustment.edit', $adjustment->id).'" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a> ';
+                   if ($adjustment->status == 'prepared'){
+                       $html .= '      <a href="'.route('stock-adjustment.edit', $adjustment->id).'" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a> ';
+                   }
                 }
                 if (hasDelete('stock transfer')){
                     $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$adjustment->id.' data-adjustment-voucher-no='.$adjustment->adjustment_voucher_no.' data-adjustment-status='.$adjustment->status.' data-kt-adjustmentItem-table="delete_row">Delete</a>';

@@ -70,10 +70,10 @@ $(document).ready(function () {
                             '<span class="badge badge-light-' + statusClass + '">' + item.adjustment_type + '</span>',
                             item.balance_quantity + ' ('+item.uom_short_name+')',
                             item.gnd_quantity + ' ('+item.uom_short_name+')',
-                            item.adj_quantity + ' ('+item.uom_short_name+')',
+                            '<span style="color: ' + (item.adjustment_type === 'increase' ? 'green' : 'red') + ';">' + item.adj_quantity + '('+item.uom_short_name+')</span>',
                             item.uom_name,
-                            item.uom_price,
-                            item.subtotal,
+                            '<span style="color: ' + (item.adjustment_type === 'increase' ? 'green' : 'red') + ';">' + item.uom_price + '('+item.currency_name+')</span>',
+                            '<span style="color: ' + (item.adjustment_type === 'increase' ? 'green' : 'red') + ';">' + item.subtotal + '('+item.currency_name+')</span>',
                         ];
 
 

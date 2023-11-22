@@ -177,6 +177,7 @@ class reportServices
                                 'subtotal' => number_format($stockDetail['subtotal'], 2),
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
+                                'currency_name' => settings('currency')->currency->symbol,
                             ];
 
                             $result[] = $variationProduct;
