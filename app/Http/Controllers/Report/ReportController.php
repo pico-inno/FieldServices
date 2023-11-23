@@ -11,18 +11,21 @@ use App\Models\Stock\Stockout;
 use App\Models\Contact\Contact;
 use App\Models\Product\Product;
 use App\Models\Product\Category;
+use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use App\Models\Stock\StockAdjustment;
+use App\Services\Report\reportServices;
 use Modules\StockInOut\Entities\Stockin;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
-use App\Http\Controllers\sell\saleController;
 
-use App\Http\Controllers\Contact\CustomerController;
 use App\Models\settings\businessSettings;
+use App\Http\Controllers\sell\saleController;
 use Modules\StockInOut\Entities\StockinDetail;
+use App\Http\Controllers\Contact\CustomerController;
 
 class ReportController extends Controller
 {
@@ -729,143 +732,6 @@ class ReportController extends Controller
         return response()->json($stocktransfers, 200);
     }
 
-//    public function stock_details_index(){
-//        $locations = businessLocation::select('id', 'name')->get();
-//        $categories = Category::select('id', 'name', 'parent_id')->get();
-//        $brands = Brand::select('id', 'name',)->get();
-//        $products = Product::select('id', 'name')->get();
-//
-//
-//        return view('App.report.inventory.stock.details', [
-//            'locations' => $locations,
-//            'categories' => $categories,
-//            'brands' => $brands,
-//            'products' => $products
-//        ]);
-//    }
-//
-//    public function stockDetailsFilter(Request $request){
-//
-//        $filterType = $request->data['filter_type'];
-//        $filterProduct = $request->data['filter_product'];
-//        $filterCategory = $request->data['filter_category'];
-//        $filterBrand = $request->data['filter_brand'];
-//        $dateRange = $request->data['filter_date'];
-//        $dates = explode(' - ', $dateRange);
-//
-//        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
-//        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
-//
-//        $query = null;
-//        $stockDetails = [];
-//
-//        //for stockin
-//        if ($filterType == 1) {
-//            $query = Stockin::where('is_deleted', 0)
-//                ->with(['stockindetails'])
-//                ->whereBetween('stockin_date', [$startDate, $endDate]);
-//
-//            if ($request->data['filter_locations'] != 0) {
-//                $query->where('business_location_id', $request->data['filter_locations']);
-//            }
-//
-//            $stockDetails = $query->get()->pluck('stockindetails')->flatten();
-//        }
-//
-//        //for stockout
-//        if ($filterType == 2) {
-//            $query = Stockout::where('is_deleted', 0)
-//                ->with('stockoutdetails')
-//                ->whereBetween('stockout_date', [$startDate, $endDate]);
-//
-//            if ($request->data['filter_locations'] != 0) {
-//                $query->where('business_location_id', $request->data['filter_locations']);
-//            }
-//
-//            $stockDetails = $query->get()->pluck('stockoutdetails')->flatten();
-//        }
-//
-//        $productIds = $stockDetails->pluck('product_id')->unique()->toArray();
-//
-//        $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id', 'uom_id', 'purchase_uom_id')
-//            ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
-//                $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
-//                    ->with(['variationTemplateValue' => function ($query) {
-//                        $query->select('id', 'name', 'variation_template_id')
-//                            ->with(['variationTemplate:id,name']);
-//                    }]);
-//            }, 'uom' => function ($q) {
-//                $q->with(['unit_category' => function ($q) {
-//                    $q->with('uomByCategory');
-//                }]);
-//            }
-//            ])
-//            ->whereIn('id', $productIds);
-//
-//        if ($filterProduct != 0) {
-//            $finalProduct->where('id', $filterProduct);
-//        }
-//
-//        if ($filterCategory != 0) {
-//            $finalProduct->where('category_id', $filterCategory);
-//        }
-//
-//        if ($filterBrand != 0) {
-//            $finalProduct->where('brand_id', $filterBrand);
-//        }
-//
-//        $finalProduct = $finalProduct->get()->toArray();
-//
-//
-//
-//        $result = [];
-//
-//
-//        foreach ($stockDetails as $stockDetail) {
-//            $productId = $stockDetail['product_id'];
-//            $variationId = $stockDetail['variation_id'];
-//            // $lotNo = $stockDetail['lot_no'];
-//
-//            foreach ($finalProduct as $product) {
-//                if ($product['id'] == $productId) {
-//                    $variations = $product['product_variations'];
-//
-//                    foreach ($variations as $variation) {
-//                        if ($variation['id'] == $variationId) {
-//                            // $smallest_qty = UomHelper::smallestQty($stockDetail['uomset_id'], $stockDetail['unit_id'], $stockDetail['quantity']);
-//                            // $smallest_price = UomHelper::smallestPrice($stockDetail['uomset_id'],$stockDetail['unit_id'],$stockDetail['quantity'],$stockDetail['purchase_price']);
-//                            // $smallest_unit_name =Unit::find(UomHelper::smallestUnitId($stockDetail['uomset_id']))->name;
-//                            $variationProduct = [
-//                                'id' => $product['id'],
-//                                'name' => $product['name'],
-//                                'sku' => $product['sku'],
-//                                'variation_id' => $variation['id'],
-//                                'product_type' => $product['product_type'],
-//                                'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
-//                                'category_id' => $product['category']['id'] ?? '',
-//                                'category_name' => $product['category']['name'] ?? '',
-//                                'brand_name' => $product['brand']['name'] ?? '',
-//                                'brand_id' => $product['brand']['id'] ?? '',
-//                                'uom_short_name' => $stockDetail['uom']['short_name'],
-//                                'uom_name' => $stockDetail['uom']['name'],
-//                                'default_purchase_price' => number_format($variation['default_purchase_price'], 2),
-//                                'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
-//                                'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
-//                                'stock_qty' => number_format($stockDetail['quantity'], 2),
-//
-//                            ];
-//
-//                            $result[] = $variationProduct;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        return response()->json($result, 200);
-//    }
-
-
     public function transfer_details_index(){
         $locations = businessLocation::select('id', 'name')->get();
         $categories = Category::select('id', 'name', 'parent_id')->get();
@@ -989,6 +855,40 @@ class ReportController extends Controller
         }
 
         return response()->json($result, 200);
+    }
+
+    public function adjustmentIndex(){
+        $locations = businessLocation::select('id', 'name')->get();
+        $stocks_person = BusinessUser::select('id', 'username')->get();
+
+
+        return view('App.report.inventory.adjustment.index', [
+            'locations' => $locations,
+            'stocksperson' => $stocks_person,
+        ]);
+    }
+
+    public function adjustmentFilter(Request $request)
+    {
+        $adjustmentSummaryFilterData = reportServices::adjustmentSummary($request->data);
+
+        return response()->json($adjustmentSummaryFilterData, 200);
+    }
+
+    public function adjustmentDetails(){
+        $locations = businessLocation::select('id', 'name')->get();
+        $stocks_person = BusinessUser::select('id', 'username')->get();
+
+        return view('App.report.inventory.adjustment.details', [
+            'locations' => $locations,
+            'stocksperson' => $stocks_person,
+        ]);
+    }
+
+    public function adjustmentDetailsFilter(Request $request){
+
+        $adjustmentDetailsFilterData = reportServices::adjustmentDetails($request->data);
+        return response()->json($adjustmentDetailsFilterData);
     }
 
 
@@ -1294,4 +1194,158 @@ class ReportController extends Controller
     }
     //End: Inventory Report
 
+
+    public function proftLoss(){
+        $grossProfit = reportServices::grossProfit();
+        $netProfit = reportServices::netProfit();
+        return view('App.report.profitLoss.index', compact('grossProfit', 'netProfit'));
+    }
+    public function profitLossData(Request $request){
+        $filterData = $request->toArray();
+        $grossProfit = price(reportServices::grossProfit($filterData));
+        $netProfit = price(reportServices::netProfit($filterData));
+        // outcome
+        $tlOsAmount = totalOSAmount($filterData);
+        $tlPAmount = totalPurchaseAmount($filterData);
+        $tlExAmount = totalExpenseAmount($filterData);
+        $tlOutcome = $tlOsAmount + $tlPAmount + $tlExAmount;
+
+        //income
+        $tlCsAmount = closingStocks($filterData);
+        $tlSAmount = totalSaleAmount($filterData);
+        $tlIncome = $tlCsAmount + $tlSAmount;
+
+        $data = [
+            'grossProfit' => $grossProfit,
+            'netProfit' => $netProfit,
+            'tlOsAmount' => price($tlOsAmount),
+            'tlPAmount' => price($tlPAmount),
+            'tlExAmount' => price($tlExAmount),
+            'tlOutcome' => price($tlOutcome),
+
+            'tlCsAmount' => price($tlCsAmount),
+            'tlSAmount' => price($tlSAmount),
+            'tlOIAmount' => price(0),
+            'tlIncome' => price($tlIncome),
+        ];
+        return response()->json($data, 200);
+    }
+
+    public function expenseReport(){
+        return view('App.report.expense.index');
+    }
+
+    public function salePurchaseReport(){
+        return view('App.report.purchaseSale.index');
+    }
+    public function salePurchaseData(Request $request){
+        $filterData = $request->toArray();
+
+        $tsa = totalSaleAmount($filterData);
+        $tpa = totalPurchaseAmount($filterData);
+        $diffTSPA = $tsa - $tpa;
+
+
+        $tpwd = totalPurchaseAmountWithoutDis($filterData);
+        $tpd = totalPurchaseDiscountAmt($filterData);
+        $tpda = totalPurchaseDueAmount($filterData);
+
+
+        $tswd = totalSaleAmountWithoutDis($filterData);
+        $tsd = totalSaleDiscount($filterData);
+        $tsda = totalSaleDueAmount($filterData);
+        $data = [
+            'tsa' => price($tsa),
+            'tpa' => price($tpa),
+            'diffTSPA' => price($diffTSPA),
+
+            'tpwd' => price($tpwd),
+            'tpd' => price($tpd),
+            'tpda' => price($tpda),
+
+            'tswd' => price($tswd),
+            'tsd' => price($tsd),
+            'tpda' => price($tsda),
+        ];
+        return response()->json($data, 200);
+    }
+
+    public function itemReport(){
+        $productCount = Product::select('products.id')
+        ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+        ->count();
+        $productCountExcVaria = Product::select('id')->count();
+        return view('App.report.item.index', compact('productCount', 'productCountExcVaria'));
+    }
+    public function itemData(){
+            $data = Product::select(
+                // 'products.id as id',
+                'products.name as product',
+                'products.sku as product_sku',
+                'sale_details.quantity as sell_qty',
+                'sale_details.uom_price as selling_price',
+                'sale_details.subtotal_with_tax as sale_subtotal',
+                'sales_voucher_no',
+                'supplier.company_name as supplier',
+                'customer.first_name as customer_name',
+                'openingPerson.username as openingPerson',
+                'purchase_details.uom_price as purchase_price',
+                'current_stock_balance.transaction_type as csbT',
+                'purchase_voucher_no',
+                'purchases.created_at as purchase_date',
+                'opening_stocks.created_at as osDate',
+                'business_locations.name as location',
+                'opening_stock_voucher_no',
+                'opening_date'
+            )
+                ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+                ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
+                ->leftJoin('sales', 'variation_id', '=', 'sales.id')
+                ->leftJoin('contacts as customer', 'sales.contact_id', '=', 'customer.id')
+                ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
+                ->leftJoin('lot_serial_details', function ($join) {
+                    $join->on('lot_serial_details.transaction_type', '=', DB::raw("'sale'"))
+                    ->where('lot_serial_details.transaction_detail_id', '=', DB::raw('sale_details.id'));
+                })
+                ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+
+                ->leftJoin('purchase_details', 'current_stock_balance.transaction_detail_id', '=', 'purchase_details.id')
+                ->leftJoin('purchases', 'purchase_details.purchases_id', '=', 'purchases.id')
+
+                ->leftJoin('opening_stock_details', 'current_stock_balance.transaction_detail_id', '=', 'opening_stock_details.id')
+                ->leftJoin('opening_stocks', 'opening_stock_details.opening_stock_id', '=', 'opening_stocks.id')
+
+                ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
+                ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
+                ->whereNotNull('sales.id');
+            // dd($data->get()->toArray());
+            return DataTables::of($data)
+                ->editColumn('purchase_voucher_no', function ($data) {
+                    if ($data->csbT == 'purchase') {
+                        return $data->purchase_voucher_no;
+                    } elseif ($data->csbT == 'opening_stock') {
+                        return $data->opening_stock_voucher_no;
+                    }
+                    return '';
+                })
+
+                ->editColumn('purchase_date', function ($data) {
+                    if ($data->csbT == 'purchase') {
+                        return fDate($data->purchase_date, false, false);
+                    } elseif ($data->csbT == 'opening_stock') {
+                        return fDate($data->osDate, false, false);
+                    }
+                    return '';
+                })
+                ->editColumn('supplier', function ($data) {
+                    if ($data->csbT == 'purchase') {
+                        return $data->supplier;
+                    } elseif ($data->csbT == 'opening_stock') {
+                        return $data->openingPerson;
+                    }
+                    return '';
+                })
+                ->rawColumns(['purchase_date'])->make(true);
+
+    }
 }
