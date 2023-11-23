@@ -298,6 +298,8 @@ Route::controller(ReportController::class)->group(function () {
     Route::get('/report/sale-purchase/data', 'salePurchaseData');
     Route::get('/items/report', 'itemReport')->name('itemReport');
     Route::get('/items/report/data', 'itemData');
+
+    Route::get('/items/couont/data', 'itemCount');
 });
 //============================ End: Reports ===========================================
 

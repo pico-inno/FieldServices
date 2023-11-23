@@ -1188,7 +1188,6 @@ class ReportController extends Controller
                 }
             }
         }
-        logger($result);
 
         return response()->json( $result, 200);
     }
@@ -1271,11 +1270,19 @@ class ReportController extends Controller
     }
 
     public function itemReport(){
+
+        return view('App.report.item.index');
+    }
+    public function itemCount(){
         $productCount = Product::select('products.id')
-        ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-        ->count();
+                ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+                ->count();
         $productCountExcVaria = Product::select('id')->count();
-        return view('App.report.item.index', compact('productCount', 'productCountExcVaria'));
+        $data=[
+            'productCount'=> $productCount,
+            'productCountExcVaria'=> $productCountExcVaria,
+        ];
+        return response()->json($data, 200);
     }
     public function itemData(){
             $data = Product::select(

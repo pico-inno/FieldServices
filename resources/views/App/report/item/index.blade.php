@@ -37,7 +37,8 @@
                     </span>
                     <div class="fs-2hx mt-1  fw-bold ">
                         <div class="fs-6 text-gray-500 fw-semibold  mt-2">Products Count (Including Its Variation)</div>
-                        {{$productCount}}
+                        <i class="fa-solid fa-spinner fa-spin fs-2hx loader  "></i>
+                        <span class="productCount"></span>
                     </div>
                 </div>
             </div>
@@ -49,7 +50,8 @@
                     </span>
                     <div class="fs-2hx mt-1  fw-bold ">
                         <div class="fs-6 text-gray-500 fw-semibold  mt-2">Products Count (Excluding Its Variation)</div>
-                        {{$productCountExcVaria}}
+                        <i class="fa-solid fa-spinner fa-spin fs-2hx loader  "></i>
+                        <span class="productCountExcVaria"></span>
                     </div>
                 </div>
             </div>
@@ -204,7 +206,33 @@ KTUtil.onDOMContentLoaded(function () {
     KTCustomersList.init();
 });
 
+getData();
+function getData(){
+    $.ajax({
+        url: `/items/couont/data`,
+        type: 'GET',
+        error:function(e){
+            status=e.status;
+            if(status==405){
+                warning('Method Not Allow!');
+            }else if(status==419){
+                error('Session Expired')
+            }else{
+                console.log(' Something Went Wrong! Error Status: '+status )
+            };
+        },
+        success: function(results){
+            setData(results);
+        }
+    })
+}
 
+function setData(data) {
+    console.log('ere');
+    $('.loader').addClass('d-none');
+    $('.productCount').text(data.productCount);
+    $('.productCountExcVaria').text(data.productCountExcVaria);
+}
 
 </script>
 @endpush
