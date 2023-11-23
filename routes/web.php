@@ -1092,6 +1092,7 @@ Route::get('/items/report/data',function(){
                     ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
                     ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
                     ->whereNotNull('sales.id');
+                    // dd($data->get()->toArray());
             return DataTables::of($data)
                 ->editColumn('purchase_voucher_no',function($data){
                     if($data->csbT=='purchase'){
