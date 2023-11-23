@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\userManagement\users;
 
+use App\Actions\userManagement\UserAction;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessUser;
 use App\Http\Requests\StoreBusinessUserRequest;
@@ -48,9 +49,10 @@ class BusinessUserController extends Controller
     }
 
 
-    public function store(StoreBusinessUserRequest $request)
+    public function store(StoreBusinessUserRequest $request, UserAction $userAction)
     {
-        UserService::createUser($request);
+        $userAction->create($request);
+
         return redirect(route('users.index'))->with(['success-swal'=>'User created successfully']);
     }
 
@@ -72,7 +74,7 @@ class BusinessUserController extends Controller
         ]);
     }
 
-    public function update(UpdateBusinessUserRequest $request, $id)
+    public function update(UpdateBusinessUserRequest $request, $id, UserAction $userAction)
     {
         $request->validate([
             'username' => [
@@ -81,14 +83,16 @@ class BusinessUserController extends Controller
                 Rule::unique('business_users')->ignore($id)]
         ]);
 
-        UserService::updateUser($request, $id);
+        $userAction->update($request, $id);
 
         return redirect(route('users.index'))->with(['scuuess-toastr'=>'User updated successfully']);
     }
 
-    public function destroy($id)
+    public function destroy($id, UserAction $userAction)
     {
-        UserService::deleteUser($id);
+
+        $userAction->delete($id);
+
         return redirect()->route('users.index')->with(['scuuess-toastr'=>'User Deleted Successfully']);
     }
 

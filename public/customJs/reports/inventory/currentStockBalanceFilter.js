@@ -33,15 +33,14 @@
         var filterViewVal = filterView.val();
         var filterTypeVal = filterType.val();
         stockReportsTableBody.empty();
-        console.log(filterProductVal + 'ffffffffffffffffffffffffffffffff')
-        filterData(filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal, filterTypeVal);
+        filterData(1, filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal, filterTypeVal);
     });
 
 
     var filterDateVal = filterDate.val();
-    filterData( 0, 0, 0, 0, filterDateVal, 0, 0);
+    filterData( 1,0, 0, 0, 0, filterDateVal, 0, 0);
 
-    async function filterData( filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterViewVal, filterTypeVal) {
+    async function filterData(pageNumber = null, filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterViewVal, filterTypeVal) {
         var data = {
             filter_locations: filterLocations,
             filter_product: filterProductVal,
@@ -60,6 +59,8 @@
                 },
                 data: {
                     data: data,
+                    page: pageNumber ?? 1,
+                    pageSize: 10,
                 },
                 error: function (e) {
                     var status = e.status;
