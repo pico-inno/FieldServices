@@ -26,23 +26,24 @@ class reportServices
         return $reportService->adjustmentDetailsFilterProcess($filterData);
     }
     //Adjustment
-
-    public static function grossProfit(){
-        $totalPurchaseAmount= purchases::where('is_delete',0)->sum('total_purchase_amount');
-        $totalSaleAmount = sales::where('is_delete', 0)->sum('total_sale_amount');
+    public static function grossProfit($filterData=''){
+        // dd($filterData);
+        $totalPurchaseAmount= totalPurchaseAmount($filterData);
+        $totalSaleAmount = totalSaleAmount($filterData);
         return $totalSaleAmount- $totalPurchaseAmount;
     }
-    public static function netProfit(){
+    public static function netProfit($filterData = ''){
         //outcome
-        $totalPurchaseAmount = purchases::where('is_delete', 0)->sum('total_purchase_amount');
-        $totalOSAmount = openingStocks::where('is_delete', 0)->sum('total_opening_amount');
-        $totalExpenseAmount = expenseTransactions::sum('expense_amount');
+
+        $totalPurchaseAmount =  totalPurchaseAmount($filterData);
+        $totalOSAmount = totalOSAmount($filterData);
+        $totalExpenseAmount = totalExpenseAmount();
+        $totalSaleAmount = totalSaleAmount($filterData);
+        $closingStocks = closingStocks();
+
+
 
         $totalOutcome=(int) $totalPurchaseAmount+ $totalOSAmount + $totalExpenseAmount;
-
-        $totalSaleAmount = sales::where('is_delete', 0)->sum('total_sale_amount');
-        $closingStocks = CurrentStockBalance::sum(DB::raw('ref_uom_price * current_quantity'));
-
         $totalIncomeAmount=$totalSaleAmount+ $closingStocks;
         // dd($totalSaleAmount, $closingStocks);
 

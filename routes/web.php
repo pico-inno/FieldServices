@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Product\UOMSet;
 use App\Services\mailServices;
 use App\Models\Contact\Contact;
+use App\Models\Product\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use Illuminate\Support\Facades\App;
@@ -16,9 +18,11 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\openingStocks\Import;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SMSController;
+use App\Services\Report\reportServices;
 use App\Http\Controllers\mailController;
 use App\Http\Controllers\TestController;
 use App\Models\Product\PriceListDetails;
+use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\tableController;
 use App\Http\Middleware\businessActivate;
 use App\Models\settings\businessSettings;
@@ -27,24 +31,28 @@ use App\Http\Controllers\expenseController;
 use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\printerController;
 use App\Http\Controllers\currencyController;
+use App\Http\Controllers\languageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\sell\saleController;
+// use App\Http\Controllers\ContactController\CustomerGroupController;
+// use App\Http\Controllers\ContactController\ImportContactsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\restaurantController;
 use App\Http\Middleware\permissions\role\view;
 use App\Http\Controllers\Product\UoMController;
+//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\exchangeRateController;
-// use App\Http\Controllers\ContactController\CustomerGroupController;
-// use App\Http\Controllers\ContactController\ImportContactsController;
 use App\Http\Controllers\openingStockController;
 use App\Http\Controllers\orderDisplayController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\stockHistoryController;
-//use App\Http\Controllers\Stock\StockTransferController;
+use App\Http\Controllers\configurationController;
 use App\Http\Controllers\expenseReportController;
+use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Report\ReportController;
+// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Stock\StockInController;
 use App\Http\Controllers\settings\FloorController;
 use App\Http\Controllers\Stock\StockOutController;
@@ -52,7 +60,6 @@ use App\Http\Controllers\deliveryChannelController;
 use App\Http\Controllers\paymentAccountsController;
 use App\Http\Controllers\posRegistrationController;
 use App\Http\Controllers\Product\GenericController;
-// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Service\ServiceController;
 use App\Http\Controllers\Contact\CustomerController;
@@ -63,7 +70,6 @@ use App\Http\Controllers\Product\VariationController;
 use App\Http\Controllers\purchase\purchaseController;
 use App\Http\Controllers\settings\BuildingController;
 use App\Http\Controllers\businessActivationController;
-use App\Http\Controllers\import\importOpeningStockController;
 use App\Http\Controllers\Service\ServiceTypeController;
 use App\Http\Controllers\Stock\StockTransferController;
 use \App\Http\Controllers\userManagement\RoleController;
@@ -78,18 +84,14 @@ use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Controllers\Product\ImportProductController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
-use App\Http\Controllers\configurationController;
-use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\import\priceListImportController;
-use App\Http\Controllers\languageController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
+use App\Http\Controllers\import\importOpeningStockController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
-use App\Models\Product\Product;
-use App\Services\Report\reportServices;
 
 // use App\Models\Manufacturer;
 
@@ -277,7 +279,25 @@ Route::controller(ReportController::class)->group(function () {
         //=================================End: Inventory Reports ========================
 
 
+
     });
+});
+Route::controller(ReportController::class)->group(function () {
+
+
+    //=================================Start : Profit And Loss Report =============================
+    Route::get('/profit-loss/report', 'proftLoss')->name('plReport');
+
+    Route::get('/expense/report', 'expenseReport')->name('expenseReport');
+
+    Route::get('/report/pl/data', 'profitLossData');
+
+    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport');
+
+
+    Route::get('/report/sale-purchase/data', 'salePurchaseData');
+    Route::get('/items/report', 'itemReport')->name('itemReport');
+    Route::get('/items/report/data', 'itemData');
 });
 //============================ End: Reports ===========================================
 
@@ -970,52 +990,14 @@ Route::prefix('pos')->group(function () {
 Route::get('/pos/edit', function () {
     return view('App.pos.edit');
 });
-Route::get('/profit-loss/report',function(){
-    $grossProfit=reportServices::grossProfit();
-    $netProfit=reportServices::netProfit();
-    return view('App.report.profitLoss.index',compact('grossProfit', 'netProfit'));
-})->name('plReport');
-
-Route::get('/sale-purchase/report', function () {
-    return view('App.report.purchaseSale.index');
-})->name('spReport');
-
-Route::get('/expense/report', function () {
-    return view('App.report.expense.index');
-})->name('expenseReport');
-
-Route::get('/items/report', function () {
-    $productCount=Product::select('products.id')
-                    ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-                    ->count();
-    $productCountExcVaria=Product::select('id')->count();
-    return view('App.report.item.index',compact('productCount', 'productCountExcVaria'));
-})->name('itemReport');
 
 
-Route::get('/items/report/data',function(){
-    $data=Product::select(
-                    'products.*',
-                    'product_variations.*',
-                    'products.id as id',
-                    'product_variations.id as variation_id',
-                    'sale_details.*',
-                    'sale_details.id as sale_details_id',
-                    'sales.*',
-                    'sales.id as sale_id',
-                    'contacts.*',
-                    'lot_serial_details',
-                    )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-                    ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
-                    ->leftJoin('sales', 'variation_id', '=', 'sales.id')
-                    ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
-                    ->leftJoin('lot_serial_details as lsd', function ($join) {
-                        $join->on('lsd.transaction_type', '=', 'sale')
-                            ->where('lsd.transaction_detail_id', '=', 'sales.id');
-                    })
-                    ->get();
-                    dd($data->toArray());
-     return response()->json($data, 200);
-});
+
+
+
+
+
+
+
 
 

@@ -5,26 +5,27 @@ use App\Helpers\UomHelper;
 use App\Models\sale\sales;
 use App\Models\BusinessUser;
 use App\Models\Product\Unit;
-use App\Models\Stock\StockAdjustment;
-use App\Services\Report\reportServices;
 use Illuminate\Http\Request;
 use App\Models\Product\Brand;
 use App\Models\Stock\Stockout;
 use App\Models\Contact\Contact;
 use App\Models\Product\Product;
 use App\Models\Product\Category;
+use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use App\Models\Stock\StockAdjustment;
+use App\Services\Report\reportServices;
 use Modules\StockInOut\Entities\Stockin;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
-use App\Http\Controllers\sell\saleController;
 
-use App\Http\Controllers\Contact\CustomerController;
 use App\Models\settings\businessSettings;
+use App\Http\Controllers\sell\saleController;
 use Modules\StockInOut\Entities\StockinDetail;
+use App\Http\Controllers\Contact\CustomerController;
 
 class ReportController extends Controller
 {
@@ -1193,4 +1194,158 @@ class ReportController extends Controller
     }
     //End: Inventory Report
 
+
+    public function proftLoss(){
+        $grossProfit = reportServices::grossProfit();
+        $netProfit = reportServices::netProfit();
+        return view('App.report.profitLoss.index', compact('grossProfit', 'netProfit'));
+    }
+    public function profitLossData(Request $request){
+        $filterData = $request->toArray();
+        $grossProfit = price(reportServices::grossProfit($filterData));
+        $netProfit = price(reportServices::netProfit($filterData));
+        // outcome
+        $tlOsAmount = totalOSAmount($filterData);
+        $tlPAmount = totalPurchaseAmount($filterData);
+        $tlExAmount = totalExpenseAmount($filterData);
+        $tlOutcome = $tlOsAmount + $tlPAmount + $tlExAmount;
+
+        //income
+        $tlCsAmount = closingStocks($filterData);
+        $tlSAmount = totalSaleAmount($filterData);
+        $tlIncome = $tlCsAmount + $tlSAmount;
+
+        $data = [
+            'grossProfit' => $grossProfit,
+            'netProfit' => $netProfit,
+            'tlOsAmount' => price($tlOsAmount),
+            'tlPAmount' => price($tlPAmount),
+            'tlExAmount' => price($tlExAmount),
+            'tlOutcome' => price($tlOutcome),
+
+            'tlCsAmount' => price($tlCsAmount),
+            'tlSAmount' => price($tlSAmount),
+            'tlOIAmount' => price(0),
+            'tlIncome' => price($tlIncome),
+        ];
+        return response()->json($data, 200);
+    }
+
+    public function expenseReport(){
+        return view('App.report.expense.index');
+    }
+
+    public function salePurchaseReport(){
+        return view('App.report.purchaseSale.index');
+    }
+    public function salePurchaseData(Request $request){
+        $filterData = $request->toArray();
+
+        $tsa = totalSaleAmount($filterData);
+        $tpa = totalPurchaseAmount($filterData);
+        $diffTSPA = $tsa - $tpa;
+
+
+        $tpwd = totalPurchaseAmountWithoutDis($filterData);
+        $tpd = totalPurchaseDiscountAmt($filterData);
+        $tpda = totalPurchaseDueAmount($filterData);
+
+
+        $tswd = totalSaleAmountWithoutDis($filterData);
+        $tsd = totalSaleDiscount($filterData);
+        $tsda = totalSaleDueAmount($filterData);
+        $data = [
+            'tsa' => price($tsa),
+            'tpa' => price($tpa),
+            'diffTSPA' => price($diffTSPA),
+
+            'tpwd' => price($tpwd),
+            'tpd' => price($tpd),
+            'tpda' => price($tpda),
+
+            'tswd' => price($tswd),
+            'tsd' => price($tsd),
+            'tpda' => price($tsda),
+        ];
+        return response()->json($data, 200);
+    }
+
+    public function itemReport(){
+        $productCount = Product::select('products.id')
+        ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+        ->count();
+        $productCountExcVaria = Product::select('id')->count();
+        return view('App.report.item.index', compact('productCount', 'productCountExcVaria'));
+    }
+    public function itemData(){
+            $data = Product::select(
+                // 'products.id as id',
+                'products.name as product',
+                'products.sku as product_sku',
+                'sale_details.quantity as sell_qty',
+                'sale_details.uom_price as selling_price',
+                'sale_details.subtotal_with_tax as sale_subtotal',
+                'sales_voucher_no',
+                'supplier.company_name as supplier',
+                'customer.first_name as customer_name',
+                'openingPerson.username as openingPerson',
+                'purchase_details.uom_price as purchase_price',
+                'current_stock_balance.transaction_type as csbT',
+                'purchase_voucher_no',
+                'purchases.created_at as purchase_date',
+                'opening_stocks.created_at as osDate',
+                'business_locations.name as location',
+                'opening_stock_voucher_no',
+                'opening_date'
+            )
+                ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+                ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
+                ->leftJoin('sales', 'variation_id', '=', 'sales.id')
+                ->leftJoin('contacts as customer', 'sales.contact_id', '=', 'customer.id')
+                ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
+                ->leftJoin('lot_serial_details', function ($join) {
+                    $join->on('lot_serial_details.transaction_type', '=', DB::raw("'sale'"))
+                    ->where('lot_serial_details.transaction_detail_id', '=', DB::raw('sale_details.id'));
+                })
+                ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+
+                ->leftJoin('purchase_details', 'current_stock_balance.transaction_detail_id', '=', 'purchase_details.id')
+                ->leftJoin('purchases', 'purchase_details.purchases_id', '=', 'purchases.id')
+
+                ->leftJoin('opening_stock_details', 'current_stock_balance.transaction_detail_id', '=', 'opening_stock_details.id')
+                ->leftJoin('opening_stocks', 'opening_stock_details.opening_stock_id', '=', 'opening_stocks.id')
+
+                ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
+                ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
+                ->whereNotNull('sales.id');
+            // dd($data->get()->toArray());
+            return DataTables::of($data)
+                ->editColumn('purchase_voucher_no', function ($data) {
+                    if ($data->csbT == 'purchase') {
+                        return $data->purchase_voucher_no;
+                    } elseif ($data->csbT == 'opening_stock') {
+                        return $data->opening_stock_voucher_no;
+                    }
+                    return '';
+                })
+
+                ->editColumn('purchase_date', function ($data) {
+                    if ($data->csbT == 'purchase') {
+                        return fDate($data->purchase_date, false, false);
+                    } elseif ($data->csbT == 'opening_stock') {
+                        return fDate($data->osDate, false, false);
+                    }
+                    return '';
+                })
+                ->editColumn('supplier', function ($data) {
+                    if ($data->csbT == 'purchase') {
+                        return $data->supplier;
+                    } elseif ($data->csbT == 'opening_stock') {
+                        return $data->openingPerson;
+                    }
+                    return '';
+                })
+                ->rawColumns(['purchase_date'])->make(true);
+
+    }
 }

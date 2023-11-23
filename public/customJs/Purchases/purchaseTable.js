@@ -36,6 +36,10 @@ var KTCustomersList = function () {
             serverSide: true,
                ajax: {
                 url: 'purchase/list/data',
+                data: function (data) {
+                    data.form_data=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                    data.to_date=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                }
             },
 
             columns: [
@@ -90,7 +94,7 @@ var KTCustomersList = function () {
             handleBusinessLocationFilter();
             toggleToolbars();
             handleStatusFilter();
-            handleDateFilterDatatable();
+            // handleDateFilterDatatable();
             handleSupplierFilter();
         });
     }
@@ -121,16 +125,16 @@ var KTCustomersList = function () {
             datatable.search(e.target.value).draw();
         });
     }
-    var handleDateFilterDatatable = () => {
-        const filterSearch = document.querySelector('[data-kt-date-filter="date"]');
-        $(filterSearch).on('change', e => {
-            let value = e.target.value;
-            if (value === 'all') {
-                value = '';
-            }
-            datatable.column(2).search(value).draw();
-        });
-    }
+    // var handleDateFilterDatatable = () => {
+    //     const filterSearch = document.querySelector('[data-kt-date-filter="date"]');
+    //     $(filterSearch).on('change', e => {
+    //         let value = e.target.value;
+    //         if (value === 'all') {
+    //             value = '';
+    //         }
+    //         datatable.column(3).search(value).draw();
+    //     });
+    // }
         // Handle status filter dropdown
     var handleBusinessLocationFilter = () => {
         const filterStatus = document.querySelector('[data-kt-business-location-filter="locations"]');
@@ -387,7 +391,7 @@ var KTCustomersList = function () {
             handleDeleteRows();
             handleStatusFilter();
             handleBusinessLocationFilter();
-            handleDateFilterDatatable();
+            // handleDateFilterDatatable();
             handleSupplierFilter();
         }
     }

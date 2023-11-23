@@ -417,58 +417,79 @@ function getConsumeQty($product_id){
 
 
 
+function queryFilter($query,$filterData=''){
+    if (isset($filterData['form_data']) && isset($filterData['to_date'])) {
+        return $query->whereDate('created_at', '>=', $filterData['form_data'])
+                ->whereDate('created_at', '<=', $filterData['to_date']);
+    }
+    return $query;
+}
 
+function purchaeTxData($filterData = ''){
+    $purchase=purchases::query()->where('is_delete', 0);
+    return queryFilter($purchase, $filterData);
+}
+function saleTxData($filterData = '')
+{
+    $purchase = sales::query()->where('is_delete', 0);
+    return queryFilter($purchase, $filterData);
+}
 //purchase transactions
-function totalPurchaseAmount(){
-    return purchases::where('is_delete', 0)->sum('total_purchase_amount');
+function totalPurchaseAmount($filterData=''){
+    return purchaeTxData($filterData)->sum('total_purchase_amount');
 }
 
-function totalPurchaseDueAmount()
+function totalPurchaseDueAmount($filterData='')
 {
-    return purchases::where('is_delete', 0)->sum('balance_amount');
+    return purchaeTxData($filterData)->sum('balance_amount');
 }
 
-function totalPurchaseAmountWithoutDis()
+function totalPurchaseAmountWithoutDis($filterData='')
 {
-    return purchases::where('is_delete', 0)->sum(DB::raw('total_line_discount + purchase_amount'));
+    return purchaeTxData($filterData)->sum(DB::raw('total_line_discount + purchase_amount'));
 }
 
-function totalPurchaseDiscountAmt()
+function totalPurchaseDiscountAmt($filterData='')
 {
-    return purchases::where('is_delete', 0)->sum('total_discount_amount');
+    return purchaeTxData($filterData)->sum('total_discount_amount');
 }
 
 
-function totalOSAmount()
+function totalOSAmount($filterData='')
 {
-    return openingStocks::where('is_delete', 0)->sum('total_opening_amount');
+    $tranactions = openingStocks::query()->where('is_delete', 0);
+    return queryFilter($tranactions, $filterData)->sum('total_opening_amount');
 }
-function totalExpenseAmount(){
-   return expenseTransactions::sum('expense_amount');
+function totalExpenseAmount($filterData=''){
+    $tranactions = expenseTransactions::query();
+    return queryFilter($tranactions, $filterData)->sum('expense_amount');
 }
-function totalExpenseDueAmount(){
-    return expenseTransactions::sum('balance_amount');
+function totalExpenseDueAmount($filterData=''){
+    $tranactions = expenseTransactions::query();
+    return queryFilter($tranactions, $filterData)->sum('balance_amount');
 }
+
+
 
 
 //  sale transactions
-function totalSaleAmount()
+function totalSaleAmount($filterData='')
 {
-    return sales::where('is_delete', 0)->sum('total_sale_amount');
+    return saleTxData($filterData)->sum('total_sale_amount');
 }
 
-function totalSaleDueAmount()
+function totalSaleDueAmount($filterData='')
 {
-    return sales::where('is_delete', 0)->sum('balance_amount');
+    return saleTxData($filterData)->sum('balance_amount');
 }
-function totalSaleAmountWithoutDis()
+function totalSaleAmountWithoutDis($filterData='')
 {
-    return sales::where('is_delete', 0)->sum('sale_amount');
+    return saleTxData($filterData)->sum('sale_amount');
 }
 
-function totalSaleDiscount()
+function totalSaleDiscount($filterData='')
 {
-    return sales::where('is_delete', 0)->sum(DB::raw('total_item_discount + COALESCE(extra_discount_amount, 0)'));
+    return saleTxData($filterData)->sum(DB::raw('total_item_discount + COALESCE(extra_discount_amount, 0)'));
 }
 
 function closingStocks()

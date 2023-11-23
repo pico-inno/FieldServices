@@ -32,7 +32,7 @@
             <div class="col-12 col-lg-4">
                 <div class="card py-4 px-5 bg- wallet">
                     <span class="text-start fw-bold mt-3 text-gray-600">
-                        <i class="fa-solid fa-hand-holding-dollar fs-6 me-2"></i>
+                        <i class="fa-solid fa-boxes-stacked fs-6 me-2"></i>
                         <span class="">Items Count</span>
                     </span>
                     <div class="fs-2hx mt-1  fw-bold ">
@@ -44,7 +44,7 @@
             <div class="col-12 col-lg-4">
                 <div class="card py-4 px-5 bg- wallet">
                     <span class="text-start fw-bold mt-3 text-gray-600">
-                        <i class="fa-solid fa-hand-holding-dollar fs-6 me-2"></i>
+                        <i class="fa-solid fa-boxes-stacked fs-6 me-2"></i>
                         <span class="">Items Count without Variation</span>
                     </span>
                     <div class="fs-2hx mt-1  fw-bold ">
@@ -75,32 +75,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Tiger Nixon</td>
-                                    <td>System Architect</td>
-                                    <td>Edinburgh</td>
-                                    <td>61</td>
-                                    <td>2011/04/25</td>
-                                    <td>$320,800</td>
-                                    <td>Tiger Nixon</td>
-                                    <td>System Architect</td>
-                                    <td>Edinburgh</td>
-                                    <td>2011/04/25</td>
-                                    <td>$320,800</td>
-                                </tr>
-                                <tr>
-                                    <td>Tiger Nixon</td>
-                                    <td>System Architect</td>
-                                    <td>Edinburgh</td>
-                                    <td>61</td>
-                                    <td>2011/04/25</td>
-                                    <td>$320,800</td>
-                                    <td>Tiger Nixon</td>
-                                    <td>System Architect</td>
-                                    <td>Edinburgh</td>
-                                    <td>2011/04/25</td>
-                                    <td>$320,800</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -144,52 +118,52 @@
                 {
                     data: 'product',
                     name: 'product',
-                    orderable: false,
-                    searchable: false
+                    // orderable: false,
+                    // searchable: false
                 },
                 {
-                    data: 'product sku',
-                    name: 'product sku',
-                    searchable: false,
-                    orderable: false,
+                    data: 'product_sku',
+                    name: 'product_sku',
+                    // searchable: false,
+                    // orderable: false,
                 },
                 {
-                    name: 'purchase voucher no',
-                    data: 'purchase voucher no',
+                    name: 'purchase_date',
+                    data: 'purchase_date',
                 },
                 {
+                    data: 'purchase_voucher_no',
+                    name: 'purchase_voucher_no'
+                },{
                     data: 'supplier',
                     name: 'supplier'
                 },
                 {
-                    data: 'purchae price',
-                    name: 'purchae price'
-                }, {
-                    data: 'customer',
-                    name: 'customer'
+                    data: 'purchase_price',
+                    name: 'purchase_price'
                 },
                 {
-                    data: "location",
-                    name: "location"
+                    data: "customer_name",
+                    name: "customer_name"
                 },
 
                 {
-                    data: 'sell qty',
-                    name: 'sell qty'
+                    data: 'location',
+                    name: 'location'
                 },
                 {
-                    data: 'selling price',
-                    name: 'selling price'
-                },
-
-                {
-                data: 'subtotal',
-                name: 'subtotal'
+                    data: 'sell_qty',
+                    name: 'sell_qty'
                 },
 
                 {
-                data: 'status',
-                name: 'subtotal'
+                    data: 'selling_price',
+                    name: 'selling_price'
+                },
+
+                {
+                    data: 'sale_subtotal',
+                    name: 'sale_subtotal'
                 }
 
             ];
@@ -197,23 +171,13 @@
             datatable = $(table).DataTable({
                 pageLength: 30,
                 lengthMenu: [10, 20, 30, 50,40,80],
-                // 'columnDefs': [
-                // // Disable ordering on column 0 (checkbox)
-                //     // { orderable: false, targets: 0 },
-                //     // { orderable: false, targets: 1 },
-                //     // {    targets: [2],
-                //     //     visible: false,
-                //     //     searchable: true
-                //     // }
-                // ],
                 order: [[1, 'desc']],
                 processing: true,
-                serverSide: false,
+                serverSide: true,
                 columns,
                 ajax: {
                     url: '/items/report/data'
-                },
-
+                }
             });
 
             // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
