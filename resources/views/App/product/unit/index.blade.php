@@ -49,13 +49,6 @@
                             <div class="d-flex flex-column gap-7 gap-lg-10">
                                 <!--begin::General options-->
                                 <div class="card card-flush py-4">
-                                    <!--begin::Card header-->
-                                    {{-- <div class="card-header">
-                                        <div class="card-title">
-                                            <h2>All Unit Category</h2>
-                                        </div>
-                                    </div> --}}
-                                    <!--end::Card header-->
                                     <!--begin::Card body-->
                                         {{-- <div class="card  card-flush"> --}}
                                             <div class="card-header align-items-center py-5 gap-2 gap-md-5">
@@ -259,8 +252,11 @@
                 serverSide: true,
                 ajax: {
                     url: '/unit-category/datas',
+                    type: 'GET',
+                    dataSrc: function (response) {
+                        return response.data;
+                    }
                 },
-
                 columns: [
                     {
                         data: 'name',
@@ -291,10 +287,13 @@
                     }
                 ]
             });
+
+
             // Search
             $('#unit-category-search').on('keyup', function() {
                 tableCate.search(this.value).draw();
             });
+
             // DELETE
             $(document).on('click', '.unit-category-delete-confirm', function(e) {
                 e.preventDefault();
@@ -341,6 +340,10 @@
                 serverSide: true,
                 ajax: {
                     url: '/unit-category/uom-datas',
+                    type: 'GET',
+                    dataSrc: function (response) {
+                        return response.data;
+                    }
                 },
 
                 columns: [
@@ -439,5 +442,4 @@
         });
     </script>
 @endpush
-{{-- var categoryName = $(this).text().trim();
-table.column('unit_category').search(categoryName).draw(); --}}
+

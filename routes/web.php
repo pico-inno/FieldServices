@@ -75,7 +75,6 @@ use App\Http\Controllers\Stock\StockTransferController;
 use \App\Http\Controllers\userManagement\RoleController;
 use App\Http\Controllers\paymentsTransactionsController;
 use App\Http\Controllers\Product\ManufacturerController;
-use App\Http\Controllers\Product\UnitCategoryController;
 use App\Http\Controllers\Service\ServiceSalesController;
 use App\Http\Controllers\Contact\CustomerGroupController;
 use App\Http\Controllers\hospitalFolioInvoicesController;
@@ -785,7 +784,7 @@ Route::controller(ManufacturerController::class)->group(function () {
 });
 
 // ====>    Unit Category
-Route::controller(UnitCategoryController::class)->group(function () {
+Route::controller(UnitController::class)->group(function () {
     Route::get('/unit-category/datas', 'unitCategoryDatas')->name('unit-category.data');
     Route::get('/unit-category/uom-datas', 'uomDatas')->name('unit-category.uomDatas');
 
@@ -799,7 +798,6 @@ Route::controller(UnitCategoryController::class)->group(function () {
 
 // ====>    UoM
 Route::controller(UoMController::class)->group(function () {
-    Route::get('/uom', 'index')->name('uom');
     Route::get('/uom/add', 'add')->name('uom.add');
     Route::post('/uom/create', 'create')->name('uom.create');
     Route::get('/uom/edit/{uom}', 'edit')->name('uom.edit');
