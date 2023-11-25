@@ -43,7 +43,7 @@ class UnitController extends Controller
 
     public function create(UnitCategoryCreateRequest $request, UnitAction $unitAction)
     {
-        $unitAction->create($request->name);
+        $unitAction->create($request);
 
         return redirect(route('unit-category'))->with(['message', 'Unit Category created successfully', 'toUnitCate' => 'to unit cate tab']);
     }
@@ -62,7 +62,7 @@ class UnitController extends Controller
             return redirect()->route('unit-category')->with('toUnitCate', 'cancel');
         }
 
-        $unitAction->update($unitCategory->id, $request->name);
+        $unitAction->update($unitCategory->id, $request);
 
         return redirect()->route('unit-category')->with(['message', 'Unit Category updated successfully', 'toUnitCate' => 'to unit cate tab']);
     }
