@@ -15,8 +15,9 @@ class ManufacturerAction
         $this->manufacturerRepository = $manufacturerRepository;
     }
 
-    public function create($data){
-        return DB::transaction(function () use ($data){
+    public function create($data)
+    {
+        return DB::transaction(function () use ($data) {
             $preparedData = $this->prepareManufacturerData($data);
             $preparedData['created_by'] = auth()->id();
 
@@ -24,8 +25,9 @@ class ManufacturerAction
         });
     }
 
-    public function update($id, $data){
-        return DB::transaction(function () use ($id, $data){
+    public function update($id, $data)
+    {
+        return DB::transaction(function () use ($id, $data) {
             $preparedData = $this->prepareManufacturerData($data);
             $preparedData['updated_by'] = auth()->id();
 
@@ -34,15 +36,17 @@ class ManufacturerAction
         });
     }
 
-    public function delete($id){
-        return DB::transaction(function () use ($id){
+    public function delete($id)
+    {
+        return DB::transaction(function () use ($id) {
             $this->manufacturerRepository->delete($id);
         });
     }
 
-    private function prepareManufacturerData($data){
+    private function prepareManufacturerData($data)
+    {
         return [
-            'name'   => $data->manufacturer_name,
+            'name' => $data->manufacturer_name,
         ];
     }
 }

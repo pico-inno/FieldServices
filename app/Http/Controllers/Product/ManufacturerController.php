@@ -25,16 +25,17 @@ class ManufacturerController extends Controller
 
         $this->manufacturerRepository = $manufacturerRepository;
     }
+
     public function datas()
     {
         $manufacturers = $this->manufacturerRepository->getAll();
 
         return DataTables::of($manufacturers)
-        ->addColumn('action', function($manufacturer){
-            return $manufacturer->id;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addColumn('action', function ($manufacturer) {
+                return $manufacturer->id;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function index()
@@ -51,12 +52,12 @@ class ManufacturerController extends Controller
     {
         $manufacturerAction->create($request);
 
-        if($request->form_type === "from_product"){
+        if ($request->form_type === "from_product") {
             return response()->json([
                 'message' => 'Manufacturer created successfully',
                 'manufacturers' => $this->manufacturerRepository->getAll()
             ]);
-        }else{
+        } else {
             return redirect()->route('manufacturer')->with('message', 'Manufacturer created successfully');
         }
     }
