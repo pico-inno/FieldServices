@@ -37,7 +37,7 @@ var KTCustomersList = function () {
                ajax: {
                 url: 'purchase/list/data',
                 data: function (data) {
-                    data.form_data=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                    data.from_date=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
                     data.to_date=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
                 }
             },

@@ -96,7 +96,7 @@
                     url: '/sell/get/saleItem',
                     data: function (data) {
                         data.saleType=$('#saleType').val() ?? 'allSale',
-                        data.form_data=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                        data.from_date=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
                         data.to_date=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
                     }
                 },

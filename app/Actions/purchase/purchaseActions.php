@@ -22,7 +22,8 @@ class purchaseActions
         $this->currency = $settings->currency;
     }
 
-    public function create($purchases_data){
+    public function create($purchases_data)
+    {
         $purchases_data['purchase_voucher_no'] = purchaseVoucher();
         $purchases_data['purchased_by'] = Auth::user()->id;
         $purchases_data['confirm_at'] = $purchases_data['status'] === 'confirmed' ? now() : null;
@@ -30,7 +31,8 @@ class purchaseActions
         return purchases::create($purchases_data);
     }
 
-    public function detailCreate($pd,$purchase){
+    public function detailCreate($pd, $purchase)
+    {
         $product = Product::where('id', $pd['product_id'])->select('purchase_uom_id')->first();
         $referencteUom = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'], $pd['purchase_uom_id']);
         $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom['referenceUomId']);
@@ -88,6 +90,7 @@ class purchaseActions
                 'increase_qty' => $data['ref_uom_quantity'],
                 'decrease_qty' => 0,
                 'ref_uom_id' => $data['ref_uom_id'],
+                'created_at' => $purchase['received_at'],
             ]);
         }
     }
@@ -112,22 +115,7 @@ class purchaseActions
             "ref_uom_price" => $per_ref_uom_price_by_default_currency,
             "current_quantity" => $referencUomInfo['qtyByReferenceUom'],
             'currency_id' => $purchase->currency_id,
+            'created_at' => $purchase['received_at'],
         ];
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

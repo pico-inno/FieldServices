@@ -69,6 +69,11 @@ function validationField(form) {
                 validators: {
                     notEmpty: { message: "* Location field is required" },
                 }
+            },
+            received_at= {
+                validators: {
+                    notEmpty: { message: "* Received Date is required in receive status!" },
+                }
             }
         }
         if(accountId){
@@ -105,6 +110,7 @@ function validationField(form) {
 
                 },
                 business_location_id,
+                received_at,
                 payment_account:paymentAccountValidator,
                 paid_amount:paidAmountValidator,
                 // payment_account:{

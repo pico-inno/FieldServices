@@ -168,6 +168,18 @@
                                     <input class="form-control form-control-sm" name="purchased_at" placeholder="Pick a date" data-td-toggle="datetimepicker"  id="kt_datepicker_1" value="{{old('purchased_at',$purchase->purchased_at)}}" />
                                 </div>
                             </div>
+                            <div class="mb-7 mt-3 col-12 col-md-3">
+                                <label class="form-label fs-6 fw-semibold required" for="received_at">
+                                    {{__('purchase.received_date')}}:
+                                </label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i>
+                                    </span>
+                                    <input class="form-control" name="received_at" placeholder="Pick a date" data-td-toggle="datetimepickerallowClear"
+                                        id="received_at" value="{{old('received_at',arr($purchase,'received_at'))}}" />
+                                </div>
+                            </div>
                             {{-- <div class="mb-7 mt-3 col-12 col-md-4">
                                 <label class="form-label fs-6 fw-semibold required" for="">
                                     Pay term:
@@ -541,6 +553,21 @@
             dateFormat: "Y-m-d H:i",
         });
 
+            let fp=$('[data-td-toggle="datetimepickerallowClear"]').flatpickr({
+        enableTime: true,
+        showClear: true,
+        dateFormat: "Y-m-d H:i",
+    });
+
+    $('#OrderStatus').change(function(){
+        let received_at=$('#received_at').val();
+        console.log($(this).val(),received_at);
+        if(received_at=='' && $(this).val()=='received'){
+            var currentDate = new Date();
+            var formattedCurrentDate = fp.formatDate(currentDate, "Y-m-d H:i");
+            fp.setDate(formattedCurrentDate);
+        }
+    })
 
         var inputElm = document.querySelector('#kt_tagify_users');
 

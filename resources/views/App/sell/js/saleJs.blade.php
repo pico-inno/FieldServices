@@ -1,6 +1,7 @@
 <script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
     var productsOnSelectData=[];
+    let ItemLimitRowCount=@json(ini_get('max_input_vars'));
 // $(document).ready(function () {
     var products;
     var allSelectedProduct=[];
@@ -41,6 +42,7 @@
                 secIndex=i;
                 return saledetail.product_variation.id== pd.variation_id;
             });
+
             let uoms=getCurrentAndRefUom(saledetail.product.uom.unit_category.uom_by_category,saledetail.uom_id);
             let saleQty=0;
             if(uoms.currentUom){
@@ -66,7 +68,6 @@
                 'uom_id':saledetail.uom_id,
                 'stock':saledetail.stock,
             };
-            console.log(newProductData);
             const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
             if(indexToReplace !== -1){
                 productsOnSelectData[indexToReplace] = newProductData;
@@ -424,6 +425,20 @@
 
     //append table row for product to sell
     function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false,parentSaleDetailId=null) {
+        if(ItemLimitRowCount<20){
+            Swal.fire({
+                title:"Sorry, Can't Add more row.",
+                text: "To get better performence,we limit row count in voucher. Please create new voucher for other rows",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+            return;
+        }
+        ItemLimitRowCount-=20;
         allSelectedProduct[selected_product.product_variations.id]=selected_product;
         if(setting.enable_row == 0 && !forceSplit){
             let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);

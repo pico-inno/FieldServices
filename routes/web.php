@@ -120,7 +120,7 @@ Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('
 
 
 //============================ Being: User Management ==========================================
-Auth::routes();
+// Auth::routes();
 Auth::routes(['register' => false]);
 //_Being: Auth
 Route::get('/', [LoginController::class, 'showLoginForm']);

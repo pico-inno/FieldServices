@@ -214,9 +214,9 @@
 
         $('#datePicker').change(function(){
             intiDataSearch();
-            let form_data=datePicker.data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let from_date=datePicker.data('daterangepicker').startDate.format('YYYY-MM-DD');
             let to_date=datePicker.data('daterangepicker').endDate.format('YYYY-MM-DD');
-            getData({form_data,to_date})
+            getData({from_date,to_date})
         })
         $('.clearFilter').click(()=>{clearFilter()});
         $('.refresh').click(()=>{refresh()});

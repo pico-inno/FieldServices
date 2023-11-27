@@ -43,6 +43,7 @@ class purchaseController extends Controller
     private $currency;
     public function __construct()
     {
+        // dd(ini_get('max_input_vars'));
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:purchase')->only(['index', 'listData']);
         $this->middleware('canCreate:purchase')->only(['add', 'store']);
@@ -99,7 +100,10 @@ class purchaseController extends Controller
         ])->validate();
         try {
             // create purchase from service
+           DB::beginTransaction();
             $purchase = $service->createPurchase($request);
+
+            DB::commit();
             if ($request->save == 'save_&_print') {
                 return redirect()->route('purchase_list')->with([
                     'success' => 'Successfully Created Purchase',
@@ -109,11 +113,13 @@ class purchaseController extends Controller
                 return redirect()->route('purchase_list')->with(['success' => 'Successfully Created Purchase']);
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             $filePath = $e->getFile();
             $fileName = basename($filePath);
             if ($fileName == 'UomHelpers.php') {
                 return redirect()->back()->with(['error' => 'Something Wrong with UOM ! Check UOM category and UOM'])->withInput($request->toArray());
             }
+            dd($e);
             return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse'])->withInput();
         }
     }
@@ -245,6 +251,7 @@ class purchaseController extends Controller
                                     'increase_qty' => $data['ref_uom_quantity'],
                                     'decrease_qty' => 0,
                                     'ref_uom_id' => $data['ref_uom_id'],
+                                    'created_at'=> $purchase['received_at']
                                 ]);
                             }
                             //    }
@@ -276,10 +283,12 @@ class purchaseController extends Controller
                                     "batch_no" => $request->batch_no,
                                     "ref_uom_price" => $pd['per_ref_uom_price'],
                                     "ref_uom_quantity" => $requestQty,
+                                    "created_at" => $request->received_at,
                                     "current_quantity" => $currentResultQty >= 0 ? $currentResultQty :  0,
                                 ]);
                                 stock_history::where('transaction_details_id', $purchase_detail_id)->where('transaction_type', 'purchase')->first()->update([
                                     'increase_qty' => $requestQty,
+                                    "created_at" => $request->received_at,
                                     "business_location_id" => $request->business_location_id,
                                 ]);
                             } else {
@@ -488,6 +497,8 @@ class purchaseController extends Controller
                 'increase_qty' => $data['ref_uom_quantity'],
                 'decrease_qty' => 0,
                 'ref_uom_id' => $data['ref_uom_id'],
+                'ref_uom_price' => $data['ref_uom_price'],
+                "created_at" => $purchase['received_at'],
             ]);
         }
     }
@@ -512,6 +523,7 @@ class purchaseController extends Controller
             "ref_uom_price" => $per_ref_uom_price_by_default_currency,
             "current_quantity" => $referencUomInfo['qtyByReferenceUom'],
             'currency_id' => $purchase->currency_id,
+            'created_at' => $purchase->received_at,
         ];
     }
 

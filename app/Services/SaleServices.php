@@ -240,6 +240,7 @@ class SaleServices
                         'transaction_details_id' => $sale_detail_id,
                         'increase_qty' => 0,
                         'ref_uom_id' => $stock['ref_uom_id'],
+                        'created_at' =>now(),
                     ];
 
                     //remove qty from current stock

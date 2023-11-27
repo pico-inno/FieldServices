@@ -62,9 +62,6 @@ class importOpeningStockController extends Controller
         } catch (\Throwable $th) {
 
             DB::rollBack();
-            dd($th);
-
-            DB::rollBack();
             return back()->with(['warning' => $th->getMessage()]);
         }
     }

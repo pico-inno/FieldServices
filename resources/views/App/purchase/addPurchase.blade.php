@@ -127,6 +127,18 @@
                                     <input class="form-control" name="purchased_at" placeholder="Pick a date" data-td-toggle="datetimepicker"  id="kt_datepicker_1" value="{{old('purchased_at',now())}}" />
                                 </div>
                             </div>
+                            <div class="mb-7 mt-3 col-12 col-md-3">
+                                <label class="form-label fs-6 fw-semibold" for="received_at">
+                                    {{__('purchase.received_date')}}:
+                                </label>
+                                <div class="input-group input-group-sm fv-row">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i>
+                                    </span>
+                                    <input class="form-control" name="received_at" placeholder="Pick a date" data-td-toggle="datetimepickerallowClear"
+                                        id="received_at" value="{{old('received_at')}}" data-allow-clear="true" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -365,6 +377,21 @@ $(document).ready(function(){
              enableTime: true,
             dateFormat: "Y-m-d H:i",
         });
+    let fp=$('[data-td-toggle="datetimepickerallowClear"]').flatpickr({
+        enableTime: true,
+        showClear: true,
+        dateFormat: "Y-m-d H:i",
+    });
+
+    $('#OrderStatus').change(function(){
+        let received_at=$('#received_at').val();
+        console.log($(this).val(),received_at);
+        if(received_at=='' && $(this).val()=='received'){
+            var currentDate = new Date();
+            var formattedCurrentDate = fp.formatDate(currentDate, "Y-m-d H:i");
+            fp.setDate(formattedCurrentDate);
+        }
+    })
         let locations=@json($locations);
 
 

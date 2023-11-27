@@ -5,13 +5,17 @@ namespace App\Providers;
 use App\Models\Currencies;
 use Ramsey\Uuid\Type\Integer;
 use App\Helpers\SettingHelpers;
+use App\Models\openingStocks;
+use App\Models\purchases\purchases;
+use App\Models\sale\sales;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 use App\Models\settings\businessSettings;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Currency;
 
 class AppServiceProvider extends ServiceProvider
@@ -50,6 +54,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Paginator::useBootstrapFive();
+        Relation::morphMap([
+            'purchase' => purchases::class,
+            'sale' => sales::class,
+            'opening_stock'=>openingStocks::class,
+            // Add other mappings if needed
+        ]);
+
 
 
     }

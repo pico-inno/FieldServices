@@ -41,6 +41,7 @@ class sales extends Model
         'is_delete',
         'deleted_at',
         'deleted_by',
+        'delivered_at',
     ];
 
 
@@ -96,6 +97,10 @@ class sales extends Model
     }
     public function saleDetails(): HasMany{
         return $this->hasMany(sale_details::class)->with('product', 'productVariation', 'uom');
+    }
+    public function stockHistory()
+    {
+        return $this->morphMany(StockHistory::class, 'transaction');
     }
 }
 

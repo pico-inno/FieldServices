@@ -90,8 +90,8 @@ class saleController extends Controller
         if ($request->saleType == 'sales') {
             $saleItems = $saleItems->whereNull('pos_register_id');
         }
-        if ($request->filled('form_data') && $request->filled('to_date')) {
-            $saleItems = $saleItems->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
         $saleItems = $saleItems->get();
         return DataTables::of($saleItems)
@@ -249,7 +249,7 @@ class saleController extends Controller
         if (class_exists('Modules\ExchangeRate\Entities\exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
             $exchangeRates = exchangeRates::get();
         }
-        return view('App.sell.sale.addSale', compact('defaultPriceListId','walkInCustomer','locations', 'products', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
+        return view('App.sell.sale.addSale', compact('defaultPriceListId', 'walkInCustomer', 'locations', 'products', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
     }
     // for edit page
     public function saleEdit($id)
@@ -271,7 +271,7 @@ class saleController extends Controller
 
         $sale = sales::with('currency')->where('id', $id)->get()->first();
         $business_location_id = $sale->business_location_id;
-        $ckRelations=[];
+        $ckRelations = [];
         if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
             $ckRelations = [
                 'kitSaleDetails.product',
@@ -477,6 +477,7 @@ class saleController extends Controller
                 'balance_amount' => $request->total_sale_amount - $saleBeforeUpdate->paid_amount,
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
+                'sold_at' => now(),
             ];
             if ($request->type == 'pos') {
                 $saleData['paid_amount'] = $request->paid_amount;
@@ -566,7 +567,7 @@ class saleController extends Controller
                     $lotSerialCheck = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id)->exists();
                     $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
 
-                    $product = Product::where('id', $request_old_sale['product_id'])->select('product_type','id','uom_id')->first();
+                    $product = Product::where('id', $request_old_sale['product_id'])->select('product_type', 'id', 'uom_id')->first();
 
                     if ($product->product_type == 'storable') {
                         // stock adjustment
@@ -765,6 +766,7 @@ class saleController extends Controller
                     if ($requestQty > 0) {
                         stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->update([
                             'decrease_qty' => $requestQty,
+                            'created_at' => $request_old_sale['delivered_at'] ?? now(),
                         ]);
                     } else {
                         stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->delete();
@@ -819,13 +821,13 @@ class saleController extends Controller
                 $allSaleDetailIdToRemove = $saleDetailQuery->get();
                 foreach ($allSaleDetailIdToRemove as   $sd) {
                     // dd($sd['product_id']);
-                    $romCheck='';
+                    $romCheck = '';
                     if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
                         $romCheck = RoMService::isKit($sd['product_id']);
                     }
                     if ($romCheck == 'kit') {
                         RoMService::removeRomTransactions($sd->id, 'kit_sale_detail');
-                    }else{
+                    } else {
                         $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id);
                         if ($lotSerials->exists()) {
                             $this->adjustStock($lotSerials->get());
@@ -905,8 +907,8 @@ class saleController extends Controller
 
 
         foreach ($allSaleDetailIdToRemove as   $sd) {
-            $romCheck='';
-            if (hasModule('ComboKit') && isEnableModule('ComboKit')){
+            $romCheck = '';
+            if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
                 $romCheck = RoMService::isKit($sd['product_id']);
             }
             if ($romCheck == 'kit') {
@@ -1046,7 +1048,7 @@ class saleController extends Controller
         $business_location_id = $request->data['business_location_id'];
         $q = $request->data['query'];
         $variation_id = $request->data['variation_id'] ?? null;
-        $relations= [
+        $relations = [
             'product_packaging' => function ($query) use ($q) {
                 $query->where('package_barcode', $q);
             },
@@ -1062,12 +1064,13 @@ class saleController extends Controller
                     ->whereIn('business_location_id', $locationIds);
             }
         ];
-        if(hasModule('ComboKit') && isEnableModule('ComboKit')){
-            $relations=[
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            $relations = [
                 'rom.uom.unit_category.uomByCategory',
                 'rom.rom_details.productVariation.product',
                 'rom.rom_details.uom',
-                ...$relations];
+                ...$relations
+            ];
         }
         $products = Product::select(
             'products.*',
@@ -1506,10 +1509,11 @@ class saleController extends Controller
             ]);
         }
     }
-    public function romAviaQtyCheck(Request $request){
+    public function romAviaQtyCheck(Request $request)
+    {
 
         if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
-            return RoMService::getKitAvailableQty($request->locationId,$request->productId);
+            return RoMService::getKitAvailableQty($request->locationId, $request->productId);
         }
         return '';
     }

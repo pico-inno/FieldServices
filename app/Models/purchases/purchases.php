@@ -43,7 +43,8 @@ class purchases extends Model
         'currency_id',
         'is_delete',
         'deleted_at',
-        'deleted_by'
+        'deleted_by',
+        'received_at'
     ];
 
     public function business_location_id(): BelongsTo
@@ -87,5 +88,9 @@ class purchases extends Model
     }
     public function currency():HasOne{
         return $this->hasOne(Currencies::class,'id','currency_id');
+    }
+    public function stockHistory()
+    {
+        return $this->morphMany(StockHistory::class, 'transaction');
     }
 }

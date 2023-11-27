@@ -30,18 +30,27 @@
     <!--begin::container-->
     <div class="container-xxl" id="kt_content_container">
         <div class="card p-0 mb-5">
-            <div class="card-body px-0 py-2 ps-5 row justify-content-between">
-                <div class="col-4 d-flex justify-content-center align-items-center">
+            <div class="card-title px-5 py-2 d-flex justify-content-between align-items-center border border-1 border-gray-200 border-top-0 border-left-0 border-right-0">
+                <div class="d-flex">
                     <i class="fa-solid fa-filter fs-2 me-3 text-gray-400"></i>
-                    <input type="text" class="form-control form-control-sm" id="datePicker" placeholder="Pick date rage" data-kt-date-filter="date" data-allow-clear="true">
+                    <h4 class="reportLabel">Overall</h4><h4> &nbsp;Report</h4>
                 </div>
-                <div class="col-8 text-end pe-10">
-                    <button class="btn btn-sm btn-light-primary refresh" title="Refresh"><i class="fa-solid fa-rotate-right fs-3"></i></button>
+                <div class="">
+                    <button class="btn btn-sm btn-light-primary refresh" title="Refresh"><i
+                            class="fa-solid fa-rotate-right fs-3"></i></button>
                     <button class="btn btn-sm btn-light-danger btn-active-danger clearFilter">Clear Filter</button>
                 </div>
             </div>
+            <div class="card-body px-0 py-2 ps-5 row justify-content-between">
+                <div class="col-5 d-flex justify-content-center align-items-center gap-2">
+                    <input type="text" class="form-control form-control-sm" id="datePicker" placeholder="Pick date rage" data-kt-date-filter="date" data-allow-clear="true">
+                    <select name="" id="priceCalMethod" class="form-select form-select-sm" data-control="select2" placeholder="Price Cal" data-placeholder="Price Cal" data-hide-search="true">
+                        <option value="avg">Average</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <div class="row align-items-stretch  align-self-stretch mb-5 g-5">
+        <div class="row align-items-stretch  align-self-stretch mb-5 g-5 ">
             <div class="col-12 col-lg-6">
                 <div class="card py-4 px-5 bg- wallet">
                     <span class="text-start fw-bold mt-3 text-gray-600 ">
@@ -57,7 +66,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-6 ">
                 <div class="card py-4 px-5 bg- wallet">
                     <span class="text-start fw-bold mt-3 text-gray-600">
                         <i class="fa-solid fa-sack-dollar fs-6 me-2 text-success"></i>
@@ -79,7 +88,7 @@
                         <table class="table table-hover table-rounded table-striped  gy-3 gs-3">
                             <tbody>
                                 <tr>
-                                    <td class="fw-bold fs-7">Total Opening Stock Amount</td>
+                                    <td class="fw-bold fs-7">Total Opening Stock Amount ( Inc: Opening Stock Transactions)</td>
                                     <td class="text-end fw-bold ">
                                         <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
                                         <span class="tlOsAmount"></span>
@@ -99,13 +108,13 @@
                                         <span class="tlExAmount"></span>
                                     </td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <td class="fw-bold fs-6">Total</td>
                                     <td class="text-end fw-bold ">
                                         <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
                                         <span class="tlOutcome"></span>
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </tbody>
                         </table>
                     </div>
@@ -137,13 +146,13 @@
                                         <span class="tlOIAmount"></span>
                                     </td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <td class="fw-bold fs-6">Total</td>
                                     <td class="text-end fw-bold ">
                                         <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
                                         <span class="tlIncome"></span>
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </tbody>
                         </table>
                     </div>
@@ -166,29 +175,30 @@
         getData();
         var start = moment().subtract(1, "M");
         var end = moment();
-        function cb(start, end) {
+        function cb(start, end,label) {
             $("#datePicker").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
-
+            $('.reportLabel').text(label);
         }
 
         let datePicker=$("#datePicker").daterangepicker({
             startDate: start,
             endDate: end,
             ranges: {
-            "Today": [moment(), moment()],
-            "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
-            "Last 7 Days": [moment().subtract(6, "days"), moment()],
-            "Last 30 Days": [moment().subtract(29, "days"), moment()],
-            "This Month": [moment().startOf("month"), moment().endOf("month")],
-            "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
+                "Today": [moment(), moment()],
+                "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
+                "Last 7 Days": [moment().subtract(6, "days"), moment()],
+                "Last 30 Days": [moment().subtract(29, "days"), moment()],
+                "This Month": [moment().startOf("month"), moment().endOf("month")],
+                "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
             }
         }, cb).val('');
 
         $('#datePicker').change(function(){
             intiDataSearch();
-            let form_data=datePicker.data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let from_date=datePicker.data('daterangepicker').startDate.format('YYYY-MM-DD');
             let to_date=datePicker.data('daterangepicker').endDate.format('YYYY-MM-DD');
-            getData({form_data,to_date})
+            let priceCalMethod= $('#priceCalMethod').val() ;
+            getData({from_date,to_date,priceCalMethod})
         })
         $('.clearFilter').click(()=>{clearFilter()});
         $('.refresh').click(()=>{refresh()});
@@ -249,11 +259,14 @@
             $("#datePicker").next('input').val('');
             intiDataSearch();
             getData();
+            $('.reportLabel').text('Overall');
         }
 
         function refresh() {
             intiDataSearch();
+            let priceCalMethod= $('#priceCalMethod').val() ;
             getData();
+            clearFilter();
         }
     })
 </script>

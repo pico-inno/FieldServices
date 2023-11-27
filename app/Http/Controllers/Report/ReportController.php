@@ -1195,19 +1195,22 @@ class ReportController extends Controller
 
 
     public function proftLoss(){
-        $grossProfit = reportServices::grossProfit();
-        $netProfit = reportServices::netProfit();
-        return view('App.report.profitLoss.index', compact('grossProfit', 'netProfit'));
+        return view('App.report.profitLoss.index');
     }
     public function profitLossData(Request $request){
-        $filterData = $request->toArray();
+        $filterData = isFilter($request->toArray());
         $grossProfit = price(reportServices::grossProfit($filterData));
         $netProfit = price(reportServices::netProfit($filterData));
         // outcome
-        $tlOsAmount = totalOSAmount($filterData);
+        if(!$filterData){
+            $tlOsAmount = totalOSTransactionAmount($filterData);
+        }else{
+            $tlOsAmount = totalOSTransactionAmount($filterData) + closingStocksCal($filterData) ;
+        }
+        // dd($tlOsAmount);
         $tlPAmount = totalPurchaseAmount($filterData);
         $tlExAmount = totalExpenseAmount($filterData);
-        $tlOutcome = $tlOsAmount + $tlPAmount + $tlExAmount;
+        $tlOutcome = $tlOsAmount  + $tlExAmount;
 
         //income
         $tlCsAmount = closingStocks($filterData);
@@ -1238,7 +1241,8 @@ class ReportController extends Controller
         return view('App.report.purchaseSale.index');
     }
     public function salePurchaseData(Request $request){
-        $filterData = $request->toArray();
+
+        $filterData = isFilter($request->toArray());
 
         $tsa = totalSaleAmount($filterData);
         $tpa = totalPurchaseAmount($filterData);
@@ -1355,4 +1359,5 @@ class ReportController extends Controller
                 ->rawColumns(['purchase_date'])->make(true);
 
     }
+
 }

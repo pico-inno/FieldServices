@@ -21,22 +21,23 @@ class purchaseService
      * @param  mixed $request
      * @return void
      */
-    public function createPurchase($request){
-        $action=new purchaseActions();
+    public function createPurchase($request)
+    {
+        $action = new purchaseActions();
         $payment = new paymentServices();
-        $packaging=new packagingServices();
+        $packaging = new packagingServices();
         // create obj
-        $purchase= $action->create($this->purchaseData($request));
+        $purchase = $action->create($this->purchaseData($request));
         //create purchaseDetail
         $purchases_details = $request->purchase_details;
         if ($purchases_details) {
             foreach ($purchases_details as $pd) {
-               $createdPd= $action->detailCreate($pd, $purchase);
-               $packaging->packagingForTx($pd,$createdPd['id'],'purchase');
+                $createdPd = $action->detailCreate($pd, $purchase);
+                $packaging->packagingForTx($pd, $createdPd['id'], 'purchase');
             }
         }
         if ($request->paid_amount > 0) {
-            $payment->makePayment($purchase, $request->payment_account,'purchase');
+            $payment->makePayment($purchase, $request->payment_account, 'purchase');
         } else {
             $suppliers = Contact::where('id', $request->contact_id)->first();
             $suppliers_payable = $suppliers->payable_amount;
@@ -54,12 +55,13 @@ class purchaseService
      * @param  mixed data from Request $request
      * @return void
      */
-    public function listData($request){
+    public function listData($request)
+    {
         $purchases = purchases::where('is_delete', 0)
             ->with('business_location_id', 'businessLocation', 'supplier')
             ->OrderBy('id', 'desc');
-        if ($request->filled('form_data') && $request->filled('to_date')) {
-            $purchases = $purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $purchases = $purchases->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
         $purchases = $purchases->get();
         return DataTables::of($purchases)
@@ -151,8 +153,8 @@ class purchaseService
 
                 return (hasView('purchase') && hasPrint('purchase') && hasUpdate('purchase') && hasDelete('purchase') ? $html : 'No Access');
             })
-        ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
-        ->make(true);
+            ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
+            ->make(true);
     }
 
 
@@ -188,9 +190,8 @@ class purchaseService
             'purchased_at' => $request->purchased_at,
             'total_purchase_amount' => $request->total_purchase_amount,
             'balance_amount' => $request->balance_amount,
-            'payment_status' => $payment_status
+            'payment_status' => $payment_status,
+            'received_at'=>$request->received_at,
         ];
     }
-
-
 }

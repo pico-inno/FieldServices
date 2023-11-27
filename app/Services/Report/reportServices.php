@@ -36,19 +36,25 @@ class reportServices
         //outcome
 
         $totalPurchaseAmount =  totalPurchaseAmount($filterData);
-        $totalOSAmount = totalOSAmount($filterData);
+        if (!$filterData) {
+            $totalOSAmount = totalOSTransactionAmount($filterData);
+        } else {
+            $totalOSAmount = totalOSTransactionAmount($filterData) + closingStocksCal($filterData);
+        }
         $totalExpenseAmount = totalExpenseAmount();
-        $totalSaleAmount = totalSaleAmount($filterData);
-        $closingStocks = closingStocks();
+        $totalSaleAmount =(int) totalSaleAmount($filterData);
+        $closingStocks = closingStocksCal($filterData);
 
 
 
         $totalOutcome=(int) $totalPurchaseAmount+ $totalOSAmount + $totalExpenseAmount;
-        $totalIncomeAmount=$totalSaleAmount+ $closingStocks;
+        $totalIncomeAmount=$totalSaleAmount;
+
+        // dd($totalOutcome, $totalIncomeAmount);
+        // dd($totalIncomeAmount, $totalOutcome);
         // dd($totalSaleAmount, $closingStocks);
 
 
-        // dd( $totalIncomeAmount - $totalOutcome, $totalSaleAmount, $totalPurchaseAmount, $closingStocks);
         return $totalIncomeAmount - $totalOutcome;
     }
 
