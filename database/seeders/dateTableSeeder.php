@@ -27,9 +27,9 @@ class dateTableSeeder  extends Seeder
                 stock_history::find($s->id)->delete();
            }
         }
-
-        DB::update("UPDATE purchases SET purchases.received_at = purchases.created_at");
-        DB::update("UPDATE sales SET sales.delivered_at = purchases.created_at");
+        DB::update("UPDATE purchases SET received_at = created_at");
+        DB::update("UPDATE sales SET delivered_at = purchases.created_at");
+        DB::update("UPDATE stock_adjustments SET adjustmented_at=stock_adjustments.updated_at");
         DB::update("
             UPDATE stock_histories
             LEFT JOIN purchase_details ON stock_histories.transaction_details_id = purchase_details.id

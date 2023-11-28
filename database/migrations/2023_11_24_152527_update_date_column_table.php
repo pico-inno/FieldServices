@@ -40,13 +40,13 @@ return new class extends Migration
 
         // info("\n\n\n-------------------- successfull console ---------------------") ;
 
-        DB::update("
-            UPDATE stock_histories
-            LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
-            LEFT JOIN sales ON sale_details.sales_id = sales.id
-            SET stock_histories.created_at = sales.sold_at
-            WHERE stock_histories.transaction_type = 'purchases';
-        ");
+        // DB::update("
+        //     UPDATE stock_histories
+        //     LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
+        //     LEFT JOIN sales ON sale_details.sales_id = sales.id
+        //     SET stock_histories.created_at = sales.sold_at
+        //     WHERE stock_histories.transaction_type = 'purchases';
+        // ");
         //     DB::update("
         //     UPDATE stock_histories
         //     LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
