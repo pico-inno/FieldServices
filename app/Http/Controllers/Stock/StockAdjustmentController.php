@@ -101,6 +101,7 @@ class StockAdjustmentController extends Controller
                 'status' => $request->status,
                 'increase_subtotal' => 0,
                 'decrease_subtotal' => 0,
+                'adjustmented_at' => $request->status == 'completed' ? now() : null,
                 'remark' => $request->remark,
                 'created_at' => now(),
                 'created_by' => Auth::id(),
@@ -172,6 +173,7 @@ class StockAdjustmentController extends Controller
                             'increase_qty' => $adjustQty,
                             'decrease_qty' => 0,
                             'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                            'created_at' => now(),
                         ]);
 
                         $stockAdjustment->increase_subtotal += $subtotal;
@@ -269,6 +271,7 @@ class StockAdjustmentController extends Controller
                             'increase_qty' => 0,
                             'decrease_qty' => $adjustQty,
                             'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                            'created_at' => now(),
                         ]);
                     }
 
@@ -426,7 +429,9 @@ class StockAdjustmentController extends Controller
 
             $stockAdjustment = StockAdjustment::where('id', $id)->get()->first();
             $stockAdjustment->status = $request->status;
+            $stockAdjustment->adjustmented_at = $request->status == 'completed' ? now() : null;
             $stockAdjustment->remark = $request->remark;
+
 
 
             // ========== Being:: Update existing row ==========
@@ -497,6 +502,7 @@ class StockAdjustmentController extends Controller
                             'increase_qty' => $adjustQty,
                             'decrease_qty' => 0,
                             'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                            'created_at' => now(),
                         ]);
 
                         $stockAdjustment->increase_subtotal += $subtotal;
@@ -574,6 +580,7 @@ class StockAdjustmentController extends Controller
                                 'increase_qty' => 0,
                                 'decrease_qty' => $adjustQty,
                                 'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                                'created_at' => now(),
                             ]);
                         }
 
@@ -772,6 +779,7 @@ class StockAdjustmentController extends Controller
                                     'increase_qty' => $adjToIncrease,
                                     'decrease_qty' => 0,
                                     'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                                    'created_at' => now(),
                                 ]);
 
                                 $subtotal = $adjQty * $currentStockBalances->ref_uom_price;
@@ -877,6 +885,7 @@ class StockAdjustmentController extends Controller
                                 'increase_qty' => 0,
                                 'decrease_qty' => $adjustQty,
                                 'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                                'created_at' => now(),
                             ]);
 
 
@@ -1082,6 +1091,7 @@ class StockAdjustmentController extends Controller
                             'increase_qty' => $adjustQty,
                             'decrease_qty' => 0,
                             'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                            'created_at' => now(),
                         ]);
 
                         $stockAdjustment->increase_subtotal += $subtotal;
@@ -1179,6 +1189,7 @@ class StockAdjustmentController extends Controller
                             'increase_qty' => 0,
                             'decrease_qty' => $adjustQty,
                             'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                            'created_at' => now(),
                         ]);
                     }
 

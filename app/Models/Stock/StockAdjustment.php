@@ -23,6 +23,7 @@ class StockAdjustment extends Model
         'status',
         'increase_subtotal',
         'decrease_subtotal',
+        'adjustmented_at',
         'remark',
         'created_at',
         'created_by',

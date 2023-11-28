@@ -225,6 +225,7 @@ class StockTransferController extends Controller
                             'ref_uom_quantity' => $lotDetail->uom_quantity,
                             'ref_uom_price' => $currentStockDetail->ref_uom_price,
                             'current_quantity' => $lotDetail->uom_quantity,
+                           'created_at' => now(),
                         ]);
                     }
 
@@ -518,6 +519,7 @@ class StockTransferController extends Controller
                                 'increase_qty' => 0,
                                 'decrease_qty' => $qtyToDecrease,
                                 'ref_uom_id' => $transferDetail['ref_uom_id'],
+                                'created_at' => now(),
                             ]);
 
                             foreach ($currentBalances as $balance) {
@@ -570,6 +572,7 @@ class StockTransferController extends Controller
                                     'increase_qty' => 0,
                                     'decrease_qty' => $qtyToDecrease,
                                     'ref_uom_id' => $transferDetail['ref_uom_id'],
+                                    'created_at' => now(),
                                 ]);
 
 
@@ -622,6 +625,7 @@ class StockTransferController extends Controller
                                     'increase_qty' => 0,
                                     'decrease_qty' => $qtyToReincrease,
                                     'ref_uom_id' => $transferDetail['ref_uom_id'],
+                                    'created_at' => now(),
                                 ]);
 
 
@@ -706,6 +710,7 @@ class StockTransferController extends Controller
                                 'increase_qty' => $lotDetail->uom_quantity,
                                 'decrease_qty' => 0,
                                 'ref_uom_id' => $transferDetail['ref_uom_id'],
+                                'created_at' => now(),
                             ]);
 
                             // Increase current quantity for "to_location"
@@ -722,6 +727,7 @@ class StockTransferController extends Controller
                                 'ref_uom_quantity' => $lotDetail->uom_quantity,
                                 'ref_uom_price' => $currentStockDetail->ref_uom_price,
                                 'current_quantity' => $lotDetail->uom_quantity,
+                                'created_at' => now(),
                             ]);
                         }
 
@@ -875,6 +881,7 @@ class StockTransferController extends Controller
                                 'ref_uom_quantity' => $lotDetail->uom_quantity,
                                 'ref_uom_price' => $currentStockDetail->ref_uom_price,
                                 'current_quantity' => $lotDetail->uom_quantity,
+                                'created_at' => now(),
                             ]);
 
                             $this->recordHistories($request->to_location, $transferDetail, $qtyToIncrease, 'increase', $lotDetail->uom_quantity );
@@ -1035,6 +1042,7 @@ class StockTransferController extends Controller
             'decrease_qty' => $qtyStatus == 'decrease' ? $quantity : 0,
             'ref_uom_id' => $currentStockData['ref_uom_id'],
             'balance_quantity' => $remainBalanceQty,
+            'created_at' => now(),
         ]);
         return true;
 
