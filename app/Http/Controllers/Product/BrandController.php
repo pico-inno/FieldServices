@@ -15,6 +15,7 @@ use App\Http\Requests\Product\Brand\BrandUpdateRequest;
 class BrandController extends Controller
 {
     protected $brandRepository;
+
     public function __construct(BrandRepository $brandRepository)
     {
         $this->middleware(['auth', 'isActive']);
@@ -31,11 +32,11 @@ class BrandController extends Controller
         $brands = Brand::all();
 
         return DataTables::of($brands)
-        ->addColumn('action', function($brand){
-            return $brand->id;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addColumn('action', function ($brand) {
+                return $brand->id;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function index()
@@ -52,12 +53,12 @@ class BrandController extends Controller
     {
         $brandAction->create($request);
 
-        if($request->form_type === "from_product"){
+        if ($request->form_type === "from_product") {
             return response()->json([
                 'message' => 'Brand created successfully',
                 'brands' => $this->brandRepository->getAll()
             ]);
-        }else{
+        } else {
             return redirect()->route('brands')->with('message', 'Brand created successfully');
         }
 

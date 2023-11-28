@@ -4,137 +4,97 @@ namespace App\Actions\userManagement;
 
 use App\Models\BusinessUser;
 use App\Models\PersonalInfo;
+use App\repositories\UserManagement\BusinessUserRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserAction
 {
+    protected $businessUserRepository;
+
+    public function __construct(BusinessUserRepository $businessUserRepository)
+    {
+        $this->businessUserRepository = $businessUserRepository;
+    }
+
     public function create($requestData)
     {
-        try {
-            DB::beginTransaction();
+        return DB::transaction(function () use ($requestData) {
+            $preparedPersonalInfoData = $this->preparePersonalInfoData($requestData);
+            $createdPersonalInfo = $this->businessUserRepository->createPersonalInfo($preparedPersonalInfoData);
 
-            $personalInfo = PersonalInfo::create([
-                'initname' => $requestData->initname,
-                'first_name' => $requestData->first_name,
-                'last_name' => $requestData->last_name,
-                'dob' => $requestData->dob,
-                'gender' => $requestData->gender,
-                'marital_status' => $requestData->marital_status,
-                'blood_group' => $requestData->blood_group,
-                'contact_number' => $requestData->contact_number,
-                'alt_number' => $requestData->alt_number,
-                'family_number' => $requestData->family_number,
-                'fb_link' => $requestData->fb_link,
-                'twitter_link' => $requestData->twitter_link,
-                'social_media_1' => $requestData->social_media_1,
-                'social_media_2' => $requestData->social_media_2,
-                'custom_field_1' => $requestData->custom_field_1,
-                'custom_field_2' => $requestData->custom_field_2,
-                'custom_field_3' => $requestData->custom_field_3,
-                'custom_field_4' => $requestData->custom_field_4,
-                'guardian_name' => $requestData->guardian_name,
-                'id_proof_name' => $requestData->id_proof_name,
-                'id_proof_number' => $requestData->id_proof_number,
-                'language' => $requestData->language,
-                'permanent_address' => $requestData->permanent_address,
-                'current_address' => $requestData->current_address,
-                'bank_details' => $requestData->bank_details,
-            ]);
+            $preparedBusinessUserData = $this->prepareBusinessUserData($requestData);
+            $preparedBusinessUserData['password'] = Hash::make($requestData->password);
+            $preparedBusinessUserData['personal_info_id'] = $createdPersonalInfo->id;
 
-
-            BusinessUser::create([
-                'username' => $requestData->username,
-                'role_id' => $requestData->role_id,
-                'business_id' => 1,
-                'default_location_id' => $requestData->default_location_id,
-                'access_location_ids' => serialize($requestData->access_location_ids),
-                'email' => $requestData->email,
-                'password' => Hash::make($requestData->password),
-                'personal_info_id' => $personalInfo->id,
-                'is_active' => $requestData->is_active == null ? 0 : $requestData->is_active
-            ]);
-
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+            $this->businessUserRepository->create($preparedBusinessUserData);
+        });
     }
 
     public function update($requestData, $id)
     {
-        try {
-            DB::beginTransaction();
+        return DB::transaction(function () use ($id, $requestData) {
+            $businessUser = $this->businessUserRepository->getById($id);
+            $preparedBusinessUserData = $this->prepareBusinessUserData($requestData);
+            $preparedBusinessUserData['password'] = $requestData->password ? Hash::make($requestData->password) : $businessUser->password;
 
-            $user = BusinessUser::findOrFail($id);
+            $this->businessUserRepository->update($id, $preparedBusinessUserData);
 
-            $user->update([
-                'username' => $requestData->username,
-                'role_id' => $requestData->role_id,
-                'default_location_id' => $requestData->default_location_id,
-                'access_location_ids' => serialize($requestData->access_location_ids),
-                'email' => $requestData->email,
-                'password' => $requestData->password ? Hash::make($requestData->password) : $user->password,
-                'is_active' => $requestData->is_active == null ? 0 : $requestData->is_active,
-            ]);
-
-            $personalInfo = PersonalInfo::findOrFail($user->personal_info_id);
-
-            $personalInfo->update([
-                'initname' => $requestData->initname,
-                'first_name' => $requestData->first_name,
-                'last_name' => $requestData->last_name,
-                'dob' => $requestData->dob,
-                'gender' => $requestData->gender,
-                'marital_status' => $requestData->marital_status,
-                'blood_group' => $requestData->blood_group,
-                'contact_number' => $requestData->contact_number,
-                'alt_number' => $requestData->alt_number,
-                'family_number' => $requestData->family_number,
-                'fb_link' => $requestData->fb_link,
-                'twitter_link' => $requestData->twitter_link,
-                'social_media_1' => $requestData->social_media_1,
-                'social_media_2' => $requestData->social_media_2,
-                'custom_field_1' => $requestData->custom_field_1,
-                'custom_field_2' => $requestData->custom_field_2,
-                'custom_field_3' => $requestData->custom_field_3,
-                'custom_field_4' => $requestData->custom_field_4,
-                'guardian_name' => $requestData->guardian_name,
-                'id_proof_name' => $requestData->id_proof_name,
-                'id_proof_number' => $requestData->id_proof_number,
-                'language' => $requestData->language,
-                'permanent_address' => $requestData->permanent_address,
-                'current_address' => $requestData->current_address,
-                'bank_details' => $requestData->bank_details,
-            ]);
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+            $preparedPersonalInfoData = $this->preparePersonalInfoData($requestData);
+            $this->businessUserRepository->updatePersonalInfo($businessUser->personal_info_id, $preparedPersonalInfoData);
+        });
     }
 
     public function delete($id)
     {
-        try {
-            DB::beginTransaction();
+        return DB::transaction(function () use ($id){
+            $businessUser = $this->businessUserRepository->getById($id);
+            $this->businessUserRepository->deletePersonalInfo($businessUser->personal_info_id);
+            $this->businessUserRepository->delete($id);
+        });
+    }
 
-            $user = BusinessUser::findOrFail($id);
-            $personalInfo = PersonalInfo::findOrFail($user->personal_info_id);
+    private function preparePersonalInfoData($data)
+    {
+        return [
+            'initname' => $data->initname,
+            'first_name' => $data->first_name,
+            'last_name' => $data->last_name,
+            'dob' => $data->dob,
+            'gender' => $data->gender,
+            'marital_status' => $data->marital_status,
+            'blood_group' => $data->blood_group,
+            'contact_number' => $data->contact_number,
+            'alt_number' => $data->alt_number,
+            'family_number' => $data->family_number,
+            'fb_link' => $data->fb_link,
+            'twitter_link' => $data->twitter_link,
+            'social_media_1' => $data->social_media_1,
+            'social_media_2' => $data->social_media_2,
+            'custom_field_1' => $data->custom_field_1,
+            'custom_field_2' => $data->custom_field_2,
+            'custom_field_3' => $data->custom_field_3,
+            'custom_field_4' => $data->custom_field_4,
+            'guardian_name' => $data->guardian_name,
+            'id_proof_name' => $data->id_proof_name,
+            'id_proof_number' => $data->id_proof_number,
+            'language' => $data->language,
+            'permanent_address' => $data->permanent_address,
+            'current_address' => $data->current_address,
+            'bank_details' => $data->bank_details,
+        ];
+    }
 
-            $user->delete();
-            $personalInfo->delete();
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+    private function prepareBusinessUserData($data)
+    {
+        return [
+            'username' => $data->username,
+            'role_id' => $data->role_id,
+            'business_id' => 1,
+            'default_location_id' => $data->default_location_id,
+            'access_location_ids' => serialize($data->access_location_ids),
+            'email' => $data->email,
+            'is_active' => $data->is_active == null ? 0 : $data->is_active
+        ];
     }
 }
