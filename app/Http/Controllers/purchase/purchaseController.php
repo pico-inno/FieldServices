@@ -319,6 +319,7 @@ class purchaseController extends Controller
                         'deleted_by' => Auth::user()->id,
                     ]);
                     CurrentStockBalance::where('transaction_detail_id', $p_id)->where('transaction_type', 'purchase')->delete();
+                    stock_history::where('transaction_details_id', $purchase_detail_id)->where('transaction_type', 'purchase')->first()->delete();
                 }
 
                 //to create purchase details
@@ -331,6 +332,7 @@ class purchaseController extends Controller
             } else {
                 $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get();
                 foreach ($fetch_purchase_details as $p) {
+                    stock_history::where('transaction_details_id', $p->id)->where('transaction_type', 'purchase')->first()->delete();
                     CurrentStockBalance::where('trnasaction_detail_id', $p->id)->where('transaction_type', 'purchase')->delete();
                 }
                 purchase_details::where('purchases_id', $id)->update([
@@ -338,6 +340,7 @@ class purchaseController extends Controller
                     'deleted_at' => now(),
                     'deleted_by' => Auth::user()->id,
                 ]);
+
             }
             // dd('here');
             DB::commit();
@@ -406,6 +409,7 @@ class purchaseController extends Controller
         $purchaseDetails = purchase_details::where('purchases_id', $id);
         foreach ($purchaseDetails->get() as $pd) {
             CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->delete();
+            stock_history::where('transaction_details_id', $p->id)->where('transaction_type', 'purchase')->first()->delete();
         }
         $purchaseDetails->update([
             'is_delete' => 1,

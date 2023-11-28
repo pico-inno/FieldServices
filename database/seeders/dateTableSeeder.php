@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\stock_history;
+use Illuminate\Database\Seeder;
 
-class dateTableSeeder
+use Illuminate\Support\Facades\DB;
+use function Laravel\Prompts\error;
+
+class dateTableSeeder  extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,40 +17,48 @@ class dateTableSeeder
      */
 
 
-    public function run()
+    public function run(): void
     {
-        DB::update("
-            UPDATE stock_histories
-            LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
-            LEFT JOIN sales ON sale_details.sales_id = sales.id
-            SET stock_histories.created_at = sales.sold_at
-        ");
-            DB::update("
-            UPDATE stock_histories
-            LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
-            LEFT JOIN sales ON sale_details.sales_id = sales.id
-            SET stock_histories.created_at = sales.sold_at
-            WHERE stock_histories.transaction_type = 'sale'
-        ");
+        $sh=stock_history::where('transaction_type', 'purchase')
+                    ->with('purchaseDetail')
+                    ->get();
+        foreach ($sh as $s) {
+           if($s->purchaseDetail->is_delete==1){
+                stock_history::find($s->id)->delete();
+           }
+        }
+        // DB::update("
+        //     UPDATE stock_histories
+        //     LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
+        //     LEFT JOIN sales ON sale_details.sales_id = sales.id
+        //     SET stock_histories.created_at = sales.sold_at
+        // ");
+        //     DB::update("
+        //     UPDATE stock_histories
+        //     LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
+        //     LEFT JOIN sales ON sale_details.sales_id = sales.id
+        //     SET stock_histories.created_at = sales.sold_at
+        //     WHERE stock_histories.transaction_type = 'sale'
+        // ");
 
-        DB::update("
-            UPDATE stock_histories
-            LEFT JOIN purchase_details ON stock_histories.transaction_details_id = purchase_details.id
-            LEFT JOIN purchases ON purchase_details.purchases_id = purchases.id
-            SET stock_histories.created_at = purchases.purchased_at,
-            stock_histories.ref_uom_price=purchase_details.per_ref_uom_price
-            WHERE stock_histories.transaction_type = 'purchase'
-        ");
+        // DB::update("
+        //     UPDATE stock_histories
+        //     LEFT JOIN purchase_details ON stock_histories.transaction_details_id = purchase_details.id
+        //     LEFT JOIN purchases ON purchase_details.purchases_id = purchases.id
+        //     SET stock_histories.created_at = purchases.purchased_at,
+        //     stock_histories.ref_uom_price=purchase_details.per_ref_uom_price
+        //     WHERE stock_histories.transaction_type = 'purchase'
+        // ");
 
-        DB::update("
-            UPDATE stock_histories
-            LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
-            LEFT JOIN sales ON sale_details.sales_id = sales.id
-            LEFT JOIN lot_serial_details ON sale_details.id = lot_serial_details.transaction_detail_id
-            LEFT JOIN current_stock_balance ON lot_serial_details.current_stock_balance_id = current_stock_balance.id
-            SET stock_histories.created_at = sales.sold_at,
-            stock_histories.ref_uom_price=current_stock_balance.ref_uom_price
-            WHERE stock_histories.transaction_type = 'sale'
-        ");
+        // DB::update("
+        //     UPDATE stock_histories
+        //     LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
+        //     LEFT JOIN sales ON sale_details.sales_id = sales.id
+        //     LEFT JOIN lot_serial_details ON sale_details.id = lot_serial_details.transaction_detail_id
+        //     LEFT JOIN current_stock_balance ON lot_serial_details.current_stock_balance_id = current_stock_balance.id
+        //     SET stock_histories.created_at = sales.sold_at,
+        //     stock_histories.ref_uom_price=current_stock_balance.ref_uom_price
+        //     WHERE stock_histories.transaction_type = 'sale'
+        // ");
     }
 }
