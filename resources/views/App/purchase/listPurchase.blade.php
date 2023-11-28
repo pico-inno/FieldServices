@@ -243,7 +243,9 @@
                             <th class="min-w-125px">{{__('table/label.voucher_no')}}</th>
                             <th class="min-w-125px">{{__('table/label.location')}}</th>
                             <th class="min-w-125px">Supplier</th>
+                            <th class="min-w-125px">{{__('table/label.received_at')}}</th>
                             <th class="min-w-125px">{{__('table/label.status')}}</th>
+                            <th class="min-w-125px">{{__('table/label.total_purchase_amount')}}</th>
                             <th class="min-w-125px">{{__('table/label.paymnet_status')}}</th>
                             {{-- <th class="min-w-125px">Quantity Remaining</th>
                             <th class="min-w-125px">Shipping Status</th>

@@ -152,6 +152,7 @@ class SaleServices
             }
             $refInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_detail['quantity'], $sale_detail['uom_id']);
             $requestQty = $refInfo['qtyByReferenceUom'];
+            $refUoMId=$refInfo['referenceUomId'];
             $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
 
             if ($product) {
@@ -164,13 +165,13 @@ class SaleServices
                         'transaction_type' => 'sale',
                         'transaction_details_id' => $created_sale_details->id,
                         'increase_qty' => 0,
-                        'ref_uom_id' => $refInfo['referenceUomId'],
+                        'ref_uom_id' => $refUoMId,
                         'decrease_qty' => $requestQty
                     ];
                     stock_history::create($stock_history_data);
                 } else {
                     if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
-                        $changeQtyStatus = $this->changeStockQty($requestQty, $request->business_location_id, $created_sale_details->toArray(), $stock);
+                        $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock);
                         if ($changeQtyStatus == false) {
                             return 'outOfStock';
                             // return redirect()->back()->withInput()->with(['warning' => "Out of Stock In " . $stock['product']['name']]);
@@ -198,7 +199,7 @@ class SaleServices
         return;
     }
 
-    public function changeStockQty($requestQty, $business_location_id, $sale_detail, $current_stock = [])
+    public function changeStockQty($requestQty,$refUoMId, $business_location_id, $sale_detail, $current_stock = [])
     {
         $product_id = $sale_detail['product_id'];
         $sale_detail_id = $sale_detail['id'];
@@ -226,23 +227,12 @@ class SaleServices
                     $stocks = $stocks->get();
                 }
                 $qtyToRemove = $requestQty;
+                $this->createStockHistory($business_location_id,$sale_detail,$requestQty, $refUoMId);
                 // dd($requestQty);
                 $data = [];
                 foreach ($stocks as  $stock) {
                     $stockQty = $stock->current_quantity;
                     // prepare data for stock history
-                    $stock_history_data = [
-                        'business_location_id' => $stock['business_location_id'],
-                        'product_id' => $stock['product_id'],
-                        'variation_id' => $stock['variation_id'],
-                        'expired_date' => $stock['expired_date'],
-                        'transaction_type' => 'sale',
-                        'transaction_details_id' => $sale_detail_id,
-                        'increase_qty' => 0,
-                        'ref_uom_id' => $stock['ref_uom_id'],
-                        'created_at' =>now(),
-                    ];
-
                     //remove qty from current stock
                     if ($qtyToRemove > $stockQty) {
                         $data[] = [
@@ -256,8 +246,6 @@ class SaleServices
                         CurrentStockBalance::where('id', $stock->id)->first()->update([
                             'current_quantity' => 0,
                         ]);
-                        $stock_history_data['decrease_qty'] = $stockQty;
-                        stock_history::create($stock_history_data);
                     } else {
                         $leftStockQty = $stockQty - $qtyToRemove;
                         $data[] = [
@@ -267,12 +255,10 @@ class SaleServices
                             'ref_uom_id' => $stock->ref_uom_id,
                             'stock_id' => $stock->id
                         ];
-                        $stock_history_data['decrease_qty'] = $qtyToRemove;
                         $qtyToRemove = 0;
                         CurrentStockBalance::where('id', $stock->id)->first()->update([
                             'current_quantity' => $leftStockQty,
                         ]);
-                        stock_history::create($stock_history_data);
                         break;
                     }
                 };
@@ -317,5 +303,20 @@ class SaleServices
         //     return false;
         // }
 
+    }
+    public function createStockHistory($business_location_id,$sale_detail,$reqQty, $refUoMId){
+        $stock_history_data = [
+            'business_location_id' => $business_location_id,
+            'product_id' => $sale_detail['product_id'],
+            'variation_id' => $sale_detail['variation_id'],
+            'expired_date' => $sale_detail['expired_date'] ?? null,
+            'transaction_type' => 'sale',
+            'transaction_details_id' => $sale_detail['id'],
+            'increase_qty' => 0,
+            'decrease_qty'=> $reqQty,
+            'ref_uom_id' => $refUoMId,
+            'created_at' => now(),
+        ];
+        stock_history::create($stock_history_data);
     }
 }

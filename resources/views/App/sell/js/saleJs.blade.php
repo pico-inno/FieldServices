@@ -49,7 +49,7 @@
                 saleQty=isNullOrNan(getReferenceUomInfoByCurrentUomQty(saledetail.quantity,uoms.currentUom,uoms.referenceUom)['qtyByReferenceUom']);
             }
             let totalCurrentStockQty=0;
-            if(saledetail.kit_sale_details){
+            if(saledetail.kit_sale_details.length >0){
                 totalCurrentStockQty=$(`.aviaQty_${index}`).val();
             }else{
                 totalCurrentStockQty=editSale.status=='delivered' ? isNullOrNan(saledetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saledetail.stock_sum_current_quantity) ;
@@ -75,22 +75,20 @@
                 productsOnSelectData=[...productsOnSelectData,newProductData];
             }
             setTimeout(() => {
-                // checkStock($(`.sale_row_${index}`));
+                let uom=$(`[name="sale_details[${index}][uom_id]"]`);
+                uom.select2();
+                let uom_select=uom.val();
+                getPrice(uom);
+                changeQtyOnUom(uom,uom_select);
+                // lineDiscountCalulation(uom);
+                extraDiscCal();
             }, 1000);
         })
         let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
         getPriceList(CurrentPriceListId);
         suggestionProductEvent();
         $('.price_list_input').val(CurrentPriceListId).trigger('change');
-        editSaleDetails.forEach(function(sale,index){
-            let uom=$(`[name="sale_details[${index}][uom_id]"]`);
-            uom.select2();
-            let uom_select=uom.val();
-            getPrice(uom);
-            changeQtyOnUom(uom,uom_select);
-            // lineDiscountCalulation(uom);
-            extraDiscCal();
-        })
+
         let dia=document.querySelectorAll('.dialer_obj')
         dia.forEach(e => {
             let diaO = new KTDialer(e, {

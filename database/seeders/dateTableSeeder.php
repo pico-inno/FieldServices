@@ -69,6 +69,13 @@ class dateTableSeeder  extends Seeder
             SET stock_histories.created_at = transfers.created_at
             WHERE stock_histories.transaction_type = 'transfer'
         ");
+        DB::raw("
+            UPDATE stock_histories
+            LEFT JOIN stockin_details ON stock_histories.transaction_details_id = stockin_details.id
+            LEFT JOIN stockins ON stockin_details.stockin_id = stockins.id
+            SET stock_histories.created_at = stockins.stockin_date
+            WHERE stock_histories.transaction_type = 'stock_in'
+        ");
 
         // DB::update("
         //     UPDATE stock_histories

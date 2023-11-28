@@ -10,6 +10,8 @@ return [
     'subtotal'=>'Subtotal',
     'no_data_to_show'=>'There is no data to show',
     'total_items'=>'Total Items',
+    'total_purchase_amount'=>'Total Purchase Amount',
+    'received_at'=> 'Received At',
 
 
 ];

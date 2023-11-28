@@ -81,7 +81,11 @@ class purchaseService
             })
 
             ->editColumn('date', function ($purchase) {
-                return fDate($purchase->created_at, true);
+                return fDate($purchase->purchased_at, true);
+            })
+
+            ->editColumn('received_at', function ($purchase) {
+                return fDate($purchase->received_at, true);
             })
             ->editColumn('purchaseItems', function ($purchase) {
                 $purchaseDetails = $purchase->purchase_details;
@@ -122,6 +126,9 @@ class purchaseService
                     return '-';
                 }
             })
+            ->editColumn('total_purchase_amount',function($e){
+                return price($e->total_purchase_amount ?? 0);
+            })
             ->addColumn('action', function ($purchase) {
                 $editBtn = $purchase->status != "confirmed" ? '<a href=" ' . route('purchase_edit', $purchase->id) . ' " class="dropdown-item p-2 edit-unit bg-active-primary fw-semibold" >Edit</a>' : '';
                 $html = '
@@ -153,7 +160,7 @@ class purchaseService
 
                 return (hasView('purchase') && hasPrint('purchase') && hasUpdate('purchase') && hasDelete('purchase') ? $html : 'No Access');
             })
-            ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
+            ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status', 'received_at'])
             ->make(true);
     }
 

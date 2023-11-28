@@ -76,9 +76,18 @@ var KTCustomersList = function () {
                     name: 'supplier'
                 },
                 {
+                    data: 'received_at',
+                    name: 'received_at',
+                },
+                {
                     data: 'status',
                     name: 'status'
-                },{
+                },
+                {
+                    name:'total_purchase_amount',
+                    data:'total_purchase_amount'
+                },
+                {
                     name:'payment_status',
                     data:'payment_status'
                 }

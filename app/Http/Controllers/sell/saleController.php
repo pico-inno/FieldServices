@@ -558,7 +558,9 @@ class saleController extends Controller
                     $sale_detial_qty_from_db = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_details->quantity, $sale_details->uom_id)['qtyByReferenceUom'];
 
                     // smallest qty from client
-                    $requestQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($request_old_sale['quantity'], $request_old_sale['uom_id'])['qtyByReferenceUom'];
+                    $UoMHelper= UomHelper::getReferenceUomInfoByCurrentUnitQty($request_old_sale['quantity'], $request_old_sale['uom_id']);
+                    $requestQty = $UoMHelper['qtyByReferenceUom'];
+                    $refUoMId=$UoMHelper['referenceUomId'];
 
 
                     $dif_sale_qty = $requestQty - $sale_detial_qty_from_db;
@@ -572,9 +574,8 @@ class saleController extends Controller
                     if ($product->product_type == 'storable') {
                         // stock adjustment
                         if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
-                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
+                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $request_old_sale);
                             if ($changeQtyStatus == false) {
-                                dd($changeQtyStatus);
                                 return back()->with(['error' => "product Out of Stock"]);
                             } else {
                                 // if ($this->setting->lot_control == "off") {
