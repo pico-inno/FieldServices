@@ -56,8 +56,8 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-start">
-                        {{-- <button  class="btn btn-light me-5 btn-sm" name="cancle" value="cancle">Cancel</button> --}}
-                        <a href="{{ route('unit-category') }}"   class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>
+                         <button  class="btn btn-light me-5 btn-sm" name="cancel" value="cancle">Cancel</button>
+{{--                        <a href="{{ route('unit-category')}}"   class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>--}}
                         <button type="submit" class="btn btn-primary btn-sm">
                             {{ __('product/product.save') }}
                         </button>
@@ -71,5 +71,5 @@
 @endsection
 
 @push('scripts')
-    
+
 @endpush

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Actions\product\GenericAction;
+use App\repositories\GenericRepository;
 use Illuminate\Http\Request;
 use App\Models\Product\Generic;
 use App\Http\Controllers\Controller;
@@ -12,25 +14,29 @@ use App\Http\Requests\Product\Generic\GenericUpdateRequest;
 
 class GenericController extends Controller
 {
-    public function __construct()
+    protected $genericRepository;
+
+    public function __construct(GenericRepository $genericRepository)
     {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:generic')->only(['index', 'unitDatas', 'uomDatas']);
         $this->middleware('canCreate:generic')->only(['add', 'create']);
         $this->middleware('canUpdate:generic')->only(['edit', 'update']);
         $this->middleware('canDelete:generic')->only('delete');
+
+        $this->genericRepository = $genericRepository;
     }
 
     public function datas()
     {
-        $generics = Generic::all();
+        $generics = $this->genericRepository->getAll();
 
         return DataTables::of($generics)
-        ->addColumn('action', function($generic){
-            return $generic->id;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addColumn('action', function ($generic) {
+                return $generic->id;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function index()
@@ -43,46 +49,39 @@ class GenericController extends Controller
         return view('App.product.generic.genericAdd');
     }
 
-    public function create(GenericCreateRequest $request)
+    public function create(GenericCreateRequest $request, GenericAction $genericAction)
     {
-        $generic = new Generic();
-        $generic->name = $request->generic_name;
-        $generic->created_by = Auth::user()->id;
+        $genericAction->create($request);
 
-        $generic->save();
-        $generics = Generic::all();
-
-        if($request->form_type === "from_product"){
+        if ($request->form_type === "from_product") {
             return response()->json([
-                'message' => 'Generic created sucessfully',
-                'generics' => $generics
+                'message' => 'Generic created successfully',
+                'generics' => $this->genericRepository->getAll()
             ]);
+        } else {
+            return redirect()->route('generic')->with('message', 'Generic created successfully');
         }
 
-        return redirect('/generic')->with('message', 'Created sucessfully generic');
     }
 
     public function edit(Generic $generic)
     {
-        return view('App.product.generic.genericEdit', compact('generic'));
+        return view('App.product.generic.genericEdit', [
+            'generic' => $generic
+        ]);
     }
 
-    public function update(GenericUpdateRequest $request, Generic $generic)
+    public function update(GenericUpdateRequest $request, Generic $generic, GenericAction $genericAction)
     {
-        $generic->name = $request->generic_name;
-        $generic->updated_by = Auth::user()->id;
+        $genericAction->update($generic->id, $request);
 
-        $generic->save();
-
-        return redirect('/generic')->with('message', 'Updated sucessfully generic');
+        return redirect()->route('generic')->with('message', 'Generic updated successfully');
     }
 
-    public function delete(Generic $generic)
+    public function delete(Generic $generic, GenericAction $genericAction)
     {
-        $generic->deleted_by = Auth::user()->id;
-        $generic->save();
-        $generic->delete();
+        $genericAction->delete($generic->id);
 
-        return response()->json(['message' => 'Deleted sucessfully generic']);
+        return response()->json(['message' => 'Generic deleted successfully']);
     }
 }

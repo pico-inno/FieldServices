@@ -4,11 +4,38 @@ namespace App\Services\product;
 
 use App\Models\Product\AdditionalProduct;
 use App\Models\Product\ProductVariation;
+use App\repositories\ProductRepository;
 
 class productServices
 {
+    public function additionalProductsRetrive($product_id){
+     $productRepository = new ProductRepository();
+     $additionalProducts =  $productRepository->getAllAdditionalProductByProductId($product_id);
 
+     $result = [];
+     foreach ($additionalProducts as $additionalProduct){
+         $product_variation = $additionalProduct->toArray()['product_variation'];
+         $product_data = $product_variation['product'];
+         $uoms_data = $additionalProduct->toArray()['uom']['unit_category']['uom_by_category'];
 
+         $data = [
+             'id' => $additionalProduct['id'],
+             'product_id' => $product_data['id'],
+             'variation_id' => $product_variation['id'],
+             'quantity' => $additionalProduct['quantity'],
+             'uom_id' => $additionalProduct['uom_id'],
+             'product_name' => $product_data['name'],
+             'variation_name' => isset($product_variation['variation_template_value']) ? $product_variation['variation_template_value']['name'] : '',
+             'uoms' => $uoms_data,
+         ];
+
+         $result [] = $data;
+
+     }
+     return $result;
+    }
+
+    /////////
     public function createAdditionalProducts(?array $datas, $nextProduct, $isCreating = true)
     {
         $nextProductId = $nextProduct->id;

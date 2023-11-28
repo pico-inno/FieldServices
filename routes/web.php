@@ -34,12 +34,14 @@ use App\Http\Controllers\currencyController;
 use App\Http\Controllers\languageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\sell\saleController;
+
 // use App\Http\Controllers\ContactController\CustomerGroupController;
 // use App\Http\Controllers\ContactController\ImportContactsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\restaurantController;
 use App\Http\Middleware\permissions\role\view;
 use App\Http\Controllers\Product\UoMController;
+
 //use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\exchangeRateController;
 use App\Http\Controllers\openingStockController;
@@ -52,6 +54,7 @@ use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Report\ReportController;
+
 // use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Stock\StockInController;
 use App\Http\Controllers\settings\FloorController;
@@ -75,7 +78,6 @@ use App\Http\Controllers\Stock\StockTransferController;
 use \App\Http\Controllers\userManagement\RoleController;
 use App\Http\Controllers\paymentsTransactionsController;
 use App\Http\Controllers\Product\ManufacturerController;
-use App\Http\Controllers\Product\UnitCategoryController;
 use App\Http\Controllers\Service\ServiceSalesController;
 use App\Http\Controllers\Contact\CustomerGroupController;
 use App\Http\Controllers\hospitalFolioInvoicesController;
@@ -118,7 +120,6 @@ Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('
 // });
 
 
-
 //============================ Being: User Management ==========================================
 // Auth::routes();
 Auth::routes(['register' => false]);
@@ -137,7 +138,7 @@ Route::controller(DashboardController::class)->group(function () {
     Route::post('/dashboard/total-sale-purchase-order-widget', 'totalSaleAndPurchaseOrder');
 });
 //End: Dashboard
-Route::get('lang/{code}',[languageController::class, 'change'])->name('lang.change');
+Route::get('lang/{code}', [languageController::class, 'change'])->name('lang.change');
 //_Being: Users
 Route::resource('users', BusinessUserController::class);
 //_End: Users
@@ -216,7 +217,6 @@ Route::get('/stock/get-stock', [StockTransferController::class, 'getStock']);
 Route::get('/stock/get-current-qty', [StockTransferController::class, 'getCurrentQtyOnUnit']);
 
 
-
 //============================ End: Stock - In, Out, Transfer, Adustment ===========================================
 
 
@@ -257,7 +257,6 @@ Route::controller(ReportController::class)->group(function () {
         //End: Expire Alert
 
 
-
         //Stock transfer summary
         Route::get('/stock-transfer-report', 'stock_transfer_index')->name('report.stocktransfer.index');
         Route::post('/transfer-report/filter-list', 'transferFilter');
@@ -277,7 +276,6 @@ Route::controller(ReportController::class)->group(function () {
         Route::post('/current-stock-balance/filter-list', 'currentStockBalanceFilter');
 
         //=================================End: Inventory Reports ========================
-
 
 
     });
@@ -358,7 +356,6 @@ Route::get('/location/setting', function () {
 });
 
 
-
 Route::resource('building', BuildingController::class);
 Route::resource('floor', FloorController::class);
 
@@ -394,13 +391,13 @@ Route::prefix('purchase')->group(function () {
     });
 });
 
-Route::get('purchase/order', fn () => view('App.purchase.purchaseOrder'))->name('purchase_order');
+Route::get('purchase/order', fn() => view('App.purchase.purchaseOrder'))->name('purchase_order');
 // Route::get('purchase/add', fn () => view('App.purchase.addPurchase'))->name('purchase_add');
-Route::get('purchase/add/order', fn () => view('App.purchase.purchaseOrderAdd'))->name('purchase_order_add');
-Route::get('purchase/add/supplier', fn () => view('App.purchase.supplierAdd'))->name('purchase_supplier_add');
+Route::get('purchase/add/order', fn() => view('App.purchase.purchaseOrderAdd'))->name('purchase_order_add');
+Route::get('purchase/add/supplier', fn() => view('App.purchase.supplierAdd'))->name('purchase_supplier_add');
 // Route::get('purchase/list', fn () => view('App.purchase.listPurchase'))->name('purchase_list');
-Route::get('purchase/list/return', fn () => view('App.purchase.listPurchaseReturn'))->name('purchase_list_return');
-Route::get('purchase/list/return/add', fn () => view('App.purchase.addListPurchaseReturn'))->name('add_purchase_list_return');
+Route::get('purchase/list/return', fn() => view('App.purchase.listPurchaseReturn'))->name('purchase_list_return');
+Route::get('purchase/list/return/add', fn() => view('App.purchase.addListPurchaseReturn'))->name('add_purchase_list_return');
 
 //============================ End::purchase ============================================
 
@@ -424,12 +421,10 @@ Route::prefix('sell')->group(function () {
         Route::get('{id}/price/list', 'getpriceList');
 
 
-
         //invoice
         Route::get('print/{id}/Invoice', 'saleInvoice')->name('print_sale');
         Route::delete('{id}/delete', 'softDelete');
         Route::delete('deletee/selected', 'softSelectedDelete');
-
 
 
         Route::get('/registration/post/{id}/Folio', 'postToRegistrationFolio')->name('postToRegistrationFolio');
@@ -442,26 +437,24 @@ Route::prefix('sell')->group(function () {
     });
 });
 
-Route::get('sell/order', fn () => view('App.sell.sale.saleOrder'))->name('sale_order');
+Route::get('sell/order', fn() => view('App.sell.sale.saleOrder'))->name('sale_order');
 // Route::get('add/sell', fn () => view('App.sell.sale.addSale'))->name('add_sale');
-Route::get('add/sell/order', fn () => view('App.sell.sale.addSaleOrder'))->name('add_sale_order');
-Route::get('sell/list/pos', fn () => view('App.sell.pos.listPos'))->name('list_pos');
+Route::get('add/sell/order', fn() => view('App.sell.sale.addSaleOrder'))->name('add_sale_order');
+Route::get('sell/list/pos', fn() => view('App.sell.pos.listPos'))->name('list_pos');
 
-Route::get('sell/list/drafts', fn () => view('App.sell.draft.listDraft'))->name('list_drafts');
-Route::get('sell/drafts/add', fn () => view('App.sell.draft.addDraft'))->name('add_draft');
+Route::get('sell/list/drafts', fn() => view('App.sell.draft.listDraft'))->name('list_drafts');
+Route::get('sell/drafts/add', fn() => view('App.sell.draft.addDraft'))->name('add_draft');
 
-Route::get('sell/list/quotations', fn () => view('App.sell.quotations.list'))->name('list_quotations');
-Route::get('sell/quotation/add', fn () => view('App.sell.quotations.add'))->name('add_quotations');
+Route::get('sell/list/quotations', fn() => view('App.sell.quotations.list'))->name('list_quotations');
+Route::get('sell/quotation/add', fn() => view('App.sell.quotations.add'))->name('add_quotations');
 
-Route::get('sell/shipments', fn () => view('App.sell.shipments'))->name('shipments');
+Route::get('sell/shipments', fn() => view('App.sell.shipments'))->name('shipments');
 
 
 //============================ End::Sale ============================================
 
 
 //============================ Start::Opening Stock ============================================
-
-
 
 
 Route::controller(openingStockController::class)->group(function () {
@@ -501,7 +494,6 @@ Route::prefix('stock-history')->group(function () {
         Route::get('/get/list/', 'historyList');
     });
 });
-
 
 
 //============================ start::exchange rate ============================================
@@ -596,7 +588,6 @@ Route::prefix('payment-transactions')->group(function () {
         Route::post('/store/{id}/sale', 'storeForSale')->name('paymentTransaction.storeForSale');
 
 
-
         // ===================================================== View =======================================================
         // expense
         Route::get('/view/{id}/expense/report', 'viewForExpense')->name('paymentTransaction.viewForExpense');
@@ -677,11 +668,6 @@ Route::prefix('expense-report')->group(function () {
 //============================ start::stock history ============================================
 
 
-
-
-
-
-
 // Route::prefix('restaurant')->group(function () {
 
 
@@ -723,20 +709,10 @@ Route::prefix('/module')->group(function () {
 });
 
 
-
-
-
-
-
-
-
-
 //============================ End::stock history ============================================
 
 
-
 //============================ End::Business Settings ============================================
-
 
 
 //============================ Being: Product ===================================================
@@ -787,7 +763,7 @@ Route::controller(ManufacturerController::class)->group(function () {
 });
 
 // ====>    Unit Category
-Route::controller(UnitCategoryController::class)->group(function () {
+Route::controller(UnitController::class)->group(function () {
     Route::get('/unit-category/datas', 'unitCategoryDatas')->name('unit-category.data');
     Route::get('/unit-category/uom-datas', 'uomDatas')->name('unit-category.uomDatas');
 
@@ -801,7 +777,6 @@ Route::controller(UnitCategoryController::class)->group(function () {
 
 // ====>    UoM
 Route::controller(UoMController::class)->group(function () {
-    Route::get('/uom', 'index')->name('uom');
     Route::get('/uom/add', 'add')->name('uom.add');
     Route::post('/uom/create', 'create')->name('uom.create');
     Route::get('/uom/edit/{uom}', 'edit')->name('uom.edit');
@@ -815,7 +790,7 @@ Route::controller(UoMController::class)->group(function () {
 
 // ====>    VARIATIONS
 Route::controller(VariationController::class)->group(function () {
-    Route::get('/variation-datas', 'variationDatas')->name('variations.data');
+    Route::get('/variation-datas', 'variationDataForDatatable')->name('variations.data');
     Route::get('/variation-values/{id}', 'value')->name('variation.values');
     Route::get('/variation', 'index')->name('variations');
     Route::get('/variation/add', 'add')->name('variation.add');
@@ -830,7 +805,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product-datas', 'productDatas')->name('product.data');
     Route::get('/product', 'index')->name('products');
     Route::get('/product/add', 'add')->name('product.add');
-    Route::get('/product/quick-add', 'quickAdd')->name('product.quickAdd');
+    Route::get('/product/quick-add', 'add')->name('product.quickAdd')->defaults('quickAdd', true);;
     Route::post('/product/create', 'create')->name('product.create');
     Route::get('/product/edit/{product}', 'edit')->name('product.edit');
     Route::put('/product/update/{product}', 'update')->name('product.update');

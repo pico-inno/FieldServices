@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Actions\product\BrandAction;
 use App\Models\Product\Brand;
 use App\Models\Product\UOMSet;
 use App\Http\Controllers\Controller;
+use App\repositories\BrandRepository;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Product\Brand\BrandCreateRequest;
@@ -12,13 +14,17 @@ use App\Http\Requests\Product\Brand\BrandUpdateRequest;
 
 class BrandController extends Controller
 {
-    public function __construct()
+    protected $brandRepository;
+
+    public function __construct(BrandRepository $brandRepository)
     {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:brand')->only(['index', 'unitDatas', 'uomDatas']);
         $this->middleware('canCreate:brand')->only(['add', 'create']);
         $this->middleware('canUpdate:brand')->only(['edit', 'update']);
         $this->middleware('canDelete:brand')->only('delete');
+
+        $this->brandRepository = $brandRepository;
     }
 
     public function datas()
@@ -26,11 +32,11 @@ class BrandController extends Controller
         $brands = Brand::all();
 
         return DataTables::of($brands)
-        ->addColumn('action', function($brand){
-            return $brand->id;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addColumn('action', function ($brand) {
+                return $brand->id;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function index()
@@ -43,49 +49,40 @@ class BrandController extends Controller
         return view('App.product.brand.brandAdd');
     }
 
-    public function create(BrandCreateRequest $request)
+    public function create(BrandCreateRequest $request, BrandAction $brandAction)
     {
-        $brand = new Brand();
-        $brand->name = $request->brand_name;
-        $brand->description = $request->brand_desc;
-        $brand->created_by = Auth::user()->id;
+        $brandAction->create($request);
 
-        $brand->save();
-        $brands = Brand::all();
-
-        if($request->form_type === "from_product"){
+        if ($request->form_type === "from_product") {
             return response()->json([
-                'message' => 'Brand created sucessfully',
-                'brands' => $brands
+                'message' => 'Brand created successfully',
+                'brands' => $this->brandRepository->getAll()
             ]);
+        } else {
+            return redirect()->route('brands')->with('message', 'Brand created successfully');
         }
-        if($request->save === "save"){
-            return redirect('/brands')->with('message', 'Created sucessfully brand');
-        }
+
     }
 
     public function edit(Brand $brand)
     {
-        return view('App.product.brand.brandEdit', compact('brand'));
+        return view('App.product.brand.brandEdit', [
+            'brand' => $brand
+        ]);
     }
 
-    public function update(BrandUpdateRequest $request, Brand $brand)
+    public function update(BrandUpdateRequest $request, Brand $brand, BrandAction $brandAction)
     {
-        $brand->name = $request->brand_name;
-        $brand->description = $request->brand_desc;
-        $brand->updated_by = Auth::user()->id;
+        $brandAction->update($brand->id, $request);
 
-        $brand->save();
-
-        return redirect('/brands')->with('message', 'Updated sucessfully brand');
+        return redirect()->route('brands')->with('message', 'Brand updated successfully');
     }
 
-    public function delete(Brand $brand)
+    public function delete(Brand $brand, BrandAction $brandAction)
     {
-        $brand->deleted_by = Auth::user()->id;
-        $brand->save();
-        $brand->delete();
 
-        return response()->json(['message' => 'Deleted sucessfully brand']);
+        $brandAction->delete($brand->id);
+
+        return response()->json(['message' => 'Brand deleted successfully']);
     }
 }

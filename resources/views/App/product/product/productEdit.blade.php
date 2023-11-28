@@ -640,32 +640,34 @@
                                                 <!--end::Table head-->
                                                 <!--begin::Table body-->
                                                 <tbody class="fw-semibold text-gray-600 data-table-body">
-                                                @foreach($additional_products as $key=>$pd)
-                                                    @php
-                                                        $product_variation = $pd->toArray()['product_variation'];
-                                                       $product_data = $product_variation['product'];
-                                                    @endphp
+                                                @foreach($additional_products as $key=>$additional_product)
+{{--                                                    @php--}}
+{{--                                                        $product_variation = $pd->toArray()['product_variation'];--}}
+{{--                                                       $product_data = $product_variation['product'];--}}
+{{--                                                       $uoms_data = $pd->toArray()['uom'];--}}
+{{--                                                    @endphp--}}
 
                                                     <tr class='cal-gp'>
                                                         <td class="d-none">
-                                                            <input type="hidden" value="{{$pd->id}}" name="additional_product_details[{{$key}}][additional_detail_id]">
-                                                            <input type="hidden" value="{{$product_data['id']}}" name="additional_product_details[{{$key}}][product_id]">
-                                                            <input type="hidden" value="{{$product_variation['id']}}" name="additional_product_details[{{$key}}][variation_id]">
+                                                            <input type="hidden" value="{{$additional_product['id']}}" name="additional_product_details[{{$key}}][additional_detail_id]">
+                                                            <input type="hidden" value="{{$additional_product['product_id']}}" name="additional_product_details[{{$key}}][product_id]">
+                                                            <input type="hidden" value="{{$additional_product['variation_id']}}" name="additional_product_details[{{$key}}][variation_id]">
                                                         </td>
+
                                                         <td>
-                                                            <span  class="text-gray-600 text-hover-primary">{{$product_data['name']}}</span>
-                                                            @if(isset($product_variation['variation_template_value']))
-                                                                <span class="text-gray-500 fw-semibold fs-5">({{$product_variation['variation_template_value']['name']}})</span>
+                                                            <span  class="text-gray-600 text-hover-primary">{{$additional_product['product_name']}}</span>
+                                                            @if($additional_product['variation_name'] != '')
+                                                                <span class="text-gray-500 fw-semibold fs-5">({{$additional_product['variation_name']}})</span>
                                                             @endif
 
                                                         </td>
                                                         <td class="fv-row">
-                                                            <input type="text" class="form-control form-control-sm mb-1 purchase_quantity input_number" placeholder="Quantity" name="additional_product_details[{{$key}}][quantity]" value="{{number_format($pd->quantity, 2)}}">
+                                                            <input type="text" class="form-control form-control-sm mb-1 purchase_quantity input_number" placeholder="Quantity" name="additional_product_details[{{$key}}][quantity]" value="{{number_format($additional_product['quantity'], 2)}}">
                                                         </td>
                                                         <td>
                                                             <select  name="additional_product_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id " data-kt-repeater="uom_select" data-hide-search="false" data-placeholder="Select unit">
-                                                                @foreach ($product_data['uom']['unit_category']['uom_by_category'] as $unit)
-                                                                    <option value="{{$unit['id']}}" @selected($unit['id']==$pd['uom_id'])>{{$unit['name']}}</option>
+                                                                @foreach ($additional_product['uoms'] as $unit)
+                                                                    <option value="{{$unit['id']}}" @selected($unit['id']==$additional_product['uom_id'])>{{$unit['name']}}</option>
                                                                 @endforeach
                                                             </select>
                                                         </td>

@@ -207,8 +207,14 @@
                             data: {
                                 _method: 'DELETE',
                             },
-                            success: function() {
-                                table.ajax.reload();
+                            success: function(res) {
+                                if(res.error){
+                                    warning(res.error)
+                                }
+                                if(res.message){
+                                    success(res.message);
+                                    table.ajax.reload()
+                                }
                             }
                         })
                     }
