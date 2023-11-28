@@ -28,6 +28,8 @@ class dateTableSeeder  extends Seeder
            }
         }
 
+        DB::update("UPDATE purchases SET purchases.received_at = purchases.created_at");
+        DB::update("UPDATE sales SET sales.delivered_at = purchases.created_at");
         DB::update("
             UPDATE stock_histories
             LEFT JOIN purchase_details ON stock_histories.transaction_details_id = purchase_details.id
