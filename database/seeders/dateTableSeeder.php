@@ -28,14 +28,14 @@ class dateTableSeeder  extends Seeder
            }
         }
         DB::update("UPDATE purchases SET received_at = created_at");
-        DB::update("UPDATE sales SET delivered_at = purchases.created_at");
-        DB::update("UPDATE stock_adjustments SET adjustmented_at=stock_adjustments.updated_at");
+        DB::update("UPDATE sales SET delivered_at = created_at");
+        DB::update("UPDATE stock_adjustments SET adjustmented_at= updated_at");
         DB::update("
             UPDATE stock_histories
             LEFT JOIN purchase_details ON stock_histories.transaction_details_id = purchase_details.id
             LEFT JOIN purchases ON purchase_details.purchases_id = purchases.id
             SET stock_histories.created_at = purchases.received_at
-            WHERE stock_histories.transaction_type = 'purchases'
+            WHERE stock_histories.transaction_type = 'purchase'
         ");
 
         DB::update("
@@ -68,7 +68,7 @@ class dateTableSeeder  extends Seeder
             LEFT JOIN transfers ON transfer_details.transfer_id = transfers.id
             SET stock_histories.created_at = transfers.created_at
             WHERE stock_histories.transaction_type = 'transfer'
-        ")
+        ");
 
         // DB::update("
         //     UPDATE stock_histories
