@@ -33,15 +33,10 @@ use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
 use App\Services\purchase\purchasingService;
-use App\Services\packaging\packagingServices;
-use App\Models\Product\VariationTemplateValues;
 use App\Repositories\interfaces\CurrencyRepositoryInterface;
 use App\Repositories\interfaces\LocationRepositoryInterface;
 use App\Repositories\interfaces\SettingRepositoryInterface;
 use App\Repositories\locationRepository;
-use App\Respoistories\interfaces\LocationInterface;
-use App\Services\purchase\purchaseDetailServices;
-use App\Services\stockhistory\stockHistoryServices;
 
 class purchaseController extends Controller
 {
@@ -65,7 +60,6 @@ class purchaseController extends Controller
 
     public function index()
     {
-        logger('this is loggin from localhost');
         $locations = businessLocation::all();
         $suppliers = Contact::where('type', 'Supplier')
             ->orWhere('type', 'Both')
@@ -87,27 +81,16 @@ class purchaseController extends Controller
 
         return view('App.purchase.addPurchase', compact('locations', 'suppliers', 'setting', 'currency', 'currencies'));
     }
-
-    // public function purchase_new_add()
-    // {
-    //     $locations = businessLocation::all();
-    //     $currency = $this->currency->defaultCurrency();
-    //     $suppliers = Contact::where('type', 'Supplier')
-    //         ->orWhere('type', 'Both')
-    //         ->select('id', 'company_name', 'prefix', 'first_name', 'last_name', 'middle_name', 'address_line_1', 'address_line_2', 'zip_code', 'city', 'state', 'country')
-    //         ->get();
-    //     $currencies = Currencies::get();
-    //     $setting = $this->setting->getByUser();
-    //     return view('App.purchase.addNewPurchase', compact('locations', 'suppliers', 'setting', 'currency', 'currencies'));
-    // }
     public function store(Request $request, purchasingService $service)
     {
         Validator::make(['details' => $request->purchase_details], ['details' => 'required'])->validate();
         try {
             // create purchase from service
-           DB::beginTransaction();
+            DB::beginTransaction();
             $purchase = $service->createPurchase($request);
             DB::commit();
+
+            // return & print
             if ($request->save == 'save_&_print') {
                 return redirect()->route('purchase_list')->with([
                     'success' => 'Successfully Created Purchase',
@@ -123,7 +106,6 @@ class purchaseController extends Controller
             if ($fileName == 'UomHelpers.php') {
                 return redirect()->back()->with(['error' => 'Something Wrong with UOM ! Check UOM category and UOM'])->withInput($request->toArray());
             }
-            dd($e);
             return redirect()->back()->with(['warning' => 'An error occurred while creating the purchasse'])->withInput();
         }
     }

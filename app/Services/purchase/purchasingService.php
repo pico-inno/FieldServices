@@ -2,23 +2,24 @@
 
 namespace App\Services\purchase;
 
+use Exception;
 use Carbon\Carbon;
+use App\Helpers\UomHelper;
+use App\Models\stock_history;
 use App\Models\Contact\Contact;
+use App\Models\Product\Product;
 use App\Services\paymentServices;
+use Illuminate\Support\Facades\DB;
+use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use Illuminate\Notifications\Action;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\LocationRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Actions\purchase\purchaseActions;
+use App\Models\purchases\purchase_details;
 use App\Services\packaging\packagingServices;
 use App\Actions\purchase\purchaseDetailActions;
-use App\Helpers\UomHelper;
-use App\Models\CurrentStockBalance;
-use App\Models\Product\Product;
-use App\Models\purchases\purchase_details;
-use App\Models\stock_history;
-use App\Services\stockhistory\stockHistoryServices;
 
 class purchasingService
 {
@@ -32,31 +33,38 @@ class purchasingService
      * @return void
      */
     public function createPurchase($request){
-        $action=new purchaseActions();
-        $detailServices=new purchaseDetailServices();
-        $payment = new paymentServices();
+        try {
+            DB::beginTransaction();
+            $action = new purchaseActions();
+            $detailServices = new purchaseDetailServices();
+            $payment = new paymentServices();
 
-        // store purchase data
-        $purchase= $action->create($this->purchaseData($request));
+            // store purchase data
+            $purchase = $action->create($this->purchaseData($request));
 
-        // store purchaseDetail data
-        $purchases_details = $request->purchase_details;
-        if ($purchases_details) {
-            $detailServices->create($purchases_details, $purchase);
+            // store purchaseDetail data
+            $purchases_details = $request->purchase_details;
+            if ($purchases_details) {
+                $detailServices->create($purchases_details, $purchase);
+            }
+
+            if ($request->paid_amount > 0) {
+                //store the payment transactions
+                $payment->makePayment($purchase, $request->payment_account, 'purchase');
+            } else {
+                // update customer's payableAmount
+                $suppliers = Contact::where('id', $request->contact_id)->first();
+                $suppliers_payable = $suppliers->payable_amount;
+                $suppliers->update([
+                    'payable_amount' => $suppliers_payable + $request['balance_amount']
+                ]);
+            }
+            DB::commit();
+            return $purchase;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw new Exception($th);
         }
-
-        if ($request->paid_amount > 0) {
-            //store the payment transactions
-            $payment->makePayment($purchase, $request->payment_account,'purchase');
-        } else {
-            // update customer's payableAmount
-            $suppliers = Contact::where('id', $request->contact_id)->first();
-            $suppliers_payable = $suppliers->payable_amount;
-            $suppliers->update([
-                'payable_amount' => $suppliers_payable + $request['balance_amount']
-            ]);
-        }
-        return $purchase;
     }
 
     public function update($id, $request)
@@ -115,7 +123,8 @@ class purchasingService
             'purchased_at' => $request->purchased_at,
             'total_purchase_amount' => $request->total_purchase_amount,
             'balance_amount' => $request->balance_amount,
-            'payment_status' => $payment_status
+            'payment_status' => $payment_status,
+            'received_at'=> $request->received_at ?? null,
         ];
     }
 
@@ -129,8 +138,8 @@ class purchasingService
     public function listData($request)
     {
         $purchases = purchases::where('is_delete', 0)
-        ->with('business_location_id', 'businessLocation', 'supplier')
-        ->OrderBy('id', 'desc');
+                    ->with('business_location_id', 'businessLocation', 'supplier')
+                    ->OrderBy('id', 'desc');
         if ($request->filled('form_data') && $request->filled('to_date')) {
             $purchases = $purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
         }

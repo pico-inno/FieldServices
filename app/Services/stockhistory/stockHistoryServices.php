@@ -14,10 +14,11 @@ class stockHistoryServices
      * @param  integer $transaction detail id
      * @param  integer $quantity
      * @param  mixed $tx_type(transaction type)
+     * @param  date stock created date
      * @param  string $change(decrease or increase)
      * @return void
      */
-    public function create($data,$txDetailId,$qty, string $tx_type,string $change='increase'){
+    public function create($data,$txDetailId,$qty,$createDate, string $tx_type,string $change='increase'){
         return stock_history::create([
             'business_location_id' => $data['business_location_id'],
             'product_id' => $data['product_id'],
@@ -29,7 +30,8 @@ class stockHistoryServices
             'increase_qty' => $change == 'increase' ? $qty :0,
             'decrease_qty' => $change == 'decrease' ? $qty : 0,
             'ref_uom_id' => $data['ref_uom_id'],
+            "created_at" => $createDate,
         ]);
     }
-    
+
 }

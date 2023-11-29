@@ -17,8 +17,6 @@ use App\Models\purchases\purchase_details;
 use App\Services\purchase\purchasingService;
 use App\Services\packaging\packagingServices;
 use App\Actions\purchase\purchaseDetailActions;
-use App\Services\stockhistory\stockHistoryServices;
-use App\Repositories\interfaces\CurrencyRepositoryInterface;
 
 class purchaseDetailServices
 {
@@ -61,11 +59,14 @@ class purchaseDetailServices
             $requestDetialIdForUpdate = array_column($requestDetailDataForUpdate, 'purchase_detail_id');
 
             // update purchase detail's data and related current stock
-            $purchaseDetailActions->detailUpdate($request,$businessLocation,$requestDetailDataForUpdate,$befUpdatedPurchaseData,$purchasesData);
-
-
+            $purchaseDetailActions->detailUpdate(
+                                    $request,
+                                    $businessLocation,
+                                    $requestDetailDataForUpdate,
+                                    $befUpdatedPurchaseData,
+                                    $purchasesData
+                                );
             //------------------------------------------- remove and create --------------------------------------------------------------//
-
             //get added purchase_details_ids from database
             $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get()->toArray();
             $get_fetched_purchase_details_id = array_column($fetch_purchase_details, 'id');
@@ -75,7 +76,6 @@ class purchaseDetailServices
             foreach ($requestDetailDataForUpdate_id_for_delete as $p_id) {
                 $purchaseDetailActions->delete($p_id);
             }
-
             //to create purchase details
             $new_purchase_details = array_filter($request_purchase_details, function ($item) {
                 return !isset($item['purchase_detail_id']);
@@ -86,7 +86,7 @@ class purchaseDetailServices
         } else {
             $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get();
             foreach ($fetch_purchase_details as $p) {
-                CurrentStockBalance::where('trnasaction_detail_id', $p->id)->where('transaction_type', 'purchase')->delete();
+                CurrentStockBalance::where('transaction_detail_id', $p->id)->where('transaction_type', 'purchase')->delete();
                 stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $p->id)->delete();
             }
             purchase_details::where('purchases_id', $id)->update([

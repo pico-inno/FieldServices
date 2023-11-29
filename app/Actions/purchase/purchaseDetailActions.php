@@ -8,13 +8,11 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
 use App\Repositories\CurrencyRepository;
-use App\Repositories\LocationRepository;
 use App\Models\settings\businessLocation;
 use App\Models\purchases\purchase_details;
 use App\Models\stock_history;
 use App\Services\packaging\packagingServices;
 use App\Services\stockhistory\stockHistoryServices;
-use App\Repositories\interfaces\CurrencyRepositoryInterface;
 
 class purchaseDetailActions
 {
@@ -151,7 +149,7 @@ class purchaseDetailActions
                 return;
             }
             CurrentStockBalance::create($data);
-            $stockHistoryServices->create($data, $purchase_detail_data['id'], $data['ref_uom_quantity'], 'purchase', 'increase');
+            $stockHistoryServices->create($data, $data['transaction_detail_id'], $data['ref_uom_quantity'], $purchase['received_at'],'purchase', 'increase');
         }
     }
     protected function currentStockBalanceData($purchase_detail_data, $purchase, $type)
@@ -171,7 +169,8 @@ class purchaseDetailActions
             "ref_uom_quantity" => $referencUomInfo['qtyByReferenceUom'],
             "ref_uom_price" => $per_ref_uom_price_by_default_currency,
             "current_quantity" => $referencUomInfo['qtyByReferenceUom'],
-            'currency_id' => $purchase->currency_id,
+            "currency_id" => $purchase->currency_id,
+            "created_at" => $purchase->received_at,
         ];
     }
 

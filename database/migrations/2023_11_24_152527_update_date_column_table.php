@@ -29,12 +29,12 @@ return new class extends Migration
         });
 
         Schema::table('purchases', function (Blueprint $table) {
-            $table->dateTime('received_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->dateTime('received_at')->default(DB::raw('CURRENT_TIMESTAMP'))->nullable();
         });
 
 
         Schema::table('sales', function (Blueprint $table) {
-            $table->dateTime('delivered_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->dateTime('delivered_at')->default(DB::raw('CURRENT_TIMESTAMP'))->nullable();
         });
 
 
