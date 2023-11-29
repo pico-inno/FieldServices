@@ -54,7 +54,7 @@
                         </div>
                         <div class="col-md-4 col-sm-12 mb-6">
                             <label for="contact_id" class="form-label">Contact ID</label>
-                            <input type="text" name="contact_id" id="contact_id" class="form-control" placeholder="Contact ID" />
+                            <input type="text" name="contact_id" id="contact_id" class="form-control form-control-sm" placeholder="Contact ID" />
                             <span class="text-gray-400">Leave empty to autogenerate</span>
                         </div>
                     </div>
@@ -75,53 +75,53 @@
                     <div class="row individual-div">
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="prefix" class="form-label">Prefix</label>
-                            <input type="text" name="prefix" id="prefix" class="form-control" placeholder="Mr / Mrs / Miss" />
+                            <input type="text" name="prefix" id="prefix" class="form-control form-control-sm" placeholder="Mr / Mrs / Miss" />
                         </div>
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="first_name" class="form-label">First Name</label>
-                            <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" />
+                            <input type="text" name="first_name" id="first_name" class="form-control form-control-sm" placeholder="First Name" />
                         </div>
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="middle_name" class="form-label">Middle Name</label>
-                            <input type="text" name="middle_name" id="middle_name" class="form-control" placeholder="Middle Name" />
+                            <input type="text" name="middle_name" id="middle_name" class="form-control form-control-sm" placeholder="Middle Name" />
                         </div>
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="last_name" class="form-label">Last Name</label>
-                            <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name" />
+                            <input type="text" name="last_name" id="last_name" class="form-control form-control-sm" placeholder="Last Name" />
                         </div>
                     </div>
                     <div class="row business-div hide">
                         <div class="col-md-4 col-sm-12 mb-6">
                             <label for="company_name" class="form-label">Business Name</label>
-                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="Business Name" />
+                            <input type="text" name="company_name" id="company_name" class="form-control form-control-sm" placeholder="Business Name" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="mobile" class="required form-label">Mobile</label>
-                            <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Mobile"  required />
+                            <input type="text" name="mobile" id="mobile" class="form-control form-control-sm" placeholder="Mobile"  required />
                         </div>
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="alternate_number" class="form-label">Alternate Contact Number</label>
-                            <input type="text" name="alternate_number" id="alternate_number" class="form-control" placeholder="Alternate Contact Numbe" />
+                            <input type="text" name="alternate_number" id="alternate_number" class="form-control form-control-sm" placeholder="Alternate Contact Numbe" />
                         </div>
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="landline" class="form-label">Landline</label>
-                            <input type="text" name="landline" id="landline" class="form-control" placeholder="Landline" />
+                            <input type="text" name="landline" id="landline" class="form-control form-control-sm" placeholder="Landline" />
                         </div>
                         <div class="col-md-3 col-sm-12 mb-6">
                             <label for="email" class="form-label">Email</label>
-                            <input type="text" name="email" id="email" class="form-control" placeholder="Email" />
+                            <input type="text" name="email" id="email" class="form-control form-control-sm" placeholder="Email" />
                         </div>
                     </div>
                     <div class="row mb-6">
                         <div class="col-md-4 col-sm-12 mb-6 individual-div">
                             <label for="dob" class="form-label">Date of birth</label>
-                            <input type="text" name="dob" id="dob" class="form-control" placeholder="Date of birth" autocomplete="off"  />
+                            <input type="text" name="dob" id="dob" class="form-control form-control-sm" placeholder="Date of birth" autocomplete="off"  />
                         </div>
                         <div class="col-md-4 col-sm-12 mb-6">
                             <label for="" class="form-label">Assigned to</label>
-                            <input type="text" class="form-control" placeholder="" />
+                            <input type="text" class="form-control form-control-sm" placeholder="" />
                         </div>
                     </div>
                     <div class="form-group text-center mt-5">
@@ -131,16 +131,16 @@
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="tax_number" class="form-label">Tax Number</label>
-                                <input type="text" name="tax_number" id="tax_number" class="form-control" placeholder="Tax Number">
+                                <input type="text" name="tax_number" id="tax_number" class="form-control form-control-sm" placeholder="Tax Number">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="balance" class="form-label">Opening Balance</label>
-                                <input type="number" name="balance" id="balance" class="form-control" placeholder="Opening Balance">
+                                <input type="number" name="balance" id="balance" class="form-control form-control-sm" placeholder="Opening Balance">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="pay_term_number" class="form-label">Pay Term</label>
                                 <div class="input-group">
-                                    <input type="number" name="pay_term_number" id="pay_term_number" class="form-control">
+                                    <input type="number" name="pay_term_number" id="pay_term_number" class="form-control form-control-sm">
                                     <select name="pay_term_type" class="form-select" aria-label="Select example">
                                         <option value="" selected disabled>Please select</option>
                                         <option value="Months">Months</option>
@@ -152,28 +152,28 @@
                         <div class="row credit-limit">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="credit_limit" class="form-label">Credit Limit</label>
-                                <input type="number" name="credit_limit" id="credit_limit" class="form-control" placeholder="Credit Limit">
+                                <input type="number" name="credit_limit" id="credit_limit" class="form-control form-control-sm" placeholder="Credit Limit">
                             </div>
                         </div>
                         <hr style="opacity: 0.3;">
                         <div class="row mt-6">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="address_line_1" class="form-label">Address Line 1</label>
-                                <input type="text" name="address_line_1" id="address_line_1" class="form-control" placeholder="Address Line 1">
+                                <input type="text" name="address_line_1" id="address_line_1" class="form-control form-control-sm" placeholder="Address Line 1">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="address_line_2" class="form-label">Address Line 2</label>
-                                <input type="text" name="address_line_2" id="address_line_2" class="form-control" placeholder="Address Line 2">
+                                <input type="text" name="address_line_2" id="address_line_2" class="form-control form-control-sm" placeholder="Address Line 2">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="city" class="form-label">City</label>
-                                <input type="text" name="city" id="city" class="form-control" placeholder="City">
+                                <input type="text" name="city" id="city" class="form-control form-control-sm" placeholder="City">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="state" class="form-label">State</label>
-                                <input type="text" name="state" id="state" class="form-control" placeholder="State">
+                                <input type="text" name="state" id="state" class="form-control form-control-sm" placeholder="State">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="country" class="form-label">Country</label>
@@ -407,63 +407,63 @@
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="zip_code" class="form-label">Zip Code</label>
-                                <input type="text" name="zip_code" id="zip_code" class="form-control" placeholder="Zip Code">
+                                <input type="text" name="zip_code" id="zip_code" class="form-control form-control-sm" placeholder="Zip Code">
                             </div>
                         </div>
                         <hr style="opacity: 0.3;">
                         <div class="row mt-6">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_1" class="form-label">Custom Field 1</label>
-                                <input type="text" name="custom_field_1" id="custom_field_1" class="form-control" placeholder="Custom Field 1">
+                                <input type="text" name="custom_field_1" id="custom_field_1" class="form-control form-control-sm" placeholder="Custom Field 1">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_2" class="form-label">Custom Field 2</label>
-                                <input type="text" name="custom_field_2" id="custom_field_2" class="form-control" placeholder="Custom Field 2">
+                                <input type="text" name="custom_field_2" id="custom_field_2" class="form-control form-control-sm" placeholder="Custom Field 2">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_3" class="form-label">Custom Field 3</label>
-                                <input type="text" name="custom_field_3" id="custom_field_3" class="form-control" placeholder="Custom Field 3">
+                                <input type="text" name="custom_field_3" id="custom_field_3" class="form-control form-control-sm" placeholder="Custom Field 3">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_4" class="form-label">Custom Field 4</label>
-                                <input type="text" name="custom_field_4" id="custom_field_4" class="form-control" placeholder="Custom Field 4">
+                                <input type="text" name="custom_field_4" id="custom_field_4" class="form-control form-control-sm" placeholder="Custom Field 4">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_5" class="form-label">Custom Field 5</label>
-                                <input type="text" name="custom_field_5" id="custom_field_5" class="form-control" placeholder="Custom Field 5">
+                                <input type="text" name="custom_field_5" id="custom_field_5" class="form-control form-control-sm" placeholder="Custom Field 5">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_6" class="form-label">Custom Field 6</label>
-                                <input type="text" name="custom_field_6" id="custom_field_6" class="form-control" placeholder="Custom Field 6">
+                                <input type="text" name="custom_field_6" id="custom_field_6" class="form-control form-control-sm" placeholder="Custom Field 6">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_7" class="form-label">Custom Field 7</label>
-                                <input type="text" name="custom_field_7" id="custom_field_7" class="form-control" placeholder="Custom Field 7">
+                                <input type="text" name="custom_field_7" id="custom_field_7" class="form-control form-control-sm" placeholder="Custom Field 7">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_8" class="form-label">Custom Field 8</label>
-                                <input type="text" name="custom_field_8" id="custom_field_8" class="form-control" placeholder="Custom Field 8">
+                                <input type="text" name="custom_field_8" id="custom_field_8" class="form-control form-control-sm" placeholder="Custom Field 8">
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_9" class="form-label">Custom Field 9</label>
-                                <input type="text" name="custom_field_9" id="custom_field_9" class="form-control" placeholder="Custom Field 9">
+                                <input type="text" name="custom_field_9" id="custom_field_9" class="form-control form-control-sm" placeholder="Custom Field 9">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mb-6">
                                 <label for="custom_field_10" class="form-label">Custom Field 10</label>
-                                <input type="text" name="custom_field_10" id="custom_field_10" class="form-control" placeholder="Custom Field 10">
+                                <input type="text" name="custom_field_10" id="custom_field_10" class="form-control form-control-sm" placeholder="Custom Field 10">
                             </div>
                         </div>
                         <hr style="opacity: 0.3;">
                         <div class="row mt-6">
                             <div class="col-md-5 col-sm-12">
                                 <label for="shipping_address" class="form-label">Shipping Address</label>
-                                <textarea name="shipping_address" id="shipping_address" class="form-control" style="resize: none;"></textarea>
+                                <textarea name="shipping_address" id="shipping_address" class="form-control form-control-sm" style="resize: none;"></textarea>
                             </div>
                         </div>
                     </div>

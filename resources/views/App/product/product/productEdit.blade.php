@@ -1,16 +1,16 @@
 @extends('App.main.navBar')
 
 @section('styles')
- {{-- css file for this page --}}
- <style>
-    .box {
-        display: none;
-    }
- </style>
+    {{-- css file for this page --}}
+    <style>
+        .box {
+            display: none;
+        }
+    </style>
 @endsection
 
 @section('title')
-<!--begin::Heading-->
+    <!--begin::Heading-->
     <h1 class="text-dark fw-bold my-0 fs-4">{{ __('product/product.edit_product') }}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
@@ -21,7 +21,7 @@
         </li>
         <li class="breadcrumb-item text-dark">{{ __('product/product.edit') }}</li>
     </ul>
-<!--end::Breadcrumb-->
+    <!--end::Breadcrumb-->
 @endsection
 @section('products_icon', 'active')
 @section('products_show', 'active show')
@@ -79,10 +79,10 @@
 
                                                         <!--begin::Edit button-->
                                                         <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                        data-kt-image-input-action="change"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-dismiss="click"
-                                                        title="Change avatar">
+                                                               data-kt-image-input-action="change"
+                                                               data-bs-toggle="tooltip"
+                                                               data-bs-dismiss="click"
+                                                               title="Change avatar">
                                                             <i class="ki-duotone ki-pencil fs-6"><span class="path1"></span><span class="path2"></span></i>
 
                                                             <!--begin::Inputs-->
@@ -94,20 +94,20 @@
 
                                                         <!--begin::Cancel button-->
                                                         <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                        data-kt-image-input-action="cancel"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-dismiss="click"
-                                                        title="Cancel avatar">
+                                                              data-kt-image-input-action="cancel"
+                                                              data-bs-toggle="tooltip"
+                                                              data-bs-dismiss="click"
+                                                              title="Cancel avatar">
                                                             <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
                                                         <!--end::Cancel button-->
 
                                                         <!--begin::Remove button-->
                                                         <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                        data-kt-image-input-action="remove"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-dismiss="click"
-                                                        title="Remove avatar">
+                                                              data-kt-image-input-action="remove"
+                                                              data-bs-toggle="tooltip"
+                                                              data-bs-dismiss="click"
+                                                              title="Remove avatar">
                                                             <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
                                                         <!--end::Remove button-->
@@ -196,7 +196,7 @@
                                                     <label class="required form-label">{{ __('product/product.product_name') }}</label>
                                                     <input type="text" name="product_name" class="form-control form-control-sm mb-2" placeholder="Product name" value="{{old('product_name',$product->name)}}" />
                                                     @error('product_name')
-                                                        <div class="text-danger my-2">{{ $message }}</div>
+                                                    <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5">
@@ -211,7 +211,7 @@
                                                     <div class="fv-row">
                                                         <label class="form-label">
                                                             SKU <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                            title="Unique product id or Stock Keeping Unit <br/><br/> Keep it blank to automatically generate sku.<br/><span class='text-muted'>You can modify sku prefix in Business settings.</span>"></i>
+                                                                   title="Unique product id or Stock Keeping Unit <br/><br/> Keep it blank to automatically generate sku.<br/><span class='text-muted'>You can modify sku prefix in Business settings.</span>"></i>
                                                         </label>
                                                         <input type="text" name="sku" class="form-control form-control-sm mb-2" placeholder="SKU Number" value="{{old('sku',$product->sku)}}" />
                                                     </div>
@@ -239,12 +239,19 @@
                                                     <label for="" class="form-label">
                                                         {{ __('product/product.category') }}
                                                     </label>
-                                                    <select id="categorySelect" name="category" class="form-select form-select-sm" data-control="select2" data-placeholder="Select category">
+                                                    <div class="input-group mb-5 flex-nowrap">
+                                                        <div class="overflow-hidden flex-grow-1">
+                                                    <select id="categorySelect" name="category" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select category">
                                                         <option></option>
                                                         @foreach ($categories as $category)
                                                             <option value="{{ $category->id }}" @selected($category->id === $product->category_id)>{{ $category->name }}</option>
                                                         @endforeach
                                                     </select>
+                                                        </div>
+                                                    <span class="input-group-text cursor-pointer" data-bs-toggle="modal" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_category">
+                                                            <i class="fas fa-circle-plus text-primary"></i>
+                                                        </span>
+                                                </div>
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <label for="" class="form-label">
@@ -304,7 +311,6 @@
                                                 </div> --}}
                                             </div>
                                             <div class="row mb-5">
-
                                                 <div class="col-md-4 mb-5">
                                                     <div class="fv-row">
                                                         <label class="form-label required">
@@ -321,8 +327,10 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @error('uom_id')
+                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
-
                                                 <div class="col-md-4 mb-5">
                                                     <div class="fv-row">
                                                         <!--begin::Label-->
@@ -332,7 +340,7 @@
                                                         <!--end::Label-->
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="uom_id" class="form-select form-select-sm uomDatas" data-control="select2" data-placeholder="Select unit">
+                                                                <select name="uom_id" class="form-select form-select-sm " data-control="select2" data-placeholder="Select unit">
                                                                     <option></option>
 {{--                                                                    @foreach ($uoms as $uom)--}}
 {{--                                                                        <option value="{{ $uom->id }}" @selected($uom->id === $product->uom_id)>{{ $uom->name }}</option>--}}
@@ -342,7 +350,7 @@
                                                         </div>
                                                     </div>
                                                     @error('uom_id')
-                                                        <div class="text-danger my-2">{{ $message }}</div>
+                                                    <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5">
@@ -361,12 +369,9 @@
                                                         </div>
                                                     </div>
                                                     @error('purchase_uom_id')
-                                                        <div class="text-danger my-2">{{ $message }}</div>
+                                                    <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
-
-                                            </div>
-                                            <div class="row">
                                                 <div class="col-md-4 mb-5">
 
                                                     <div id="single_alert_qty_ui"  class="fv-row">
@@ -407,7 +412,7 @@
                                                     Has Variation
                                                 </label>
                                                 <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                    title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
+                                                   title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
                                                             <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
                                                 <div class="mb-3">
@@ -425,49 +430,49 @@
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
-                                                        <tr class="bg-secondary fw-bold fs-6 text-gray-800 text-center">
-                                                            {{-- <th>Variation SKU</th> --}}
-                                                            <th>Default Purchase Price</th>
-                                                            <th>
-                                                                x Margin(%) <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                title="Default profit margin for the product.<br/>
+                                                    <tr class="bg-secondary fw-bold fs-6 text-gray-800 text-center">
+                                                        {{-- <th>Variation SKU</th> --}}
+                                                        <th>Default Purchase Price</th>
+                                                        <th>
+                                                            x Margin(%) <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
+                                                                           title="Default profit margin for the product.<br/>
                                                                        <i class='text-muted'>You can manage default profit margin in Business Settings.</i>"></i>
-                                                            </th>
-                                                            <th>Default Selling Price</th>
-                                                            <th>Product image</th>
-                                                        </tr>
+                                                        </th>
+                                                        <th>Default Selling Price</th>
+                                                        <th>Product image</th>
+                                                    </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="row">
-                                                                    <div class="col-md-6">
-                                                                        <label for="" class="required form-label">Exc. tax</label>
-                                                                        <input type="text" name="single_exc" class="form-control" placeholder="Exc. tax">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label for="" class="required form-label">Inc. tax</label>
-                                                                        <input type="text" name="single_inc" class="form-control" placeholder="Inc. tax">
-                                                                    </div>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="" class="required form-label">Exc. tax</label>
+                                                                    <input type="text" name="single_exc" class="form-control" placeholder="Exc. tax">
                                                                 </div>
-                                                            </td>
-                                                            <td>
-                                                                <label for=""></label>
-                                                                <input type="text" name="single_profit" class="form-control" value="">
-                                                            </td>
-                                                            <td>
-                                                                <label for="" class="form-label">Exc. Tax</label>
-                                                                <input type="text" name="single_selling" class="form-control" placeholder="Exc. tax">
-                                                            </td>
-                                                            <td>
-                                                                <label for="" class="form-label">Product image</label>
-                                                                <input type="file" name="" id="" class="form-control">
-                                                                <div class="text-muted">
-                                                                    Max File size: 5MB <br/>
-                                                                    Aspect ration should be 1:1
+                                                                <div class="col-md-6">
+                                                                    <label for="" class="required form-label">Inc. tax</label>
+                                                                    <input type="text" name="single_inc" class="form-control" placeholder="Inc. tax">
                                                                 </div>
-                                                            </td>
-                                                        </tr>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <label for=""></label>
+                                                            <input type="text" name="single_profit" class="form-control" value="">
+                                                        </td>
+                                                        <td>
+                                                            <label for="" class="form-label">Exc. Tax</label>
+                                                            <input type="text" name="single_selling" class="form-control" placeholder="Exc. tax">
+                                                        </td>
+                                                        <td>
+                                                            <label for="" class="form-label">Product image</label>
+                                                            <input type="file" name="" id="" class="form-control">
+                                                            <div class="text-muted">
+                                                                Max File size: 5MB <br/>
+                                                                Aspect ration should be 1:1
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -481,65 +486,65 @@
                                             <div class="my-3 table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
-                                                        <tr class="fw-bold fs-3 text-gray-800 text-start bg-gray-300">
-                                                            <th class="text-center">Variation</th>
-                                                            <th>Variation Values</th>
-                                                        </tr>
+                                                    <tr class="fw-bold fs-3 text-gray-800 text-start bg-gray-300">
+                                                        <th class="text-center">Variation</th>
+                                                        <th>Variation Values</th>
+                                                    </tr>
                                                     </thead>
                                                     <tbody class="repeater" >
-                                                        <tr >
-                                                            <td class="min-w-200px">
-                                                                <select name="variation_name" disabled id="variationSelect" class="form-select" data-control="select2" data-hide-search="true" data-placeholder="Please select">
-                                                                    <option></option>
-                                                                    @foreach ($variations as $variation)
-                                                                        <option value="{{ $variation->id }}"
-                                                                            @selected($product->productVariationTemplates()->first()->variation_template_id === $variation->id) >
-                                                                            {{ $variation->name }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                    <input type="hidden" name="variation_template_id_hidden" value="{{ $product->productVariationTemplates()->first()->variation_template_id }}">
-                                                                </select>
-                                                            </td>
-                                                            <td>
-                                                                <div class="table-responsive">
-                                                                    <table class="table  table-bordered" id="variation-table">
-                                                                        <thead>
-                                                                            <tr class="fw-bold fs-6 text-gray-800 text-start bg-gray-500">
-                                                                                <th class="text-center min-w-100px">
-                                                                                    SKU <i class="fas fa-exclamation-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                                    title="SKU is optional. <br/> <br/>
+                                                    <tr >
+                                                        <td class="min-w-200px">
+                                                            <select name="variation_name" disabled id="variationSelect" class="form-select" data-control="select2" data-hide-search="true" data-placeholder="Please select">
+                                                                <option></option>
+                                                                @foreach ($variations as $variation)
+                                                                    <option value="{{ $variation->id }}"
+                                                                        @selected($product->productVariationTemplates()->first()->variation_template_id === $variation->id) >
+                                                                        {{ $variation->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                                <input type="hidden" name="variation_template_id_hidden" value="{{ $product->productVariationTemplates()->first()->variation_template_id }}">
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <div class="table-responsive">
+                                                                <table class="table  table-bordered" id="variation-table">
+                                                                    <thead>
+                                                                    <tr class="fw-bold fs-6 text-gray-800 text-start bg-gray-500">
+                                                                        <th class="text-center min-w-100px">
+                                                                            SKU <i class="fas fa-exclamation-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
+                                                                                   title="SKU is optional. <br/> <br/>
                                                                                            Keep it blank to automatically generate sku."></i>
-                                                                                </th>
-                                                                                <th class="min-w-100px">Value</th>
-                                                                                <th class="min-w-200px">
-                                                                                    Default Purchase Price <br/>
-                                                                                    <i>Exc. tax Inc. tax</i>
-                                                                                </th>
-                                                                                <th class="min-w-150px">
-                                                                                    x Margin(%)
-                                                                                </th>
-                                                                                <th class="min-w-150px">
-                                                                                    Default Selling Price <br/>
-                                                                                    <i>Exc. Tax</i>
-                                                                                </th>
-                                                                                <th class="min-w-100px">Alert Quantity</th>
-                                                                                <th class="min-w-200px">Variation Images</th>
-                                                                                <th class=" min-w-50px">
+                                                                        </th>
+                                                                        <th class="min-w-100px">Value</th>
+                                                                        <th class="min-w-200px">
+                                                                            Default Purchase Price <br/>
+                                                                            <i>Exc. tax Inc. tax</i>
+                                                                        </th>
+                                                                        <th class="min-w-150px">
+                                                                            x Margin(%)
+                                                                        </th>
+                                                                        <th class="min-w-150px">
+                                                                            Default Selling Price <br/>
+                                                                            <i>Exc. Tax</i>
+                                                                        </th>
+                                                                        <th class="min-w-100px">Alert Quantity</th>
+                                                                        <th class="min-w-200px">Variation Images</th>
+                                                                        <th class=" min-w-50px">
                                                                                     <span id="child-repeater" name="add" data-repeater-create class="svg-icon svg-icon-primary svg-icon-4 cursor-pointer add-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                                         <path opacity="0.3" d="M11 13H7C6.4 13 6 12.6 6 12C6 11.4 6.4 11 7 11H11V13ZM17 11H13V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z" fill="currentColor"/>
                                                                                         <path d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12ZM17 11H13V7C13 6.4 12.6 6 12 6C11.4 6 11 6.4 11 7V11H7C6.4 11 6 11.4 6 12C6 12.6 6.4 13 7 13H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z" fill="currentColor"/>
                                                                                         </svg>
                                                                                     </span>
-                                                                                </th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody data-repeater-list="variation_lists" id="variation-row" class="variation-row-class">
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody data-repeater-list="variation_lists" id="variation-row" class="variation-row-class">
 
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -600,77 +605,78 @@
                                             <!--end::Description-->
                                         </div>
 
-                                        <div class="ad_pd">
-                                            <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
-                                                <div class="col-6 col-md-2 fs-4  fw-semibold  text-primary">
-                                                    Additional Products
-                                                </div>
-                                                <div class="separator   border-primary-subtle col-md-10 col-6"></div>
+
+                                        <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
+                                            <div class="col-6 col-md-2 fs-4  fw-semibold  text-primary">
+                                                Additional Products
                                             </div>
-                                            <div class="row align-items-center mb-8">
-                                                <div class="col-12">
-                                                    <div class="input-group quick-search-form p-0">
-                                                        <div class="input-group-text">
-                                                            <i class="fa-solid fa-magnifying-glass"></i>
-                                                        </div>
-                                                        <input type="text" class="form-control form-control-sm rounded-end-3" id="searchInput" placeholder="Search...">
-                                                        <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
+                                            <div class="separator   border-primary-subtle col-md-10 col-6"></div>
+                                        </div>
+                                        <div class="row align-items-center mb-8">
+                                            <div class="col-12">
+                                                <div class="input-group quick-search-form p-0">
+                                                    <div class="input-group-text">
+                                                        <i class="fa-solid fa-magnifying-glass"></i>
                                                     </div>
+                                                    <input type="text" class="form-control form-control-sm rounded-end-3" id="searchInput" placeholder="Search...">
+                                                    <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                                 </div>
-
                                             </div>
-                                            <div class="table-responsive">
-                                                <table class="table table-rounded table-striped border gy-4 gs-4" id="additional_product_table">
-                                                    <!--begin::Table head-->
-                                                    <thead class="bg-light rounded-3">
-                                                    <!--begin::Table row-->
-                                                    <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
-                                                        <th class="min-w-125px" style="max-width: 125px">Product</th>
-                                                        <th class="w-200px">Quantity</th>
-                                                        <th class="w-300px">UOM</th>
-                                                        <th class="text-center" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-rounded table-striped border gy-4 gs-4" id="additional_product_table">
+                                                <!--begin::Table head-->
+                                                <thead class="bg-light rounded-3">
+                                                <!--begin::Table row-->
+                                                <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                    <th class="min-w-125px" style="max-width: 125px">Product</th>
+                                                    <th class="w-200px">Quantity</th>
+                                                    <th class="w-300px">UOM</th>
+                                                    <th class="text-center" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+                                                </tr>
+                                                <!--end::Table row-->
+                                                </thead>
+                                                <!--end::Table head-->
+                                                <!--begin::Table body-->
+                                                <tbody class="fw-semibold text-gray-600 data-table-body">
+                                                @foreach($additional_products as $key=>$additional_product)
+{{--                                                    @php--}}
+{{--                                                        $product_variation = $pd->toArray()['product_variation'];--}}
+{{--                                                       $product_data = $product_variation['product'];--}}
+{{--                                                       $uoms_data = $pd->toArray()['uom'];--}}
+{{--                                                    @endphp--}}
+
+                                                    <tr class='cal-gp'>
+                                                        <td class="d-none">
+                                                            <input type="hidden" value="{{$additional_product['id']}}" name="additional_product_details[{{$key}}][additional_detail_id]">
+                                                            <input type="hidden" value="{{$additional_product['product_id']}}" name="additional_product_details[{{$key}}][product_id]">
+                                                            <input type="hidden" value="{{$additional_product['variation_id']}}" name="additional_product_details[{{$key}}][variation_id]">
+                                                        </td>
+
+                                                        <td>
+                                                            <span  class="text-gray-600 text-hover-primary">{{$additional_product['product_name']}}</span>
+                                                            @if($additional_product['variation_name'] != '')
+                                                                <span class="text-gray-500 fw-semibold fs-5">({{$additional_product['variation_name']}})</span>
+                                                            @endif
+
+                                                        </td>
+                                                        <td class="fv-row">
+                                                            <input type="text" class="form-control form-control-sm mb-1 purchase_quantity input_number" placeholder="Quantity" name="additional_product_details[{{$key}}][quantity]" value="{{number_format($additional_product['quantity'], 2)}}">
+                                                        </td>
+                                                        <td>
+                                                            <select  name="additional_product_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id " data-kt-repeater="uom_select" data-hide-search="false" data-placeholder="Select unit">
+                                                                @foreach ($additional_product['uoms'] as $unit)
+                                                                    <option value="{{$unit['id']}}" @selected($unit['id']==$additional_product['uom_id'])>{{$unit['name']}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+
+                                                        <th class="text-center"><i class="fa-solid fa-trash text-danger deleteRow" ></i></th>
                                                     </tr>
-                                                    <!--end::Table row-->
-                                                    </thead>
-                                                    <!--end::Table head-->
-                                                    <!--begin::Table body-->
-                                                    <tbody class="fw-semibold text-gray-600 data-table-body">
-                                                    @foreach($additional_products as $key=>$pd)
-                                                        @php
-                                                        $product_variation = $pd->toArray()['product_variation'];
-                                                        $product_data = $product_variation['product'];
-                                                        @endphp
-
-                                                        <tr class='cal-gp'>
-                                                            <td class="d-none">
-                                                                <input type="hidden" value="{{$pd->id}}" name="additional_product_details[{{$key}}][additional_detail_id]">
-                                                                <input type="hidden" value="{{$product_data['id']}}" name="additional_product_details[{{$key}}][product_id]">
-                                                                <input type="hidden" value="{{$product_variation['id']}}" name="additional_product_details[{{$key}}][variation_id]">
-                                                            </td>
-                                                            <td>
-                                                                <span  class="text-gray-600 text-hover-primary">{{$product_data['name']}}</span>
-                                                                @if(isset($product_variation['variation_template_value']))
-                                                                <span class="text-gray-500 fw-semibold fs-5">({{$product_variation['variation_template_value']['name']}})</span>
-                                                                @endif
-
-                                                            </td>
-                                                            <td class="fv-row">
-                                                                <input type="text" class="form-control form-control-sm mb-1 purchase_quantity input_number" placeholder="Quantity" name="additional_product_details[{{$key}}][quantity]" value="{{number_format($pd->quantity, 2)}}">
-                                                            </td>
-                                                            <td>
-                                                                <select  name="additional_product_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id " data-kt-repeater="uom_select" data-hide-search="false" data-placeholder="Select unit">
-                                                                    @foreach ($product_data['uom']['unit_category']['uom_by_category'] as $unit)
-                                                                        <option value="{{$unit['id']}}" @selected($unit['id']==$pd['uom_id'])>{{$unit['name']}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </td>
-
-                                                            <th class="text-center"><i class="fa-solid fa-trash text-danger deleteRow" ></i></th>
-                                                        </tr>
-                                                    @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                         <div class="packaging_pd advance-toggle-class d-none">
                                             <div class="d-flex justify-content-center align-items-center mt-3 mb-6">
@@ -688,112 +694,112 @@
                                                             <table class="table table-rounded table-striped border gy-4 gs-4" id="packaging_table">
                                                                 <!--begin::Table head-->
                                                                 <thead class="bg-light rounded-3">
-                                                                    <!--begin::Table row-->
-                                                                    <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
-                                                                        <th class="min-w-100px">Packaging Name</th>
-                                                                        <th class="min-w-100px">Quantity</th>
-                                                                        <th class="min-w-100px">UOM</th>
-                                                                        <th class="min-w-100px">For Purchase</th>
-                                                                        <th class="min-w-100px">For Sale</th>
-                                                                        <th class="text-center"><i class="fa-solid fa-trash text-primary" type="button"></i>
-                                                                        </th>
-                                                                    </tr>
-                                                                    <!--end::Table row-->
+                                                                <!--begin::Table row-->
+                                                                <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                                    <th class="min-w-100px">Packaging Name</th>
+                                                                    <th class="min-w-100px">Quantity</th>
+                                                                    <th class="min-w-100px">UOM</th>
+                                                                    <th class="min-w-100px">For Purchase</th>
+                                                                    <th class="min-w-100px">For Sale</th>
+                                                                    <th class="text-center"><i class="fa-solid fa-trash text-primary" type="button"></i>
+                                                                    </th>
+                                                                </tr>
+                                                                <!--end::Table row-->
                                                                 </thead>
                                                                 <!--end::Table head-->
                                                                 <!--begin::Table body-->
                                                                 <tbody class="fw-semibold text-gray-600 data-table-body"
-                                                                    data-repeater-list="packaging_repeater">
-                                                                    @if (count($packagings) >0)
-                                                                        @foreach ($packagings as $i=>$packaging)
-                                                                            <tr class=" text-center p-row" data-repeater-item>
-                                                                                <td class="fv-row">
-                                                                                    <div class="fv-row text-start">
-                                                                                        <input type="text" class="form-control form-control-sm " value="{{$packaging->packaging_name}}" name="packaging_repeater[{{$i}}][packaging_name]"
-                                                                                            placeholder="Packaging Name" data-placeholder="Packaging Name">
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="fv-row text-start">
-                                                                                        <input type="text" class="form-control form-control-sm d-none" value="{{$packaging->id}}" name="packaging_repeater[{{$i}}][packaging_id]" placeholder="Qty"
-                                                                                            data-placeholder="Packaging Name">
-                                                                                        <input type="text" class="form-control form-control-sm " value="{{$packaging->quantity}}"
-                                                                                            name="packaging_repeater[{{$i}}][packaging_quantity]" placeholder="Qty"
-                                                                                            data-placeholder="Packaging Name">
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <select class="form-select form-select-sm unitOfUom" name="packaging_repeater[{{$i}}][packaging_uom_id]"
+                                                                       data-repeater-list="packaging_repeater">
+                                                                @if (count($packagings) >0)
+                                                                    @foreach ($packagings as $i=>$packaging)
+                                                                        <tr class=" text-center p-row" data-repeater-item>
+                                                                            <td class="fv-row">
+                                                                                <div class="fv-row text-start">
+                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->packaging_name}}" name="packaging_repeater[{{$i}}][packaging_name]"
+                                                                                           placeholder="Packaging Name" data-placeholder="Packaging Name">
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="fv-row text-start">
+                                                                                    <input type="text" class="form-control form-control-sm d-none" value="{{$packaging->id}}" name="packaging_repeater[{{$i}}][packaging_id]" placeholder="Qty"
+                                                                                           data-placeholder="Packaging Name">
+                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->quantity}}"
+                                                                                           name="packaging_repeater[{{$i}}][packaging_quantity]" placeholder="Qty"
+                                                                                           data-placeholder="Packaging Name">
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <select class="form-select form-select-sm unitOfUom" name="packaging_repeater[{{$i}}][packaging_uom_id]"
                                                                                         data-control="select2" data-kt-select2="true" data-hide-search="true"
                                                                                         data-placeholder="Select UoM">
-                                                                                        @foreach ($packaging->uom->unit_category->uomByCategory as $uom)
-                                                                                            <option value="{{$uom->id}}" @selected($uom->id == $packaging->uom_id)>{{$uom->name}}</option>
-                                                                                        @endforeach
-                                                                                    </select>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="form-check float-start  user-select-none">
-                                                                                        <input class="form-check-input" type="checkbox" name="packaging_repeater[{{$i}}][for_purchase]" @checked($packaging->for_purchase) />
-                                                                                        <label class="form-check-label text-start" for="forPurchase">
-                                                                                            For Purchase
-                                                                                        </label>
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="form-check justify-content-start user-select-none float-start">
-                                                                                        <input class="form-check-input" type="checkbox" name="for_sale" @checked($packaging->for_sale) />
-                                                                                        <label class="form-check-label text-start" for="forSale">
-                                                                                            For Sale
-                                                                                        </label>
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td class="text-danger cursor-pointer user-select-none" p-remove>
-                                                                                    <i class="fa-solid fa-trash text-danger deleteRow"></i>
-                                                                                </td>
-                                                                            </tr>
-                                                                        @endforeach
-                                                                    @else
-                                                                            <tr class=" text-center p-row" data-repeater-item>
-                                                                                <td class="fv-row">
-                                                                                    <div class="fv-row text-start">
-                                                                                        <input type="text" class="form-control form-control-sm " name="packaging_name" placeholder="Packaging Name"
-                                                                                            data-placeholder="Packaging Name">
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="fv-row text-start">
-                                                                                        <input type="text" class="form-control form-control-sm " name="packaging_quantity" placeholder="Qty"
-                                                                                            data-placeholder="Packaging Name">
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="fv-row text-start">
-                                                                                        <select class="form-select form-select-sm unitOfUom" name="packaging_uom_id" data-control="select2"
-                                                                                            data-kt-select2="true" data-hide-search="true" data-placeholder="Select UoM">
-                                                                                        </select>
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="form-check float-start  user-select-none">
-                                                                                        <input class="form-check-input" type="checkbox" name="for_purchase" />
-                                                                                        <label class="form-check-label text-start" for="forPurchase">
-                                                                                            For Purchase
-                                                                                        </label>
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="form-check justify-content-start user-select-none float-start">
-                                                                                        <input class="form-check-input" type="checkbox" name="for_sale" />
-                                                                                        <label class="form-check-label text-start" for="forSale">
-                                                                                            For Sale
-                                                                                        </label>
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td class="text-danger cursor-pointer user-select-none" p-remove>
-                                                                                    <i class="fa-solid fa-trash text-danger deleteRow"></i>
-                                                                                </td>
-                                                                            </tr>
-                                                                    @endif
+                                                                                    @foreach ($packaging->uom->unit_category->uomByCategory as $uom)
+                                                                                        <option value="{{$uom->id}}" @selected($uom->id == $packaging->uom_id)>{{$uom->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="form-check float-start  user-select-none">
+                                                                                    <input class="form-check-input" type="checkbox" name="packaging_repeater[{{$i}}][for_purchase]" @checked($packaging->for_purchase) />
+                                                                                    <label class="form-check-label text-start" for="forPurchase">
+                                                                                        For Purchase
+                                                                                    </label>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="form-check justify-content-start user-select-none float-start">
+                                                                                    <input class="form-check-input" type="checkbox" name="for_sale" @checked($packaging->for_sale) />
+                                                                                    <label class="form-check-label text-start" for="forSale">
+                                                                                        For Sale
+                                                                                    </label>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td class="text-danger cursor-pointer user-select-none" p-remove>
+                                                                                <i class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @else
+                                                                    <tr class=" text-center p-row" data-repeater-item>
+                                                                        <td class="fv-row">
+                                                                            <div class="fv-row text-start">
+                                                                                <input type="text" class="form-control form-control-sm " name="packaging_name" placeholder="Packaging Name"
+                                                                                       data-placeholder="Packaging Name">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="fv-row text-start">
+                                                                                <input type="text" class="form-control form-control-sm " name="packaging_quantity" placeholder="Qty"
+                                                                                       data-placeholder="Packaging Name">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="fv-row text-start">
+                                                                                <select class="form-select form-select-sm unitOfUom" name="packaging_uom_id" data-control="select2"
+                                                                                        data-kt-select2="true" data-hide-search="true" data-placeholder="Select UoM">
+                                                                                </select>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="form-check float-start  user-select-none">
+                                                                                <input class="form-check-input" type="checkbox" name="for_purchase" />
+                                                                                <label class="form-check-label text-start" for="forPurchase">
+                                                                                    For Purchase
+                                                                                </label>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="form-check justify-content-start user-select-none float-start">
+                                                                                <input class="form-check-input" type="checkbox" name="for_sale" />
+                                                                                <label class="form-check-label text-start" for="forSale">
+                                                                                    For Sale
+                                                                                </label>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="text-danger cursor-pointer user-select-none" p-remove>
+                                                                            <i class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endif
 
                                                                 </tbody>
                                                             </table>
@@ -844,7 +850,7 @@
                             <button type="submit" class="btn btn-success btn-sm">Save & Add Opening Stock</button> --}}
                             {{-- <button type="submit" class="btn btn-info btn-sm" name="save" value="save_and_another">Save & Add Another</button> --}}
                             <button type="submit" class="btn btn-primary btn-sm" name="save" value="save">Save</button>
-                          </div>
+                        </div>
                         <!--end::Button-->
                     </div>
                 </div>
@@ -857,6 +863,7 @@
     </div>
     <!--end::Content-->
     @include('App.product.brand.quickAddBrand')
+    @include('App.product.category.quickAddCategory')
     @include('App.product.generic.quickAddGeneric')
     @include('App.product.manufacturer.quickAddManufacturer')
 @endsection
@@ -865,15 +872,15 @@
     <script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
     @include('App.product.JS.productQuickSearch')
-<script>
-    let packagingCount=@json(count($packagings));
-    $(document).ready(function (){
-        $('[data-kt-repeater="uom_select"]').select2();
-    });
-    $(document).on('click','[p-remove]',function(){
-        $(this).closest('.p-row').remove();
-    })
-    var currentUoMData=[];
+    <script>
+        let packagingCount=@json(count($packagings));
+        $(document).ready(function (){
+            $('[data-kt-repeater="uom_select"]').select2();
+        });
+        $(document).on('click','[p-remove]',function(){
+            $(this).closest('.p-row').remove();
+        })
+        var currentUoMData=[];
         $('#packaging_repeater').repeater({
             initEmpty: packagingCount > 0 ?false :true,
 
@@ -898,25 +905,25 @@
             }
         });
 
-    toastr.options = {
-        "closeButton": false,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": false,
-        "positionClass": "toastr-top-center",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toastr-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
 
-    // ============= > Begin:: For Product Description < =====================
+        // ============= > Begin:: For Product Description < =====================
         var quill = new Quill('#kt_docs_quill_basic', {
             modules: {
                 toolbar: [
@@ -938,22 +945,22 @@
             var quillData = quill.root.innerHTML;
             document.querySelector('input[name="quill_data"]').value = quillData;
         });
-    // ============= > End:: For Product Description < =======================
+        // ============= > End:: For Product Description < =======================
 
-    // ============= > Begin:: For Product Type      < =======================
+        // ============= > Begin:: For Product Type      < =======================
 
         const selectBox = document.getElementById("has_variation");
         const singleBox = document.getElementById("single_box");
         const variableBox = document.getElementById("variable_box");
 
-            // $(document).ready(function() {
-            //     $("#single_alert_qty_ui").css("display", "block");
-            // });
+        // $(document).ready(function() {
+        //     $("#single_alert_qty_ui").css("display", "block");
+        // });
 
 
         if(selectBox.value === "variable"){
             variableBox.style.display = "block";
-        $("#single_alert_qty_ui").addClass("d-none");
+            $("#single_alert_qty_ui").addClass("d-none");
 
         }else{
             singleBox.style.display = "block";
@@ -974,15 +981,15 @@
                 variableBox.style.display = "block";
             }
         });
-    // ============= > End:: For Product Type      < =========================
+        // ============= > End:: For Product Type      < =========================
 
-    // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
+        // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
         let profitPercentage = (sell, purchase) => Math.ceil( ( (parseInt(sell) - parseInt(purchase)) * 100)/parseInt(purchase) );
 
         let sellingPrice = (profit, purchase) => Math.ceil( ( (100 + parseInt(profit)) * parseInt(purchase))/100 );
-    // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
+        // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
 
-    // ============= > Begin:: For Single Product Type Calculate < ===========
+        // ============= > Begin:: For Single Product Type Calculate < ===========
 
         let singleExc = $('[name="single_exc"]');
         let singleInc = $('[name="single_inc"]');
@@ -1082,10 +1089,10 @@
             }
         })
 
-    // ============= > End:: For Single Product Type Calculate   < ===========
+        // ============= > End:: For Single Product Type Calculate   < ===========
 
 
-    // ============= > Begin:: For Variation table repeater  < ===============
+        // ============= > Begin:: For Variation table repeater  < ===============
         $(document).ready(function () {
             let newVariation = `
             <tr data-repeater-item class="variation-add-delete">
@@ -1255,9 +1262,9 @@
 
         });
 
-    // ============= > Begin:: For Variation table repeater < ================
+        // ============= > Begin:: For Variation table repeater < ================
 
-    // ============= > Begin:: For Sub Category Select Box  < ================
+        // ============= > Begin:: For Sub Category Select Box  < ================
 
         $(document).ready(function() {
             const cateSelect = $('#categorySelect');
@@ -1334,9 +1341,9 @@
             })
         });
 
-    // ============= > End:: For Sub Category Select Box  < ==================
+        // ============= > End:: For Sub Category Select Box  < ==================
 
-    // ============= > Begin:: For Purchase, Profit, Selling price  < ==================
+        // ============= > Begin:: For Purchase, Profit, Selling price  < ==================
         $(document).on('input', 'input[name="purchase_price_for_single"]', function() {
             let value = $(this).val();
             let profit = $(document).find('input[name="profit_margin_for_single"]').val();
@@ -1371,91 +1378,87 @@
             $(document).find('input[name="single_profit"]').val(profit)
             $(document).find('input[name="single_selling"]').val(value)
         })
-    // ============= > End:: For Purchase, Profit, Selling price  < ==================
+        // ============= > End:: For Purchase, Profit, Selling price  < ==================
 
-    // ============= > Begin:: For Show advance  < ==================
+        // ============= > Begin:: For Show advance  < ==================
         $(document).on('click', '#advance_toggle', function() {
             $('.show_advance, .hide_advance').toggleClass('d-none');
             $('.advance-toggle-class').toggleClass('d-none');
         })
-    // ============= > End:: For Show advance  < ==================
+        // ============= > End:: For Show advance  < ==================
 
+        $(document).ready(function(){
+            $('[name="unit_categories"]').val(JSON.parse('{{ json_encode($unit_category_id) }}')).trigger('change');
 
+            setTimeout(function (){
+                $('[name="uom_id"]').val(JSON.parse('{{ json_encode($product->uom_id) }}')).trigger('change');
+            }, 300);
 
-
-    {{--$('[name="uom_id"]').val(@json($product->uom_id)).trigger('change');--}}
-
-    $(document).ready(function () {
-        let oldUoMId = @json($product->purchase_uom_id ?? null);
-        $('[name="unit_categories"]').val(@json($unit_category_id)).trigger('change');
-        unitCategory(@json($unit_category_id));
-
-        setTimeout(function(){
-            $('[name="purchase_uom_id"]').val(@json($product->purchase_uom_id)).trigger('change');
-        },600);
-    });
-
-    $(document).on('change', 'select[name="unit_categories"]', function (){
-        let unit_category_id = $(this).val();
-        $('.unitOfUom').empty();
-        unitCategory(unit_category_id);
-
-    });
-
-    function unitCategory(unit_category_id){
-        $.ajax({
-            url: `/uom/category/get/${unit_category_id}`,
-            type: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(results){
-                $('.uomDatas').empty();
-                let data=[];
-                for (let item of results) {
-
-                    data=[...data,
-                        {
-                            'id':item.id,
-                            'text':item.name,
-                            'data-uom-name': item.name
-                        }]
-                }
-                currentUoMData=data;
-
-                let selectElement = $('.uomDatas');
-                selectElement.empty(); // Clear existing options
-                for (let item of data) {
-                    let option = $('<option></option>').val(item.id).text(item.text).attr('data-uom-name', item.text);
-                    selectElement.append(option);
-                }
-
-
-                $('.uomDatas').select2({
-                    minimumResultsForSearch: Infinity,
-                });
-
-
-                setTimeout(function (){
-                    let selectedOption = $('select[name="uom_id"]').find('option:selected');
-                    let uomName = selectedOption.attr('data-uom-name');
-
-
-                    $('.uom-label').text('('+uomName+')');
-
-                }, 150);
-                $('[name="uom_id"]').val(data[0].id).trigger('change');
-            },
-            error: function(e){
-                console.log(e.responseJSON.error);
-            }
+            setTimeout(function (){
+                $('[name="purchase_uom_id"]').val(JSON.parse('{{ json_encode($product->purchase_uom_id) }}')).trigger('change');
+            }, 500);
         });
-    }
 
-    // ============= > Begin:: For UOM  < ==================
+        $(document).on('change', 'select[name="unit_categories"]', function (){
+            let unit_category_id = $(this).val();
+           unitCategory(unit_category_id);
+        });
+
+        function unitCategory(unit_category_id){
+            $.ajax({
+                url: `/uom/category/get/${unit_category_id}`,
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(results){
+                    console.log(results);
+                    $('.uomDatas').empty();
+                    let data=[];
+                    for (let item of results) {
+
+                        data=[...data,
+                            {
+                                'id':item.id,
+                                'text':item.name,
+                                'data-uom-name': item.name
+                            }]
+                    }
+                    currentUoMData=data;
+
+                    let selectElement = $('[name="uom_id"]');
+                    selectElement.empty(); // Clear existing options
+                    for (let item of data) {
+                        let option = $('<option></option>').val(item.id).text(item.text).attr('data-uom-name', item.text);
+                        selectElement.append(option);
+                    }
+
+
+                    $('[name="uom_id"]').select2({
+                        minimumResultsForSearch: Infinity,
+                    });
+
+
+                    setTimeout(function (){
+                        let selectedOption = $('select[name="uom_id"]').find('option:selected');
+                        let uomName = selectedOption.attr('data-uom-name');
+
+
+                        $('.uom-label').text('('+uomName+')');
+
+                    }, 150);
+                    $('[name="uom_id"]').val(data[0].id).trigger('change');
+                },
+                error: function(e){
+                    console.log(e.responseJSON.error);
+                }
+            });
+        }
+        // ============= > Begin:: For UOM  < ==================
         let isSelectUoM = false;
         if(!isSelectUoM){
             let id = $(document).find('select[name="uom_id"]').val();
+
             $.ajax({
                 url: `/uom/get/${id}`,
                 type: 'GET',
@@ -1481,10 +1484,10 @@
                             option.selected = true;
                         }
                         data=[...data,
-                        {
-                            'id':item.id,
-                            'text':item.name
-                        }]
+                            {
+                                'id':item.id,
+                                'text':item.name
+                            }]
                         purchaseUoM.append(option);
                     }
                     currentUoMData=data;
@@ -1500,7 +1503,10 @@
 
         $(document).on('change', 'select[name="uom_id"]', function() {
             let uom_id = $(this).val();
+            let selectedOption = $(this).find('option:selected');
+            let uomName = selectedOption.attr('data-uom-name');
 
+            $('.uom-label').text('('+uomName+')');
             $.ajax({
                 url: `/uom/get/${uom_id}`,
                 type: 'GET',
@@ -1513,10 +1519,10 @@
                     for (let item of results) {
                         // let option = document.createElement('option');
                         data=[...data,
-                        {
-                            'id':item.id,
-                            'text':item.name
-                        }]
+                            {
+                                'id':item.id,
+                                'text':item.name
+                            }]
                     }
                     currentUoMData=data;
                     $('.unitOfUom').select2({
@@ -1529,10 +1535,10 @@
                 }
             });
         })
-    // ============= > End:: For UOM  < ==================
+        // ============= > End:: For UOM  < ==================
 
 
-    // ============= > Begin:: For Brand  < ==================
+        // ============= > Begin:: For Brand  < ==================
         $('.quick-add-brand').on('click', function(e) {
             // e.preventDefault();
             let brand_name = $(document).find('input[name="brand_name"]').val();
@@ -1559,6 +1565,7 @@
                             value: brand.id,
                             text: brand.name
                         }));
+                        $('select[name="brand"]').val(brand.id).trigger('change');
                     });
 
                     $('#kt_modal_brand').modal('hide');
@@ -1568,9 +1575,50 @@
                 }
             });
         })
-    // ============= > End:: For Brand  < ==================
+        // ============= > End:: For Brand  < ==================
 
-    // ============= > Begin:: For Generic  < ==================
+        // ============= > Begin:: For Category  < ==================
+        $('.quick-add-category').on('click', function(e) {
+            // e.preventDefault();
+            let category_name = $(document).find('input[name="category_name"]').val();
+            let category_code = $(document).find('input[name="category_code"]').val();
+            let parent_id = $(document).find('select[name="parent_id"]').val();
+            let category_desc = $(document).find('input[name="category_desc"]').val();
+            let form_type = "from_product";
+
+            var formData = {category_name, category_code, parent_id,category_desc, form_type};
+
+            $.ajax({
+                url: '/category/create',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    success(response.message)
+                    $('select[name="category"]').empty();
+
+                    $('select[name="category"]').append($('<option>'));
+
+                    $.each(response.categories, function(index, category) {
+                        $('select[name="category"]').append($('<option>', {
+                            value: category.id,
+                            text: category.name
+                        }));
+                        $('select[name="category"]').val(category.id).trigger('change');
+                    });
+
+                    $('#kt_modal_category').modal('hide');
+                },
+                error: function(error) {
+
+                }
+            });
+        })
+        // ============= > End:: For Category  < ==================
+
+        // ============= > Begin:: For Generic  < ==================
         $('.quick-add-generic').on('click', function(e) {
             let generic_name = $(document).find('input[name="generic_name"]').val();
             let form_type = "from_product";
@@ -1595,8 +1643,8 @@
                             value: generic.id,
                             text: generic.name
                         }));
+                        $('select[name="generic"]').val(generic.id).trigger('change');
                     });
-
                     $('#kt_modal_generic').modal('hide');
                 },
                 error: function(error) {
@@ -1604,9 +1652,9 @@
                 }
             });
         })
-    // ============= > End:: For Generic  < ==================
+        // ============= > End:: For Generic  < ==================
 
-    // ============= > Begin:: For Manufacturer  < ==================
+        // ============= > Begin:: For Manufacturer  < ==================
         $('.quick-add-manufacturer').on('click', function(e) {
             let manufacturer_name = $(document).find('input[name="manufacturer_name"]').val();
             let form_type = "from_product";
@@ -1631,6 +1679,7 @@
                             value: manufacturer.id,
                             text: manufacturer.name
                         }));
+                        $('select[name="manufacturer"]').val(manufacturer.id).trigger('change');
                     });
 
                     $('#kt_modal_manufacturer').modal('hide');
@@ -1640,8 +1689,8 @@
                 }
             });
         })
-    // ============= > End:: For Manufacturer  < ==================
-</script>
+        // ============= > End:: For Manufacturer  < ==================
+    </script>
 
     @if (session('message'))
         <script>

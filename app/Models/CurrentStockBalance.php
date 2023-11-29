@@ -29,6 +29,8 @@ class CurrentStockBalance extends Model
         'ref_uom_quantity',
         'ref_uom_price',
         'current_quantity',
+        'created_at'
+
     ];
 
     public function location()

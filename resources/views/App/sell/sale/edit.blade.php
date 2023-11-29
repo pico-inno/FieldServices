@@ -86,13 +86,12 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
-                                        <select class="form-select  form-select-sm   fw-bold rounded-0"  name="contact_id" data-kt-select2="true" data-hide-search="false" data-placeholder="Select customer name" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true" >
-                                            <option value=""></option>
-                                            {{-- <option value="2">Aung Aung</option> --}}
-                                            @foreach ($customers as $customer)
-                                                <option value="{{$customer->id}}" @selected($customer->id==$sale->contact_id) priceList={{$customer->pricelist_id}}>{{ $customer->first_name ?? $customer->company_name}}</option>
-                                            @endforeach
-                                        </select>
+                                        <x-customersearch placeholder='Select customer name' name="contact_id" className=" form-selecet contact_id fw-bold rounded-start-0" >
+                                            <x-slot:defaultOption>
+                                                <option value="{{$sale->customer->id}}" selected>{{$sale->customer->getFullNameAttribute()}}-{{'('.arr($sale->customer,'mobile','-').')'}}</option>
+                                            </x-slot>
+                                        </x-customersearch>
+
                                     </div>
                                     <button class="input-group-text add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#add_supplier_modal" data-href="{{ url('purchase/add/supplier')}}">
                                         <i class="fa-solid fa-circle-plus fs-3 text-primary"></i>
@@ -188,6 +187,9 @@
                                             $product_variation =$sale_detail->toArray()['product_variation'];
                                             $additionalProduct=$sale_detail->productVariation->additionalProduct;
                                             $parentkey=$sale_detail->parent_id ?array_search($sale_detail->parent_id,array_column($sale_details->toArray(),'id')) +1:$key;
+                                            $kitSaleDetails=$sale_detail['kitSaleDetails'];
+                                            $avilQty=getKitAvailableQty($sale->business_location_id,$product->id);
+                                            $conusmeQty=getConsumeQty($product->id);
                                         @endphp
                                         <tr class="sale_row sale_row_{{$key}}" data-unid="{{$parentkey}}" data-product="{{$sale_detail->variation_id}}">
                                             <td class="d-flex ps-2">
@@ -196,10 +198,27 @@
                                                     <span>{{$product->name}}</span>
                                                     <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
                                                     <br>
-
-                                                    @if ($product->type =='storeable')
+                                                    @if (isset($sale_detail['kitSaleDetails']))
+                                                        <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">{{$avilQty +round($sale_detail->quantity,2) }}</span>
+                                                        <span class='smallest_unit_txt smallest_rom_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
+                                                        <input type="hidden" class="aviaQty_{{$key}}" value="{{$avilQty +round($sale_detail->quantity,2) }}" >
+                                                    @elseif ($product->product_type =='storable')
                                                         <span class="current_stock_qty_txt">{{$sale_detail->stock_sum_current_quantity}}</span> <span
                                                             class='smallest_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
+                                                    @endif
+
+                                                    @if (isset($sale_detail['kitSaleDetails']))
+                                                        @foreach ($kitSaleDetails as $ksd)
+                                                            <span class="badge badge-secondary">
+                                                                {{$ksd['product']['name']}} x {{$ksd['quantity']}}{{$ksd['uom']['short_name']}}
+                                                            </span>
+                                                            <div class='rdMainDiv'>
+                                                                <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty={{$sale_detail->variation_id}}
+                                                                value="{{$ksd['quantity']}}" />
+                                                                <input type="hidden" class="romQty" data-romvaridqty={{$sale_detail->variation_id}} value="{{$ksd['quantity']}}" />
+                                                                <input type="hidden" class="romUom" data-romvariduom={{$sale_detail->variation_id}} value="{{$ksd['uom_id']}}" />
+                                                            </div>
+                                                        @endforeach
                                                     @endif
                                                     @if (count($additionalProduct) >0)
                                                         <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-non" data-varid="{{$sale_detail->variation_id}}"
@@ -253,7 +272,7 @@
                                             <td class="fv-row">
                                                 <select name="sale_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
                                                     data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
-                                                    data-placeholder="Select Package" placeholder="select Package" required>
+                                                    data-placeholder="Select Package" placeholder="select Package" >
                                                     <option value="">Select Package</option>
                                                     @foreach ($product_variation['packaging'] as $package)
                                                     <option @selected($package['id']==arr($sale_detail['packagingTx'],'product_packaging_id'))
@@ -439,29 +458,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="suggestionProducts">
-                <div class="border border-1 rounded px-2 py-3 d-flex mb-2">
-                    <div class="img bg-light w-50px h-50px rounded">
-
-                    </div>
-                    <div class="product-info ms-4 pt-1">
-                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span
-                                class="text-gray-700 fw-semibold">(Cherry Mx blue switch)</span></span>
-                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30
-                                pcs</span></span>
-                    </div>
-                </div>
-                <div class="border border-1 rounded px-2 py-3 d-flex">
-                    <div class="img bg-light w-50px h-50px rounded">
-
-                    </div>
-                    <div class="product-info ms-4 pt-1">
-                        <span class="fw-bold text-gray-800">Rk 61 wireless Keyboard <span
-                                class="text-gray-700 fw-semibold">(Cherry Mx
-                                blue switch)</span></span>
-                        <span class="fw-bold text-gray-700 pt-2 d-block">Qty : <span class="text-gray-900"> 30
-                                pcs</span></span>
-                    </div>
-                </div>
 
             </div>
             <div class="modal-footer">
@@ -470,13 +466,15 @@
         </div>
     </div>
 </div>
+
 @include('App.purchase.newProductAdd')
 @include('App.sell.sale.subscribeModel')
+
 @endsection
 
 @push('scripts')
-<script src={{asset('customJs/Purchases/contactAdd.js')}}></script>
-@include('App.purchase.contactAdd')
+{{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
+{{-- @include('App.purchase.contactAdd') --}}
     <script>
         $('[data-kt-select2="select2"]').select2();
         $('#subscribe').change(function() {

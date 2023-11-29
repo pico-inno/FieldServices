@@ -7,6 +7,7 @@ use App\Models\settings\businessLocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -22,6 +23,8 @@ class StockAdjustment extends Model
         'status',
         'increase_subtotal',
         'decrease_subtotal',
+        'adjustmented_at',
+        'remark',
         'created_at',
         'created_by',
         'updated_at',
@@ -35,6 +38,11 @@ class StockAdjustment extends Model
     public function businessLocation(): BelongsTo
     {
         return $this->belongsTo(businessLocation::class, 'business_location', 'id');
+    }
+
+    public function adjustmentDetails(): HasMany
+    {
+        return $this->hasMany(StockAdjustmentDetail::class, 'adjustment_id', 'id');
     }
     public function created_by(): HasOne
     {

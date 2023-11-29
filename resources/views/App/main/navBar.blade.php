@@ -28,6 +28,11 @@
     <link rel="stylesheet" href={{asset("customCss/scrollbar.css")}}>
     <!--end::Global Stylesheets Bundle-->
     @yield('styles')
+    <style>
+        /* .aside-menu{
+            width:300px !important;
+        } */
+    </style>
 </head>
 <!--end::Head-->
 <!--begin::Body-->
@@ -44,7 +49,7 @@
         <!--begin::Page-->
         <div class="page d-flex flex-row flex-column-fluid">
             <!--begin::Aside-->
-            <div id="kt_aside" class="aside aside-extended" data-kt-drawer="true" data-kt-drawer-name="aside"
+            <div id="kt_aside" class="aside aside-extended aside-menu" data-kt-drawer="true" data-kt-drawer-name="aside"
                 data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
                 data-kt-drawer-width="auto" data-kt-drawer-direction="start"
                 data-kt-drawer-toggle="#kt_aside_mobile_toggle">
@@ -1258,6 +1263,9 @@
                                                                 </a>
                                                                 <!--end:Menu link-->
                                                             </div>
+                                                        @if(hasModule('ComboKit') && isEnableModule('ComboKit'))
+                                                            @include('combokit::layouts.master')
+                                                        @endif
 														</div>
 														<!--end:Menu sub-->
 														<!--end:Menu sub-->
@@ -1771,8 +1779,6 @@
                                                 </a>
                                             </div>
                                             <div class="menu-item menu-accordion ">
-                                                <!--begin:Menu link-->
-                                                <!--begin:Menu link-->
                                                 <a class="menu-link @yield('stock_history_active_show')"
                                                     href="{{route('stockHistory_list')}}">
                                                     <span class=" menu-icon">
@@ -1844,6 +1850,9 @@
                                     </div>
                                     <!--end::Tab pane-->
                                     @endif --}}
+
+
+
                                     <!--begin::Tab pane-->
                                     <div class="tab-pane fade @yield('reports_active_show')"
                                         id="kt_aside_nav_tab_reports" role="tabpanel">
@@ -1858,6 +1867,26 @@
                                                             class="menu-heading fw-bold text-uppercase fs-7">Reports</span>
                                                     </div>
                                                     <!--end:Menu content-->
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('plReport_active_show')" href="{{route('plReport')}}">
+                                                        <span class="menu-title ">Profit/Loss Report</span>
+                                                    </a>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('spReport_active_show')" href="{{route('spReport')}}">
+                                                        <span class="menu-title ">Purchase & Sale Report</span>
+                                                    </a>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('expenseReport_active_show')" href="{{route('expenseReport')}}">
+                                                        <span class="menu-title ">Expense Report</span>
+                                                    </a>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('itemReport_active_show')" href="{{route('itemReport')}}">
+                                                        <span class="menu-title ">Item Report</span>
+                                                    </a>
                                                 </div>
                                                 @if(hasAll('sell'))
                                                 <!--begin:Menu item-->
@@ -2080,6 +2109,36 @@
                                                         </div>
                                                         <!--end:Menu item-->
                                                         @endif
+
+                                                        @if(hasView('stock adjustment') && hasExport('stock adjustment'))
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link  @yield('stock_adjustment_summary_active_show')"
+                                                                   href="{{route('report.adjustment.index')}}">
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+                                                                    <span class="menu-title">Stock Adjustment Summary</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link  @yield('stock_adjustment_details_active_show')"
+                                                                   href="{{route('report.adjustment.details')}}">
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+                                                                    <span class="menu-title">Stock Adjustment Details</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                        @endif
+
                                                         @if(multiHasAll(['stockin', 'stockout', 'stock transfer', 'stock
                                                         adjustment', 'opening stock']))
                                                         <!--begin:Menu item-->
@@ -3240,8 +3299,15 @@
                     </div>
                     <!--end::Aside mobile toggle-->
                     <!--begin::Logo-->
-                    <a href="../../demo7/dist/index.html" class="d-flex align-items-center">
-                        <img alt="Logo" src={{asset("assets/media/logos/demo7.svg")}} class="h-30px" />
+                    <a href="/" class="d-flex align-items-center">
+                        @php
+                        $logo=getSettingsValue('logo');
+                        @endphp
+                        @if ($logo)
+                        <img alt="Logo" src="{{asset('storage/logo/'.$logo)}}" class="h-20px w-20px" />
+                        @else
+                        <img alt="Logo" src="https://picosbs.com/img/logo.png" class="h-20px w-20px" />
+                        @endif
                     </a>
                     <!--end::Logo-->
                 </div>
@@ -3249,26 +3315,9 @@
                 <!--begin::Toolbar wrapper-->
                 <div class="d-flex flex-shrink-0">
                     <!--begin::Invite user-->
-                    <div class="d-flex ms-3 d-none">
-                        <a href="#"
-                            class="btn btn-flex flex-center bg-body btn-color-gray-700 btn-active-color-primary w-40px w-md-auto h-40px px-0 px-md-6"
-                            data-bs-toggle="modal" data-bs-target="#kt_modal_invite_friends">
-                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr075.svg-->
-                            <span class="svg-icon svg-icon-2 svg-icon-primary me-0 me-md-2">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1"
-                                        transform="rotate(-90 11.364 20.364)" fill="currentColor" />
-                                    <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
-                                </svg>
-                            </span>
-                            <!--end::Svg Icon-->
-                            <span class="d-none d-md-inline">New Member</span>
-                        </a>
-                    </div>
-                    <div class="d-flex align-items-center ms-3">
+                    <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <!--begin::Menu toggle-->
-                        <a href="#" class="d-flex btn btn-icon flex-center btn-sm bg-body btn-color-gray-600 px-5 btn-active-color-primary h-40px w-auto"
+                        <a href="#" class="d-md-flex d-none  btn btn-icon flex-center btn-sm bg-body btn-color-gray-600 px-5 btn-active-color-primary h-40px w-auto"
                             data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
                             data-kt-menu-placement="bottom-end">
                             @php
@@ -3316,35 +3365,35 @@
                         <!--end::Menu-->
                     </div>
                     <!--end::Invite user-->
-                    <div class="d-flex align-items-center ms-3">
+                    <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <a href="{{ route('pos.selectPos')}}"
-                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-40px"
+                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-sm-40px h-25px"
                             title="POS Screen">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen060.svg-->
                             <span class="svg-icon svg-icon-5">
-                                <i class="fa-solid fa-cash-register fs-7"></i>
+                                <i class="fa-solid fa-cash-register fs-sm-7 fs-8"></i>
                             </span>
                             <!--end::Svg Icon-->
                         </a>
                     </div>
                     <!--end::Create app-->
                     <!--begin::Theme mode-->
-                    <div class="d-flex align-items-center ms-3">
+                    <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <a href="#" id="alertSound"
-                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-40px">
+                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-sm-40px h-25px">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen060.svg-->
                             <span class="svg-icon svg-icon-5" id='alertIcon'>
-                                <i class="fa-solid fa-volume-low text-primary fs-5"></i>
+                                <i class="fa-solid fa-volume-low text-primary fs-sm-4 fs-8"></i>
                             </span>
                             <!--end::Svg Icon-->
                         </a>
                     </div>
 
 
-                    <div class="d-flex align-items-center ms-3">
+                    <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <!--begin::Menu toggle-->
                         <a href="#"
-                            class="btn btn-icon flex-center btn-sm bg-body btn-color-gray-600 btn-active-color-primary h-40px"
+                            class="btn btn-icon flex-center btn-sm bg-body btn-color-gray-600 btn-active-color-primary h-sm-40px h-25px"
                             data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
                             data-kt-menu-placement="bottom-end">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen060.svg-->
@@ -3382,7 +3431,7 @@
                             </span>
                             <!--end::Svg Icon-->
                             <!--begin::Svg Icon | path: icons/duotune/general/gen061.svg-->
-                            <span class="svg-icon theme-dark-show svg-icon-2">
+                            <span class="svg-icon theme-dark-show svg-icon-5">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -3410,7 +3459,7 @@
                                 <a href="#" class="menu-link px-3 py-2" data-kt-element="mode" data-kt-value="light">
                                     <span class="menu-icon" data-kt-element="icon">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen060.svg-->
-                                        <span class="svg-icon svg-icon-3">
+                                        <span class="svg-icon svg-icon-4">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -3499,14 +3548,14 @@
                         </div>
                         <!--end::Menu-->
                     </div>
-                    <div class="app-navbar-item ms-1 ms-md-4" id="kt_header_user_menu_toggle">
+                    <div class="app-navbar-item ms-1 ms-sm-4" id="kt_header_user_menu_toggle">
                         <!--begin::Menu wrapper-->
                         @php
                         $personalInfo =
                         \App\Models\PersonalInfo::find(\Illuminate\Support\Facades\Auth::user()->personal_info_id);
                         $roleName = \App\Models\Role::find(\Illuminate\Support\Facades\Auth::user()->role_id)->name;
                         @endphp
-                        <div class="cursor-pointer symbol symbol-40px"
+                        <div class="cursor-pointer symbol symbol-sm-40px symbol-25px"
                             data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                             data-kt-menu-placement="bottom-end">
                             @if($personalInfo)
@@ -3561,7 +3610,54 @@
                             </div>
                             <!--begin::Menu separator-->
                             <div class="separator my-2"></div>
+                            <div class="menu-item text-start px-5">
+                                <a href="#" class="d-md-none d-flex  btn btn-icon justify-content-start btn-sm bg-body btn-color-gray-600 px-5 btn-active-color-primary h-40px w-auto"
+                                data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
+                                data-kt-menu-placement="bottom-end">
+                                    @php
+                                        $lang=Auth::user()->personal_info->language;
+                                    @endphp
+                                    @if ($lang=='en')
+                                        English <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
+                                    @elseif ($lang=='my')
+                                        မြန်မာ <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/myanmar.svg")}} alt="" />
+                                    @elseif ($lang=='th')
+                                        ภาษาไทย <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/thailand.svg")}} alt="" />
+                                    @endif
 
+                                    </a>
+                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-color fw-semibold py-4 fs-base w-150px"
+                                    data-kt-menu="true">
+                                    <!--begin::Menu item-->
+                                    <div class="menu-item px-3">
+                                        <a href="{{route('lang.change','my')}}"
+                                            class="menu-link d-flex px-5  {{Auth::user()->personal_info->language == 'my' ? 'active':''}}">
+                                            <span class="symbol symbol-20px me-4">
+                                                <img class="rounded-1" src={{asset("assets/media/flags/myanmar.svg")}} alt="" />
+                                            </span>
+                                            မြန်မာ
+                                        </a>
+                                    </div>
+                                    <!--begin::Menu item-->
+                                    <div class="menu-item px-3">
+                                        <a href="{{route('lang.change','en')}}"
+                                            class="menu-link d-flex px-5 {{Auth::user()->personal_info->language == 'en' ? 'active':''}}">
+                                            <span class="symbol symbol-20px me-4">
+                                                <img class="rounded-1" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
+                                            </span>
+                                            English
+                                        </a>
+                                    </div>
+                                    <div class="menu-item px-3">
+                                        <a href="{{route('lang.change','th')}}"
+                                            class="menu-link d-flex px-5  {{Auth::user()->personal_info->language == 'th' ? 'active':''}}">
+                                            <span class="symbol symbol-20px me-4">
+                                                <img class="rounded-1" src={{asset("assets/media/flags/thailand.svg")}} alt="" />
+                                            </span>ภาษาไทย</a>
+                                    </div>
+                                </div>
+                                <div class="separator my-2"></div>
+                            </div>
                             <div class="menu-item px-5">
                                 <a class="menu-link px-5" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                             document.getElementById('logout-form').submit();">Sign

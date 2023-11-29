@@ -145,7 +145,7 @@ class openingStockController extends Controller
     {
         $locations = businessLocation::all();
         $openingStock = openingStocks::where('id', $id)->first();
-        $openingStockDetails = openingStockDetails::with([
+        $openingStockDetailsChunks = openingStockDetails::with([
             'productVariation' => function ($q) {
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
                     ->with(
@@ -156,9 +156,9 @@ class openingStockController extends Controller
                         ]
                     );
             }, 'product', 'packagingTx'
-        ])->where('opening_stock_id', $id)->where('is_delete', 0)->get();
+        ])->where('opening_stock_id', $id)->where('is_delete', 0)->get()->chunk(200);
         // dd($openingStockDetails->toArray(),productPackagingTransactions::get()->toArray);
-        return view('App.openingStock.edit', compact('openingStock', 'locations',  'openingStockDetails'));
+        return view('App.openingStock.edit', compact('openingStock', 'locations',  'openingStockDetailsChunks'));
     }
     public function update($id,Request $request)
     {
@@ -215,6 +215,7 @@ class openingStockController extends Controller
                     stock_history::where('transaction_details_id', $opening_stock_detail_id)->where('transaction_type', 'opening_stock')->update([
                         'increase_qty' => $requestQty,
                         "business_location_id" => $request->business_location_id,
+                        "created_at" => $request['opening_date'],
                     ]);
                     $currentStock->update([
                         "ref_uom_id" => $refUnitId,
@@ -222,6 +223,7 @@ class openingStockController extends Controller
                         "ref_uom_quantity" => $requestQty,
                         "ref_uom_price" => $updateOpeningStockData['ref_uom_price'],
                         "current_quantity" => $current_qty >= 0 ? $current_qty : '0',
+                        "created_at" => $request['opening_date'],
                     ]);
                 }
 
@@ -422,6 +424,7 @@ class openingStockController extends Controller
             'increase_qty' =>  $smallestQty,
             'decrease_qty' => 0,
             'ref_uom_id' => $refUomId,
+            'created_at'=>$openingStock['opening_date'],
         ]);
         return [
             "business_location_id" => $openingStock->business_location_id,
@@ -434,6 +437,7 @@ class openingStockController extends Controller
             "ref_uom_quantity" => $smallestQty,
             "ref_uom_price" => $opening_stock_detail->ref_uom_price,
             "current_quantity" => $smallestQty,
+            "created_at" => $openingStock['opening_date'],
         ];
 
     }

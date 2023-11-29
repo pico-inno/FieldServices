@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Product\UOMSet;
 use App\Services\mailServices;
 use App\Models\Contact\Contact;
+use App\Models\Product\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use Illuminate\Support\Facades\App;
@@ -16,9 +18,11 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\openingStocks\Import;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SMSController;
+use App\Services\Report\reportServices;
 use App\Http\Controllers\mailController;
 use App\Http\Controllers\TestController;
 use App\Models\Product\PriceListDetails;
+use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\tableController;
 use App\Http\Middleware\businessActivate;
 use App\Models\settings\businessSettings;
@@ -27,24 +31,31 @@ use App\Http\Controllers\expenseController;
 use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\printerController;
 use App\Http\Controllers\currencyController;
+use App\Http\Controllers\languageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\sell\saleController;
+
+// use App\Http\Controllers\ContactController\CustomerGroupController;
+// use App\Http\Controllers\ContactController\ImportContactsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\restaurantController;
 use App\Http\Middleware\permissions\role\view;
 use App\Http\Controllers\Product\UoMController;
+
+//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\exchangeRateController;
-// use App\Http\Controllers\ContactController\CustomerGroupController;
-// use App\Http\Controllers\ContactController\ImportContactsController;
 use App\Http\Controllers\openingStockController;
 use App\Http\Controllers\orderDisplayController;
 use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\stockHistoryController;
-//use App\Http\Controllers\Stock\StockTransferController;
+use App\Http\Controllers\configurationController;
 use App\Http\Controllers\expenseReportController;
+use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Report\ReportController;
+
+// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Stock\StockInController;
 use App\Http\Controllers\settings\FloorController;
 use App\Http\Controllers\Stock\StockOutController;
@@ -52,7 +63,6 @@ use App\Http\Controllers\deliveryChannelController;
 use App\Http\Controllers\paymentAccountsController;
 use App\Http\Controllers\posRegistrationController;
 use App\Http\Controllers\Product\GenericController;
-// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Service\ServiceController;
 use App\Http\Controllers\Contact\CustomerController;
@@ -63,13 +73,11 @@ use App\Http\Controllers\Product\VariationController;
 use App\Http\Controllers\purchase\purchaseController;
 use App\Http\Controllers\settings\BuildingController;
 use App\Http\Controllers\businessActivationController;
-use App\Http\Controllers\import\importOpeningStockController;
 use App\Http\Controllers\Service\ServiceTypeController;
 use App\Http\Controllers\Stock\StockTransferController;
 use \App\Http\Controllers\userManagement\RoleController;
 use App\Http\Controllers\paymentsTransactionsController;
 use App\Http\Controllers\Product\ManufacturerController;
-use App\Http\Controllers\Product\UnitCategoryController;
 use App\Http\Controllers\Service\ServiceSalesController;
 use App\Http\Controllers\Contact\CustomerGroupController;
 use App\Http\Controllers\hospitalFolioInvoicesController;
@@ -78,12 +86,10 @@ use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Controllers\Product\ImportProductController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
 use App\Http\Controllers\Contact\ImportContactsController;
-use App\Http\Controllers\configurationController;
-use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\import\priceListImportController;
-use App\Http\Controllers\languageController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
+use App\Http\Controllers\import\importOpeningStockController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
@@ -114,10 +120,9 @@ Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('
 // });
 
 
-
 //============================ Being: User Management ==========================================
-Auth::routes();
-
+// Auth::routes();
+Auth::routes(['register' => false]);
 //_Being: Auth
 Route::get('/', [LoginController::class, 'showLoginForm']);
 //_End: Auth
@@ -133,7 +138,7 @@ Route::controller(DashboardController::class)->group(function () {
     Route::post('/dashboard/total-sale-purchase-order-widget', 'totalSaleAndPurchaseOrder');
 });
 //End: Dashboard
-Route::get('lang/{code}',[languageController::class, 'change'])->name('lang.change');
+Route::get('lang/{code}', [languageController::class, 'change'])->name('lang.change');
 //_Being: Users
 Route::resource('users', BusinessUserController::class);
 //_End: Users
@@ -212,7 +217,6 @@ Route::get('/stock/get-stock', [StockTransferController::class, 'getStock']);
 Route::get('/stock/get-current-qty', [StockTransferController::class, 'getCurrentQtyOnUnit']);
 
 
-
 //============================ End: Stock - In, Out, Transfer, Adustment ===========================================
 
 
@@ -253,13 +257,19 @@ Route::controller(ReportController::class)->group(function () {
         //End: Expire Alert
 
 
-
         //Stock transfer summary
         Route::get('/stock-transfer-report', 'stock_transfer_index')->name('report.stocktransfer.index');
         Route::post('/transfer-report/filter-list', 'transferFilter');
         //Stock transfer details
         Route::get('/transfer-details-report', 'transfer_details_index')->name('report.transfer.details.index');
         Route::post('/transfer-details/filter-list', 'transferDetailsFilter');
+
+        //Stock adjustment summary
+        Route::get('/stock-adjustment-report', 'adjustmentIndex')->name('report.adjustment.index');
+        Route::post('/adjustment-report/filter-list', 'adjustmentFilter');
+        //Stock adjustment details
+        Route::get('/adjustment-details-report', 'adjustmentDetails')->name('report.adjustment.details');
+        Route::post('/adjustment-details/filter-list', 'adjustmentDetailsFilter');
 
         //Current Stock Balance
         Route::get('/current-stock-balance', 'currentStockBalanceIndex')->name('report.currentstockbalance.index');
@@ -269,6 +279,25 @@ Route::controller(ReportController::class)->group(function () {
 
 
     });
+});
+Route::controller(ReportController::class)->group(function () {
+
+
+    //=================================Start : Profit And Loss Report =============================
+    Route::get('/profit-loss/report', 'proftLoss')->name('plReport');
+
+    Route::get('/expense/report', 'expenseReport')->name('expenseReport');
+
+    Route::get('/report/pl/data', 'profitLossData');
+
+    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport');
+
+
+    Route::get('/report/sale-purchase/data', 'salePurchaseData');
+    Route::get('/items/report', 'itemReport')->name('itemReport');
+    Route::get('/items/report/data', 'itemData');
+
+    Route::get('/items/couont/data', 'itemCount');
 });
 //============================ End: Reports ===========================================
 
@@ -327,7 +356,6 @@ Route::get('/location/setting', function () {
 });
 
 
-
 Route::resource('building', BuildingController::class);
 Route::resource('floor', FloorController::class);
 
@@ -363,13 +391,13 @@ Route::prefix('purchase')->group(function () {
     });
 });
 
-Route::get('purchase/order', fn () => view('App.purchase.purchaseOrder'))->name('purchase_order');
+Route::get('purchase/order', fn() => view('App.purchase.purchaseOrder'))->name('purchase_order');
 // Route::get('purchase/add', fn () => view('App.purchase.addPurchase'))->name('purchase_add');
-Route::get('purchase/add/order', fn () => view('App.purchase.purchaseOrderAdd'))->name('purchase_order_add');
-Route::get('purchase/add/supplier', fn () => view('App.purchase.supplierAdd'))->name('purchase_supplier_add');
+Route::get('purchase/add/order', fn() => view('App.purchase.purchaseOrderAdd'))->name('purchase_order_add');
+Route::get('purchase/add/supplier', fn() => view('App.purchase.supplierAdd'))->name('purchase_supplier_add');
 // Route::get('purchase/list', fn () => view('App.purchase.listPurchase'))->name('purchase_list');
-Route::get('purchase/list/return', fn () => view('App.purchase.listPurchaseReturn'))->name('purchase_list_return');
-Route::get('purchase/list/return/add', fn () => view('App.purchase.addListPurchaseReturn'))->name('add_purchase_list_return');
+Route::get('purchase/list/return', fn() => view('App.purchase.listPurchaseReturn'))->name('purchase_list_return');
+Route::get('purchase/list/return/add', fn() => view('App.purchase.addListPurchaseReturn'))->name('add_purchase_list_return');
 
 //============================ End::purchase ============================================
 
@@ -393,12 +421,10 @@ Route::prefix('sell')->group(function () {
         Route::get('{id}/price/list', 'getpriceList');
 
 
-
         //invoice
         Route::get('print/{id}/Invoice', 'saleInvoice')->name('print_sale');
         Route::delete('{id}/delete', 'softDelete');
         Route::delete('deletee/selected', 'softSelectedDelete');
-
 
 
         Route::get('/registration/post/{id}/Folio', 'postToRegistrationFolio')->name('postToRegistrationFolio');
@@ -406,29 +432,29 @@ Route::prefix('sell')->group(function () {
 
 
         Route::post('/split/', 'saleSplitForPos')->name('saleSplitForPos');
+
+        Route::get('/rom/aviable/qty/check', 'romAviaQtyCheck')->name('romAviaQtyCheck');
     });
 });
 
-Route::get('sell/order', fn () => view('App.sell.sale.saleOrder'))->name('sale_order');
+Route::get('sell/order', fn() => view('App.sell.sale.saleOrder'))->name('sale_order');
 // Route::get('add/sell', fn () => view('App.sell.sale.addSale'))->name('add_sale');
-Route::get('add/sell/order', fn () => view('App.sell.sale.addSaleOrder'))->name('add_sale_order');
-Route::get('sell/list/pos', fn () => view('App.sell.pos.listPos'))->name('list_pos');
+Route::get('add/sell/order', fn() => view('App.sell.sale.addSaleOrder'))->name('add_sale_order');
+Route::get('sell/list/pos', fn() => view('App.sell.pos.listPos'))->name('list_pos');
 
-Route::get('sell/list/drafts', fn () => view('App.sell.draft.listDraft'))->name('list_drafts');
-Route::get('sell/drafts/add', fn () => view('App.sell.draft.addDraft'))->name('add_draft');
+Route::get('sell/list/drafts', fn() => view('App.sell.draft.listDraft'))->name('list_drafts');
+Route::get('sell/drafts/add', fn() => view('App.sell.draft.addDraft'))->name('add_draft');
 
-Route::get('sell/list/quotations', fn () => view('App.sell.quotations.list'))->name('list_quotations');
-Route::get('sell/quotation/add', fn () => view('App.sell.quotations.add'))->name('add_quotations');
+Route::get('sell/list/quotations', fn() => view('App.sell.quotations.list'))->name('list_quotations');
+Route::get('sell/quotation/add', fn() => view('App.sell.quotations.add'))->name('add_quotations');
 
-Route::get('sell/shipments', fn () => view('App.sell.shipments'))->name('shipments');
+Route::get('sell/shipments', fn() => view('App.sell.shipments'))->name('shipments');
 
 
 //============================ End::Sale ============================================
 
 
 //============================ Start::Opening Stock ============================================
-
-
 
 
 Route::controller(openingStockController::class)->group(function () {
@@ -468,7 +494,6 @@ Route::prefix('stock-history')->group(function () {
         Route::get('/get/list/', 'historyList');
     });
 });
-
 
 
 //============================ start::exchange rate ============================================
@@ -563,7 +588,6 @@ Route::prefix('payment-transactions')->group(function () {
         Route::post('/store/{id}/sale', 'storeForSale')->name('paymentTransaction.storeForSale');
 
 
-
         // ===================================================== View =======================================================
         // expense
         Route::get('/view/{id}/expense/report', 'viewForExpense')->name('paymentTransaction.viewForExpense');
@@ -644,11 +668,6 @@ Route::prefix('expense-report')->group(function () {
 //============================ start::stock history ============================================
 
 
-
-
-
-
-
 // Route::prefix('restaurant')->group(function () {
 
 
@@ -690,20 +709,10 @@ Route::prefix('/module')->group(function () {
 });
 
 
-
-
-
-
-
-
-
-
 //============================ End::stock history ============================================
 
 
-
 //============================ End::Business Settings ============================================
-
 
 
 //============================ Being: Product ===================================================
@@ -754,7 +763,7 @@ Route::controller(ManufacturerController::class)->group(function () {
 });
 
 // ====>    Unit Category
-Route::controller(UnitCategoryController::class)->group(function () {
+Route::controller(UnitController::class)->group(function () {
     Route::get('/unit-category/datas', 'unitCategoryDatas')->name('unit-category.data');
     Route::get('/unit-category/uom-datas', 'uomDatas')->name('unit-category.uomDatas');
 
@@ -768,7 +777,6 @@ Route::controller(UnitCategoryController::class)->group(function () {
 
 // ====>    UoM
 Route::controller(UoMController::class)->group(function () {
-    Route::get('/uom', 'index')->name('uom');
     Route::get('/uom/add', 'add')->name('uom.add');
     Route::post('/uom/create', 'create')->name('uom.create');
     Route::get('/uom/edit/{uom}', 'edit')->name('uom.edit');
@@ -782,7 +790,7 @@ Route::controller(UoMController::class)->group(function () {
 
 // ====>    VARIATIONS
 Route::controller(VariationController::class)->group(function () {
-    Route::get('/variation-datas', 'variationDatas')->name('variations.data');
+    Route::get('/variation-datas', 'variationDataForDatatable')->name('variations.data');
     Route::get('/variation-values/{id}', 'value')->name('variation.values');
     Route::get('/variation', 'index')->name('variations');
     Route::get('/variation/add', 'add')->name('variation.add');
@@ -797,11 +805,12 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product-datas', 'productDatas')->name('product.data');
     Route::get('/product', 'index')->name('products');
     Route::get('/product/add', 'add')->name('product.add');
-    Route::get('/product/quick-add', 'quickAdd')->name('product.quickAdd');
+    Route::get('/product/quick-add', 'add')->name('product.quickAdd')->defaults('quickAdd', true);;
     Route::post('/product/create', 'create')->name('product.create');
     Route::get('/product/edit/{product}', 'edit')->name('product.edit');
     Route::put('/product/update/{product}', 'update')->name('product.update');
     Route::delete('/product/delete/{product}', 'delete')->name('product.delete');
+    Route::get('products/get', 'getProducts');
 
     // product variation delete
     Route::delete('/product-variation/delete/{id}', 'deleteProductVariation')->name('product-variation.delete');
@@ -905,6 +914,7 @@ Route::get('/download/contact-excel-template', [ImportContactsController::class,
 
 Route::get('customers/quickadd', [CustomerController::class, 'quickCreateCustomer']);
 Route::post('customers', [CustomerController::class, 'quickStoreCustomer']);
+Route::get('customers/get', [CustomerController::class, 'getCusForSelect']);
 
 Route::resource('customer-group', CustomerGroupController::class);
 
@@ -922,7 +932,7 @@ Route::controller(POSController::class)->group(function () {
     Route::put('/pos/contact-phone/update/{id}', 'phoneOnlyUpdate')->name('pos.contact-phone.update');
 
     Route::get('/pos/create', 'create')->name('pos.create');
-    Route::get('/pos/payment-print-layout', 'paymentPrintLayout')->name('pos.pryment-print-layout');
+    Route::get('/pos/{id}/payment-print-layout', 'paymentPrintLayout')->name('pos.pryment-print-layout');
 
     Route::get('/pos/{posRegisterId}/edit/', 'edit')->name('pos.edit');
 
@@ -957,3 +967,14 @@ Route::prefix('pos')->group(function () {
 Route::get('/pos/edit', function () {
     return view('App.pos.edit');
 });
+
+
+
+
+
+
+
+
+
+
+

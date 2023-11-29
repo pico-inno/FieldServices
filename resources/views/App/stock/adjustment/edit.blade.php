@@ -101,6 +101,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12 fv-row">
+                                    <!--begin::Label-->
+                                    <label class="fs-6 fw-semibold mb-2">Remark</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <textarea name="remark" class="form-control " cols="10" rows="3">{{$stockAdjustment->remark??''}}</textarea>
+                                    <!--end::Input-->
+                                </div>
+                            </div>
                         </div>
                         <!--end::Card header-->
                     </div>
@@ -138,6 +148,7 @@
                                         <th class="min-w-100px">{{__('adjustment.unit')}}</th>
                                         <th class="w-125px">{{__('adjustment.package_qty')}}</th>
                                         <th class="min-w-100px">{{__('adjustment.package')}}</th>
+                                        <th class="w-200px">Remark</th>
                                         <th>
                                             <i class="fas fa-trash fw-bold"></i>
                                         </th>
@@ -179,8 +190,9 @@
                                                 <input type="hidden" class="before_edit_gnd_quantity" name="adjustment_details[{{$key}}][before_edit_gnd_quantity]" value="{{round($detail->gnd_quantity,2)}}">
                                             </td>
                                             <td>
-                                                <span class="adj_quantity_text">{{$detail->adj_quantity}}</span> <span class='smallest_unit_txt'>{{$detail->product->uom['name']}}</span>
-                                                <input class="adj_quantity" type="hidden" value="{{$detail->adj_quantity}}" name="adjustment_details[{{$key}}][adj_quantity]">
+                                                <input class="form-control form-control-sm adj_quantity" type="text" value="{{$detail->adj_quantity}}" name="adjustment_details[{{$key}}][adj_quantity]">
+{{--                                                <span class="adj_quantity_text">{{$detail->adj_quantity}}</span> <span class='smallest_unit_txt'>{{$detail->product->uom['name']}}</span>--}}
+{{--                                                <input class="adj_quantity" type="hidden" value="{{$detail->adj_quantity}}" name="adjustment_details[{{$key}}][adj_quantity]">--}}
                                                 <input type="hidden" value="{{$detail->adj_quantity}}" name="adjustment_details[{{$key}}][before_edit_adj_quantity]">
                                             </td>
                                             <td>
@@ -198,19 +210,23 @@
                                             </td>
                                             <td class="fv-row">
                                                 <input type="text"  class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
-                                                       name="adjustment_details[{{$key}}][packaging_quantity]" value="{{$detail['packagingTx']['quantity']}}">
+                                                       name="adjustment_details[{{$key}}][packaging_quantity]" value="{{$detail['packagingTx']['quantity'] ?? 1}}">
                                             </td>
                                             <td class="fv-row">
                                                 <select  name="adjustment_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
                                                          data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
-                                                         data-placeholder="Select Package" placeholder="select Package" required>
+                                                         data-placeholder="Select Package" placeholder="select Package">
                                                     <option value="">Select Package</option>
                                                     @foreach ($product_variation['packaging'] as $package)
                                                         <option @selected($package['id']==$detail['packagingTx']['product_packaging_id'])
                                                                 data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
-                                                            {{$package['packaging_name']}}</option>
+                                                            {{$package['packaging_name']}} ({{ number_format($package['quantity'], 2, '.', '') }} {{$package['uom']['short_name']}})</option>
                                                     @endforeach
                                                 </select>
+                                            </td>
+                                            <td class="fv-row">
+                                                <input type="text" class="form-control form-control-sm mb-1"
+                                                       name="adjustment_details[{{$key}}][remark]" value="{{$detail->remark}}">
                                             </td>
                                             <th><i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
                                             </th>

@@ -110,7 +110,7 @@ class CustomerController extends Controller
                 'pay_term_type', 'receivable_amount', 'payable_amount', 'credit_limit', 'is_default',
                 'shipping_address', 'customer_group_id', 'custom_field_1', 'custom_field_2', 'custom_field_3',
                 'custom_field_4', 'custom_field_5', 'custom_field_6', 'custom_field_7', 'custom_field_8',
-                'custom_field_9', 'custom_field_10'
+                'custom_field_9', 'custom_field_10', 'age', 'gender'
             ]);
 
             $latestContact = Contact::latest()->first();
@@ -169,7 +169,7 @@ class CustomerController extends Controller
                 'pay_term_type', 'credit_limit', 'is_default',
                 'shipping_address', 'customer_group_id', 'custom_field_1', 'custom_field_2', 'custom_field_3',
                 'custom_field_4', 'custom_field_5', 'custom_field_6', 'custom_field_7', 'custom_field_8',
-                'custom_field_9', 'custom_field_10'
+                'custom_field_9', 'custom_field_10','age','gender'
             ]);
 
             $latestContact = Contact::latest()->first();
@@ -288,6 +288,8 @@ class CustomerController extends Controller
             $customer->first_name = $request['first_name'];
             $customer->middle_name = $request['middle_name'];
             $customer->last_name = $request['last_name'];
+            $customer->age = $request['age'];
+            $customer->gender = $request['gender'];
             $customer->email = $request['email'];
             $customer->contact_id = $request['contact_id'];
             $customer->is_active = $request['is_active'];
@@ -318,6 +320,8 @@ class CustomerController extends Controller
             $customer->custom_field_8 = $request['custom_field_8'];
             $customer->custom_field_9 = $request['custom_field_9'];
             $customer->custom_field_10 = $request['custom_field_10'];
+
+
             $dob = $request['dob'];
             $date = DateTime::createFromFormat('d/m/Y', $dob);
             $customer->dob = !empty($dob) ? $date->format('Y-m-d') : null;
@@ -355,5 +359,23 @@ class CustomerController extends Controller
             return back()->with('error','Contact not found');
         }
 
+    }
+
+    public function getCusForSelect(Request $request){
+        $q = $request->q;
+        $customers = Contact::where(function ($query) use ($q) {
+            if($q!=''){
+                $query->where('first_name', 'like', '%' . $q . '%')
+                ->orWhere('middle_name', 'like', '%' . $q . '%')
+                ->orWhere('last_name', 'like', '%' . $q . '%')
+                ->orWhere('mobile', 'like', '%' . $q . '%')
+                ->orWhere('contact_id', 'like', '%' . $q . '%');
+            }{
+                return $query;
+            }
+        })
+        ->whereIn('type', ['Customer', 'Both'])
+        ->paginate(20);
+        return response()->json($customers, 200);
     }
 }

@@ -2,7 +2,18 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Actions\product\ProductAction;
 use App\Models\Product\AdditionalProduct;
+use App\repositories\BrandRepository;
+use App\repositories\CategoryRepository;
+use App\repositories\GenericRepository;
+use App\repositories\ManufacturerRepository;
+use App\repositories\ProductRepository;
+use App\repositories\UnitCategoryRepository;
+use App\repositories\UOMRepository;
+use App\repositories\UserManagement\BusinessUserRepository;
+use App\repositories\VariationRepository;
+use App\Services\product\productServices;
 use Exception;
 use App\Models\Product\UOM;
 use App\Models\BusinessUser;
@@ -34,7 +45,19 @@ use App\Services\packaging\packagingServices;
 class ProductController extends Controller
 {
     private $variation_template_values;
-    public function __construct()
+    protected $businessUserRepository, $productRepository, $brandRepository, $categoryRepository, $manufacturerRepository, $genericRepository, $uomRepository, $unitCategoryRepository, $variationRepository;
+
+    public function __construct(
+        BusinessUserRepository $businessUserRepository,
+        BrandRepository $brandRepository,
+        CategoryRepository $categoryRepository,
+        ManufacturerRepository $manufacturerRepository,
+        GenericRepository $genericRepository,
+        UOMRepository $uomRepository,
+        UnitCategoryRepository $unitCategoryRepository,
+        VariationRepository $variationRepository,
+        ProductRepository $productRepository,
+    )
     {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:product')->only(['index', 'productDatas']);
@@ -42,6 +65,16 @@ class ProductController extends Controller
         $this->middleware('canUpdate:product')->only(['edit', 'update']);
         $this->middleware('canDelete:product')->only('delete');
         $this->variation_template_values = VariationTemplateValues::query();
+
+        $this->businessUserRepository = $businessUserRepository;
+        $this->brandRepository = $brandRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->manufacturerRepository = $manufacturerRepository;
+        $this->genericRepository = $genericRepository;
+        $this->uomRepository = $uomRepository;
+        $this->unitCategoryRepository = $unitCategoryRepository;
+        $this->variationRepository = $variationRepository;
+        $this->productRepository = $productRepository;
     }
 
 
@@ -131,123 +164,66 @@ class ProductController extends Controller
         return view('App.product.product.productList');
     }
 
-    public function add()
+    public function add($quickAdd = false)
     {
-        $brands = Brand::all();
-        $categories = Category::with('parentCategory', 'childCategory')->get();
-        $manufacturers = Manufacturer::all();
-        $generics = Generic::all();
-        $uoms = UOM::all();
-        $variations = VariationTemplates::all();
-        $unitCategories = UnitCategory::all();
+        $view = $quickAdd ? 'App.product.product.quickAddProduct' : 'App.product.product.productAdd';
 
-        return view('App.product.product.productAdd', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations',));
-    }
-    public function quickAdd()
-    {
-        $brands = Brand::all();
-        $categories = Category::with('parentCategory', 'childCategory')->get();
-        $manufacturers = Manufacturer::all();
-        $generics = Generic::all();
-        $uoms = UOM::all();
-        $variations = VariationTemplates::all();
-        $unitCategories = UnitCategory::all();
-        return view('App.product.product.quickAddProduct', compact('brands', 'unitCategories', 'categories', 'manufacturers', 'generics', 'uoms', 'variations'));
+        return view($view, [
+            'brands' => $this->brandRepository->getAll(),
+            'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
+            'manufacturers' => $this->manufacturerRepository->getAll(),
+            'generics' => $this->genericRepository->getAll(),
+            'variations' => $this->variationRepository->getAllTemplate(),
+            'unitCategories' => $this->unitCategoryRepository->getAll(),
+            'uoms' => $this->uomRepository->getAll(),
+        ]);
+
     }
 
-    public function create(ProductCreateRequest $request)
+    public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
 
-        DB::beginTransaction();
-        try {
-            $img_name = $this->saveProductImage($request);
-            $productData = $this->prepareProductData($request, $img_name);
-            $nextProduct = Product::create($productData);
-            $nextProductId = $nextProduct->id;
-            $this->insertProductVariations($request, $nextProduct);
+        $productAction->create($request);
 
-            if ($request->additional_product_details) {
-                $this->createAdditionalProducts($request->additional_product_details, $nextProduct);
-            }
-            DB::table('product_variations_tmplates')->insert([
-                'product_id' => $nextProductId,
-                'variation_template_id' => $request->variation_name,
-                'created_by' => Auth::user()->id,
-                'created_at' => now()
-            ]);
-            // for packaging
-            if($request->packaging_repeater){
-               $packagingServices= new packagingServices();
-               $packagingServices->createWithBulk($request->packaging_repeater, $nextProduct);
-            }
-            DB::commit();
-            if ($request->save === "save") {
-                return redirect('/product')->with('message', 'Created sucessfully product');
-            }
-            if ($request->save === "save_and_another") {
-                return redirect()->route('product.add');
-            }
-            if ($request->input('form_type') === 'from_pos') {
-                return response()->json(['success' => true, 'message' => 'Product created sucessfully']);
-            }
-            if ($request->save === "app_opening_stock") {
-                $stockin_persons = BusinessUser::with('personal_info')->get();
-                $locations = businessLocation::all();
-
-                return view('App.openingStock.add', [
-                    'stockin_persons' => $stockin_persons,
-                    'locations' => $locations,
-                ]);
-            }
-        } catch (Exception $e) {
-            // dd($e);
-            DB::rollBack();
-            return back()->with(['error'=>$e->getMessage()]);
+        if ($request->save === "save") {
+            return redirect()->route('products')->with('message', 'Product created successfully');
         }
+        if ($request->save === "save_and_another") {
+            return redirect()->route('product.add')->with('message', 'Product created successfully');
+        }
+        if ($request->input('form_type') === 'from_pos') {
+            return response()->json(['success' => true, 'message' => 'Product created successfully']);
+        }
+        if ($request->save === "app_opening_stock") {
+            return view('App.openingStock.add', [
+                'stockin_persons' => $this->businessUserRepository->getAllWithRelationships(['personal_info']),
+                'locations' => businessLocation::all(),
+            ]);
+        }
+
     }
 
-    public function edit(Product $product)
+    public function edit(Product $product, productServices $productServices)
     {
-        $brands = Brand::all();
-        $categories = Category::with('parentCategory', 'childCategory')->get();
-        $unitCategories = UnitCategory::all();
-        $manufacturers = Manufacturer::all();
-        $generics = Generic::all();
-        $uoms = UOM::all();
-        $variations = VariationTemplates::all();
-        $productVariation = ProductVariation::with('product', 'variationTemplateValue')->where('product_id', $product->id)->get();
-        $additional_products =   AdditionalProduct::with([
-            'productVariation' => function ($q) {
-                $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
-                    ->with(
-                        [
-                            'variationTemplateValue' => function ($q) {
-                                $q->select('id', 'name');
-                            },
-                            'product' => function ($q) {
-                                $q->with([
-                                    'uom' => function ($q) {
-                                        $q->with(['unit_category' => function ($q) {
-                                            $q->with('uomByCategory');
-                                        }]);
-                                    }
-                                ]);
-                            }
-                        ]
-                    );
-            }
-        ])->where('primary_product_id', $product->id)->get();
-        $packagings=productPackaging::where('product_id',$product->id)->with('uom')->get();
-
-        $unit_category_id = UOM::where('id', $product->uom_id)->first()->unit_category_id;
-
-
-        return view('App.product.product.productEdit', compact('product', 'packagings', 'unit_category_id','unitCategories','brands', 'categories', 'manufacturers', 'generics', 'uoms', 'variations', 'productVariation', 'additional_products'));
+        return view('App.product.product.productEdit', [
+                'product' => $product,
+                'brands' => $this->brandRepository->getAll(),
+                'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
+                'manufacturers' => $this->manufacturerRepository->getAll(),
+                'generics' => $this->genericRepository->getAll(),
+                'variations' => $this->variationRepository->getAllTemplate(),
+                'unitCategories' => $this->unitCategoryRepository->getAll(),
+                'uoms' => $this->uomRepository->getAll(),
+                'productVariation' => $this->productRepository->getVariationByProductIdWithRelationships($product->id, ['product', 'variationTemplateValue']),
+                'additional_products' => $productServices->additionalProductsRetrive($product->id),
+                'packagings' => $this->productRepository->getPackagingByProductIdWithRelationships($product->id, ['uom']),
+                'unit_category_id' => $this->uomRepository->getUomByUomId($product->uom_id)->first()->unit_category_id,
+            ]);
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
-        //        return $request;
+
         DB::beginTransaction();
         try {
             // Update Product
@@ -258,9 +234,9 @@ class ProductController extends Controller
             // Update Product Variationn
             $this->insertProductVariations($request, $product, false);
 
-            if ($request->additional_product_details) {
-                $this->createAdditionalProducts($request->additional_product_details, $product, false);
-            }
+            $productService = new productServices();
+            $productService->createAdditionalProducts($request->additional_product_details, $product,false);
+
             // for packaging
             if ($request->packaging_repeater) {
                 $packagingServices = new packagingServices();
@@ -401,60 +377,6 @@ class ProductController extends Controller
         return $productData;
     }
 
-    private function createAdditionalProducts(array $datas, $nextProduct, $isCreating = true)
-    {
-        $nextProductId = $nextProduct->id;
-        $productVariation = ProductVariation::where('product_id', $nextProductId)->first();
-        if (!$isCreating) {
-
-            $additionalDetailsIds = array_filter($datas, function ($item) {
-                return isset($item['additional_detail_id']);
-            });
-            $oldDetailsIds = array_column($additionalDetailsIds, 'additional_detail_id');
-
-            AdditionalProduct::where('primary_product_id', $nextProductId)
-                ->whereNotIn('id', $oldDetailsIds)
-                ->delete();
-
-            foreach ($additionalDetailsIds as $data) {
-                AdditionalProduct::where('primary_product_id', $nextProductId)
-                    ->where('id', $data['additional_detail_id'])
-                    ->update([
-                        'additional_product_variation_id' => $data['variation_id'],
-                        'uom_id' => $data['uom_id'],
-                        'quantity' => $data['quantity'],
-                    ]);
-            }
-
-            $detailsWithoutAdId = array_filter($datas, function ($item) {
-                return !isset($item['additional_detail_id']);
-            });
-
-            foreach ($detailsWithoutAdId as $data) {
-                AdditionalProduct::create([
-                    'primary_product_id' => $nextProduct->id,
-                    'primary_product_variation_id' => $productVariation->id,
-                    'additional_product_variation_id' => $data['variation_id'],
-                    'uom_id' => $data['uom_id'],
-                    'quantity' => $data['quantity'],
-                ]);
-            }
-            return;
-        }
-
-
-
-        foreach ($datas as $data) {
-            AdditionalProduct::create([
-                'primary_product_id' => $nextProduct->id,
-                'primary_product_variation_id' => $productVariation->id,
-                'additional_product_variation_id' => $data['variation_id'],
-                'uom_id' => $data['uom_id'],
-                'quantity' => $data['quantity'],
-            ]);
-        }
-        return;
-    }
 
     private function insertProductVariations($request, $nextProduct, $isCreating = true)
     {
@@ -591,5 +513,20 @@ class ProductController extends Controller
                 'cal_value' => $defaultSellingPrice,
             ]);
         }
+    }
+
+
+    public function getProducts(Request $request){
+        $q = $request->q;
+        $porducts = Product::where(function ($query) use ($q) {
+            if($q!=''){
+                $query->where('name', 'like', '%' . $q . '%');
+//                    ->orWhere('name', 'like', '%' . $q . '%');
+            }{
+                return $query;
+            }
+        })
+            ->paginate(10);
+        return response()->json($porducts, 200);
     }
 }

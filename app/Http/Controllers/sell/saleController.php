@@ -42,6 +42,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
+use Modules\ComboKit\Services\RoMService;
 use App\Models\purchases\purchase_details;
 use App\Services\packaging\packagingServices;
 use Modules\Reservation\Entities\Reservation;
@@ -49,7 +50,6 @@ use App\Models\posSession\posRegisterSessions;
 use Modules\Reservation\Entities\FolioInvoice;
 use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
-use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Repositories\locationRepository;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
@@ -90,8 +90,8 @@ class saleController extends Controller
         if ($request->saleType == 'sales') {
             $saleItems = $saleItems->whereNull('pos_register_id');
         }
-        if ($request->filled('form_data') && $request->filled('to_date')) {
-            $saleItems = $saleItems->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
         $saleItems = $saleItems->get();
         return DataTables::of($saleItems)
@@ -238,7 +238,7 @@ class saleController extends Controller
     {
         $locations = locationRepository::getTransactionLocation();
         $products = Product::with('productVariations')->get();
-        $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
+        $walkInCustomer = optional(Contact::where('type', 'Customer')->orWhere('type', 'Both')->where('first_name', 'Walk-In Customer')->first());
         $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
         $paymentAccounts = paymentAccounts::get();
         $setting = businessSettings::where('id', Auth::user()->business_id)->first();
@@ -249,7 +249,7 @@ class saleController extends Controller
         if (class_exists('Modules\ExchangeRate\Entities\exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
             $exchangeRates = exchangeRates::get();
         }
-        return view('App.sell.sale.addSale', compact('defaultPriceListId', 'locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
+        return view('App.sell.sale.addSale', compact('defaultPriceListId', 'walkInCustomer', 'locations', 'products', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
     }
     // for edit page
     public function saleEdit($id)
@@ -271,7 +271,15 @@ class saleController extends Controller
 
         $sale = sales::with('currency')->where('id', $id)->get()->first();
         $business_location_id = $sale->business_location_id;
+        $ckRelations = [];
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            $ckRelations = [
+                'kitSaleDetails.product',
+                'kitSaleDetails.uom',
+            ];
+        }
         $sale_details_query = sale_details::with([
+            ...$ckRelations,
             'packagingTx',
             'currency',
             'productVariation' => function ($q) {
@@ -386,7 +394,7 @@ class saleController extends Controller
             } else {
                 $sdcStatus = $saleService->saleDetailCreation($request, $sale_data, $sale_details);
                 if ($sdcStatus == 'outOfStock') {
-                    return redirect()->back()->withInput()->with(['error' => 'Product Out Of Stock']);
+                    return back()->withInput()->with(['error' => 'Product Out Of Stock']);
                 }
             }
 
@@ -395,7 +403,7 @@ class saleController extends Controller
             // response
             if ($request->type == 'pos') {
                 return response()->json([
-                    'data' => $sale_data->sales_voucher_no,
+                    'data' => $sale_data['id'],
                     'status' => '200',
                     'message' => 'successfully Created'
                 ], 200);
@@ -410,15 +418,15 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
-            logger($e);
             DB::rollBack();
+            dd($e);
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',
                     'message' => 'Something wrong'
                 ], 500);
             } else {
-                return redirect()->back()->with(['warning' => 'Something Went Wrong While creating sale']);
+                return back()->with(['warning' => 'Something Went Wrong While creating sale']);
             }
         }
     }
@@ -469,6 +477,7 @@ class saleController extends Controller
                 'balance_amount' => $request->total_sale_amount - $saleBeforeUpdate->paid_amount,
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
+                'sold_at' => now(),
             ];
             if ($request->type == 'pos') {
                 $saleData['paid_amount'] = $request->paid_amount;
@@ -508,7 +517,6 @@ class saleController extends Controller
 
                         $suppliers = Contact::where('id', $sales->contact_id)->first();
                         $suppliers_receivable = $suppliers->receivable_amount;
-                        logger(($suppliers_receivable - $saleBeforeUpdate->balance_amount) +  $sales->balance_amount);
                         $suppliers->update([
                             'receivable_amount' => ($suppliers_receivable - $saleBeforeUpdate->balance_amount) +  $sales->balance_amount
                         ]);
@@ -541,7 +549,7 @@ class saleController extends Controller
                     unset($request_old_sale["sale_detail_id"]);
                     $request_old_sale['updated_by'] = Auth::user()->id;
 
-                    $sale_details = sale_details::where('id', $sale_detail_id)->where('is_delete', 0)->first();
+                    $sale_details = sale_details::where('id', $sale_detail_id)->with('kitSaleDetails')->where('is_delete', 0)->first();
                     $request_old_sale['id'] = $sale_details->id;
 
 
@@ -550,7 +558,9 @@ class saleController extends Controller
                     $sale_detial_qty_from_db = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_details->quantity, $sale_details->uom_id)['qtyByReferenceUom'];
 
                     // smallest qty from client
-                    $requestQty = UomHelper::getReferenceUomInfoByCurrentUnitQty($request_old_sale['quantity'], $request_old_sale['uom_id'])['qtyByReferenceUom'];
+                    $UoMHelper= UomHelper::getReferenceUomInfoByCurrentUnitQty($request_old_sale['quantity'], $request_old_sale['uom_id']);
+                    $requestQty = $UoMHelper['qtyByReferenceUom'];
+                    $refUoMId=$UoMHelper['referenceUomId'];
 
 
                     $dif_sale_qty = $requestQty - $sale_detial_qty_from_db;
@@ -559,15 +569,14 @@ class saleController extends Controller
                     $lotSerialCheck = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id)->exists();
                     $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
 
-                    $product = Product::where('id', $request_old_sale['product_id'])->select('product_type')->first();
+                    $product = Product::where('id', $request_old_sale['product_id'])->select('product_type', 'id', 'uom_id')->first();
 
                     if ($product->product_type == 'storable') {
                         // stock adjustment
                         if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
-                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $request->business_location_id, $request_old_sale);
+                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $request_old_sale);
                             if ($changeQtyStatus == false) {
-
-                                return redirect()->back()->withInput()->with(['warning' => "product Out of Stock"]);
+                                return back()->with(['error' => "product Out of Stock"]);
                             } else {
                                 // if ($this->setting->lot_control == "off") {
                                 $datas = $changeQtyStatus;
@@ -587,6 +596,7 @@ class saleController extends Controller
                             }
                         } elseif ($saleBeforeUpdate->status == 'delivered' && $request->status != "delivered" && $businessLocation->allow_sale_order == 0) {
                             $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id);
+                            stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->delete();
                             if ($lotSerials->exists()) {
                                 $this->adjustStock($lotSerials->get());
                                 foreach ($lotSerials->get() as $lotSerial) {
@@ -704,8 +714,8 @@ class saleController extends Controller
                             }
                         };
                     }
+                    // dd('d');
                     // dd($request_old_sale);
-
                     $request_sale_details_data = [
                         'uom_id' => $request_old_sale['uom_id'],
                         'quantity' => $request_old_sale['quantity'],
@@ -720,10 +730,32 @@ class saleController extends Controller
                         'subtotal_with_tax' => $request_old_sale['subtotal'] - ($request_old_sale['line_subtotal_discount'] ?? 0),
                         'note' => $request_old_sale['item_detail_note'] ?? null,
                     ];
-                    // dd($request_sale_details_data);
+                    // updateQTy
+                    // $requestQty = $request_sale_details_data['quantity'];
+                    // if ($request_sale_details_data['uom_id'] != $product['uom_id']) {
+                    //     $requestQty = UomHelper::changeQtyOnUom($request_sale_details_data['uom_id'], $product['uom_id'], $requestQty);
+                    // };
 
+                    //oldQty
+                    // $quantity = $sale_details['quantity'];
+                    // if ($sale_details['uom_id'] != $product['uom_id']) {
+                    //     $quantity = UomHelper::changeQtyOnUom($sale_details['uom_id'], $product['uom_id'], $sale_details['quantity']);
+                    // };
+                    if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+                        RoMService::updateRomTransactions(
+                            $sale_details->id,
+                            'kit_sale_detail',
+                            $sales->business_location_id,
+                            $request_old_sale['product_id'],
+                            $request_old_sale['variation_id'],
+                            $request_sale_details_data['quantity'],
+                            $request_sale_details_data['uom_id'],
+                            $sale_details['quantity'],
+                            $sale_details['uom_id']
+                        );
+                    }
                     $packagingService = new packagingServices();
-                    $packagingService->updatePackagingForTx($request_old_sale, $sale_details->id,'sale');
+                    $packagingService->updatePackagingForTx($request_old_sale, $sale_details->id, 'sale');
                     if ($request_old_sale['quantity'] <= 0) {
                         $request_sale_details_data['is_delete']  = 1;
                         $request_sale_details_data['deleted_at']  = now();
@@ -732,9 +764,11 @@ class saleController extends Controller
                     } else {
                         $sale_details->update($request_sale_details_data);
                     };
+
                     if ($requestQty > 0) {
                         stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->update([
                             'decrease_qty' => $requestQty,
+                            'created_at' => $request_old_sale['delivered_at'] ?? now(),
                         ]);
                     } else {
                         stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->delete();
@@ -788,13 +822,22 @@ class saleController extends Controller
                 $saleDetailQuery = sale_details::where('sales_id', $id);
                 $allSaleDetailIdToRemove = $saleDetailQuery->get();
                 foreach ($allSaleDetailIdToRemove as   $sd) {
-                    $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id);
-                    if ($lotSerials->exists()) {
-                        $this->adjustStock($lotSerials->get());
-                        foreach ($lotSerials->get() as $lotSerial) {
-                            $lotSerial->delete();
-                        }
-                    };
+                    // dd($sd['product_id']);
+                    $romCheck = '';
+                    if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+                        $romCheck = RoMService::isKit($sd['product_id']);
+                    }
+                    if ($romCheck == 'kit') {
+                        RoMService::removeRomTransactions($sd->id, 'kit_sale_detail');
+                    } else {
+                        $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id);
+                        if ($lotSerials->exists()) {
+                            $this->adjustStock($lotSerials->get());
+                            foreach ($lotSerials->get() as $lotSerial) {
+                                $lotSerial->delete();
+                            }
+                        };
+                    }
                 }
 
                 stock_history::where('transaction_details_id', $id)->where('transaction_type', 'sale')->delete();
@@ -813,10 +856,9 @@ class saleController extends Controller
 
             DB::commit();
         } catch (Exception $e) {
-
-            logger($e);
-            dd($e);
             DB::rollBack();
+            dd($e);
+            return back()->with(['warning' => 'Something Went Wrong While update sale voucher']);
         }
         // dd($request->toArray());
         if ($request->type == 'pos') {
@@ -864,17 +906,28 @@ class saleController extends Controller
     {
         $saleDetailQuery = sale_details::where('sales_id', $id);
         $allSaleDetailIdToRemove = $saleDetailQuery->get();
+
+
         foreach ($allSaleDetailIdToRemove as   $sd) {
-            $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id)->OrderBy('id', 'DESC');
-            if ($lotSerials->exists()) {
-                if (request('restore') == 'true') {
-                    $this->adjustStock($lotSerials->get());
-                }
-                foreach ($lotSerials->get() as $lotSerial) {
-                    $lotSerial->delete();
-                }
-            };
+            $romCheck = '';
+            if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+                $romCheck = RoMService::isKit($sd['product_id']);
+            }
+            if ($romCheck == 'kit') {
+                RoMService::removeRomTransactions($sd->id, 'kit_sale_detail');
+            } else {
+                $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id)->OrderBy('id', 'DESC');
+                if ($lotSerials->exists()) {
+                    if (request('restore') == 'true') {
+                        $this->adjustStock($lotSerials->get());
+                    }
+                    foreach ($lotSerials->get() as $lotSerial) {
+                        $lotSerial->delete();
+                    }
+                };
+            }
         }
+
         stock_history::where('transaction_details_id', $id)->where('transaction_type', 'sale')->delete();
         $saleDetailQuery->update([
             'is_delete' => 1,
@@ -906,10 +959,12 @@ class saleController extends Controller
                         ->when($variation_id, function ($query) use ($variation_id) {
                             $query->where('id', $variation_id);
                         })
-                        ->with(['packaging'=>function($q){
-                            $q->where('for_purchase', 1);
-                        },
-                        'variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue']);
+                        ->with([
+                            'packaging' => function ($q) {
+                                $q->where('for_purchase', 1);
+                            },
+                            'variationTemplateValue:id,name', 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
+                        ]);
                 },
                 'stock' => function ($query) use ($business_location_id) {
                     $locationIds = childLocationIDs($business_location_id);
@@ -995,6 +1050,30 @@ class saleController extends Controller
         $business_location_id = $request->data['business_location_id'];
         $q = $request->data['query'];
         $variation_id = $request->data['variation_id'] ?? null;
+        $relations = [
+            'product_packaging' => function ($query) use ($q) {
+                $query->where('package_barcode', $q);
+            },
+            'uom',
+            'uom.unit_category.uomByCategory',
+            'product_variations.packaging.uom',
+            'product_variations.additionalProduct.productVariation.product',
+            'product_variations.additionalProduct.uom',
+            'product_variations.additionalProduct.productVariation.variationTemplateValue',
+            'stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->where('current_quantity', '>', 0)
+                    ->whereIn('business_location_id', $locationIds);
+            }
+        ];
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            $relations = [
+                'rom.uom.unit_category.uomByCategory',
+                'rom.rom_details.productVariation.product',
+                'rom.rom_details.uom',
+                ...$relations
+            ];
+        }
         $products = Product::select(
             'products.*',
             'product_variations.*',
@@ -1005,7 +1084,7 @@ class saleController extends Controller
             'product_variations.id as variation_id',
             'variation_template_values.id as variation_template_values_id'
         )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where(function ($query) use ($q) {
                 $query->where('can_sale', 1)
                     ->where('products.name', 'like', '%' . $q . '%')
@@ -1019,28 +1098,12 @@ class saleController extends Controller
             ->when($variation_id, function ($query) use ($variation_id) {
                 $query->where('product_variations.id', $variation_id);
             })
-            ->with([
-                'product_packaging' => function ($query) use ($q) {
-                    $query->where('package_barcode',$q);
-                },
-                'uom',
-                'uom.unit_category.uomByCategory',
-                'product_variations.packaging.uom',
-                'product_variations.additionalProduct.productVariation.product',
-                'product_variations.additionalProduct.uom',
-                'product_variations.additionalProduct.productVariation.variationTemplateValue',
-                'stock' => function ($query) use ($business_location_id) {
-                    $locationIds = childLocationIDs($business_location_id);
-                    $query->where('current_quantity', '>', 0)
-                    ->whereIn('business_location_id', $locationIds);
-                }
-            ])
+            ->with($relations)
             ->withSum(['stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
                 $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()->toArray();
-            // dd(productPackaging::with('product_variations')->get()->toArray());
         return response()->json($products, 200);
     }
     public function getSuggestionProduct(Request $request)
@@ -1051,7 +1114,13 @@ class saleController extends Controller
         $product = Product::where('id', $productId)->with('uom.unit_category.uomByCategory')->first();
         $variation = ProductVariation::where('id', $variationId)
             ->where('product_id', $productId)
-            ->with('additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue', 'variationTemplateValue')
+            ->with(
+                'packaging.uom',
+                'additionalProduct.productVariation.product',
+                'additionalProduct.uom',
+                'additionalProduct.productVariation.variationTemplateValue',
+                'variationTemplateValue'
+            )
             ->first();
         $stockQuery = CurrentStockBalance::where('variation_id', $variationId)->where('current_quantity', '>', 0)
             ->where('business_location_id', $locationId);
@@ -1068,6 +1137,7 @@ class saleController extends Controller
             'name' => $product->name,
             'sku' => $product->sku,
             'total_current_stock_qty' => $total_current_stock_qty,
+            'stock_sum_current_quantity' => $total_current_stock_qty,
             'variation_name' => $variation['variationTemplateValue'] ? $variation['variationTemplateValue']['name'] : '',
             'stock' => $stocks,
             'uom_id' => $product->uom_id,
@@ -1081,6 +1151,7 @@ class saleController extends Controller
             'has_variation' => 'sub_variable',
             'product_type' => $product->product_type,
         ];
+        // dd($result);
         return response()->json($result, 200);
     }
 
@@ -1337,7 +1408,7 @@ class saleController extends Controller
 
             $originalSale = sales::find($saleId);
             if (!$originalSale) {
-                return redirect()->back()->with('error', 'Sales voucher not found.');
+                return back()->with('error', 'Sales voucher not found.');
             }
 
             $currentDetailCount = sale_details::where('sales_id', $saleId)->count();
@@ -1350,7 +1421,7 @@ class saleController extends Controller
                     }
                 }
                 if ($currentDetailCount == $splitLineCount) {
-                    return redirect()->back()->with('warning', "Can't Split All Item.");
+                    return back()->with('warning', "Can't Split All Item.");
                 }
             }
 
@@ -1439,5 +1510,13 @@ class saleController extends Controller
                 'error' => 'Something Went Wrongs'
             ]);
         }
+    }
+    public function romAviaQtyCheck(Request $request)
+    {
+
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            return RoMService::getKitAvailableQty($request->locationId, $request->productId);
+        }
+        return '';
     }
 }

@@ -14,8 +14,8 @@ var KTUsersList = function () {
         datatable = $(table).DataTable({
             "info": false,
             'order': [],
-            "pageLength": 8,
-            "lengthChange": false,
+            "pageLength": 10,
+            "lengthChange": true,
             'columnDefs': [
                 { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
                 { orderable: false, targets: 5 }, // Disable ordering on column 6 (actions)

@@ -183,7 +183,20 @@
                 packageQtyForCal=packaging.quantity,
                 pkgname=packaging.packaging_name
             }
-            console.log(product,'dsfds---------');
+            let romTags='';
+            if(product.rom){
+                let rom=product.rom;
+                if(rom){
+                    rom.rom_details.forEach(rd=>{
+                        romTags+=
+                        `
+                        <span class="badge badge-secondary">
+                            ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
+                        </span>
+                        `;
+                    })
+                }
+            }
             let additionProductLink=additionalProduct.length >0 ?
              `
                 <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
@@ -217,10 +230,12 @@
                     <input type="hidden" name="cost_price" value="${product.stock[0] ?product.stock[0].ref_uom_price : 0}" />
                     <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
 
-                    <td class=" text-break text-start fw-bold fs-6 text-gray-700 "><span class="product-name">${product.name}</span>
-                        <br>
-                        ${stockBalanceText}
-                        <br>
+                    <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
+                        <span class="product-name">
+                            ${product.name}
+                        </span>
+                        <div>${romTags}</div>
+                        <div>${stockBalanceText}</div>
                         ${product.has_variation !== 'single' ? `<span class="fs-7 fw-semibold text-gray-600 variation_value_and_name">${variation_value_and_name}</span><br>` : ''}
                         <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : ${product.has_variation == 'single' ?product.sku : product.variation_sku}</span>
                         <br>
@@ -240,7 +255,7 @@
                                     <i class="fas fa-minus fs-7"></i>
                                 </button>
 
-                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input" name="quantity[]"  value="${isNullOrNan(packageQtyForCal,1) }" />
+                                <input type="text" class=" form-control form-control-sm border-0 text-center  fw-bold text-gray-800 quantity_input qtyInp" name="quantity[]"  value="${isNullOrNan(packageQtyForCal,1) }" />
 
                                 <button type="button" class=" px-3 btn btn-sm btn-light btn-icon-gray-600 border-end-0" id="increase">
                                     <i class="fas fa-plus"></i>
@@ -255,9 +270,9 @@
                         </div>
                     </td>
                     <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} "><span class="subtotal_price">${product.product_variations.default_selling_price * 1}</span> ${symbol}</td>
-                    <td class="exclude-modal text-end">
+                    <td class="exclude-modal text-end" id="delete-item">
                             <div>
-                            <i class="fas fa-trash me-3 text-danger cursor-pointer" id="delete-item"></i>
+                            <i class="fas fa-trash me-3 text-danger cursor-pointer" ></i>
                             </div>
                             ${additionProductLink}
                     </td>
@@ -311,15 +326,26 @@
         }
 
         let totalSubtotalAmountCalculate = () => {
-            let itemCount = $(`#${tableBodyId} tr`).length;
             let totalSum = 0;
             $(`#${tableBodyId} .subtotal_price`).each(function() {
                 let value = isNullOrNan($(this).text());
                 totalSum += value;
             });
 
-            $(`#${infoPriceId} .sb-item-quantity`).text(itemCount);
             $(`#${infoPriceId} .sb-total`).text(pDecimal(totalSum));
+            itemCal();
+        }
+
+        // cal
+        const itemCal=()=>{
+            let total=0;
+            $(`#${tableBodyId} .invoiceRow`).each(function() {
+                let parent = $(this).closest('tr');
+                let quantity = parent.find('.quantity_input').val();
+                total+=isNullOrNan($(this).find('.qtyInp').val());
+            })
+            $('.badgeQtyCount').text(total);
+            $(`#${infoPriceId} .sb-item-quantity`).text(total);
         }
 
         // let getPrice = () => {
@@ -589,7 +615,6 @@
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 if(subtotal_with_discount !== ''){
                     let result =isNullOrNan(subtotal) - isNullOrNan(subtotal_with_discount);
-                    console.log(result,isNullOrNan(subtotal) , isNullOrNan(subtotal_with_discount));
                     totalDisPrice += result;
                 }
                 subTotalPrice += isNullOrNan(subtotal);
@@ -783,7 +808,6 @@
                     'currency_id': null,
                     'delivered_quantity': null
                 };
-                console.log(raw_sale_details);
                 sale_details.push(raw_sale_details);
             })
             let type = 'pos';
@@ -810,9 +834,10 @@
                     // Clear existing options
                     selectedElement.empty();
                     $.each(result, function(index, item) {
+                        let text=item.full_name+'-'+'('+ `${item.mobile !=null ? item.mobile :'-'} ` +')';
                         var option = $("<option>")
                             .val(item.id)
-                            .text(item.full_name);
+                            .text(text);
                         selectedElement.append(option);
                     });
                     selectedElement.val(id).trigger("change");
@@ -858,6 +883,7 @@
                                     <img src="{{asset('assets/media/svg/files/blank-image-dark.svg')}}" class="rounded-3 theme-dark-show mb-4 w-60px h-60px w-xxl-100px h-xxl-100px" alt="" />`}
                                     <div class="mb-2">
                                         <div class="text-center">
+                                            ${item.receipe_of_material_id?'<i class="fa-solid fa-cubes text-gray-500 fs-9 "></i>':''}
                                             <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-7 mb-3 pos-product-name">${item.name}</span>
                                             <span class="text-gray-400 fw-semibold d-block fs-8 mt-n1">${item.vari_tem_name ? item.vari_tem_name : ''} - ${item.vari_tem_val_name ? item.vari_tem_val_name : ''}</span>
                                         </div>
@@ -977,7 +1003,8 @@
 
             let selected_product = products[index];
 
-            if(selected_product.product_type =='storable' && selected_product.stock_sum_current_quantity === 0 || selected_product.stock_sum_current_quantity === null){
+            if(selected_product.product_type =='storable'
+            && (selected_product.stock_sum_current_quantity === 0 || selected_product.stock_sum_current_quantity === null)){
                 return;
             }
 
@@ -1057,6 +1084,7 @@
                     };
                 },
                 success: function(results){
+                    console.log(results);
                     if(results.length>0 && results[0].product_type=="storable"){
                         if(results[0].stock_sum_current_quantity == 0 || results[0].stock_sum_current_quantity == '' || results[0].stock_sum_current_quantity == null){
                             error('Out of stock');
@@ -1085,6 +1113,9 @@
                     totalSubtotalAmountCalculate();
                     totalDisPrice();
                 },
+                error:function(e){
+                    console.log(e);
+                }
 
             })
         })
@@ -1249,15 +1280,18 @@
             checkStock($(this));
             hideCalDisPrice($(this));
             totalDisPrice();
+            itemCal();
         })
         $(document).on('change', '.quantity_input', function() {
+            packaging($(this),'/');
+            getPrice($(this));
             calPrice($(this));
             totalSubtotalAmountCalculate();
-            getPrice($(this));
             checkStock($(this));
             hideCalDisPrice($(this));
-            packaging($(this),'/');
             totalDisPrice();
+            itemCal();
+
         })
         $(document).on('click', '#decrease', function() {
             let parent = $(`#${tableBodyId}`).find($(this)).closest('tr');
@@ -1272,6 +1306,7 @@
             checkStock($(this));
             hideCalDisPrice($(this));
             totalDisPrice();
+            itemCal();
         })
         function processTableRows() {
             $(`#${tableBodyId} tr`).each(function() {
@@ -1431,6 +1466,7 @@
             packaging(current_tr,'*');
             calPrice(current_tr);
             totalDisPrice();
+            itemCal();
         });
         // End
         const packaging=(e,operator)=>{
@@ -1468,11 +1504,21 @@
 
         // for delete item
         $(document).on('click', '#delete-item', function() {
-            checkStock($(this));
+            let thisDom=$(this);
+            $(this).closest('tr').remove();
+            itemCal();
+            totalSubtotalAmountCalculate();
+            checkStock(thisDom);
+            hideCalDisPrice(thisDom);
+            packaging(thisDom,'/');
+            totalDisPrice();
+
+            checkStock(thisDom);
             totalSubtotalAmountCalculate();
             totalDisPrice();
 
-            $(this).closest('tr').remove();
+
+
         })
 
         // for small and medium size table
@@ -1553,28 +1599,15 @@
                         },
                         data: dataForSale,
                         success: function(results){
+                            let id=results.data;
                             if(results.status==200){
-                                let invoice_no = results.data;
-                                $(`#${tableBodyId} tr`).remove();
-                                totalSubtotalAmountCalculate();
-                                totalDisPrice();
-                                $('#payment_info .print_paid').text(0);
-                                $('#payment_info .print_change').text(0);
-                                $('#payment_info .print_balance').text(0);
-                                $('input[name="pay_amount"]').val(0);
-
-                                let data = { invoice_row_data, totalPriceAndOtherData , invoice_no };
                                 $.ajax({
-                                    url: '/pos/payment-print-layout',
+                                    url: `/pos/${id}/payment-print-layout`,
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                     },
-                                    data: data,
                                     success: function(response){
-
-                                        if(response.type=='network'){
-                                            success('successfully sell and print!')
-                                        }else{
+                                        success('successfully sell and print!')
                                             var iframe = $('<iframe>', {
                                                     'height': '0px',
                                                     'width': '0px',
@@ -1594,9 +1627,24 @@
                                                 setTimeout(() => {
                                                     iframe.contentWindow.print();
                                                 }, 500);
-                                        }
-                                    }
+                                    },
+                                    error:function(e){
+                                        error('Something Wrong On printing');
+                                    },
                                 })
+                                $(`#${tableBodyId} tr`).remove();
+                                totalSubtotalAmountCalculate();
+                                totalDisPrice();
+                                $('#payment_info .print_paid').text(pDecimal(0));
+                                $('#payment_info .print_change').text(pDecimal(0));
+                                $('#payment_info .print_balance').text(pDecimal(0));
+                                $('input[name="pay_amount"]').val(pDecimal(0));
+                                $('#payment_row_body').html('');
+                                $('#payment_row_body').append(paymentRow);
+                                $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
+                                $('.reservation_id').val('').trigger('change')
+                                $('#paymentForm')[0].reset();
+                                ajaxOnContactChange($(`#${contact_id}`).val());
                             }
                         },
                         error:function(e){
@@ -1928,7 +1976,7 @@
             event.preventDefault();
 
             var formData = $(this).serialize();
-
+            console.log($(this).attr('action'));
             $.ajax({
                 url: $(this).attr('action'),
                 type: $(this).attr('method'),

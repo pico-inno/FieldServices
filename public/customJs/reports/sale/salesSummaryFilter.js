@@ -31,12 +31,12 @@
     filterData(0, 0, 0, filterDateVal);
 
     async function filterData(filterLocationsVal, filterCustomersVal, filterStatusVal, filterDateVal) {
-    var data = {
-    filter_locations: filterLocationsVal,
-    filter_customers: filterCustomersVal,
-    filter_status: filterStatusVal,
-    filter_date: filterDateVal
-};
+        var data = {
+        filter_locations: filterLocationsVal,
+        filter_customers: filterCustomersVal,
+        filter_status: filterStatusVal,
+        filter_date: filterDateVal
+            };
     try {
         var tableLoadingMessage = $('.table-loading-message');
 
@@ -94,6 +94,15 @@
                 },
 
             });
+
+
+
+            //handle Search datatable
+            const filterSearch = document.querySelector('[data-sale-summary-table-filter="search"]');
+            filterSearch.addEventListener('keyup', function (e) {
+                dataTable.search(e.target.value).draw();
+            });
+            //handle Search datatable
 } catch (error) {
     console.error(error);
 }

@@ -88,7 +88,6 @@ class businessSettingController extends Controller
             'expense_report_prefix'=>$request->expense_report_prefix,
             'business_location_prefix' => $request->business_location_prefix,
         ];
-
         $oldData = businessSettings::where('id', Auth::user()->business_id)->first();
         $logoPath = $this->saveLogo($request, $oldData->logo);
         $data['logo'] = $logoPath;

@@ -130,7 +130,7 @@
         <div class="card">
             <div class="card-header align-items-center py-5 gap-2 gap-md-5">
                 <!--begin::Actions-->
-                <div class="d-flex flex-wrap gap-2">
+                <div class="d-flex flex-wrap gap-2 d-none">
                     <!--begin::Checkbox-->
                     <div class="form-check form-check-sm form-check-custom form-check-solid me-4 me-lg-7">
                         <input class="form-check-input" type="checkbox" data-kt-check="true"
@@ -255,7 +255,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($smsDatas as $sms)
+                        @foreach ($smsDatas['data'] as $sms)
                             <tr>
                                 <td class="ps-9">
                                     <div class="form-check form-check-sm form-check-custom form-check-solid mt-3">

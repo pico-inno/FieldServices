@@ -31,6 +31,7 @@ class StockAdjustmentDetail extends Model
         'adj_quantity',
         'uom_price',
         'subtotal',
+        'remark',
         'created_at',
         'created_by',
         'updated_at',

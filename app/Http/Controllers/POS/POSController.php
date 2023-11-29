@@ -189,7 +189,7 @@ class POSController extends Controller
     {
         $products = Product::with('productVariations')
                 ->where('can_sale',1)
-                ->select('id', 'name', 'sku', 'has_variation','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image')->get();
+                ->select('id', 'name', 'sku', 'has_variation','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image', 'receipe_of_material_id')->get();
 
         $product_with_variations = $products->map(function ($item, $key){
 
@@ -219,39 +219,24 @@ class POSController extends Controller
         })->flatten();
 
         // return response()->json($product_with_variations);
-        $product_with_variations->chunk(100)->each(function ($chunk) {
+        $product_with_variations->chunk(1000)->each(function ($chunk) {
             $response = response()->json($chunk);
             $response->send();
         });
     }
 
-    public function paymentPrintLayout(Request $request)
+    public function paymentPrintLayout($id)
     {
-        $business_name = businessSettings::first()->name;
-        $user_name = Auth::user()->username;
-        $invoice_row = $request->invoice_row_data;
-        $invoice_no = $request->invoice_no;
-        $totalPriceAndOtherData = $request->totalPriceAndOtherData;
-        $posRegisterId=$totalPriceAndOtherData['posRegisterId'];
-        $printer=posRegisters::where('id', $posRegisterId)->select('printer_id')->with('printer');
-        // if($printer->exists()){
-        //     $printerInfo= $printer->first()->printer;
-        //     dd($printerInfo);
-        //     if($printerInfo->printer_type=='network'){
-        //         $networkPrinter=new networkPrinterController();
-        //         $status=$networkPrinter->print($printerInfo,['voucherData'=>$totalPriceAndOtherData, 'invoice_row'=>$invoice_row, 'invoice_no'=> $invoice_no]);
 
-        //         // dd($invoice_row);
-                // $html= view('App.pos.print.payment', compact('invoice_row', 'invoice_no','voucherData'))->render();
-        //         return response()->json([$status,'type'=>'network']);
-        //     }
-        // }
-
-        $voucherData = $totalPriceAndOtherData;
-        $invoice_row = $invoice_row;
-        // dd($invoice_row);
-        $html = view('App.pos.print.payment', compact('business_name', 'user_name', 'invoice_row', 'totalPriceAndOtherData', 'invoice_no', 'voucherData'))->render();
-
+        $sale = sales::with('sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
+        // dd($sale);
+        $location = businessLocation::where('id', $sale['business_location_id'])->first();
+        $address = $location->locationAddress;
+        $sale_details = sale_details::with('productVariation.product', 'productVariation.variationTemplateValue', 'product', 'uom', 'currency')
+                        ->where('sales_id', $id)->where('is_delete', 0)->get();
+                        // dd($sale);
+        $html = view('App.pos.print.payment2', compact('sale_details','address','location','sale'))->render();
+        logger('--');
         return response()->json(['html' => $html]);
     }
 

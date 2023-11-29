@@ -30,9 +30,9 @@
 			<form id="kt_ecommerce_settings_general_form" class="form" action="{{ route('variation.update', $variation->id) }}" method="POST">
 				@csrf
 				@method('PUT')
-		
+
 				<div class="card card-flush">
-					<div class="card-body">						
+					<div class="card-body">
 						<div class="tab-content" id="myTabContent">
 							<div class="tab-pane fade show active" id="kt_ecommerce_settings_general" role="tabpanel">
 									<div class="row mb-7">
@@ -45,7 +45,7 @@
 											<label class="fs-6 fw-semibold form-label mt-3">
 												<span class="required">{{ __('product/variation.variation_name') }}</span>
 											</label>
-											
+
 										</div>
 										<div class="col-md-6">
 											<input type="hidden" name="variation_template_id" value="{{ $variation->id }}">
@@ -56,7 +56,7 @@
 										</div>
 										<div class="col-md-3"></div>
 									</div>
-									<div class="row fv-row mb-7"> 
+									<div class="row fv-row mb-7">
 										<div class="col-md-3 text-md-end">
 											<label class="fs-6 fw-semibold form-label mt-3">
 												<span class="">{{ __('product/variation.add_variation_value') }}</span>
@@ -65,41 +65,41 @@
 										<div class="col-md-9" id="kt_docs_repeater_basic">
 											<div class="form-group">
 												<div data-repeater-list="variation_values">
-													@foreach ($var_tem_values as $value)														
+													@foreach ($var_tem_values as $value)
 														<div data-repeater-item>
 															<div class="form-group row mb-3">
 																<input type="hidden" name="id" value="{{ $value->id }}">
 																<div class="col-md-8">
-																	<input type="text" name="variation_values" value="{{$value->name}}" class="form-control form-control-sm mb-2 mb-md-0" />
+																	<input type="text" name="value" value="{{$value->name}}" class="form-control form-control-sm mb-2 mb-md-0" />
 																</div>
 															</div>
 														</div>
 													@endforeach
 												</div>
 											</div>
-							
+
 											<div class="form-group mt-5">
 												<a href="javascript:;" data-repeater-create class="btn btn-sm btn-light-primary">
 													<i class="la la-plus"></i>{{ __('product/product.add') }}
 												</a>
 											</div>
-										
+
 										</div>
-									
+
 									</div>
-								</div>							
-							</div>					
-						</div>					
+								</div>
+							</div>
+						</div>
 					</div>
-				
+
 					<div class="d-flex justify-content-start mt-5">
-                
+
                         <a href="{{ route('variations') }}"  class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>
-                
+
                         <button type="submit" class="btn btn-primary btn-sm">
                             {{ __('product/product.save') }}
                         </button>
-           
+
                     </div>
 			</form>
 		</div>

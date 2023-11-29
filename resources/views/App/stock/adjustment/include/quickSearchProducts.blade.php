@@ -240,12 +240,13 @@
             let packagingOption='';
             if(variation.packaging){
                 variation.packaging.forEach((pk)=>{
+                    let package_uom_name = uomByCategory.find((item) => item.id === pk.uom_id).short_name;
                     packagingOption+=`
-                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name}</option>
+                        <option value="${pk.id}" data-qty="${pk.quantity}" data-uomid="${pk.uom_id}">${pk.packaging_name} (${Number(pk.quantity).toFixed(2)} ${package_uom_name})</option>
                     `;
                 })
             }
-
+            // console.log(variation.packaging+'package--------');
             var newRow = `
                 <tr class="adjustment_row">
                     <td>
@@ -276,8 +277,8 @@
                         </div>
                     </td>
                     <td>
-                    <span class="adj_quantity_text">- </span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>
-                    <input class="adj_quantity" type="hidden" name="adjustment_details[${unique_name_id}][adj_quantity]">
+
+                    <input class="form-control form-control-sm adj_quantity" type="text" name="adjustment_details[${unique_name_id}][adj_quantity]">
                     </td>
                     <td>
                         <select name="adjustment_details[${unique_name_id}][uom_id]" id="" class="form-select form-select-sm  unit_input uom_select" data-kt-repeater="uom_select_${unique_name_id}"  data-hide-search="true"  data-placeholder="Select Unit" required>
@@ -295,6 +296,10 @@
                             <option value="">Select Package</option>
                             ${packagingOption}
                         </select>
+                    </td>
+                    <td class="fv-row">
+                        <input type="text" class="form-control form-control-sm mb-1"
+                            name="adjustment_details[${unique_name_id}][remark]" value="">
                     </td>
                     <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
                 </tr>
@@ -418,8 +423,8 @@
         })
         $(document).on('input', '.gnd_quantity', function (){
             packaging($(this),'/');
-            // changeQtyOnUom($(this));
-            // calDifferenceQty($(this));
+            changeQtyOnUom($(this));
+            calDifferenceQty($(this));
         })
         const packaging=(e,operator)=>{
             let parent = $(e).closest('.adjustment_row');
@@ -527,12 +532,21 @@
         }
 
 
-        $(document).on('input','.adjustment_row input',function () {
+        $(document).on('input', '.adj_quantity', function () {
+            calGndQuantity($(this));
+        });
 
-            // changeQtyOnUom($(this));
-            // calDifferenceQty($(this));
-        })
+        function calGndQuantity(e) {
+            const i = inputs(e);
+            var adj_quantity = Number(i.adj_quantity.val());
+            var current_stock_qty_txt = Number(i.current_stock_qty_txt.text());
 
+            setTimeout(function () {
+                var gnd_quantity = adj_quantity + current_stock_qty_txt;
+                console.log(gnd_quantity);
+                i.gnd_quantity.val(gnd_quantity);
+            }, 400);
+        }
 
         function calDifferenceQty(e) {
             const i = inputs(e);
@@ -545,7 +559,7 @@
                 console.log(difference_qty);
                 i.adj_quantity_text.text(difference_qty);
                 i.adj_quantity.val(difference_qty);
-            }, 800)
+            }, 400)
 
 
         }

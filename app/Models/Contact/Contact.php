@@ -25,6 +25,8 @@ class Contact extends Model
         'middle_name',
         'last_name',
         'email',
+        'gender',
+        'age',
         'is_active',
         'tax_number',
         'township',

@@ -2,7 +2,7 @@
 
 
 @section('inventory_icon', 'active')
-@section('inventroy_show', 'active show')
+@section('inventory_show', 'active show')
 @section('opening_stock_here_show','here show')
 {{-- @section('add_opening_stock_active_show', 'active ') --}}
 @section('title')
@@ -150,74 +150,93 @@
                                         <tr class="dataTables_empty text-center d-none">
                                             <td colspan="8 ">There is no data to show</td>
                                         </tr>
-                                        @foreach ($openingStockDetails as $key=>$osd)
-                                            @php
-                                                $product=$osd->product;
-                                                $product_variation=$osd->toArray()['product_variation'];
-                                            @endphp
-                                            <tr class='cal-gp'>
-                                                <td class="d-none">
-                                                    <input type="hidden" class="input_number product_id" value="{{$osd->product_id}}" name="opening_stock_details[{{$key}}][product_id]">
-                                                    <input type="hidden" class="input_number variation_id" value="{{$osd->variation_id}}" name="opening_stock_details[{{$key}}][variation_id]">
-                                                    <input type="hidden" class="input_number" value="{{$osd->id}}" name="opening_stock_details[{{$key}}][opening_stock_detail_id]">
-                                                </td>
-                                                <td>
-                                                    <a href="#" class="text-gray-600 text-hover-primary mb-1 ">{{$product->name}}</a><br>
-                                                    @if(isset($product_variation['variation_template_value']))
-                                                        <span class="my-2 d-block">
-                                                            ({{$product_variation['variation_template_value']['name']}})
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td class="fv-row">
-                                                    <input type="text" class="form-control form-control-sm quantity input_number" placeholder="Quantity" name="opening_stock_details[{{$key}}][quantity]" value="{{round($osd->quantity,2)}}">
+                                        @php
+                                            $osdCount=0;
+                                            $productsOnSelectData=[];
+                                        @endphp
+                                        @foreach ($openingStockDetailsChunks as $openingStockDetails)
+                                            @foreach ($openingStockDetails as $key=>$osd)
+                                                @php
+                                                    $product=$osd->product;
+                                                    $product_variation=$osd->toArray()['product_variation'];
+                                                    $osdCount++;
+                                                    $newProductData = [
+                                                        'id' => $osd->product->id,
+                                                        'variation_id' => $product_variation,
+                                                        'product_variations' => $osd['product_variation'],
+                                                        'uoms' => $osd['product']['uom']['unit_category']['uom_by_category']
+                                                    ];
+                                                    $indexToReplace = array_search($newProductData['id'], array_column($productsOnSelectData, 'id'));
+                                                    if($indexToReplace !== false){
+                                                        $productsOnSelectData[$indexToReplace] = $newProductData;
+                                                    }else{
+                                                        $productsOnSelectData[] = $newProductData;
+                                                    }
+                                                @endphp
+                                                <tr class='cal-gp'>
+                                                    <td class="d-none">
+                                                        <input type="hidden" class="input_number product_id" value="{{$osd->product_id}}" name="opening_stock_details[{{$key}}][product_id]">
+                                                        <input type="hidden" class="input_number variation_id" value="{{$osd->variation_id}}" name="opening_stock_details[{{$key}}][variation_id]">
+                                                        <input type="hidden" class="input_number" value="{{$osd->id}}" name="opening_stock_details[{{$key}}][opening_stock_detail_id]">
+                                                    </td>
+                                                    <td>
+                                                        <a href="#" class="text-gray-600 text-hover-primary mb-1 ">{{$product->name}}</a><br>
+                                                        @if(isset($product_variation['variation_template_value']))
+                                                            <span class="my-2 d-block">
+                                                                ({{$product_variation['variation_template_value']['name']}})
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="fv-row">
+                                                        <input type="text" class="form-control form-control-sm quantity input_number" placeholder="Quantity" name="opening_stock_details[{{$key}}][quantity]" value="{{round($osd->quantity,2)}}">
 
-                                                </td>
-                                                <td>
-                                                    <select name="opening_stock_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id "
-                                                        data-kt-repeater="unit_select" data-hide-search="true" data-control="select2" data-hide-search="false"
-                                                        data-placeholder="Select unit" placeholder="select unit">
-                                                        @foreach ($product->uom->unit_category->uomByCategory as $unit)
-                                                        <option value="{{$unit['id']}}" @selected($unit['id']==$osd['uom_id'])>{{$unit['name']}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td class="fv-row">
-                                                    <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
-                                                        name="opening_stock_details[{{$key}}][packaging_quantity]" value="{{arr($osd['packagingTx'],'quantity')}}">
-                                                </td>
-                                                <td class="fv-row">
-                                                    <select name="opening_stock_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
-                                                        data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
-                                                        data-placeholder="Select Package" placeholder="select Package" required>
-                                                        <option value="">Select Package</option>
-                                                        @foreach ($product_variation['packaging'] as $package)
-                                                            <option @selected($package['id']==arr($osd['packagingTx'],'product_packaging_id'))
-                                                                data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
-                                                                {{$package['packaging_name']}} ({{fquantity($package['quantity'])}}-{{$package['uom']['short_name']}})
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="opening_stock_details[{{$key}}][uom_price]" id="numberonly"  value="{{round($osd->uom_price,2)}}">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control sum subtotal  form-control-sm input_number text-dark" name="opening_stock_details[{{$key}}][subtotal]" id="numberonly"  value="{{round($osd->subtotal,2)}}" >
-                                                </td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text" data-td-target="#kt_datepicker_1"  data-kt-repeater="datepicker">
-                                                            <i class="fas fa-calendar"></i>
-                                                        </span>
-                                                        <input class="form-control form-control-sm" name="opening_stock_details[{{$key}}][expired_date]" class="exp_date" placeholder="Pick a date"  data-allow-clear="true" data-kt-repeater="datepicker" value="" />
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <textarea name="opening_stock_details[{{$key}}][remark]" class="form-control form-control-sm" data-kt-autosize="true"  id="" >{{$osd->remark}}</textarea>
-                                                </td>
-                                                <th><i class="fa-solid fa-trash text-danger deleteRow btn" ></i></th>
-                                            </tr>
+                                                    </td>
+                                                    <td>
+                                                        <select name="opening_stock_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id "
+                                                            data-kt-repeater="unit_select" data-hide-search="true" data-control="select2" data-hide-search="false"
+                                                            data-placeholder="Select unit" placeholder="select unit">
+                                                            @foreach ($product->uom->unit_category->uomByCategory as $unit)
+                                                            <option value="{{$unit['id']}}" @selected($unit['id']==$osd['uom_id'])>{{$unit['name']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td class="fv-row">
+                                                        <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
+                                                            name="opening_stock_details[{{$key}}][packaging_quantity]" value="{{arr($osd['packagingTx'],'quantity')}}">
+                                                    </td>
+                                                    <td class="fv-row">
+                                                        <select name="opening_stock_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
+                                                            data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
+                                                            data-placeholder="Select Package" placeholder="select Package" >
+                                                            <option value="">Select Package</option>
+                                                            @foreach ($product_variation['packaging'] as $package)
+                                                                <option @selected($package['id']==arr($osd['packagingTx'],'product_packaging_id'))
+                                                                    data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
+                                                                    {{$package['packaging_name']}} ({{fquantity($package['quantity'])}}-{{$package['uom']['short_name']}})
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control form-control-sm sum uom_price  input_number" name="opening_stock_details[{{$key}}][uom_price]" id="numberonly"  value="{{round($osd->uom_price,2)}}">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control sum subtotal  form-control-sm input_number text-dark" name="opening_stock_details[{{$key}}][subtotal]" id="numberonly"  value="{{round($osd->subtotal,2)}}" >
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text" data-td-target="#kt_datepicker_1"  data-kt-repeater="datepicker">
+                                                                <i class="fas fa-calendar"></i>
+                                                            </span>
+                                                            <input class="form-control form-control-sm" name="opening_stock_details[{{$key}}][expired_date]" class="exp_date" placeholder="Pick a date"  data-allow-clear="true" data-kt-repeater="datepicker" value="" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <textarea name="opening_stock_details[{{$key}}][remark]" class="form-control form-control-sm" data-kt-autosize="true"  id="" >{{$osd->remark}}</textarea>
+                                                    </td>
+                                                    <th><i class="fa-solid fa-trash text-danger deleteRow btn" ></i></th>
+                                                </tr>
+                                            @endforeach
                                         @endforeach
 
                                     </tbody>
@@ -228,7 +247,7 @@
                                         <tbody>
                                                 <tr class="">
                                                     <td class="text-end fw-semibold pe-4">Item :</td>
-                                                    <td class="text-start fw-bold item_count">{{count($openingStockDetails)}}</td>
+                                                    <td class="text-start fw-bold item_count">{{$osdCount}}</td>
                                                 </tr>
                                                 <tr class="">
                                                 <td class="text-end fw-bold pe-4 min-w-150px">Total Opening Amount :</td>
@@ -259,7 +278,7 @@
 
     <script>
         $("#kt_datepicker_1").flatpickr({
-            dateFormat: "d-m-Y",
+            dateFormat: "Y-m-d",
         });
         $('[data-kt-repeater="datepicker"]').flatpickr({
             dateFormat: "Y-m-d",

@@ -1,22 +1,28 @@
 <?php
 
+use App\Actions\currentStockBalance\currentStockBalanceActions;
 use App\Models\data;
 use App\Helpers\UomHelper;
 use App\Models\Currencies;
+use App\Models\sale\sales;
 use App\Models\Product\UOM;
+use App\Models\openingStocks;
+use App\Models\stock_history;
 use App\Models\systemSetting;
 use App\Helpers\SettingHelpers;
 use App\Helpers\generatorHelpers;
+use App\Models\sale\sale_details;
+use Illuminate\Support\Facades\DB;
+use App\Models\CurrentStockBalance;
+use App\Models\expenseTransactions;
 use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
-
-
-
-
+use Modules\ComboKit\Services\RoMService;
+use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
 
 function hasModule($moduleName)
 {
@@ -120,7 +126,8 @@ function numericToDate($date)
     return $dateTime;
 }
 
-function formateDate($dateTime){
+function formateDate($dateTime)
+{
 
     $setting = getSettings();
     return $dateTime->format("$setting->date_format");
@@ -143,7 +150,7 @@ function isUsePaymnetAcc()
  */
 function getSettings()
 {
-    return businessSettings::where('id',Auth::user()->business_id)
+    return businessSettings::where('id', Auth::user()->business_id)
         ->first();
 }
 
@@ -212,32 +219,33 @@ function updenvWithoutQuote($newEnvVariables)
  *  @return mixed $resultPrice
  *
  */
-function priceChangeByUom($currentUOMId, $currentUomPrice,$newUOMID) {
-        $newUomInfo = UOM::where('id', $newUOMID)->first();
-        $newUomValue=$newUomInfo->value;
-        $newUomType = $newUomInfo->unit_type;
-        $currentUomInfo = UOM::where('id', $currentUOMId)->first();
-        $currentUomType=$currentUomInfo->unit_type;
-        $currentUomValue= $currentUomInfo->value;
-        $resultPrice=0;
-        if ($currentUomType == 'reference' && $newUomType == 'smaller') {
-            $resultPrice = $currentUomPrice /($newUomInfo->value * $currentUomInfo->value);
-        }else if ($currentUomType == 'reference' && $newUomType == 'bigger') {
-            $resultPrice = $currentUomPrice * $newUomValue;
-        }else if ($currentUomType == 'bigger' && $newUomType == 'reference') {
-            $resultPrice = $currentUomPrice / $currentUomValue;
-        }else if ($currentUomType == 'bigger' && $newUomType == 'bigger') {
-            $resultPrice = $currentUomPrice *($newUomValue / $currentUomValue);
-        }else if ($currentUomType == 'smaller' && $newUomType == 'bigger') {
-            $resultPrice = $currentUomPrice * ($currentUomValue * $newUomValue) ;
-        }else if ($currentUomType == 'smaller' && $newUomType == 'smaller') {
-            $resultPrice = $currentUomPrice / $newUomValue;
-        }else if ($currentUomType == 'smaller' && $newUomType == 'reference') {
-            $resultPrice = $currentUomPrice * $currentUomValue ;
-        }else{
-            $resultPrice = $currentUomPrice  ;
-        }
-        return $resultPrice;
+function priceChangeByUom($currentUOMId, $currentUomPrice, $newUOMID)
+{
+    $newUomInfo = UOM::where('id', $newUOMID)->first();
+    $newUomValue = $newUomInfo->value;
+    $newUomType = $newUomInfo->unit_type;
+    $currentUomInfo = UOM::where('id', $currentUOMId)->first();
+    $currentUomType = $currentUomInfo->unit_type;
+    $currentUomValue = $currentUomInfo->value;
+    $resultPrice = 0;
+    if ($currentUomType == 'reference' && $newUomType == 'smaller') {
+        $resultPrice = $currentUomPrice / ($newUomInfo->value * $currentUomInfo->value);
+    } else if ($currentUomType == 'reference' && $newUomType == 'bigger') {
+        $resultPrice = $currentUomPrice * $newUomValue;
+    } else if ($currentUomType == 'bigger' && $newUomType == 'reference') {
+        $resultPrice = $currentUomPrice / $currentUomValue;
+    } else if ($currentUomType == 'bigger' && $newUomType == 'bigger') {
+        $resultPrice = $currentUomPrice * ($newUomValue / $currentUomValue);
+    } else if ($currentUomType == 'smaller' && $newUomType == 'bigger') {
+        $resultPrice = $currentUomPrice * ($currentUomValue * $newUomValue);
+    } else if ($currentUomType == 'smaller' && $newUomType == 'smaller') {
+        $resultPrice = $currentUomPrice / $newUomValue;
+    } else if ($currentUomType == 'smaller' && $newUomType == 'reference') {
+        $resultPrice = $currentUomPrice * $currentUomValue;
+    } else {
+        $resultPrice = $currentUomPrice;
+    }
+    return $resultPrice;
 }
 
 
@@ -298,46 +306,48 @@ function businessLocationCode()
     return generatorHelpers::generateVoucher($prefix, $location_count);
 }
 
-     function requestJsonId($requestJson,$key,$value)
-    {
-        $datas = json_decode($requestJson);
-        if ($datas) {
-            $data = array_map(function ($c)use($key,$value) {
-                return [$key => $c->$value];
-            }, $datas);
-            return $data;
-        }
-        return [];
+function requestJsonId($requestJson, $key, $value)
+{
+    $datas = json_decode($requestJson);
+    if ($datas) {
+        $data = array_map(function ($c) use ($key, $value) {
+            return [$key => $c->$value];
+        }, $datas);
+        return $data;
     }
+    return [];
+}
 
 
-function getParentName($parentLocation){
-    if($parentLocation){
-        $parent= getParentName($parentLocation->parentLocation);
-        $name=$parent .' / '.$parentLocation->name;
+function getParentName($parentLocation)
+{
+    if ($parentLocation) {
+        $parent = getParentName($parentLocation->parentLocation);
+        $name = $parent . ' / ' . $parentLocation->name;
         return $name;
-    }else{
+    } else {
         return null;
     }
 }
 
-function arr($array,$key,$seperator='',$noneVal='') {
-    if(isset($array[$key])){
-        return $seperator != '' ? $array[$key].$seperator: $array[$key];
-    }else{
+function arr($array, $key, $seperator = '', $noneVal = '')
+{
+    if (isset($array[$key])) {
+        return $seperator != '' ? $array[$key] . $seperator : $array[$key];
+    } else {
         return $noneVal;
     }
 }
 function businessLocationName($bl)
 {
-    $parentName=getParentName($bl['parentLocation']);
-    $parent= $parentName ? substr($parentName, 2) . ' / ' : '';
-    return $parent.$bl['name'];
+    $parentName = getParentName($bl['parentLocation']);
+    $parent = $parentName ? substr($parentName, 2) . ' / ' : '';
+    return $parent . $bl['name'];
 }
 function childLocationIDs($locationId)
 {
-    $LocationsIds=businessLocation::where('parent_location_id',$locationId)->select('id')->pluck('id')->toArray();
-    $LocationsIds[]=$locationId;
+    $LocationsIds = businessLocation::where('parent_location_id', $locationId)->select('id')->pluck('id')->toArray();
+    $LocationsIds[] = $locationId;
     return $LocationsIds;
 }
 
@@ -345,16 +355,15 @@ function addresss($address)
 {
     // dd($address);
     return
-        arr($address,'address',',')."<br>".
-        arr($address,'city',',').arr($address,'state',',').arr($address,'country',',')."<br>".
-        arr($address,'zip_postal_code','')
-    ;
+        arr($address, 'address', ',') . "<br>" .
+        arr($address, 'city', ',') . arr($address, 'state', ',') . arr($address, 'country', ',') . "<br>" .
+        arr($address, 'zip_postal_code', '');
 }
 
 function getSystemData($key)
 {
     try {
-        return systemSetting::where('key',$key)->firstOrFail()->value;
+        return systemSetting::where('key', $key)->firstOrFail()->value;
     } catch (\Throwable $th) {
         return null;
     }
@@ -396,4 +405,154 @@ function printFormat($productName, $quantity, $price)
         $str .= $forName . $forQty . $forPrice . "\n";
     }
     return $str;
+}
+
+function getKitAvailableQty($locationId, $productId)
+{
+    if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+        return RoMService::getKitAvailableQty($locationId, $productId);
+    }
+    return $productId;
+}
+
+function getConsumeQty($product_id)
+{
+    try {
+        return RoMService::getKitConsumeDetails($product_id);
+    } catch (\Throwable $th) {
+        return [];
+    }
+}
+
+
+
+function queryFilter($query, $filterData = false, $dateColumn = 'created_at')
+{
+    if (isset($filterData['from_date']) && isset($filterData['to_date'])) {
+        return $query->whereDate($dateColumn, '>=', $filterData['from_date'])
+            ->whereDate($dateColumn, '<=', $filterData['to_date']);
+    }
+    return $query;
+}
+
+function purchaeTxData($filterData = false)
+{
+    $purchase = purchases::query()->where('is_delete', 0);
+    return queryFilter($purchase, $filterData, 'received_at');
+}
+function saleTxData($filterData = false)
+{
+    $purchase = sales::query()->where('is_delete', 0);
+    return queryFilter($purchase, $filterData,'sold_at');
+}
+function isFilter($arr){
+  return  !empty($arr) ? $arr : false;
+}
+//purchase transactions
+function totalPurchaseAmount($filterData = false)
+{
+    return purchaeTxData($filterData)->sum('total_purchase_amount');
+}
+
+function totalPurchaseDueAmount($filterData = false)
+{
+    return purchaeTxData($filterData)->sum('balance_amount');
+}
+
+function totalPurchaseAmountWithoutDis($filterData = false)
+{
+    return purchaeTxData($filterData)->sum(DB::raw('total_line_discount + purchase_amount'));
+}
+
+function totalPurchaseDiscountAmt($filterData = false)
+{
+    return purchaeTxData($filterData)->sum('total_discount_amount');
+}
+
+
+function totalOSTransactionAmount($filterData = false)
+{
+    $tranactions = openingStocks::query()->where('is_delete', 0);
+    $resultPrice = queryFilter($tranactions, $filterData, 'opening_date')->sum('total_opening_amount');
+    return $resultPrice;
+}
+function totalExpenseAmount($filterData = false)
+{
+    $tranactions = expenseTransactions::query();
+    return queryFilter($tranactions, $filterData)->sum('expense_amount');
+}
+function totalExpenseDueAmount($filterData = false)
+{
+    $tranactions = expenseTransactions::query();
+    return queryFilter($tranactions, $filterData)->sum('balance_amount');
+}
+
+
+
+
+//  sale transactions
+function totalSaleAmount($filterData = false)
+{
+    return saleTxData($filterData)->sum('total_sale_amount');
+}
+
+function totalSaleDueAmount($filterData = false)
+{
+    return saleTxData($filterData)->sum('balance_amount');
+}
+function totalSaleAmountWithoutDis($filterData = false)
+{
+    return saleTxData($filterData)->sum('sale_amount');
+}
+
+function totalSaleDiscount($filterData = false)
+{
+    return saleTxData($filterData)->sum(DB::raw('total_item_discount + COALESCE(extra_discount_amount, 0)'));
+}
+function closingStocks($filterData = false)
+{
+    if (!$filterData) {
+        return closingStocksCal($filterData) ;
+    } else {
+        return closingStocksCal($filterData) + closingStocksCal($filterData, true);
+    }
+}
+
+function closingStocksCal($filterData = false, $betweenDateRage = false)
+{
+    // dd(stock_history::get()->toArray());
+    $stockHistories = stock_history::select('variation_id', DB::raw('SUM(increase_qty) as totalIncreaseQty'), DB::raw('SUM(decrease_qty) as totalDecreaseQty'))
+        ->when(isset($filterData['from_date']) && !$betweenDateRage, function ($q) use ($filterData) {
+            $q->whereDate('created_at', '<', $filterData['from_date']);
+        })
+        ->when(isset($filterData['from_date']) && isset($filterData['to_date']) && $betweenDateRage, function ($q) use ($filterData) {
+            $q->whereDate('created_at', '>=', $filterData['from_date'])
+                ->whereDate('created_at', '<=', $filterData['to_date']);
+        })
+        ->groupBy('variation_id')
+        ->get()
+        ->toArray();
+    $avgPrice = CurrentStockBalance::select('variation_id', DB::raw('AVG(ref_uom_price) as total_price'))
+        ->when(isset($filterData['from_date']) && !$betweenDateRage, function ($q) use ($filterData) {
+            $q->whereDate('created_at', '<', $filterData['from_date']);
+        })
+        ->when(isset($filterData['from_date']) && isset($filterData['to_date']) && $betweenDateRage, function ($q) use ($filterData) {
+            $q->whereDate('created_at', '>=', $filterData['from_date'])
+                ->whereDate('created_at', '<=', $filterData['to_date']);
+        })
+        ->groupBy('variation_id')
+        ->get()
+        ->keyBy('variation_id')
+        ->toArray();
+
+    $totalPrice = 0;
+    // dd($stockHistories);
+    foreach ($stockHistories as $i => $stockHistory) {
+        $totalQTy = $stockHistory['totalIncreaseQty'] - $stockHistory['totalDecreaseQty'];
+        // dd($stockHistory['totalIncreaseQty'] , $stockHistory['totalDecreaseQty']);
+        $varId = $stockHistory['variation_id'];
+        $price = $avgPrice[$varId]['total_price'] ?? 0;
+        $totalPrice += $totalQTy * $price;
+    }
+    return $totalPrice;
 }

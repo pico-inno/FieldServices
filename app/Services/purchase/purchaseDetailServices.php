@@ -87,6 +87,7 @@ class purchaseDetailServices
             $fetch_purchase_details = purchase_details::where('purchases_id', $id)->where('is_delete', 0)->select('id')->get();
             foreach ($fetch_purchase_details as $p) {
                 CurrentStockBalance::where('trnasaction_detail_id', $p->id)->where('transaction_type', 'purchase')->delete();
+                stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $p->id)->delete();
             }
             purchase_details::where('purchases_id', $id)->update([
                 'is_delete' => 1,

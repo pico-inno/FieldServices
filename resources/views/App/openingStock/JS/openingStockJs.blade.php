@@ -2,30 +2,16 @@
 <script>
 $(document).ready(function() {
     let prodcuts;
-    let productsOnSelectData=[];
-    let osdDetails=@json($openingStockDetails?? []) ;
-    if(osdDetails.length>0){
-        osdDetails.forEach(function(osd,index){
-            let newProductData={
-                'id':osd.product.id,
-                'variation_id':osd.product_variation.id,
-                'product_variations':osd.product_variation,
-                'uoms':osd.product.uom.unit_category.uom_by_category
-            };
-            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
-            if(indexToReplace !== -1){
-                productsOnSelectData[indexToReplace] = newProductData;
-            }else{
-                productsOnSelectData=[...productsOnSelectData,newProductData];
-            }
-        })
-    }
+    let productsOnSelectData=@json($productsOnSelectData?? []);
+    let osdCount={{$osdCount ?? 0}};
+    let ItemLimitRowCount=@json(ini_get('max_input_vars'))-(osdCount*20);
+    console.log(ItemLimitRowCount);
+    // let ItemLimitRowCount=50;
     const itemCal=()=>{
         let total=0;
         $('.quantity').each(function() {
             var value = isNullOrNan($(this).val());
             total += value;
-
         });
         $('.item_count').text(total );
     }
@@ -186,6 +172,20 @@ $(document).ready(function() {
     });
 
     function append_row(selected_product,unique_name_id) {
+        if(ItemLimitRowCount<20){
+            Swal.fire({
+                title:"Sorry, Can't Add more row.",
+                text: "To get better performence,we limit row count in voucher. Please create new voucher for other rows",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+            return;
+        }
+        ItemLimitRowCount-=20;
         let default_purchase_price,variation_id;
         default_purchase_price=selected_product.default_purchase_price;
         variation=selected_product.product_variations;
@@ -388,15 +388,19 @@ $(document).ready(function() {
     }();
     $(document).on('change','.package_id',function(){
         packaging($(this));
+        itemCal();
     })
     $(document).on('change','.unit_id',function(){
         packaging($(this),'/');
+        itemCal();
     })
     $(document).on('input','.quantity',function(){
         packaging($(this),'/');
+        itemCal();
     })
     $(document).on('input','.package_qty',function(){
-            packaging($(this),'*');
+        packaging($(this),'*');
+        itemCal();
     })
     const packaging=(e,operator)=>{
         let parent = $(e).closest('.cal-gp');

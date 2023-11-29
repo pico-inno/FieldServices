@@ -1,11 +1,28 @@
-tempusDominus.extend(tempusDominus.plugins.customDateFormat);
-
+    tempusDominus.extend(tempusDominus.plugins.customDateFormat);
     new tempusDominus.TempusDominus(document.getElementById('dob'), {
         localization: {
             locale: "en",
             format: "dd/MM/yyyy",
         }
     });
+    $(document).on('change', '#dob', function () {
+        let dobString = $('#dob').val();
+        let dobParts = dobString.split('/');
+        let day = parseInt(dobParts[0], 10);
+        let month = parseInt(dobParts[1], 10) - 1;
+        let year = parseInt(dobParts[2], 10);
+
+        let dob = new Date(year, month, day);
+        if (dob) {
+            let today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            let monthDiff = today.getMonth() - dob.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            $('#age').val(age);
+        }
+    })
 
     let individual = document.getElementById('individual');
     let individualdivs = document.querySelectorAll('.individual-div');
@@ -69,7 +86,7 @@ tempusDominus.extend(tempusDominus.plugins.customDateFormat);
         } else if (contactTypeSelect.value === "Both") {
             customerGroupDiv.forEach(function(customer_group) {
                 customer_group.classList.remove('hide');
-            });            
+            });
             creditLimitDiv.classList.remove('hide');
         }
     }
@@ -93,7 +110,7 @@ tempusDominus.extend(tempusDominus.plugins.customDateFormat);
             customerGroupDiv.forEach(function(customer_group) {
                 customer_group.classList.remove('hide');
                 customer_group.style.display = "block";
-            });            
+            });
             creditLimitDiv.classList.remove('hide');
             creditLimitDiv.style.display = "block";
         }

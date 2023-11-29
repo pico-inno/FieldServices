@@ -8,11 +8,12 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductVariation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\ComboKit\Entities\ReceipeOfMaterial;
 use App\Models\Product\ProductVariationsTemplates;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -38,6 +39,7 @@ class Product extends Model
         'can_expense',
         'can_expense',
         'is_recurring',
+        'receipe_of_material_id',
         'product_custom_field1',
         'product_custom_field2',
         'product_custom_field3',
@@ -117,4 +119,10 @@ class Product extends Model
     {
         return $this->hasOne(productPackaging::class, 'product_id', 'id');
     }
+
+    public function rom(): HasOne
+    {
+        return $this->hasOne(ReceipeOfMaterial::class, 'id', 'receipe_of_material_id');
+    }
+
 }

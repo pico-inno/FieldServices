@@ -1,9 +1,9 @@
-//cal purchase
 <script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
     $(document).ready(function() {
     let products;
     let productsOnSelectData=[];
+    let ItemLimitRowCount=@json(ini_get('max_input_vars'));
     var suppliers=@json($suppliers);
     let setting=@json($setting);
     let currency=@json($currency);
@@ -190,6 +190,20 @@
     });
 
     function append_row(selected_product,unique_name_id) {
+        if(ItemLimitRowCount<20){
+            Swal.fire({
+                title:"Sorry, Can't Add more row.",
+                text: "To get better performence,we limit row count in voucher. Please create new voucher for other rows",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+            return;
+        }
+        ItemLimitRowCount-=20;
         let default_purchase_price,variation_id,variation;
         // if(selected_product.has_variation=='single'){
         //     default_purchase_price=selected_product.product_variations.default_purchase_price;
@@ -570,7 +584,6 @@
         i.subtotal_with_discount.val(pDecimal(price_after_discount));
 
         result=pDecimal(price_after_discount+(per_item_expense*quantity));
-
         i.subtotal_with_tax.text(result);
         i.subtotal_with_tax_input.val(result)
         InsertPurchaseItemTotalPrice(i,result);

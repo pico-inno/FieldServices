@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Actions\product\unit\UOMAction;
 use App\Models\Product\UOM;
+use App\repositories\UnitCategoryRepository;
+use App\repositories\UOMRepository;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Product\UnitCategory;
@@ -11,67 +14,47 @@ use App\Http\Requests\Product\UoM\UoMUpdateRequest;
 
 class UoMController extends Controller
 {
-    public function __construct()
+    protected $uomRepository;
+    protected $unitCategoryRepository;
+    public function __construct(UOMRepository $uomRepository, UnitCategoryRepository $unitCategoryRepository)
     {
         $this->middleware(['auth', 'isActive']);
-    }
-    public function index()
-    {
-
+        $this->uomRepository = $uomRepository;
+        $this->unitCategoryRepository = $unitCategoryRepository;
     }
 
     public function add()
     {
-        $unitCategories = UnitCategory::select('id', 'name')->get();
-
-        return view('App.product.unit.uomAdd', compact('unitCategories'));
+        return view('App.product.unit.uomAdd', [
+            'unitCategories' => $this->unitCategoryRepository->getAll(),
+        ]);
     }
 
-    public function create(UoMCreateRequest $request)
+    public function create(UoMCreateRequest $request, UOMAction $uomAction)
     {
-        UOM::create([
-            'name' => $request->name,
-            'short_name' => $request->short_name,
-            'unit_category_id' => $request->unit_category,
-            'unit_type' => $request->unit_type,
-            'value' => $request->value,
-            'rounded_amount' => $request->rounded_amount,
-            'created_by' => auth()->id()
-        ]);
-
-        return redirect(route('unit-category'))->with(['message' => 'Created sucessfully UoM', 'toUOM' => 'to uom tab']);
+        $uomAction->create($request);
+        return redirect()->route('unit-category')->with(['message' => 'UOM created successfully', 'toUOM' => 'to uom tab']);
     }
 
     public function edit(UOM $uom)
     {
-        $unitCategories = UnitCategory::select('id', 'name')->get();
-
-        return view('App.product.unit.uomEdit', compact('uom', 'unitCategories'));
-    }
-
-    public function update(UoMUpdateRequest $request, UOM $uom)
-    {
-        $uom->update([
-            'name' => $request->name,
-            'short_name' => $request->short_name,
-            'unit_category_id' => $request->unit_category,
-            'unit_type' => $request->unit_type,
-            'value' => $request->value,
-            'rounded_amount' => $request->rounded_amount,
-            'updated_by' => auth()->id()
+        return view('App.product.unit.uomEdit', [
+            'uom' => $uom,
+            'unitCategories' => $this->unitCategoryRepository->getAll(),
         ]);
-
-        return redirect(route('unit-category'))->with(['message' => 'Updated sucessfully UoM', 'toUOM' => 'to uom tab']);
     }
 
-    public function delete(UOM $uom)
+    public function update(UoMUpdateRequest $request, UOM $uom, UOMAction $uomAction)
     {
-        $uom->deleted_by = auth()->id();
-        $uom->save();
+        $uomAction->update($uom->id, $request);
 
-        $uom->delete();
+        return redirect(route('unit-category'))->with(['message' => 'UOM updated successfully', 'toUOM' => 'to uom tab']);
+    }
 
-        return response()->json(['message' => 'Deleted sucessfully UoM']);
+    public function delete(UOM $uom, UOMAction $uomAction)
+    {
+        $uomAction->delete($uom->id);
+        return response()->json(['message' => 'UOM deleted successfully']);
     }
 
     public function checkUoM($id)
@@ -82,16 +65,16 @@ class UoMController extends Controller
     }
 
     public function getUomCategoryByUomId($id){
-        $uoms = UOM::where('unit_category_id', $id)->get();
+        $uoms = $this->uomRepository->getByCategoryId($id);
 
         return response()->json($uoms);
     }
 
     public function getUomByUomId($id)
     {
-        $unitCategoryId = UOM::whereId($id)->first()->unit_category_id;
-        $uomByUnitCategoryId = UOM::whereUnitCategoryId($unitCategoryId)->get();
+        $unitCategoryId = $this->uomRepository->getById($id)->unit_category_id;
+        $uoms = $this->uomRepository->getByCategoryId($unitCategoryId);
 
-        return response()->json($uomByUnitCategoryId);
+        return response()->json($uoms);
     }
 }

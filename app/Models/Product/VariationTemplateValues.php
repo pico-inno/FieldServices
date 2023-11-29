@@ -18,11 +18,13 @@ class VariationTemplateValues extends Model
         'created_by'
     ];
 
-    public function variationTemplate() {
+    public function variationTemplate()
+    {
         return $this->belongsTo(VariationTemplates::class, 'variation_template_id', 'id');
     }
 
-    public function getName(){
+    public function getName()
+    {
         return $this->name;
     }
 }

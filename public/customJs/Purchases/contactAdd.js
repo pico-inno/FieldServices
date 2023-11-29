@@ -1,23 +1,28 @@
-// Bind the change event to the checkbox
-$('#individual_ck').change(function() {
-  // Get the checked value of the checkbox
-    var isChecked = $(this).prop('checked');
-     $('#bussiness_ck').prop('checked',false);
+        $('form#add_contact_form').submit(function(event) {
+            event.preventDefault();
 
-  // Check if the checkbox is checked or not
-  if (isChecked) {
-      $('#individual_input_gp').removeClass('d-none')
-       $('#bussiness_id_div').addClass('d-none')
-  }
-});
-$('#bussiness_ck').change(function() {
-  // Get the checked value of the checkbox
-    var isChecked = $(this).prop('checked');
-    $('#individual_ck').prop('checked',false);
+            var formData = $(this).serialize();
+            console.log($(this).attr('action'));
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: formData,
+                success: function(response){
+                    if (response.success == true) {
+                        $('#contact_add_modal').modal('hide');
+                        success(response.msg);
 
-  // Check if the checkbox is checked or not
-  if (isChecked) {
-      $('#individual_input_gp').addClass('d-none')
-      $('#bussiness_id_div').removeClass('d-none')
-  }
-});
+                        // Clear the input fields in the modal form
+                        $('#add_contact_form')[0].reset();
+                        $('.contact_id').append($('<option>', {
+                            value: response.new_contact_id,
+                            text: response.new_contact_name
+                        }));
+                        $('.contact_id').val(response.new_contact_id).trigger("change");
+                    }
+                },
+                error: function(result) {
+                    error(result.responseJSON.errors, 'Something went wrong');
+                }
+            })
+        })

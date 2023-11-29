@@ -49,10 +49,15 @@
                                 <div class="mb-5 col-4 col-sm12 col-md-3 ">
                                     <label class="form-label fs-6 fw-semibold">{{__('report.business_locations')}}</label>
                                     <select class="form-select form-select-sm fw-bold filter_locations" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-saleItem-table-filter="businesslocation" data-hide-search="true">
-                                        <option value="0">{{__('report.all')}}</option>
-                                        @foreach ($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
-                                        @endforeach
+                                        <option></option>
+                                        @if(count($locations) > 0)
+                                            <option selected value="0">All Locations</option>
+                                            @foreach($locations as $location)
+                                                <option value="{{$location->id}}">{{businessLocationName($location)}}</option>
+                                            @endforeach
+                                        @else
+                                            <option selected disabled value="null">No locations</option>
+                                        @endif
                                     </select>
                                 </div>
                                 <!--end::Input group-->
@@ -115,9 +120,9 @@
                             </svg>
                         </span>
                                 <!--end::Svg Icon-->
-                                <input type="text" data-kt-customer-table-filter="search"
+                                <input type="text" data-sale-summary-table-filter="search"
                                        class="form-control form-control-solid w-250px ps-15"
-                                       placeholder="Search Stock In Order"/>
+                                       placeholder="Search"/>
                             </div>
                             <!--end::Search-->
                         </div>
@@ -137,7 +142,7 @@
 
                                 <!--begin::Export-->
                                 <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="modal"
-                                        data-bs-target="#kt_customers_export_modal">
+                                        data-bs-target="#sale_summary_export_modal">
                                     <!--begin::Svg Icon | path: icons/duotune/arrows/arr078.svg-->
                                     <span class="svg-icon svg-icon-2">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -202,7 +207,7 @@
 
                 <!--begin::Modals-->
                 <!--begin::Modal - Adjust Balance-->
-                <div class="modal fade" id="kt_customers_export_modal" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="sale_summary_export_modal" tabindex="-1" aria-hidden="true">
                     <!--begin::Modal dialog-->
                     <div class="modal-dialog modal-dialog-centered mw-650px">
                         <!--begin::Modal content-->
@@ -210,7 +215,7 @@
                             <!--begin::Modal header-->
                             <div class="modal-header">
                                 <!--begin::Modal title-->
-                                <h2 class="fw-bold">Export Customers</h2>
+                                <h2 class="fw-bold">Export Sales Summary</h2>
                                 <!--end::Modal title-->
                                 <!--begin::Close-->
                                 <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">

@@ -29,11 +29,15 @@ class ImportProductController extends Controller
     {
         // Excel::import(new ProductsImport, $request->file('import-products'));
 
-        $file = $request->file('import-products');
-        $import = new ProductsImport;
-        $import->import($file);
-
-        return back()->with(['success'=>'Successfully Imported']);
+        try {
+            $file = $request->file('import-products');
+            $import = new ProductsImport;
+            $importMessage=$import->import($file);
+            // dd($importMessage);
+            return back()->with(['success' => 'Successfully Imported']);
+        } catch (\Throwable $th) {
+            return back()->with(['error' =>$th->getMessage()])->withInput();
+        }
     }
     public function dowloadDemoExcel()
     {

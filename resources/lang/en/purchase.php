@@ -7,7 +7,8 @@ return [
 
     'add'=>'add',
     'purchase_status'=>'Purchase Status',
-    'purchase_date'=>'Purchase Date',
+    'purchase_date'=>'Purchase \ Ordering Date',
+    'received_date' => 'Received Date',
 
 
     // new label

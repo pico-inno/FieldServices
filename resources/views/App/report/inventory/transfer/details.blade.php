@@ -37,9 +37,9 @@
                     <div class="card-body filter-card">
                         <div class="row mb-5 flex-wrap">
                             <!--begin::Input group-->
-                            <div class="mb-5 col-6 col-md-4 ">
+                            <div class="mb-5 col-6 col-md-3 ">
                                 <label class="form-label fs-6 fw-semibold">Location (From)</label>
-                                <select class="form-select  fw-bold filter_locations_from" data-kt-select2="true"
+                                <select class="form-select form-select-sm  fw-bold filter_locations_from" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true"
                                         data-kt-stockins-table-filter="location" data-hide-search="true">
                                     <option></option>
@@ -52,9 +52,9 @@
                             </div>
                             <!--end::Input group-->
                             <!--begin::Input group-->
-                            <div class="mb-5 col-6 col-md-4 ">
+                            <div class="mb-5 col-6 col-md-3">
                                 <label class="form-label fs-6 fw-semibold">Location (To)</label>
-                                <select class="form-select  fw-bold filter_locations_to" data-kt-select2="true"
+                                <select class="form-select form-select-sm  fw-bold filter_locations_to" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true"
                                         data-kt-stockins-table-filter="location" data-hide-search="true">
                                     <option></option>
@@ -67,9 +67,9 @@
                             </div>
                             <!--end::Input group-->
                             <!--begin::Input group-->
-                            <div class="mb-5 col-6 col-md-4">
+                            <div class="mb-5 col-6 col-md-3">
                                 <label class="form-label fs-6 fw-semibold">Product</label>
-                                <select class="form-select  fw-bold filter_product" data-kt-select2="true"
+                                <select class="form-select form-select-sm fw-bold filter_product" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">
                                     <option></option>
                                     @if(count($products) > 0)
@@ -83,12 +83,19 @@
                                 </select>
                             </div>
                             <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-10 col-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold">Date</label>
+                                <input class="form-control form-control-sm form-control-solid filter_date" placeholder="Pick date rage"
+                                       id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
+                            </div>
+                            <!--end::Input group-->
                         </div>
                         <div class="row mb-5">
                             <!--begin::Input group-->
-                            <div class="mb-5 col-6 col-md-4">
+                            <div class="mb-5 col-6 col-md-3">
                                 <label class="form-label fs-6 fw-semibold">Category</label>
-                                <select class="form-select  fw-bold filter_category" data-kt-select2="true"
+                                <select class="form-select form-select-sm fw-bold filter_category" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
                                     @if(count($categories) > 0)
@@ -103,9 +110,9 @@
                             </div>
                             <!--end::Input group-->
                             <!--begin::Input group-->
-                            <div class="mb-5 col-6 col-md-4">
+                            <div class="mb-5 col-6 col-md-3">
                                 <label class="form-label fs-6 fw-semibold">Brand</label>
-                                <select class="form-select  fw-bold filter_brand" data-kt-select2="true"
+                                <select class="form-select form-select-sm fw-bold filter_brand" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
                                     @if(count($brands) > 0)
@@ -117,13 +124,6 @@
                                         <option selected disabled value="null">No Brand</option>
                                     @endif
                                 </select>
-                            </div>
-                            <!--end::Input group-->
-                            <!--begin::Input group-->
-                            <div class="mb-10 col-6 col-md-4 ">
-                                <label class="form-label fs-6 fw-semibold">Date</label>
-                                <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
-                                       id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
                             </div>
                             <!--end::Input group-->
                         </div>
@@ -239,7 +239,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                     
+
                             <th class="text-danger fs-3"></th>
                             <th class="text-danger fs-3"></th>
                         </tr>

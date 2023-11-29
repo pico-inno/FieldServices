@@ -190,6 +190,7 @@ class purchaseDetailActions
             'deleted_by' => Auth::user()->id,
         ]);
         CurrentStockBalance::where('transaction_detail_id', $detialId)->where('transaction_type', 'purchase')->delete();
+        stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $detialId)->delete();
     }
 
     // deleteStock

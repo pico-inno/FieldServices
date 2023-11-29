@@ -84,8 +84,8 @@ class saleController extends Controller
         if ($request->saleType == 'sales') {
             $saleItems = $saleItems->whereNull('pos_register_id');
         }
-        if ($request->filled('form_data') && $request->filled('to_date')) {
-            $saleItems = $saleItems->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
         $saleItems = $saleItems->get();
         return DataTables::of($saleItems)
@@ -480,6 +480,7 @@ class saleController extends Controller
                         'transaction_details_id' => $sale_detail_id,
                         'increase_qty' => 0,
                         'ref_uom_id' => $stock['ref_uom_id'],
+                        'ref_uom_price' => $stock['ref_uom_price']
                     ];
 
                     //remove qty from current stock
@@ -548,6 +549,7 @@ class saleController extends Controller
                     'increase_qty' => 0,
                     'decrease_qty' => $requestQty,
                     'ref_uom_id' => $currentStockData['ref_uom_id'],
+                    'ref_uom_price' => $currentStockData['ref_uom_price']
                 ]);
                 return true;
             }
@@ -1186,7 +1188,7 @@ class saleController extends Controller
                         'transaction_details_id' => $created_sale_details->id,
                         'increase_qty' => 0,
                         'ref_uom_id' => $refInfo['referenceUomId'],
-                        'decrease_qty' => $requestQty
+                        'decrease_qty' => $requestQty,
                     ];
                     stock_history::create($stock_history_data);
                 } else {

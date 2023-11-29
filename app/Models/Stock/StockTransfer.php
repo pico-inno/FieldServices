@@ -26,7 +26,7 @@ class StockTransfer extends Model
         'status',
         'received_at',
         'received_person',
-        'transfer_expense',
+        'remark',
         'confirm_at',
         'confirm_by',
         'created_by',

@@ -22,7 +22,7 @@ class ImportProductCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'import-products' => 'required|mimes:xlx,xls|max:2048'
+            'import-products' => 'required|mimes:xlt,xlx,xls,xltx,xlsx,csv|max:2048'
         ];
     }
 
@@ -30,7 +30,7 @@ class ImportProductCreateRequest extends FormRequest
     {
         return [
             'import-products.required' => 'Import product excel file is required',
-            'import-products.mimes' => 'Invalid file type. Only xlx and xls files are allowed.',
+            'import-products.mimes' => 'Invalid file type. Only xlt , xlx, xls, xltx, xlsx and csv files are allowed.',
             'import-products.max' => 'The file size should not exceed 2048 kilobytes.',
         ];
     }

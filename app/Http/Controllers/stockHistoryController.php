@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CurrentStockBalance;
-use App\Models\settings\businessLocation;
-use App\Models\settings\businessSettings;
 use DateTime;
+use stockout;
+use App\Helpers\UomHelper;
 use Illuminate\Http\Request;
 use App\Models\stock_history;
 use Yajra\DataTables\DataTables;
+use App\Models\sale\sale_details;
+use App\Models\CurrentStockBalance;
+use App\Models\settings\businessLocation;
+use App\Models\settings\businessSettings;
+use Modules\StockInOut\Entities\StockoutDetail;
 
 class stockHistoryController extends Controller
 {
@@ -63,22 +67,31 @@ class stockHistoryController extends Controller
                 return $history->business_location->name;
             })
             ->editColumn('product', function ($history) {
-                $variation=$history->productVariation->variationTemplateValue;
-                $variationName=$variation ? ' ('.$variation->name.')':'';
-                $productName=$history->product['name'];
-                return $productName . $variationName ;
+                $variation = $history->productVariation;
+                if ($variation) {
+                    $variationTemplateValue = $variation->variationTemplateValue;
+                    $variationName = $variationTemplateValue ? ' (' . $variationTemplateValue->name . ')' : '';
+                    $productName = $history->product['name'];
+                    return $productName . $variationName;
+                }
             })
             ->editColumn('date', function ($history) {
                 if($history->transaction_type=='sale'){
                     $created_at=  $history->saleDetail->sale->created_at;
                 }else if($history->transaction_type=='purchase'){
-                    $created_at=  $history->purchaseDetail->created_at;
+                    $created_at=  $history->purchaseDetail->purchase->purchased_at;
                 }else if($history->transaction_type=='stock_out'){
-                    $created_at=  $history->StockoutDetail->created_at;
+                    $created_at=false;
+                    if(hasModule('StockInOut') && isEnableModule('StockInOut')){
+                        $created_at =  $history->StockoutDetail->created_at;
+                    }
                 }else if($history->transaction_type=='stock_in'){
-                    $created_at=  $history->stockInDetail->created_at;
+                    $created_at=false;
+                    if($history->stockInDetail) {
+                    $created_at =  $history->stockInDetail->created_at;
+                    }
                 }else if($history->transaction_type=='opening_stock'){
-                    $created_at=  $history->openingStockDetail->created_at;
+                    $created_at=  $history->openingStockDetail->openingStock->opening_date;
                 }else if($history->transaction_type=='adjustment'){
                     $created_at=  $history->adjustmentDetail->created_at;
                 }else if($history->transaction_type=='transfer'){
@@ -97,9 +110,9 @@ class stockHistoryController extends Controller
                     return $history->business_location->name;
                 }else{
                     if($history->transaction_type=='purchase'){
-                        return  $history->purchaseDetail->purchase->supplier->company_name;
+                        return  arr($history->purchaseDetail->purchase->supplier,'company_name','','no supplier found');
                     }else if($history->transaction_type=='stock_in'){
-                        return  $history->stockInDetail->purchaseDetail->purchase->supplier->company_name;
+                        return  arr($history->stockInDetail->purchaseDetail->purchase->supplier, 'company_name', '', 'no supplier found');
                     }
                 }
                 return $history->business_location->name;
@@ -145,15 +158,22 @@ class stockHistoryController extends Controller
                     <span class='text-success'>$voucherNo</span><br>
                     ";
                 }else if($history->transaction_type=='stock_in'){
-                    $voucherNo=$history->stockInDetail->stockin->stockin_voucher_no;
-                    $html = "
-                    <span class='text-primary'>$voucherNo</span><br>
-                    ";
+                    $html = "";
+                    if (hasModule('StockInOut') && isEnableModule('StockInOut')) {
+                        $voucherNo=$history->stockInDetail->stockin->stockin_voucher_no;
+                        $html = "
+                        <span class='text-primary'>$voucherNo</span><br>
+                        ";
+                    }
                 }else if($history->transaction_type=='stock_out'){
-                    $voucherNo=$history->StockoutDetail->stockOut->stockout_voucher_no;
-                    $html = "
-                    <span class='text-danger'>$voucherNo</span><br>
-                    ";
+
+                $html = "";
+                    if(hasModule('StockInOut') && isEnableModule('StockInOut')){
+                        $voucherNo = $history->StockoutDetail->stockOut->stockout_voucher_no;
+                        $html = "
+                        <span class='text-danger'>$voucherNo</span><br>
+                        ";
+                    }
                 }
                 else if($history->transaction_type=='opening_stock'){
                     $voucherNo=$history->openingStockDetail->openingStock->opening_stock_voucher_no;

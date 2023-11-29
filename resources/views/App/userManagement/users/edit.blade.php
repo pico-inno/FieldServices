@@ -1,5 +1,9 @@
 @extends('App.main.navBar')
 
+@section('user_active','active')
+@section('user_active_show','active show')
+@section('user_here_show','here show')
+@section('user_list_active_show','active show')
 @section('styles')
 @endsection
 

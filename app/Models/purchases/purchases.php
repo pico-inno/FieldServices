@@ -25,7 +25,7 @@ class purchases extends Model
         'extra_discount_type',
         'extra_discount_amount',
         'totid_amount',
-        'baal_discount_amount',
+        'total_discount_amount',
         'purchase_expense',
         'total_purchase_amount',
         'balance_amount',
@@ -43,7 +43,8 @@ class purchases extends Model
         'currency_id',
         'is_delete',
         'deleted_at',
-        'deleted_by'
+        'deleted_by',
+        'received_at'
     ];
 
     public function business_location_id(): BelongsTo
@@ -87,5 +88,9 @@ class purchases extends Model
     }
     public function currency():HasOne{
         return $this->hasOne(Currencies::class,'id','currency_id');
+    }
+    public function stockHistory()
+    {
+        return $this->morphMany(StockHistory::class, 'transaction');
     }
 }

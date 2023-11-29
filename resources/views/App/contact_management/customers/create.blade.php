@@ -110,6 +110,12 @@
                             <input type="text" name="company_name" id="company_name" class="form-control form-control-sm fs-7" placeholder="Business Name" />
                         </div>
                     </div>
+                    <div class="d-flex justify-content-center align-items-center mt-3 mb-10">
+                        <div class="col-6 col-md-1 fs-5  fw-semibold  text-primary">
+                            General Info
+                        </div>
+                        <div class="separator   border-gray-300 col-md-11 col-6"></div>
+                    </div>
                     <div class="row individual-div">
                         <div class="col-md-3 col-sm-12 mb-8">
                             <label for="prefix" class="form-label">Prefix</label>
@@ -134,6 +140,33 @@
                             <input type="text" name="mobile" id="mobile" class="form-control form-control-sm fs-7" placeholder="Mobile" required />
                         </div>
                         <div class="col-md-3 col-sm-12 mb-8">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select name="gender" id="gender" class="form-select form-select-sm" placeholder="Gender" data-placeholder="Gender" data-control="select2" data-allow-clear="true" data-hide-search="true">
+                                <option disabled selected>Select Gender</option>
+                                <option value="male">
+                                    Male
+                                </option>
+                                <option value="female">
+                                    Female
+                                </option>
+                                <option value="Prefer not to say">
+                                    Prefer not to say
+                                </option>
+                                <option value="others">
+                                    Others...
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-sm-12 mb-8 individual-div">
+                            <label for="dob" class="form-label">Date of birth</label>
+                            <input type="text" name="dob" id="dob" class="form-control form-control-sm fs-7" placeholder="Date of birth"
+                                autocomplete="off" />
+                        </div>
+                        <div class="col-md-3 col-sm-12 mb-8">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="text" name="age" id="age" class="form-control form-control-sm fs-7" placeholder="Age" />
+                        </div>
+                        <div class="col-md-3 col-sm-12 mb-8">
                             <label for="alternate_number" class="form-label">Alternate Contact Number</label>
                             <input type="text" name="alternate_number" id="alternate_number" class="form-control form-control-sm fs-7" placeholder="Alternate Contact Numbe" />
                         </div>
@@ -145,6 +178,12 @@
                             <label for="email" class="form-label">Email</label>
                             <input type="text" name="email" id="email" class="form-control form-control-sm fs-7" placeholder="Email" />
                         </div>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center mt-3 mb-10">
+                        <div class="col-6 col-md-1 fs-5  fw-semibold  text-primary">
+                            Address
+                        </div>
+                        <div class="separator   border-gray-300 col-md-11 col-6"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-3 col-sm-12 mb-8">
@@ -399,10 +438,6 @@
                             <label for="zip_code" class="form-label">Zip Code</label>
                             <input type="text" name="zip_code" id="zip_code" class="form-control form-control-sm fs-7" placeholder="Zip Code">
                         </div>
-                        <div class="col-md-3 col-sm-12 mb-8 individual-div">
-                            <label for="dob" class="form-label">Date of birth</label>
-                            <input type="text" name="dob" id="dob" class="form-control form-control-sm fs-7" placeholder="Date of birth" autocomplete="off" />
-                        </div>
                     </div>
                     <div class="form-group text-center mt-5">
                         <button type="button" onclick="showMoreInfo()" class="btn btn-primary btn-sm moreBtn rounded text-white">More Informations <i class="fa-solid fa-chevron-down text-white ms-4"></i></button>
@@ -440,7 +475,7 @@
                                 <label for="credit_limit" class="form-label">Credit Limit</label>
                                 <input type="number" name="credit_limit" id="credit_limit" class="form-control form-control-sm fs-7" placeholder="Credit Limit">
                             </div>
-                        </div>                        
+                        </div>
                         <hr style="opacity: 0.3;">
                         <div class="row mt-6">
                             <div class="col-md-3 col-sm-12 mb-8">

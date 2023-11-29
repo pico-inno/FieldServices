@@ -23,7 +23,8 @@ class purchaseActions
         $this->currency = $settings->currency;
     }
 
-    public function create($purchases_data){
+    public function create($purchases_data)
+    {
         $purchases_data['purchase_voucher_no'] = purchaseVoucher();
         $purchases_data['purchased_by'] = Auth::user()->id;
         $purchases_data['confirm_at'] = $purchases_data['status'] === 'confirmed' ? now() : null;

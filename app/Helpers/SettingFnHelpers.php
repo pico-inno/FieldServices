@@ -16,3 +16,11 @@ function getSettingValue($key){
 }
 
 
+function settings($key = null){ //key for relation
+    if ($key == null){
+        return businessSettings::all()->first();
+    }else{
+        return businessSettings::with("$key")->get()->first();
+    }
+}
+

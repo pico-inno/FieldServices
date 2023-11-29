@@ -107,6 +107,8 @@
                 }
             }
           </style>
+          <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
+        <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
     </head>
     <!--end::Head-->
     <!--begin::Body-->
@@ -207,9 +209,8 @@
 
                             <div class="row mb-1" style="max-height: 5%;z-index: 200;">
                                 <div class="input-group input-group-solid flex-nowrap">
-                                    <select name="pos_customer" id="sb_pos_customer" class="form-select rounded-end-0 border-start border-end" data-kt-select2="true"  data-placeholder="Select customer">
-
-                                    </select>
+                                    <x-customersearch placeholder='Select customer name' id="sb_pos_customer" name="pos_customer"
+                                        className="form-select rounded-end-0 border-start border-end" />
                                     <span class="input-group-text border-gray-300 cursor-pointer" data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
                                         <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
                                     </span>
@@ -375,16 +376,8 @@
                             <div class="row mb-1">
                                 <div class="col-12">
                                     <div class="input-group input-group-solid input-group-sm mb-2 flex-nowrap">
-                                        {{-- <select name="pos_customer" id="pos_customer" class="form-select form-select-sm rounded-end-0 border-start border-end" data-kt-select2="true"  data-placeholder="Select customer">
-                                            <option></option>
-                                            @foreach ($customers as $customer)
-                                                <option value="{{ $customer->id }}">{{ $customer->getFullNameAttribute() }}</option>
-                                            @endforeach
-                                        </select> --}}
-                                        <select name="pos_customer" id="pos_customer" class="form-select form-select-sm rounded-end-0 border-start border-end" data-kt-select2="true"  data-placeholder="Select customer">
 
-                                        </select>
-
+                                        <x-customersearch placeholder='Select customer name' id="pos_customer" name="pos_customer" className="form-select rounded-end-0 border-start border-end" />
                                         <span class="input-group-text border-gray-300 cursor-pointer " data-bs-toggle="modal" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">
                                             <i class="fa-solid fa-circle-plus text-primary fs-3"></i>
                                         </span>
@@ -538,7 +531,10 @@
             </div>
 
             <div class="app-engage-secondary" style="z-index: 700;">
-                <button class="app-engage-btn hover-gray d-lg-none d-xl-none d-xxl-none btn bg-primary btn-lg me-2" id="pos_shopping_cart">
+                <button class="app-engage-btn hover-gray d-lg-none d-xl-none d-xxl-none btn bg-primary btn-lg me-2 position-relative" id="pos_shopping_cart">
+                    <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger badgeQtyCount">
+                        0
+                    </span>
                     <i class="fa-sharp fa-solid fa-cart-shopping text-white fs-3"></i>
                 </button>
             </div>
@@ -1039,8 +1035,6 @@
             </div>
         </div>
         <!--begin::Global Javascript Bundle(mandatory for all pages)-->
-        <script src={{ asset("assets/plugins/global/plugins.bundle.js") }}></script>
-        <script src={{ asset("assets/js/scripts.bundle.js") }}></script>
         <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
         <script src={{asset('customJs/loading/miniLoading.js')}}></script>
 		<script src={{asset('customJs/print/print.js')}}></script>
@@ -1175,3 +1169,4 @@
     });
 })
 </script>
+@stack('scripts')

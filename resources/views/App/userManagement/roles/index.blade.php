@@ -117,14 +117,13 @@
                                     @if(hasDelete('role'))
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-3">
-{{--                                        <a href="#" class="menu-link px-3" data-kt-users-table-filter="delete_row">Delete</a>--}}
-                                        <form id="delete-form" action="{{route('roles.destroy', $role->id)}}" method="post">
+                                        <a class="menu-link px-3" href="#" onclick="event.preventDefault();
+                                           document.getElementById('delete-form-{{$role->id}}').submit();">Delete</a>
+
+                                        <form id="delete-form-{{$role->id}}" action="{{route('roles.destroy',$role->id)}}" method="POST" class="d-none">
                                             @csrf
                                             @method('delete')
-                                            <button class="menu-link px-3 btn btn-sm d-inline-block">Delete
-                                            </button>
                                         </form>
-
                                     </div>
                                     <!--end::Menu item-->
                                     @endif

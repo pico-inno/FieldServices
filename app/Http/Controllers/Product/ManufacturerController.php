@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Actions\product\ManufacturerAction;
 use App\Http\Controllers\Controller;
 use App\Models\Product\Manufacturer;
+use App\repositories\ManufacturerRepository;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Product\Manufacturer\ManufacturerCreateRequest;
@@ -11,24 +13,29 @@ use App\Http\Requests\Product\Manufacturer\ManufacturerUpdateRequest;
 
 class ManufacturerController extends Controller
 {
-    public function __construct()
+    protected $manufacturerRepository;
+
+    public function __construct(ManufacturerRepository $manufacturerRepository)
     {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:manufacture')->only(['index', 'unitDatas', 'uomDatas']);
         $this->middleware('canCreate:manufacture')->only(['add', 'create']);
         $this->middleware('canUpdate:manufacture')->only(['edit', 'update']);
         $this->middleware('canDelete:manufacture')->only('delete');
+
+        $this->manufacturerRepository = $manufacturerRepository;
     }
+
     public function datas()
     {
-        $manufacturers = Manufacturer::all();
+        $manufacturers = $this->manufacturerRepository->getAll();
 
         return DataTables::of($manufacturers)
-        ->addColumn('action', function($manufacturer){
-            return $manufacturer->id;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addColumn('action', function ($manufacturer) {
+                return $manufacturer->id;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function index()
@@ -41,46 +48,38 @@ class ManufacturerController extends Controller
         return view('App.product.manufacturer.manufacturerAdd');
     }
 
-    public function create(ManufacturerCreateRequest $request)
+    public function create(ManufacturerCreateRequest $request, ManufacturerAction $manufacturerAction)
     {
-        $manufacturer = new Manufacturer();
-        $manufacturer->name = $request->manufacturer_name;
-        $manufacturer->created_by = Auth::user()->id;
+        $manufacturerAction->create($request);
 
-        $manufacturer->save();
-        $manufacturers = Manufacturer::all();
-
-        if($request->form_type === "from_product"){
+        if ($request->form_type === "from_product") {
             return response()->json([
-                'message' => 'Manufacturer created sucessfully',
-                'manufacturers' => $manufacturers
+                'message' => 'Manufacturer created successfully',
+                'manufacturers' => $this->manufacturerRepository->getAll()
             ]);
+        } else {
+            return redirect()->route('manufacturer')->with('message', 'Manufacturer created successfully');
         }
-
-        return redirect('/manufacturer')->with('message', 'Created sucessfully manufacturer');
     }
 
     public function edit(Manufacturer $manufacturer)
     {
-        return view('App.product.manufacturer.manufacturerEdit', compact('manufacturer'));
+        return view('App.product.manufacturer.manufacturerEdit', [
+            'manufacturer' => $manufacturer
+        ]);
     }
 
-    public function update(ManufacturerUpdateRequest $request, Manufacturer $manufacturer )
+    public function update(ManufacturerUpdateRequest $request, Manufacturer $manufacturer, ManufacturerAction $manufacturerAction)
     {
-        $manufacturer->name = $request->manufacturer_name;
-        $manufacturer->updated_by = Auth::user()->id;
+        $manufacturerAction->update($manufacturer->id, $request);
 
-        $manufacturer->save();
-
-        return redirect('/manufacturer')->with('message', 'Updated sucessfully manufacturer');
+        return redirect()->route('manufacturer')->with('message', 'Manufacturer updated successfully');
     }
 
-    public function delete(Manufacturer $manufacturer)
+    public function delete(Manufacturer $manufacturer, ManufacturerAction $manufacturerAction)
     {
-        $manufacturer->deleted_by = Auth::user()->id;
-        $manufacturer->save();
-        $manufacturer->delete();
+        $manufacturerAction->delete($manufacturer->id);
 
-        return response()->json(['message' => 'Deleted sucessfully manufacturer']);
+        return response()->json(['message' => 'Manufacturer deleted successfully']);
     }
 }
