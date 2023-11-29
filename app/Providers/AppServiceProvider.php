@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 use App\Models\settings\businessSettings;
+use App\Repositories\CurrencyRepository;
+use App\Repositories\interfaces\CurrencyRepositoryInterface;
+use App\Repositories\interfaces\LocationRepositoryInterface;
+use App\Repositories\interfaces\SettingRepositoryInterface;
+use App\Repositories\LocationRepository;
+use App\Repositories\SettingRepository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Currency;
 
@@ -27,7 +33,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(LocationRepositoryInterface::class, LocationRepository::class);
+        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
+        $this->app->bind(CurrencyRepositoryInterface::class, CurrencyRepository::class);
+
     }
 
     /**

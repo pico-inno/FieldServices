@@ -1320,14 +1320,14 @@
                                                                 <span class="menu-title px-0">{{__('purchase.add_purchase')}}</span>
                                                             </a>
                                                         </div>
-                                                        <div class="menu-item d-none">
+                                                        {{-- <div class="menu-item d-none">
                                                             <a class="menu-link @yield('purchases_new_add_active_show') px-0" href="{{route('purchase_new_add')}}">
                                                                 <span class="menu-icon">
                                                                      <i class="fa-solid fa-cart-plus"></i>
                                                                 </span>
                                                                 <span class="menu-title px-0">Add New Purchase</span>
                                                             </a>
-                                                        </div>
+                                                        </div> --}}
                                                         @endif
                                                         @yield('edit_purchase')
                                                         {{-- <div class="menu-item">

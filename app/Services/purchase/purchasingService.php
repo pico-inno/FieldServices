@@ -2,15 +2,26 @@
 
 namespace App\Services\purchase;
 
+use Exception;
+use Carbon\Carbon;
+use App\Helpers\UomHelper;
+use App\Models\stock_history;
 use App\Models\Contact\Contact;
+use App\Models\Product\Product;
+use App\Services\paymentServices;
+use Illuminate\Support\Facades\DB;
+use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
 use Illuminate\Notifications\Action;
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\LocationRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Actions\purchase\purchaseActions;
+use App\Models\purchases\purchase_details;
 use App\Services\packaging\packagingServices;
-use App\Services\paymentServices;
+use App\Actions\purchase\purchaseDetailActions;
 
-class purchaseService
+class purchasingService
 {
 
 
@@ -21,33 +32,102 @@ class purchaseService
      * @param  mixed $request
      * @return void
      */
-    public function createPurchase($request)
-    {
-        $action = new purchaseActions();
-        $payment = new paymentServices();
-        $packaging = new packagingServices();
-        // create obj
-        $purchase = $action->create($this->purchaseData($request));
-        //create purchaseDetail
-        $purchases_details = $request->purchase_details;
-        if ($purchases_details) {
-            foreach ($purchases_details as $pd) {
-                $createdPd = $action->detailCreate($pd, $purchase);
-                $packaging->packagingForTx($pd, $createdPd['id'], 'purchase');
+    public function createPurchase($request){
+        try {
+            DB::beginTransaction();
+            $action = new purchaseActions();
+            $detailServices = new purchaseDetailServices();
+            $payment = new paymentServices();
+
+            // store purchase data
+            $purchase = $action->create($this->purchaseData($request));
+
+            // store purchaseDetail data
+            $purchases_details = $request->purchase_details;
+            if ($purchases_details) {
+                $detailServices->create($purchases_details, $purchase);
             }
+
+            if ($request->paid_amount > 0) {
+                //store the payment transactions
+                $payment->makePayment($purchase, $request->payment_account, 'purchase');
+            } else {
+                // update customer's payableAmount
+                $suppliers = Contact::where('id', $request->contact_id)->first();
+                $suppliers_payable = $suppliers->payable_amount;
+                $suppliers->update([
+                    'payable_amount' => $suppliers_payable + $request['balance_amount']
+                ]);
+            }
+            DB::commit();
+            return $purchase;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw new Exception($th);
         }
-        if ($request->paid_amount > 0) {
-            $payment->makePayment($purchase, $request->payment_account, 'purchase');
-        } else {
-            $suppliers = Contact::where('id', $request->contact_id)->first();
-            $suppliers_payable = $suppliers->payable_amount;
-            $suppliers->update([
-                'payable_amount' => $suppliers_payable + $request['balance_amount']
-            ]);
-        }
-        // dd($purchase);
-        return $purchase;
     }
+
+    public function update($id, $request)
+    {
+
+        //initial class
+        $action = new purchaseActions();
+        $detailServices = new purchaseDetailServices();
+
+        // update purchase data
+        $purchasesData = $this->purchaseData($request);
+        $purchase=$action->update($id, $purchasesData);
+        //update purchase detail data
+        $detailServices->update($id,$purchase, $request);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     *prepare data to create purchase
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function purchaseData($request)
+    {
+        if ($request->paid_amount == 0) {
+            $payment_status = 'due';
+        } elseif ($request->paid_amount >= $request->total_purchase_amount) {
+            $payment_status = 'paid';
+        } else {
+            $payment_status = 'partial';
+        }
+        return [
+            'business_location_id' => $request->business_location_id,
+            'contact_id' => $request->contact_id,
+            'status' => $request->status,
+            'purchase_amount' => $request->purchase_amount,
+            'total_line_discount' => $request->total_line_discount,
+            'extra_discount_type' => $request->extra_discount_type,
+            'extra_discount_amount' => $request->extra_discount_amount,
+            'total_discount_amount' => $request->total_discount_amount,
+            'purchase_expense' => $request->purchase_expense,
+            'total_purchase_amount' => $request->total_purchase_amount,
+            'currency_id' => $request->currency_id,
+            'paid_amount' => $request->paid_amount,
+            'purchased_at' => $request->purchased_at,
+            'total_purchase_amount' => $request->total_purchase_amount,
+            'balance_amount' => $request->balance_amount,
+            'payment_status' => $payment_status,
+            'received_at'=> $request->received_at ?? null,
+        ];
+    }
+
 
     /**
      * Data for list that show using datatable
@@ -58,10 +138,10 @@ class purchaseService
     public function listData($request)
     {
         $purchases = purchases::where('is_delete', 0)
-            ->with('business_location_id', 'businessLocation', 'supplier')
-            ->OrderBy('id', 'desc');
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $purchases = $purchases->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
+                    ->with('business_location_id', 'businessLocation', 'supplier')
+                    ->OrderBy('id', 'desc');
+        if ($request->filled('form_data') && $request->filled('to_date')) {
+            $purchases = $purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
         }
         $purchases = $purchases->get();
         return DataTables::of($purchases)
@@ -81,11 +161,7 @@ class purchaseService
             })
 
             ->editColumn('date', function ($purchase) {
-                return fDate($purchase->purchased_at, true);
-            })
-
-            ->editColumn('received_at', function ($purchase) {
-                return fDate($purchase->received_at, true);
+                return fDate($purchase->created_at, true);
             })
             ->editColumn('purchaseItems', function ($purchase) {
                 $purchaseDetails = $purchase->purchase_details;
@@ -126,9 +202,6 @@ class purchaseService
                     return '-';
                 }
             })
-            ->editColumn('total_purchase_amount',function($e){
-                return price($e->total_purchase_amount ?? 0);
-            })
             ->addColumn('action', function ($purchase) {
                 $editBtn = $purchase->status != "confirmed" ? '<a href=" ' . route('purchase_edit', $purchase->id) . ' " class="dropdown-item p-2 edit-unit bg-active-primary fw-semibold" >Edit</a>' : '';
                 $html = '
@@ -160,45 +233,8 @@ class purchaseService
 
                 return (hasView('purchase') && hasPrint('purchase') && hasUpdate('purchase') && hasDelete('purchase') ? $html : 'No Access');
             })
-            ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status', 'received_at'])
+            ->rawColumns(['action', 'checkbox', 'status', 'date', 'payment_status'])
             ->make(true);
     }
 
-
-
-
-    /**
-     *prepare data to create purchase
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function purchaseData($request)
-    {
-        if ($request->paid_amount == 0) {
-            $payment_status = 'due';
-        } elseif ($request->paid_amount >= $request->total_purchase_amount) {
-            $payment_status = 'paid';
-        } else {
-            $payment_status = 'partial';
-        }
-        return [
-            'business_location_id' => $request->business_location_id,
-            'contact_id' => $request->contact_id,
-            'status' => $request->status,
-            'purchase_amount' => $request->purchase_amount,
-            'total_line_discount' => $request->total_line_discount,
-            'extra_discount_type' => $request->extra_discount_type,
-            'extra_discount_amount' => $request->extra_discount_amount,
-            'total_discount_amount' => $request->total_discount_amount,
-            'purchase_expense' => $request->purchase_expense,
-            'currency_id' => $request->currency_id,
-            'paid_amount' => $request->paid_amount,
-            'purchased_at' => $request->purchased_at,
-            'total_purchase_amount' => $request->total_purchase_amount,
-            'balance_amount' => $request->balance_amount,
-            'payment_status' => $payment_status,
-            'received_at'=>$request->received_at,
-        ];
-    }
 }

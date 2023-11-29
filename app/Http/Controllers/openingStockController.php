@@ -419,7 +419,6 @@ class openingStockController extends Controller
             'business_location_id' =>  $openingStock->business_location_id,
             'product_id' => $opening_stock_detail->product_id,
             'variation_id' =>  $opening_stock_detail->variation_id,
-            // "lot_serial_numbers" => UomHelper::generateBatchNo($pd['variation_id'],'BSN',6),
             'transaction_type' => $type,
             'transaction_details_id' => $opening_stock_detail->id,
             'increase_qty' =>  $smallestQty,

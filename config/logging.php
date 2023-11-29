@@ -78,6 +78,13 @@ return [
         //     'emoji' => ':boom:',
         //     'level' => env('LOG_LEVEL', 'critical'),
         // ],
+        // 'slack' => [
+        //     'driver' => 'slack',
+        //     'url' => env('LOG_SLACK_WEBHOOK_URL'),
+        //     'username' => 'Laravel Log',
+        //     'emoji' => ':boom:',
+        //     'level' => env('LOG_LEVEL', 'critical'),
+        // ],
 
         'papertrail' => [
             'driver' => 'monolog',
@@ -120,7 +127,7 @@ return [
         ],
         // 'slack' => [
         //     'driver' => 'slack',
-        //     'url' => env('SLACK_WEBHOOK_URL','https://hooks.slack.com/services/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'),
+        //     'url' => env('SLACK_WEBHOOK_URL'),
         //     'channel' => '#erppos_logs',
         //     'username' => env('APP_NAME'),
         //     'emoji' => ':bomb:', // Customize the emoji as needed

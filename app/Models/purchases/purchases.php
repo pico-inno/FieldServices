@@ -24,7 +24,7 @@ class purchases extends Model
         'total_line_discount',
         'extra_discount_type',
         'extra_discount_amount',
-        'totid_amount',
+        'total_amount',
         'total_discount_amount',
         'purchase_expense',
         'total_purchase_amount',

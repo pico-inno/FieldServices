@@ -33,7 +33,6 @@ class UomHelper
         } else {
             $result = $qty;
         }
-        // dd($result,round($result, $referenceRoundedAmount));
         return [
             "qtyByReferenceUom" => $result,
             "referenceUomId" => $referenceUomId,
