@@ -55,8 +55,8 @@ class stockHistoryAdjsutment extends Command
                             $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sd['quantity'], $sd['uom_id']);
                         }
                         if(hasModule('StockInOut') && isEnableModule('StockInOut') && $tx == 'stock_out'){
-                            $sd = StockoutDetail::where('id', $dh[0]['transaction_details_id'])->first();
-                            $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sd['quantity'], $sd['uom_id']);
+                            $sod = StockoutDetail::where('id', $dh[0]['transaction_details_id'])->first();
+                            $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sod['quantity'], $sod['uom_id']);
                         }
                         if ($ref) {
                             stock_history::where('id', $dh[0]['id'])->update(['decrease_qty' => $ref['qtyByReferenceUom']]);
