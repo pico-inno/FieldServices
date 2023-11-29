@@ -31,12 +31,32 @@ class stockHistoryDateAdjsutment extends Command
         $this->info("---------- Adjusting Date --------------\n");
         try {
             DB::beginTransaction();
-            $sh = stock_history::where('transaction_type', 'purchase')
+            $pdsh = stock_history::where('transaction_type', 'purchase')
                 ->with('purchaseDetail')
                 ->get();
-            foreach ($sh as $s) {
+            foreach ($pdsh as $s) {
                 if ($s->purchaseDetail->is_delete == 1) {
                     stock_history::find($s->id)->delete();
+                }
+            }
+            $sdsh = stock_history::where('transaction_type', 'sale')
+                ->with('saleDetail.sale')
+                ->get();
+
+            foreach ($sdsh as $sd) {
+                if ($sd->saleDetail->sale->status != 'delivered') {
+                    stock_history::where('id',$sd->id)->delete();
+                }
+            }
+
+
+            $sdsh = stock_history::where('transaction_type', 'trasfer')
+                    ->with('StockTransferDetail.stockTransfer')
+                    ->get();
+
+            foreach ($sdsh as $sd) {
+                if ($sd->StockTransferDetail->stockTransfer->status != 'in_transit' || $sd->StockTransferDetail->stockTransfer->status != 'complete') {
+                    stock_history::where('id', $sd->id)->delete();
                 }
             }
             DB::update("UPDATE purchases SET received_at = created_at");

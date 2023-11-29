@@ -596,6 +596,7 @@ class saleController extends Controller
                             }
                         } elseif ($saleBeforeUpdate->status == 'delivered' && $request->status != "delivered" && $businessLocation->allow_sale_order == 0) {
                             $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sale_details->id);
+                            stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->delete();
                             if ($lotSerials->exists()) {
                                 $this->adjustStock($lotSerials->get());
                                 foreach ($lotSerials->get() as $lotSerial) {
