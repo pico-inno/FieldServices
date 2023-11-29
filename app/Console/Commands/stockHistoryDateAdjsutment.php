@@ -59,17 +59,17 @@ class stockHistoryDateAdjsutment extends Command
                     stock_history::where('id', $sd->id)->delete();
                 }
             }
-            DB::update("UPDATE purchases SET received_at = created_at");
             DB::update("UPDATE sales SET delivered_at = created_at");
+            DB::update("UPDATE purchases SET received_at = created_at");
             DB::update("UPDATE stock_adjustments SET adjustmented_at= updated_at");
             DB::update("
                 UPDATE stock_histories
                 LEFT JOIN purchase_details ON stock_histories.transaction_details_id = purchase_details.id
-                LEFT JOIN purchases ON purchase_details.purchases_id = purchases.id
-                SET stock_histories.created_at = purchases.received_at
+                LEFT JOIN current_stock_balance ON purchase_details.id = current_stock_balance.transaction_detail_id
+                SET stock_histories.created_at = current_stock_balance.created_at
                 WHERE stock_histories.transaction_type = 'purchase'
+                AND current_stock_balance.transaction_type = 'purchase';
             ");
-
             DB::update("
                 UPDATE stock_histories
                 LEFT JOIN sale_details ON stock_histories.transaction_details_id = sale_details.id
