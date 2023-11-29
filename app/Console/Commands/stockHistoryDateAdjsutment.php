@@ -36,7 +36,7 @@ class stockHistoryDateAdjsutment extends Command
                 ->get();
             foreach ($pdsh as $s) {
                 if ($s->purchaseDetail->is_delete == 1) {
-                    stock_history::find($s->id)->delete();
+                    stock_history::where('id',$s->id)->delete();
                 }
             }
             $sdsh = stock_history::where('transaction_type', 'sale')
@@ -50,15 +50,15 @@ class stockHistoryDateAdjsutment extends Command
             }
 
 
-            $sdsh = stock_history::where('transaction_type', 'trasfer')
-                    ->with('StockTransferDetail.stockTransfer')
-                    ->get();
+            // $sdshs = stock_history::where('transaction_type', 'trasfer')
+            //         ->with('StockTransferDetail.stockTransfer')
+            //         ->get();
 
-            foreach ($sdsh as $sd) {
-                if ($sd->StockTransferDetail->stockTransfer->status != 'in_transit' || $sd->StockTransferDetail->stockTransfer->status != 'complete') {
-                    stock_history::where('id', $sd->id)->delete();
-                }
-            }
+            // foreach ($sdshs as $sdsh) {
+            //     if ($sdsh->StockTransferDetail->stockTransfer->status != 'in_transit' || $sdsh->StockTransferDetail->stockTransfer->status != 'complete') {
+            //         stock_history::where('id', $sdsh->id)->delete();
+            //     }
+            // }
             DB::update("UPDATE sales SET delivered_at = created_at");
             DB::update("UPDATE purchases SET received_at = created_at");
             DB::update("UPDATE stock_adjustments SET adjustmented_at= updated_at");
