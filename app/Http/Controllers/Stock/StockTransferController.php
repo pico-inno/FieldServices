@@ -415,8 +415,6 @@ class StockTransferController extends Controller
         }
 
 
-
-
     }
 
     /**
