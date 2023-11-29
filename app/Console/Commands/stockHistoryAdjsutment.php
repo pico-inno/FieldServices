@@ -36,6 +36,7 @@ class stockHistoryAdjsutment extends Command
             $transactions = [
                 'sale',
                 'stock_out',
+                'adjustment'
             ];
             foreach ($transactions as $tx) {
                 $duplicateHistories = stock_history::where('transaction_type', $tx)->where('decrease_qty', '>', 0)
@@ -53,9 +54,11 @@ class stockHistoryAdjsutment extends Command
                             $sd = sale_details::where('id', $dh[0]['transaction_details_id'])->first();
                             $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sd['quantity'], $sd['uom_id']);
                         }
-                        if ($tx == 'stock_out') {
-                            $sd = StockoutDetail::where('id', $dh[0]['transaction_details_id'])->first();
-                            $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sd['quantity'], $sd['uom_id']);
+                        if(hasModule('StockInOut') && isEnableModule('StockInOut')){
+                            if ($tx == 'stock_out') {
+                                $sd = StockoutDetail::where('id', $dh[0]['transaction_details_id'])->first();
+                                $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sd['quantity'], $sd['uom_id']);
+                            }
                         }
                         if ($ref) {
                             stock_history::where('id', $dh[0]['id'])->update(['decrease_qty' => $ref['qtyByReferenceUom']]);
