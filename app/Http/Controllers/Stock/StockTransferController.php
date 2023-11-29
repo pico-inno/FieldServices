@@ -145,6 +145,21 @@ class StockTransferController extends Controller
 
                 if ($request->status == 'in_transit' || $request->status == 'completed') {
 
+                    stock_history::create([
+                        'business_location_id' => $request->from_location,
+                        'product_id' => $transfer_detail['product_id'],
+                        'variation_id' => $transfer_detail['variation_id'],
+                        'lot_serial_no' => null,
+                        'expired_date' => null,
+                        'transaction_type' => 'transfer',
+                        'transaction_details_id' => $transferDetail->id,
+                        'increase_qty' => 0,
+                        'decrease_qty' => $referenceUomInfo['qtyByReferenceUom'],
+                        'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                        'created_at' => now(),
+                    ]);
+
+
                     // Decrease current quantity for "from_location"
                     $currentBalances = CurrentStockBalance::where('business_location_id', $request->from_location)
                         ->where('product_id', $transfer_detail['product_id'])
@@ -167,8 +182,6 @@ class StockTransferController extends Controller
 
                             //record decreased qty to lot serial details
                             $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $stockQty);
-                            //transfer detail record to history
-                            $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $currentBalances = 0);
 
 
                             $qtyToDecrease -= $stockQty;
@@ -181,8 +194,6 @@ class StockTransferController extends Controller
 
                             //record decreased qty to lot serial details
                             $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $qtyToDecrease);
-                            //transfer detail record to history
-                            $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $leftStockQty);
 
 
                             break;
@@ -194,8 +205,6 @@ class StockTransferController extends Controller
                             //record decreased qty to lot serial details
                             $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $stockQty);
                             //transfer detail record to history
-                            $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $currentBalances = 0);
-
 
                             break;
                         }
@@ -229,8 +238,19 @@ class StockTransferController extends Controller
                         ]);
                     }
 
-                    //transfer detail record to history
-                    $this->recordHistories($request->to_location, $transferDetail, $qtyToIncrease, 'increase', $lotDetail->uom_quantity);
+                    stock_history::create([
+                        'business_location_id' => $request->to_location,
+                        'product_id' => $transfer_detail['product_id'],
+                        'variation_id' => $transfer_detail['variation_id'],
+                        'lot_serial_no' => null,
+                        'expired_date' => null,
+                        'transaction_type' => 'transfer',
+                        'transaction_details_id' => $transferDetail->id,
+                        'increase_qty' => $referenceUomInfo['qtyByReferenceUom'],
+                        'decrease_qty' => 0,
+                        'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                        'created_at' => $request->confirm_at,
+                    ]);
 
 
                 }
@@ -429,7 +449,6 @@ class StockTransferController extends Controller
 
         $settings =  businessSettings::all()->first();
 
-//return $requestStocktransferDetails;
         DB::beginTransaction();
         try {
             $packagingService=new packagingServices();
@@ -449,6 +468,7 @@ class StockTransferController extends Controller
                     'to_location' => $request->to_location,
                     'status' => $request->status,
                     'remark' => $request->remark,
+                    'updated_by' => \auth()->id()
                 ]);
 
 
@@ -473,6 +493,9 @@ class StockTransferController extends Controller
                         ->where('transfer_id', $stockTransfer->id)
                         ->update($stockTransferDetailData);
 
+                    $referenceUomInfoForHis = UomHelper::getReferenceUomInfoByCurrentUnitQty($newQty, $transferDetail['uom_id']);
+
+
 
                     $currentBalances = CurrentStockBalance::where('business_location_id', $request->from_location)
                         ->where('product_id', $transferDetail['product_id'])
@@ -486,10 +509,13 @@ class StockTransferController extends Controller
                         ->get();
 
                     if($newStatus == 'prepared' || $newStatus == 'pending'){
+                        stock_history::where('transaction_type', 'transfer')
+                            ->where('transaction_details_id', $transferDetail['transfer_detail_id'])->delete();
                         if($oldStatus == 'in_transit'){
                             $restoreLotSerialDetails = lotSerialDetails::where('transaction_detail_id', $transferDetailId)
                                 ->where('transaction_type', 'transfer')
                                 ->get();
+
                             foreach ($restoreLotSerialDetails as $restoreDetail){
                                 $currentStockBalance = CurrentStockBalance::where('id', $restoreDetail->current_stock_balance_id)->first();
                                 $currentStockBalance->current_quantity += $restoreDetail->uom_quantity;
@@ -501,11 +527,16 @@ class StockTransferController extends Controller
 
                     if ($newStatus == 'in_transit' || $newStatus == 'completed') {
 
-                        if ($newQty > $beforeEditQty || ($newQty == $beforeEditQty && $newStatus == 'in_transit')) {
-                            $updateableQty = ($oldStatus == 'prepared' || $oldStatus == 'pending' || $newQty == $beforeEditQty) ? $newQty : ($newQty - $beforeEditQty);
-                            $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($updateableQty, $transferDetail['uom_id']);
-                            $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
+                        $stock_history = stock_history::where('transaction_type', 'transfer')
+                            ->where('transaction_details_id', $transferDetailId)
+                            ->first();
 
+                        if ($stock_history){
+                            $stock_history->decrease_qty = $referenceUomInfoForHis['qtyByReferenceUom'];
+                            $stock_history->ref_uom_id = $referenceUomInfoForHis['referenceUomId'];
+                            $stock_history->created_at = $request->transfered_at;
+                            $stock_history->save();
+                        }else{
                             stock_history::create([
                                 'business_location_id' => $request->from_location,
                                 'product_id' => $transferDetail['product_id'],
@@ -515,10 +546,18 @@ class StockTransferController extends Controller
                                 'transaction_type' => 'transfer',
                                 'transaction_details_id' => $transferDetailId,
                                 'increase_qty' => 0,
-                                'decrease_qty' => $qtyToDecrease,
-                                'ref_uom_id' => $transferDetail['ref_uom_id'],
+                                'decrease_qty' => $referenceUomInfoForHis['qtyByReferenceUom'],
+                                'ref_uom_id' => $referenceUomInfoForHis['referenceUomId'],
                                 'created_at' => now(),
                             ]);
+                        }
+
+
+                        if ($newQty > $beforeEditQty || ($newQty == $beforeEditQty && $newStatus == 'in_transit')) {
+                            $updateableQty = ($oldStatus == 'prepared' || $oldStatus == 'pending' || $newQty == $beforeEditQty) ? $newQty : ($newQty - $beforeEditQty);
+                            $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($updateableQty, $transferDetail['uom_id']);
+                            $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
+
 
                             foreach ($currentBalances as $balance) {
                                 $currentQty = $balance->current_quantity;
@@ -559,21 +598,6 @@ class StockTransferController extends Controller
                                 $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($updateableQty, $transferDetail['uom_id']);
                                 $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
 
-                                stock_history::create([
-                                    'business_location_id' => $request->from_location,
-                                    'product_id' => $transferDetail['product_id'],
-                                    'variation_id' => $transferDetail['variation_id'],
-                                    'lot_serial_no' => null,
-                                    'expired_date' => null,
-                                    'transaction_type' => 'transfer',
-                                    'transaction_details_id' => $transferDetailId,
-                                    'increase_qty' => 0,
-                                    'decrease_qty' => $qtyToDecrease,
-                                    'ref_uom_id' => $transferDetail['ref_uom_id'],
-                                    'created_at' => now(),
-                                ]);
-
-
                                 foreach ($currentBalances as $balance) {
                                     $currentQty = $balance->current_quantity;
                                     $checkLotDetail = lotSerialDetails::where('transaction_type', 'transfer')
@@ -612,21 +636,6 @@ class StockTransferController extends Controller
                                 $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($updateableQty, $transferDetail['uom_id']);
                                 $qtyToReincrease = $referenceUomInfo['qtyByReferenceUom'];
 
-                                stock_history::create([
-                                    'business_location_id' => $request->from_location,
-                                    'product_id' => $transferDetail['product_id'],
-                                    'variation_id' => $transferDetail['variation_id'],
-                                    'lot_serial_no' => null,
-                                    'expired_date' => null,
-                                    'transaction_type' => 'transfer',
-                                    'transaction_details_id' => $transferDetailId,
-                                    'increase_qty' => 0,
-                                    'decrease_qty' => $qtyToReincrease,
-                                    'ref_uom_id' => $transferDetail['ref_uom_id'],
-                                    'created_at' => now(),
-                                ]);
-
-
                                 $lotSerialDetails = lotSerialDetails::where('transaction_detail_id', $transferDetailId)
                                     ->where('transaction_type', 'transfer')
                                     ->when($settings->accounting_method == 'fifo', function ($query) {
@@ -639,7 +648,7 @@ class StockTransferController extends Controller
                                 foreach ($lotSerialDetails as $lotSerialDetail) {
                                     $stockQty = $lotSerialDetail->uom_quantity;
 
-                                    if ($qtyToReincrease > $stockQty) {
+                                    if ($qtyToReincrease >= $stockQty) {
                                         $qtyToReincrease -= $stockQty;
 
                                         $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
@@ -688,15 +697,6 @@ class StockTransferController extends Controller
                         $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
                             ->where('transaction_detail_id', $transferDetailId)->get();
 
-                        // CurrentStockBalance::where('transaction_type', 'transfer')
-                        // ->where('transaction_detail_id', $transferDetailId)->delete();
-
-
-
-                        foreach ($lotSerialDetails as $lotDetail){
-                            $currentStockDetail = CurrentStockBalance::where('id', $lotDetail->current_stock_balance_id)->first();
-
-
                             stock_history::create([
                                 'business_location_id' => $request->to_location,
                                 'product_id' => $transferDetail['product_id'],
@@ -705,11 +705,15 @@ class StockTransferController extends Controller
                                 'expired_date' => null,
                                 'transaction_type' => 'transfer',
                                 'transaction_details_id' => $transferDetailId,
-                                'increase_qty' => $lotDetail->uom_quantity,
+                                'increase_qty' => $referenceUomInfoForHis['qtyByReferenceUom'],
                                 'decrease_qty' => 0,
-                                'ref_uom_id' => $transferDetail['ref_uom_id'],
+                                'ref_uom_id' => $referenceUomInfoForHis['referenceUomId'],
                                 'created_at' => now(),
                             ]);
+//                        }
+
+                        foreach ($lotSerialDetails as $lotDetail){
+                            $currentStockDetail = CurrentStockBalance::where('id', $lotDetail->current_stock_balance_id)->first();
 
                             // Increase current quantity for "to_location"
                             CurrentStockBalance::create([
@@ -747,6 +751,9 @@ class StockTransferController extends Controller
 
                 foreach ($transactionDetails as $transactionDetail){
 
+                    $stock_history = stock_history::where('transaction_type', 'transfer')
+                        ->where('transaction_details_id', $transactionDetail->id)
+                        ->delete();
 
                     CurrentStockBalance::where('transaction_detail_id', $transactionDetail->id)
                         ->where('transaction_type', 'transfer')
@@ -757,8 +764,6 @@ class StockTransferController extends Controller
                         ->get();
 
 
-
-//                stock_history::where()
                     foreach ($restoreLotSerialDetails as $restoreDetail){
                         $currentStockBalance = CurrentStockBalance::where('id', $restoreDetail->current_stock_balance_id)->first();
                         $currentStockBalance->current_quantity += $restoreDetail->uom_quantity;
@@ -809,6 +814,21 @@ class StockTransferController extends Controller
 
                     if ($request->status == 'in_transit' || $request->status == 'completed') {
 
+                        stock_history::create([
+                            'business_location_id' => $request->from_location,
+                            'product_id' => $transfer_detail['product_id'],
+                            'variation_id' => $transfer_detail['variation_id'],
+                            'lot_serial_no' => null,
+                            'expired_date' => null,
+                            'transaction_type' => 'transfer',
+                            'transaction_details_id' => $transferDetail->id,
+                            'increase_qty' => 0,
+                            'decrease_qty' => $referenceUomInfo['qtyByReferenceUom'],
+                            'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                            'created_at' => now(),
+                        ]);
+
+
                         // Decrease current quantity for "from_location"
                         $currentBalances = CurrentStockBalance::where('business_location_id', $request->from_location)
                             ->where('product_id', $transfer_detail['product_id'])
@@ -820,11 +840,11 @@ class StockTransferController extends Controller
                                 return $query->orderByDesc('id');
                             })
                             ->get();
-
+//1
                         foreach ($currentBalances as $balance) {
-                            $stockQty = $balance->current_quantity;
+                            $stockQty = $balance->current_quantity; //2 5 5 5
 
-                            if ($qtyToDecrease > $stockQty) { //10 8 6 /2 2 10
+                            if ($qtyToDecrease > $stockQty) { //13 > 2
                                 $balance->update([
                                     'current_quantity' => 0,
                                 ]);
@@ -834,9 +854,9 @@ class StockTransferController extends Controller
 
                                 $qtyToDecrease -= $stockQty;
                                 //transfer detail record to history
-                                $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $currentBalances = 0);
+//                                $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $currentBalances = 0);
 
-                            }elseif($stockQty > $qtyToDecrease){ //10 > 6
+                            }elseif($stockQty > $qtyToDecrease){ //1 > 5
                                 $leftStockQty = $stockQty - $qtyToDecrease;
 
                                 $balance->update([
@@ -846,7 +866,7 @@ class StockTransferController extends Controller
                                 //record decreased qty to lot serial details
                                 $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $qtyToDecrease);
                                 //transfer detail record to history
-                                $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $leftStockQty);
+//                                $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $leftStockQty);
 
                                 break;
                             }
@@ -858,6 +878,19 @@ class StockTransferController extends Controller
 
 
                         //transfer detail record to history
+                        stock_history::create([
+                            'business_location_id' => $request->to_location,
+                            'product_id' => $transfer_detail['product_id'],
+                            'variation_id' => $transfer_detail['variation_id'],
+                            'lot_serial_no' => null,
+                            'expired_date' => null,
+                            'transaction_type' => 'transfer',
+                            'transaction_details_id' => $transferDetail->id,
+                            'increase_qty' => $referenceUomInfo['qtyByReferenceUom'],
+                            'decrease_qty' => 0,
+                            'ref_uom_id' => $referenceUomInfo['referenceUomId'],
+                            'created_at' => now(),
+                        ]);
 
                         $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
                             ->where('transaction_detail_id', $transferDetail->id)->get();
@@ -882,7 +915,7 @@ class StockTransferController extends Controller
                                 'created_at' => now(),
                             ]);
 
-                            $this->recordHistories($request->to_location, $transferDetail, $qtyToIncrease, 'increase', $lotDetail->uom_quantity );
+//                            $this->recordHistories($request->to_location, $transferDetail, $qtyToIncrease, 'increase', $lotDetail->uom_quantity );
                         }
 
 

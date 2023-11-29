@@ -511,14 +511,14 @@
             var before_edit_quantity = Number(i.before_edit_quantity.val() ?? 0);
             var current_stock_qty_txt = Number(i.current_stock_qty_txt.text());
 
-
             setTimeout(function() {
                 var isQtyInvalid =  quantity > current_stock_qty_txt + before_edit_quantity;
+
                 var isQtyNull = quantity === 0 || quantity == null;
                 i.quantity.toggleClass('text-danger', isQtyInvalid || isQtyNull);
                 i.current_stock_qty_txt.toggleClass('text-danger', isQtyInvalid);
                 i.smallest_unit_txt.toggleClass('text-danger', isQtyInvalid);
-                $('.update_btn').prop('disabled', isQtyInvalid || isQtyNull);
+                $('.update_btn').toggleClass('disabled', isQtyInvalid || isQtyNull);
             }, 700)
         }
 
