@@ -108,6 +108,7 @@
                             <th class="text-center min-w-80px">Actions</th>
                             <th class="min-w-400px">Name</th>
                             <th class="min-w-125px">Location Id</th>
+                            <th class="min-w-125px">Location Type</th>
                             <th class="min-w-125px">address</th>
                             <th class="min-w-125px">City</th>
                             <th class="min-w-125px">Zip Code</th>

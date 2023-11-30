@@ -60,7 +60,7 @@ class purchaseController extends Controller
 
     public function index()
     {
-        $locations = businessLocation::all();
+        $locations = $this->locations->getWithAC();
         $suppliers = Contact::where('type', 'Supplier')
             ->orWhere('type', 'Both')
             ->select('id', 'company_name', 'prefix', 'first_name', 'last_name', 'middle_name')
@@ -70,7 +70,7 @@ class purchaseController extends Controller
 
     public function add()
     {
-        $locations = $this->locations->getAllPermitted();
+        $locations = $this->locations->getforTx();
         $currency = $this->currency->defaultCurrency();
         $suppliers = Contact::where('type', 'Supplier')
             ->orWhere('type', 'Both')

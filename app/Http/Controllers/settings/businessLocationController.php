@@ -41,10 +41,13 @@ class businessLocationController extends Controller
     }
     public function listData()
     {
-        $locations = businessLocation::query()->with('locationAddress');
+        $locations = businessLocation::query()->with('locationAddress','locationType');
         return DataTables::of($locations)
             ->editColumn('name', function ($location) {
                 return businessLocationName($location);
+            })
+            ->addColumn('location_type',function($location){
+                return $location->locationType->name;
             })
             ->addColumn('address', function ($location) {
                 return arr($location->locationAddress, 'address');

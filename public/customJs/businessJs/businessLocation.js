@@ -53,6 +53,10 @@ var KTlocationsList = function () {
                     name: 'location_code'
                 },
                 {
+                    data: 'location_type',
+                    name: 'location_type'
+                },
+                {
                     data: 'address',
                     name: 'address',
                 },
