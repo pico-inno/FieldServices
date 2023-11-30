@@ -41,7 +41,8 @@ class stockHistoryAdjsutment extends Command
                 'transfer'
             ];
             foreach ($transactions as $tx) {
-                $duplicateHistories = stock_history::where('transaction_type', $tx)->where('decrease_qty', '>', 0)
+                $duplicateHistories = stock_history::where('transaction_type', $tx)
+                    ->where('decrease_qty', '>', 0)
                     ->get()
                     ->groupBy('transaction_details_id')
                     ->toArray();
@@ -66,7 +67,11 @@ class stockHistoryAdjsutment extends Command
                         }
                         if ($ref) {
                             stock_history::where('id', $dh[0]['id'])->update(['decrease_qty' => $ref['qtyByReferenceUom']]);
-                            stock_history::where('transaction_type', $tx)->where('decrease_qty', '>', 0)->where('increase_qty','<=',0)->whereNotIn('id', [$dh[0]['id']])->delete();
+                            stock_history::where('transaction_type', $tx)
+                                            ->where('transaction_details_id', $dh[0]['transaction_details_id'])
+                                            ->where('decrease_qty', '>', 0)
+                                            ->where('increase_qty','<=',0)
+                                            ->whereNotIn('id', [$dh[0]['id']])->delete();
                         }
                     }
                 }
