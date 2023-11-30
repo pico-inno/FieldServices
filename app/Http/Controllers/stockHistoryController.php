@@ -29,7 +29,10 @@ class stockHistoryController extends Controller
     {
         $currencyDp=getSettingValue('currency_decimal_places');
         $quantityDp=getSettingValue('quantity_decimal_places');
-        $histories = stock_history::with('productVariation')->get();
+        $histories = stock_history::with('productVariation')
+                    ->when(!hasModule('StockInOut') ,function($q){
+                        $q->whereNotIn('transaction_type', ['stock_in', 'stock_out']);
+                    })->get();
 
         $openingBalances = [];
 

@@ -689,6 +689,7 @@
             result=isNullOrNan(price_after_discount)+isNullOrNan(purchaseExpense);
             $('#total_purchase_amount').val(pDecimal(result));
             $('#total_purchase_amount_txt').text(fpDecimal(result,currentCurrency));
+            $('#paid_amount').val(result);
 
 
         }, 100);

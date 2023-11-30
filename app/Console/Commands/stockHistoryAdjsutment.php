@@ -6,6 +6,7 @@ use App\Helpers\UomHelper;
 use App\Models\stock_history;
 use Illuminate\Console\Command;
 use App\Models\sale\sale_details;
+use App\Models\Stock\StockTransferDetail;
 use Illuminate\Support\Facades\DB;
 use Modules\StockInOut\Entities\StockoutDetail;
 
@@ -36,7 +37,8 @@ class stockHistoryAdjsutment extends Command
             $transactions = [
                 'sale',
                 'stock_out',
-                'adjustment'
+                'adjustment',
+                'transfer'
             ];
             foreach ($transactions as $tx) {
                 $duplicateHistories = stock_history::where('transaction_type', $tx)->where('decrease_qty', '>', 0)
@@ -54,13 +56,17 @@ class stockHistoryAdjsutment extends Command
                             $sd = sale_details::where('id', $dh[0]['transaction_details_id'])->first();
                             $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sd['quantity'], $sd['uom_id']);
                         }
+                        if ($tx == 'transfer') {
+                            $tf = StockTransferDetail::where('id', $dh[0]['transaction_details_id'])->first();
+                            $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($tf['quantity'], $tf['uom_id']);
+                        }
                         if(hasModule('StockInOut') && isEnableModule('StockInOut') && $tx == 'stock_out'){
                             $sod = StockoutDetail::where('id', $dh[0]['transaction_details_id'])->first();
                             $ref = UomHelper::getReferenceUomInfoByCurrentUnitQty($sod['quantity'], $sod['uom_id']);
                         }
                         if ($ref) {
                             stock_history::where('id', $dh[0]['id'])->update(['decrease_qty' => $ref['qtyByReferenceUom']]);
-                            stock_history::where('transaction_type', $tx)->where('decrease_qty', '>', 0)->whereNotIn('id', [$dh[0]['id']])->delete();
+                            stock_history::where('transaction_type', $tx)->where('decrease_qty', '>', 0)->where('increase_qty','<=',0)->whereNotIn('id', [$dh[0]['id']])->delete();
                         }
                     }
                 }
