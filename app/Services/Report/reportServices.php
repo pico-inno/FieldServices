@@ -48,7 +48,7 @@ class reportServices
 
 
         $totalOutcome=(int) $totalPurchaseAmount+ $totalOSAmount + $totalExpenseAmount;
-        $totalIncomeAmount=$totalSaleAmount;
+        $totalIncomeAmount=$totalSaleAmount + $closingStocks;
 
         // dd($totalOutcome, $totalIncomeAmount);
         // dd($totalIncomeAmount, $totalOutcome);
