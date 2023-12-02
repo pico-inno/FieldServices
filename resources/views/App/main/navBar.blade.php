@@ -423,6 +423,19 @@
                                         <!--end::Nav link-->
                                     </li>
                                 @endif
+                                @if(hasModule('fieldService') && isEnableModule('fieldService'))
+                                    <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right"
+                                        data-bs-dismiss="click" title="campagin">
+                                        <!-- begin::Nav link -->
+                                        <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('campaign_icon')"
+                                            data-bs-toggle="tab" href="#kt_aside_nav_tab_campaign">
+                                            <!-- begin::Fontawesome Icon -->
+                                            <i class="fa-solid fa-bullhorn fs-6"></i>
+                                            <!-- end::Fontawesome Icon -->
+                                        </a>
+                                        <!-- end::Nav link -->
+                                    </li>
+                                @endif
                                 <!--end::Nav item-->
                                 @if(hasView('Module'))
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -2248,7 +2261,40 @@
                                         <!--end::Wrapper-->
                                     </div>
                                     <!--end::Tab pane-->
-
+                                    @if(hasModule('fieldService') && isEnableModule('fieldService'))
+                                        <div class="tab-pane fade  @yield('campaign_show')" id="kt_aside_nav_tab_campaign" role="tabpanel">
+                                            <!--begin::Wrapper-->
+                                            <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
+                                                id="kt_aside_menu" data-kt-menu="true">
+                                                <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                                    <div class="menu-item pt-2">
+                                                        <!--begin:Menu content-->
+                                                        <div class="menu-content">
+                                                            <span class="menu-heading fw-bold text-uppercase fs-8">Campaign</span>
+                                                        </div>
+                                                        <!--end:Menu content-->
+                                                    </div>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('campaign_list_active')" href="{{route('campaign.index')}}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-list fs-6"></i>
+                                                        </span>
+                                                        <span class="menu-title">Campaign List</span>
+                                                    </a>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('campaign_list_v2_active')" href="{{route('campaign.list2')}}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-list fs-6"></i>
+                                                        </span>
+                                                        <span class="menu-title">Campaign List V2</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <!--end::Wrapper-->
+                                        </div>
+                                    @endif
                                     <div class="tab-pane fade  @yield('module_show')" id="kt_aside_nav_tab_modules"
                                         role="tabpanel">
                                         <!--begin::Wrapper-->
@@ -3798,3 +3844,4 @@
 </body>
 <!--end::Body-->
 </html>
+
