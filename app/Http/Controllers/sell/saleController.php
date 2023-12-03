@@ -38,7 +38,7 @@ use App\Models\hospitalRoomSaleDetails;
 use App\Models\posRegisterTransactions;
 use App\Models\Product\PriceListDetails;
 use App\Models\Product\ProductVariation;
-use App\Repositories\locationRepository;
+use App\Repositories\LocationRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
@@ -255,7 +255,7 @@ class saleController extends Controller
     // for edit page
     public function saleEdit($id)
     {
-        $locations = locationRepository::getTransactionLocation();
+        $locations = LocationRepository::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $priceLists = PriceLists::select('id', 'name', 'description')->get();
