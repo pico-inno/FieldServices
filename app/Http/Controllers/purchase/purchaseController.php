@@ -26,6 +26,7 @@ use App\Http\Controllers\Controller;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductVariation;
+use App\Repositories\LocationRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Actions\purchase\purchaseActions;
 use App\Models\settings\businessLocation;
@@ -33,10 +34,9 @@ use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
 use App\Services\purchase\purchasingService;
+use App\Repositories\interfaces\SettingRepositoryInterface;
 use App\Repositories\interfaces\CurrencyRepositoryInterface;
 use App\Repositories\interfaces\LocationRepositoryInterface;
-use App\Repositories\interfaces\SettingRepositoryInterface;
-use App\Repositories\locationRepository;
 
 class purchaseController extends Controller
 {
@@ -123,7 +123,7 @@ class purchaseController extends Controller
                 'error' => 'This transaction is not editable.'
             ]);
         };
-        $locations = locationRepository::getTransactionLocation();
+        $locations = LocationRepository::getTransactionLocation();
         $currency = $this->currency->defaultCurrency();
         $suppliers = Contact::where('type', 'Supplier')
             ->orWhere('type', 'Both')

@@ -38,6 +38,7 @@ use App\Models\hospitalRoomSaleDetails;
 use App\Models\posRegisterTransactions;
 use App\Models\Product\PriceListDetails;
 use App\Models\Product\ProductVariation;
+use App\Repositories\locationRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
@@ -48,10 +49,10 @@ use App\Services\packaging\packagingServices;
 use Modules\Reservation\Entities\Reservation;
 use App\Models\posSession\posRegisterSessions;
 use Modules\Reservation\Entities\FolioInvoice;
+use App\Http\Requests\location\locationRequest;
 use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
-use App\Repositories\locationRepository;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -236,7 +237,7 @@ class saleController extends Controller
     // sale create page
     public function createPage()
     {
-        $locations = locationRepository::getTransactionLocation();
+        $locations = LocationRepository::getTransactionLocation();
         $products = Product::with('productVariations')->get();
         $walkInCustomer = optional(Contact::where('type', 'Customer')->orWhere('type', 'Both')->where('first_name', 'Walk-In Customer')->first());
         $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();

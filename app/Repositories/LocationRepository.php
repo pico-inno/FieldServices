@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\locationType;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
 use App\Repositories\interfaces\LocationRepositoryInterface;
