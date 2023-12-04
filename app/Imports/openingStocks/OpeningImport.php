@@ -174,7 +174,7 @@ class OpeningImport implements ToCollection,WithHeadingRow
             return true;
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th->getMessage(),$row,'here error');
+            return throw new Exception($th->getMessage());
         }
     }
 

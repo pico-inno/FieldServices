@@ -48,8 +48,8 @@ class importOpeningStockController extends Controller
 
             $openingStocks = openingStocks::create($opening_stock_data);
             $status = Excel::import(new OpeningImport($openingStocks), $file);
+            DB::commit();
             if ($status) {
-                DB::commit();
                 $total_opening_amount = openingStockDetails::where('opening_stock_id', $openingStocks->id)->sum('subtotal');
                 $openingStocks->update([
                     'total_opening_amount' => $total_opening_amount
