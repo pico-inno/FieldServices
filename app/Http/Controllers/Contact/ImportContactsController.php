@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Contact;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\contact\contactImport;
+use Illuminate\Support\Facades\Validator;
 
 class ImportContactsController extends Controller
 {
@@ -29,5 +33,29 @@ class ImportContactsController extends Controller
         ];
 
         return response()->download($path, 'importContact.xls', $headers);
+    }
+    public function import(Request $request){
+        try {
+            DB::beginTransaction();
+            Validator::make($request->toArray(),
+                [
+                    'contact_file' => 'required|mimes:xlx,xls,xlsx,csv|max:2048',
+                ],
+                [
+                    'contact_file.required' => 'Import file is required!',
+                    'contact_file.mimes' => 'Format not support!',
+                ]
+            )->validate();
+
+            $file = $request->file('contact_file');
+            Excel::import(new contactImport(), $file);
+
+            DB::commit();
+            return back()->with(['success'=>'Successfully imported']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with(['error'=>"Something Wrong ! <br/>".$th->getMessage()]);
+            //throw $th;
+        }
     }
 }

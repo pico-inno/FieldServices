@@ -2,25 +2,25 @@
 @if(session('success'))
 
     <script>
-        success("{{session('success')}}");
+        success("{!! session('success') !!}");
     </script>
 @endif
 @if(session('warning'))
 
     <script>
-        warning("{{session('warning')}}");
+        warning("{!! session('warning') !!}");
     </script>
 @endif
 @if(session('error'))
 
     <script>
-        error("{{session('error')}}");
+        error("{!! session('error') !!}");
     </script>
 @endif
 
 @if(session('noti'))
     <script>
-        noti("{{session('noti')}}");
+        noti("{!! session('noti') !!}");
     </script>
 
 @endif

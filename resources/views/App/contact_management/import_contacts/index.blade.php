@@ -28,15 +28,16 @@
         <div class="card card-p-4 card-flush">
             <div class="card-body">
                 <div class="row mb-8">
-                    <div class="col-6">
-                        <form action="">
+                    <form action="{{route('contact.import')}}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="col-6">
                             <label for="" class="required form-label">File to import:</label>
-                            <input type="file" class="form-control form-control-sm" name="" accept=".xls" />
-                        </form>
-                    </div>
-                    <div class="col-6 mt-8">
-                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                    </div>
+                            <input type="file" class="form-control form-control-sm" name="contact_file" />
+                        </div>
+                        <div class="col-6 mt-8">
+                            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                        </div>
+                    </form>
                 </div>
                 <div class="row">
                     <div class="col-sm-4">

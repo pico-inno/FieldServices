@@ -62,7 +62,8 @@ class generatorHelpers
     public static function generateVoucher($prefix,$uniqueCount,$voucherCount=6)
     {
         $numberCount = "%0" . $voucherCount . "d";
-        $voucherNo = sprintf($prefix.'-'. $numberCount, ($uniqueCount + 1));
+        $prefixTxt= $prefix ? $prefix.'-' : '';
+        $voucherNo = sprintf($prefixTxt. $numberCount, ($uniqueCount + 1));
         return $voucherNo;
     }
 }

@@ -911,6 +911,7 @@ Route::prefix('/contacts')->group(function () {
 });
 
 Route::get('/download/contact-excel-template', [ImportContactsController::class, 'dowloadContactExcel'])->name('download-contact-excel');
+Route::post('/contact/import/contact', [ImportContactsController::class, 'import'])->name('contact.import');
 
 Route::get('customers/quickadd', [CustomerController::class, 'quickCreateCustomer']);
 Route::post('customers', [CustomerController::class, 'quickStoreCustomer']);

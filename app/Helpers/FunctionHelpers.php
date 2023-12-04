@@ -299,6 +299,13 @@ function expenseReportVoucherNo($uniqueCount)
     $prefix = getSettingValue('expense_report_prefix');
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
+
+
+function contactNo($uniqueCount)
+{
+    // $prefix = getSettingValue('expense_report_prefix');
+    return generatorHelpers::generateVoucher('', $uniqueCount);
+}
 function businessLocationCode()
 {
     $location_count = businessLocation::count();
