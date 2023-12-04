@@ -1,14 +1,18 @@
 <?php
 
 namespace App\Imports\contact;
+use Exception;
+use Carbon\Carbon;
 use App\Models\Contact\Contact;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use App\Models\Contact\Contact as ContactContact;
-use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\Product\PriceLists;
 
 class contactImport implements ToCollection, WithHeadingRow
 {
@@ -46,9 +50,24 @@ class contactImport implements ToCollection, WithHeadingRow
 
     }
     public function contactData($datas){
+        if($datas['dob']){
+            $excelDateValue = intval($datas['dob']);
+            $unixTimestamp = ($excelDateValue - 25569) * 86400;
+            $formattedDate = date('Y-m-d', $unixTimestamp);
+        }
+        $pricelistId=null;
+        if($datas['price_list_name']){
+           try {
+                $pricelistId = PriceLists::where('name', trim($datas['price_list_name']))->firstOrFail();
+           } catch (\Throwable $th) {
+                throw new Exception($datas['price_list_name']." Price List not found");
+
+           }
+        }
         return [
             'type'=>$datas['contact_type'],
             'business_id'=>Auth::user()->business_id,
+            'price_list_id' => $pricelistId,
             'contact_id'=>$datas['contact_id'] ?? $this->contactId(),
             'company_name'=> ucfirst($datas['company_name']),
             'prefix'=>$datas['prefix'],
@@ -70,7 +89,7 @@ class contactImport implements ToCollection, WithHeadingRow
             'address_line_1' => arr($datas, 'address_line_1'),
             'address_line_2' => arr($datas, 'address_line_2'),
             'zip_code' => arr($datas, 'zip_code'),
-            'dob' => $datas['dob'],
+            'dob' => $formattedDate ?? '',
             'shipping_address' => arr($datas, 'shipping_address'),
             'custom_field_1' => arr($datas, 'custom_field_1'),
             'custom_field_2' => arr($datas, 'custom_field_2'),
