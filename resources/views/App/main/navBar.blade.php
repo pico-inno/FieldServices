@@ -2813,24 +2813,24 @@
                                         <!--begin:Menu item-->
                                         <div data-kt-menu-trigger="click" class="menu-item menu-accordion here show">
                                             <!--begin:Menu link-->
-                                            <div class="menu-item">
-                                                <!--begin:Menu link-->
-                                                <a class="menu-link @yield('service_type_active_show')"
-                                                    href="{{ route('service-type') }}">
-                                                    <span class="menu-bullet">
-                                                        <span class="bullet bullet-dot"></span>
-                                                    </span>
-                                                    <span class="menu-title fs-7">{{ __('service.service_type')
-                                                        }}</span>
-                                                </a>
-                                                <!--end:Menu link-->
-                                            </div>
+{{--                                            <div class="menu-item">--}}
+{{--                                                <!--begin:Menu link-->--}}
+{{--                                                <a class="menu-link @yield('service_type_active_show')"--}}
+{{--                                                    href="{{ route('service-type') }}">--}}
+{{--                                                    <span class="menu-bullet">--}}
+{{--                                                        <span class="bullet bullet-dot"></span>--}}
+{{--                                                    </span>--}}
+{{--                                                    <span class="menu-title fs-7">{{ __('service.service_type')--}}
+{{--                                                        }}</span>--}}
+{{--                                                </a>--}}
+{{--                                                <!--end:Menu link-->--}}
+{{--                                            </div>--}}
                                             <!--end:Menu sub-->
                                             <!--begin:Menu link-->
                                             <div class="menu-item">
                                                 <!--begin:Menu link-->
                                                 <a class="menu-link @yield('service_active_show')"
-                                                    href="{{ route('service') }}">
+                                                   href="{{ route('service.index') }}">
                                                     <span class="menu-bullet">
                                                         <span class="bullet bullet-dot"></span>
                                                     </span>
@@ -2843,7 +2843,7 @@
                                             <div class="menu-item">
                                                 <!--begin:Menu link-->
                                                 <a class="menu-link @yield('service_sales_active_show')"
-                                                    href="{{ route('service-sale') }}">
+                                                   href="{{ route('service-sale') }}">
                                                     <span class="menu-bullet">
                                                         <span class="bullet bullet-dot"></span>
                                                     </span>

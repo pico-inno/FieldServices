@@ -10,6 +10,9 @@ use App\Models\productPackaging;
 
 class ProductRepository
 {
+    public function query(){
+        return Product::query();
+    }
     public function getAll()
     {
         return Product::all();

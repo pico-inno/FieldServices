@@ -7,6 +7,8 @@ use App\Models\Product\Category;
 use App\Http\Controllers\Controller;
 use App\repositories\CategoryRepository;
 use Illuminate\Support\Facades\Auth;
+use Modules\Service\Actions\ServiceCategoryAction;
+use Modules\Service\Repositories\ServiceCategoryRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Product\Category\CategoryCreateRequest;
 use App\Http\Requests\Product\Category\CategoryUpdateRequest;
@@ -28,11 +30,11 @@ class CategoryController extends Controller
     {
         $categories = $this->categoryRepository->getWithRelationships(['parentCategory','childCategory']);
         return DataTables::of($categories)
-        ->addColumn('action', function($category){
-            return $category->id;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addColumn('action', function($category){
+                return $category->id;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function index()
@@ -51,6 +53,7 @@ class CategoryController extends Controller
 
     public function create(CategoryCreateRequest $request, CategoryAction $categoryAction)
     {
+
         $categoryAction->create($request);
 
         if($request->form_type === "from_product"){
@@ -75,10 +78,16 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         $categories = $this->categoryRepository->getByParentIdWithRelationships(null, ['parentCategory', 'childCategory']);
+        $service_category = null;
+        if(hasModule('Service') && isEnableModule('Service')){
+            $serviceCategoryRepository = new ServiceCategoryRepository();
+            $service_category = $serviceCategoryRepository->query()->where('category_id', $category->id)->first();
+        }
 
         return view('App.product.category.categoryEdit', [
             'category' => $category,
             'categories' => $categories,
+            'service_category' => $service_category,
         ]);
     }
 
