@@ -112,24 +112,25 @@ class CustomerController extends Controller
                 'custom_field_4', 'custom_field_5', 'custom_field_6', 'custom_field_7', 'custom_field_8',
                 'custom_field_9', 'custom_field_10', 'age', 'gender'
             ]);
-            $contactId=$this->contactId();
+            // $contactId=$this->contactId();
+            $latestContact = Contact::latest()->first();
             // Check if the latest contact_id is in the format of 'C000X'
-            // if ($latestContact && preg_match('/^C\d{4}$/i', $latestContact->contact_id)) {
-            //     // Extract the numeric part of the latest Contact ID
-            //     $numericPart = (int)substr($latestContact->contact_id, 1);
-            //     $numericPart++;
-            //     // Generate the Contact ID with leading zeros
-            //     $contactId = 'C' . str_pad($numericPart, 4, '0', STR_PAD_LEFT);
-            // } else {
-            //     // If latest contact_id is not in the format of 'C000X', find the next available Contact ID
-            //     $contactId = 'C0001';
-            //     while (Contact::where('contact_id', $contactId)->exists()) {
-            //         // Keep incrementing the numeric part until an available Contact ID is found
-            //         $numericPart = (int)substr($contactId, 1);
-            //         $numericPart++;
-            //         $contactId = 'C' . str_pad($numericPart, 4, '0', STR_PAD_LEFT);
-            //     }
-            // }
+            if ($latestContact && preg_match('/^C\d{4}$/i', $latestContact->contact_id)) {
+                // Extract the numeric part of the latest Contact ID
+                $numericPart = (int)substr($latestContact->contact_id, 1);
+                $numericPart++;
+                // Generate the Contact ID with leading zeros
+                $contactId = 'C' . str_pad($numericPart, 4, '0', STR_PAD_LEFT);
+            } else {
+                // If latest contact_id is not in the format of 'C000X', find the next available Contact ID
+                $contactId = 'C0001';
+                while (Contact::where('contact_id', $contactId)->exists()) {
+                    // Keep incrementing the numeric part until an available Contact ID is found
+                    $numericPart = (int)substr($contactId, 1);
+                    $numericPart++;
+                    $contactId = 'C' . str_pad($numericPart, 4, '0', STR_PAD_LEFT);
+                }
+            }
 
             // Check if the contact_id input is filled
             if (request()->filled('contact_id')) {
@@ -154,12 +155,11 @@ class CustomerController extends Controller
     }
 
     public function contactId($extra=0) {
-
-        $latestContact = Contact::latest()->first();
-        $contactId = contactNo($latestContact->id + $extra);
-        if(Contact::where('contact_id', $contactId)->exists()){
-           return $this->contactId(1);
-        }else{
+        $latestContactId = Contact::latest()->first()->id ?? 1;
+        $contactId = contactNo($latestContactId+1 + $extra);
+        if (!Contact::where('contact_id', $contactId)->exists()) {
+            return $this->contactId(1);
+        } else {
             return $contactId;
         }
     }

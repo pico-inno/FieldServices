@@ -303,7 +303,7 @@ class openingStockController extends Controller
             'uom_price' => $detail['uom_price'],
             'subtotal' => $detail['subtotal'],
             'ref_uom_id' =>  $referencteUom['referenceUomId'],
-            'ref_uom_price' =>$detail['uom_price'] ?? 0 /$referencteUom['qtyByReferenceUom'] ?? 1,
+            'ref_uom_price' =>($detail['uom_price'] ?? 0) /$referencteUom['qtyByReferenceUom'] ?? 1,
             'remark' => $detail['remark']
         ];
     }

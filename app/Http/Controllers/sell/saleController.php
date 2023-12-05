@@ -858,7 +858,6 @@ class saleController extends Controller
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
             return back()->with(['warning' => 'Something Went Wrong While update sale voucher']);
         }
         // dd($request->toArray());

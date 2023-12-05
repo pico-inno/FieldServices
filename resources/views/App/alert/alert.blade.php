@@ -12,7 +12,6 @@
     </script>
 @endif
 @if(session('error'))
-
     <script>
         error("{!! session('error') !!}");
     </script>

@@ -53,8 +53,10 @@ class ImportContactsController extends Controller
             DB::commit();
             return back()->with(['success'=>'Successfully imported']);
         } catch (\Throwable $th) {
+            // dd($th);
             DB::rollBack();
-            return back()->with(['error'=>"Something Wrong ! <br/>".$th->getMessage()]);
+            $text= "Something Wrong !";
+            return redirect()->back()->with(['error' => $text]);
             //throw $th;
         }
     }

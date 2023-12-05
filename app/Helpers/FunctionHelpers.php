@@ -519,7 +519,7 @@ function totalSaleDiscount($filterData = false)
 function closingStocks($filterData = false)
 {
     if (!$filterData) {
-        return closingStocksCal($filterData) ;
+        return closingStocksCal() ;
     } else {
         return closingStocksCal($filterData) + closingStocksCal($filterData, true);
     }
@@ -553,7 +553,6 @@ function closingStocksCal($filterData = false, $betweenDateRage = false)
         ->toArray();
 
     $totalPrice = 0;
-    // dd($stockHistories);
     foreach ($stockHistories as $i => $stockHistory) {
         $totalQTy = $stockHistory['totalIncreaseQty'] - $stockHistory['totalDecreaseQty'];
         // dd($stockHistory['totalIncreaseQty'] , $stockHistory['totalDecreaseQty']);

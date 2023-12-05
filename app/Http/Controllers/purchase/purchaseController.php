@@ -157,7 +157,6 @@ class purchaseController extends Controller
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);
             throw $e;
         }

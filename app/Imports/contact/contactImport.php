@@ -31,7 +31,8 @@ class contactImport implements ToCollection, WithHeadingRow
                     if($row['contact_type'] == 'supplier' && trim($row['company_name'])== ''){
                         return throw new Exception('If the content type is supplier, Company Name is require.');
                     }
-                    elseif($row['contact_type'] == 'Customer' && trim($row['first_name']) == '' && trim($row['middle_name']) == '' && trim($row['last_name']) == ''){
+                    elseif($row['contact_type'] == 'Customer' && (trim($row['first_name']) == '' && trim($row['middle_name']) == '' && trim($row['last_name']) == '')){
+                        dd(trim($row['first_name']),$row,trim($row['first_name']) == '' && trim($row['middle_name']) == '' && trim($row['last_name']) == '');
                         return throw new Exception('If the content type is customer,Customer Name is require.');
                     }elseif($row['contact_type'] =='Both' && trim($row['company_name']) == '' && trim($row['first_name']) == '' && trim($row['middle_name']) == '' && trim($row['last_name']) == ''){
                         return throw new Exception('If the content type is Both,Company Name or Customer Name is require.');
@@ -50,7 +51,7 @@ class contactImport implements ToCollection, WithHeadingRow
 
     }
     public function contactData($datas){
-        if($datas['dob']){
+        if($datas['dob'] !=''){
             $excelDateValue = intval($datas['dob']);
             $unixTimestamp = ($excelDateValue - 25569) * 86400;
             $formattedDate = date('Y-m-d', $unixTimestamp);
@@ -89,7 +90,7 @@ class contactImport implements ToCollection, WithHeadingRow
             'address_line_1' => arr($datas, 'address_line_1'),
             'address_line_2' => arr($datas, 'address_line_2'),
             'zip_code' => arr($datas, 'zip_code'),
-            'dob' => $formattedDate ?? '',
+            'dob' => $formattedDate ?? null,
             'shipping_address' => arr($datas, 'shipping_address'),
             'custom_field_1' => arr($datas, 'custom_field_1'),
             'custom_field_2' => arr($datas, 'custom_field_2'),
@@ -99,13 +100,8 @@ class contactImport implements ToCollection, WithHeadingRow
     }
     public function contactId($extra = 0)
     {
-
-        $latestContact = Contact::latest()->first();
-        $contactId = contactNo($latestContact->id + $extra);
-        if (Contact::where('contact_id', $contactId)->exists()) {
-            return $this->contactId(1);
-        } else {
-            return $contactId;
-        }
+        $latestContactId = Contact::orderBy('id','DESC')->first()->id ?? 0;
+        $contactId = contactNo($latestContactId+ $extra);
+        return $contactId;
     }
 }
