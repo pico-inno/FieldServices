@@ -125,4 +125,9 @@ class Product extends Model
         return $this->hasOne(ReceipeOfMaterial::class, 'id', 'receipe_of_material_id');
     }
 
+    public function product_variation(): HasOne
+    {
+        return $this->hasOne(ProductVariation::class, 'product_id', 'id');
+    }
+
 }

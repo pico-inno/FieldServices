@@ -1,7 +1,7 @@
 @extends('App.main.navBar')
 
 @section('styles')
- {{-- css file for this page --}}
+    {{-- css file for this page --}}
 @endsection
 @section('products_icon', 'active')
 @section('products_show', 'active show')
@@ -9,7 +9,7 @@
 
 
 @section('title')
-<!--begin::Heading-->
+    <!--begin::Heading-->
     <h1 class="text-dark fw-bold my-0 fs-4">{{ __('product/category.edit_category') }}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
@@ -20,7 +20,7 @@
         </li>
         <li class="breadcrumb-item text-dark">{{ __('product/product.edit') }}</li>
     </ul>
-<!--end::Breadcrumb-->
+    <!--end::Breadcrumb-->
 @endsection
 @section('content')
     <!--begin::Content-->
@@ -51,7 +51,7 @@
                                 <input type="text" name="category_name" value="{{old('category_name',$category->name)}}" class="form-control mb-2 form-control-sm" placeholder="Category name" />
 
                                 @error('category_name')
-                                    <span class="text-danger">{{ $message }}</span>
+                                <span class="text-danger">{{ $message }}</span>
                                 @enderror
                                 <div class="text-muted fs-7 mt-2">A category name is required and recommended to be unique.</div>
                             </div>
@@ -66,7 +66,7 @@
 
                             </div>
 
-                            <div>
+                            <div class="mb-10 fv-row">
 
                                 <label class="form-label">{{ __('product/category.description') }}</label>
                                 <textarea name="category_desc" id="" cols="30" rows="3" class="form-control">{{ old('category_desc', $category->description) }}</textarea>
@@ -74,6 +74,27 @@
                                 <div class="text-muted fs-7">Set a description to the category for better visibility.</div>
 
                             </div>
+                            @if(hasModule('Service') && isEnableModule('Service'))
+                                <!--begin::Input group-->
+                                <div class="mb-7 mt-3 col-12 col-md-3">
+                                    <div class="d-flex">
+                                        <!--begin::Checkbox-->
+                                        <div class="form-check form-check-custom form-check-solid">
+                                            <!--begin::Input-->
+                                            <input type="checkbox" name="service_category" value="1" @if(isset($service_category)) checked @endif   class="form-check-input me-3">
+                                            <!--end::Input-->
+                                            <!--begin::Label-->
+                                            <label class="form-check-label" for="service_category">
+                                                <div class="fw-bold">This category make for service category</div>
+
+                                            </label>
+                                            <!--end::Label-->
+                                        </div>
+                                        <!--end::Checkbox-->
+                                    </div>
+                                </div>
+                                <!--end::Input group-->
+                            @endif
 
                         </div>
 

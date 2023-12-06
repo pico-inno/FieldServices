@@ -4,6 +4,7 @@ namespace App\Actions\product;
 
 use App\repositories\CategoryRepository;
 use Illuminate\Support\Facades\DB;
+use Modules\Service\Actions\ServiceCategoryAction;
 
 class CategoryAction
 {
@@ -22,7 +23,14 @@ class CategoryAction
             }
             $preparedData['created_by'] = auth()->id();
 
-            $this->categoryRepository->create($preparedData);
+            $createdCategory = $this->categoryRepository->create($preparedData);
+
+            if (hasModule('Service') && isEnableModule('Service') && $data->service_category)
+            {
+                $serviceCategoryAction = new ServiceCategoryAction();
+                $serviceCategoryAction->createOrDelete($createdCategory->id);
+            }
+
         });
     }
 
@@ -37,12 +45,23 @@ class CategoryAction
             $preparedData['updated_by'] = auth()->id();
             $this->categoryRepository->update($id, $preparedData);
 
+            if (hasModule('Service') && isEnableModule('Service'))
+            {
+                $serviceCategoryAction = new ServiceCategoryAction();
+                if ($data->service_category){
+                    $serviceCategoryAction->createOrDelete($id);
+                }else{
+                    $serviceCategoryAction->delete($id);
+                }
+
+            }
+
         });
     }
 
     public function delete($id){
         return DB::transaction(function () use ($id){
-           $this->categoryRepository->delete($id);
+            $this->categoryRepository->delete($id);
         });
     }
 
