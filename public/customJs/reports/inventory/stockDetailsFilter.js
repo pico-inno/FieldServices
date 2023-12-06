@@ -1,8 +1,6 @@
  $(document).ready(function () {
     // $('#stock_details_reports_table').DataTable();
-    var dataTable = $('#stock_details_reports_table').DataTable({
-        searching: true,
-    });
+    var dataTable = $('#stock_details_reports_table').DataTable();
     var stockReportsTableBody = $('#stock_details_reports_table tbody');
     var filterCard = $('.filter-card');
     var filterType = $('.filter_type');
