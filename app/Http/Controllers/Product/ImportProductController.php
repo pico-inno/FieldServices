@@ -30,12 +30,15 @@ class ImportProductController extends Controller
         // Excel::import(new ProductsImport, $request->file('import-products'));
 
         try {
+            DB::beginTransaction();
             $file = $request->file('import-products');
+            // $status = Excel::import(new ProductsImport(), $file);
             $import = new ProductsImport;
             $importMessage=$import->import($file);
-            // dd($importMessage);
+            DB::commit();
             return back()->with(['success' => 'Successfully Imported']);
         } catch (\Throwable $th) {
+            Db::rollBack();
             return back()->with(['error' =>$th->getMessage()])->withInput();
         }
     }

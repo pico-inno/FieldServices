@@ -53,6 +53,8 @@ class ProductsImport implements
 
     public function __construct()
     {
+
+        ini_set('max_execution_time', '0');
         $this->brands = Brand::select('id', 'name');
         $this->categories = Category::select('id', 'name', 'parent_id');
         $this->generics = Generic::select('id', 'name');
@@ -65,35 +67,42 @@ class ProductsImport implements
 
     private function createOrGetRecord($model, $query, $field1, $value1, $field2 = null)
     {
-        if ($value1) {
-            if (array_key_exists($value1, $this->realtionId)) {
-                $id = $this->realtionId[$value1];
-                return $id;
-            } else {
-                if (!$field2) {
-                    $raw_query = $query->where($field1, $value1)->first();
-                    if ($raw_query) {
-                        $this->realtionId[$value1] = $raw_query->id;
-                        return $raw_query->id;
+        try {
+        // DB::beginTransaction();
+            if ($value1) {
+                if (array_key_exists($value1, $this->realtionId)) {
+                    $id = $this->realtionId[$value1];
+                    return $id;
+                } else {
+                    if (!$field2) {
+                        $raw_query = $model::where($field1, $value1)->first();
+                        if ($raw_query) {
+                            $this->realtionId[$value1] = $raw_query->id;
+                            return $raw_query->id;
+                        }
                     }
-                }
-                if ($field2) {
-                    $raw_query = $query->where($field1, $value1)->whereNull($field2)->first();
-                    if ($raw_query) {
-                        $this->realtionId[$value1] = $raw_query->id;
-                        return $raw_query->id;
+                    if ($field2) {
+                        $raw_query = $model::where($field1, $value1)->whereNull($field2)->first();
+                        if ($raw_query) {
+                            $this->realtionId[$value1] = $raw_query->id;
+                            return $raw_query->id;
+                        }
                     }
-                }
 
-                $newData = $model::create([
-                    $field1 => $value1,
-                    'created_by' => auth()->id()
-                ])->id;
-                if ($newData) {
-                    $this->realtionId[$value1] = $newData;
-                    return $newData;
+                    $newData = $model::create([
+                        $field1 => $value1,
+                        'created_by' => auth()->id()
+                    ])->id;
+                    if ($newData) {
+                        $this->realtionId[$value1] = $newData;
+                        return $newData;
+                    }
                 }
             }
+            // DB::commit();
+        } catch (\Throwable $th) {
+            // DB::rollBack();
+            return throw new Exception($th->getMessage());
         }
     }
 
@@ -168,18 +177,16 @@ class ProductsImport implements
             }
         } catch (\Throwable $th) {
 
-
+            dd($th);
             $uomName = $rowData['uom'];
-            dd($th, $uomName,$rowData);
-            throw new Exception("UOM not found! Check to ensure the UOM exists", 1);
+            return throw new Exception("$uomName - UOM not found! Check to ensure the UOM exists", 1);
         }
     }
 
     public function collection(Collection $rows)
     {
-        // dd($rows->toArray());
-        DB::beginTransaction();
         try {
+        // DB::beginTransaction();
             // begin: for image
             $spreadsheet = IOFactory::load(request()->file('import-products'));
             $i = 0;
@@ -332,17 +339,17 @@ class ProductsImport implements
                     ]);
                 }
             }
-            DB::commit();
+            // DB::commit();
         } catch (Exception $e) {
-            DB::rollBack();
+            // DB::rollBack();
             $errorMessage = $e->getMessage();
-            throw new Exception($errorMessage);
+            return throw new Exception($errorMessage);
         }
     }
 
     public function chunkSize(): int
     {
-        return 20;
+        return 200;
     }
 
     public function rules(): array
@@ -361,4 +368,5 @@ class ProductsImport implements
             '*.sku_leave_blank_to_auto_generate_sku' => 'The SKU has already been taken.'
         ];
     }
+    
 }
