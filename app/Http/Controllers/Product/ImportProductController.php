@@ -39,7 +39,8 @@ class ImportProductController extends Controller
             return back()->with(['success' => 'Successfully Imported']);
         } catch (\Throwable $th) {
             Db::rollBack();
-            return back()->with(['error' =>$th->getMessage()])->withInput();
+            $error= ['error' => $th->getMessage()];
+            return back()->with($error)->withInput();
         }
     }
     public function dowloadDemoExcel()
