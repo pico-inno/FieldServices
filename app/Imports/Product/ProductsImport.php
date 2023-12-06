@@ -55,6 +55,7 @@ class ProductsImport implements
     {
 
         ini_set('max_execution_time', '0');
+        ini_set("memory_limit", "-1");
         $this->brands = Brand::select('id', 'name');
         $this->categories = Category::select('id', 'name', 'parent_id');
         $this->generics = Generic::select('id', 'name');
