@@ -176,8 +176,6 @@ class ProductsImport implements
                 ];
             }
         } catch (\Throwable $th) {
-
-            dd($th);
             $uomName = $rowData['uom'];
             return throw new Exception("$uomName - UOM not found! Check to ensure the UOM exists", 1);
         }
@@ -368,5 +366,5 @@ class ProductsImport implements
             '*.sku_leave_blank_to_auto_generate_sku' => 'The SKU has already been taken.'
         ];
     }
-    
+
 }
