@@ -62,8 +62,14 @@ class importOpeningStockController extends Controller
         } catch (\Throwable $th) {
 
             DB::rollBack();
-            return back()->with(['warning' => $th->getMessage()]);
+            $failures = null;
+            if($th instanceof \Illuminate\Validation\ValidationException){
+                $failures = $th->failures();
+            }
+            $error = ['error' => $th->getMessage(), 'failures' => $failures];
+            return back()->with($error)->withInput();
         }
+
     }
     public function dowloadDemoExcel()
     {

@@ -57,6 +57,34 @@
                                     @endif
                                 </div>
                             </div>
+                            @if(session('failures') && count(session('failures')))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="table-responsive">
+                                    <table class="table ">
+                                        <thead>
+                                            <tr>
+                                                <th>Row No</th>
+                                                <th>Errors</th>
+                                                <th>Values</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (session('failures') as $failure)
+                                            <tr>
+                                                <td>{{ $failure->row() }}</td>
+                                                <td>{{ implode(', ', $failure->errors()) }}</td>
+                                                <td>
+                                                    Product Name : {{ $failure->values()['product_name'] }}<br>
+                                                    Sku : {{ $failure->values()['product_variation_sku'] }}
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            @endif
                             <!--begin::Card body-->
                             <div class="card-body">
                                 <div class="row mb-5 flex-wrap">
