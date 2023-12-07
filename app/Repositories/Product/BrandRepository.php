@@ -1,11 +1,15 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\Brand;
 
 class BrandRepository
 {
+    public function query()
+    {
+        return Brand::query();
+    }
     public function getAll()
     {
         return Brand::all();

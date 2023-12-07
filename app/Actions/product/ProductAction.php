@@ -2,16 +2,12 @@
 
 namespace App\Actions\product;
 
-use App\Models\Product\PriceListDetails;
 use App\Models\Product\Product;
-use App\Models\Product\ProductVariation;
-use App\Models\Product\VariationTemplateValues;
-use App\repositories\PriceRepository;
-use App\repositories\ProductRepository;
-use App\repositories\VariationRepository;
+use App\Repositories\Product\PriceRepository;
+use App\Repositories\Product\ProductRepository;
+use App\Repositories\Product\VariationRepository;
 use App\Services\packaging\packagingServices;
 use App\Services\product\productServices;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

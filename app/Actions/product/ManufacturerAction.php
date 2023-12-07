@@ -2,7 +2,7 @@
 
 namespace App\Actions\product;
 
-use App\repositories\ManufacturerRepository;
+use App\Repositories\Product\ManufacturerRepository;
 use Illuminate\Support\Facades\DB;
 
 class ManufacturerAction

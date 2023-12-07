@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Product;
 
 use App\Actions\product\GenericAction;
-use App\repositories\GenericRepository;
-use Illuminate\Http\Request;
-use App\Models\Product\Generic;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Product\Generic\GenericCreateRequest;
 use App\Http\Requests\Product\Generic\GenericUpdateRequest;
+use App\Models\Product\Generic;
+use App\Repositories\Product\GenericRepository;
+use Yajra\DataTables\Facades\DataTables;
 
 class GenericController extends Controller
 {

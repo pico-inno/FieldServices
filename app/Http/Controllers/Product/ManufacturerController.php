@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Product;
 
 use App\Actions\product\ManufacturerAction;
 use App\Http\Controllers\Controller;
-use App\Models\Product\Manufacturer;
-use App\repositories\ManufacturerRepository;
-use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Product\Manufacturer\ManufacturerCreateRequest;
 use App\Http\Requests\Product\Manufacturer\ManufacturerUpdateRequest;
+use App\Models\Product\Manufacturer;
+use App\Repositories\Product\ManufacturerRepository;
+use Yajra\DataTables\Facades\DataTables;
 
 class ManufacturerController extends Controller
 {

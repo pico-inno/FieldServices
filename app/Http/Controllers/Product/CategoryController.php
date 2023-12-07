@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Product;
 
 use App\Actions\product\CategoryAction;
-use App\Models\Product\Category;
 use App\Http\Controllers\Controller;
-use App\repositories\CategoryRepository;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Product\Category\CategoryCreateRequest;
+use App\Http\Requests\Product\Category\CategoryUpdateRequest;
+use App\Models\Product\Category;
+use App\Repositories\Product\CategoryRepository;
 use Modules\Service\Actions\ServiceCategoryAction;
 use Modules\Service\Repositories\ServiceCategoryRepository;
 use Yajra\DataTables\Facades\DataTables;
-use App\Http\Requests\Product\Category\CategoryCreateRequest;
-use App\Http\Requests\Product\Category\CategoryUpdateRequest;
 
 class CategoryController extends Controller
 {

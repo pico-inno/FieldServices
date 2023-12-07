@@ -2,8 +2,7 @@
 
 namespace App\Actions\product;
 
-use App\repositories\VariationRepository;
-use App\Services\product\VariationService;
+use App\Repositories\Product\VariationRepository;
 use Illuminate\Support\Facades\DB;
 
 class VariationAction

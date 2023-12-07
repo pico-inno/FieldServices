@@ -2,7 +2,7 @@
 
 namespace App\Actions\product;
 
-use App\repositories\CategoryRepository;
+use App\Repositories\Product\CategoryRepository;
 use Illuminate\Support\Facades\DB;
 use Modules\Service\Actions\ServiceCategoryAction;
 

@@ -2,10 +2,8 @@
 
 namespace App\Actions\product\unit;
 
-use App\Models\Product\UnitCategory;
-use App\Models\Product\UOM;
-use App\repositories\UnitCategoryRepository;
-use App\repositories\UOMRepository;
+use App\Repositories\Product\UnitCategoryRepository;
+use App\Repositories\Product\UOMRepository;
 use Illuminate\Support\Facades\DB;
 
 class UnitAction

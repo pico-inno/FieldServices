@@ -1,11 +1,15 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\Generic;
 
 class GenericRepository
 {
+    public function query()
+    {
+        return Generic::query();
+    }
     public function getAll()
     {
         return Generic::all();

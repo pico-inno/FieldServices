@@ -25,7 +25,7 @@ class PriceLists extends Model
 
     public function priceListDetails(): HasMany
     {
-        return $this->hasMany(PriceListDetails::class, 'pricelist_id');
+        return $this->hasMany(PriceListDetails::class, 'pricelist_id', 'id');
     }
 
     public function businessSetting(): BelongsTo

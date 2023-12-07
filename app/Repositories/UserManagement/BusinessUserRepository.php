@@ -1,12 +1,16 @@
 <?php
 
-namespace App\repositories\UserManagement;
+namespace App\Repositories\UserManagement;
 
 use App\Models\BusinessUser;
 use App\Models\PersonalInfo;
 
 class BusinessUserRepository
 {
+    public function query()
+    {
+        return BusinessUser::query();
+    }
     public function getAll()
     {
         return BusinessUser::all();

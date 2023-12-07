@@ -1,17 +1,23 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\VariationTemplates;
 use App\Models\Product\VariationTemplateValues;
 
 class VariationRepository
 {
-    public function prepareVariationTemplateValuesData(array $data){
-        return [
-            'name' => $data['value'],
-        ];
+
+    public function queryTemplates()
+    {
+        return VariationTemplates::query();
     }
+
+    public function queryTemplateValues()
+    {
+        return VariationTemplateValues::query();
+    }
+
     public function getAllTemplate(){
         return VariationTemplates::all();
     }
@@ -68,5 +74,11 @@ class VariationRepository
         return VariationTemplateValues::with($relations)->where('variation_template_id', $variation_id)->get();
 
     }
+
+    //    public function prepareVariationTemplateValuesData(array $data){
+//        return [
+//            'name' => $data['value'],
+//        ];
+//    }
 
 }

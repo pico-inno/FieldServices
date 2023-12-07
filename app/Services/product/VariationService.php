@@ -2,9 +2,8 @@
 
 namespace App\Services\product;
 
-use App\Models\Product\VariationTemplateValues;
-use App\repositories\ProductRepository;
-use App\repositories\VariationRepository;
+use App\Repositories\Product\ProductRepository;
+use App\Repositories\Product\VariationRepository;
 
 class VariationService
 {

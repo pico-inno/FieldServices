@@ -4,7 +4,7 @@ namespace App\Services\product;
 
 use App\Models\Product\AdditionalProduct;
 use App\Models\Product\ProductVariation;
-use App\repositories\ProductRepository;
+use App\Repositories\Product\ProductRepository;
 
 class productServices
 {

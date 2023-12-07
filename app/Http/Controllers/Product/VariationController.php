@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Product;
 
 use App\Actions\product\VariationAction;
-use App\repositories\VariationRepository;
-use App\Services\product\VariationService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\Variation\VariationCreateRequest;
 use App\Http\Requests\Product\Variation\VariationUpdateRequest;
-use Yajra\DataTables\Facades\DataTables;
 use App\Models\Product\VariationTemplates;
+use App\Repositories\Product\VariationRepository;
+use App\Services\product\VariationService;
+use Yajra\DataTables\Facades\DataTables;
 
 
 class VariationController extends Controller

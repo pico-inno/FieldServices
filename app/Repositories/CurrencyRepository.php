@@ -7,6 +7,10 @@ use App\Repositories\interfaces\CurrencyRepositoryInterface;
 
 class CurrencyRepository implements CurrencyRepositoryInterface
 {
+    public function query()
+    {
+        return Currencies::query();
+    }
     public function getAll()
     {
         return Currencies::all();

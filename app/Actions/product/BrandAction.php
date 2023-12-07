@@ -2,7 +2,7 @@
 
 namespace App\Actions\product;
 
-use App\repositories\BrandRepository;
+use App\Repositories\Product\BrandRepository;
 use Illuminate\Support\Facades\DB;
 
 class BrandAction
