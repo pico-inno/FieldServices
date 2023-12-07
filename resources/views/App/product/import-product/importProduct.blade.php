@@ -40,6 +40,55 @@
                         {{ $errorMessage }}
                     </div>
                 @endif
+                @if(session('failures'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <div class="table-responsive">
+                            <table class="table ">
+                                <thead>
+                                    <tr>
+                                        <th>Row No</th>
+                                        <th>Errors</th>
+                                        <th>Values</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (session('failures') as $failure)
+                                    <tr>
+                                        <td>{{ $failure->row() }}</td>
+                                        <td>{{ implode(', ', $failure->errors()) }}</td>
+                                        <td>
+                                            Product Name : {{ $failure->values()['name'] }}<br>
+                                            Sku  : {{ $failure->values()['sku_leave_blank_to_auto_generate_sku'] }}
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
+                {{-- @if (count($failures) > 0)
+                    <h2>Validation Failures:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Errors</th>
+                                <th>Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($failures as $failure)
+                            <tr>
+                                <td>{{ $failure->row() }}</td>
+                                <td>{{ implode(', ', $failure->errors()) }}</td>
+                                <td>{{ implode(', ', $failure->values()) }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif --}}
                 <form action="{{ route('import-product.create') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
@@ -338,7 +387,7 @@
 
                         </div>
                     </div>
-                </div>
+                </>
                 <!--end::Main column-->
 
         </div>
