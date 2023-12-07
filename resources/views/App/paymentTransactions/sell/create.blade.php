@@ -78,7 +78,7 @@
                     @endif
                     <div class="{{isUsePaymnetAcc() ? 'col-md-4'  : 'col-md-6' }} col-12 mb-5 fv-row">
                         <label for="payment_amount" class="form-label fs-7 mb-2  required"> Amount</label>
-                        <input type="text" name="payment_amount" id="payment_amount" class="form-control form-control-sm" value="{{$data->balance_amount}}">
+                        <input type="text" name="payment_amount" id="payment_amount" class="form-control form-control-sm input_number" value="{{$data->balance_amount}}">
                     </div>
                     <div class="col-md-12 mb-5 ">
                         <label for="" class="form-label fs-7 mb-2">Note</label>
@@ -102,7 +102,7 @@
 <script>
 
     $(document).ready(function(){
-
+            numberOnly();
                     // user update validation
             var paidAllValidator = function () {
                 // Shared variables

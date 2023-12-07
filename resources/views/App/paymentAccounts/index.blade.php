@@ -553,6 +553,14 @@ KTUtil.onDOMContentLoaded(function () {
                             notEmpty: { message: "* Currency is required" }
                         },
                     },
+                    opening_amount:{
+                        validators: {
+                            numeric: {
+                                    message: 'The value is not a number',
+                                    decimalSeparator: '.',
+                                },
+                        },
+                    },
             };
             return  FormValidation.formValidation(
                 form,

@@ -19,7 +19,7 @@
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Transfer Amount </label>
                             <div class="input-group mb-3">
-                                <input  id="transferAmount" type="text" class="form-control form-select-sm fs-3" name="tx_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
+                                <input  id="transferAmount" type="text" class="form-control form-select-sm fs-3 input_number" name="tx_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
                                 <label for="" class="input-group-text fw-bold rounded-start-0  fs-4 ">{{$current_acc->currency->symbol}}</label>
                             </div>
                             <span class="text-gray-600 fw-semibold">Current Balance: {{$current_acc->current_balance}} {{$current_acc->currency->symbol}}</span>
@@ -46,7 +46,7 @@
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Receive Amount </label>
                             <div class="input-group mb-3">
-                                <input  id="rx_amount" type="text" class="form-control form-select-sm fs-3" name="rx_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
+                                <input  id="rx_amount" type="text" class="form-control form-select-sm fs-3 input_number" name="rx_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
                                 <label for="" class="input-group-text fw-bold rounded-start-0  fs-4 " id="rx_currency_symbol">-</label>
                             </div>
                             {{-- <span class="text-gray-600 fw-semibold">Current Balance: {{$current_acc->current_balance}} {{$current_acc->currency->symbol}}</span> --}}
@@ -65,6 +65,7 @@
 
 
 <script>
+    numberOnly();
     $('[data-kt-select2="true"]').select2();
     var accounts=@json($accounts);
     var currencyDp={{$currencyDp}};

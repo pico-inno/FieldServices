@@ -19,7 +19,7 @@
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Withdrawl Amount </label>
                             <div class="input-group mb-3">
-                                <input  id="withdrawl_amount" type="text" class="form-control form-select-sm fs-3" name="withdrawl_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
+                                <input  id="withdrawl_amount" type="text" class="form-control form-select-sm fs-3 input_number" name="withdrawl_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
                                 <label for="" class="input-group-text fw-bold rounded-start-0  fs-4 ">{{$account->currency->symbol}}</label>
                                 {{-- <input type="text" class="form-control form-control-sm " value="{{$account->currency->symbol}}" readonly> --}}
                                 {{-- <div class="overflow-hidden flex-grow-2">
@@ -49,6 +49,7 @@
 
 
 <script>
+    numberOnly();
     // user update validation
 var depositeValidator = function () {
     // Shared variables

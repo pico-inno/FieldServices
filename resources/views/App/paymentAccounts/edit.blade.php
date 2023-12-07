@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-4 mb-5 fv-row">
                             <label for="opening_amount" class=" form-label">Opening Amount</label>
-                            <input type="text" name="opening_amount" id="opening_amount" class="form-control form-control-sm" value="{{$account->opening_amount}}">
+                            <input type="text" name="opening_amount" id="opening_amount" class="form-control form-control-sm input_number" value="{{$account->opening_amount}}">
                         </div>
                         <div class="col-4 mb-5 fv-row">
                             <label for="currency" class="required form-label">Currency</label>

@@ -56,7 +56,7 @@
                                 <span class="input-group-text">
                                     <i class="fas fa-calendar"></i>
                                 </span>
-                                <input class="form-control form-control-sm" name="payment_date" placeholder="Pick a date"
+                                <input class="form-control form-control-sm input_number" name="payment_date" placeholder="Pick a date"
                                     data-datepicker="datepicker" id="payment_date"
                                     value="{{old('payment_date',$data->payment_date)}}"/>
                         </div>
