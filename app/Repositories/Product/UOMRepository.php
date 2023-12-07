@@ -1,11 +1,15 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\UOM;
 
 class UOMRepository
 {
+    public function query()
+    {
+        return UOM::query();
+    }
     public function getAll()
     {
         return UOM::all();

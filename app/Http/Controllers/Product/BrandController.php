@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Product;
 
 use App\Actions\product\BrandAction;
-use App\Models\Product\Brand;
-use App\Models\Product\UOMSet;
 use App\Http\Controllers\Controller;
-use App\repositories\BrandRepository;
-use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Product\Brand\BrandCreateRequest;
 use App\Http\Requests\Product\Brand\BrandUpdateRequest;
+use App\Models\Product\Brand;
+use App\Models\Product\UOMSet;
+use App\Repositories\Product\BrandRepository;
+use Yajra\DataTables\Facades\DataTables;
 
 class BrandController extends Controller
 {

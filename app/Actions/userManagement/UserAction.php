@@ -2,9 +2,7 @@
 
 namespace App\Actions\userManagement;
 
-use App\Models\BusinessUser;
-use App\Models\PersonalInfo;
-use App\repositories\UserManagement\BusinessUserRepository;
+use App\Repositories\UserManagement\BusinessUserRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 

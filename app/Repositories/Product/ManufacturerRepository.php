@@ -1,11 +1,15 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\Manufacturer;
 
 class ManufacturerRepository
 {
+    public function query()
+    {
+        return Manufacturer::query();
+    }
     public function getAll()
     {
         return Manufacturer::all();

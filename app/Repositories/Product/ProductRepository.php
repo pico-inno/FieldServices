@@ -1,6 +1,6 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\AdditionalProduct;
 use App\Models\Product\Product;
@@ -12,6 +12,22 @@ class ProductRepository
 {
     public function query(){
         return Product::query();
+    }
+    public function queryVariation()
+    {
+        return ProductVariation::query();
+    }
+    public function queryVariationsTemplates()
+    {
+        return ProductVariationsTemplates::query();
+    }
+    public function queryPackaging()
+    {
+        return productPackaging::query();
+    }
+    public function queryAdditional()
+    {
+        return AdditionalProduct::query();
     }
     public function getAll()
     {

@@ -2,7 +2,7 @@
 
 namespace App\Actions\product;
 
-use App\repositories\GenericRepository;
+use App\Repositories\Product\GenericRepository;
 use Illuminate\Support\Facades\DB;
 
 class GenericAction

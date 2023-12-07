@@ -1,11 +1,15 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\Category;
 
 class CategoryRepository
 {
+    public function query()
+    {
+        return Category::query();
+    }
     public function getAll()
     {
         return Category::all();

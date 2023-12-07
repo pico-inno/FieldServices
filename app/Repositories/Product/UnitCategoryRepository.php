@@ -1,11 +1,15 @@
 <?php
 
-namespace App\repositories;
+namespace App\Repositories\Product;
 
 use App\Models\Product\UnitCategory;
 
 class UnitCategoryRepository
 {
+    public function query()
+    {
+        return UnitCategory::query();
+    }
     public function getAll()
     {
         return UnitCategory::all();

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Repositories\CurrencyRepository;
+use App\Repositories\Product\PriceRepository;
 use Exception;
 use App\Models\Currencies;
 use Hamcrest\Arrays\IsArray;
@@ -24,9 +26,17 @@ use Illuminate\Support\Facades\Auth;
 
 class PriceListDetailController extends Controller
 {
-    public function __construct()
+    protected $currencyRepository;
+    protected $priceRepository;
+    public function __construct(
+        CurrencyRepository $currencyRepository,
+        PriceRepository $priceRepository,
+    )
     {
         $this->middleware(['auth', 'isActive']);
+
+        $this->currencyRepository = $currencyRepository;
+        $this->priceRepository = $priceRepository;
     }
 
     public function priceListDetailDatas()
@@ -56,10 +66,16 @@ class PriceListDetailController extends Controller
     {
         $PriceListDetaildata= request()['PriceListDetaildata'] ??[];
         $priceListData=request()['priceListData']?? [];
-        $currencies = Currencies::all();
         $businessSetting = getSettings();
-        $price_lists = PriceLists::where('currency_id', $businessSetting->currency_id)->get();
-        return view('App.product.PriceListDetail.add', compact('currencies', 'price_lists', 'businessSetting', 'PriceListDetaildata', 'priceListData'));
+        $price_lists = $this->priceRepository->query()->where('currency_id', $businessSetting->currency_id)->get();
+
+        return view('App.product.PriceListDetail.add', [
+            'currencies' => $this->currencyRepository->getAll(),
+            'price_lists' => $price_lists,
+            'businessSetting' => $businessSetting,
+            'PriceListDetaildata' => $PriceListDetaildata,
+            'priceListData' => $priceListData,
+        ]);
     }
     public function importTemplate()
     {
