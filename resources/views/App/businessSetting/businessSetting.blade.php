@@ -36,7 +36,7 @@
                         @if ($settingData['logo'])
                             <img alt="Logo" src="{{asset('storage/logo/'.$settingData['logo'])}}" class="mw-25px mw-lg-35px" />
                         @else
-                            <img class="mw-25px mw-lg-35px" src="{{asset('storage/default/pico.png')}}" alt="image" />
+                            <img class="mw-25px mw-lg-35px" src="{{asset('default/pico.png')}}" alt="image" />
                         @endif
                     </div>
                     <!--end::Image-->

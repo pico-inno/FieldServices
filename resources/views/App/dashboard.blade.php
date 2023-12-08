@@ -80,7 +80,7 @@
 
         </div>
         <div class="loadingLogo">
-            <img src="{{asset('storage/default/pico.png')}}"  alt="" width="50px">
+            <img src="{{asset('default/pico.png')}}"  alt="" width="50px">
         </div>
     </div>
 	<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
