@@ -373,7 +373,7 @@ class openingStockController extends Controller
         $openingStockDetail = openingStockDetails::where('opening_stock_id', $id);
         foreach ($openingStockDetail->get() as $osd) {
             CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->delete();
-            stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $osd->id)->delete();
+            stock_history::where('transaction_type', 'opening_stock')->where('transaction_details_id', $osd->id)->delete();
         }
         $data = [
             'success' => 'Successfully Deleted'
