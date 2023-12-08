@@ -265,7 +265,17 @@ function checkTxEditable($startDate)
 
 
 // --------------------------------------------------    voucher generator
+function serviceSaleVoucher()
+{
+    $prefix = getSettingValue('sale_prefix');
 
+    if (hasModule('Service') && isEnableModule('Service')){
+        $uniqueCount = \Modules\Service\Entities\ServiceSale::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
+        return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+    }else{
+        return null;
+    }
+}
 
 function saleVoucher($uniqueCount)
 {
