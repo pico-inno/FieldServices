@@ -132,7 +132,7 @@
                             </svg>
                         </span>
                         <!--end::Svg Icon-->
-                        <input type="text" data-kt-saleItem-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search Purchase Order" />
+                        <input type="text" data-kt-saleItem-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search Opening Stock" />
                     </div>
                     <!--end::Search-->
                 </div>
