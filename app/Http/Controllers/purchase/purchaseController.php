@@ -237,6 +237,11 @@ class purchaseController extends Controller
                     'deleted_by' => Auth::user()->id,
                     'deleted_at' => now()
                 ]);
+                $purchaseDetails = purchase_details::where('purchases_id', $id);
+                foreach ($purchaseDetails->get() as $pd) {
+                    CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->delete();
+                    stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+                }
             }
             $data = [
                 'success' => 'Successfully Deleted'
