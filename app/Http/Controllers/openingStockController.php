@@ -371,6 +371,11 @@ class openingStockController extends Controller
             'deleted_at' => now()
         ]);
         $openingStockDetail = openingStockDetails::where('opening_stock_id', $id);
+        openingStockDetails::where('opening_stock_id', $id)->update([
+            'is_delete' => 1,
+            'deleted_by' => Auth::user()->id,
+            'deleted_at' => now()
+        ]);
         foreach ($openingStockDetail->get() as $osd) {
             CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->delete();
             stock_history::where('transaction_type', 'opening_stock')->where('transaction_details_id', $osd->id)->delete();
@@ -393,10 +398,16 @@ class openingStockController extends Controller
                     'deleted_at' =>now(),
                 ]);
                 $openingStockDetail = openingStockDetails::where('opening_stock_id', $id);
+
                 foreach ($openingStockDetail->get() as $osd) {
                     CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->delete();
                     stock_history::where('transaction_type', 'opening_stock')->where('transaction_details_id', $osd->id)->delete();
                 }
+                openingStockDetails::where('opening_stock_id', $id)->update([
+                    'is_delete' => 1,
+                    'deleted_by' => Auth::user()->id,
+                    'deleted_at' => now()
+                ]);
             }
             $data = [
                 'success' => 'Successfully Deleted'
