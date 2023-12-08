@@ -120,7 +120,7 @@
             }
         );
     }else{
-        $('[name="contact_id"]').val(3).trigger('change');
+        // $('[name="contact_id"]').val(3).trigger('change');
     }
 
     unique_name_id+=products_length;
@@ -143,9 +143,15 @@
     $('.quick-search-form input').on('input',debounce( function() {
         var query = $(this).val().trim();
         let business_location_id = $('#business_location_id').val();
+        let psku_kw=$('#psku_kw').is(':checked');
+        let vsku_kw=$('#vsku_kw').is(':checked');
+        let pgbc_kw=$('#pgbc_kw').is(':checked');
         let data = {
             business_location_id,
-            query //text from search bar
+            query, //text from search bar,
+            psku_kw,
+            vsku_kw,
+            pgbc_kw
         }
         if (query.length >= 2) {
             $('.quick-search-results').removeClass('d-none');
@@ -158,7 +164,7 @@
             // throttleTimeout =
             setTimeout(function() {
                 $.ajax({
-                    url: `/sell/get/product/v2`,
+                    url: `/sell/get/product/v3`,
                     type: 'GET',
                     delay: 150,
                     data: {
@@ -1295,6 +1301,7 @@
             price_after_discount=sale_amount - (extra_discount+total_item_discount);
 
             $('.total_sale_amount').val(price_after_discount);
+            $('.paid_amount_input').val(price_after_discount);
 
         }, 110);
 

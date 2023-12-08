@@ -435,4 +435,45 @@ class purchaseController extends Controller
         // dd(productPackaging::with('product_variations')->get()->toArray());
         return response()->json($products, 200);
     }
+
+    public function getProductForPurchaseV3(Request $request)
+    {
+        $keyword = $request->keyword;
+        $psku_kw = $request->psku_kw ?? false;
+        $vsku_kw = $request->vsku_kw ?? false;
+        $pgbc_kw = $request->pgbc_kw ?? false;
+        $products = Product::select(
+            'products.*',
+            'product_variations.*',
+            'variation_template_values.*',
+            'variation_template_values.name as variation_name',
+            'products.name as name',
+            'products.id as id',
+            'product_variations.id as variation_id'
+        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+        ->where('products.name', 'like', '%' . $keyword . '%')
+            ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+            })
+            ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+            })
+            ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                    $query->where('package_barcode', $keyword);
+                });
+            })
+            ->with([
+                'product_packaging' => function ($query) use ($keyword) {
+                    $query->where('package_barcode', $keyword);
+                },
+                'uom' => function ($query) {
+                    $query->with('unit_category.uomByCategory');
+                },
+                'product_variations.packaging.uom'
+            ])
+            ->get()->toArray();
+        // dd(productPackaging::with('product_variations')->get()->toArray());
+        return response()->json($products, 200);
+    }
 }

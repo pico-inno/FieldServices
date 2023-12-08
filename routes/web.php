@@ -388,6 +388,7 @@ Route::prefix('purchase')->group(function () {
         Route::get('{id}/units', 'getUnits');
         Route::get('/get/product', 'getProductForPurchase');
         Route::get('/get/product/v2', 'getProductForPurchaseV2');
+        Route::get('/get/product/v3', 'getProductForPurchaseV3');
     });
 });
 
@@ -417,6 +418,7 @@ Route::prefix('sell')->group(function () {
         Route::get('get/product', 'getProduct');
 
         Route::get('get/product/v2', 'getProductV2');
+        Route::get('get/product/v3', 'getProductV3');
         Route::get('get/suggestion/product', 'getSuggestionProduct');
         Route::get('{id}/price/list', 'getpriceList');
 
