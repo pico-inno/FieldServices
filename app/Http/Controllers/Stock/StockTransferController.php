@@ -156,7 +156,7 @@ class StockTransferController extends Controller
                         'increase_qty' => 0,
                         'decrease_qty' => $referenceUomInfo['qtyByReferenceUom'],
                         'ref_uom_id' => $referenceUomInfo['referenceUomId'],
-                        'created_at' => now(),
+                        'created_at' => $transfered_at,
                     ]);
 
 
@@ -249,7 +249,7 @@ class StockTransferController extends Controller
                         'increase_qty' => $referenceUomInfo['qtyByReferenceUom'],
                         'decrease_qty' => 0,
                         'ref_uom_id' => $referenceUomInfo['referenceUomId'],
-                        'created_at' => $request->confirm_at,
+                        'created_at' => $transfered_at,
                     ]);
 
 
@@ -446,6 +446,7 @@ class StockTransferController extends Controller
         $requestStocktransferDetails = $request->transfer_details;
         $oldStatus = $stockTransfer->status;
         $newStatus = $request->status;
+        $transfered_at = date('Y-m-d', strtotime($request->transfered_at));
 
         $settings =  businessSettings::all()->first();
 
@@ -466,6 +467,7 @@ class StockTransferController extends Controller
 
                 StockTransfer::where('id', $stockTransfer->id)->update([
                     'to_location' => $request->to_location,
+                    'transfered_at' => $transfered_at,
                     'status' => $request->status,
                     'remark' => $request->remark,
                     'updated_by' => \auth()->id()
@@ -548,7 +550,7 @@ class StockTransferController extends Controller
                                 'increase_qty' => 0,
                                 'decrease_qty' => $referenceUomInfoForHis['qtyByReferenceUom'],
                                 'ref_uom_id' => $referenceUomInfoForHis['referenceUomId'],
-                                'created_at' => now(),
+                                'created_at' => $transfered_at,
                             ]);
                         }
 
@@ -708,7 +710,7 @@ class StockTransferController extends Controller
                                 'increase_qty' => $referenceUomInfoForHis['qtyByReferenceUom'],
                                 'decrease_qty' => 0,
                                 'ref_uom_id' => $referenceUomInfoForHis['referenceUomId'],
-                                'created_at' => now(),
+                                'created_at' => $transfered_at,
                             ]);
 //                        }
 
@@ -825,7 +827,7 @@ class StockTransferController extends Controller
                             'increase_qty' => 0,
                             'decrease_qty' => $referenceUomInfo['qtyByReferenceUom'],
                             'ref_uom_id' => $referenceUomInfo['referenceUomId'],
-                            'created_at' => now(),
+                            'created_at' => $transfered_at,
                         ]);
 
 
@@ -889,7 +891,7 @@ class StockTransferController extends Controller
                             'increase_qty' => $referenceUomInfo['qtyByReferenceUom'],
                             'decrease_qty' => 0,
                             'ref_uom_id' => $referenceUomInfo['referenceUomId'],
-                            'created_at' => now(),
+                            'created_at' => $transfered_at,
                         ]);
 
                         $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
