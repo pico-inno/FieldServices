@@ -72,8 +72,11 @@
 
      let throttleTimeout;
     $('.quick-search-form input').on('input', debounce(function() {
-        var query = $(this).val().trim();
-        if (query.length >= 2) {
+        var keyword = $(this).val().trim();
+        let psku_kw=$('#psku_kw').is(':checked');
+        let vsku_kw=$('#vsku_kw').is(':checked');
+        let pgbc_kw=$('#pgbc_kw').is(':checked');
+        if (keyword.length >= 2) {
             $('.quick-search-results').removeClass('d-none');
             $('.quick-search-results').html(`<div class="quick-search-result result cursor-pointer p-2 ps-10 fw-senubold fs-5">
                 <span><span class="spinner-border spinner-border-sm align-middle me-2"></span>Loading</span>
@@ -81,11 +84,14 @@
             `);
              setTimeout(function() {
                 $.ajax({
-                    url: `/purchase/get/product/v2`,
+                    url: `/purchase/get/product/v3`,
                     type: 'GET',
                     delay: 150,
                     data: {
-                        data:query
+                        keyword,
+                        psku_kw,
+                        vsku_kw,
+                        pgbc_kw
                     },
                     error:function(e){
                         status=e.status;

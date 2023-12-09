@@ -345,7 +345,7 @@ var KTCustomersList = function () {
 
             initCustomerList();
             initToggleToolbar();
-            // handleSearchDatatable();
+            handleSearchDatatable();
             handleDeleteRows();
             // handleStatusFilter();
             // handleBusinessLocationFilter();

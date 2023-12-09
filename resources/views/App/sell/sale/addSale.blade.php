@@ -91,7 +91,7 @@
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
                                         <x-customersearch placeholder='Select customer name' name="contact_id" className=" form-select-sm contact_id fw-bold rounded-start-0" >
-                                            <x-slot:defaultOption>
+                                                <x-slot:defaultOption>
                                                 <option value="{{$walkInCustomer->id}}" selected>
                                                     {{$walkInCustomer->getFullNameAttribute()}}-{{'('.arr($walkInCustomer,'mobile','-').')'}}</option>
                                             </x-slot>
@@ -143,7 +143,7 @@
                             </div>
                             <div class="separator   border-primary-subtle col-md-10 col-6"></div>
                         </div>
-                        <div class="row align-items-center mb-5 justify-content-sm-center">
+                        <div class="row align-items-center mb-2 justify-content-sm-center">
                             <div class="col-12 col-md-9">
                                 <div class="input-group quick-search-form p-0">
                                     <div class="input-group-text">
@@ -156,6 +156,72 @@
                             <button class="col-md-3 col-12 p-3 mt-lg-0 mt-3 col-md-3 btn-sm btn-primary btn add_new_product_modal  productQuickAdd"   data-href="{{route('product.quickAdd')}}" type="button">
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Add new product
                             </button>
+                        </div>
+                        <div class="mb-5">
+                            <!--begin::Heading-->
+                            <div class="d-flex align-items-start collapsible py-1 toggle mb-0 collapsed user-select-none" data-bs-toggle="collapse"
+                                data-bs-target="#keyword_setting" aria-expanded="false">
+                                <!--begin::Icon-->
+                                <div class="me-1">
+                                    <i class="ki-outline ki-down toggle-on text-primary fs-3"></i>
+                                    <i class="ki-outline ki-right toggle-off fs-3"></i>
+                                </div>
+                                <!--end::Icon-->
+
+                                <!--begin::Section-->
+                                <div class="d-flex align-items-start flex-wrap">
+                                    <!--begin::Title-->
+                                    <h3 class="text-gray-800 fw-semibold cursor-pointer me-3 mb-0 fs-7 ">
+                                       Click to set Search Keyword
+                                    </h3>
+                                    <!--end::Title-->
+
+                                    <!--begin::Label-->
+                                    <span class="badge badge-light my-1 d-block d-none">React</span>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Section-->
+                            </div>
+                            <!--end::Heading-->
+
+                            <!--begin::Body-->
+                            <div id="keyword_setting" class="fs-6 ms-10 collapse" style="">
+                                <div class="row mt-5">
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="p_kw" checked disabled />
+                                            <label class="form-check-label cursor-pointer" for="p_kw">
+                                                Product Name
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="psku_kw" checked />
+                                            <label class="form-check-label cursor-pointer" for="psku_kw">
+                                                Product Sku
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="vsku_kw" />
+                                            <label class="form-check-label cursor-pointer" for="vsku_kw">
+                                                Variation Sku
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="pgbc_kw" />
+                                            <label class="form-check-label cursor-pointer" for="pgbc_kw">
+                                                Packaging Barcode
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Content-->
                         </div>
                         {{-- <div class="d-flex ps-2 gap-1 overflow-x-scroll hover-scroll pb-3" id="suggestionProducts">
 

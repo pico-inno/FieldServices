@@ -1,5 +1,4 @@
-
-const debounce = (callback, wait = 500) => {
+const debounce = (callback, wait = 350) => {
     let timeoutId = null;
     return function(...args){
         clearTimeout(timeoutId);

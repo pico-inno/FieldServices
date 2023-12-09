@@ -39,7 +39,7 @@
                             <div class="card-px text-center pt-15 pb-15">
                                 <!--begin::Title-->
                                 <div class="image">
-                                    <img src="{{asset('storage/default/pico.png')}}" alt="" width="100px" height="100px">
+                                    <img src="{{asset('default/pico.png')}}" alt="" width="100px" height="100px">
                                 </div>
                                 <h2 class="fs-2x fw-bold mb-0 text-primary-emphasis header-text">PICO SBS (ERP POS)</h2>
                                 <!--end::Title-->

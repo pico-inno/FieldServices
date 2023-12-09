@@ -33,7 +33,7 @@ class adjustOsRefPrice extends Command
     {
         try {
             DB::beginTransaction();
-            $osds = openingStockDetails::select('id', 'uom_id', 'uom_price', 'quantity')->get();
+            $osds = openingStockDetails::select('id', 'uom_id', 'uom_price', 'quantity')->whereNot('is_delete',1)->get();
             $bar = $this->output->createProgressBar(count($osds));
             $bar->start();
             foreach ($osds as $osd) {
@@ -41,7 +41,8 @@ class adjustOsRefPrice extends Command
                 $data = $this->dataForOpeningStockDetails($osd);
                 $osd->where('id', $osd->id)->first()->update($data);
                 CurrentStockBalance::where('transaction_detail_id', $osd->id)
-                ->where('transaction_type', 'opening_stock')->first()
+                ->where('transaction_type', 'opening_stock')
+                ->first()
                 ->update($data);
             }
 

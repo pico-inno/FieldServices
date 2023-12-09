@@ -19,7 +19,7 @@
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Deposit Amount </label>
                             <div class="input-group mb-3">
-                                <input  id="deposit_amount" type="text" class="form-control form-select-sm fs-3" name="deposit_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
+                                <input  id="deposit_amount" type="text" class="form-control form-select-sm fs-3 input_number" name="deposit_amount" value="{{old('transfer_amount')}}" autocomplete="off" />
                                 <label for="" class="input-group-text fw-bold rounded-start-0  fs-4 ">{{$account->currency->symbol}}</label>
                             </div>
                     </div>
@@ -37,6 +37,7 @@
 
 
 <script>
+    numberOnly();
         // user update validation
     var depositeValidator = function () {
         // Shared variables
@@ -74,7 +75,7 @@
             const submitButton = element.querySelectorAll('[data-kt-sale-action="submit"]');
             submitButton.forEach((btn) => {
                 btn.addEventListener('click', function (e) {
-                    
+
                         if (validator) {
                             validator.validate().then(function (status) {
                                 console.log(status);

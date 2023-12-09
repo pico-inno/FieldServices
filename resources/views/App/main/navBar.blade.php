@@ -14,7 +14,7 @@
     <meta property="og:title" content="ERPPOS Business Software" />
     <meta property="og:site_name" content="ERPPOS" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" href="{{asset('storage/default/pico.png')}}" />
+    <link rel="shortcut icon" href="{{asset('default/pico.png')}}" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
@@ -65,7 +65,7 @@
                             @if ($logo)
                             <img alt="Logo" src="{{asset('storage/logo/'.$logo)}}" class="h-24px w-35px" />
                             @else
-                            <img alt="Logo" src="{{asset('storage/default/pico.png')}}" class="h-24px w-35px" />
+                            <img alt="Logo" src="{{asset('default/pico.png')}}" class="h-24px w-35px" />
                             @endif
                         </a>
                     </div>
@@ -3352,7 +3352,7 @@
                         @if ($logo)
                         <img alt="Logo" src="{{asset('storage/logo/'.$logo)}}" class="h-20px w-20px" />
                         @else
-                        <img alt="Logo" src="{{asset('storage/default/pico.png')}}" class="h-20px w-20px" />
+                        <img alt="Logo" src="{{asset('default/pico.png')}}" class="h-20px w-20px" />
                         @endif
                     </a>
                     <!--end::Logo-->

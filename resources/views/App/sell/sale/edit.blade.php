@@ -154,6 +154,72 @@
                                 <i class="fa-solid fa-plus me-2 text-white"></i> Add new product
                             </button>
                         </div>
+                        <div class="mb-5">
+                            <!--begin::Heading-->
+                            <div class="d-flex align-items-start collapsible py-1 toggle mb-0 collapsed user-select-none"
+                                data-bs-toggle="collapse" data-bs-target="#keyword_setting" aria-expanded="false">
+                                <!--begin::Icon-->
+                                <div class="me-1">
+                                    <i class="ki-outline ki-down toggle-on text-primary fs-3"></i>
+                                    <i class="ki-outline ki-right toggle-off fs-3"></i>
+                                </div>
+                                <!--end::Icon-->
+
+                                <!--begin::Section-->
+                                <div class="d-flex align-items-start flex-wrap">
+                                    <!--begin::Title-->
+                                    <h3 class="text-gray-800 fw-semibold cursor-pointer me-3 mb-0 fs-7 ">
+                                        Click to set Search Keyword
+                                    </h3>
+                                    <!--end::Title-->
+
+                                    <!--begin::Label-->
+                                    <span class="badge badge-light my-1 d-block d-none">React</span>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Section-->
+                            </div>
+                            <!--end::Heading-->
+
+                            <!--begin::Body-->
+                            <div id="keyword_setting" class="fs-6 ms-10 collapse" style="">
+                                <div class="row mt-5">
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="p_kw" checked disabled />
+                                            <label class="form-check-label cursor-pointer" for="p_kw">
+                                                Product Name
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="psku_kw" checked />
+                                            <label class="form-check-label cursor-pointer" for="psku_kw">
+                                                Product Sku
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="vsku_kw" />
+                                            <label class="form-check-label cursor-pointer" for="vsku_kw">
+                                                Variation Sku
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-check form-check-sm user-select-none">
+                                            <input class="form-check-input " type="checkbox" value="on" id="pgbc_kw" />
+                                            <label class="form-check-label cursor-pointer" for="pgbc_kw">
+                                                Packaging Barcode
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Content-->
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-row-dashed fs-6 gy-4 mt-10" id="sale_table">
                                 <!--begin::Table head-->

@@ -237,6 +237,17 @@ class purchaseController extends Controller
                     'deleted_by' => Auth::user()->id,
                     'deleted_at' => now()
                 ]);
+                $purchaseDetails = purchase_details::where('purchases_id', $id);
+
+                $purchaseDetails->update([
+                    'is_delete' => 1,
+                    'deleted_by' => Auth::user()->id,
+                    'deleted_at' => now()
+                ]);
+                foreach ($purchaseDetails->get() as $pd) {
+                    CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->delete();
+                    stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+                }
             }
             $data = [
                 'success' => 'Successfully Deleted'
@@ -423,6 +434,47 @@ class purchaseController extends Controller
                 },
                 'uom' => function ($q) {
                     $q->with('unit_category.uomByCategory');
+                },
+                'product_variations.packaging.uom'
+            ])
+            ->get()->toArray();
+        // dd(productPackaging::with('product_variations')->get()->toArray());
+        return response()->json($products, 200);
+    }
+
+    public function getProductForPurchaseV3(Request $request)
+    {
+        $keyword = $request->keyword;
+        $psku_kw = $request->psku_kw ?? false;
+        $vsku_kw = $request->vsku_kw ?? false;
+        $pgbc_kw = $request->pgbc_kw ?? false;
+        $products = Product::select(
+            'products.*',
+            'product_variations.*',
+            'variation_template_values.*',
+            'variation_template_values.name as variation_name',
+            'products.name as name',
+            'products.id as id',
+            'product_variations.id as variation_id'
+        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+        ->where('products.name', 'like', '%' . $keyword . '%')
+            ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+            })
+            ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+            })
+            ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                    $query->where('package_barcode', $keyword);
+                });
+            })
+            ->with([
+                'product_packaging' => function ($query) use ($keyword) {
+                    $query->where('package_barcode', $keyword);
+                },
+                'uom' => function ($query) {
+                    $query->with('unit_category.uomByCategory');
                 },
                 'product_variations.packaging.uom'
             ])
