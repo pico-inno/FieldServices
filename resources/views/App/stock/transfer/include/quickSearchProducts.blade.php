@@ -62,10 +62,19 @@
         //Begin: quick search
         $('.quick-search-form input').on('input', function() {
             var query = $(this).val().trim(); //input search query
+            let business_location_id = $('#business_location_id').val();
+            let psku_kw=$('#psku_kw').is(':checked');
+            let vsku_kw=$('#vsku_kw').is(':checked');
+            let pgbc_kw=$('#pgbc_kw').is(':checked');
             let data = {
                 business_location_id,
-                query
+                query, //text from search bar,
+                psku_kw,
+                vsku_kw,
+                pgbc_kw
             }
+
+            console.log(data);
 
             if (query.length >= 2) {
                 quickSearchResults.removeClass('d-none');
@@ -77,7 +86,7 @@
 
                 setTimeout(function() {
                     $.ajax({
-                        url: `/sell/get/product/v2`,
+                        url: `/sell/get/product/v3`,
                         type: 'GET',
                         delay: 150,
                         data: {data},
