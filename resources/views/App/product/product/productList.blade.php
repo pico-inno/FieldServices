@@ -448,24 +448,7 @@
     <script src="{{asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <!-- <script src="{{ asset('customJs/product/productListExport.js') }}"></script> -->
     <script>
-        // success message
-        // toastr.options = {
-        //     "closeButton": false,
-        //     "debug": false,
-        //     "newestOnTop": false,
-        //     "progressBar": false,
-        //     "positionClass": "toastr-top-center",
-        //     "preventDuplicates": false,
-        //     "onclick": null,
-        //     "showDuration": "300",
-        //     "hideDuration": "1000",
-        //     "timeOut": "5000",
-        //     "extendedTimeOut": "1000",
-        //     "showEasing": "swing",
-        //     "hideEasing": "linear",
-        //     "showMethod": "fadeIn",
-        //     "hideMethod": "fadeOut"
-        // };
+
         var table;
         $(document).ready(function () {
 
@@ -490,6 +473,9 @@
                 serverSide: true,
                 ajax: {
                     url: '/product-datas',
+                    data: function (d) {
+                        d.length = $('.Datatable-tb').DataTable().page.len();
+                    },
                 },
 
                 columns: [

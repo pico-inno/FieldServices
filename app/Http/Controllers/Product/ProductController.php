@@ -68,8 +68,10 @@ class ProductController extends Controller
     }
 
 
-    public function productDatas()
+    public function productDatas(Request $request)
     {
+        $length = $request->input('length', 10);
+
         $products = Product::with('productVariations', 'category', 'brand')->get();
 
         return DataTables::of($products)

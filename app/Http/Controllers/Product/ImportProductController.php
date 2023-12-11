@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ImportProduct\ImportProductCreateRequest;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\Product\ProductsImport;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class ImportProductController extends Controller
 {
@@ -35,12 +36,18 @@ class ImportProductController extends Controller
             // $status = Excel::import(new ProductsImport(), $file);
             $import = new ProductsImport;
             $importMessage=$import->import($file);
+
             DB::commit();
-            return back()->with(['success' => 'Successfully Imported']);
+            return back()->with(['success-swal' => 'Successfully Imported']);
         } catch (\Throwable $th) {
             Db::rollBack();
-            $failures = $th->failures();
-            $error = ['error' => $th->getMessage(), 'failures' => $failures];
+
+            $failures = null;
+            if($th instanceof \Illuminate\Validation\ValidationException){
+                $failures = $th->failures();
+            }
+            $error = ['error-swal' => $th->getMessage(), 'failures' => $failures];
+
             return back()->with($error);
         }
     }

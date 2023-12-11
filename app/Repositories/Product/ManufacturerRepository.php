@@ -3,6 +3,7 @@
 namespace App\Repositories\Product;
 
 use App\Models\Product\Manufacturer;
+use Illuminate\Support\Facades\Auth;
 
 class ManufacturerRepository
 {
@@ -34,5 +35,16 @@ class ManufacturerRepository
     {
         Manufacturer::where('id', $id)->update(['deleted_by' => auth()->id()]);
         return Manufacturer::destroy($id);
+    }
+
+    public function getOrCreateManufacturerId($manufacturerName)
+    {
+        if ($manufacturerName){
+            $manufacturer =  Manufacturer::where('name', $manufacturerName)->first();
+            if (!$manufacturer){
+                $manufacturer = $this->create(['name' => $manufacturerName, 'created_by' => Auth::id()]);
+            }
+            return $manufacturer->id;
+        }
     }
 }
