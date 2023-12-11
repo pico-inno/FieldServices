@@ -647,7 +647,23 @@
                                 _method: 'DELETE',
                             },
                             success: function(response) {
-                                success(response.message);
+                                if(response.message){
+                                    success(response.message);
+                                }
+
+                                if(response.error){
+                                    Swal.fire({
+                                        text: response.error,
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        showCancelButton: false,
+                                        confirmButtonText: "Ok",
+                                        cancelButtonText: "Delete",
+                                        customClass: {
+                                            confirmButton: "btn fw-bold btn-primary",
+                                        }
+                                    });
+                                }
                                 table.ajax.reload();
                             }
                         })
@@ -680,9 +696,13 @@
                                 _method: 'DELETE',
                             },
                             success: function(response) {
-                                success(response.message);
+                                if (response.message) {
+                                    success(response.message);
+                                }
+
                                 table.ajax.reload();
                             }
+
                         })
                     }
                 });
@@ -843,11 +863,27 @@
         });
 
     </script>
+    <script>
+
+{{--        @if(session('error-swal'))--}}
+{{--        Swal.fire({--}}
+{{--            text: '{{session('error-swal')}}',--}}
+{{--            icon: "error",--}}
+{{--            buttonsStyling: false,--}}
+{{--            showCancelButton: false,--}}
+{{--            confirmButtonText: "Ok",--}}
+{{--            cancelButtonText: "Delete",--}}
+{{--            customClass: {--}}
+{{--                confirmButton: "btn fw-bold btn-primary",--}}
+{{--            }--}}
+{{--        });--}}
+{{--        @endif--}}
+
     @if(session('message'))
-        <script>
+
             success("{{session('message')}}");
-        </script>
+
     @endif
 
-
+        </script>
 @endpush
