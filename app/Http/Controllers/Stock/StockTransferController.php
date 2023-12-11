@@ -126,7 +126,7 @@ class StockTransferController extends Controller
                     'expense' => 0,
                     'subtotal_with_expense' => 0,
                     'per_ref_uom_price' => 0,
-                    'ref_uom_id' => $transfer_detail['ref_uom_id'],
+                    'ref_uom_id' => $referencUomInfo['referenceUomId'],
                     'currency_id' => $transfer_detail['currency_id'],
                     'remark' => $transfer_detail['remark'],
                     'created_at' => now(),
