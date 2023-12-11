@@ -85,6 +85,7 @@ class businessSettings extends Model
         'custom_labels',
         'common_settings',
         'is_active',
+        'allow_overselling',
 
 
 
