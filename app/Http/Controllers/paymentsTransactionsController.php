@@ -523,6 +523,11 @@ class paymentsTransactionsController extends Controller
                     'payment_status'=> $payment_status
                 ]);
 
+            $suppliers = Contact::where('id', $purchase->contact_id)->first();
+            $suppliers_payable = $suppliers->payable_amount;
+            $suppliers->update([
+                'payable_amount' => $suppliers_payable + $paymentTransaction->payment_amount
+            ]);
             $paymentTransaction->delete();
             DB::commit();
             return response()->json([
@@ -570,6 +575,12 @@ class paymentsTransactionsController extends Controller
                     'balance_amount'=>$balance_amount,
                     'payment_status'=> $payment_status
                 ]);
+
+            $suppliers = Contact::where('id', $sale->contact_id)->first();
+            $suppliers_receivable = $suppliers->receivable_amount;
+            $suppliers->update([
+                'receivable_amount' => $suppliers_receivable + $paymentTransaction->payment_amount
+            ]);
 
             $paymentTransaction->delete();
             DB::commit();

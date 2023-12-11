@@ -1309,12 +1309,14 @@
             let sale_amount=isNullOrNan($('.sale_amount_input').val());
             let total_item_discount=isNullOrNan($('.total_item_discount').val())
             let extra_discount_type=$('.extra_discount_type').val();
+            let total_paid_amount=isNullOrNan($('#total_paid_amount').val());
             let price_after_discount;
             let extra_discount=extraDiscCal();
             price_after_discount=sale_amount - (extra_discount+total_item_discount);
 
             $('.total_sale_amount').val(price_after_discount);
             $('.paid_amount_input').val(price_after_discount);
+            cal_balance_amount();
 
         }, 110);
 

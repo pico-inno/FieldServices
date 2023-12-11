@@ -918,6 +918,7 @@ Route::post('/contact/import/contact', [ImportContactsController::class, 'import
 Route::get('customers/quickadd', [CustomerController::class, 'quickCreateCustomer']);
 Route::post('customers', [CustomerController::class, 'quickStoreCustomer']);
 Route::get('customers/get', [CustomerController::class, 'getCusForSelect']);
+Route::get('/contact/get/{contactId}', [CustomerController::class, 'getContactData']);
 
 Route::resource('customer-group', CustomerGroupController::class);
 

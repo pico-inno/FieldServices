@@ -46,6 +46,9 @@ $(document).ready(function () {
                     let qtyValidate = productsOnSelectData.find(function (pd) {
                         return pd.validate==false;
                     });
+                    let credit_limit = $('#credit_limit').val();
+                    console.log(credit_limit,'credit_limit',$('#total_balance_amount').val() );
+                    console.log( $('#total_balance_amount').val() > credit_limit," $('#total_balance_amount').val() > credit_limit");
                     if (qtyValidate) {
                         e.preventDefault();
                          Swal.fire({
@@ -57,7 +60,8 @@ $(document).ready(function () {
                                     confirmButton: "btn btn-primary"
                                 }
                             });
-                    } else if ( $('#total_balance_amount').val() > credit_limit) {
+                    } else if (isNullOrNan($('#total_balance_amount').val() )> isNullOrNan(credit_limit)) {
+                        console.log($('#total_balance_amount').val() > credit_limit);
                         e.preventDefault();
                         $('#credit_limit_message').removeClass('d-none');
                             Swal.fire({

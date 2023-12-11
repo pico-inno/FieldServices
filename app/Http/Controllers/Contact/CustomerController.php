@@ -386,4 +386,10 @@ class CustomerController extends Controller
         ->paginate(20);
         return response()->json($customers, 200);
     }
+    public function getContactData($contactId,Request $request) {
+        $keys= $request->toArray()['key'] ?? [];
+        $key=count($keys) > 0 ? $keys : ['*'];
+        $contact=Contact::select(...$key)->where('id',$contactId)->first();
+        return response()->json($contact, 200);;
+    }
 }

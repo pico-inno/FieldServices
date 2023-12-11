@@ -437,20 +437,47 @@
 @endsection
 
 @push('scripts')
-
 <script>
     const myModalEl = document.getElementById('suggestionModal')
     myModalEl.addEventListener('hidden.bs.modal', event => {
         $('.modal-backdrop').remove();
     })
-    let contacts=@json($customers ?? []);
-    var credit_limit=0;
+    //get/customer/{customer}/{key}
+    let contacts=@json($walkInCustomer->toArray());
+    getCreditLimit(contacts['id']);
     $(document).on('change','[name="contact_id"]',function(){
-        let contact_id=contacts.find(c=>c.id==$(this).val());
-        credit_limit=parseFloat(contact_id ?contact_id.credit_limit: 0) ;
-        $('.credit_limit_txt').text(credit_limit ? credit_limit.toFixed(2) : 0);
-        $('credit_limit').val(credit_limit ?? 0);
+        getCreditLimit($(this).val());
     })
+    function getCreditLimit(id){
+        $('.credit_limit_txt').text('loading....');
+        $('#credit_limit').val(0);
+        $.ajax({
+            url: `/contact/get/${id}`,
+            type: 'GET',
+            data:{
+                'key':['credit_limit','receivable_amount']
+            },
+            error:function(e){
+                status=e.status;
+                if(status==405){
+                    warning('Method Not Allow!');
+                }else if(status==419){
+                    error('Session Expired')
+                }else{
+                    console.log(e);
+                    console.log(' Something Went Wrong! Error Status: '+status )
+                };
+            },
+            success: function(results){
+                credit_limit=parseFloat(results.credit_limit ? results.credit_limit: 0) ;
+                receivable_amount=parseFloat(results.receivable_amount ? results.receivable_amount: 0) ;
+                let result= credit_limit-receivable_amount;
+                console.log(result);
+                $('.credit_limit_txt').text(result ? result.toFixed(2) : 0);
+                $('#credit_limit').val(result ?? 0);
+            },
+        })
+    }
     $("#kt_datepicker_1").flatpickr({
         dateFormat: "d-m-Y",
     });

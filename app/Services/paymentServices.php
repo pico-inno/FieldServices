@@ -64,34 +64,34 @@ class paymentServices
                         'current_balance' => $finalCurrentBalance,
                     ]);
                 }
-                $suppliers = Contact::where('id', $transaction->contact_id)->first();
-                if ($transaction->balance_amount > 0) {
-                    if($transactionType=='sale'){
-                        $suppliers_receivable = $suppliers->receivable_amount;
-                        $suppliers->update([
-                            'receivable_amount' => $suppliers_receivable +  $transaction->balance_amount
-                        ]);
-                    }else{
-                        $suppliers_payable = $suppliers->payable_amount;
-                        $suppliers->update([
-                            'payable_amount' => $suppliers_payable + $transaction->balance_amount
-                        ]);
-                    }
-                } else if ($transaction->balance_amount < 0) {
-                    if($transactionType=='sale'){
-                        $suppliers_payable = $suppliers->receivable_amount;
-                        $suppliers->update([
-                            'payable_amount' => $suppliers_payable + $transaction->balance_amount
-                        ]);
-                    }else{
-                        $suppliers_receivable = $suppliers->receivable_amount;
-                        $suppliers->update([
-                            'receivable_amount' => $suppliers_receivable + $transaction->receivable_amount
-                        ]);
-                    }
-                }
             }
 
+            $suppliers = Contact::where('id', $transaction->contact_id)->first();
+            if ($transaction->balance_amount > 0) {
+                if($transactionType=='sale'){
+                    $suppliers_receivable = $suppliers->receivable_amount;
+                    $suppliers->update([
+                        'receivable_amount' => $suppliers_receivable +  $transaction->balance_amount
+                    ]);
+                }else{
+                    $suppliers_payable = $suppliers->payable_amount;
+                    $suppliers->update([
+                        'payable_amount' => $suppliers_payable + $transaction->balance_amount
+                    ]);
+                }
+            } else if ($transaction->balance_amount < 0) {
+                if($transactionType=='sale'){
+                    $suppliers_payable = $suppliers->receivable_amount;
+                    $suppliers->update([
+                        'payable_amount' => $suppliers_payable + $transaction->balance_amount
+                    ]);
+                }else{
+                    $suppliers_receivable = $suppliers->receivable_amount;
+                    $suppliers->update([
+                        'receivable_amount' => $suppliers_receivable + $transaction->receivable_amount
+                    ]);
+                }
+            }
             return $paymentTransaction;
         }
         return null;

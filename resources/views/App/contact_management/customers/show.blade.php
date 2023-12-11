@@ -450,9 +450,9 @@
                                         <div class="col-lg-6">
                                             <span class="fw-bold fs-6 text-gray-800" id="reservation-code">
                                                 @if($contact->credit_limit)
-                                                {{$contact->credit_limit}}
+                                                {{price($contact->credit_limit)}}
                                                 @else
-                                                -
+                                                {{price(0)}}
                                                 @endif
                                             </span>
                                         </div>
@@ -466,9 +466,9 @@
                                         <div class="col-lg-6">
                                             <span class="fw-bold fs-6 text-gray-800" id="reservation-code">
                                                 @if($contact->receivable_amount)
-                                                {{$contact->receivable_amount}}
+                                                {{price($contact->receivable_amount)}}
                                                 @else
-                                                -
+                                                {{price(0)}}
                                                 @endif
                                             </span>
                                         </div>
@@ -482,9 +482,9 @@
                                         <div class="col-lg-6">
                                             <span class="fw-bold fs-6 text-gray-800" id="reservation-code">
                                                 @if($contact->payable_amount)
-                                                {{$contact->payable_amount}}
+                                                {{price($contact->payable_amount)}}
                                                 @else
-                                                -
+                                                {{price(0)}}
                                                 @endif
                                             </span>
                                         </div>
@@ -712,15 +712,14 @@
                                 <!--begin::Table body-->
                                 @php
                                 if(isset($data['payments'])) {
-                                foreach($data['payments'] as $payment) {
-                                foreach($payment as $payment_tran) {
-                                $paymentType = $payment_tran->transaction_type;
-                                $paymentAmount = $payment_tran->payment_amount;
-                                }
+                                    foreach($data['payments'] as $payment) {
+                                        foreach($payment as $payment_tran) {
+                                            $paymentType = $payment_tran->transaction_type;
+                                            $paymentAmount = $payment_tran->payment_amount;
+                                        }
 
+                                    }
                                 }
-                                }
-
                                 @endphp
                                 <tbody class="fw-semibold text-gray-600">
                                     {{-- @if(isset($data['sales']))
@@ -803,7 +802,7 @@
                                         <td>{{$s->sold_at}}</td>
                                         <td>{{$s->sales_voucher_no}}</td>
                                         <td>
-                                            {{$paymentType}}
+                                            {{$paymentType ?? ''}}
                                         </td>
                                         <td>{{$s->businessLocation->name}}</td>
                                         <td>

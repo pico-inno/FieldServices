@@ -554,6 +554,9 @@
             $('.credit_limit_txt').text(credit_limit ? credit_limit.toFixed(2) : 0);
             $('credit_limit').val(credit_limit ?? 0);
         })
+
+
+
         $('[data-kt-select2="select2"]').select2();
         $('#subscribe').change(function() {
             // If the checkbox is checked, show the modal box
