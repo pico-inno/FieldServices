@@ -14,6 +14,7 @@
     let locations=@json($locations);
     let defaultPriceListId={{$defaultPriceListId}}
     let lotControl=setting.lot_control;
+    let allowOverSelling=setting.allow_overselling;
     var suggestionProduct=[];
     function isNullOrNan(val){
         let v=parseFloat(val);
@@ -23,6 +24,17 @@
             return v;
         }
     }
+    function check()
+    {
+        let saleRow = document.querySelectorAll('.sale_row');
+        saleRow.forEach((sr) => {
+            checkStock($(sr));
+        })
+    }
+    $('#saleStatus').change(()=>{
+        check();
+    })
+
     let priceLists=@json($priceLists);
     let exchangeRates=@json($exchangeRates ?? []);
     let currentPriceList;
@@ -208,7 +220,7 @@
                                             return;
                                         }
                                         let total_current_stock_qty=Number(result.stock_sum_current_quantity);
-                                        let css_class=isNullOrNan(result.stock_sum_current_quantity)<=0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
+                                        let css_class=isNullOrNan(result.stock_sum_current_quantity)<=0 && result.product_type=="storable" && allowOverSelling !=1 ?" text-gray-600 order-3":'';
 
                                         html += `<div class="quick-search-result result ps-10  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
                                         html += `<h4 class="fs-6  pt-3 ${css_class} ">
@@ -222,7 +234,7 @@
                                             if(result.stock_sum_current_quantity>0){
                                                 html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
                                             }else{
-                                                html += '<p>Out of Stocks</p>';
+                                                html += `<p class="${allowOverSelling ? 'text-warning' :'text-danger'}">* Out of Stocks</p>`;
                                             }
                                         }
                                         html += '</div>';
@@ -294,7 +306,7 @@
         if(id!="selectAll"){
             selected_product= products[id];
             let isStorable=selected_product.product_type=="storable";
-            if((selected_product.stock_sum_current_quantity==0 || selected_product.stock_sum_current_quantity==null) && isStorable){
+            if((selected_product.stock_sum_current_quantity==0 || selected_product.stock_sum_current_quantity==null) && isStorable && allowOverSelling ==0){
                 return;
             }
         }
@@ -444,7 +456,7 @@
         }
         ItemLimitRowCount-=20;
         allSelectedProduct[selected_product.product_variations.id]=selected_product;
-        if(setting.enable_row == 0 && !forceSplit){
+        if(setting.enable_row == 0 && !forceSplit && allowOverSelling ==0){
             let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
             if(checkProduct){
                 let selectQtyInput=document.querySelectorAll(`.quantity-${selected_product.product_variations.id}`);
@@ -992,8 +1004,9 @@
                 referenceUomId: referenceUomId
             };
         }
-
+        // $('#saleStatus').change(){}
         function checkStock(e){
+            let status=$('#saleStatus').val();
             let parent = e.closest('.sale_row');
             let variationId=parent.find('.variation_id').val();
             let index;
@@ -1029,7 +1042,7 @@
             result+=isNullOrNan(rdQty);
             console.log(result,rdQty);
             if(product.product_type =='storable' || (product.product_type =='consumeable' && product.total_current_stock_qty != null)){
-                if(result > productsOnSelectData[index].total_current_stock_qty){
+                if(result > productsOnSelectData[index].total_current_stock_qty && (allowOverSelling == 0 || status=='delivered')){
                             productsOnSelectData[index].validate=false;
                     $(`.stock_alert_${variationId}`).removeClass('d-none');
                 }else{

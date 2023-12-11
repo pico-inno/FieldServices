@@ -898,7 +898,7 @@
                                                 </div>
                                                 <div class="col-md-12  mb-7  col-lg-4">
                                                     <div class="form-check form-switch ">
-                                                        <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                                        <input class="form-check-input cursor-pointer" type="checkbox" name="allow_overselling" role="switch" id="flexSwitchCheckDefault" @checked($settingData['allow_overselling'])>
                                                         <label class="form-check-label text-gray-800" for="flexSwitchCheckDefault">{{__('business_settings.allow_overselling')}}</label>
                                                     </div>
                                                 </div>

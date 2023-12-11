@@ -121,7 +121,7 @@
                                 @endphp
 
                                 <div class="overflow-hidden  flex-grow-1">
-                                    <select name="status" id="" class="form-select form-select-sm" data-kt-select2="true" data-hide-search="true">
+                                    <select name="status" id="saleStatus" class="form-select form-select-sm" data-kt-select2="true" data-hide-search="true">
                                         <option value="quotation" @selected($sale->status=='quotation')>Quotation</option>
                                         <option value="draft" @selected($sale->status=='draft')>Draft</option>
                                         <option value="pending" @selected($sale->status=='pending')>Pending</option>
@@ -250,11 +250,15 @@
                                         @php
                                             $key++;
                                             $product=$sale_detail->product;
+                                            // dd($sale_detail->toArray());
                                             $product_variation =$sale_detail->toArray()['product_variation'];
                                             $additionalProduct=$sale_detail->productVariation->additionalProduct;
                                             $parentkey=$sale_detail->parent_id ?array_search($sale_detail->parent_id,array_column($sale_details->toArray(),'id')) +1:$key;
                                             $kitSaleDetails=$sale_detail['kitSaleDetails'];
-                                            $avilQty=getKitAvailableQty($sale->business_location_id,$product->id);
+                                            $avilQty=0;
+                                            if(count($kitSaleDetails)>0){
+                                                $avilQty=getKitAvailableQty($sale->business_location_id,$product->id);
+                                            }
                                             $conusmeQty=getConsumeQty($product->id);
                                         @endphp
                                         <tr class="sale_row sale_row_{{$key}}" data-unid="{{$parentkey}}" data-product="{{$sale_detail->variation_id}}">
@@ -265,7 +269,7 @@
                                                     <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
                                                     <br>
                                                     @if (isset($sale_detail['kitSaleDetails']))
-                                                        <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">{{$avilQty +round($sale_detail->quantity,2) }}</span>
+                                                        <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">{{$avilQty +round($sale_detail->stock_sum_current_quantity ?? 0,2) }}</span>
                                                         <span class='smallest_unit_txt smallest_rom_unit_txt'>{{$sale_detail->product->uom['name']}}</span>(s/es)
                                                         <input type="hidden" class="aviaQty_{{$key}}" value="{{$avilQty +round($sale_detail->quantity,2) }}" >
                                                     @elseif ($product->product_type =='storable')
@@ -542,6 +546,14 @@
 {{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
 {{-- @include('App.purchase.contactAdd') --}}
     <script>
+        let contacts=@json($customers ?? []);
+        var credit_limit=0;
+        $(document).on('change','[name="contact_id"]',function(){
+            let contact_id=contacts.find(c=>c.id==$(this).val());
+            credit_limit=parseFloat(contact_id ?contact_id.credit_limit: 0) ;
+            $('.credit_limit_txt').text(credit_limit ? credit_limit.toFixed(2) : 0);
+            $('credit_limit').val(credit_limit ?? 0);
+        })
         $('[data-kt-select2="select2"]').select2();
         $('#subscribe').change(function() {
             // If the checkbox is checked, show the modal box

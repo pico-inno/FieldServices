@@ -115,13 +115,6 @@ $(document).ready(function () {
         saleValidator.init();
     });
 
-    function check()
-    {
-        let saleRow = document.querySelectorAll('.sale_row');
-        saleRow.forEach((sr) => {
-            checkStock($(sr));
-        })
-    }
 
 
 })
