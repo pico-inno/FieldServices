@@ -65,6 +65,7 @@ class ProductsImport implements
 
         ini_set('max_execution_time', '0');
         ini_set("memory_limit", "-1");
+        ini_set("max_allowed_packet", "-1");
 
         $this->uom = new UOM;
         $this->productRepository = new ProductRepository();
@@ -330,12 +331,12 @@ class ProductsImport implements
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 500;
     }
 
     public function batchSize(): int
     {
-        return 1000;
+        return 500;
     }
 
     public function rules(): array
