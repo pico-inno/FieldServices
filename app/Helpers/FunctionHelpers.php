@@ -1,6 +1,5 @@
 <?php
 
-use App\Actions\currentStockBalance\currentStockBalanceActions;
 use App\Models\data;
 use App\Helpers\UomHelper;
 use App\Models\Currencies;
@@ -10,6 +9,8 @@ use App\Models\openingStocks;
 use App\Models\stock_history;
 use App\Models\systemSetting;
 use App\Helpers\SettingHelpers;
+use App\Models\Product\Product;
+use App\Models\Product\Category;
 use App\Helpers\generatorHelpers;
 use App\Models\sale\sale_details;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +20,12 @@ use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Product\ProductVariation;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Modules\ComboKit\Services\RoMService;
 use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
+use App\Actions\currentStockBalance\currentStockBalanceActions;
 
 function hasModule($moduleName)
 {
@@ -571,4 +574,31 @@ function closingStocksCal($filterData = false, $betweenDateRage = false)
         $totalPrice += $totalQTy * $price;
     }
     return $totalPrice;
+}
+
+function getOptionName($type,$id){
+    $result='';
+    if($type=='All'){
+        return 'All';
+    }elseif($type== 'Category'){
+        $result= Category::select('id', 'name', 'short_code as uniqCode')
+                ->where('id',$id)
+                ->first();
+    }elseif($type== 'Product'){
+        $result = Product::select('id', 'name', 'sku as uniqCode')
+            ->where('id', $id)->first();
+    }elseif($type== 'Variation'){
+        $result = ProductVariation::whereNotNull('variation_template_value_id')
+            ->where('product_variations.id', $id)
+            ->select(
+                'product_variations.id',
+                DB::raw("CONCAT(products.name, '-', variation_template_values.name) AS name"),
+                'product_variations.variation_sku as uniqCode'
+            )
+            ->leftJoin('products', 'product_variations.product_id', '=', 'products.id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->first();
+    }
+    $text= $result['name'] . ' (' . $result['uniqCode'] . ')';
+    return $text;
 }

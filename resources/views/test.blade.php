@@ -1,13 +1,38 @@
+<!-- AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0 -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <title>Get Location from Lat/Lng</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0"></script>
 </head>
+
 <body>
-    <p class="text-danger fs-3">hello</p>
+    <div id="location"></div>
+
+    <script>
+        function getLocation(latitude, longitude) {
+            var latlng = new google.maps.LatLng(latitude, longitude);
+            var geocoder = new google.maps.Geocoder();
+
+            geocoder.geocode({ 'location': latlng }, function (results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        document.getElementById('location').innerHTML = 'Location: ' + results[0].formatted_address;
+                    } else {
+                        document.getElementById('location').innerHTML = 'No results found';
+                    }
+                } else {
+                    document.getElementById('location').innerHTML = 'Geocoder failed due to: ' + status;
+                }
+            });
+        }
+
+        // Example usage:
+        var latitude = 40.7128; // Replace with your latitude
+        var longitude = -74.0060; // Replace with your longitude
+        getLocation(latitude, longitude);
+    </script>
 </body>
+
 </html>

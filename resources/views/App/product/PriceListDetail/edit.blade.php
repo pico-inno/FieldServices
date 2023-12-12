@@ -156,7 +156,9 @@
                                                     <div class="fv-row">
                                                         <select name="apply_value[]" class="form-select form-select-sm rounded-0 fs-7" data-control="select2"
                                                             data-hide-search="false" data-placeholder="Please select">
-
+                                                            @if ($item->applied_type != 'All')
+                                                                <option value="{{$item->applied_value}}" selected>{{getOptionName($item->applied_type,$item->applied_value)}}</option>
+                                                            @endif
                                                         </select>
                                                     </div>
                                                 </td>
@@ -308,9 +310,19 @@ submitButton.addEventListener('click', function (e) {
                 error( @json($error) )
             </script>
         @endforeach
-    @endif
+    @endif$(e)
 
-    @include('App.product.PriceListDetail.js.pricelist_js_for_edit');
+    {{-- @include('App.product.PriceListDetail.js.pricelist_js_for_edit'); --}}
     @include('App.product.PriceListDetail.js.price_list_detail_js');
 
+    <script>
+        $(document).ready(function() {
+            $('select[name="apply_type[]"]').each(function(){
+                let current_row = $(this).closest('tr');
+                let applied_type = current_row.find('select[name="apply_type[]"]').val();
+                getApplyValue(current_row,applied_type);
+            })
+        });
+
+    </script>
 @endpush

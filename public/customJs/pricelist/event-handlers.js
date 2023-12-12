@@ -3,8 +3,8 @@ $(document).on('click', '#add_price_list_row', function() {
     addBtnRemove();
     $('#price_list_body').append(priceListRow);
 
-    $('[data-control="select2"]').select2({ 
-        minimumResultsForSearch: Infinity 
+    $('[data-control="select2"]').select2({
+        minimumResultsForSearch: Infinity
     });
     $(".select_date").flatpickr({
         altInput: true,
@@ -19,60 +19,58 @@ $(document).on('click', '#add_price_list_row', function() {
 $(document).on('click', '.delete_each_row', function() {
     let isDelete = disableDeleteButton();
     if(isDelete) return;
-    
-    let current_row = $(this).closest('tr'); 
+
+    let current_row = $(this).closest('tr');
     current_row.remove();
 })
 
 // change aply type
-$(document).on('change', 'select[name="apply_type[]"]', function (event) {    
-    let current_row = $(this).closest('tr');        
+$(document).on('change', 'select[name="apply_type[]"]', function () {
+    let current_row = $(this).closest('tr');
     let applied_type = current_row.find('select[name="apply_type[]"]').val();
-
     let selectedElement = current_row.find('select[name="apply_value[]"]');
     // Clear existing options
     selectedElement.empty();
     addBtnRemove();
+    current_row.find('select[name="apply_value[]"]').select2({}).empty();
+    getApplyValue(current_row, applied_type);
+});
 
-    if(applied_type === 'All'){
+function getApplyValue(row, applied_type) {
+    if (applied_type == 'All') {
         let option = document.createElement('option');
         option.value = '0';
         option.text = 'All Products';
-        current_row.find('select[name="apply_value[]"]').append(option);
-
+        row.find('select[name="apply_value[]"]').append(option);
         return;
-    }        
-    
-    $.ajax({
-        url: `/price-list-detail/search`,
-        type: 'GET',
-        data: {
-            applied_type
+    }
+    row.find('select[name="apply_value[]"]').select2({
+        ajax: {
+            url: `/price-list-detail/search?applied_type=${applied_type}`,
+            delay: 250,
+            processResults: function (results, params) {
+                params.page = params.page || 1;
+                resultsForSelect = [];
+                let data = results.data;
+                data.map(function (d) {
+                    resultsForSelect.push({
+                        id: d.id,
+                        text: `${d.name ?? ''} ${d.uniqCode ? ' ( ' + d.uniqCode + ' ) ' : ''}`
+                    });
+                })
+                return {
+                    results: resultsForSelect,
+                    pagination: {
+                        more: (params.page * 20) < results.total
+                    }
+                };
+            },
+            cache: true
         },
-        success: function(results){
-            const defaultOption = document.createElement('option'); // Create default option
-            defaultOption.value = '';
-            defaultOption.text = 'Select an option';
-            $(selectedElement).append(defaultOption);
-
-            for(let item of results) {
-                let option = document.createElement('option');
-                option.value = item.id;
-                if(applied_type === 'Variation'){
-                    option.text = item.product_variation_name;
-                }else{
-                    option.text = item.name;
-                }
-                selectedElement.append(option);
-            }
-            $('[data-control="select2"]').select2();
-        },
-        error: function(xhr, status, error) {
-            console.log(error);
-        }
-    })
-});
-
+        placeholder: 'Search for an item',
+        minimumInputLength: 0,
+    });
+}
 // change cal type
 $(document).on('change', 'select[name="cal_type[]"]', function (event) {
     let current_row = $(this).closest('tr');

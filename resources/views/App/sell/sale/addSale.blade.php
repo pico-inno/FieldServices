@@ -94,7 +94,7 @@
                                                 <x-slot:defaultOption>
                                                 <option value="{{$walkInCustomer->id}}" selected>
                                                     {{$walkInCustomer->getFullNameAttribute()}}-{{'('.arr($walkInCustomer,'mobile','-').')'}}</option>
-                                            </x-slot>
+                                                </x-slot>
                                         </x-customersearch>
                                     </div>
                                     <button class="input-group-text  add_supplier_modal"  data-bs-toggle="modal" type="button" data-bs-target="#contact_add_modal" data-href="{{ route('pos.contact.add') }}">

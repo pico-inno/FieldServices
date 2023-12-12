@@ -178,38 +178,75 @@ class PriceListDetailController extends Controller
     public function searchAppliedValue(Request $request)
     {
         $applied_type = $request->applied_type;
-
+        $query_keyword = $request->q;
         $toResponseData = null;
         if($applied_type === 'Category'){
-            $categories = Category::select('id', 'name')->get();
+            $categories = Category::select('id', 'name', 'short_code as uniqCode')
+                ->where(function ($query) use ($query_keyword) {
+                    if ($query_keyword != '') {
+                        $query->where('name', 'like', '%' . $query_keyword . '%')
+                            ->orWhere('short_code', 'like', '%' . $query_keyword . '%');
+                    } {
+                        return $query;
+                    }
+                })->paginate(20);
             $toResponseData = $categories;
         }
 
         if($applied_type === 'Product'){
-            $products = Product::select('id', 'name')->get();
+            $products = Product::select('id', 'name', 'sku as uniqCode')
+                        ->where(function ($query) use ($query_keyword) {
+                            if ($query_keyword != '') {
+                                $query->where('name', 'like', '%' . $query_keyword . '%')
+                                    ->orWhere('sku', 'like', '%' . $query_keyword . '%');
+                            } {
+                                return $query;
+                            }
+                        })->paginate(20);
             $toResponseData = $products;
         }
 
         if($applied_type === 'Variation'){
-            $allVariations=$this::getVariationOptions();
+            $allVariations=$this::getVariationOptions($query_keyword);
             $toResponseData = $allVariations;
         }
 
         return response()->json($toResponseData);
     }
 
-    public static function getVariationOptions(){
-        $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')->select('id', 'product_id', 'variation_template_value_id')->get();
+    // public static function getVariationOptions(){
+    //     $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')->select('id', 'product_id', 'variation_template_value_id')->get();
 
-        $allVariations = [];
-        foreach ($product_with_variations as $variation) {
-            $product_name = $variation->product->name;
-            $variation_template_name = $variation->variationTemplateValue->variationTemplate->name ?? '';
-            $variation_template_value_name = $variation->variationTemplateValue->name ?? '';
-            $variation['product_variation_name'] = "$product_name - ($variation_template_name - $variation_template_value_name)";;
-            $allVariations[] = $variation;
-        };
-        return $allVariations;
+    //     $allVariations = [];
+    //     foreach ($product_with_variations as $variation) {
+    //         $product_name = $variation->product->name;
+    //         $variation_template_name = $variation->variationTemplateValue->variationTemplate->name ?? '';
+    //         $variation_template_value_name = $variation->variationTemplateValue->name ?? '';
+    //         $variation['product_variation_name'] = "$product_name - ($variation_template_name - $variation_template_value_name)";;
+    //         $allVariations[] = $variation;
+    //     };
+    //     dd($allVariations);
+    //     return $allVariations;
+    // }
+    public static function getVariationOptions($query_keyword)
+    {
+        $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')
+        ->select(
+            'product_variations.id',
+            DB::raw("CONCAT(products.name, '-', variation_template_values.name) AS name"),
+            'product_variations.variation_sku as uniqCode'
+        )
+        ->leftJoin('products', 'product_variations.product_id', '=', 'products.id')
+        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+        ->where(function ($query) use ($query_keyword) {
+            if ($query_keyword != '') {
+                $query->where('products.name', 'like', '%' . $query_keyword . '%')
+                    ->orWhere('product_variations.variation_sku', 'like', '%' . $query_keyword . '%');
+            } {
+                return $query;
+            }
+        })->paginate(20);
+        return $product_with_variations;
     }
     private function hasCreatePricelistDetail($request)
     {
