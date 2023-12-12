@@ -133,6 +133,19 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="mb-3  col-12 mt-3 col-sm-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold required" for="purchaseDatee">
+                                    sold At:
+                                </label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i>
+                                    </span>
+                                    <input class="form-control" name="sold_at" placeholder="Pick a date" data-td-toggle="sold_at" id="sold_at"
+                                        value="{{old('sold_at',$sale->sold_at)}}" />
+
+                                </div>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-center align-items-center mt-3 mb-10">
                             <div class="col-6 col-md-2 fs-7  fw-semibold  text-primary">
@@ -543,9 +556,15 @@
 @endsection
 
 @push('scripts')
+
 {{-- <script src={{asset('customJs/Purchases/contactAdd.js')}}></script> --}}
 {{-- @include('App.purchase.contactAdd') --}}
     <script>
+        $('[data-td-toggle="sold_at"]').flatpickr({
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+
         let contacts=@json($customers ?? []);
         var credit_limit=0;
         $(document).on('change','[name="contact_id"]',function(){

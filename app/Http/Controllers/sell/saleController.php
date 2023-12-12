@@ -478,7 +478,7 @@ class saleController extends Controller
                 'balance_amount' => $request->total_sale_amount - $saleBeforeUpdate->paid_amount,
                 'currency_id' => $request->currency_id,
                 'updated_by' => Auth::user()->id,
-                'sold_at' => now(),
+                'sold_at' => $request->sold_at,
             ];
             if ($request->type == 'pos') {
                 $saleData['paid_amount'] = $request->paid_amount;

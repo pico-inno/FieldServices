@@ -56,7 +56,7 @@ class SaleServices
             'table_id' => $data->table_id,
             'balance_amount' => $data->balance_amount,
             'currency_id' => $data->currency_id,
-            'sold_at' => now(),
+            'sold_at' => $data->sold_at,
             'sold_by' => Auth::user()->id,
             'created_by' => Auth::user()->id,
         ]);

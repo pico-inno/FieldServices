@@ -204,7 +204,7 @@
                                     <div class="col-4 p-3">
                                         <h2 class="" id="tab-title">{{__('business_settings.business')}}</h2>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-md-4 col-8">
                                         <div class="input-group input-group-sm flex-nowrap">
                                             <span class="input-group-text">
                                                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -899,7 +899,7 @@
                                                 <div class="col-md-12  mb-7  col-lg-4">
                                                     <div class="form-check form-switch ">
                                                         <input class="form-check-input cursor-pointer" type="checkbox" name="allow_overselling" role="switch" id="flexSwitchCheckDefault" @checked($settingData['allow_overselling'])>
-                                                        <label class="form-check-label text-gray-800" for="flexSwitchCheckDefault">{{__('business_settings.allow_overselling')}}</label>
+                                                        <label class="form-check-label text-gray-800" for="flexSwitchCheckDefault">Allow Preorder</label>
                                                     </div>
                                                 </div>
                                             </div>

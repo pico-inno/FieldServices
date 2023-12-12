@@ -66,13 +66,13 @@
                 <div class="card">
                     <div class="card-body  px-5">
 
-                        <div class="row mb-5 flex-wrap">
+                        <div class="row mb-5 mb-sm-10 flex-wrap">
                             @error('sale_details')
                                 <div class="alert-danger alert">
                                     At least one sale item is required to complete sale!
                                 </div>
                             @enderror
-                            <div class="mb-sm-10 mb-3 col-12 col-sm-6 mt-3 col-md-3">
+                            <div class="mb-3 col-12 col-sm-6 mt-3 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold" for="">
                                     Select Price List
                                 </label>
@@ -83,7 +83,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-sm-10 mb-3 mt-3 col-12 col-sm-6 col-md-3 fv-row">
+                            <div class="mb-3 mt-3 col-12 col-sm-6 col-md-3 fv-row">
                                 <label class="form-label fs-7 mb-3 fw-semibold required">Customer:</label>
                                 <div class="input-group input-group-sm flex-nowrap">
                                     <div class="input-group-text">
@@ -108,8 +108,7 @@
                                     <div class="p-2 text-danger">* {{$message}}</div>
                                 @enderror
                             </div>
-
-                            <div class="mb-sm-10 mb-3  col-12 mt-3 col-sm-6 col-md-3">
+                            <div class="mb-3  col-12 mt-3 col-sm-6 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Currency
                                 </label>
@@ -119,9 +118,8 @@
                                     @endforeach
                                 </select>
                             </div>
-
                             {{-- <input type="hidden" name="currency_id" value="{{$defaultCurrency['id']}}"> --}}
-                            <div class="mb-sm-10 mb-3  col-12 mt-3 col-sm-6 col-md-3">
+                            <div class="mb-3  col-12 mt-3 col-sm-6 col-md-3">
                                 <label class="form-label fs-7 mb-3 fw-semibold required" for="">
                                     Status
                                 </label>
@@ -134,7 +132,19 @@
                                     <option value="delivered"  >Delivered</option>
                                 </select>
                             </div>
+                            <div class="mb-3  col-12 mt-3 col-sm-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold required" for="purchaseDatee">
+                                    sold At:
+                                </label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i>
+                                    </span>
+                                    <input class="form-control" name="sold_at" placeholder="Pick a date" data-td-toggle="sold_at"  id="sold_at" value="{{old('sold_at',now()->format('Y-m-d H:i'))}}" />
 
+
+                                </div>
+                            </div>
 
                         </div>
                         <div class="d-flex justify-content-center align-items-center mt-3 mb-10">
@@ -438,6 +448,12 @@
 
 @push('scripts')
 <script>
+
+    $('[data-td-toggle="sold_at"]').flatpickr({
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+    });
+
     const myModalEl = document.getElementById('suggestionModal')
     myModalEl.addEventListener('hidden.bs.modal', event => {
         $('.modal-backdrop').remove();
