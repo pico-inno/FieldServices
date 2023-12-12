@@ -45,4 +45,14 @@ class UOMRepository
         $uoms = UOM::whereUnitCategoryId($unitCategoryId)->get();
         return $uoms;
     }
+
+    public function getByName($uomName)
+    {
+        return UOM::where('name', $uomName)->first();
+    }
+
+    public function getPurchaseUom($uomName, $unit_category_id)
+    {
+        return UOM::where('name', $uomName)->where('unit_category_id', $unit_category_id)->first();
+    }
 }

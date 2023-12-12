@@ -4,6 +4,7 @@ namespace App\Repositories\Product;
 
 use App\Models\Product\VariationTemplates;
 use App\Models\Product\VariationTemplateValues;
+use Illuminate\Support\Facades\Auth;
 
 class VariationRepository
 {
@@ -75,10 +76,20 @@ class VariationRepository
 
     }
 
-    //    public function prepareVariationTemplateValuesData(array $data){
-//        return [
-//            'name' => $data['value'],
-//        ];
-//    }
+    public function getOrCreateVariationId($variationName)
+    {
+
+        if ($variationName){
+            $variation =  VariationTemplates::where('name', $variationName)->first();
+            if (!$variation){
+                $variation = $this->createTemplate(['name' => $variationName, 'created_by' => Auth::id()]);
+            }
+            return $variation->id;
+        }
+
+        return null;
+    }
+
+
 
 }

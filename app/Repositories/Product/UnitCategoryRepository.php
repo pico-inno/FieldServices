@@ -35,4 +35,6 @@ class UnitCategoryRepository
         UnitCategory::where('id', $id)->update(['deleted_by' => auth()->id()]);
         return UnitCategory::destroy($id);
     }
+
+
 }

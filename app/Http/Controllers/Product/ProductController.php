@@ -68,8 +68,10 @@ class ProductController extends Controller
     }
 
 
-    public function productDatas()
+    public function productDatas(Request $request)
     {
+        $length = $request->input('length', 10);
+
         $products = Product::with('productVariations', 'category', 'brand')->get();
 
         return DataTables::of($products)
@@ -252,8 +254,18 @@ class ProductController extends Controller
 
     public function delete(Product $product)
     {
+
+        if ($product->receipe_of_material_id !== null && $product->product_type === 'consumeable'){
+            return response()->json(['error' => 'This product is associated with one or more combo/kit template. Delete the combo/kit template or associate them with a different product.']);
+        }
+
+        if ($product->receipe_of_material_id !== null && $product->product_type === 'service'){
+            return response()->json(['error' => 'This product is associated with one or more service template. Delete the service template or associate them with a different product.']);
+        }
+
         DB::beginTransaction();
         try {
+
             $productVariationIds = ProductVariation::where('product_id', $product->id)->get()->pluck('id'); // to delete
             ProductVariation::whereIn('id', $productVariationIds)->update(['deleted_by' => Auth::user()->id]);
 

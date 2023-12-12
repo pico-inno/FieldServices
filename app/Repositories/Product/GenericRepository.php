@@ -3,6 +3,7 @@
 namespace App\Repositories\Product;
 
 use App\Models\Product\Generic;
+use Illuminate\Support\Facades\Auth;
 
 class GenericRepository
 {
@@ -34,5 +35,16 @@ class GenericRepository
     {
         Generic::where('id', $id)->update(['deleted_by' => auth()->id()]);
         return Generic::destroy($id);
+    }
+
+    public function getOrCreateGenericId($genericName)
+    {
+        if ($genericName){
+            $generic =  Generic::where('name', $genericName)->first();
+            if (!$generic){
+                $generic = $this->create(['name' => $genericName, 'created_by' => Auth::id()]);
+            }
+            return $generic->id;
+        }
     }
 }

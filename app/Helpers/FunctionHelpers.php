@@ -268,9 +268,17 @@ function checkTxEditable($startDate)
 
 
 // --------------------------------------------------    voucher generator
+function productSKU()
+{
+    $products = new \App\Repositories\Product\ProductRepository();
+    $uniqueCount = $products->query()->orderBy('id', 'DESC')->pluck('id')->first() ?? 1;
+
+    return  sprintf('%07d', ($uniqueCount));
+}
 function serviceSaleVoucher()
 {
-    $prefix = getSettingValue('sale_prefix');
+//    $prefix = getSettingValue('sale_prefix');
+    $prefix = 'SS';
 
     if (hasModule('Service') && isEnableModule('Service')){
         $uniqueCount = \Modules\Service\Entities\ServiceSale::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;

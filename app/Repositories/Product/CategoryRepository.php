@@ -3,6 +3,7 @@
 namespace App\Repositories\Product;
 
 use App\Models\Product\Category;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryRepository
 {
@@ -48,6 +49,17 @@ class CategoryRepository
 
     public function getWithRelationships($relations = []){
         return Category::with($relations)->get();
+    }
+
+    public function getOrCreateCategoryId($categoryName)
+    {
+        if ($categoryName){
+            $category =  Category::where('name', $categoryName)->first();
+            if (!$category){
+                $category = $this->create(['name' => $categoryName, 'created_by' => Auth::id()]);
+            }
+            return $category->id;
+        }
     }
 
 }

@@ -2,190 +2,87 @@
 
 namespace App\Imports\Product;
 
-use App\Models\productPackaging;
+use App\Repositories\Product\BrandRepository;
+use App\Repositories\Product\CategoryRepository;
+use App\Repositories\Product\GenericRepository;
+use App\Repositories\Product\ManufacturerRepository;
+use App\Repositories\Product\ProductRepository;
+use App\Repositories\Product\UnitCategoryRepository;
+use App\Repositories\Product\UOMRepository;
+use App\Repositories\Product\VariationRepository;
 use Exception;
-use App\Models\Product\Brand;
-use App\Models\Product\Generic;
-use App\Models\Product\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use App\Models\Product\Category;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use App\Models\Product\ProductVariation;
-use App\Models\Product\VariationTemplates;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use App\Models\Product\VariationTemplateValues;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-use App\Models\Product\ProductVariationsTemplates;
-use App\Models\Product\UnitCategory;
 use App\Models\Product\UOM;
 use PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing;
-use Illuminate\Support\Facades\Validator;
+
 
 class ProductsImport implements
     WithValidation,
     ToCollection,
     WithHeadingRow,
-    WithChunkReading
+    WithChunkReading,
+    WithBatchInserts
 {
     use Importable;
 
-    private $brands;
-    private $categories;
-    private $generics;
-    private $manufacturers;
-    private $unit_category;
+//    private $brands;
+//    private $categories;
+//    private $generics;
+//    private $manufacturers;
+//    private $unit_category;
     private $uom;
-    private $variations;
-    private $variation_values;
-    private  $packageing;
-    private $realtionId = [];
+//    private $variations;
+//    private $variation_values;
+//    private  $packageing;
+//    private $realtionId = [];
 
     private $imageCoordinates = [];
+
+    private $rowCount;
+
+    protected $productRepository,
+        $brandRepository,
+        $manufacturerRepository,
+        $categoryRepository,
+        $genericRepository,
+        $uomRepository,
+        $unitCategoryRepository,
+        $variationRepository;
 
     public function __construct()
     {
 
         ini_set('max_execution_time', '0');
         ini_set("memory_limit", "-1");
-        $this->brands = Brand::select('id', 'name');
-        $this->categories = Category::select('id', 'name', 'parent_id');
-        $this->generics = Generic::select('id', 'name');
-        $this->manufacturers = Manufacturer::select('id', 'name');
-        $this->unit_category = new UnitCategory;
+
         $this->uom = new UOM;
-        $this->variations = VariationTemplates::select('id', 'name');
-        $this->variation_values = VariationTemplateValues::select('id', 'name', 'variation_template_id');
-    }
-
-    private function createOrGetRecord($model, $query, $field1, $value1, $field2 = null)
-    {
-        try {
-        // DB::beginTransaction();
-            if ($value1) {
-                if (array_key_exists($value1, $this->realtionId)) {
-                    $id = $this->realtionId[$value1];
-                    return $id;
-                } else {
-                    if (!$field2) {
-                        $raw_query = $model::where($field1, $value1)->first();
-                        if ($raw_query) {
-                            $this->realtionId[$value1] = $raw_query->id;
-                            return $raw_query->id;
-                        }
-                    }
-                    if ($field2) {
-                        $raw_query = $model::where($field1, $value1)->whereNull($field2)->first();
-                        if ($raw_query) {
-                            $this->realtionId[$value1] = $raw_query->id;
-                            return $raw_query->id;
-                        }
-                    }
-
-                    $newData = $model::create([
-                        $field1 => $value1,
-                        'created_by' => auth()->id()
-                    ])->id;
-                    if ($newData) {
-                        $this->realtionId[$value1] = $newData;
-                        return $newData;
-                    }
-                }
-            }
-            // DB::commit();
-        } catch (\Throwable $th) {
-            // DB::rollBack();
-            return throw new Exception($th->getMessage());
-        }
-    }
-
-    private function formatProductVariation($product_id, $variation_id, $variation_values, $variation_sku, $row, $product_sku)
-    {
-
-        $format_data = [];
-        foreach ($variation_values as $key => $value) {
-            $variation_value_query = $this->variation_values->where('variation_template_id', $variation_id);
-            $vari_val_query_lowercase = $variation_value_query->pluck('name')->map(fn ($v) => strtolower($v));
-            $variation_template_value_id = null;
-            if (!$vari_val_query_lowercase->contains(strtolower($value))) {
-                $variation_template_value_id = VariationTemplateValues::create(['name' => $value, 'variation_template_id' => $variation_id, 'created_by' => auth()->id()])->id;
-            }
-            if ($vari_val_query_lowercase->contains(strtolower($value))) {
-                foreach ($variation_value_query->get() as $v) {
-                    if (strtolower($v->name) === strtolower($value)) {
-                        $variation_template_value_id = $v->id;
-                    }
-                }
-            }
-            if (trim($variation_sku[$key]) == '') {
-                $vari_sku = $product_sku . '-' . $key + 1;
-            } else {
-                $vari_sku = $variation_sku[$key];
-            };
-            $format_data[] = [
-                'product_id' => $product_id,
-                'variation_sku' => $vari_sku,
-                'variation_template_value_id' => $variation_template_value_id,
-                'default_purchase_price' => $row['purchase_price'],
-                'profit_percent' => '',
-                'default_selling_price' => $row['selling_price'],
-                'created_by' => auth()->id()
-            ];
-        };
-
-        return $format_data;
+        $this->productRepository = new ProductRepository();
+        $this->brandRepository = new BrandRepository();
+        $this->manufacturerRepository = new ManufacturerRepository();
+        $this->categoryRepository = new CategoryRepository();
+        $this->genericRepository = new GenericRepository();
+        $this->uomRepository = new UOMRepository();
+        $this->unitCategoryRepository = new UnitCategoryRepository();
+        $this->variationRepository = new VariationRepository();
     }
 
 
-    private function processUoM($rowData)
-    {
-        // $unitCategoryName = $rowData['unit_category'];
-        // if (!$unitCategoryName) {
-        //     throw new \Exception("Unit Category Required");
-        // }
-        try {
-            $uomName = $rowData['uom'];
-            $purchaseUoMName = $rowData['purchase_uom'];
-
-            // $unitCategoryId = $this->unit_category->where('name', $unitCategoryName)->pluck('id')->first();
-            $uom = $this->uom->where('name', $uomName)->select('id', 'unit_category_id')->first();
-            $uomId = $uom->id;
-            $purchaseUoMId = $this->uom->where('name', $purchaseUoMName)->where('unit_category_id', $uom->unit_category_id)->pluck('id')->first();
-            // dd($purchaseUoMId);
-            if (($uomId && !$purchaseUoMId) || (!$uomId && $purchaseUoMId) || (!$uomId && !$purchaseUoMId)) {
-                throw new \Exception("UOM and Purchase uom do not match cateogry.");
-            }
-            if (!$uomId) {
-                throw new \Exception("UoM doesn't exist");
-            }
-            if (!$purchaseUoMId) {
-                throw new \Exception("Purchase UoM doesn't exist");
-            }
-
-            if ($uomId && $purchaseUoMId) {
-                return [
-                    'uom_id' => $uomId,
-                    'purchaseUoM_id' => $purchaseUoMId
-                ];
-            }
-        } catch (\Throwable $th) {
-            $uomName = $rowData['uom'];
-            return throw new Exception("$uomName - UOM not found! Check to ensure the UOM exists", 1);
-        }
-    }
 
     public function collection(Collection $rows)
     {
+        $this->rowCount = $rows->count();
         try {
-        // DB::beginTransaction();
             // begin: for image
             $spreadsheet = IOFactory::load(request()->file('import-products'));
             $i = 0;
@@ -235,18 +132,30 @@ class ProductsImport implements
                 if (array_key_exists($currentRow, $imageArrays)) {
                     $imageName = $currentRow;
                 }
-                $brand_id = $this->createOrGetRecord(Brand::class, $this->brands, 'name', $row['brand']);
-                $category_id = $this->createOrGetRecord(Category::class, $this->categories, 'name', $row['category'], 'parent_id');
-                $generic_id = $this->createOrGetRecord(Generic::class, $this->generics, 'name', $row['generic']);
-                $manufacturer_id = $this->createOrGetRecord(Manufacturer::class, $this->manufacturers, 'name', $row['manufacturer']);
-                $uom = $this->processUoM($row);
+
+                //ok
+                $uomName = $row['uom'];
+                $purchaseUoMName = $row['purchase_uom'];
+
+                $brand_id = $this->brandRepository->getOrCreateBrandId($row['brand']);
+                $category_id = $this->categoryRepository->getOrCreateCategoryId($row['category']);
+                $manufacturer_id = $this->manufacturerRepository->getOrCreateManufacturerId($row['manufacturer']);
+                $generic_id = $this->genericRepository->getOrCreateGenericId($row['generic']);
+                $uom = $this->uomRepository->getByName($uomName);
+                $uom_id = $uom->id;
+                $purchase_uom = $this->uomRepository->getPurchaseUom($purchaseUoMName, $uom->unit_category_id);
+                $purchase_uom_id = $purchase_uom->id ?? null;
+
+                if ($uom_id !== $purchase_uom_id || $purchase_uom_id == null) {
+                    return throw new Exception("UOM '{$row["uom"]}' and Purchase UOM '{$row["purchase_uom"]}' do not match in your excel");
+                }
+
                 $variation_name = $row['variation_name_keep_blank_if_product_type_is_single'];
-                $variation_id = $variation_name ? $this->createOrGetRecord(VariationTemplates::class, $this->variations, 'name', $variation_name) : null;
+                $variation_id = $this->variationRepository->getOrCreateVariationId($variation_name);
+                $sku = $row['sku_leave_blank_to_auto_generate_sku'] ?? productSKU();
+                //ok
 
-                $product_count = Product::withTrashed()->count();
-                $sku = $row['sku_leave_blank_to_auto_generate_sku'] ?? sprintf('%07d', ($product_count + 1));
-
-                $product = new Product([
+                $prepareProductData = [
                     "name" => $row["name"],
                     "product_code" => $row["product_code"],
                     "sku" => $sku,
@@ -259,8 +168,8 @@ class ProductsImport implements
                     "can_sale" => $row['can_sale_0_or_1'] ?? 0,
                     "can_purchase" => $row['can_purchase_0_or_1'] ?? 0,
                     "can_expense" => $row['can_expense_0_or_1'] ?? 0,
-                    "uom_id" => $uom['uom_id'],
-                    "purchase_uom_id" => $uom['purchaseUoM_id'],
+                    "uom_id" => $uom_id,
+                    "purchase_uom_id" => $purchase_uom_id,
                     "product_custom_field1" => $row["custom_field_1"],
                     "product_custom_field2" => $row["custom_field_2"],
                     "product_custom_field3" => $row["custom_field_2"],
@@ -268,49 +177,25 @@ class ProductsImport implements
                     "image" => $imageName ? $imageArrays[$imageName] : null,
                     "product_description" => $row['product_description'],
                     "created_by" => auth()->id()
-                ]);
-                $product->save();
-                $product_id = $product->fresh()->id;
-                $createdProduct = $product->fresh();
+                ];
 
-                $productVariationsTemplates = ProductVariationsTemplates::create([
+                $createdProduct = $this->productRepository->create($prepareProductData);
+
+                $product_id = $createdProduct->id;
+
+                $prepareVariationsTemplatesData = [
                     'product_id' => $product_id,
                     'variation_template_id' => $variation_id,
-                    'created_by' => auth()->id()
-                ]);
+                    'created_by' => Auth::id(),
+                ];
+
+                $createdProductVariationsTemplates = $this->productRepository->createVariationTemplate($prepareVariationsTemplatesData);
+
 
                 //Product Packaging
                 if (isset($row['packaging_info_package_qty_unit'])){
                     $packageRaw = $row['packaging_info_package_qty_unit'];
-                    if ($packageRaw !== null) {
-                        $packages = explode('|', $packageRaw);
-
-                        foreach ($packages as $package) {
-
-                            if (!preg_match('/^([^=]+)=(\d+)-([^=]+)$/', $package, $matches)) {
-
-                                throw new \Exception('Invalid package format: ' . $package);
-                            }
-
-                            $name = $matches[1];
-                            $quantity = $matches[2];
-                            $uom_name = $matches[3];
-
-                            $uom = $this->uom->where('name', trim($uom_name))->select('id', 'unit_category_id')->first();
-                            $uomId = $uom->id;
-
-                            // Create instance of ProductPackaging
-                            productPackaging::create([
-                                'packaging_name' => $name,
-                                'product_id' => $product_id,
-                                'product_variation_id' => $productVariationsTemplates->id,
-                                'quantity' => $quantity,
-                                'uom_id' => $uomId,
-                                'for_purchase' => true,
-                                'for_sale' => true,
-                            ]);
-                        }
-                    }
+                    $this->createPackaging($packageRaw, $product_id, $createdProductVariationsTemplates, $uom->unit_category_id);
                 }
                 //Product Packaging
 
@@ -323,32 +208,134 @@ class ProductsImport implements
 
                     $raw_variation_sku = $row['variation_skus_seperated_values_blank_if_product_type_if_single'];
                     $variation_sku_array = array_map(fn ($value) => trim($value), explode("|", $raw_variation_sku));
-                    $insert_data = $this->formatProductVariation($product_id, $variation_id, $variation_value_array, $variation_sku_array, $row, $sku);
-                    ProductVariation::insert($insert_data);
+
+
+                     $this->createProductVariation($product_id, $variation_id, $variation_value_array, $variation_sku_array, $row, $sku);
+
                 }
 
                 if (strtolower(trim($hasVariation)) === "single") {
-                    ProductVariation::create([
-                        'product_id' => $product_id,
-                        'variation_sku' => $createdProduct->sku,
-                        'default_purchase_price' => $row['purchase_price'],
-                        'profit_percent' => $row['profit_margin'],
-                        'default_selling_price' => $row['selling_price'],
-                        'created_by' => auth()->id()
-                    ]);
+
+                    $preparedProductVariation = $this->prepareProductVariation($row);
+                    $preparedProductVariation['product_id'] = $product_id;
+                    $preparedProductVariation['variation_sku'] = $createdProduct->sku;
+
+                    $this->productRepository->createVariation($preparedProductVariation);
                 }
             }
-            // DB::commit();
+
         } catch (Exception $e) {
-            // DB::rollBack();
+
             $errorMessage = $e->getMessage();
             return throw new Exception($errorMessage);
         }
     }
 
+    private function createProductVariation($product_id, $variation_id, $variation_values, $variation_sku, $row, $product_sku)
+    {
+
+        $variations = [];
+        foreach ($variation_values as $key => $value) {
+
+            $variation_value_query = $this->variationRepository->queryTemplateValues()->where('variation_template_id', $variation_id);
+
+            $variation_value_names = $variation_value_query->pluck('name')->map(fn ($v) => strtolower($v));
+
+
+            $variation_template_value_id = null;
+
+            if (!$variation_value_names->contains(strtolower($value))) {
+                $createdTemplateValues = $this->variationRepository->createTemplateValues([
+                        'name' => $value,
+                        'variation_template_id' => $variation_id,
+                        'created_by' => auth()->id()]
+                );
+                $variation_template_value_id = $createdTemplateValues->id;
+            }
+            if ($variation_value_names->contains(strtolower($value))) {
+                foreach ($variation_value_query->get() as $v) {
+                    if (strtolower($v->name) === strtolower($value)) {
+                        $variation_template_value_id = $v->id;
+                    }
+                }
+            }
+
+            if (trim($variation_sku[$key]) == '') {
+                $vari_sku = $product_sku . '-' . $key + 1;
+            } else {
+                $vari_sku = $variation_sku[$key];
+            };
+            $preparedProductVariation = $this->prepareProductVariation($row);
+            $preparedProductVariation['product_id'] = $product_id;
+            $preparedProductVariation['variation_sku'] = $vari_sku;
+            $preparedProductVariation['variation_template_value_id'] = $variation_template_value_id;
+            $variations[] = $preparedProductVariation;
+        };
+        $this->productRepository->insertVariation($variations);
+
+    }
+
+
+    private function createPackaging($packageRaw, $product_id, $createdProductVariationsTemplates, $unit_category_id)
+    {
+
+        if ($packageRaw !== null) {
+            $packages = explode('|', $packageRaw);
+            $packaging = [];
+            foreach ($packages as $package) {
+
+                if (!preg_match('/^([^=]+)=(\d+)-([^=]+)$/', $package, $matches)) {
+
+                    throw new \Exception('Invalid package format: ' . $package .' in your excel.');
+                }
+
+                $name = $matches[1];
+                $quantity = $matches[2];
+                $uom_name = $matches[3];
+
+                $uom =$this->uomRepository->getPurchaseUom(trim($uom_name), $unit_category_id);
+
+                $uomId = $uom->id ?? null;
+
+                if ($uomId == null) {
+                    return throw new Exception("Package UOM '{$uom_name}' and Default UOM are do not match in your excel");
+                }
+
+                $preparePackagingData = [
+                    'packaging_name' => $name,
+                    'product_id' => $product_id,
+                    'product_variation_id' => $createdProductVariationsTemplates->id,
+                    'quantity' => $quantity,
+                    'uom_id' => $uomId,
+                    'for_purchase' => true,
+                    'for_sale' => true,
+                ];
+                $packaging[] = $preparePackagingData;
+
+            }
+            $this->productRepository->insertPackaging($packaging);
+        }
+    }
+
+    private function prepareProductVariation($row)
+    {
+        return  [
+            'default_purchase_price' => $row['purchase_price'],
+            'profit_percent' => $row['profit_margin'],
+            'default_selling_price' => $row['selling_price'],
+            'created_by' => auth()->id()
+        ];
+    }
+
+
     public function chunkSize(): int
     {
-        return 200;
+        return 1000;
+    }
+
+    public function batchSize(): int
+    {
+        return 1000;
     }
 
     public function rules(): array
@@ -356,15 +343,32 @@ class ProductsImport implements
         return [
             '*.sku_leave_blank_to_auto_generate_sku' => [
                 'nullable',
-                Rule::unique('products', 'sku')
-            ]
+                Rule::unique('products', 'sku'),
+//                ->whereNull('deleted_by')
+            ],
+
+            '*.uom' => [
+                Rule::exists('uom', 'name'),
+            ],
+
+            '*.purchase_uom' => [
+                Rule::exists('uom', 'name'),
+            ],
+
+            '*.has_variation_single_or_variable' => [
+              Rule::In(['single', 'Single','variable','Variable', 'SINGLE', 'VARIABLE'])
+            ],
+
         ];
     }
 
     public function customValidationMessages()
     {
         return [
-            '*.sku_leave_blank_to_auto_generate_sku' => 'The SKU has already been taken.'
+            '*.sku_leave_blank_to_auto_generate_sku' => 'The SKU has already been taken.',
+            '*.uom' => 'UOM not found!',
+            '*.purchase_uom' => 'Purchase UOM not found!',
+            '*.has_variation_single_or_variable' => 'Incorrect name of single or variable',
         ];
     }
 

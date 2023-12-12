@@ -3,6 +3,7 @@
 namespace App\Repositories\Product;
 
 use App\Models\Product\Brand;
+use Illuminate\Support\Facades\Auth;
 
 class BrandRepository
 {
@@ -34,6 +35,17 @@ class BrandRepository
     {
         Brand::where('id', $id)->update(['deleted_by' => auth()->id()]);
         return Brand::destroy($id);
+    }
+
+    public function getOrCreateBrandId($brandName)
+    {
+        if ($brandName){
+            $brand =  Brand::where('name', $brandName)->first();
+            if (!$brand){
+                $brand = $this->create(['name' => $brandName, 'created_by' => Auth::id()]);
+            }
+            return $brand->id;
+        }
     }
 
 

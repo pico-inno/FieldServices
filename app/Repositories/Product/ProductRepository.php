@@ -29,6 +29,11 @@ class ProductRepository
     {
         return AdditionalProduct::query();
     }
+
+    public function getCountWithTrashed()
+    {
+        return Product::withTrashed()->count();
+    }
     public function getAll()
     {
         return Product::all();
@@ -51,6 +56,11 @@ class ProductRepository
         return ProductVariation::create($data);
     }
 
+    public function insertVariation(array $data)
+    {
+        return  ProductVariation::insert($data);
+    }
+
     public function createVariationTemplate(array $data)
     {
         return ProductVariationsTemplates::create($data);
@@ -59,6 +69,11 @@ class ProductRepository
     public function createPackaging(array $data)
     {
         return productPackaging::create($data);
+    }
+
+    public function insertPackaging(array $data)
+    {
+        return productPackaging::insert($data);
     }
 
     public function createAdditionalProduct(array $data)
