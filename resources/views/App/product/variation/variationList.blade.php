@@ -215,7 +215,24 @@
                                 _method: 'DELETE',
                             },
                             success: function (res) {
-                                toastr.success(res.message)
+                                if(res.message){
+                                    toastr.success(res.message)
+                                }
+                                if(res.error){
+
+                                    Swal.fire({
+                                        text: res.error,
+                                        icon: "error",
+                                        buttonsStyling: false,
+
+                                        confirmButtonText: "Ok",
+                                        customClass: {
+                                            confirmButton: "btn fw-bold btn-primary",
+                                        }
+                                    });
+                                }
+
+
                                 table.ajax.reload();
                             }
                         })

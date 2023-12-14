@@ -519,12 +519,13 @@
                         data: 'product',
                         name: 'product.name',
                         render: function(data, type, full, meta) {
+
                             return `
                             <div class="d-flex align-items-center">
                                 <div class="symbol symbol-50px">
                                     ${data.image ? `<span class="symbol-label" style="background-image:url(/storage/product-image/${data.image});"></span>` : `<span class="symbol-label"></span>` }
                                 </div>
-                                <div class="ms-3">${data.name}</div>
+                                <div class="ms-3 ${data.deleted_variation == 'deleted' ? 'text-danger' : ''}">${data.name}</div>
                             </div>
                             `;
                         }
@@ -762,9 +763,10 @@
                         category = '';
                     }
                 // end: for category conditions
-                let variation_name = data.purchase_price.variation_name[index];
+                let variation_name = data.purchase_price.variation_name[index] != 'deleted' ? data.purchase_price.variation_name[index] : data.purchase_price.deleted_variation_name[index];
                 let selling_price = data.selling_price.selling_prices[index];
                 let variation_id = data.product_variations[index].id;
+                let cssClass = data.purchase_price.variation_name[index] == 'deleted' ? 'text-danger' : 'text-gray-500';
                 return `
                     <table class="table" >
                         <tr>
@@ -779,7 +781,7 @@
                                     </ul>
                                 </div>
                             </td>
-                            <td class="w-150px text-gray-500">${data.name} | ${variation_name}</td>
+                            <td class="w-150px ${cssClass}">${data.name} | ${variation_name}</td>
                             <td class="text-start w-150px text-gray-500">Ks ${purchase_price}</td>
                             <td class="text-start w-100px text-gray-500">Ks ${selling_price}</td>
                             <td class="text-start w-100px text-gray-500">${data.has_variation}</td>
