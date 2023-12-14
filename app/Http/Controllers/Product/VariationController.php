@@ -6,7 +6,9 @@ use App\Actions\product\VariationAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\Variation\VariationCreateRequest;
 use App\Http\Requests\Product\Variation\VariationUpdateRequest;
+use App\Models\Product\Product;
 use App\Models\Product\VariationTemplates;
+use App\Repositories\Product\ProductRepository;
 use App\Repositories\Product\VariationRepository;
 use App\Services\product\VariationService;
 use Yajra\DataTables\Facades\DataTables;
@@ -15,8 +17,11 @@ use Yajra\DataTables\Facades\DataTables;
 class VariationController extends Controller
 {
     protected $variationRepository;
+    protected $productRepository;
 
-    public function __construct(VariationRepository $variationRepository)
+    public function __construct(VariationRepository $variationRepository,
+    ProductRepository $productRepository,
+    )
     {
 
         $this->middleware(['auth', 'isActive']);
@@ -26,6 +31,7 @@ class VariationController extends Controller
         $this->middleware('canDelete:variation')->only('delete');
 
         $this->variationRepository = $variationRepository;
+        $this->productRepository = $productRepository;
     }
 
     public function index()
@@ -66,6 +72,12 @@ class VariationController extends Controller
 
     public function delete(VariationTemplates $variation, VariationAction $variationAction)
     {
+        $variation_value_ids = $this->variationRepository->queryTemplateValues()->where('variation_template_id', $variation->id)->pluck('id');
+        $products = $this->productRepository->queryVariation()->whereIn('variation_template_value_id', $variation_value_ids)->get();
+
+        if (!$products->isEmpty()){
+            return response()->json(['error' => 'This variation is associated with one or more product. Delete these products or associate them with a different variation.']);
+        }
 
         $variationAction->delete($variation->id);
 

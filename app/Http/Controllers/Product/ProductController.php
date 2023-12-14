@@ -76,12 +76,21 @@ class ProductController extends Controller
 
         return DataTables::of($products)
             ->addColumn('product', function ($product) {
-                return ['image' => $product->image, 'name' => $product->name];
+                $deleted_variation = false;
+
+                if ($product->has_variation === "variable") {
+                    foreach ($product->productVariations as $value) {
+                        $deleted_variation = optional($value)->variationTemplateValue->name ??  'deleted';
+                    }
+                }
+
+                return ['image' => $product->image, 'name' => $product->name, 'deleted_variation' => $deleted_variation];
                 // return ['image' => $product->image, 'name' => $product->name];
             })
             ->addColumn('purchase_price', function ($product) {
                 $purchase_price = null;
                 $variation_values = null;
+                $deleted_variation_values = null;
                 // for single product
                 if ($product->has_variation === "single") {
                     $purchase_price = $product->productVariations[0]->default_purchase_price ?? 0;
@@ -90,10 +99,12 @@ class ProductController extends Controller
                 if ($product->has_variation === "variable") {
                     foreach ($product->productVariations as $value) {
                         $purchase_price[] = $value->default_purchase_price;
-                        $variation_values[] = $value->variationTemplateValue->name;
+
+                        $variation_values[] = optional($value)->variationTemplateValue->name ??  'deleted';
+                        $deleted_variation_values[] = optional($value)->variationTemplateValue->name ?? VariationTemplateValues::withTrashed()->where('id', $value->variation_template_value_id)->pluck('name')->first();
                     }
                 }
-                return ['purchase_prices' => $purchase_price, 'variation_name' => $variation_values, 'has_variation' => $product->has_variation];
+                return ['purchase_prices' => $purchase_price, 'variation_name' => $variation_values, 'deleted_variation_name' => $deleted_variation_values, 'has_variation' => $product->has_variation];
             })
             ->addColumn('selling_price', function ($product) {
                 $selling_price = null;
