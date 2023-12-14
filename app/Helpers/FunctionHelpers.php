@@ -7,6 +7,7 @@ use App\Models\Currencies;
 use App\Models\sale\sales;
 use App\Models\Product\UOM;
 use App\Models\openingStocks;
+use App\Models\Stock\StockAdjustment;
 use App\Models\stock_history;
 use App\Models\systemSetting;
 use App\Helpers\SettingHelpers;
@@ -301,9 +302,10 @@ function stockTransferVoucher($uniqueCount)
     $prefix = getSettingValue('stock_transfer_prefix');
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
-function stockAdjustmentVoucherNo($uniqueCount)
+function stockAdjustmentVoucherNo()
 {
     $prefix = getSettingValue('stock_adjustment_prefix');
+    $uniqueCount = StockAdjustment::orderByDesc('id')->value('id') ?? 0;
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
 function expenseVoucherNo($uniqueCount)

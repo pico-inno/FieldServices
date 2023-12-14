@@ -16,7 +16,7 @@
 
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">{{__('adjustment.create')}}</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">NEW{{__('adjustment.create')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
@@ -37,75 +37,83 @@
                 @csrf
                 <!--begin::Main column-->
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
-                    <!--begin::General options-->
-                                        <div class="card card-flush py-4">
-
-                                            <div class="card-body pt-0">
-                                                <div class="row mt-3">
-                                                    <div class="col-md-9 fv-row">
-                                                        <label class="form-label required" for="business_location">
-                                                            {{__('adjustment.location')}}
-                                                        </label>
-                                                        <div class="input-group">
-                                                            <div class="input-group-text"><i class="fa-solid fa-location-dot"></i></div>
-                                                            <div class="overflow-hidden flex-grow-1">
-                                                            <select name="business_location" id="business_location_id"
-                                                                    class="form-select fw-bold rounded-0 form-select-sm"
-                                                                    data-kt-select2="true" data-hide-search="false"
-                                                                    data-placeholder="{{__('adjustment.placeholder_location')}}" data-allow-clear="true"
-                                                                    data-kt-user-table-filter="role" data-hide-search="true">
-                                                                <option></option>
-                                                                @foreach ($locations as $location)
-                                                                    <option @selected(old('business_location', \Illuminate\Support\Facades\Auth::user()->default_location_id)==$location->id) value="{{$location->id}}">{{$location->name}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            </div>
-                                                            <button type="button" class="input-group-text "  data-bs-toggle="tooltip" data-bs-custom-class="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-primary-emphasis'>{{__('adjustment.location_tip')}}</span>">
-                                                                <i class="fa-solid fa-circle-info text-primary"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3 mb-4">
-                                                        <label class="form-label required" for="status">
-                                                           {{__('adjustment.status')}}
-                                                        </label>
-                                                        <div class="fv-row">
-                                                            <select name="status" class="form-select form-select-sm fw-bold "
-                                                                    data-kt-select2="true"
-                                                                    data-hide-search="true" data-placeholder="Status"
-                                                                    data-allow-clear="true" data-kt-user-table-filter="role"
-                                                                    data-hide-search="true">
-                                                                <option></option>
-                                                                <option value="prepared" @selected(old('status') == 'prepared') selected>Prepared</option>
-                                                                <option value="completed" @selected(old('status') == 'completed')>Completed</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-3">
-                                                    <div class="col-md-12 fv-row">
-                                                        <!--begin::Label-->
-                                                        <label class="fs-6 fw-semibold mb-2">Remark</label>
-                                                        <!--end::Label-->
-                                                        <!--begin::Input-->
-                                                        <textarea name="remark" class="form-control " cols="10" rows="3"></textarea>
-                                                        <!--end::Input-->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--end::Card header-->
+                    <!--begin::Main card-->
+                    <div class="card card-flush py-4">
+                        <div class="card-body pt-0">
+                            <div class="row mt-3">
+                                <div class="col-md-6 fv-row">
+                                    <label class="form-label required" for="business_location">
+                                        {{__('adjustment.location')}}
+                                    </label>
+                                    <div class="input-group">
+                                        <div class="input-group-text"><i class="fa-solid fa-location-dot"></i></div>
+                                        <div class="overflow-hidden flex-grow-1">
+                                        <select name="business_location" id="business_location_id"
+                                                class="form-select fw-bold rounded-0 form-select-sm"
+                                                data-kt-select2="true" data-hide-search="false"
+                                                data-placeholder="{{__('adjustment.placeholder_location')}}" data-hide-search="true">
+                                            <option></option>
+                                            @foreach ($locations as $location)
+                                                <option value="{{$location->id}}"  @selected(old('business_location', Auth::user()->default_location_id) == $location->id)>{{businessLocationName($location)}}</option>
+                                            @endforeach
+                                        </select>
                                         </div>
-                    <!--end::General options-->
+                                        <button type="button" class="input-group-text "  data-bs-toggle="tooltip" data-bs-custom-class="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-primary-emphasis'>{{__('adjustment.location_tip')}}</span>">
+                                            <i class="fa-solid fa-circle-info text-primary"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <label class="form-label required" for="status">
+                                        Condition
+                                    </label>
+                                    <div class="fv-row">
+                                        <select name="condition" class="form-select form-select-sm fw-bold "
+                                                data-kt-select2="true"
+                                                data-hide-search="true" data-placeholder="Condition">
+                                            <option></option>
+                                            <option value="normal" @selected(old('condition') == 'normal') selected>Normal</option>
+                                            <option value="abnormal" @selected(old('condition') == 'abnormal')>Abnormal</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <label class="form-label required" for="status">
+                                       {{__('adjustment.status')}}
+                                    </label>
+                                    <div class="fv-row">
+                                        <select name="status" class="form-select form-select-sm fw-bold "
+                                                data-kt-select2="true"
+                                                data-hide-search="true" data-placeholder="Status">
+                                            <option></option>
+                                            <option value="prepared" @selected(old('status') == 'prepared') selected>Prepared</option>
+                                            <option value="completed" @selected(old('status') == 'completed')>Completed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12 fv-row">
+                                    <!--begin::Label-->
+                                    <label class="fs-6 fw-semibold mb-2">Remark</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <textarea name="remark" class="form-control " cols="10" rows="3"></textarea>
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                    </div>
+                    <!--end::Main card-->
                     <div class="card">
                         <div class="card-body">
-
-                            @error('details')
+                            @error('adjustment_details')
                             <div class="alert-danger alert">
-                                At least one item is required to complete adjustment!
+                                {{$message}}
                             </div>
                             @enderror
                             <div class="row align-items-center mb-8">
-
                                 <div class="col-12">
                                     <div class="input-group quick-search-form p-0">
                                         <div class="input-group-text">
@@ -119,6 +127,72 @@
                                             style="max-height: 300px;z-index: 100;"></div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="mb-5">
+                                <!--begin::Heading-->
+                                <div class="d-flex align-items-start collapsible py-1 toggle mb-0 collapsed user-select-none" data-bs-toggle="collapse"
+                                     data-bs-target="#keyword_setting" aria-expanded="false">
+                                    <!--begin::Icon-->
+                                    <div class="me-1">
+                                        <i class="ki-outline ki-down toggle-on text-primary fs-3"></i>
+                                        <i class="ki-outline ki-right toggle-off fs-3"></i>
+                                    </div>
+                                    <!--end::Icon-->
+
+                                    <!--begin::Section-->
+                                    <div class="d-flex align-items-start flex-wrap">
+                                        <!--begin::Title-->
+                                        <h3 class="text-gray-800 fw-semibold cursor-pointer me-3 mb-0 fs-7 ">
+                                            Click to set Search Keyword
+                                        </h3>
+                                        <!--end::Title-->
+
+                                        <!--begin::Label-->
+                                        <span class="badge badge-light my-1 d-block d-none">React</span>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Section-->
+                                </div>
+                                <!--end::Heading-->
+
+                                <!--begin::Body-->
+                                <div id="keyword_setting" class="fs-6 ms-10 collapse" style="">
+                                    <div class="row mt-5">
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="p_kw" checked disabled />
+                                                <label class="form-check-label cursor-pointer" for="p_kw">
+                                                    Product Name
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="psku_kw" checked />
+                                                <label class="form-check-label cursor-pointer" for="psku_kw">
+                                                    Product Sku
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="vsku_kw" />
+                                                <label class="form-check-label cursor-pointer" for="vsku_kw">
+                                                    Variation Sku
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="pgbc_kw" />
+                                                <label class="form-check-label cursor-pointer" for="pgbc_kw">
+                                                    Packaging Barcode
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end::Content-->
                             </div>
                             <div class="table-responsive">
                                 <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="adjustment_table">
@@ -161,39 +235,7 @@
 @endsection
 
 @push('scripts')
-    <script>
-        // const date = new Date();
-        //
-        // let day = date.getDate();
-        // let month = date.getMonth() + 1;
-        // let year = date.getFullYear();
-        //
-        // $("#kt_datepicker_2").flatpickr({
-        //     dateFormat: "d-m-Y",
-        //     conjunction: ""
-        // });
-        //
-        // let query = document.querySelector('#kt_datepicker_2');
-        // query.value = `${day}-${month}-${year}`;
-        //
-        //
-        // $(document).ready(function() {
-        //
-        //     var $fromLocationSelect = $('select[name="from_location"]');
-        //     var $toLocationSelect = $('select[name="to_location"]');
-        //
-        //
-        //     $fromLocationSelect.on('change', function() {
-        //         var selectedLocation = $(this).val();
-        //
-        //         $toLocationSelect.find('option').prop('disabled', false);
-        //         $toLocationSelect.find('option[value="' + selectedLocation + '"]').prop('disabled', true);
-        //         $toLocationSelect.trigger('change');
-        //     });
-        // });
 
-
-    </script>
-    @include('App.stock.adjustment.include.quickSearchProducts')
+    @include('App.stock.adjustment.include.searchProductsJS')
     <script src={{asset('customJs/stock/validation/adjustmentAdd.js')}}></script>
 @endpush

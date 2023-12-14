@@ -58,7 +58,7 @@
 
                         <div class="card-body pt-0">
                             <div class="row mt-3">
-                                <div class="col-md-9">
+                                <div class="col-md-6">
                                     <label class="form-label required" for="">
                                         {{__('adjustment.location')}}
                                     </label>
@@ -68,11 +68,11 @@
                                                 {{ $stockAdjustment->status == 'completed' ? 'disabled' : '' }}
                                                 class="form-select fw-bold rounded-0 form-select-sm"
                                                 data-kt-select2="true" data-hide-search="false"
-                                                data-placeholder="{{__('adjustment.placeholder_location')}}" data-allow-clear="true"
-                                                data-kt-user-table-filter="role" data-hide-search="true">
+                                                data-placeholder="{{__('adjustment.placeholder_location')}}"
+                                                 data-hide-search="true">
                                             <option></option>
                                             @foreach ($locations as $location)
-                                                <option  @selected($stockAdjustment->business_location == $location->id) value="{{$location->id}}">{{$location->name}}</option>
+                                                <option value="{{$location->id}}"  @selected(old('business_location', $stockAdjustment->business_location) == $location->id)>{{businessLocationName($location)}}</option>
                                             @endforeach
                                         </select>
                                         <button type="button" class="input-group-text "  data-bs-toggle="tooltip" data-bs-custom-class="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-primary-emphasis'>{{__('adjustment.location_tip')}}</span>">
@@ -81,6 +81,20 @@
                                         @if($stockAdjustment->status == 'completed')
                                             <input type="hidden" value="{{$stockAdjustment->business_location}}" name="business_location">
                                         @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <label class="form-label required" for="status">
+                                        Condition
+                                    </label>
+                                    <div class="fv-row">
+                                        <select name="condition" class="form-select form-select-sm fw-bold "
+                                                data-kt-select2="true"
+                                                data-hide-search="true" data-placeholder="Condition">
+                                            <option></option>
+                                            <option value="normal" @selected(old('condition') == 'normal') selected>Normal</option>
+                                            <option value="abnormal" @selected(old('condition') == 'abnormal')>Abnormal</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-3 mb-4">
