@@ -90,6 +90,7 @@ use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
@@ -961,6 +962,10 @@ Route::prefix('pos')->group(function () {
         Route::post('{id}/session/store', 'sessionStore')->name('pos.sessionStore');
         Route::post('{id}/session/destory', 'sessionDestory')->name('pos.sessionDestory');
     });
+});
+
+Route::prefix('invoice')->controller(InvoiceController::class)->group(function(){
+    Route::get('create','create')->name('invoice.create');
 });
 //============================ End: POS ==============================================
 // POS
