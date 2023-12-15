@@ -1,8 +1,8 @@
 @extends('App.main.navBar')
 
-@section('campaign_icon', 'active')
-@section('campaign_show', 'active show')
-@section('campaign_list_active', 'active')
+@section('invoice', 'active')
+@section('invoice_show', 'active show')
+@section('invoice_active', 'active')
 
 @section('styles')
 
@@ -35,7 +35,6 @@
 
                             <option value="A4"><b>A4</option>
                             <option value="A3"><b>A3</option>
-
                             <option value="A5"><b>A5</option>
                             <option value="Legal"><b>Legal</option>
                             <option value="80mm"><b>80mm</option>
@@ -102,7 +101,7 @@
                             <input type="checkbox" name="" class="column">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Descount</label>
+                            <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Discount</label>
                             <input type="checkbox" name="" class="column">
                         </div>
 

@@ -489,10 +489,10 @@
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                     data-bs-placement="right" data-bs-dismiss="click" title="Invoice">
                                     <!--begin::Nav link-->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light  @yield('contact_active')"
+                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('invoice')"
                                         data-bs-toggle="tab" href="#kt_aside_nav_tab_invoice">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
-                                        <i class="fa-solid fa-address-book fs-6"></i>
+                                        <i class="fa-solid fa-file-invoice fs-6"></i>
                                     </a>
                                     <!--end::Nav link-->
                                 </li>
@@ -1087,7 +1087,7 @@
                                     @endif
                                             <!--begin::Wrapper-->
 
-                                            <div class="tab-pane fade "
+                                            <div class="tab-pane fade  @yield('invoice_show')"
                                                 id="kt_aside_nav_tab_invoice" role="tabpanel">
 
                                                 <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
@@ -1111,14 +1111,12 @@
                                                                     <!--begin:Menu item-->
                                                                     <div class="menu-item">
                                                                         <!--begin:Menu link-->
-                                                                        <a class="menu-link"
-                                                                            href="{{ route('invoice.create') }}">
-
+                                                                        <a class="menu-link @yield('invoice_active')" href="{{ route('invoice.create') }}">
                                                                             <span class="menu-icon">
                                                                                 <i class="fa-solid fa-circle-plus"></i>
                                                                             </span>
                                                                             <span
-                                                                                class="menu-title fs-6">Invoice</span>
+                                                                                class="menu-title fs-6">Add Invoice</span>
                                                                         </a>
                                                                         <!--end:Menu link-->
                                                                     </div>
