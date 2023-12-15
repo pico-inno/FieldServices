@@ -30,7 +30,7 @@
                         <!--end::Label-->
 
                         <!--begin::Select-->
-                        <select name="paperSize" id="paperSize" aria-label="Select a Papersize" data-kt-select2="true"  data-status="filter"  data-kt-select2="true" data-hide-search="false" data-allow-clear="true"  data-hide-search="true"
+                        <select name="paperSize" id="paperSize" aria-label="Select a Papersize"   data-status="filter"  data-kt-select2="true" data-hide-search="false" data-allow-clear="true"  data-hide-search="true"
                             data-placeholder="Select Papersize" class="form-select form-select-solid">
 
                             <option value="A4"><b>A4</option>
