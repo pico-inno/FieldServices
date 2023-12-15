@@ -208,8 +208,36 @@ class ProductController extends Controller
 
     public function edit(Product $product, productServices $productServices)
     {
+
+
+        $product_variation_template_value_ids = $this->productRepository->query()
+            ->leftJoin('product_variations', 'product_variations.product_id', '=', 'products.id')
+             ->select('products.*', 'product_variations.variation_template_value_id as variation_template_value_id')
+             ->where('products.id', $product->id)
+             ->pluck('variation_template_value_id');
+
+       $variation_template_value_ids = $this->productRepository->queryVariationsTemplates()
+           ->leftJoin('variation_template_values', 'variation_template_values.variation_template_id', '=', 'product_variations_tmplates.variation_template_id')
+           ->where('product_variations_tmplates.product_id', $product->id)
+           ->select('variation_template_values.*')
+           ->pluck('id', 'name');
+
+        $remain_variation_ids = array_diff($variation_template_value_ids->toArray(), $product_variation_template_value_ids->toArray());
+
+
+//        if (empty($difference1) && empty($difference2)) {
+//            echo "Arrays have the same values.";
+//        } else {
+//            echo "Arrays have different values.\n";
+//            echo "Values in the first array but not in the second: " . implode(', ', $difference1) . "\n";
+//            echo "Values in the second array but not in the first: " . implode(', ', $difference2) . "\n";
+//        }
+
+
+
         return view('App.product.product.productEdit', [
                 'product' => $product,
+                'remain_variation_ids' =>$remain_variation_ids,
                 'brands' => $this->brandRepository->getAll(),
                 'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
                 'manufacturers' => $this->manufacturerRepository->getAll(),
@@ -245,6 +273,7 @@ class ProductController extends Controller
                 $packagingServices = new packagingServices();
                 $packagingServices->update($request->packaging_repeater, $product);
             }
+
             // Update Product Variation Template
             ProductVariationsTemplates::where('product_id', $product->id)->update([
                 'product_id' => $product->id,
@@ -477,6 +506,8 @@ class ProductController extends Controller
                 }
             }
         }
+
+
         if ($has_variation === "single") {
             $productSingle = [
                 'product_id' => $nextProductId,
