@@ -504,6 +504,7 @@
                                                                 @endforeach
                                                                 <input type="hidden" name="variation_template_id_hidden" value="{{ $product->productVariationTemplates()->first()->variation_template_id }}">
                                                             </select>
+                                                            <a class="btn btn-primary mt-3 btn-sm" id="remainVariationAdd">Add Remain Value</a>
                                                         </td>
                                                         <td>
                                                             <div class="table-responsive">
@@ -1222,6 +1223,36 @@
             }
             // for variation select
             const variationSelect = $('#variationSelect');
+            const remainVariationAdd = $('#remainVariationAdd');
+            const remainVariationIds = @json($remain_variation_ids);
+console.log(remainVariationIds)
+            if (remainVariationIds.length === 0) {
+
+                remainVariationAdd.addClass('d-none')
+            } else {
+                // Enable the button
+                remainVariationAdd.removeClass('d-none');
+            }
+
+            $(document).on('click', '#remainVariationAdd', function() {
+                $.each(remainVariationIds, function(key, value) {
+                    let cloneRow = $(newVariation).clone();
+                    cloneRow.find('input[name="variation_sku[]"]').val()
+                    cloneRow.find('input[name="variation_value[]"]').val(key)
+                    cloneRow.find('input[name="variation_id[]"]').val(value)
+                    cloneRow.find('input[name="product_variation_id[]"]').val()
+                    cloneRow.find('input[name="exc_purchase[]"]').val()
+                    cloneRow.find('input[name="inc_purchase[]"]').val()
+                    cloneRow.find('input[name="profit_percentage[]"]').val()
+                    cloneRow.find('input[name="selling_price[]"]').val()
+                    cloneRow.find('input[name="alert_quantity[]"]').val()
+                    cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
+                    $('#variation-row').append(cloneRow);
+                });
+                calculateVariation();
+                remainVariationAdd.prop('disabled', true)
+                remainVariationAdd.text('Added')
+            })
 
             // show old value variation
             let toShowVariation = false;
@@ -1245,7 +1276,7 @@
                         cloneRow.find('input[name="alert_quantity[]"]').val(item.alert_quantity)
                         cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
                         $('#variation-row').append(cloneRow);
-                    })
+                    });
                     calculateVariation();
                 }
                 // variationCalculate();
