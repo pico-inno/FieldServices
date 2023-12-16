@@ -318,7 +318,7 @@
                         <input type="text" class="form-control form-control-sm" name="transfer_details[${unique_name_id}][remark]">
                     </td>
                     <th>
-                    ${$('#transfer_table tbody tr').length}
+                    
                         <i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i>
                     </th>
                 </tr>
