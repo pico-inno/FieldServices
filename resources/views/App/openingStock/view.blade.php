@@ -85,12 +85,12 @@
                                         }
                                     @endphp
                                     <tr class="text-center">
-                                        <!--begin::Name=-->
+                                        {{-- <!--begin::Name=--> --}}
                                         <td class="text-center">
                                             {{$key+1}}
                                         </td>
-                                        <!--end::Name=-->
-                                        <!--begin::Email=-->
+                                        {{-- <!--end::Name=-->
+                                        <!--begin::Email=--> --}}
                                         <td>
                                             {{arr($p,'name','','Unknown Product')}}
                                             @if(isset($product_variation['variation_template_value']))
@@ -106,7 +106,7 @@
                                             {{round($osd->quantity,2)}}
                                         </td>
                                         <td>
-                                            {{round($osd->price,2)}}
+                                            {{round($osd->uom_price,2)}}
                                         </td>
                                         <td>
                                             {{round($osd->subtotal,2)}}
