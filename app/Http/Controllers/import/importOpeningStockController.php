@@ -17,12 +17,16 @@ class importOpeningStockController extends Controller
 {
     public function __construct()
     {
+
         $this->middleware(['auth', 'isActive']);
     }
     public function import(Request $request)
     {
 
         try {
+
+            ini_set('max_execution_time', '0');
+            ini_set("memory_limit", "-1");
             DB::beginTransaction();
             $file = $request->file('ImportedFile');
             request()->validate([

@@ -32,6 +32,11 @@ class openingStockController extends Controller
 
     public function __construct()
     {
+
+        ini_set('max_execution_time', '0');
+        ini_set("memory_limit", "-1");
+        ini_set("max_allowed_packet", "-1");
+        ini_set('max_input_vars', 20000);
         $this->middleware(['auth', 'isActive']);
     }
     public function index()
