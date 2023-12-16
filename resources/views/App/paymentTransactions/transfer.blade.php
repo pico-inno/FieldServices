@@ -29,9 +29,19 @@
                 <div class="row mb-6">
                     <div class="col-12">
                         <div class="fv-row mb-7">
+                            <label class="required fs-6 fw-semibold form-label mb-1 required">Transfer at </label>
+                            <div class="overflow-hidden flex-grow-2">
+                                <input type="text" class="form-control form-control-sm" data-td-toggle="datetimepicker" name="payment_date" value="{{now()->format('Y-M-d h:i')}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <div class="col-12">
+                        <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Transfer To </label>
                             <div class="overflow-hidden flex-grow-2">
-                                <select  id="rx_account" class="form-select form-select-sm form-select-dark"   name="rx_account_id" data-kt-select2="true" data-placeholder="Select Currency" data-allow-clear="true" data-dropdown-parent="#transferModal">
+                                <select  id="rx_account" class="form-select form-select-sm form-select-dark"   name="rx_account_id" data-kt-select2="true" data-placeholder="Select Receive Account" data-allow-clear="true" data-dropdown-parent="#transferModal">
                                     <option value="" disabled selected>Select Receive Account</option>
                                     @foreach ($accounts as $a)
                                         <option value="{{$a->id}}">{{$a->name}} ({{$a->account_number}})</option>
@@ -67,6 +77,10 @@
 <script>
     numberOnly();
     $('[data-kt-select2="true"]').select2();
+    $('[data-td-toggle="datetimepicker"]').flatpickr({
+        enableTime: true,
+        dateFormat: "Y-M-d H:i",
+    });
     var accounts=@json($accounts);
     var currencyDp={{$currencyDp}};
     (

@@ -3369,12 +3369,12 @@
                             @php
                                 $lang=Auth::user()->personal_info->language;
                             @endphp
-                            @if ($lang=='en')
-                                English <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
-                            @elseif ($lang=='my')
+                            @if ($lang=='my')
                                 မြန်မာ <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/myanmar.svg")}} alt="" />
                             @elseif ($lang=='th')
                                 ภาษาไทย <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/thailand.svg")}} alt="" />
+                            @else
+                            English <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
                             @endif
 
                         </a>

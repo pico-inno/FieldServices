@@ -24,6 +24,17 @@
                             </div>
                     </div>
                 </div>
+                <div class="row mb-6">
+                    <div class="col-12">
+                        <div class="fv-row mb-7">
+                            <label class="required fs-6 fw-semibold form-label mb-1 required">Deposite at </label>
+                            <div class="overflow-hidden flex-grow-2">
+                                <input type="text" class="form-control form-control-sm" data-td-toggle="datetimepicker"
+                                    name="payment_date" value="{{now()->format('Y-M-d h:i')}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-footer py-3 ">
@@ -37,6 +48,10 @@
 
 
 <script>
+    $('[data-td-toggle="datetimepicker"]').flatpickr({
+        enableTime: true,
+        dateFormat: "Y-M-d H:i",
+    });
     numberOnly();
         // user update validation
     var depositeValidator = function () {

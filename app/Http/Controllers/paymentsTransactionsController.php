@@ -14,6 +14,7 @@ use App\Models\purchases\purchases;
 use App\Models\paymentsTransactions;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessSettings;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 
 class paymentsTransactionsController extends Controller
@@ -74,54 +75,68 @@ class paymentsTransactionsController extends Controller
 
 
     public function storeWithdrawl($id,Request $request){
-        $withdrawlAmount=$request->withdrawl_amount;
+        try {
+            DB::beginTransaction();
+            $withdrawlAmount = $request->withdrawl_amount;
 
-        $account=paymentAccounts::where('id',$id)->first();
-        $currentBalance=$account->current_balance;
-        Validator::make([
-            'withdrawlAmount'=>$withdrawlAmount,
-            'currentBalance'=>$currentBalance
-        ],[
-            'withdrawlAmount'=>'lte:currentBalance|required'
-        ])->validate();
-        paymentAccounts::where('id',$id)->update([
-            'current_balance'=>$currentBalance-$withdrawlAmount
-        ]);
-        paymentsTransactions::create([
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
-            'payment_date'=>now(),
-            'payment_account_id'=>$account->id,
-            'transaction_type'=>'withdrawl',
-            'payment_type'=>'credit',
-            'payment_amount'=>$withdrawlAmount,
-            'currency_id'=>$account->currency_id,
-        ]);
-        return back()->with(['success'=>'Successfully withdrawls']);
+            $account = paymentAccounts::where('id', $id)->first();
+            $currentBalance = $account->current_balance;
+            Validator::make([
+                'withdrawlAmount' => $withdrawlAmount,
+                'currentBalance' => $currentBalance
+            ], [
+                'withdrawlAmount' => 'lte:currentBalance|required'
+            ])->validate();
+            paymentAccounts::where('id', $id)->update([
+                'current_balance' => $currentBalance - $withdrawlAmount
+            ]);
+            paymentsTransactions::create([
+                'payment_voucher_no' => generatorHelpers::paymentVoucher(),
+                'payment_date' => $request->payment_date ? date_create($request->payment_date) : now(),
+                'payment_account_id' => $account->id,
+                'transaction_type' => 'withdrawl',
+                'payment_type' => 'credit',
+                'payment_amount' => $withdrawlAmount,
+                'currency_id' => $account->currency_id,
+            ]);
+            DB::commit();
+            return back()->with(['success' => 'Successfully withdrawls']);
+        } catch (\Throwable $th) {
+            DB::commit();
+            return back()->with(['error' => 'Something Wrong']);
+        }
     }
 
 
     public function depositStore($id,Request $request){
-        $depositAmount=$request->deposit_amount;
-        $account=paymentAccounts::where('id',$id)->first();
-        $currentBalance=$account->current_balance;
-        Validator::make([
-            'depoist_amount'=>$depositAmount,
-        ],[
-            'depoist_amount'=>'required'
-        ])->validate();
-        paymentAccounts::where('id',$id)->update([
-            'current_balance'=>$currentBalance+$depositAmount
-        ]);
-        paymentsTransactions::create([
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher(),
-            'payment_date'=>now(),
-            'payment_account_id'=>$account->id,
-            'transaction_type'=>'deposit',
-            'payment_type'=>'debit',
-            'payment_amount'=>$depositAmount,
-            'currency_id'=>$account->currency_id,
-        ]);
-        return back()->with(['success'=>'Successfully withdrawls']);
+        try {
+            DB::beginTransaction();
+            $depositAmount = $request->deposit_amount;
+            $account = paymentAccounts::where('id', $id)->first();
+            $currentBalance = $account->current_balance;
+            Validator::make([
+                'depoist_amount' => $depositAmount,
+            ], [
+                'depoist_amount' => 'required'
+            ])->validate();
+            paymentAccounts::where('id', $id)->update([
+                'current_balance' => $currentBalance + $depositAmount
+            ]);
+            paymentsTransactions::create([
+                'payment_voucher_no' => generatorHelpers::paymentVoucher(),
+                'payment_date' => $request->payment_date ? date_create($request->payment_date) : now(),
+                'payment_account_id' => $account->id,
+                'transaction_type' => 'deposit',
+                'payment_type' => 'debit',
+                'payment_amount' => $depositAmount,
+                'currency_id' => $account->currency_id,
+            ]);
+            DB::commit();
+            return back()->with(['success' => 'Successfully withdrawls']);
+        } catch (\Throwable $th) {
+            DB::commit();
+            return back()->with(['error' => 'Something Wrong']);
+        }
     }
     public function transferUi($id){
         $current_acc=paymentAccounts::where('id',$id)->with('currency')->first();
@@ -130,59 +145,82 @@ class paymentsTransactionsController extends Controller
         return view('App.paymentTransactions.transfer',compact('current_acc','accounts','currencyDp'));
     }
     public function makeTransfer($paymentAccountId){
-        $request=request();
-        $rx_account_id=$request->rx_account_id;
-        $tx_amount=$request->tx_amount;
-        $rx_amount=$request->rx_amount;
-        $this->transfer($paymentAccountId,$rx_account_id,$tx_amount,$rx_amount);
-        return back()->with(['success'=>'Successfully transfer']);
+        try {
+            DB::beginTransaction();
+            $request = request();
+            $rx_account_id = $request->rx_account_id;
+            $tx_amount = $request->tx_amount;
+            $rx_amount = $request->rx_amount;
+            $payment_date = $request->payment_date;
+            $this->transfer($paymentAccountId, $rx_account_id, $tx_amount, $rx_amount, 'transfer', $payment_date);
+            DB::commit();
+            return back()->with(['success' => 'Successfully transfer']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['error' => 'Something wrong']);
+        }
     }
-    public function transfer($tx_account_id,$rx_account_id,$tx_amount,$rx_amount,$status='transfer'){
-        $tx_voucher_no=generatorHelpers::paymentVoucher();
-        $tx=paymentAccounts::where('id',$tx_account_id);
-        $tx_acc=$tx->first();
-        $tx_acc_current_balance=$tx_acc->current_balance;
+    public function transfer(
+            $tx_account_id,
+            $rx_account_id,
+            $tx_amount,
+            $rx_amount,
+            $status='transfer',
+            $payment_date=null,
+    )
+    {
+        try {
+            DB::beginTransaction();
+            $tx_voucher_no = generatorHelpers::paymentVoucher();
+            $tx = paymentAccounts::where('id', $tx_account_id);
+            $tx_acc = $tx->first();
+            $tx_acc_current_balance = $tx_acc->current_balance;
 
 
-        $tx_left_amt=$tx_acc_current_balance-$tx_amount;
-        $tx->update([
-            'current_balance'=>$tx_left_amt
-        ]);
-        $tx_payment=paymentsTransactions::create([
-            'payment_voucher_no'=>$tx_voucher_no,
-            'payment_date'=>now(),
-            'payment_account_id'=>$tx_account_id,
-            'payment_type'=>'credit',
-            'transaction_type'=>$status,
-            'payment_amount'=>$tx_amount,
-            'currency_id'=>$tx_acc->currency_id,
-        ]);
+            $tx_left_amt = $tx_acc_current_balance - $tx_amount;
+            $tx->update([
+                'current_balance' => $tx_left_amt
+            ]);
+            $tx_payment = paymentsTransactions::create([
+                'payment_voucher_no' => $tx_voucher_no,
+                'payment_date' => $payment_date ? date_create($payment_date) : now(),
+                'payment_account_id' => $tx_account_id,
+                'payment_type' => 'credit',
+                'transaction_type' => $status,
+                'payment_amount' => $tx_amount,
+                'currency_id' => $tx_acc->currency_id,
+            ]);
 
 
-        $rx=paymentAccounts::where('id',$rx_account_id);
-        $rx_acc=$rx->first();
-        $rx_acc_current_balance=$rx_acc->current_balance;
+            $rx = paymentAccounts::where('id', $rx_account_id);
+            $rx_acc = $rx->first();
+            $rx_acc_current_balance = $rx_acc->current_balance;
 
 
 
-        $rx_result_amt=$rx_acc_current_balance+$rx_amount;
-        $rx->update([
-            'current_balance'=>$rx_result_amt
-        ]);
-        $rx_voucher_no=generatorHelpers::paymentVoucher();
-        $tx_payment->update([
-            'transaction_ref_no'=>$rx_voucher_no,
-        ]);
-        return paymentsTransactions::create([
-            'payment_voucher_no'=>$rx_voucher_no,
-            'payment_date'=>now(),
-            'payment_account_id'=>$rx_account_id,
-            'transaction_ref_no'=>$tx_voucher_no,
-            'payment_type'=>'debit',
-            'transaction_type'=>$status,
-            'payment_amount'=> $rx_amount,
-            'currency_id'=>$rx_acc->currency_id,
-        ]);
+            $rx_result_amt = $rx_acc_current_balance + $rx_amount;
+            $rx->update([
+                'current_balance' => $rx_result_amt
+            ]);
+            $rx_voucher_no = generatorHelpers::paymentVoucher();
+            $tx_payment->update([
+                'transaction_ref_no' => $rx_voucher_no,
+            ]);
+            $paymentTransaction= paymentsTransactions::create([
+                'payment_voucher_no' => $rx_voucher_no,
+                'payment_date' => $payment_date ? date_create($payment_date) : now(),
+                'payment_account_id' => $rx_account_id,
+                'transaction_ref_no' => $tx_voucher_no,
+                'payment_type' => 'debit',
+                'transaction_type' => $status,
+                'payment_amount' => $rx_amount,
+                'currency_id' => $rx_acc->currency_id,
+            ]);
+            DB::commit();
+            return $paymentTransaction;
+        } catch (\Throwable $th) {
+            return throw new Exception($th->getMessage());
+        }
     }
 
     public function createForExpense($id){
@@ -433,7 +471,6 @@ class paymentsTransactionsController extends Controller
             DB::commit();
             return back()->with(['success'=>'Successfully updated']);
        } catch (\Throwable $th) {
-        dd($th);
             DB::rollBack();
             return back()->with(['success' => 'Something Wrong']);
        }
@@ -598,47 +635,40 @@ class paymentsTransactionsController extends Controller
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     protected function makePayment($transaction,$request,$transaction_type="expense"){
-        $data=[
-            'payment_voucher_no'=>generatorHelpers::paymentVoucher($transaction_type),
-            'payment_date'=>now(),
-            'transaction_type'=>$transaction_type,
-            'transaction_id'=>$transaction->id,
-            'transaction_ref_no'=>$transaction->expense_voucher_no,
-            'payment_method'=>'card',
-            'payment_account_id'=>$request->payment_account_id ?? null,
-            'payment_type'=> $transaction_type =='sale'?'debit':'credit',
-            'payment_amount'=>$request->payment_amount,
-            'currency_id'=>$transaction->currency_id,
-            'note'=>$request->note,
-        ];
-        paymentsTransactions::create($data);
-        if($request->payment_account_id){
-            $accountInfo=paymentAccounts::where('id',$request->payment_account_id);
-            if($accountInfo->exists()){
-                $currentBalanceFromDb=$accountInfo->first()->current_balance ;
-                if($transaction_type=='sale'){
-                    $finalCurrentBalance=$currentBalanceFromDb + $request->payment_amount;
-                }else{
-                    $finalCurrentBalance=$currentBalanceFromDb - $request->payment_amount;
+        try {
+            DB::beginTransaction();
+            $data = [
+                'payment_voucher_no' => generatorHelpers::paymentVoucher($transaction_type),
+                'payment_date' => now(),
+                'transaction_type' => $transaction_type,
+                'transaction_id' => $transaction->id,
+                'transaction_ref_no' => $transaction->expense_voucher_no,
+                'payment_method' => 'card',
+                'payment_account_id' => $request->payment_account_id ?? null,
+                'payment_type' => $transaction_type == 'sale' ? 'debit' : 'credit',
+                'payment_amount' => $request->payment_amount,
+                'currency_id' => $transaction->currency_id,
+                'note' => $request->note,
+            ];
+            paymentsTransactions::create($data);
+            if ($request->payment_account_id) {
+                $accountInfo = paymentAccounts::where('id', $request->payment_account_id);
+                if ($accountInfo->exists()) {
+                    $currentBalanceFromDb = $accountInfo->first()->current_balance;
+                    if ($transaction_type == 'sale') {
+                        $finalCurrentBalance = $currentBalanceFromDb + $request->payment_amount;
+                    } else {
+                        $finalCurrentBalance = $currentBalanceFromDb - $request->payment_amount;
+                    }
+                    $accountInfo->update([
+                        'current_balance' => $finalCurrentBalance,
+                    ]);
                 }
-                $accountInfo->update([
-                    'current_balance'=>$finalCurrentBalance,
-                ]);
             }
+            DB::commit();
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage());
         }
     }
 }
