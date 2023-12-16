@@ -926,9 +926,8 @@ class saleController extends Controller
                     }
                 };
             }
+            stock_history::where('transaction_details_id', $sd->id)->where('transaction_type', 'sale')->delete();
         }
-
-        stock_history::where('transaction_details_id', $id)->where('transaction_type', 'sale')->delete();
         $saleDetailQuery->update([
             'is_delete' => 1,
             'deleted_at' => now(),
