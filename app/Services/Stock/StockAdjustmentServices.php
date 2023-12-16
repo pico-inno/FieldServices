@@ -89,7 +89,7 @@ class StockAdjustmentServices
                 ->where('business_location_id', $request->business_location)
                 ->where('product_id',$adjustmentDetail['product_id'])
                 ->where('variation_id', $adjustmentDetail['variation_id'])
-                ->where('current_quantity', '>', 0)
+//                ->where('current_quantity', '>', 0)
                 ->latest()
                 ->first();
 
@@ -148,6 +148,56 @@ class StockAdjustmentServices
     }
 
 
+    public function delete($id)
+    {
+        $this->stockAdjustmentRepository->update($id, ['deleted_by' => Auth::id(), 'is_delete' => true]);
+        $this->stockAdjustmentRepository->delete($id);
+
+        $this->stockAdjustmentRepository->updateDetailByAdjustmentId($id, ['deleted_by' => Auth::id(), 'is_delete' => true]);
+        $this->stockAdjustmentRepository->deleteDetailsByAdjustmentId($id);
+    }
+
+    public function deleteWithRestore($id)
+    {
+
+        $adjustmentDetailsIds = $this->stockAdjustmentRepository->queryDetails()
+            ->where('adjustment_id', $id)->pluck('id');
+
+        $lotSerialDetails = $this->lotSerialDetailsRepository->query()
+            ->whereIn('transaction_detail_id', $adjustmentDetailsIds)
+            ->where('transaction_type', 'adjustment')
+            ->when(getSettingsValue('accounting_method') == 'fifo', function ($query) {
+                return $query->orderByDesc('current_stock_balance_id');
+            }, function ($query) {
+                return $query->orderBy('current_stock_balance_id');
+            })->get();
+
+        foreach ($lotSerialDetails as $restoreDetail){
+            $this->currentStockBalanceRepository->query()
+                ->where('id', $restoreDetail->current_stock_balance_id)
+                ->increment('current_quantity', $restoreDetail->uom_quantity);
+        }
+
+        $this->stockHistoryRepository->query()
+            ->whereIn('transaction_details_id', $adjustmentDetailsIds)
+            ->where('transaction_type', 'adjustment')
+            ->delete();
+
+        $this->lotSerialDetailsRepository->query()
+            ->whereIn('transaction_detail_id', $adjustmentDetailsIds)
+            ->where('transaction_type', 'adjustment')
+            ->delete();
+
+        $this->currentStockBalanceRepository->query()
+            ->whereIn('transaction_detail_id', $adjustmentDetailsIds)
+            ->where('transaction_type', 'adjustment')
+            ->delete();
+
+
+        $this->delete($id);
+
+    }
+
     protected function createAdjustmentDetail(
         $adjustmentDetails,
         $locationId,
@@ -164,7 +214,7 @@ class StockAdjustmentServices
                 ->where('business_location_id', $locationId)
                 ->where('product_id',$adjustmentDetail['product_id'])
                 ->where('variation_id', $adjustmentDetail['variation_id'])
-                ->where('current_quantity', '>', 0)
+//                ->where('current_quantity', '>', 0)
                 ->latest()
                 ->first();
 
@@ -331,6 +381,7 @@ class StockAdjustmentServices
     private function prepareAdjustment($data)
     {
         return [
+            'condition' => $data->condition,
             'status' => $data->status,
             'increase_subtotal' => 0,
             'decrease_subtotal' => 0,
@@ -361,19 +412,4 @@ class StockAdjustmentServices
         ];
     }
 
-    private function updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, $transactionType, $qty)
-    {
-        if ($checkLotDetail) {
-            $checkLotDetail->uom_quantity += $qty;
-            $checkLotDetail->save();
-        } else {
-            lotSerialDetails::create([
-                'transaction_detail_id' => $transferDetailId,
-                'transaction_type' => $transactionType,
-                'current_stock_balance_id' => $balance['id'],
-                'uom_id' => $balance['ref_uom_id'],
-                'uom_quantity' => $qty
-            ]);
-        }
-    }
 }

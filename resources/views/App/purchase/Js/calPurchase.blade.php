@@ -138,6 +138,8 @@
 
                                 html += '</div>';
                             });
+
+
                             if (results.length == 1) {
                                 $('.quick-search-results').show();
                                     setTimeout(() => {
@@ -152,8 +154,8 @@
                                 $('.quick-search-results').show();
                                 html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
                             }
-                        $('.quick-search-results').removeClass('d-none')
-                        $('.quick-search-results').html(html);
+                            $('.quick-search-results').removeClass('d-none')
+                            $('.quick-search-results').html(html);
 
                     }
                 });

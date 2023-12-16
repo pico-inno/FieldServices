@@ -20,6 +20,7 @@ class StockAdjustment extends Model
     protected $fillable = [
         'adjustment_voucher_no',
         'business_location',
+        'condition',
         'status',
         'increase_subtotal',
         'decrease_subtotal',
