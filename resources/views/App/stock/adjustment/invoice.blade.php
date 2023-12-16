@@ -49,9 +49,9 @@
                     </h3>
                     <address class="mt-1 invoice-purchases">
                        {{ $location['name'] ? $location['name'].','  :''}}<br>
-                       {{ $location['address'] ? $location['address'].','  :''}}<br>
-                        {{$location['city'] ? $location['city'].',' :'' }}{{ $location['state'] ? $location['state'].',' :'' }}
-                        {{$location['country'] ? $location['country'].',' :'' }}{{$location['zip_code'] ? $location['zip_code'].',' :''}}
+{{--                       {{ $location['address'] ? $location['address'].','  :''}}<br>--}}
+{{--                        {{$location['city'] ? $location['city'].',' :'' }}{{ $location['state'] ? $location['state'].',' :'' }}--}}
+{{--                        {{$location['country'] ? $location['country'].',' :'' }}{{$location['zip_code'] ? $location['zip_code'].',' :''}}--}}
                     </address>
                 </div>
                 <div class="col-4">

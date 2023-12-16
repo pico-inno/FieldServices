@@ -2,22 +2,15 @@
 
 namespace App\Http\Controllers\Stock;
 
-use App\Helpers\UomHelper;
+
 use App\Http\Requests\Stock\StoreStockAdjustmentRequest;
 use App\Models\BusinessUser;
 use App\Models\Contact\Contact;
-use App\Models\CurrentStockBalance;
-use App\Models\lotSerialDetails;
-use App\Models\productPackagingTransactions;
-use App\Models\purchases\purchases;
 use App\Models\Stock\StockAdjustment;
 use App\Models\Stock\StockAdjustmentDetail;
-use App\Models\Stock\StockTransferDetail;
-use App\Models\stock_history;
 use App\Repositories\LocationRepository;
-use App\Services\packaging\packagingServices;
+use App\Repositories\Stock\StockAdjustmentRepository;
 use App\Services\Stock\StockAdjustmentServices;
-use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
@@ -25,20 +18,20 @@ use App\Models\Stock\StockTransfer;
 use App\Http\Controllers\Controller;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
 
 class StockAdjustmentController extends Controller
 {
     private $locationRepository;
+    private $stockAdjustmentRepository;
     public function __construct(
-        LocationRepository $locationRepository
+        LocationRepository $locationRepository,
+        StockAdjustmentRepository $stockAdjustmentRepository
     )
     {
         $this->middleware(['auth', 'isActive']);
         $this->locationRepository = $locationRepository;
+        $this->stockAdjustmentRepository = $stockAdjustmentRepository;
 
     }
     /**
@@ -87,6 +80,7 @@ class StockAdjustmentController extends Controller
      */
     public function store(StoreStockAdjustmentRequest $request,StockAdjustmentServices $adjustmentServices)
     {
+//        return $request;
         try {
             DB::beginTransaction();
             $adjustmentServices->create($request);
@@ -192,14 +186,11 @@ class StockAdjustmentController extends Controller
             }], 'current_quantity');
         $adjustment_details = $stock_adjustment_details->get();
 
-//        return $adjustment_details;
-
         return view('App.stock.adjustment.edit', [
             'stockAdjustment' => $stockAdjustment,
             'adjustment_details' => $adjustment_details,
             'transfer_persons' => $transfer_persons,
             'locations' => $locations,
-//            'currency' => $currency,
             'setting' => $setting,
 
         ]);
@@ -228,152 +219,33 @@ class StockAdjustmentController extends Controller
     {
     }
 
-    public function softDelete(string $id){
+    public function softDelete(string $id, StockAdjustmentServices $stockAdjustmentServices){
+
         $restore = request()->query('restore');
-        $settings = businessSettings::all()->first();
+
         if ($restore == 'true') {
-
-            $adjustmentDetails = StockAdjustmentDetail::where('adjustment_id', $id)->pluck('id');
-
-            $lotSerialDetails = lotSerialDetails::whereIn('transaction_detail_id', $adjustmentDetails)
-                ->where('transaction_type', 'adjustment')
-                ->when($settings->accounting_method == 'fifo', function ($query) {
-                    return $query->orderByDesc('current_stock_balance_id');
-                }, function ($query) {
-                    return $query->orderBy('current_stock_balance_id');
-                })
-                ->get();
-
-
-            foreach ($lotSerialDetails as $restoreDetail){
-
-                $currentStockBalance = CurrentStockBalance::where('id', $restoreDetail->current_stock_balance_id)->first();
-                $currentStockBalance->current_quantity += $restoreDetail->uom_quantity;
-                $currentStockBalance->save();
-            }
-
-            stock_history::whereIn('transaction_details_id', $adjustmentDetails)
-                ->where('transaction_type', 'adjustment')
-                ->delete();
-
-            lotSerialDetails::whereIn('transaction_detail_id', $adjustmentDetails)
-                ->where('transaction_type', 'adjustment')
-                ->delete();
-
-
-            CurrentStockBalance::whereIn('transaction_detail_id', $adjustmentDetails)
-                ->where('transaction_type', 'adjustment')
-                ->delete();
-
-
-            StockAdjustment::where('id', $id)->update(['deleted_by' => Auth::id(), 'is_delete' => true]);
-            StockAdjustment::where('id', $id)->delete();
-            StockAdjustmentDetail::where('adjustment_id', $id)->update(['deleted_by' => Auth::id(), 'is_delete' => true]);
-            StockAdjustmentDetail::where('adjustment_id', $id)->delete();
-
-
-            $data = [
-                'success' => 'Adjustment was removed, and the quantity was returned.',
-            ];
-
-
+            $stockAdjustmentServices->deleteWithRestore($id);
+            $data = ['success' => 'Adjustment was removed, and the quantity was returned.'];
 
         }else{
-            StockAdjustment::where('id', $id)->update(['deleted_by' => Auth::id(), 'is_delete' => true]);
-            StockAdjustment::where('id', $id)->delete();
-            StockAdjustmentDetail::where('adjustment_id', $id)->update(['deleted_by' => Auth::id(), 'is_delete' => true]);
-            StockAdjustmentDetail::where('adjustment_id', $id)->delete();
-
-            $data = [
-                'success' => 'Adjustment was removed',
-            ];
+            $stockAdjustmentServices->delete($id);
+            $data = ['success' => 'Adjustment was removed'];
         }
-
-
 
         return response()->json($data, 200);
     }
 
-    public function listData()
+    public function listData(Request $request,StockAdjustmentServices $stockAdjustmentServices)
     {
+        $pageLength = $request->input('pageLength', 25);
 
-        $adjustmentResults= StockAdjustment::where('is_delete',0)
+        $adjustmentResults = $this->stockAdjustmentRepository->query()
+            ->where('is_delete',0)
             ->with(['businessLocation:id,name', 'createdPerson:id,username'])
-            ->OrderBy('id','desc')->get();
-        return DataTables::of($adjustmentResults)
-            ->addColumn('checkbox',function($adjustment){
-                return
-                    '
-                    <div class="form-check form-check-sm form-check-custom ">
-                        <input class="form-check-input" type="checkbox" data-checked="delete" value='.$adjustment->id.' />
-                    </div>
-                ';
-            })
-            ->editColumn('created_by', function($adjustment){
-                return $adjustment->createdPerson['username'] ?? '-';
-            })
-            ->editColumn('location_name', function($adjustment){
-                return $adjustment->businessLocation['name'] ?? '';
-            })
+            ->OrderBy('id','desc')->paginate($pageLength);
 
-            ->editColumn('date',function($adjustment){
-                $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$adjustment->created_at);
-                $formattedDate = $dateTime->format("m-d-Y " );
-                $formattedTime = $dateTime->format(" h:i A " );
-                return $formattedDate.'<br>'.'('.$formattedTime.')';
-            })
-//            ->editColumn('adjustmentItems',function($adjustment){
-//                $adjustmentDetails=$adjustment->purchase_details;
-//                $items='';
-//                foreach ($adjustmentDetails as $key => $pd) {
-//                    $variation=$pd->productVariation;
-//                    $productName=$variation->product->name;
-//                    $sku=$variation->product->sku ?? '';
-//                    $variationName=$variation->variationTemplateValue->name ?? '';
-//                    $items.="$productName,$variationName,$sku ;";
-//                }
-//                return $items;
-//            })
-            ->editColumn('status', function($adjustment) {
-                $html='';
-                if($adjustment->status == 'prepared'){
-                    $html= "<span class='badge badge-light-warning'> $adjustment->status </span>";
-                }elseif($adjustment->status == 'completed'){
-                    $html = "<span class='badge badge-light-success'>$adjustment->status</span>";
-                }
-                return $html;
-            })
-            ->addColumn('action', function ($adjustment) {
+        return response()->json($adjustmentResults);
 
-                $html = '
-                    <div class="dropdown ">
-                        <button class="btn m-2 btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle " type="button" id="purchaseDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Actions
-                        </button>
-                        <div class="z-3">
-                        <ul class="dropdown-menu z-10 p-5 " aria-labelledby="purchaseDropDown" role="menu">';
-                if(hasView('stock transfer')){
-                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2"   type="button" data-href="'.route('stock-adjustment.show', $adjustment->id).'">
-                                View
-                            </a>';
-                }
-                if (hasPrint('stock transfer')){
-                    $html .= ' <a class="dropdown-item p-2  px-3  text-gray-600 print-invoice rounded-2"  data-href="' . route('adjustment.print',$adjustment->id) .'">print</a>';
-                }
-                if (hasUpdate('stock transfer')){
-                   if ($adjustment->status == 'prepared'){
-                       $html .= '      <a href="'.route('stock-adjustment.edit', $adjustment->id).'" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a> ';
-                   }
-                }
-                if (hasDelete('stock transfer')){
-                    $html .= '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id='.$adjustment->id.' data-adjustment-voucher-no='.$adjustment->adjustment_voucher_no.' data-adjustment-status='.$adjustment->status.' data-kt-adjustmentItem-table="delete_row">Delete</a>';
-                }
-                $html .= '</ul></div></div>';
-
-                return (hasView('stock transfer') && hasPrint('stock transfer') && hasUpdate('stock transfer') && hasDelete('stock transfer') ? $html : 'No Access');
-            })
-            ->rawColumns(['action', 'checkbox', 'location_name', 'status','date', 'created_by'])
-            ->make(true);
     }
 
     public function invoicePrint($id)
@@ -428,46 +300,100 @@ class StockAdjustmentController extends Controller
             $query->where('business_location', $request->data['filter_locations']);
         }
 
-//        if ($request->data['filter_locations_to'] != 0) {
-//            $query->where('to_location', $request->data['filter_locations_to']);
-//        }
-//
-//        if ($request->data['filter_stocktransferperson'] != 0) {
-//            $query->where('transfered_person', $request->data['filter_stocktransferperson']);
-//        }
-//
-//        if ($request->data['filter_stockreceiveperson'] != 0) {
-//            $query->where('received_person', $request->data['filter_stockreceiveperson']);
-//        }
-
         $stockAdjustments = $query->get();
 
 
         return response()->json($stockAdjustments, 200);
     }
 
-    private function updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, $transactionType, $qty)
+    public function getProductV3(Request $request)
     {
-        if ($checkLotDetail) {
-            $checkLotDetail->uom_quantity += $qty;
-            $checkLotDetail->save();
-        } else {
-            lotSerialDetails::create([
-                'transaction_detail_id' => $transferDetailId,
-                'transaction_type' => $transactionType,
-                'current_stock_balance_id' => $balance['id'],
-                'uom_id' => $balance['ref_uom_id'],
-                'uom_quantity' => $qty
-            ]);
+
+        $data = $request->data;
+        $business_location_id = $data['business_location_id'];
+        $keyword = $data['query'];
+        $variation_id = $data['variation_id'] ?? null;
+        $psku_kw = $data['psku_kw'] ?? false;
+        $vsku_kw = $data['vsku_kw'] ?? false;
+        $pgbc_kw = $data['pgbc_kw'] ?? false;
+        $relations = [
+            'product_packaging' => function ($query) use ($keyword) {
+                $query->where('package_barcode', $keyword);
+            },
+            'uom:id,name,short_name,unit_category_id,unit_type,value,rounded_amount',
+            'uom.unit_category:id,name',
+            'uom.unit_category.uomByCategory:id,name,short_name,unit_type,unit_category_id,value,rounded_amount',
+            'product_variations.packaging.uom',
+            'product_variations.additionalProduct.productVariation.product',
+            'product_variations.additionalProduct.uom',
+            'product_variations.additionalProduct.productVariation.variationTemplateValue',
+            'stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->select('current_quantity', 'business_location_id', 'product_id','id')
+//                    ->where('current_quantity', '>', 0)
+                    ->whereIn('business_location_id', $locationIds);
+            }
+        ];
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            $relations = [
+                'rom.uom.unit_category.uomByCategory',
+                'rom.rom_details.productVariation.product',
+                'rom.rom_details.uom',
+                ...$relations
+            ];
         }
+        $products = Product::select(
+            'products.name as name',
+            'products.id as id',
+            'products.product_code',
+            'products.sku',
+            'products.product_type',
+            'products.has_variation',
+            'products.lot_count',
+            'products.uom_id',
+            'products.purchase_uom_id',
+            'products.can_sale',
+            'products.is_recurring',
+            'products.receipe_of_material_id',
+
+            'product_variations.product_id',
+            'product_variations.variation_sku',
+            'product_variations.variation_template_value_id',
+            'product_variations.default_selling_price',
+            'product_variations.id as variation_id',
+
+            'variation_template_values.variation_template_id',
+            'variation_template_values.name as variation_name',
+            'variation_template_values.id as variation_template_values_id'
+        )->whereNull('products.deleted_at')
+            ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
+                $query
+                    ->where('can_sale', 1)
+                    ->where('products.name', 'like', '%' . $keyword . '%')
+                    ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                            $query->where('package_barcode', $keyword);
+                        });
+                    });
+            })
+            ->when($variation_id, function ($query) use ($variation_id) {
+                $query->where('product_variations.id', $variation_id);
+            })
+            ->with($relations)
+            ->withSum(['stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->whereIn('business_location_id', $locationIds);
+            }], 'current_quantity')
+            ->get()->toArray();
+        return response()->json($products, 200);
     }
 
-    public function generateVoucherNumber($prefix)
-    {
-        $lastStockAdjustmentId = StockAdjustment::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
-
-        $voucherNumber = stockAdjustmentVoucherNo($lastStockAdjustmentId);
-
-        return $voucherNumber;
-    }
 }

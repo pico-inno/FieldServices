@@ -203,6 +203,7 @@ Route::get('transfer/print/{id}/invoice', [StockTransferController::class, 'invo
 //_Being: Stock Adjustment
 Route::resource('stock-adjustment', StockAdjustmentController::class);
 Route::post('stock-adjustment/filter-list', [StockAdjustmentController::class, 'filterList']);
+Route::get('/adjustment/get/product/v3', [StockAdjustmentController::class, 'getProductV3']);
 Route::resource('stock-adjustment', StockAdjustmentController::class)->except('destroy');
 Route::delete('stock-adjustment/{id}/delete', [StockAdjustmentController::class, 'softDelete']);
 Route::get('/adjustment/tableData', [StockAdjustmentController::class, 'listData']);

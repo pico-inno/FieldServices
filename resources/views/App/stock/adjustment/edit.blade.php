@@ -140,7 +140,7 @@
                                         <input type="text" class="form-control rounded-end-1" id="searchInput"
                                                placeholder="{{__('adjustment.search_products')}}">
                                         <div
-                                            class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
+                                            class="quick-search-results overflow-scroll rounded-1 p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
                                             id="autocomplete" data-allow-clear="true"
                                             style="max-height: 300px;z-index: 100;"></div>
                                     </div>
@@ -250,21 +250,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {{--                            <div class="separator my-5"></div>--}}
-                            {{--                            <div class="col-4 float-end mt-3">--}}
-                            {{--                                <table class="col-12 ">--}}
-                            {{--                                    <tbody>--}}
-                            {{--                                    <tr>--}}
-                            {{--                                        <th>Total Item:</th>--}}
-                            {{--                                        <td class="rowcount text-left fs-4" id="total_item">0</td>--}}
-                            {{--                                    </tr>--}}
-                            {{--                                    <tr>--}}
-                            {{--                                        <th>Net Total Amount</th>--}}
-                            {{--                                        <td class="rowSum text-left fs-4 net_purchase_total_amount_text" id=''>0</td>--}}
-                            {{--                                    </tr>--}}
-                            {{--                                    </tbody>--}}
-                            {{--                                </table>--}}
-                            {{--                            </div>--}}
+
 
                         </div>
                     </div>
@@ -283,20 +269,6 @@
 
 @push('scripts')
     <script>
-        // $(document).ready(function() {
-        //
-        //     var $businessLocation = $('select[name="business_location"]');
-        //
-        //
-        //     $businessLocation.on('change', function() {
-        //         var selectedLocation = $(this).val();
-        //
-        //         $toLocationSelect.find('option').prop('disabled', false);
-        //         $toLocationSelect.find('option[value="' + selectedLocation + '"]').prop('disabled', true);
-        //         $toLocationSelect.trigger('change');
-        //     });
-        // });
-
 
     </script>
     @include('App.stock.adjustment.include.quickSearchProducts')

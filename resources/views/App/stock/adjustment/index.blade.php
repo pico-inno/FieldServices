@@ -220,6 +220,7 @@
                             <th class="min-w-100px">{{__('adjustment.increase_subtotal')}}</th>
                             <th class="min-w-100px">{{__('adjustment.decrease_subtotal')}}</th>
                             <th class="min-w-100px">{{__('adjustment.status')}}</th>
+                            <th class="min-w-100px">Condition</th>
                             <th class="min-w-100px">{{__('adjustment.created_by')}}</th>
 
                         </tr>

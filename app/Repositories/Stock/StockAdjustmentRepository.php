@@ -41,4 +41,19 @@ class StockAdjustmentRepository
     {
         return StockAdjustmentDetail::where('id', $id)->update($data);
     }
+
+    public function updateDetailByAdjustmentId($adjustment_id,array $data)
+    {
+        return StockAdjustmentDetail::where('adjustment_id', $adjustment_id)->update($data);
+    }
+
+    public function delete($id)
+    {
+        return StockAdjustment::destroy($id);
+    }
+
+    public function deleteDetailsByAdjustmentId($adjustment_id)
+    {
+        return StockAdjustmentDetail::where('adjustment_id', $adjustment_id)->delete();
+    }
 }

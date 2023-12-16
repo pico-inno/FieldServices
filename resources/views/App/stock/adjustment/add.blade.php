@@ -122,7 +122,7 @@
                                         <input type="text" class="form-control rounded-end-1" id="searchInput"
                                                placeholder="{{__('adjustment.search_products')}}">
                                         <div
-                                            class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
+                                            class="quick-search-results overflow-scroll rounded-1 p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
                                             id="autocomplete" data-allow-clear="true"
                                             style="max-height: 300px;z-index: 100;"></div>
                                     </div>
@@ -236,6 +236,6 @@
 
 @push('scripts')
 
-    @include('App.stock.adjustment.include.searchProductsJS')
+    @include('App.stock.adjustment.include.quickSearchProducts')
     <script src={{asset('customJs/stock/validation/adjustmentAdd.js')}}></script>
 @endpush
