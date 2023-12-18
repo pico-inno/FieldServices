@@ -1200,7 +1200,7 @@ class ReportController extends Controller
     public function profitLossData(Request $request){
         $filterData = isFilter($request->toArray());
         $grossProfit = price(reportServices::grossProfit($filterData));
-        $netProfit = price(reportServices::netProfit($filterData));
+        // $netProfit = price(reportServices::netProfit($filterData));
         // outcome
         if(!$filterData){
             $tlOsAmount = totalOSTransactionAmount($filterData);
@@ -1210,13 +1210,15 @@ class ReportController extends Controller
         // dd($tlOsAmount);
         $tlPAmount = totalPurchaseAmount($filterData);
         $tlExAmount = totalExpenseAmount($filterData);
-        $tlOutcome = $tlOsAmount  + $tlExAmount;
+        $tlOutcome = $tlOsAmount  + $tlExAmount+$tlPAmount;
 
         //income
         $tlCsAmount = closingStocks($filterData);
         $tlSAmount = totalSaleAmount($filterData);
         $tlIncome = $tlCsAmount + $tlSAmount;
 
+
+        $netProfit=$tlIncome-$tlOutcome;
         $data = [
             'grossProfit' => $grossProfit,
             'netProfit' => $netProfit,

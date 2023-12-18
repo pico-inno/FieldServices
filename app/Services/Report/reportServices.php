@@ -39,7 +39,7 @@ class reportServices
         if (!$filterData) {
             $totalOSAmount = totalOSTransactionAmount($filterData);
         } else {
-            $totalOSAmount = totalOSTransactionAmount($filterData) + closingStocksCal($filterData);
+            $totalOSAmount = totalOSTransactionAmount($filterData) ;
         }
         $totalExpenseAmount = totalExpenseAmount();
         $totalSaleAmount =(int) totalSaleAmount($filterData);
@@ -53,7 +53,6 @@ class reportServices
         // dd($totalOutcome, $totalIncomeAmount);
         // dd($totalIncomeAmount, $totalOutcome);
         // dd($totalSaleAmount, $closingStocks);
-
 
         return $totalIncomeAmount - $totalOutcome;
     }
