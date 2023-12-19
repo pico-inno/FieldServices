@@ -32,34 +32,35 @@ class stockHistoryController extends Controller
         $histories = stock_history::with('productVariation')
                     ->when(!hasModule('StockInOut') ,function($q){
                         $q->whereNotIn('transaction_type', ['stock_in', 'stock_out']);
-                    })->get();
+                    });
+                    // ->get();
 
-        $openingBalances = [];
+        // $openingBalances = [];
 
-        foreach ($histories as $history) {
-            $product_id = $history->product_id;
-            $variation_id = $history->variation_id;
-            $location_id = $history->business_location_id;
-
-
-            if (!isset($openingBalances[$product_id][$variation_id][$location_id])) {
-
-                $openingBalances[$product_id][$variation_id][$location_id] = 0;
-            }
-
-            $increase_qty = $history->increase_qty ?? 0;
-            $decrease_qty = $history->decrease_qty ?? 0;
-
-            $increaseAble = $openingBalances[$product_id][$variation_id][$location_id] + $increase_qty;
-            $balance_qty = $increaseAble - $decrease_qty;
+        // foreach ($histories as $history) {
+        //     $product_id = $history->product_id;
+        //     $variation_id = $history->variation_id;
+        //     $location_id = $history->business_location_id;
 
 
-            $openingBalances[$product_id][$variation_id][$location_id] = $balance_qty;
+        //     if (!isset($openingBalances[$product_id][$variation_id][$location_id])) {
+
+        //         $openingBalances[$product_id][$variation_id][$location_id] = 0;
+        //     }
+
+        //     $increase_qty = $history->increase_qty ?? 0;
+        //     $decrease_qty = $history->decrease_qty ?? 0;
+
+        //     $increaseAble = $openingBalances[$product_id][$variation_id][$location_id] + $increase_qty;
+        //     $balance_qty = $increaseAble - $decrease_qty;
 
 
-            $history->balance_qty = $balance_qty;
+        //     $openingBalances[$product_id][$variation_id][$location_id] = $balance_qty;
 
-        }
+
+        //     $history->balance_qty = $balance_qty;
+
+        // }
 
 
 
@@ -86,19 +87,19 @@ class stockHistoryController extends Controller
                 }else if($history->transaction_type=='stock_out'){
                     $created_at=false;
                     if(hasModule('StockInOut') && isEnableModule('StockInOut')){
-                        $created_at =  $history->StockoutDetail->created_at;
+                        $created_at =  $history->StockoutDetail->created_at  ?? '';
                     }
                 }else if($history->transaction_type=='stock_in'){
                     $created_at=false;
                     if($history->stockInDetail) {
-                    $created_at =  $history->stockInDetail->created_at;
+                    $created_at =  $history->stockInDetail->created_at  ?? '';
                     }
                 }else if($history->transaction_type=='opening_stock'){
-                    $created_at=  $history->openingStockDetail->openingStock->opening_date;
+                    $created_at=  $history->openingStockDetail->openingStock->opening_date ?? '';
                 }else if($history->transaction_type=='adjustment'){
-                    $created_at=  $history->adjustmentDetail->created_at;
+                    $created_at=  $history->adjustmentDetail->created_at ?? '';
                 }else if($history->transaction_type=='transfer'){
-                    $created_at=  $history->StockTransferDetail->created_at;
+                    $created_at=  $history->StockTransferDetail->created_at ?? '';
                 }
                 if($created_at){
                     $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$created_at);
@@ -185,7 +186,7 @@ class stockHistoryController extends Controller
                     ";
                 }
                 else if($history->transaction_type=='transfer'){
-                    $voucherNo=$history->StockTransferDetail->stockTransfer->transfer_voucher_no;
+                    $voucherNo=$history->StockTransferDetail->stockTransfer->transfer_voucher_no  ?? '';
                     $html = "
                     <span class='text-info'>$voucherNo</span><br>
                     ";
