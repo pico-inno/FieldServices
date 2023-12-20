@@ -395,14 +395,22 @@ class saleController extends Controller
             } else {
                 $sdcStatus = $saleService->saleDetailCreation($request, $sale_data, $sale_details);
                 if ($sdcStatus == 'outOfStock') {
-                    return back()->withInput()->with(['error' => 'Product Out Of Stock']);
+                    if ($request->type == 'pos' || $request->type == 'campaign') {
+                        logger('out of stock');
+                        return response()->json([
+                            'status' => '404',
+                            'message' => 'Product Out of Stock'
+                        ], 200);
+                    }else{
+                        return back()->withInput()->with(['error' => 'Product Out Of Stock']);
+                    }
                 }
             }
 
             DB::commit();
 
             // response
-            if ($request->type == 'pos') {
+            if ($request->type == 'pos' || $request->type=="campaign") {
                 return response()->json([
                     'data' => $sale_data['id'],
                     'status' => '200',
@@ -420,7 +428,7 @@ class saleController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
+            logger($e->getMessage());
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',

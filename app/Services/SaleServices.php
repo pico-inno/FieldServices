@@ -215,6 +215,8 @@ class SaleServices
                             ->where('current_quantity', '>', '0')
                             ->sum('current_quantity');
             if ($requestQty > $totalStocks) {
+                logger($requestQty);
+                logger($totalStocks);
                 return false;
             } else {
                 $stocks = CurrentStockBalance::where('product_id', $product_id)
