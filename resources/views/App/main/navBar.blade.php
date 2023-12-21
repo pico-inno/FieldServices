@@ -2284,11 +2284,11 @@
                                                     </a>
                                                 </div>
                                                 <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('campaign_list_v2_active')" href="{{route('campaign.list2')}}">
+                                                    <a class="menu-link @yield('attendance_list_active')" href="{{route('attendance.index')}}">
                                                         <span class="menu-icon">
                                                             <i class="fa-solid fa-list fs-6"></i>
                                                         </span>
-                                                        <span class="menu-title">Campaign List V2</span>
+                                                        <span class="menu-title">Attendance List </span>
                                                     </a>
                                                 </div>
                                             </div>

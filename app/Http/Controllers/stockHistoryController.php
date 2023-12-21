@@ -30,6 +30,7 @@ class stockHistoryController extends Controller
         $currencyDp=getSettingValue('currency_decimal_places');
         $quantityDp=getSettingValue('quantity_decimal_places');
         $histories = stock_history::with('productVariation')
+                    ->orderBy('id','DESC')
                     ->when(!hasModule('StockInOut') ,function($q){
                         $q->whereNotIn('transaction_type', ['stock_in', 'stock_out']);
                     });
@@ -79,35 +80,8 @@ class stockHistoryController extends Controller
                     return $productName . $variationName;
                 }
             })
-            ->editColumn('date', function ($history) {
-                if($history->transaction_type=='sale'){
-                    $created_at=  $history->saleDetail->sale->created_at;
-                }else if($history->transaction_type=='purchase'){
-                    $created_at=  $history->purchaseDetail->purchase->purchased_at;
-                }else if($history->transaction_type=='stock_out'){
-                    $created_at=false;
-                    if(hasModule('StockInOut') && isEnableModule('StockInOut')){
-                        $created_at =  $history->StockoutDetail->created_at  ?? '';
-                    }
-                }else if($history->transaction_type=='stock_in'){
-                    $created_at=false;
-                    if($history->stockInDetail) {
-                    $created_at =  $history->stockInDetail->created_at  ?? '';
-                    }
-                }else if($history->transaction_type=='opening_stock'){
-                    $created_at=  $history->openingStockDetail->openingStock->opening_date ?? '';
-                }else if($history->transaction_type=='adjustment'){
-                    $created_at=  $history->adjustmentDetail->created_at ?? '';
-                }else if($history->transaction_type=='transfer'){
-                    $created_at=  $history->StockTransferDetail->created_at ?? '';
-                }
-                if($created_at){
-                    $dateTime = DateTime::createFromFormat("Y-m-d H:i:s",$created_at);
-                    $formattedDate = $dateTime->format("m-d-Y " );
-                    $formattedTime = $dateTime->format(" h:i A " );
-                    return $formattedDate.'<br>'.'('.$formattedTime.')';
-                }
-                return '-';
+            ->editColumn('created_at', function ($history) {
+                return fdate($history->created_at,false,true);
             })
             ->editColumn('from',function($history){
                 if($history->transaction_type=='sale' || $history->transaction_type=='stock_out'){

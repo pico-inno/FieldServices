@@ -340,6 +340,11 @@ class saleController extends Controller
             $paymentAccountIds = json_decode($registeredPos->payment_account_id);
             $request['payment_account'] = $paymentAccountIds[0] ?? null;
             $request['currency_id'] = $this->currency->id ?? null;
+            $request['field_type'] = 'pos';
+            $request['field_id']= $request->pos_register_id;
+        }elseif($request->type == 'campaign'){
+            $request['field_type'] = 'campaign';
+            $request['field_id']= $request->campaign_id;
         }
 
         DB::beginTransaction();

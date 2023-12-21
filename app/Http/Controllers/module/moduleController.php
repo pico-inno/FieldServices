@@ -33,6 +33,8 @@ class moduleController extends Controller
         $module = Module::find($ucModuleName);
         $module->enable();
 
+        Artisan::call('module:publish');
+
         return back()->with(['success'=>'Successfully Install']);
     }
     public function uninstall(Request $request){
