@@ -1111,12 +1111,24 @@
                                                                     <!--begin:Menu item-->
                                                                     <div class="menu-item">
                                                                         <!--begin:Menu link-->
+                                                                        <a class="menu-link @yield('invoice_templates_active')" href="{{ route('invoice.index') }}">
+                                                                            <span class="menu-icon">
+                                                                                <i class="fa-solid fa-folder-open"></i>
+                                                                            </span>
+                                                                            <span
+                                                                                class="menu-title fs-6">Invoice Templates</span>
+                                                                        </a>
+                                                                        <!--end:Menu link-->
+                                                                    </div>
+
+                                                                    <div class="menu-item">
+                                                                        <!--begin:Menu link-->
                                                                         <a class="menu-link @yield('invoice_active')" href="{{ route('invoice.create') }}">
                                                                             <span class="menu-icon">
                                                                                 <i class="fa-solid fa-circle-plus"></i>
                                                                             </span>
                                                                             <span
-                                                                                class="menu-title fs-6">Add Invoice</span>
+                                                                                class="menu-title fs-6">Create Invoice Templates</span>
                                                                         </a>
                                                                         <!--end:Menu link-->
                                                                     </div>

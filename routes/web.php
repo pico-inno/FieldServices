@@ -965,7 +965,9 @@ Route::prefix('pos')->group(function () {
 });
 
 Route::prefix('invoice')->controller(InvoiceController::class)->group(function(){
+    Route::get('index','index')->name('invoice.index');
     Route::get('create','create')->name('invoice.create');
+    Route::post('add','add')->name('invoice.add');
 });
 //============================ End: POS ==============================================
 // POS
