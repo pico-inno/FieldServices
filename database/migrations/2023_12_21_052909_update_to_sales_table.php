@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sales', function (Blueprint $table) {
-            $table->unsignedBigInteger('field_id')->nullable();
-            $table->enum('field_type',['sale','pos','campaign'])->default('sale');
+            $table->unsignedBigInteger('channel_id')->nullable();
+            $table->enum('channel_type',['sale','pos','campaign'])->default('sale');
         });
         Schema::table('sale_details', function (Blueprint $table) {
             $table->enum('discount_type', ['fixed', 'percentage','foc','present'])->nullable()->change();

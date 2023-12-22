@@ -69,7 +69,7 @@ class saleController extends Controller
         $this->middleware('canCreate:sell')->only(['createPage', 'store']);
         $this->middleware('canUpdate:sell')->only(['saleEdit', 'update']);
         $this->middleware('canDelete:sell')->only('softDelete', 'softSelectedDelete');
-        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale')->with('currency')->first();
+        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale','invoice_layout')->with('currency')->first();
         $this->setting = $settings;
         $this->currency = $settings->currency ?? null;
         $this->accounting_method = $settings->accounting_method ?? null;
@@ -335,16 +335,17 @@ class saleController extends Controller
             'business_location_id.required' => 'Bussiness Location is required!',
             'contact_id.required' => 'Contact is required!',
         ])->validate();
+        $request['channel_type'] = 'sale';
         if ($request->type == 'pos') {
             $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
             $paymentAccountIds = json_decode($registeredPos->payment_account_id);
             $request['payment_account'] = $paymentAccountIds[0] ?? null;
             $request['currency_id'] = $this->currency->id ?? null;
-            $request['field_type'] = 'pos';
-            $request['field_id']= $request->pos_register_id;
+            $request['channel_type'] = 'pos';
+            $request['channel_id']= $request->pos_register_id;
         }elseif($request->type == 'campaign'){
-            $request['field_type'] = 'campaign';
-            $request['field_id']= $request->campaign_id;
+            $request['channel_type'] = 'campaign';
+            $request['channel_id']= $request->campaign_id;
         }
 
         DB::beginTransaction();
@@ -1330,9 +1331,12 @@ class saleController extends Controller
                         $q->select('id', 'name');
                     }
                 ]);
-        }, 'product', 'uom', 'currency'])
-            ->where('sales_id', $id)->where('is_delete', 0)->get();
-        $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address'))->render();
+        }, 'product', 'uom', 'currency'])->where('sales_id', $id)->where('is_delete', 0)->get();
+        if($this->setting->invoice_layout == 0){
+            $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address'))->render();
+        }elseif($this->setting->invoice_layout == 1){
+            $invoiceHtml = view('App.sell.print.pos.80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
+        }
         return response()->json(['html' => $invoiceHtml]);
     }
 

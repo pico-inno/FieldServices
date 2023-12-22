@@ -921,6 +921,17 @@
                                                 </div>
                                             </div>
 
+                                            <div class="row ">
+                                                <div class="col-12 col-md-6">
+                                                    <x-location-input label="Invoice Layout:">
+                                                        <x-forms.nob-select placeholder="Invoice Layout" name="invoice_layout">
+                                                            <option value="0" @selected($settingData['invoice_layout']==0)>Default Template</option>
+                                                            <option value="1" @selected($settingData['invoice_layout']==1)>80mm</option>
+                                                        </x-forms.nob-select>
+                                                    </x-location-input>
+                                                </div>
+                                            </div>
+
                                     </div>
 
                                     {{-- pos-tab --}}

@@ -59,7 +59,7 @@ class SaleServices
             'sold_at' => $data->sold_at,
             'sold_by' => Auth::user()->id,
             'created_by' => Auth::user()->id,
-            'field_type'=>$data->field_type ?? null,
+            'channel_type'=>$data->channel_type ?? null,
         ]);
     }
 

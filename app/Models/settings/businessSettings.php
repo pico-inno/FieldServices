@@ -98,8 +98,10 @@ class businessSettings extends Model
         'purchase_payment_prefix',
         'expense_payment_prefix',
         'sale_payment_prefix',
-        'expense_report_prefix'
+        'expense_report_prefix',
 
+        //
+        'invoice_layout'
     ];
 
     public function currency(){
