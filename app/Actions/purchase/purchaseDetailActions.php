@@ -28,7 +28,7 @@ class purchaseDetailActions
         $product = Product::where('id', $pd['product_id'])->select('purchase_uom_id')->first();
         $referencteUom = UomHelper::getReferenceUomInfoByCurrentUnitQty($pd['quantity'], $pd['purchase_uom_id']);
         $per_ref_uom_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $referencteUom['referenceUomId']);
-        $default_selling_price = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
+        $newDefaultPrice = priceChangeByUom($pd['purchase_uom_id'], $pd['uom_price'], $product['purchase_uom_id']);
         $pd['purchases_id'] = $purchase->id;
         $pd['subtotal'] = $pd['uom_price'] * $pd['quantity'];
         $pd['subtotal_with_discount'] = $pd['subtotal_with_discount'];
@@ -46,7 +46,7 @@ class purchaseDetailActions
         $pd['deleted_by'] = Auth::user()->id;
         $pd['is_delete'] = 0;
         $pd = purchase_details::create($pd);
-        $this->updateDefaultPurchasePrice($pd['variation_id'], $default_selling_price);
+        $this->updateDefaultPurchasePrice($pd['variation_id'], $newDefaultPrice);
         $this->currentStockBalanceAndStockHistoryCreation($pd, $purchase, 'purchase');
         return $pd;
     }
@@ -129,11 +129,11 @@ class purchaseDetailActions
 
 
 
-    public function updateDefaultPurchasePrice($variation_id, $default_selling_price)
+    public function updateDefaultPurchasePrice($variation_id, $newDefaultPrice)
     {
         $variation_product = ProductVariation::where('id', $variation_id)->first();
         if ($variation_product) {
-            $variation_product->update(['default_purchase_price' => $default_selling_price]);
+            $variation_product->update(['default_purchase_price' => $newDefaultPrice]);
         }
     }
 

@@ -1293,12 +1293,14 @@ class ReportController extends Controller
     public function itemData(){
             $data = Product::select(
                 // 'products.id as id',
-                'products.name as product',
-                'products.sku as product_sku',
+                'sales_voucher_no',
+                'products.name as name',
+                'products.sku as sku',
+
                 'sale_details.quantity as sell_qty',
                 'sale_details.uom_price as selling_price',
                 'sale_details.subtotal_with_tax as sale_subtotal',
-                'sales_voucher_no',
+
                 'supplier.company_name as supplier',
                 'customer.first_name as customer_name',
                 'openingPerson.username as openingPerson',
@@ -1330,7 +1332,9 @@ class ReportController extends Controller
 
                 ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
                 ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
-                ->whereNotNull('sales.id');
+                    // ->where('products.id',6601)
+                    // ->whereNotNull('sales.id')
+                ;
             // dd($data->get()->toArray());
             return DataTables::of($data)
                 ->editColumn('purchase_voucher_no', function ($data) {
