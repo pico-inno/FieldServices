@@ -2291,6 +2291,15 @@
                                                         <span class="menu-title">Attendance List </span>
                                                     </a>
                                                 </div>
+
+                                                <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('games_active')" href="{{route('games.index')}}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-gamepad fs-6"></i>
+                                                        </span>
+                                                        <span class="menu-title">Game</span>
+                                                    </a>
+                                                </div>
                                             </div>
                                             <!--end::Wrapper-->
                                         </div>
