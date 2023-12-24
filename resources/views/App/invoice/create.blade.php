@@ -8,7 +8,7 @@
 
 @endsection
 @section('title')
-<!--begin::Heading-->
+    <!--begin::Heading-->
     <h1 class="text-dark fw-bold my-0 fs-2">Create Invoice Template</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
@@ -19,7 +19,7 @@
         <li class="breadcrumb-item text-muted">Invoice Templates</li>
         <li class="breadcrumb-item text-dark">Create</li>
     </ul>
-<!--end::Breadcrumb-->
+    <!--end::Breadcrumb-->
 @endsection
 
 @section('content')
@@ -38,6 +38,11 @@
                     <div class="card-body p-10">
                         <!--begin::Input group-->
                         <div class="mb-10">
+                            <label class="form-label fw-bold fs-6 text-gray-700">Layout Name</label>
+
+                            <div class="input-group mb-8">
+                                <input type="text" class="form-control" name="layoutName" placeholder="Layout-1">
+                            </div>
                             <!--begin::Label-->
                             <label class="form-label fw-bold fs-6 text-gray-700">Paper Size</label>
                             <!--end::Label-->
@@ -64,42 +69,72 @@
 
                         <!--begin::Option-->
                         <div class="mb-10">
-                            <label
-                                class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                    Supplier Name
-                                </span>
 
-                                <input class="form-check-input" type="checkbox" name="supplierName" />
-                            </label>
-                            <label
-                                class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                    Phone Number
-                                </span>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label
+                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                            Customer Name
+                                        </span>
 
-                                <input class="form-check-input" type="checkbox" name="phone" />
-                            </label>
-                            <!--end::Option-->
+                                        <input class="form-check-input" type="checkbox" name="customerName" />
+                                    </label>
+                                    <label
+                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                            Supplier Name
+                                        </span>
 
-                            <!--begin::Option-->
-                            <label
-                                class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                    Purchase Status
-                                </span>
+                                        <input class="form-check-input" type="checkbox" name="supplierName" />
+                                    </label>
+                                    <label
+                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                            Phone Number
+                                        </span>
+                                        <input class="form-check-input" type="checkbox" name="phone" />
+                                    </label>
 
-                                <input class="form-check-input" type="checkbox" name="purchaseStatus" />
-                            </label>
+                                    <label
+                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                            Address
+                                        </span>
+                                        <input class="form-check-input" type="checkbox" name="address" />
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <!--begin::Option-->
+                                    <label
+                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                            Purchase Status
+                                        </span>
 
-                            <label
-                                class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                    Customer Name
-                                </span>
+                                        <input class="form-check-input" type="checkbox" checked name="purchaseStatus" />
+                                    </label>
 
-                                <input class="form-check-input" type="checkbox" name="customerName" />
-                            </label>
+                                    <label
+                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                            Date
+                                        </span>
+                                        <input class="form-check-input" type="checkbox" name="date" checked />
+                                    </label>
+
+                                    <label
+                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                            Invoice Number
+                                        </span>
+
+                                        <input class="form-check-input" type="checkbox" checked name="invoiceNumber" />
+                                    </label>
+                                </div>
+
+                            </div>
+
                         </div>
 
                         <!--end::Option-->
@@ -113,14 +148,12 @@
                                 <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Number</label>
                                 <input type="checkbox" name="number" class="column">
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Description</label>
-                                <input type="checkbox" name="description" class="column">
-                            </div>
+
                             <div class="col-md-3">
                                 <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Expense</label>
                                 <input type="checkbox" name="expense" class="column">
                             </div>
+
                             <div class="col-md-3">
                                 <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Discount</label>
                                 <input type="checkbox" name="discount" class="column">
@@ -153,33 +186,33 @@
 @endsection
 
 @push('scripts')
- <!-- CKEditor CDN -->
- <script src="https://cdn.ckeditor.com/ckeditor5/23.0.0/classic/ckeditor.js"></script>
- <script>
-     $(document).ready(function() {
-         $('#paperSize').change(function() {
-             let value = $('#paperSize').val();
-             if (value === "80mm") {
-                 $('.column').prop('disabled', true);
-             }
-         })
+    <!-- CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/23.0.0/classic/ckeditor.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#paperSize').change(function() {
+                let value = $('#paperSize').val();
+                if (value === "80mm") {
+                    $('.column').prop('disabled', true);
+                }
+            })
 
-     })
-     ClassicEditor
-         .create(document.querySelector('#kt_docs_ckeditor_classic'))
-         .then(editor => {
-             console.log(editor);
-         })
-         .catch(error => {
-             console.error(error);
-         });
-     ClassicEditor
-         .create(document.querySelector('#kt_docs_ckeditor_classic2'))
-         .then(editor => {
-             console.log(editor);
-         })
-         .catch(error => {
-             console.error(error);
-         });
- </script>
+        })
+        ClassicEditor
+            .create(document.querySelector('#kt_docs_ckeditor_classic'))
+            .then(editor => {
+                console.log(editor);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        ClassicEditor
+            .create(document.querySelector('#kt_docs_ckeditor_classic2'))
+            .then(editor => {
+                console.log(editor);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 @endpush

@@ -8,7 +8,7 @@
 
 @endsection
 @section('title')
-<!--begin::Heading-->
+    <!--begin::Heading-->
     <h1 class="text-dark fw-bold my-0 fs-2">Invoice Templates</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
@@ -19,7 +19,7 @@
         <li class="breadcrumb-item text-muted">Invoices</li>
         <li class="breadcrumb-item text-dark">Templates</li>
     </ul>
-<!--end::Breadcrumb-->
+    <!--end::Breadcrumb-->
 @endsection
 
 @section('content')
@@ -28,22 +28,19 @@
         <!--begin::Container-->
         <div class="container-xxl" id="location">
             <div class="row">
-                <div class="col-4">
-                    <div class="card shadow">Hello</div>
-                </div>
-                <div class="col-4">
-                    <div class="card shadow">Hellooooo</div>
-                </div>
-                <div class="col-4">
-                    <div class="card shadow">Helloooo</div>
-                </div>
-            </div>
+                @foreach ($layouts as $layout)
+                    <div class="col-4">
+                        <div class="card shadow p-3">{{ $layout->name }}
+                            <a href="{{ route('invoice.detail',$layout->id) }}" class="btn btn-success btn-sm">View</a>
+                        </div>
 
+                    </div>
+                @endforeach
+            </div>
         </div>
 
     </div>
 @endsection
 
 @push('scripts')
-
 @endpush
