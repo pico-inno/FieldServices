@@ -70,7 +70,7 @@ class Product extends Model
     }
     public function product_variations():HasOne
     {
-        return $this->hasOne(ProductVariation::class,'id', 'variation_id');
+        return $this->hasOne(ProductVariation::class);
     }
 
     public function category() : BelongsTo

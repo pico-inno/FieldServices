@@ -59,6 +59,13 @@
         <div class="">
             <div class="card">
                 <div class="card-body">
+                    <div class="d-flex  flex-wrap flex-sm-nowrap col-12 pt-7 my-3  ">
+                        <div class="col-12 col-md-3 me-sm-5 mb-3 mb-sm-0 ms-3">
+                            <input type="text" class="form-control form-control-sm" placeholder="Search...."
+                                data-filter="input">
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-hover table-rounded table-striped border gy-5 gs-5" id="itemReportTable">
                             <thead>
@@ -118,14 +125,14 @@
             // Init datatable --- more info on datatables: https://datatables.net/manual/
             let columns = [
                 {
-                    data: 'product',
-                    name: 'product',
+                    data: 'name',
+                    name: 'name',
                     // orderable: false,
                     // searchable: false
                 },
                 {
-                    data: 'product_sku',
-                    name: 'product_sku',
+                    data: 'sku',
+                    name: 'sku',
                     // searchable: false,
                     // orderable: false,
                 },
@@ -184,6 +191,14 @@
 
             // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
             datatable.on('draw', function () {
+
+            });
+        }
+
+        var handleSearchDatatable = () => {
+            const filterSearch = document.querySelector('[data-filter="input"]');
+            filterSearch.addEventListener('keyup', function (e) {
+                let result=datatable.column(0).search(e.target.value).draw();
             });
         }
 
@@ -197,6 +212,7 @@
             }
 
             initCustomerList();
+            handleSearchDatatable();
         }
     }
 }();
@@ -205,6 +221,7 @@
 KTUtil.onDOMContentLoaded(function () {
     KTCustomersList.init();
 });
+
 
 getData();
 function getData(){

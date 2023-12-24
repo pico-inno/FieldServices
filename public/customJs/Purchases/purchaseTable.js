@@ -177,7 +177,7 @@ var KTCustomersList = function () {
         });
     }
 
-        // Delete location
+        // Delete
     var handleDeleteRows = () => {
         // Select all delete buttons
         const deleteButtons = document.querySelectorAll('[data-kt-purchase-table="delete_row"]');
@@ -190,7 +190,7 @@ var KTCustomersList = function () {
                 const parent = e.target.closest('tr');
 
                 // Get purchase name
-                const purchaseName = parent.querySelectorAll('td')[4].innerText;
+                const purchaseName = parent.querySelectorAll('td')[3].innerText;
 
                 // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
                 Swal.fire({

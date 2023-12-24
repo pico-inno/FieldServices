@@ -181,7 +181,7 @@
                                                             <input type="hidden" class="input_number" value="{{$osd->id}}" name="opening_stock_details[{{$key}}][opening_stock_detail_id]">
                                                         </td>
                                                         <td>
-                                                            <a href="#" class="text-gray-600 text-hover-primary mb-1 ">{{$product->name}}</a><br>
+                                                            <span  class="text-gray-600 text-hover-primary mb-1 ">{{$product->name}}</span><br>
                                                             @if(isset($product_variation['variation_template_value']))
                                                                 <span class="my-2 d-block">
                                                                     ({{$product_variation['variation_template_value']['name']}})

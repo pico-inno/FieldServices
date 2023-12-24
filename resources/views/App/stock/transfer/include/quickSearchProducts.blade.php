@@ -318,6 +318,7 @@
                         <input type="text" class="form-control form-control-sm" name="transfer_details[${unique_name_id}][remark]">
                     </td>
                     <th>
+                    
                         <i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i>
                     </th>
                 </tr>
@@ -374,9 +375,10 @@
 
 
 
-        $('#business_location_id').on('change',function(){
-            $('#transfer_table').find('tbody').empty();
+        $('#business_location_id').on('change', function () {
+            $('#transfer_table tbody tr:not(.dataTables_empty)').remove();
         });
+
 
         $(document).on('change','.package_id',function(){
             packaging($(this));
@@ -663,7 +665,7 @@
         // Attach click event listener to all delete buttons in the table
         $(document).on('click', '#transfer_table .deleteRow', function (e) {
             const $row = $(this).closest('tr');
-            const rowCount = $('#transfer_table tbody tr').length - 1; // Subtract one to account for the header row.
+            const rowCount = $('#transfer_table tbody tr').length - 1;
 
             if (rowCount === 1) {
                 $(this).css({
@@ -673,6 +675,8 @@
                 e.preventDefault();
                 return false;
             }
+
+
 
             e.preventDefault();
 

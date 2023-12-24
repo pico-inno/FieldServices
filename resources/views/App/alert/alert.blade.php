@@ -1,4 +1,4 @@
-<script src={{asset('customJs/toastrAlert/alert.js')}}></script>
+<script src={{asset('/customJs/toastrAlert/alert.js')}}></script>
 @if(session('success'))
 
     <script>

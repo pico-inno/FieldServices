@@ -59,6 +59,7 @@ class SaleServices
             'sold_at' => $data->sold_at,
             'sold_by' => Auth::user()->id,
             'created_by' => Auth::user()->id,
+            'channel_type'=>$data->channel_type ?? null,
         ]);
     }
 
@@ -215,6 +216,8 @@ class SaleServices
                             ->where('current_quantity', '>', '0')
                             ->sum('current_quantity');
             if ($requestQty > $totalStocks) {
+                logger($requestQty);
+                logger($totalStocks);
                 return false;
             } else {
                 $stocks = CurrentStockBalance::where('product_id', $product_id)

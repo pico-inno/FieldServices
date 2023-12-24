@@ -69,7 +69,7 @@ class saleController extends Controller
         $this->middleware('canCreate:sell')->only(['createPage', 'store']);
         $this->middleware('canUpdate:sell')->only(['saleEdit', 'update']);
         $this->middleware('canDelete:sell')->only('softDelete', 'softSelectedDelete');
-        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale')->with('currency')->first();
+        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale','invoice_layout')->with('currency')->first();
         $this->setting = $settings;
         $this->currency = $settings->currency ?? null;
         $this->accounting_method = $settings->accounting_method ?? null;
@@ -335,11 +335,17 @@ class saleController extends Controller
             'business_location_id.required' => 'Bussiness Location is required!',
             'contact_id.required' => 'Contact is required!',
         ])->validate();
+        $request['channel_type'] = 'sale';
         if ($request->type == 'pos') {
             $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
             $paymentAccountIds = json_decode($registeredPos->payment_account_id);
             $request['payment_account'] = $paymentAccountIds[0] ?? null;
             $request['currency_id'] = $this->currency->id ?? null;
+            $request['channel_type'] = 'pos';
+            $request['channel_id']= $request->pos_register_id;
+        }elseif($request->type == 'campaign'){
+            $request['channel_type'] = 'campaign';
+            $request['channel_id']= $request->campaign_id;
         }
 
         DB::beginTransaction();
@@ -395,14 +401,22 @@ class saleController extends Controller
             } else {
                 $sdcStatus = $saleService->saleDetailCreation($request, $sale_data, $sale_details);
                 if ($sdcStatus == 'outOfStock') {
-                    return back()->withInput()->with(['error' => 'Product Out Of Stock']);
+                    if ($request->type == 'pos' || $request->type == 'campaign') {
+                        logger('out of stock');
+                        return response()->json([
+                            'status' => '404',
+                            'message' => 'Product Out of Stock'
+                        ], 200);
+                    }else{
+                        return back()->withInput()->with(['error' => 'Product Out Of Stock']);
+                    }
                 }
             }
 
             DB::commit();
 
             // response
-            if ($request->type == 'pos') {
+            if ($request->type == 'pos' || $request->type=="campaign") {
                 return response()->json([
                     'data' => $sale_data['id'],
                     'status' => '200',
@@ -420,7 +434,7 @@ class saleController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
+            logger($e->getMessage());
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',
@@ -926,9 +940,8 @@ class saleController extends Controller
                     }
                 };
             }
+            stock_history::where('transaction_details_id', $sd->id)->where('transaction_type', 'sale')->delete();
         }
-
-        stock_history::where('transaction_details_id', $id)->where('transaction_type', 'sale')->delete();
         $saleDetailQuery->update([
             'is_delete' => 1,
             'deleted_at' => now(),
@@ -1106,6 +1119,62 @@ class saleController extends Controller
             ->get()->toArray();
         return response()->json($products, 200);
     }
+    public function getProductV3ef(Request $request)
+    {
+        $data = $request->data;
+        $business_location_id = $data['business_location_id'];
+        $keyword = $data['query'];
+        $variation_id = $data['variation_id'] ?? null;
+        $psku_kw = $data['psku_kw'] ?? false;
+        $vsku_kw = $data['vsku_kw'] ?? false;
+        $pgbc_kw = $data['pgbc_kw'] ?? false;
+
+        $products = Product::select(
+            'products.name as name',
+            'products.id as id',
+            'products.product_code',
+            'products.sku',
+            'products.product_type',
+            'products.has_variation',
+            'products.uom_id',
+
+            'product_variations.product_id',
+            'product_variations.variation_sku',
+            'product_variations.variation_template_value_id',
+
+            'variation_template_values.variation_template_id',
+            'variation_template_values.name as variation_name',
+            'variation_template_values.id as variation_template_values_id'
+        )->whereNull('products.deleted_at')
+        ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+        ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
+            $query
+                ->where('products.can_sale', 1)
+                ->where('products.name', 'like', '%' . $keyword . '%')
+                ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                    $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                })
+                ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                    $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                })
+                ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                    $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                        $query->where('package_barcode', $keyword);
+                    });
+                });
+        })
+            ->when($variation_id, function ($query) use ($variation_id) {
+                $query->where('product_variations.id', $variation_id);
+            })
+            ->withSum(['stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->whereIn('business_location_id', $locationIds);
+            }], 'current_quantity')->paginate(10);
+            // ->get()->toArray();
+            // dd($products);
+        return response()->json($products, 200);
+    }
     public function getProductV3(Request $request)
     {
 
@@ -1262,9 +1331,12 @@ class saleController extends Controller
                         $q->select('id', 'name');
                     }
                 ]);
-        }, 'product', 'uom', 'currency'])
-            ->where('sales_id', $id)->where('is_delete', 0)->get();
-        $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address'))->render();
+        }, 'product', 'uom', 'currency'])->where('sales_id', $id)->where('is_delete', 0)->get();
+        if($this->setting->invoice_layout == 0){
+            $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address'))->render();
+        }elseif($this->setting->invoice_layout == 1){
+            $invoiceHtml = view('App.sell.print.pos.80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
+        }
         return response()->json(['html' => $invoiceHtml]);
     }
 

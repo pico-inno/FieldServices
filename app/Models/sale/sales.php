@@ -42,6 +42,9 @@ class sales extends Model
         'deleted_at',
         'deleted_by',
         'delivered_at',
+
+        'channel_type',
+        'channel_id'
     ];
 
 

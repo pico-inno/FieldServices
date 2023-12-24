@@ -174,7 +174,7 @@
                                 <x-location-input label="Invoice Layout:">
                                     <x-forms.nob-select placeholder="Invoice Layout" name="invoice_layout">
                                         <option value="1">Default Template</option>
-                                        <option value="2">Moden Template</option>
+                                        <option value="2">80mm</option>
                                     </x-forms.nob-select>
                                 </x-location-input>
                             </div>

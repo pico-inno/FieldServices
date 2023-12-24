@@ -32,6 +32,11 @@ class openingStockController extends Controller
 
     public function __construct()
     {
+
+        ini_set('max_execution_time', '0');
+        ini_set("memory_limit", "-1");
+        ini_set("max_allowed_packet", "-1");
+        ini_set('max_input_vars', 20000);
         $this->middleware(['auth', 'isActive']);
     }
     public function index()
@@ -163,13 +168,7 @@ class openingStockController extends Controller
     public function update($id,Request $request)
     {
         $request_opening_stock_details = $request->opening_stock_details;
-        $opening_stock_data = [
-            'business_location_id' => $request->business_location_id,
-            'opening_date' =>date('Y-m-d', strtotime($request->opening_date)),
-            'note' => $request->note,
-            'updated_by' => Auth::user()->id,
-            'updated_at' => Carbon::now(),
-        ];
+        $opening_stock_data=$this->dataForOpeningStock($request);
         $opening_stock_data['updated_by'] = Auth::user()->id;
         $opening_stock_data['updated_at'] = Carbon::now();
         DB::beginTransaction();
@@ -275,11 +274,13 @@ class openingStockController extends Controller
             }
             // dd('herde');
             DB::commit();
+
+            return redirect()->route('opening_stock_list')->with(['success' => 'Successfully Updated Purchase']);
         } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
-            throw $e;
+            return redirect()->route('opening_stock_list')->with(['error' => 'something wrong']);
         }
-        return redirect()->route('opening_stock_list')->with(['success' => 'Successfully Updated Purchase']);
     }
 
     public function dataForOpeningStock($request){

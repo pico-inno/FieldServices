@@ -155,6 +155,8 @@
                     ],
                     order: [[0, ' ']],
                     processing: true,
+                    pageLength: 30,
+                    lengthMenu: [10, 20, 30, 50,40,80],
                     serverSide: true,
                     ajax: {
                         url: '/stock-history/get/list/',
@@ -166,8 +168,8 @@
                             data:'location'
                         },
                         {
-                            name:'date',
-                            data:'date',
+                            name:'created_at',
+                            data:'created_at',
                         },
                         {
                             data:'reference',

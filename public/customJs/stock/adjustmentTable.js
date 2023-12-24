@@ -19,14 +19,18 @@ var KTCustomersList = function () {
             // dateRow[2].setAttribute('data-order', realDate);
         });
 
-        // Init datatable --- more info on datatables: https://datatables.net/manual/
+
+
+        let userPageLength = $('#pageLengthInput').val();
+        let defaultPageLength = 25;
+        let pageLength = userPageLength ? parseInt(userPageLength, 25) : defaultPageLength;
+
         datatable = $(table).DataTable({
-            pageLength: 30,
-            lengthMenu: [10, 20, 30, 50,40,80],
+            pageLength: pageLength,
+            lengthMenu: [25, 30, 50,80, 150, 300],
             'columnDefs': [
-                { orderable: false, targets: 0 }, // Disable ordering on column 0 (checkbox)
-                { orderable: false, targets: 1 }, // Disable ordering on column 6 (actions)
-                {    targets: [2],
+                { orderable: false, targets: 0 },
+                {    targets: [1],
                     visible: true,
                     searchable: false
                 }
@@ -35,59 +39,104 @@ var KTCustomersList = function () {
             serverSide: true,
             ajax: {
                 url: '/adjustment/tableData',
+                type: 'GET',
+                dataType: 'json',
+                data: function (d) {
+                    d.pageLength = d.length;
+                    d.page = (d.start / d.length) + 1;
+                }
             },
-
             columns: [
-                // {
-                //     data: 'checkbox',
-                //     name: 'checkbox',
-                //
-                // },
                 {
                     data: 'action',
                     name: 'action',
-                },
-                {
-                    name:'date',
-                    data:'date',
-                },
-                {
-                    data: 'adjustment_voucher_no',
-                    name: 'adjustment_voucher_no'
-                },
-                {
-                    name: "location_name",
-                    data: "location_name",
-                },
-                {
-                    data: 'increase_subtotal',
-                    name: 'increase_subtotal'
-                },
-                {
-                    data: 'decrease_subtotal',
-                    name: 'decrease_subtotal'
-                },{
-                    name:'status',
-                    data:'status'
-                },{
-                    name:'created_by',
-                    data:'created_by'
-                }
+                    render: function (data, type, row) {
+                        var printUrl = 'adjustment/print/'+row.id+'/invoice';
+                        var viewUrl = '/stock-adjustment/' + row.id;
+                        var editUrl =  'stock-adjustment/'+row.id+'/edit';
+
+                        var html = '<div class="dropdown ">' +
+                            '<button class="btn m-2 btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle " type="button" id="purchaseDropDown" data-bs-toggle="dropdown" aria-expanded="false">' +
+                            'Actions' +
+                            '</button>' +
+                            '<div class="z-3">' +
+                            '<ul class="dropdown-menu z-10 p-5 " aria-labelledby="purchaseDropDown" role="menu">';
 
 
+                            html += '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2" type="button" data-href="' + viewUrl + '">' +
+                                'View' +
+                                '</a>';
+
+
+                            html += ' <a class="dropdown-item p-2  px-3  text-gray-600 print-invoice rounded-2"  data-href="' + printUrl + '">Print</a>';
+                            if (row.status === 'prepared') {
+                                html += '<a href="' + editUrl + '" class="dropdown-item p-2  px-3 view_detail  text-gray-600 rounded-2">Edit</a>';
+                            }
+
+                            html += '<a class="dropdown-item p-2  px-3 view_detail  text-gray-600 round rounded-2" data-id=' + row.id + ' data-adjustment-voucher-no=' + row.adjustment_voucher_no + ' data-adjustment-status=' + row.status + ' data-kt-adjustmentItem-table="delete_row">Delete</a>';
+
+                        html += '</ul></div></div>';
+
+                        return html;
+                    }
+                },
+                {
+                    data: 'adjustmented_at',
+                    name: 'adjustmented_at',
+                    render: function (data, type, row) {
+                        var date = new Date(row.adjustmented_at);
+
+                        var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                        var formattedDate = date.toLocaleDateString('en-US', options);
+
+                        return formattedDate;
+                    }
+                },
+                { data: 'adjustment_voucher_no', name: 'adjustment_voucher_no' },
+                { data: 'business_location.name', name: 'businessLocation.name' },
+                { data: 'increase_subtotal', name: 'increase_subtotal' },
+                { data: 'decrease_subtotal', name: 'decrease_subtotal' },
+                {
+                    name: 'status',
+                    data: 'status',
+                    render: function (data, type, row) {
+                        if (row.status === 'prepared') {
+                            return '<span class="badge badge-light-warning">' + row.status + '</span>';
+                        } else if (row.status === 'completed') {
+                            return '<span class="badge badge-light-success">' + row.status + '</span>';
+                        } else {
+                            return row.status;
+                        }
+                    }
+                },
+                {
+                    name: 'condition',
+                    data: 'condition',
+                    render: function (data, type, row) {
+                        if (row.condition === 'abnormal') {
+                            return '<span class="badge badge-light-warning">' + row.condition + '</span>';
+                        } else if (row.condition === 'normal') {
+                            return '<span class="badge badge-light-success">' + row.condition + '</span>';
+                        } else {
+                            return row.condition;
+                        }
+                    }
+                },
+                { data: 'created_person.username', name: 'createdPerson.username' },
             ]
-
         });
 
-        // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
+
+
+
         datatable.on('draw', function () {
-            // initToggleToolbar();
+
             handleDeleteRows();
             handleBusinessLocationFilter();
             // toggleToolbars();
             handleStatusFilter();
-            handleDateFilterDatatable();
-            handleStatusFilter();
+            // handleDateFilterDatatable();
+            // handleStatusFilter();
         });
     }
     var start = moment().subtract(1, "M");
@@ -222,8 +271,9 @@ var KTCustomersList = function () {
                                             customClass: {
                                                 confirmButton: "btn fw-bold btn-primary",
                                             }
-                                        }).then(function () {
-                                        });
+
+                                        })
+                                        loadingOff();
                                     }
                                 });
                             });
