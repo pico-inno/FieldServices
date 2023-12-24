@@ -1577,6 +1577,7 @@
                                                             class="menu-heading fw-bold text-uppercase fs-7">Inventory</span>
                                                     </div>
                                                     <!--end:Menu content-->
+                                                    {{-- Command --}}
                                                 </div>
                                                 @if(hasAll('opening stock'))
                                                 <!--begin:Menu item-->
