@@ -101,7 +101,15 @@ class businessSettings extends Model
         'expense_report_prefix',
 
         //
-        'invoice_layout'
+        'invoice_layout',
+
+        'alt_contact_no',
+        'business_contact_no',
+        'addresss',
+        'zip_postal_code',
+        'city',
+        'state',
+        'country',
     ];
 
     public function currency(){

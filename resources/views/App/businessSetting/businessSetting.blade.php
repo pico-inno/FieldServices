@@ -574,13 +574,54 @@
                                                 </x-slot>
                                             </x-setting.setting-row>
 
+
                                             <x-setting.setting-row
-                                                :firstLabel="__('business_settings.default_profit_percent')" firstFor="default_profit_percent"
+                                                :firstLabel="__('business_settings.alt_contact_no')" firstFor="alt_contact_no"
+                                                :secLabel="__('business_settings.business_contact_no')" secFor="business_contact_no"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.input :value="$settingData['alt_contact_no']" id="alt_contact_no" name="alt_contact_no"></x-forms.input>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.input :value="$settingData['business_contact_no']" id="business_contact_no" name="business_contact_no"></x-forms.input>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+
+
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.addresss')" firstFor="addresss"
+                                                :secLabel="__('business_settings.zip_postal_code')" secFor="zip_postal_code"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.input :value="$settingData['addresss']" id="addresss" name="addresss"></x-forms.input>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.input :value="$settingData['zip_postal_code']" id="zip_postal_code" name="zip_postal_code"></x-forms.input>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+
+
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.city')" firstFor="city"
+                                                :secLabel="__('business_settings.state')" secFor="state"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.input :value="$settingData['city']" id="city" name="city"></x-forms.input>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.input :value="$settingData['state']" id="state" name="state"></x-forms.input>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+
+
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.country')" firstFor="country"
                                                 :secLabel="__('business_settings.default_currency')" secFor="default_currency"
                                             >
                                                 <x-slot:firstInput>
-                                                    <x-forms.input :value="$settingData['default_profit_percent']" id="default_profit_percent" name="default_profit_percent"></x-forms.input>
+                                                    <x-forms.input :value="$settingData['country']" id="country" name="country"></x-forms.input>
                                                 </x-slot>
+
                                                 <x-slot:secInput>
                                                     <div class="input-group flex-nowrap">
                                                         <div class="overflow-hidden flex-grow-1">
@@ -593,6 +634,20 @@
                                                             </x-forms.nob-select>
                                                         </div>
                                                     </div>
+                                                </x-slot>
+                                            </x-setting.setting-row>
+                                            <x-setting.setting-row
+                                                :firstLabel="__('business_settings.default_profit_percent')" firstFor="default_profit_percent"
+                                                :secLabel="__('business_settings.quantity_rounded_method')" secFor="quantity_rounded_method"
+                                            >
+                                                <x-slot:firstInput>
+                                                    <x-forms.input :value="$settingData['default_profit_percent']" id="default_profit_percent" name="default_profit_percent"></x-forms.input>
+                                                </x-slot>
+                                                <x-slot:secInput>
+                                                    <x-forms.nob-select name="quantity_rounded_method" id="quantity_rounded_method" :placeholder="__('business_settings.quantity_rounded_method')" >
+                                                        <option value="0" @selected($settingData['quantity_decimal_places']==0)>RoundUp</option>
+                                                        <option value="1" @selected($settingData['quantity_decimal_places']==1)>RoundDown</option>
+                                                    </x-forms.nob-select>
                                                 </x-slot>
                                             </x-setting.setting-row>
 
@@ -703,7 +758,7 @@
                                             </x-setting.setting-row>
 
 
-                                            <x-setting.setting-row
+                                            {{-- <x-setting.setting-row
                                                 :firstLabel="__('business_settings.quantity_rounded_method')" firstFor="quantity_rounded_method"
                                             >
                                                 <x-slot:firstInput>
@@ -712,7 +767,7 @@
                                                         <option value="1" @selected($settingData['quantity_decimal_places']==1)>RoundDown</option>
                                                     </x-forms.nob-select>
                                                 </x-slot>
-                                            </x-setting.setting-row>
+                                            </x-setting.setting-row> --}}
                                         <!--end::Form-->
                                     </div>
 

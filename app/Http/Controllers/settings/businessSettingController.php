@@ -90,6 +90,14 @@ class businessSettingController extends Controller
             'expense_report_prefix'=>$request->expense_report_prefix,
             'business_location_prefix' => $request->business_location_prefix,
             'invoice_layout'=>$request->invoice_layout,
+
+            'alt_contact_no'=>$request->alt_contact_no,
+            'business_contact_no'=>$request->business_contact_no,
+            'addresss'=>$request->addresss,
+            'zip_postal_code'=>$request->zip_postal_code,
+            'city'=>$request->city,
+            'state'=>$request->state,
+            'country'=>$request->country,
         ];
         $oldData = businessSettings::where('id', Auth::user()->business_id)->first();
         $logoPath = $this->saveLogo($request, $oldData->logo);

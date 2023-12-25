@@ -1335,7 +1335,9 @@ class saleController extends Controller
         if($this->setting->invoice_layout == 0){
             $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address'))->render();
         }elseif($this->setting->invoice_layout == 1){
-            $invoiceHtml = view('App.sell.print.pos.80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
+            $invoiceHtml = view('App.sell.print.pos.custom-80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
+        }elseif($this->setting->invoice_layout == 2){
+            $invoiceHtml = view('App.sell.print.pos.custom-80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
         }
         return response()->json(['html' => $invoiceHtml]);
     }

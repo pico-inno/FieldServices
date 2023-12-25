@@ -394,6 +394,15 @@ return [
 
     'save' => 'Save',
 
+    'alt_contact_no'=>'Alternate Contact No',
+    'business_contact_no'=>'Business Contact No',
+    'addresss'=>'Address',
+    'zip_postal_code'=>'Zip Postal Code',
+    'city'=>'City',
+    'state'=>'State',
+    'country'=>'Country',
+
+
 
 
 ];
