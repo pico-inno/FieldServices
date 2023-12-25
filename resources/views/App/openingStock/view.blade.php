@@ -29,7 +29,7 @@
                             </h3>
                               <address class="mt-3 fs-5">
                                     {{businessLocationName($location)}}
-                                    {!! addresss($address)!!}
+                                    {!! address($address)!!}
                                 </address>
                         </div>
                         <div class="col-sm-4">

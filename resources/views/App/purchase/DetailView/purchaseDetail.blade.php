@@ -68,7 +68,7 @@
                             <!--end::Text-->
                             <!--end::Description-->
                             <div class="fw-semibold fs-7 text-gray-600">
-                               {!! addresss($addresss) !!}
+                               {!! address($address) !!}
                             </div>
                             <!--end::Description-->
                         </div>

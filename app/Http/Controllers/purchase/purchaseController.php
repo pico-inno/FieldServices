@@ -184,7 +184,7 @@ class purchaseController extends Controller
 
         $purchase = purchases::with('business_location_id', 'purchased_by', 'confirm_by', 'supplier', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
         $location = businessLocation::where("id", $purchase['business_location_id'])->first();
-        $addresss = locationAddress::where('location_id', $location['id'])->first();
+        $address = locationAddress::where('location_id', $location['id'])->first();
         $purchase_details = purchase_details::with(
             'productVariation:id,product_id,variation_template_value_id',
             'productVariation.product:id,name,has_variation,uom_id',
@@ -197,7 +197,7 @@ class purchaseController extends Controller
             'location',
             'purchase_details',
             'setting',
-            'addresss',
+            'address',
         ));
     }
 

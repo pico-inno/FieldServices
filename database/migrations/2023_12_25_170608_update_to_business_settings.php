@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('business_settings', function (Blueprint $table) {
             $table->text('alt_contact_no')->nullable();
             $table->text('business_contact_no')->nullable();
-            $table->text('addresss')->nullable();
+            $table->text('address')->nullable();
             $table->string('zip_postal_code')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();

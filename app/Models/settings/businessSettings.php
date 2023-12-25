@@ -105,7 +105,7 @@ class businessSettings extends Model
 
         'alt_contact_no',
         'business_contact_no',
-        'addresss',
+        'address',
         'zip_postal_code',
         'city',
         'state',

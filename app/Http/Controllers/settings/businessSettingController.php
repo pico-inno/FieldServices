@@ -93,7 +93,7 @@ class businessSettingController extends Controller
 
             'alt_contact_no'=>$request->alt_contact_no,
             'business_contact_no'=>$request->business_contact_no,
-            'addresss'=>$request->addresss,
+            'address'=>$request->address,
             'zip_postal_code'=>$request->zip_postal_code,
             'city'=>$request->city,
             'state'=>$request->state,

@@ -589,11 +589,11 @@
 
 
                                             <x-setting.setting-row
-                                                :firstLabel="__('business_settings.addresss')" firstFor="addresss"
+                                                :firstLabel="__('business_settings.address')" firstFor="address"
                                                 :secLabel="__('business_settings.zip_postal_code')" secFor="zip_postal_code"
                                             >
                                                 <x-slot:firstInput>
-                                                    <x-forms.input :value="$settingData['addresss']" id="addresss" name="addresss"></x-forms.input>
+                                                    <x-forms.input :value="$settingData['address']" id="address" name="address"></x-forms.input>
                                                 </x-slot>
                                                 <x-slot:secInput>
                                                     <x-forms.input :value="$settingData['zip_postal_code']" id="zip_postal_code" name="zip_postal_code"></x-forms.input>

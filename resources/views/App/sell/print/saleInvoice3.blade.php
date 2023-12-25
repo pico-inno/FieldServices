@@ -87,7 +87,7 @@
                                     <!--end::Text-->
                                     <!--end::Description-->
                                     <div class="fw-semibold  text-gray-600 invoice-sales">
-                                        {!! addresss($address) !!}
+                                        {!! address($address) !!}
                                 </div>
                                     <!--end::Description-->
                                 </div>

@@ -51,7 +51,7 @@
                     </h3>
                     <address class="mt-1 invoice-purchases">
                        {{businessLocationName($location)}}<br>
-                       {!! addresss($address) !!}
+                       {!! address($address) !!}
                     </address>
                 </div>
                 <div class="col-4">

@@ -381,7 +381,7 @@ function childLocationIDs($locationId)
     return $LocationsIds;
 }
 
-function addresss($address)
+function address($address)
 {
     // dd($address);
     return
