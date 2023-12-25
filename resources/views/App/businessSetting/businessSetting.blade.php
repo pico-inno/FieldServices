@@ -982,6 +982,7 @@
                                                         <x-forms.nob-select placeholder="Invoice Layout" name="invoice_layout">
                                                             <option value="0" @selected($settingData['invoice_layout']==0)>Default Template</option>
                                                             <option value="1" @selected($settingData['invoice_layout']==1)>80mm</option>
+                                                            <option value="2" @selected($settingData['invoice_layout']==2)>80mm (Template 2)</option>
                                                         </x-forms.nob-select>
                                                     </x-location-input>
                                                 </div>

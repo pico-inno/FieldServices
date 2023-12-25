@@ -16,7 +16,7 @@
             margin: 5px;
         }
 
-        .businessName{
+        .text-center{
             text-align: center;
         }
         .logo {
@@ -41,12 +41,25 @@
 // echo printFormat('Voucher No','',$sale['sales_voucher_no']);
 $name=getSettingsValue('name') ?? '';
 $address=getSettingsValue('address') ?? '';
-echo '<div class="businessName">';
-echo '<span>'.$name.'</span>';
-echo '<span>'.$address.'</span>';
+$bcn=getSettingsValue('business_contact_no') ?? '';
+$altcn=getSettingsValue('alt_contact_no') ?? '';
+$city=getSettingsValue('city')?? '';
+$state=getSettingsValue('state')?? '';
+$country=getSettingsValue('country')?? '';
+echo '<div class="text-center">';
+
+echo '<h2>'.$name.'</h2>';
+echo '<span>'.
+        implode(', ',[$address,$city,$state,$country])
+    .'</span>';
+echo '<br>';
+echo '<span>'.
+        implode(', ',[$bcn,$altcn])
+    .'</span>';
 echo '</div>';
 echo '<pre>';
 echo '<br>';
+
 echo printFormat('Date','',fDate($sale['sold_at'],'',false));
 echo printFormat('Customer','',$sale['customer']['prefix'].' '.$sale['customer']['first_name'].' '.$sale['customer']['middle_name'].' '. $sale['customer']['last_name']);
 echo '<br><br>';
@@ -60,7 +73,10 @@ foreach ($sale_details as  $sd) {
 }
 echo '<br>';
 echo '---------------------------------------------------<br>';
-echo printFormat('','Total',fprice($sale['total_sale_amount']));die;
+echo printFormat('','Total',fprice($sale['total_sale_amount']));
+echo "<br><br><br>";
+echo "<div class='text-center'>Thanks For Shopping</div>";
+// die;
 @endphp
 </pre>
 

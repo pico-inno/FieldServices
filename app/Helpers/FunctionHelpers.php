@@ -437,6 +437,52 @@ function printFormat($productName, $quantity, $price)
     return $str;
 }
 
+
+
+
+// format char to print in 48
+function printTxtFormat(array $values=[],array $width=[])
+{
+    $splitedValue=[];
+    $lengths = [];
+    foreach ($values as $key=>$value) {
+        $splited=str_split($value, $width[$key]);
+        $splitedValue=[...$splitedValue,$splited];
+        $lengths=[...$lengths,count($splited)];
+    }
+    $longestIndex = '';
+    $longestArrayLength = 0;
+
+    foreach ($lengths as $index => $arrayLength) {
+        if ($arrayLength > $longestArrayLength) {
+            $longestIndex = $index;
+            $longestArrayLength = $arrayLength;
+        }
+    }
+    $str='';
+    foreach ($splitedValue[$longestIndex] as $splitIndex=>$s) {
+        $line='';
+        foreach ($values as $index=>$value) {
+            if($index == 0){
+                $line.=isset($splitedValue[$index][$splitIndex]) ? str_pad($splitedValue[$index][$splitIndex], $width[$index], " ") : str_pad(" ", $width[$index], " ");
+            }
+            elseif($index ==count( $splitedValue)){
+                $line.=isset($splitedValue[$index][$splitIndex]) ? str_pad($splitedValue[$index][$splitIndex], $width[$index], " ", STR_PAD_LEFT) : str_pad(" ", $width[$index], " ", STR_PAD_LEFT);
+            }
+            else{
+                $line.=isset($splitedValue[$index][$splitIndex]) ? str_pad($splitedValue[$index][$splitIndex], $width[$index] + 1, " ", STR_PAD_LEFT) : str_pad(" ", $width[$index] + 1, " ", STR_PAD_LEFT);
+            }
+        }
+        $str.=$line."\n";
+    }
+    return $str;
+}
+
+function  eightyTxtFormat(...$values)  {
+    $width=[22,8,18];
+    return printTxtFormat($values,$width);
+}
+
 function getKitAvailableQty($locationId, $productId)
 {
     if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
@@ -612,3 +658,4 @@ function getOptionName($type,$id){
     $text= $result['name'] . ' (' . $result['uniqCode'] . ')';
     return $text;
 }
+
