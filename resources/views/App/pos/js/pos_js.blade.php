@@ -313,7 +313,7 @@
             let default_price = $element.closest('tr').find('input[name="selling_price[]"]').val();
             let perItemDis = $element.closest('tr').find('input[name="per_item_discount"]').val();
             let disType = $element.closest('tr').find('input[name="discount_type"]').val();
-            let total_price = default_price;
+            let total_price = default_price * quantity;
             let perItemDiscounts=isNullOrNan(perItemDis);
             if(disType === "fixed"){
                 $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - perItemDiscounts);
