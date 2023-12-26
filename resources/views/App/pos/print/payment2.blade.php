@@ -51,15 +51,20 @@ if($lineDisc==0){
     }
 }else{
 
-    echo eighty4Column('Product','Qty','Disc','Price');
+    echo eighty5Column('Product','Qty','Price','Disc','Subtotal');
     echo '---------------------------------------------------<br>';
     echo '<br>';
     foreach ($sale_details as  $sd) {
         $variation=$sd['product_variation']?'('.$sd['product_variation']['variation_template_value']['name'].')':'';
         $productName=$sd['product']['name'].$variation;
-        echo eighty4Column($productName,fquantity($sd['quantity']).' '.$sd['uomName'],calPercentage($sd['discount_type'],$sd['per_item_discount'],$sd['subtotal']),fprice($sd['subtotal_with_discount']));
+        echo eighty5Column(
+                        $productName,
+                        formatNumber($sd['quantity']).' '.$sd['uomName'],
+                        formatNumber($sd['uom_price']),
+                        calPercentage($sd['discount_type'],$sd['per_item_discount'],$sd['subtotal']),
+                        fprice($sd['subtotal_with_discount']));
         $discTxt=discountTxt($sd['discount_type'],$sd['per_item_discount']);
-        echo $discTxt ? printTxtFormat(['','','('.$discTxt.')',' '],[22,8,8,10],true) :'';
+        echo $discTxt ? eighty5Column('','','','('.$discTxt.')','') :'';
     }
 }
 echo '<br>';

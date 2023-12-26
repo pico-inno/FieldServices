@@ -314,7 +314,7 @@
             let perItemDis = $element.closest('tr').find('input[name="per_item_discount"]').val();
             let disType = $element.closest('tr').find('input[name="discount_type"]').val();
             let total_price = default_price;
-            let perItemDiscounts=isNullOrNan(perItemDis) * isNullOrNan(quantity);
+            let perItemDiscounts=isNullOrNan(perItemDis);
             if(disType === "fixed"){
                 $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - perItemDiscounts);
             }
@@ -614,7 +614,6 @@
                 let quantity = parent.find('.quantity_input').val();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 if(subtotal_with_discount !== ''){
-                    console.log(subtotal_with_discount,'=========');
                     let result =isNullOrNan(subtotal) - isNullOrNan(subtotal_with_discount);
                     totalDisPrice += result;
                 }
@@ -1700,6 +1699,11 @@
 
             let payable_amount = $(`#${infoPriceId} .sb-total-amount`).text();
             let pay_amount = 0;
+
+            $('input[name="pay_amount"]').val(pDecimal(payable_amount));
+            $('.print_paid ').text(pDecimal(payable_amount));
+            $('.print_change').text(pDecimal(0));
+            $('.print_balance').text(pDecimal(0));
             $(document).on('input', 'input[name="pay_amount"]', function() {
                 pay_amount = 0;
                 paidAmount=isNullOrNan($('#paidAmount').val()) ?? 0;

@@ -490,9 +490,14 @@ function eighty4Column(...$values){
     $width=[22,8,8,10];
     return printTxtFormat($values,$width);
 }
+
+function eighty5Column(...$values){
+    $width=[18,7,7,7,8];
+    return printTxtFormat($values,$width);
+}
 function discountTxt($type,$disAmt){
     if($type=='percentage'){
-        return formatNumber($disAmt).' %';
+        return formatNumber($disAmt).'%';
     }elseif($type=='foc'){
         return '';
     }
@@ -502,12 +507,12 @@ function discountTxt($type,$disAmt){
 }
 function calPercentage($type,$disAmt,$originalAmt){
     if($type=='percentage'){
-        return fprice(($originalAmt*$disAmt)/100);
+        return formatNumber(($originalAmt*$disAmt)/100);
     }elseif($type=='foc'){
         return 0;
     }
     else{
-        return fprice($disAmt);
+        return formatNumber($disAmt ?? 0);
     }
 }
 function formatNumber($number) {
