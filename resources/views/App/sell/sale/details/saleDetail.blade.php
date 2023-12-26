@@ -153,8 +153,7 @@
                                                 {{$sd->discount_type}}
                                             </td>
                                             <td class="pt-6">
-                                               {{price($sd->per_item_discount)}} &nbsp; {{
-                                            $sd->discount_type=='percentage'?'%':$currency }}
+                                               {{fprice($sd->per_item_discount)}} &nbsp; {{$sd->discount_type=='percentage'?'%':$currency }}
                                             </td>
                                             <td class="pt-6 text-dark fw-bolder">
                                                {{price($sd->subtotal_with_discount,$sd->currency_id)}}

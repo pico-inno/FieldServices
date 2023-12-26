@@ -441,7 +441,7 @@ function printFormat($productName, $quantity, $price)
 
 
 // format char to print in 48
-function printTxtFormat(array $values=[],array $width=[])
+function printTxtFormat(array $values=[],array $width=[],$break=true)
 {
     $splitedValue=[];
     $lengths = [];
@@ -473,7 +473,11 @@ function printTxtFormat(array $values=[],array $width=[])
                 $line.=isset($splitedValue[$index][$splitIndex]) ? str_pad($splitedValue[$index][$splitIndex], $width[$index] + 1, " ", STR_PAD_LEFT) : str_pad(" ", $width[$index] + 1, " ", STR_PAD_LEFT);
             }
         }
-        $str.=$line."\n";
+        if($break){
+            $str.=$line."\n";
+        }else{
+            $str.=$line;
+        }
     }
     return $str;
 }
@@ -482,7 +486,33 @@ function  eightyTxtFormat(...$values)  {
     $width=[22,8,18];
     return printTxtFormat($values,$width);
 }
-
+function eighty4Column(...$values){
+    $width=[22,8,8,10];
+    return printTxtFormat($values,$width);
+}
+function discountTxt($type,$disAmt){
+    if($type=='percentage'){
+        return formatNumber($disAmt).' %';
+    }elseif($type=='foc'){
+        return '';
+    }
+    else{
+        return '';
+    }
+}
+function calPercentage($type,$disAmt,$originalAmt){
+    if($type=='percentage'){
+        return fprice(($originalAmt*$disAmt)/100);
+    }elseif($type=='foc'){
+        return 0;
+    }
+    else{
+        return fprice($disAmt);
+    }
+}
+function formatNumber($number) {
+    return strpos($number, '.') !== false ? rtrim(rtrim($number, '0'), '.') : $number;
+}
 function getKitAvailableQty($locationId, $productId)
 {
     if (hasModule('ComboKit') && isEnableModule('ComboKit')) {

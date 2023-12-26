@@ -63,11 +63,11 @@
             .loader {
                 border: 1px solid #f3f3f3;
                 border-top: 1px solid #009ef7;
-                width: 50px;
-                height: 50px;
+                width: 70px;
+                height: 70px;
             }
             .loadingLogo img{
-                width: 25px;
+                width: 40px;
             }
         }
 

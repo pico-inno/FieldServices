@@ -433,6 +433,7 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
+            logger($e);
             DB::rollBack();
             logger($e->getMessage());
             if ($request->type == 'pos') {

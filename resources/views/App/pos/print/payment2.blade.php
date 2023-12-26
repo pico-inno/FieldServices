@@ -34,21 +34,40 @@
 @php
 // echo printFormat('Voucher No','',$sale['sales_voucher_no']);
 $name=getSettingsValue('name') ?? '';
+$lineDisc=getSettingsValue('enable_line_discount_for_sale') ?? 1;
 echo '<center>'.$name.'<center>';
 echo '<br>';
 echo printFormat('Date','',fDate($sale['created_now'],'',false));
 echo printFormat('Customer','',$sale->customer->getFullNameAttribute());
 echo '<br><br>';
-echo printFormat('Product','Qty','Price');
-echo '---------------------------------------------------<br>';
-echo '<br>';
-foreach ($sale_details as  $sd) {
-    $variation=$sd['product_variation']?'('.$sd['product_variation']['variation_template_value']['name'].')':'';
-    $productName=$sd['product']['name'].$variation;
-    echo printFormat($productName,fquantity($sd['quantity']).' '.$sd['uomName'],fprice($sd['subtotal']));
+if($lineDisc==0){
+    echo printFormat('Product','Qty','Price');
+    echo '---------------------------------------------------<br>';
+    echo '<br>';
+    foreach ($sale_details as  $sd) {
+        $variation=$sd['product_variation']?'('.$sd['product_variation']['variation_template_value']['name'].')':'';
+        $productName=$sd['product']['name'].$variation;
+        echo printFormat($productName,fquantity($sd['quantity']).' '.$sd['uomName'],fprice($sd['subtotal']));
+    }
+}else{
+
+    echo eighty4Column('Product','Qty','Disc','Price');
+    echo '---------------------------------------------------<br>';
+    echo '<br>';
+    foreach ($sale_details as  $sd) {
+        $variation=$sd['product_variation']?'('.$sd['product_variation']['variation_template_value']['name'].')':'';
+        $productName=$sd['product']['name'].$variation;
+        echo eighty4Column($productName,fquantity($sd['quantity']).' '.$sd['uomName'],calPercentage($sd['discount_type'],$sd['per_item_discount'],$sd['subtotal']),fprice($sd['subtotal_with_discount']));
+        $discTxt=discountTxt($sd['discount_type'],$sd['per_item_discount']);
+        echo $discTxt ? printTxtFormat(['','','('.$discTxt.')',' '],[22,8,8,10],true) :'';
+    }
 }
 echo '<br>';
 echo '---------------------------------------------------<br>';
+
+
+// echo printFormat('','Amount',fprice($sale['sale_amount']));
+// echo printFormat('','Discount',calPercentage($sale['extra_discount_type'],$sale['extra_discount_amount'],$sale['sale_amount']));
 echo printFormat('','Total',fprice($sale['total_sale_amount']));
 @endphp
 </pre>

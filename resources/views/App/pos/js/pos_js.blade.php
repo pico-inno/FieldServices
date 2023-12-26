@@ -313,7 +313,7 @@
             let default_price = $element.closest('tr').find('input[name="selling_price[]"]').val();
             let perItemDis = $element.closest('tr').find('input[name="per_item_discount"]').val();
             let disType = $element.closest('tr').find('input[name="discount_type"]').val();
-            let total_price = default_price * quantity;
+            let total_price = default_price;
             let perItemDiscounts=isNullOrNan(perItemDis) * isNullOrNan(quantity);
             if(disType === "fixed"){
                 $element.closest('tr').find('input[name="subtotal_with_discount"]').val(total_price - perItemDiscounts);
@@ -614,6 +614,7 @@
                 let quantity = parent.find('.quantity_input').val();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 if(subtotal_with_discount !== ''){
+                    console.log(subtotal_with_discount,'=========');
                     let result =isNullOrNan(subtotal) - isNullOrNan(subtotal_with_discount);
                     totalDisPrice += result;
                 }
@@ -1402,7 +1403,7 @@
                 let quantity = current_tr.find('input[name="quantity[]"]').val();
 
                 let result_dis_calc = calDiscountPrice(current_discount_type, discount_amount, current_price);
-                let subtotal_with_discount = isNullOrNan(result_dis_calc * quantity);
+                let subtotal_with_discount = isNullOrNan(result_dis_calc );
                 $('#invoice_row_discount').find('input[name="subtotal_with_discount"]').val(subtotal_with_discount);
             })
 

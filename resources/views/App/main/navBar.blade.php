@@ -245,7 +245,7 @@
                                     <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('pos_icon')"
                                         data-bs-toggle="tab" href="#kt_aside_nav_tab_pos">
                                         <!-- begin::Fontawesome Icon -->
-                                        <i class="fa-solid fa-cash-register fs-6"></i>
+                                        <i class="fa-solid fa-cash-register fs-5"></i>
                                         <!-- end::Fontawesome Icon -->
                                     </a>
                                     <!-- end::Nav link -->
@@ -3362,9 +3362,9 @@
                         $logo=getSettingsValue('logo');
                         @endphp
                         @if ($logo)
-                        <img alt="Logo" src="{{asset('storage/logo/'.$logo)}}" class="h-20px w-20px" />
+                        <img alt="Logo" src="{{asset('storage/logo/'.$logo)}}" class="h-30px w-30px" />
                         @else
-                        <img alt="Logo" src="{{asset('default/pico.png')}}" class="h-20px w-20px" />
+                        <img alt="Logo" src="{{asset('default/pico.png')}}" class="h-30px w-30px" />
                         @endif
                     </a>
                     <!--end::Logo-->
@@ -3425,11 +3425,11 @@
                     <!--end::Invite user-->
                     <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <a href="{{ route('pos.selectPos')}}"
-                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-sm-40px h-25px"
+                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-40px "
                             title="POS Screen">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen060.svg-->
                             <span class="svg-icon svg-icon-5">
-                                <i class="fa-solid fa-cash-register fs-sm-7 fs-8"></i>
+                                <i class="fa-solid fa-cash-register fs-7 "></i>
                             </span>
                             <!--end::Svg Icon-->
                         </a>
@@ -3438,10 +3438,10 @@
                     <!--begin::Theme mode-->
                     <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <a href="#" id="alertSound"
-                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-sm-40px h-25px">
+                            class="btn btn-sm btn-icon flex-center bg-body btn-color-gray-600 h-40px">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen060.svg-->
                             <span class="svg-icon svg-icon-5" id='alertIcon'>
-                                <i class="fa-solid fa-volume-low text-primary fs-sm-4 fs-8"></i>
+                                <i class="fa-solid fa-volume-low text-primary fs-4 "></i>
                             </span>
                             <!--end::Svg Icon-->
                         </a>
@@ -3451,7 +3451,7 @@
                     <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <!--begin::Menu toggle-->
                         <a href="#"
-                            class="btn btn-icon flex-center btn-sm bg-body btn-color-gray-600 btn-active-color-primary h-sm-40px h-25px"
+                            class="btn btn-icon flex-center btn-sm bg-body btn-color-gray-600 btn-active-color-primary h-40px"
                             data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
                             data-kt-menu-placement="bottom-end">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen060.svg-->
@@ -3613,7 +3613,7 @@
                         \App\Models\PersonalInfo::find(\Illuminate\Support\Facades\Auth::user()->personal_info_id);
                         $roleName = \App\Models\Role::find(\Illuminate\Support\Facades\Auth::user()->role_id)->name;
                         @endphp
-                        <div class="cursor-pointer symbol symbol-sm-40px symbol-25px"
+                        <div class="cursor-pointer symbol symbol-40px "
                             data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                             data-kt-menu-placement="bottom-end">
                             @if($personalInfo)
