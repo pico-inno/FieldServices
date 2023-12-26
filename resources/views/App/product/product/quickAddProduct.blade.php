@@ -138,7 +138,7 @@
                                                 </label>
                                                 <div class="input-group flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select name="product_type" class="form-select form-select-sm" data-control="select2" id="product_type" data-placeholder="Select Product Type">
+                                                        <select name="product_type" class="form-select form-select-sm" data-control="select2" id="product_type" data-placeholder="Select Product Type" data-parent='#quick_add_product_form'>
                                                             <option></option>
                                                             <option value="consumeable">Consumeable</option>
                                                             <option selected value="storable">Storable</option>
@@ -188,6 +188,7 @@
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">{{ __('product/product.brand') }}</label>
                                            <select name="brand" class="form-select form-select-sm" data-control="select2"
+                                           data-parent='#quick_add_product_form'
                                                 data-placeholder="Select brand">
                                                 <option></option>
                                                 @foreach ($brands as $brand)
@@ -213,7 +214,7 @@
                                             <label for="" class="form-label">
                                                 {{ __('product/product.sub_category') }}
                                             </label>
-                                            <select class="form-select form-select-sm" name="sub_category"
+                                            <select class="form-select form-select-sm" name="sub_category" data-parent='#quick_add_product_form'
                                                 id="subCategorySelect" data-control="select2" data-hide-search="true"
                                                 data-placeholder="Select sub category">
 
@@ -224,7 +225,8 @@
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">Manufacturer</label>
                                            <select name="manufacturer" class="form-select form-select-sm" data-control="select2"
-                                                data-placeholder="Select manufacturer">
+                                                data-placeholder="Select manufacturer"
+                                                data-parent='#quick_add_product_form'>
                                                 <option></option>
                                                 @foreach ($manufacturers as $manufacturer)
                                                 <option value="{{ $manufacturer->id }}">{{ $manufacturer->name
@@ -236,7 +238,7 @@
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">Generic</label>
                                             <select name="generic" class="form-select form-select-sm" data-control="select2"
-                                                data-placeholder="Select generic">
+                                                data-placeholder="Select generic" data-parent='#quick_add_product_form'>
                                                 <option></option>
                                                 @foreach ($generics as $generic)
                                                 <option value="{{ $generic->id }}">{{ $generic->name }}</option>
@@ -267,7 +269,7 @@
                                                 </label>
                                                 <div class="input-group mb-5 flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select name="unit_categories" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Unit Categories">
+                                                        <select name="unit_categories" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Unit Categories" data-parent='#quick_add_product_form'>
                                                             <option></option>
                                                             @foreach ($unitCategories as $unitCategorie)
                                                                 <option value="{{ $unitCategorie->id }}" @selected(old('uom_id') == $unitCategorie->id)>{{ $unitCategorie->name }}</option>
@@ -290,7 +292,7 @@
                                                 <div class="input-group mb-5 flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
                                                         <select name="uom_id" class="form-select form-select-sm uomDatas"
-                                                            data-control="select2" data-placeholder="Select UoM">
+                                                            data-control="select2" data-placeholder="Select UoM" data-parent='#quick_add_product_form'>
                                                             <option></option>
 {{--                                                            @foreach ($uoms as $uom)--}}
 {{--                                                            <option value="{{ $uom->id }}">{{ $uom->name }}</option>--}}
@@ -315,7 +317,7 @@
                                                         <select class="form-select form-select-sm"
                                                             name="purchase_uom_id" id="unitOfUom" data-control="select2"
                                                             data-hide-search="true"
-                                                            data-placeholder="Select purchase UoM">
+                                                            data-placeholder="Select purchase UoM" data-parent='#quick_add_product_form'>
 
                                                         </select>
                                                     </div>
@@ -375,7 +377,7 @@
                                                             <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
                                         <div class="mb-3">
-                                            <select class="form-select form-select-sm" name="has_variation" data-control="select2" id="has_variation" data-hide-search="true">
+                                            <select class="form-select form-select-sm" name="has_variation" data-control="select2" id="has_variation" data-hide-search="true" data-parent='#quick_add_product_form'>
                                                 <option value="single" selected>Single</option>
                                                 <option value="variable">Variable</option>
                                             </select>
@@ -460,7 +462,7 @@
                                                     <td class="min-w-200px">
                                                         <select name="variation_name" id="variationSelect"
                                                             class="form-select rounded-0" data-control="select2"
-                                                            data-hide-search="true" data-placeholder="Please select">
+                                                            data-hide-search="true" data-placeholder="Please select" data-parent='#quick_add_product_form'>
                                                             <option></option>
                                                             @foreach ($variations as $variation)
                                                             <option value="{{ $variation->id }}">{{ $variation->name }}

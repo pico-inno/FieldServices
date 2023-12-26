@@ -25,7 +25,7 @@
                         <div class="col-md-4 col-sm-12">
                             <label for="contact-type" class="required form-label">Contact Type</label>
                             <select name="type" class="form-select form-select-sm fs-7" id="contact-type" required
-                                aria-label="Select example" onclick="showCG()">
+                                aria-label="Select example" onclick="showCG()"  data-parent='#contact_add_modal'>
                                 <option @disabled(!hasCreate('supplier')) value="Supplier">Suppliers</option>
                                 <option value="Customer" selected>Customers</option>
                                 <option @disabled(!hasCreate('supplier')) value="Both">Both (Suppliers and Customers)</option>
@@ -65,7 +65,7 @@
                             $customer_groups = \App\Models\Contact\CustomerGroup::all();
                             @endphp
                             <select name="customer_group_id" class="form-select form-select-sm fs-7" data-control="select2"
-                                data-placeholder="None" data-allow-clear="true">
+                                data-placeholder="None" data-allow-clear="true"  data-parent='#contact_add_modal'>
                                 <option></option>
                                 @foreach($customer_groups as $customer_group)
                                 <option value="{{$customer_group->id}}">{{$customer_group->name}}</option>
@@ -78,7 +78,7 @@
                             $price_lists = \App\Models\Product\PriceLists::all();
                             @endphp
                             <select name="price_list_id" class="form-select form-select-sm fs-7" data-control="select2"
-                                data-placeholder="None" data-allow-clear="true">
+                                data-placeholder="None" data-allow-clear="true"  data-parent='#contact_add_modal'>
                                 <option></option>
                                 @foreach($price_lists as $price_list)
                                 <option value="{{$price_list->id}}">{{$price_list->name}}</option>
@@ -128,7 +128,7 @@
                         <div class="col-md-3 col-sm-12 mb-8">
                             <label for="gender" class="form-label">Gender</label>
                             <select name="gender" id="gender" class="form-select form-select-sm" placeholder="Gender"
-                                data-placeholder="Gender" data-control="select2" data-allow-clear="true" data-hide-search="true">
+                                data-placeholder="Gender" data-control="select2" data-allow-clear="true" data-hide-search="true"  data-parent='#contact_add_modal'>
                                 <option disabled selected>Select Gender</option>
                                 <option value="male">
                                     Male
@@ -198,7 +198,7 @@
                         <div class="col-md-3 col-sm-12 mb-8">
                             <label for="country" class="form-label">Country</label>
                             <select name="country" id="country" class="form-select form-select-sm fs-7" data-control="select2"
-                                data-placeholder="Select Country">
+                                data-placeholder="Select Country"  data-parent='#contact_add_modal'>
                                 <option></option>
                                 <option value="Afghanistan">Afghanistan</option>
                                 <option value="Aland Islands">Aland Islands</option>
@@ -450,7 +450,7 @@
                                         class="form-control form-control-sm rounded-end-0 fs-7">
                                     <div class="overflow-hidden flex-grow-1">
                                         <select name="pay_term_type" class="form-select form-select-sm rounded-start-0 fs-7"
-                                            data-control="select2" data-placeholder="Please select">
+                                            data-control="select2" data-placeholder="Please select" data-parent='#contact_add_modal'>
                                             <option></option>
                                             <option value="Months">Months</option>
                                             <option value="Days">Days</option>

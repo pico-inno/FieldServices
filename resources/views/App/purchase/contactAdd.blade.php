@@ -387,7 +387,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <label for="contact-type" class="required form-label">Contact Type</label>
-                            <select name="type" class="form-select" id="contact-type" data-control="select2" required
+                            <select name="type" class="form-select" id="contact-type" data-control="select2" required   data-parent='#contact_add_modal'
                                 aria-label="Select example">
                                 <option value="Supplier" selected>Suppliers</option>
                                 <option value="Customer" >Customers</option>
@@ -424,7 +424,7 @@
                     <div class="row mb-6 customer-group">
                         <div class="col-md-4 col-sm-12">
                             <label for="customer_group_id" class="form-label">Customer Group</label>
-                            <select name="customer_group_id" class="form-select " data-control="select2"
+                            <select name="customer_group_id" class="form-select " data-control="select2" data-parent='#contact_add_modal'
                                 data-placeholder="None" data-hide-search="true">
                                 <option></option>
                                 @php
@@ -525,7 +525,7 @@
                                 <div class="input-group">
                                     <input type="number" name="pay_term_number" id="pay_term_number"
                                         class="form-control">
-                                    <select name="pay_term_type" class="form-select" aria-label="Select example">
+                                    <select name="pay_term_type" class="form-select" aria-label="Select example" data-parent='#contact_add_modal'>
                                         <option value="" selected disabled>Please select</option>
                                         <option value="Months">Months</option>
                                         <option value="Days">Days</option>
@@ -564,7 +564,7 @@
                             </div>
                             <div class="col-md-4 col-sm-12 mb-6 detail-toggle-class d-none">
                                 <label for="country" class="form-label">Country</label>
-                                <select name="country" id="country" class="form-select" aria-label="Select example">
+                                <select name="country" id="country" class="form-select" aria-label="Select example" data-parent='#contact_add_modal'>
                                     <option value="" selected disabled>Select Country</option>
                                     <option value="Afghanistan">Afghanistan</option>
                                     <option value="Aland Islands">Aland Islands</option>
