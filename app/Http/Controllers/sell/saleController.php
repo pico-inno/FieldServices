@@ -402,7 +402,6 @@ class saleController extends Controller
                 $sdcStatus = $saleService->saleDetailCreation($request, $sale_data, $sale_details);
                 if ($sdcStatus == 'outOfStock') {
                     if ($request->type == 'pos' || $request->type == 'campaign') {
-                        logger('out of stock');
                         return response()->json([
                             'status' => '404',
                             'message' => 'Product Out of Stock'
@@ -435,6 +434,7 @@ class saleController extends Controller
         } catch (Exception $e) {
             logger($e);
             DB::rollBack();
+            dd($e);
             logger($e->getMessage());
             if ($request->type == 'pos') {
                 return response()->json([

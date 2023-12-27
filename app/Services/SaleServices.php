@@ -106,7 +106,7 @@ class SaleServices
                 'variation_id' => $sale_detail['variation_id'],
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],
-                'uom_price' => $sale_detail['uom_price'],
+                'uom_price' => $sale_detail['uom_price'] ?? 0,
                 'subtotal' =>  $sale_detail['subtotal'],
                 'discount_type' => $sale_detail['discount_type'],
                 'per_item_discount' => $sale_detail['per_item_discount'],

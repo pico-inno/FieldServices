@@ -75,10 +75,10 @@ echo '<br>';
 echo '---------------------------------------------------<br>';
 echo printFormat('','Total',fprice($sale['total_sale_amount']));
 echo "<br><br><br>";
+echo "</pre>";
 echo "<div class='text-center'>Thanks For Shopping</div>";
 // die;
 @endphp
-</pre>
 
 </body>
 
