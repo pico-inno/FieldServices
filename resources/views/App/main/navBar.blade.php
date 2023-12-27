@@ -2296,7 +2296,7 @@
                                                 <div class="menu-item menu-accordion ">
                                                     <a class="menu-link @yield('questionnaire_list_active')" href="{{route('quest.index')}}">
                                                         <span class="menu-icon">
-                                                            <i class="fa-solid fa-list fs-6"></i>
+                                                            <i class="fa-regular fa-paste fs-6"></i>
                                                         </span>
                                                         <span class="menu-title">Questionnaire List </span>
                                                     </a>
