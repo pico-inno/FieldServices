@@ -22,6 +22,7 @@ class InvoiceController extends Controller
     {
         $this->validateInvoiceTemplateData($request);
         $invoiceTemplateData = $this->getInvoiceTemplateData($request);
+        // dd(InvoiceLayout::create($invoiceTemplateData));
         // dd($invoiceTemplateData);
         InvoiceLayout::create($invoiceTemplateData);
         return back();
@@ -36,7 +37,6 @@ class InvoiceController extends Controller
 
     public function edit($id)
     {
-
         $layout = InvoiceLayout::find($id);
         return view('App.invoice.edit',compact('layout'));
     }

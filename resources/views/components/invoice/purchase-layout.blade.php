@@ -13,8 +13,7 @@
                         </li>
 
                     @if ($layout['data_text']['supplier_name'])
-                        <li class="text-muted">From : <span style="color:#5dc561 ;">U Maung
-                                Maung</span></li>
+                        <li class="text-muted">From : <span style="color:#5dc561 ;">{{$purchase->supplier->name}}</span></li>
                     @endif
                     @if ($layout['data_text']['address'])
                         <li class="text-muted">{{ $location->name }}</li>

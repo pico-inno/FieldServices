@@ -134,14 +134,7 @@
                         <!--end::Svg Icon-->
                         <input type="text" data-kt-purchase-table-filter="search" class="form-control fs-8 fs-sm-base form-control-sm form-control-solid w-100 w-sm-250px ps-10 ps-sm-15 " placeholder="Search Purchase" />
                     </div>
-                    <div class="col-12">
-                        <select class="form-select form-select-sm fw-bold" id="layoutIdBox" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-supplier-table-filter="supplier" data-hide-search="true">
-                            <option selected disabled></option>
-                            @foreach ($layouts as $layout)
-                                <option value="{{ $layout->id }}">{{$layout->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
+
                     <!--end::Search-->
                 </div>
                 <!--begin::Card title-->

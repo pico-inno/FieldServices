@@ -76,7 +76,6 @@
                                 <textarea style="color: red !important;" name="header" id="kt_docs_ckeditor_classic"></textarea>
                                 @error('header') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
-
                         </div>
                         <div class="separator separator-dashed mb-8"></div>
 

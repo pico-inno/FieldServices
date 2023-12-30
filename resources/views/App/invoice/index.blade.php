@@ -47,7 +47,7 @@
                                         <a href="{{ route('invoice.edit',$layout->id) }}" class="table-actions btn btn-warning btn-sm">
                                             <i class="fa-solid fa-pencil-alt"></i>
                                         </a>
-                                        <a href="" class="table-actions btn btn-danger btn-sm">
+                                        <a href="{{ route('invoice.delete',$layout->id) }}" class="table-actions btn btn-danger btn-sm">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
                                     </td>
