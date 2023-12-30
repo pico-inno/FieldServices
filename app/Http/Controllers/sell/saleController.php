@@ -419,7 +419,6 @@ class saleController extends Controller
                 $sdcStatus = $saleService->saleDetailCreation($request, $sale_data, $sale_details);
                 if ($sdcStatus == 'outOfStock') {
                     if ($request->type == 'pos' || $request->type == 'campaign') {
-                        logger('out of stock');
                         return response()->json([
                             'status' => '404',
                             'message' => 'Product Out of Stock'
@@ -441,14 +440,20 @@ class saleController extends Controller
                 ], 200);
             } else {
                 if ($request->save == 'save_&_print') {
-                    // dd($sale_data->with(''))
                     return redirect()->route('all_sales', 'allSales')->with([
                         'success' => 'Successfully Created Sale',
                         'print' => $sale_data->id,
-                        'layoutId' => $layoutId
-
+                        'layoutId' => $layoutId,
                     ]);
-                } else {
+                } elseif($request->save == "save_&_download_image"){
+                    return redirect()->route('all_sales', 'allSales')->with([
+                        'success' => 'Successfully Created Sale',
+                        'print' => $sale_data->id,
+                        'layoutId' => $layoutId,
+                        'name' => $sale_data->sales_voucher_no
+                    ]);
+                }
+                else{
                     return redirect()->route('all_sales', 'allSales')->with(['success' => 'Successfully Created Sale']);
                 }
             }

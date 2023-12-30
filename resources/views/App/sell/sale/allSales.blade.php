@@ -456,45 +456,24 @@
     </script>
     <script src="{{ asset('customJs/sell/saleItemTable.js') }}"></script>
     <script src="{{ asset('customJs/sell/payment/payment.js') }}"></script>
+    <script src="{{ asset('customJs/print/print.js') }}"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
         let printId = "{{ session('print') }}";
-        let layoutId = " {{ session('layoutId') }}"
-        // const layoutIdSelectBox = $('#layoutIdBox');
-        // let layoutId = 1;
-        // layoutIdSelectBox.change(function(e){
-        //     layoutId = e.target.value;
-
-        // })
-        if (printId) {
-            let url = `/sell/print/${printId}/Invoice`;
+        let layoutId = " {{ session('layoutId') }}";
+        let url = `/sell/print/${printId}/Invoice`;
+        let name = "{{ session('name') }}";
+        if (printId && !name) {
             loadingOn();
             ajaxPrint(url, layoutId);
         }
-        $(document).on('click', '.view_detail', function() {
-            $url = $(this).data('href');
-
+        if(name && printId){
             loadingOn();
-            $('.purchaseDetail').load($url, function() {
-                $(this).modal('show');
+            generateImage(url,layoutId,name);
+        }
 
-                loadingOff();
-            });
-        });
-
-        $(document).on('click', '.print-invoice', function(e) {
-            e.preventDefault();
+        function generateImage(url,layoutId,name) {
             loadingOn();
-            var url = $(this).data('href');
-            ajaxPrint(url, layoutId);
-        });
-
-        $(document).on('click', '.download-image', function(e) {
-            e.preventDefault();
-            loadingOn();
-            var url = $(this).data('href');
-            var layoutId = $(this).data('layoutId'); // Corrected to 'layoutid'
-            var name = $(this).data('name');
             $.ajax({
                 url: url,
                 data: {
@@ -505,24 +484,20 @@
                     newWindow.document.write(response.html);
                     newWindow.document.close();
 
-                    // Wait for a brief moment for the content to render
                     setTimeout(function() {
-                        // Capture the content of the new window using html2canvas
                         html2canvas(newWindow.document.body, {
                             useCORS: true,
                             allowTaint: true
                         }).then(function(canvas) {
-                            // Convert canvas to data URL
                             var img = canvas.toDataURL('image/png');
 
                             var downloadLink = document.createElement('a');
                             downloadLink.href = img;
                             downloadLink.download = name +
-                                '.png'; // Set a default filename for the download
+                                '.png';
                             document.body.appendChild(downloadLink);
                             downloadLink.click();
 
-                            // Show success message
                             Swal.fire({
                                 title: 'Image downloaded!',
                                 type: 'success',
@@ -536,13 +511,39 @@
 
                             loadingOff();
                         });
-                    }, 500); // Adjust the timeout as needed
+                    }, 500);
                 },
                 error: function(error) {
                     console.error('Error:', error);
                     loadingOff();
                 }
             });
+        }
+
+        $(document).on('click', '.download-image', function(e) {
+            e.preventDefault();
+            var url = $(this).data('href');
+            var layoutId = $(this).data('layoutId');
+            var name = $(this).data('name');
+            generateImage(url,layoutId,name);
+        });
+
+
+        $(document).on('click', '.view_detail', function() {
+            $url = $(this).data('href');
+
+            loadingOn();
+            $('.purchaseDetail').load($url, function() {
+                $(this).modal('show');
+                loadingOff();
+            });
+        });
+
+        $(document).on('click', '.print-invoice', function(e) {
+            e.preventDefault();
+            loadingOn();
+            var url = $(this).data('href');
+            ajaxPrint(url, layoutId);
         });
 
 
