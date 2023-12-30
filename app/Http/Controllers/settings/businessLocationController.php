@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\InvoiceLayout;
 use App\Models\locationAddress;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -30,7 +31,8 @@ class businessLocationController extends Controller
         $priceLists=PriceLists::get();
         $locationType= locationType::get();
         $locations = businessLocation::orderBy('id','DESC')->get();
-        return view('App.businessSetting.location.add',compact('priceLists', 'locationType', 'locations'));
+        $invoiceLayouts = InvoiceLayout::all();
+        return view('App.businessSetting.location.add',compact('priceLists','invoiceLayouts', 'locationType', 'locations'));
     }
     public function add(Request $request,locationActions $action)
     {
@@ -108,7 +110,8 @@ class businessLocationController extends Controller
         //     ->where('id', '!=', $bl->id)
         //     ->where('parent_location_id', '!=', $bl->id)->get();
         $address = locationAddress::where('location_id',$bl->id)->first();
-        return view('App.businessSetting.location.edit',compact('bl','priceLists','locationType','locations', 'address'));
+        $invoiceLayouts = InvoiceLayout::all();
+        return view('App.businessSetting.location.edit',compact('bl','invoiceLayouts','priceLists','locationType','locations', 'address'));
 
     }
     public function view(businessLocation $businessLocation){
@@ -118,6 +121,7 @@ class businessLocationController extends Controller
     }
     public function update(Request $request,$id)
     {
+
         $bl = businessLocation::where('id', $id)->first();
         $parentLocation=businessLocation::where('id', $request->parent_location_id)->first();
         if($request->parent_location_id != $id && arr($parentLocation, 'parent_location_id') != $id){

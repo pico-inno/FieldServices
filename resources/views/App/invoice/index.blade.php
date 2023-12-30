@@ -28,14 +28,35 @@
         <!--begin::Container-->
         <div class="container-xxl" id="location">
             <div class="row">
-                @foreach ($layouts as $layout)
-                    <div class="col-4">
-                        <div class="card shadow p-3">{{ $layout->name }}
-                            <a href="{{ route('invoice.detail',$layout->id) }}" class="btn btn-success btn-sm">View</a>
-                        </div>
+                <div class="card p-4">
+                    <h4 class="text-muted p-3">Invoice Layouts</h4>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($layouts as $layout)
+                                <tr>
+                                    <td><a href="{{ route('invoice.detail',$layout->id) }}"> {{ $layout->name }}</a></td>
+                                    <td>{{ $layout->created_at->format('j-F-Y') }}</td>
+                                    <td>
+                                        <a href="{{ route('invoice.edit',$layout->id) }}" class="table-actions btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-pencil-alt"></i>
+                                        </a>
+                                        <a href="" class="table-actions btn btn-danger btn-sm">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
-                    </div>
-                @endforeach
             </div>
         </div>
 

@@ -53,6 +53,7 @@ use App\Http\Requests\location\locationRequest;
 use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
+use App\Models\InvoiceLayout;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -69,7 +70,7 @@ class saleController extends Controller
         $this->middleware('canCreate:sell')->only(['createPage', 'store']);
         $this->middleware('canUpdate:sell')->only(['saleEdit', 'update']);
         $this->middleware('canDelete:sell')->only('softDelete', 'softSelectedDelete');
-        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale','invoice_layout')->with('currency')->first();
+        $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale', 'invoice_layout')->with('currency')->first();
         $this->setting = $settings;
         $this->currency = $settings->currency ?? null;
         $this->accounting_method = $settings->accounting_method ?? null;
@@ -80,11 +81,16 @@ class saleController extends Controller
     {
         $locations = businessLocation::select('name', 'id', 'parent_location_id')->get();
         $customers = contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
-        return view('App.sell.sale.allSales', compact('locations', 'customers', 'saleType'));
+        $layouts = InvoiceLayout::all();
+        return view('App.sell.sale.allSales', compact('locations', 'customers', 'saleType', 'layouts'));
     }
+
+
     public function saleItemsList(Request $request)
     {
         $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')->with('business_location_id', 'businessLocation', 'customer');
+        // dd($saleItems->get()->toArray());
+
         if ($request->saleType == 'posSales') {
             $saleItems = $saleItems->whereNotNull('pos_register_id');
         }
@@ -95,6 +101,7 @@ class saleController extends Controller
             $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
         $saleItems = $saleItems->get();
+
         return DataTables::of($saleItems)
             ->editColumn('saleItems', function ($saleItems) {
                 $saleDetails = $saleItems->sale_details;
@@ -165,7 +172,7 @@ class saleController extends Controller
                         <ul class="dropdown-menu z-10 p-5 " aria-labelledby="saleItemDropDown" role="menu">';
                 if (hasView('sell')) {
                     $html .= ' <a class="dropdown-item p-2   view_detail"   type="button" data-href="' . route('saleDetail', $saleItem->id) . '">
-                                view
+                                View
                             </a>';
                 }
                 if (hasUpdate('sell')) {
@@ -176,8 +183,13 @@ class saleController extends Controller
                     }
                 }
                 if (hasPrint('sell')) {
-                    $html .= '<a class="dropdown-item p-2  cursor-pointer  print-invoice"  data-href="' . route('print_sale', $saleItem->id) . '">print</a>';
+                    $html .= '<a class="dropdown-item p-2  cursor-pointer  print-invoice"  data-href="' . route('print_sale', $saleItem->id) . '">Print</a>';
                 }
+
+
+                $html .= '<a class="dropdown-item p-2  cursor-pointer download-image" data-name="'.$saleItem->sales_voucher_no.'" data-layoutId="'.$saleItem->businessLocation->invoice_layout .'"  data-href=" '. route('print_sale', $saleItem->id) .' ">Download Image</a>';
+
+
                 if ($saleItem->balance_amount > 0) {
                     $html .= '<a class="dropdown-item p-2 cursor-pointer " id="paymentCreate"   data-href="' . route('paymentTransaction.createForSale', ['id' => $saleItem->id, 'currency_id' => $saleItem->currency_id]) . '">Add Payment</a>';
                 }
@@ -238,6 +250,7 @@ class saleController extends Controller
     public function createPage()
     {
         $locations = LocationRepository::getTransactionLocation();
+        // dd($locations->toArray());
         $products = Product::with('productVariations')->get();
         $walkInCustomer = optional(Contact::where('type', 'Customer')->orWhere('type', 'Both')->where('first_name', 'Walk-In Customer')->first());
         $priceLists = PriceLists::select('id', 'name', 'description', 'currency_id')->get();
@@ -247,6 +260,7 @@ class saleController extends Controller
         $currencies = Currencies::get();
         $defaultPriceListId = getSystemData('defaultPriceListId');
         $exchangeRates = [];
+
         if (class_exists('Modules\ExchangeRate\Entities\exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
             $exchangeRates = exchangeRates::get();
         }
@@ -324,6 +338,8 @@ class saleController extends Controller
     // sale store
     public function store(Request $request, SaleServices $saleService, paymentServices $paymentServices)
     {
+        $location = businessLocation::find($request->business_location_id);
+        $layoutId = InvoiceLayout::find($location->invoice_layout);
         $sale_details = $request->sale_details;
         Validator::make($request->toArray(), [
             'sale_details' => 'required',
@@ -342,10 +358,10 @@ class saleController extends Controller
             $request['payment_account'] = $paymentAccountIds[0] ?? null;
             $request['currency_id'] = $this->currency->id ?? null;
             $request['channel_type'] = 'pos';
-            $request['channel_id']= $request->pos_register_id;
-        }elseif($request->type == 'campaign'){
+            $request['channel_id'] = $request->pos_register_id;
+        } elseif ($request->type == 'campaign') {
             $request['channel_type'] = 'campaign';
-            $request['channel_id']= $request->campaign_id;
+            $request['channel_id'] = $request->campaign_id;
         }
 
         DB::beginTransaction();
@@ -360,6 +376,7 @@ class saleController extends Controller
             }
             $request['payment_status'] = $payment_status;
             $sale_data = $saleService->create($request);
+
 
             if ($request->reservation_id) {
                 $request['sale_id'] = $sale_data->id;
@@ -407,7 +424,7 @@ class saleController extends Controller
                             'status' => '404',
                             'message' => 'Product Out of Stock'
                         ], 200);
-                    }else{
+                    } else {
                         return back()->withInput()->with(['error' => 'Product Out Of Stock']);
                     }
                 }
@@ -416,7 +433,7 @@ class saleController extends Controller
             DB::commit();
 
             // response
-            if ($request->type == 'pos' || $request->type=="campaign") {
+            if ($request->type == 'pos' || $request->type == "campaign") {
                 return response()->json([
                     'data' => $sale_data['id'],
                     'status' => '200',
@@ -424,9 +441,12 @@ class saleController extends Controller
                 ], 200);
             } else {
                 if ($request->save == 'save_&_print') {
+                    // dd($sale_data->with(''))
                     return redirect()->route('all_sales', 'allSales')->with([
                         'success' => 'Successfully Created Sale',
                         'print' => $sale_data->id,
+                        'layoutId' => $layoutId
+
                     ]);
                 } else {
                     return redirect()->route('all_sales', 'allSales')->with(['success' => 'Successfully Created Sale']);
@@ -573,9 +593,9 @@ class saleController extends Controller
                     $sale_detial_qty_from_db = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_details->quantity, $sale_details->uom_id)['qtyByReferenceUom'];
 
                     // smallest qty from client
-                    $UoMHelper= UomHelper::getReferenceUomInfoByCurrentUnitQty($request_old_sale['quantity'], $request_old_sale['uom_id']);
+                    $UoMHelper = UomHelper::getReferenceUomInfoByCurrentUnitQty($request_old_sale['quantity'], $request_old_sale['uom_id']);
                     $requestQty = $UoMHelper['qtyByReferenceUom'];
-                    $refUoMId=$UoMHelper['referenceUomId'];
+                    $refUoMId = $UoMHelper['referenceUomId'];
 
 
                     $dif_sale_qty = $requestQty - $sale_detial_qty_from_db;
@@ -1146,24 +1166,24 @@ class saleController extends Controller
             'variation_template_values.name as variation_name',
             'variation_template_values.id as variation_template_values_id'
         )->whereNull('products.deleted_at')
-        ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
-        ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
-            $query
-                ->where('products.can_sale', 1)
-                ->where('products.name', 'like', '%' . $keyword . '%')
-                ->when($psku_kw == 'true', function ($q) use ($keyword) {
-                    $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
-                })
-                ->when($vsku_kw == 'true', function ($q) use ($keyword) {
-                    $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
-                })
-                ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
-                    $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
-                        $query->where('package_barcode', $keyword);
+            ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
+                $query
+                    ->where('products.can_sale', 1)
+                    ->where('products.name', 'like', '%' . $keyword . '%')
+                    ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                            $query->where('package_barcode', $keyword);
+                        });
                     });
-                });
-        })
+            })
             ->when($variation_id, function ($query) use ($variation_id) {
                 $query->where('product_variations.id', $variation_id);
             })
@@ -1171,8 +1191,8 @@ class saleController extends Controller
                 $locationIds = childLocationIDs($business_location_id);
                 $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')->paginate(10);
-            // ->get()->toArray();
-            // dd($products);
+        // ->get()->toArray();
+        // dd($products);
         return response()->json($products, 200);
     }
     public function getProductV3(Request $request)
@@ -1198,9 +1218,9 @@ class saleController extends Controller
             'product_variations.additionalProduct.productVariation.variationTemplateValue',
             'stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
-                $query->select('current_quantity', 'business_location_id', 'product_id','id')
-                ->where('current_quantity', '>', 0)
-                ->whereIn('business_location_id', $locationIds);
+                $query->select('current_quantity', 'business_location_id', 'product_id', 'id')
+                    ->where('current_quantity', '>', 0)
+                    ->whereIn('business_location_id', $locationIds);
             }
         ];
         if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
@@ -1235,24 +1255,24 @@ class saleController extends Controller
             'variation_template_values.name as variation_name',
             'variation_template_values.id as variation_template_values_id'
         )->whereNull('products.deleted_at')
-        ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
-        ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
-            $query
-                ->where('can_sale', 1)
-                ->where('products.name', 'like', '%' . $keyword . '%')
-                ->when($psku_kw == 'true', function ($q) use ($keyword) {
-                    $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
-                })
-                ->when($vsku_kw == 'true', function ($q) use ($keyword) {
-                    $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
-                })
-                ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
-                    $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
-                        $query->where('package_barcode', $keyword);
+            ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
+                $query
+                    ->where('can_sale', 1)
+                    ->where('products.name', 'like', '%' . $keyword . '%')
+                    ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                            $query->where('package_barcode', $keyword);
+                        });
                     });
-                });
-        })
+            })
             ->when($variation_id, function ($query) use ($variation_id) {
                 $query->where('product_variations.id', $variation_id);
             })
@@ -1313,15 +1333,15 @@ class saleController extends Controller
         return response()->json($result, 200);
     }
 
-
-    public function saleInvoice($id)
+    public function saleInvoice($id, Request $request)
     {
-        $sale = sales::with('sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first()->toArray();
+        $sale = sales::with('sold_by','sold', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
+        // dd($sale->toArray());
 
         $location = businessLocation::where('id', $sale['business_location_id'])->first();
         $address = $location->locationAddress;
 
-        $sale_details = sale_details::with(['productVariation' => function ($q) {
+        $table_text = sale_details::with(['productVariation' => function ($q) {
             $q->select('id', 'product_id', 'variation_template_value_id')
                 ->with([
                     'product' => function ($q) {
@@ -1332,10 +1352,18 @@ class saleController extends Controller
                     }
                 ]);
         }, 'product', 'uom', 'currency'])->where('sales_id', $id)->where('is_delete', 0)->get();
-        if($this->setting->invoice_layout == 0){
-            $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address'))->render();
-        }elseif($this->setting->invoice_layout == 1){
-            $invoiceHtml = view('App.sell.print.pos.80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
+
+        $layout = InvoiceLayout::find($location->invoice_layout);
+        $type="sale";
+
+
+        if ($layout->paper_size  == "80mm") {
+            $invoiceHtml = view('App.sell.print.pos.80mm', compact('sale', 'location', 'table_text', 'address'))->render();
+        } else {
+            $printSectionHtml = view('App.invoice.detail', compact('sale', 'location', 'table_text', 'address', 'layout','type'))->render();
+            // Extract the content of id="print-section" from the HTML
+            preg_match('/<section class="p-5" id="print-section">(.*?)<\/section>/s', $printSectionHtml, $matches);
+            $invoiceHtml = $matches[0];
         }
         return response()->json(['html' => $invoiceHtml]);
     }

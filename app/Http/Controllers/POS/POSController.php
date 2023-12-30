@@ -24,6 +24,7 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\networkPrinterController;
+use App\Models\InvoiceLayout;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use Modules\Restaurant\Entities\table;
@@ -81,6 +82,7 @@ class POSController extends Controller
             return back()->with(['warning'=>'something went wrong']);
         }
         $locations = businessLocation::all();
+
         // $priceGroups = PriceGroup::select('id', 'name', 'description')->get();
         $price_lists = PriceLists::all();
         $currentStockBalance = CurrentStockBalance::all();
@@ -105,6 +107,7 @@ class POSController extends Controller
         }
         return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables', 'reservations', 'setting', 'currencySymbol'));
     }
+
     public function edit($posRegisterId)
     {
         try {
@@ -227,7 +230,7 @@ class POSController extends Controller
 
     public function paymentPrintLayout($id)
     {
-
+        // $invoiceLayout = InvoiceLayout::find($request->invoiceLayoutId);
         $sale = sales::with('sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
         // dd($sale);
         $location = businessLocation::where('id', $sale['business_location_id'])->first();

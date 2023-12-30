@@ -79,6 +79,8 @@
                                     @endforeach
                                 </select>
                             </div>
+
+
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-12 col-md-3">
@@ -121,7 +123,7 @@
                 <!--begin::Card title-->
                 <div class="card-title ">
                     <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative my-1">
+                    <div class="d-flex align-items-center position-relative my-1 me-2">
                         <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                         <span class="svg-icon svg-icon-sm-1 svg-icon-5 position-absolute m-3 ms-sm-6">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -131,6 +133,14 @@
                         </span>
                         <!--end::Svg Icon-->
                         <input type="text" data-kt-purchase-table-filter="search" class="form-control fs-8 fs-sm-base form-control-sm form-control-solid w-100 w-sm-250px ps-10 ps-sm-15 " placeholder="Search Purchase" />
+                    </div>
+                    <div class="col-12">
+                        <select class="form-select form-select-sm fw-bold" id="layoutIdBox" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-supplier-table-filter="supplier" data-hide-search="true">
+                            <option selected disabled></option>
+                            @foreach ($layouts as $layout)
+                                <option value="{{ $layout->id }}">{{$layout->name}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <!--end::Search-->
                 </div>
@@ -142,6 +152,7 @@
                         <!--begin::Filter-->
                        <!--begin::Toolbar-->
                         <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+
                             <!--begin::Filter-->
                             {{-- <button class="accordion-button fs-4 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#kt_accordion_1_body_1" aria-expanded="true" aria-controls="kt_accordion_1_body_1">
                                 Accordion Item #1
@@ -181,6 +192,7 @@
                                 </div>
                                 <!--end::Content-->
                             </div>
+
                             <!--end::Menu 1-->
                             <!--end::Filter-->
                         </div>
@@ -396,6 +408,14 @@
 
           $(document).ready(function(){
             let printId="{{session('print')}}";
+
+
+            const layoutIdSelectBox = $('#layoutIdBox');
+            let layoutId = 1;
+            layoutIdSelectBox.change(function(e){
+                layoutId = e.target.value;
+            })
+
             if(printId){
                 let url=`purchase/print/${printId}/Invoice`;
                 loadingOn();
@@ -411,6 +431,9 @@
             function ajaxPrint(url){
                 $.ajax({
                     url: url,
+                    data : {
+                        'layoutId' : layoutId
+                    },
                     success: function(response) {
                         // Open a new window with the invoice HTML and styles
                                 // Create a hidden iframe element and append it to the body

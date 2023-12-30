@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('data_text')->nullable();
             $table->string('header_text');
             $table->string('footer_text');
+            $table->longText('note');
             $table->json('table_text')->nullable();
             $table->timestamps();
         });

@@ -42,7 +42,7 @@ echo '<br><br>';
 echo printFormat('Product','Qty','Price');
 echo '---------------------------------------------------<br>';
 echo '<br>';
-foreach ($sale_details as  $sd) {
+foreach ($table_text as  $sd) {
     $variation=$sd['product_variation']?'('.$sd['product_variation']['variation_template_value']['name'].')':'';
     $productName=$sd['product']['name'].$variation;
     echo printFormat($productName,fquantity($sd['quantity']).' '.$sd['uomName'],round($sd['subtotal_with_tax']));

@@ -55,6 +55,17 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="col-6 mb-5 fv-row">
+                        <label for="invoice" class="required form-label">Invoice Layout</label>
+                        <select name="layout_id" class="form-select form-select-sm" data-control="select2" placeholder="Select Printer" data-placeholder="Select Printer">
+                            <option value="0">Select Invoice Layout</option>
+                            @foreach ($layouts as $layout)
+                                <option value="{{$layout->id}}">{{$layout->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="col-6 mb-5">
                         <label for="location" class=" form-label">Description</label>
                         <textarea name="description" class="form-control form-control-sm" id="" cols="30" rows="3"></textarea>

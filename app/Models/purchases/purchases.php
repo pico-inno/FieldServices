@@ -56,8 +56,6 @@ class purchases extends Model
     {
         return $this->belongsTo(businessLocation::class, 'business_location_id','id');
     }
-
-
     public function supplier(): HasOne
     {
         return $this->hasOne(Contact::class,'id','contact_id');

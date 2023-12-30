@@ -9,7 +9,7 @@ class InvoiceLayout extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['name','paper_size','paper_type','data_text','header_texts','footer_text','note','table_text'];
     protected $casts = [
         'data_text' => 'array',
         'table_text' => 'array',

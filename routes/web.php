@@ -966,6 +966,8 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function()
     Route::get('create','create')->name('invoice.create');
     Route::post('add','add')->name('invoice.add');
     Route::get('detail/{id}','detail')->name('invoice.detail');
+    Route::get('edit/{id}','edit')->name('invoice.edit');
+    Route::post('update','update')->name('invoice.update');
 });
 //============================ End: POS ==============================================
 // POS

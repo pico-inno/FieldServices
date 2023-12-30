@@ -6,6 +6,7 @@
 @endphp
     <div class="modal-dialog modal-fullscreen-sm" id="printArea">
         <div class="modal-content">
+
               <form>
                 <div class="modal-header">
                     <h3 class="-title">sale Details (Voucher No : <span class=" " id="clipboard">{{$sale['sales_voucher_no']}} </span> )
@@ -257,6 +258,7 @@
         </div>
     </div>
     <script src={{asset('customJs/general.js')}}></script>
+    <script src={{asset('customJs/invoice/print.js')}}></script>
     <script>
         clipboard()
     </script>
