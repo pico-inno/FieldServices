@@ -21,7 +21,7 @@
                                 </div>
                                 <div class="col-md-4 mb-5  fv-row" >
                                     <label for="" class="form-label fs-7 mb-2 required">Quantity</label>
-                                    <input type="text" name="quantity" class="form-control form-control-sm quantity" placeholder="Amount" value="1"/>
+                                    <input type="text" name="quantity" class="form-control form-control-sm quantity input_number" placeholder="Amount" value="1"/>
                                 </div>
                                 <div class="col-md-4 mb-5  fv-row">
                                     <label for="" class="form-label fs-7 mb-2 required">Select UOM</label>
@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="col-md-4 mb-5  fv-row">
                                     <label for="" class="form-label fs-7 mb-2 required">Expense Amount</label>
-                                    <input type="text" name="expense_amount" class="form-control form-control-sm">
+                                    <input type="text" name="expense_amount" class="form-control form-control-sm input_number">
                                 </div>
                                 <div class="col-md-4 offset-md-4 mb-5  fv-row">
                                     <label for="" class="form-label fs-7 mb-2 ">Payment Account</label>
@@ -68,11 +68,11 @@
                                 </div>
                                 <div class="col-md-4 mb-5  fv-row">
                                     <label for="" class="form-label fs-7 mb-2">Paid Amount</label>
-                                    <input type="text" name="paid_amount" class="form-control form-control-sm">
+                                    <input type="text" name="paid_amount" class="form-control form-control-sm input_number">
                                 </div>
                                 <div class="col-md-6 mb-5 ">
                                     <label for="" class="form-label fs-7 mb-2">Expense Descritpion</label>
-                                    <textarea class="form-control" data-kt-autosize="true" name="expense_description"></textarea>
+                                    <textarea class="form-control" data-kt-autosize="true" name="expense_description "></textarea>
                                 </div>
                                 <div class="col-md-6 mb-5 ">
                                     <label for="" class="form-label fs-7 mb-2">Note</label>

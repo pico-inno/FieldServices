@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-md-4 mb-3 ">
                                 <label for="" class="form-label fs-7 mb-2">Quantity</label>
-                                <input type="text" name="quantity"  class="form-control form-control-sm quantity" placeholder="Amount" value="{{$expense->quantity}}"/>
+                                <input type="text" name="quantity"  class="form-control form-control-sm quantity input_number" placeholder="Amount" value="{{$expense->quantity}}"/>
                             </div>
 
                             <div class="col-md-4 mb-3">
@@ -66,7 +66,7 @@
                             @endif
                             <div class="col-md-4 mb-3">
                                 <label for="" class="form-label fs-7 mb-2">Expense Amount</label>
-                                <input type="text" name="expense_amount" class="form-control form-control-sm" value="{{$expense->expense_amount}}">
+                                <input type="text" name="expense_amount" class="form-control form-control-sm input_number" value="{{$expense->expense_amount}}">
                             </div>
                             <div class="col-md-6 mb-3 ">
                                 <label for="" class="form-label fs-7 mb-2">Expense Descritpion</label>
@@ -108,4 +108,7 @@
     </div>
 </div>
 
+<script>
+    numberOnly();
+</script>
 
