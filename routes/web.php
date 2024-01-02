@@ -292,17 +292,17 @@ Route::controller(ReportController::class)->group(function () {
 
 
     //=================================Start : Profit And Loss Report =============================
-    Route::get('/profit-loss/report', 'proftLoss')->name('plReport');
+    Route::get('/profit-loss/report', 'proftLoss')->name('plReport')->middleware(['canView:expense', 'canView:purchase', 'canView:sale']);
 
-    Route::get('/expense/report', 'expenseReport')->name('expenseReport');
+    Route::get('/expense/report', 'expenseReport')->name('expenseReport')->middleware(['canView:expense']);
 
     Route::get('/report/pl/data', 'profitLossData');
 
-    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport');
+    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport')->middleware(['canView:sale', 'canView:purchase']);
 
 
     Route::get('/report/sale-purchase/data', 'salePurchaseData');
-    Route::get('/items/report', 'itemReport')->name('itemReport');
+    Route::get('/items/report', 'itemReport')->name('itemReport')->middleware(['canView:product','canView:purchase', 'canView:sale']);
     Route::get('/items/report/data', 'itemData');
 
     Route::get('/items/couont/data', 'itemCount');

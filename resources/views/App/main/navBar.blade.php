@@ -327,27 +327,29 @@
                                 <!--end::Nav item-->
                                 @endif
                                 <!--begin::Nav item-->
-                                <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
-                                    data-bs-placement="right" data-bs-dismiss="click" title="Reports">
-                                    <!--begin::Nav link-->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light @yield('reports_active')"
-                                        data-bs-toggle="tab" href="#kt_aside_nav_tab_reports">
-                                        <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2023-03-24-172858/core/html/src/media/icons/duotune/graphs/gra001.svg-->
-                                        <span class="svg-icon svg-icon-gray-100 svg-icon-4">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path opacity="0.3"
-                                                    d="M14 3V21H10V3C10 2.4 10.4 2 11 2H13C13.6 2 14 2.4 14 3ZM7 14H5C4.4 14 4 14.4 4 15V21H8V15C8 14.4 7.6 14 7 14Z"
-                                                    fill="currentColor" />
-                                                <path
-                                                    d="M21 20H20V8C20 7.4 19.6 7 19 7H17C16.4 7 16 7.4 16 8V20H3C2.4 20 2 20.4 2 21C2 21.6 2.4 22 3 22H21C21.6 22 22 21.6 22 21C22 20.4 21.6 20 21 20Z"
-                                                    fill="currentColor" />
-                                            </svg>
-                                        </span>
-                                        <!--end::Svg Icon-->
-                                    </a>
-                                    <!--end::Nav link-->
-                                </li>
+                                @if(hasView('Expense') && hasView('purchase') && hasView('sale'))
+                                    <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                        data-bs-placement="right" data-bs-dismiss="click" title="Reports">
+                                        <!--begin::Nav link-->
+                                        <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light @yield('reports_active')"
+                                            data-bs-toggle="tab" href="#kt_aside_nav_tab_reports">
+                                            <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2023-03-24-172858/core/html/src/media/icons/duotune/graphs/gra001.svg-->
+                                            <span class="svg-icon svg-icon-gray-100 svg-icon-4">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path opacity="0.3"
+                                                        d="M14 3V21H10V3C10 2.4 10.4 2 11 2H13C13.6 2 14 2.4 14 3ZM7 14H5C4.4 14 4 14.4 4 15V21H8V15C8 14.4 7.6 14 7 14Z"
+                                                        fill="currentColor" />
+                                                    <path
+                                                        d="M21 20H20V8C20 7.4 19.6 7 19 7H17C16.4 7 16 7.4 16 8V20H3C2.4 20 2 20.4 2 21C2 21.6 2.4 22 3 22H21C21.6 22 22 21.6 22 21C22 20.4 21.6 20 21 20Z"
+                                                        fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                            <!--end::Svg Icon-->
+                                        </a>
+                                        <!--end::Nav link-->
+                                    </li>
+                                @endif
                                 <!--end::Nav item-->
                                 @if(hasView('Cash & Payment'))
                                 <!--begin::Nav item-->
@@ -378,6 +380,7 @@
                                 @endif
                                 <!--end::Nav item-->
                                 <!--begin::Nav item-->
+                                @if(hasView('sms') || hasCreate('sms'))
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                     data-bs-placement="right" data-bs-dismiss="click" title="SMS">
                                     <!--begin::Nav link-->
@@ -389,6 +392,8 @@
                                     </a>
                                     <!--end::Nav link-->
                                 </li>
+                                @endif
+                                @if( hasCreate('mail'))
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                     data-bs-placement="right" data-bs-dismiss="click" title="Mail">
                                     <!--begin::Nav link-->
@@ -400,8 +405,11 @@
                                     </a>
                                     <!--end::Nav link-->
                                 </li>
+                                @endif
                                 <!--end::Nav item-->
                                 <!--begin::Nav item-->
+                                @if((hasModule('HospitalManagement') && isEnableModule('HospitalManagement'))|| (hasModule('Reservation') &&
+                                isEnableModule('Reservation')) || multiHasAll(['sms','mail','printer','business setting','business location']))
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                     data-bs-placement="right" data-bs-dismiss="click" title="Settings">
                                     <!--begin::Nav link-->
@@ -413,6 +421,7 @@
                                     </a>
                                     <!--end::Nav link-->
                                 </li>
+                                @endif
                                 @if(hasModule('Barcode') && isEnableModule('Barcode'))
                                     <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right"
                                         data-bs-dismiss="click" title="Barcode">
@@ -1888,26 +1897,34 @@
                                                     </div>
                                                     <!--end:Menu content-->
                                                 </div>
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('plReport_active_show')" href="{{route('plReport')}}">
-                                                        <span class="menu-title ">Profit/Loss Report</span>
-                                                    </a>
-                                                </div>
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('spReport_active_show')" href="{{route('spReport')}}">
-                                                        <span class="menu-title ">Purchase & Sale Report</span>
-                                                    </a>
-                                                </div>
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('expenseReport_active_show')" href="{{route('expenseReport')}}">
-                                                        <span class="menu-title ">Expense Report</span>
-                                                    </a>
-                                                </div>
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('itemReport_active_show')" href="{{route('itemReport')}}">
-                                                        <span class="menu-title ">Item Report</span>
-                                                    </a>
-                                                </div>
+                                                @if(hasView('Expense') && hasView('purchase') && hasView('sale'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('plReport_active_show')" href="{{route('plReport')}}">
+                                                            <span class="menu-title ">Profit/Loss Report</span>
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                                @if(hasView('sell') && hasView('purchase'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('spReport_active_show')" href="{{route('spReport')}}">
+                                                            <span class="menu-title ">Purchase & Sale Report</span>
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                                @if(hasView('Expense'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('expenseReport_active_show')" href="{{route('expenseReport')}}">
+                                                            <span class="menu-title ">Expense Report</span>
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                                @if(hasView('product') && hasView('purchase') && hasView('sale'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('itemReport_active_show')" href="{{route('itemReport')}}">
+                                                            <span class="menu-title ">Item Report</span>
+                                                        </a>
+                                                    </div>
+                                                @endif
                                                 @if(hasAll('sell'))
                                                 <!--begin:Menu item-->
                                                 <div data-kt-menu-trigger="click"
@@ -2218,6 +2235,9 @@
                                                 </div>
                                                 <!--end:Menu item-->
                                                 @endif
+
+                                                @if(multiHasAll(['stockin', 'stockout', 'stock transfer', 'stock
+                                                adjustment', 'opening stock']))
                                                 <!--begin:Menu item-->
                                                 <div data-kt-menu-trigger="click"
                                                     class="menu-item menu-accordion @yield('stock_alert_reports_here_show')">
@@ -2261,6 +2281,7 @@
                                                     </div>
                                                     <!--end:Menu sub-->
                                                 </div>
+                                                @endif
                                                 <!--end:Menu item-->
 
                                             </div>
@@ -2282,42 +2303,50 @@
                                                         <!--end:Menu content-->
                                                     </div>
                                                 </div>
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('campaign_report_active')" href="{{route('campaign.report')}}">
-                                                        <span class="menu-icon">
-                                                            <i class="fa-solid fa-chart-simple fs-6"></i>
-                                                        </span>
-                                                        <span class="menu-title">Campaign Report</span>
-                                                    </a>
-                                                </div>
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('campaign_list_active')" href="{{route('campaign.index')}}">
-                                                        <span class="menu-icon">
-                                                            <i class="fa-solid fa-list fs-6"></i>
-                                                        </span>
-                                                        <span class="menu-title">Campaign List</span>
-                                                    </a>
-                                                </div>
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('attendance_list_active')" href="{{route('attendance.index')}}">
-                                                        <span class="menu-icon">
-                                                            <i class="fa-solid fa-list fs-6"></i>
-                                                        </span>
-                                                        <span class="menu-title">Attendance List </span>
-                                                    </a>
-                                                </div>
+                                                @if(hasView('campaign report'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('campaign_report_active')" href="{{route('campaign.report')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-chart-simple fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Campaign Report</span>
+                                                        </a>
+                                                    </div>
+                                                @endif
 
-                                                <div class="menu-item menu-accordion ">
-                                                    <a class="menu-link @yield('questionnaire_list_active')" href="{{route('quest.index')}}">
-                                                        <span class="menu-icon">
-                                                            <i class="fa-regular fa-paste fs-6"></i>
-                                                        </span>
-                                                        <span class="menu-title">Questionnaire List </span>
-                                                    </a>
-                                                </div>
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('campaign_list_active')" href="{{route('campaign.index')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-list fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Campaign List</span>
+                                                        </a>
+                                                    </div>
 
-                                                @if(hasModule('games') && isEnableModule('games'))
-                                                    <div class="menu-item menu-accordion ">
+                                                @if(hasView('attendance'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('attendance_list_active')" href="{{route('attendance.index')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-list fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Attendance List </span>
+                                                        </a>
+                                                    </div>
+                                                @endif
+
+                                                @if(hasAll('questionnaire'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('questionnaire_list_active')" href="{{route('quest.index')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-regular fa-paste fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Questionnaire List </span>
+                                                        </a>
+                                                    </div>
+                                                @endif
+
+                                                @if(hasModule('games') && isEnableModule('games') && hasAll('game'))
+                                                    <div class="menu-item  ">
                                                         <a class="menu-link @yield('games_active')" href="{{route('games.index')}}">
                                                             <span class="menu-icon">
                                                                 <i class="fa-solid fa-gamepad fs-6"></i>
@@ -2375,6 +2404,7 @@
                                                     <!--end:Menu content-->
                                                 </div>
                                                 <!--begin:Menu item-->
+                                                @if(hasView('sms') || hasCreate('sms'))
                                                 <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('sms_poh_active_show')">
                                                     <span class="menu-link">
                                                         <span class="menu-icon">
@@ -2384,14 +2414,17 @@
                                                         <span class="menu-arrow"></span>
                                                     </span>
                                                     <div class="menu-sub menu-sub-accordion">
-                                                        <div class="menu-item">
-                                                            <a class="menu-link @yield('sms_poh_dashboard')" href="{{route('sms.index','smspoh')}}">
-                                                                <span class="menu-bullet">
-                                                                    <span class="bullet bullet-dot"></span>
-                                                                </span>
-                                                                <span class="menu-title ">Dashboard</span>
-                                                            </a>
-                                                        </div>
+                                                        @if(hasView('sms'))
+                                                            <div class="menu-item">
+                                                                <a class="menu-link @yield('sms_poh_dashboard')" href="{{route('sms.index','smspoh')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title ">Dashboard</span>
+                                                                </a>
+                                                            </div>
+                                                        @endif
+                                                        @if(hasCreate('sms'))
                                                         <div class="menu-item">
                                                             <a class="menu-link @yield('sms_poh_active')"
                                                                 href="{{route('sms.create','smspoh')}}">
@@ -2401,36 +2434,44 @@
                                                                 <span class="menu-title ">Send SMS</span>
                                                             </a>
                                                         </div>
+                                                        @endif
                                                     </div>
                                                 </div>
-                                                <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('sms_twilio_active_show')">
-                                                    <span class="menu-link">
-                                                        <span class="menu-icon">
-                                                            <i class="fa-solid fa-sms"></i>
+                                                @endif
+                                                @if(hasView('sms') || hasCreate('sms'))
+                                                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion @yield('sms_twilio_active_show')">
+                                                        <span class="menu-link">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-sms"></i>
+                                                            </span>
+                                                            <span class="menu-title">Twilio SMS</span>
+                                                            <span class="menu-arrow"></span>
                                                         </span>
-                                                        <span class="menu-title">Twilio SMS</span>
-                                                        <span class="menu-arrow"></span>
-                                                    </span>
-                                                    <div class="menu-sub menu-sub-accordion">
-                                                        <div class="menu-item">
-                                                            <a class="menu-link @yield('twilio_dashboard')" href="{{route('sms.index','twilio')}}">
-                                                                <span class="menu-bullet">
-                                                                    <span class="bullet bullet-dot"></span>
-                                                                </span>
-                                                                <span class="menu-title ">Dashboard</span>
-                                                            </a>
-                                                        </div>
-                                                        <div class="menu-item">
-                                                            <a class="menu-link @yield('sms_twilio_active')"
-                                                                href="{{route('sms.create','twilio')}}">
-                                                                <span class="menu-bullet">
-                                                                    <span class="bullet bullet-dot"></span>
-                                                                </span>
-                                                                <span class="menu-title ">Send SMS</span>
-                                                            </a>
+                                                        <div class="menu-sub menu-sub-accordion">
+                                                            @if(hasView('sms'))
+                                                                <div class="menu-item">
+                                                                    <a class="menu-link @yield('twilio_dashboard')" href="{{route('sms.index','twilio')}}">
+                                                                        <span class="menu-bullet">
+                                                                            <span class="bullet bullet-dot"></span>
+                                                                        </span>
+                                                                        <span class="menu-title ">Dashboard</span>
+                                                                    </a>
+                                                                </div>
+                                                            @endif
+                                                            @if(hasCreate('sms'))
+                                                            <div class="menu-item">
+                                                                <a class="menu-link @yield('sms_twilio_active')"
+                                                                    href="{{route('sms.create','twilio')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title ">Send SMS</span>
+                                                                </a>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
-                                                </div>
+                                                @endif
                                     </div>
                                 </div>
                                 <!--end::Wrapper-->
@@ -2457,6 +2498,7 @@
                                                         <span class="menu-title">Mail</span>
                                                         <span class="menu-arrow"></span>
                                                     </span>
+                                                    @if( hasCreate('mail'))
                                                     <div class="menu-sub menu-sub-accordion">
                                                         <div class="menu-item">
                                                             <a class="menu-link @yield('compose_active')" href="{{route('mail.compose')}}">
@@ -2467,6 +2509,7 @@
                                                             </a>
                                                         </div>
                                                     </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -2486,6 +2529,7 @@
                                             <!--end:Menu content-->
                                         </div>
                                         <!--begin:Menu item-->
+                                        @if(hasUpdate('business setting'))
                                         <div data-kt-menu-trigger="click"
                                             class="menu-item menu-accordion @yield('business_setting_here_show')">
                                             <!--begin:Menu link-->
@@ -2520,56 +2564,63 @@
                                             <!--end:Menu sub-->
                                             <!--end:Menu sub-->
                                         </div>
+                                        @endif
                                         <!--end:Menu item-->
                                         <!--begin:Menu item-->
-                                        <div data-kt-menu-trigger="click"
-                                            class="menu-item menu-accordion  @yield('location_here_show')">
-                                            <!--begin:Menu link-->
-                                            <span class="menu-link">
-                                                <span class="menu-icon">
-                                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
-                                                    <i class="bi bi-geo-alt-fill fs-2"></i>
-                                                    <!--end::Svg Icon-->
+                                        @if(hasAll('business location'))
+                                            <div data-kt-menu-trigger="click"
+                                                class="menu-item menu-accordion  @yield('location_here_show')">
+                                                <!--begin:Menu link-->
+                                                <span class="menu-link">
+                                                    <span class="menu-icon">
+                                                        <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                                        <i class="bi bi-geo-alt-fill fs-2"></i>
+                                                        <!--end::Svg Icon-->
+                                                    </span>
+                                                    <span class="menu-title ">Business Location</span>
+                                                    <span class="menu-arrow"></span>
                                                 </span>
-                                                <span class="menu-title ">Business Location</span>
-                                                <span class="menu-arrow"></span>
-                                            </span>
-                                            <!--end:Menu link-->
-                                            <!--begin:Menu sub-->
-                                            <!--begin:Menu sub-->
-                                            <div class="menu-sub menu-sub-accordion">
-                                                <!--begin:Menu item-->
-                                                <!--begin:Menu item-->
-                                                <div class="menu-item">
-                                                    <!--begin:Menu link-->
-                                                    <a class="menu-link @yield('location_list_nav')"
-                                                        href="{{route('business_location')}}">
-                                                        <span class="menu-bullet">
-                                                            <span class="bullet bullet-dot"></span>
-                                                        </span>
-                                                        <span class="menu-title">Location List</span>
-                                                    </a>
-                                                    <!--end:Menu link-->
-                                                </div>
-                                                <!--end:Menu item-->
-                                                <!--begin:Menu item-->
-                                                <div class="menu-item">
-                                                    <!--begin:Menu link-->
-                                                    <a class="menu-link @yield('location_add_nav')"
-                                                        href="{{route('location_add_form')}}">
-                                                        <span class="menu-bullet">
-                                                            <span class="bullet bullet-dot"></span>
-                                                        </span>
-                                                        <span class="menu-title">Add Location</span>
-                                                    </a>
-                                                    <!--end:Menu link-->
-                                                </div>
-                                                <!--end:Menu item-->
-                                                <!--end:Menu item-->
+                                                <!--end:Menu link-->
+                                                <!--begin:Menu sub-->
+                                                <!--begin:Menu sub-->
+                                                    <div class="menu-sub menu-sub-accordion">
+                                                        <!--begin:Menu item-->
+                                                        <!--begin:Menu item-->
+                                                        @if(hasView('business location'))
+                                                        <div class="menu-item">
+                                                            <!--begin:Menu link-->
+                                                            <a class="menu-link @yield('location_list_nav')"
+                                                                href="{{route('business_location')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title">Location List</span>
+                                                            </a>
+                                                            <!--end:Menu link-->
+                                                        </div>
+                                                        @endif
+                                                        <!--end:Menu item-->
+                                                        <!--begin:Menu item-->
+                                                        @if(hasCreate('business location'))
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('location_add_nav')"
+                                                                    href="{{route('location_add_form')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title">Add Location</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                        @endif
+                                                        <!--end:Menu item-->
+                                                        <!--end:Menu item-->
 
+                                                    </div>
                                             </div>
-                                        </div>
-
+                                        @endif
+                                        @if(hasAll('printer'))
                                         <div class="menu-item menu-accordion ">
                                             <!--begin:Menu link-->
                                             <!--begin:Menu link-->
@@ -2581,7 +2632,10 @@
                                                 <span class="menu-title">Printer List</span>
                                             </a>
                                         </div>
+                                        @endif
                                         <!--end:Menu item-->
+                                        @if ((hasModule('HospitalManagement') && isEnableModule('HospitalManagement'))|| (hasModule('Reservation') && isEnableModule('Reservation')))
+
                                         <div class="menu-item menu-accordion">
                                             <!--begin:Menu link-->
                                             <a class="menu-link @yield('building_active_show')"
@@ -2604,6 +2658,7 @@
                                             </a>
                                             <!--end::Menu link-->
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <!--end::Wrapper-->
