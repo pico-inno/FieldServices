@@ -30,6 +30,6 @@ class LocationRepository implements LocationRepositoryInterface
     }
     public static function getTransactionLocation(){
         return  businessLocation::where('is_active', 1)
-                ->whereNotIn('location_type',[2])->get();
+                ->whereNotIn('location_type',[3])->with('locationAddress')->get();
     }
 }

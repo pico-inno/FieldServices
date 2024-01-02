@@ -8,6 +8,7 @@ use Nwidart\Modules\Facades\Module;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class moduleController extends Controller
@@ -50,19 +51,18 @@ class moduleController extends Controller
         $moduleName=ucwords($decryptName);
         $module = Module::find($moduleName);
         // Artisan::call('module:migrate-rollback', ['module' => $moduleName]);
+        $module->disable();
         $module->delete();
         return back()->with(['success'=>'Successfully Uninstall']);
     }
     public function uploadModule(Request $request)
     {
-
-
         $module = $request->file('module_zip');
         Validator::make([
             'file'=> $module
         ],
         [
-                'file'=> 'required|mimetypes:application/zip'
+            'file'=> 'required|mimetypes:application/zip'
         ])->validate();
          //check if uploaded file is valid or not and and if not redirect back
          if ($module->getMimeType() != 'application/zip') {

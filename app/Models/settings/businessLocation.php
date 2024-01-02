@@ -26,6 +26,7 @@ class businessLocation extends Model
         'location_type',
         'inventory_flow',
         'invoice_layout',
+        'gps_location',
     ];
 
     // protected $casts = [

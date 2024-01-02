@@ -94,6 +94,7 @@ use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
+use App\Services\packaging\packagingServices;
 
 // use App\Models\Manufacturer;
 
@@ -124,7 +125,13 @@ Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('
 // Auth::routes();
 Auth::routes(['register' => false]);
 //_Being: Auth
-Route::get('/', [LoginController::class, 'showLoginForm']);
+Route::get('/', function() {
+    if(hasModule('fieldService') && isEnableModule('fieldService')){
+        return redirect()->route('campaign.index');
+    }else{
+        return redirect()->route('home');
+    }
+});
 //_End: Auth
 
 //Being: Dashboard

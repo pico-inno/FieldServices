@@ -694,3 +694,15 @@ function getOptionName($type,$id){
     return $text;
 }
 
+
+
+function getProductNameInfos($varId){
+   $variation= ProductVariation::select('id','product_id')->where('id',$varId)
+                ->with('product:id,name','variationTemplateValue:id,name')
+                ->first()->toArray();
+
+    return [
+        'product_name'=>arr($variation['product'],'name'),
+        'variation_name'=>arr($variation['variation_template_value'],['name'])
+    ];
+}

@@ -28,7 +28,11 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
             <!--begin::Container-->
     <div class="container-xxl" id="location">
-
+        <div class="card mb-3">
+            <div class="card-body">
+                <div id="map" style="width: 100%;" class="h-md-300px h-300px"></div>
+            </div>
+        </div>
         <!--begin::Modals-->
         <div class="card" >
             <div class="card-body user-select-none">
@@ -44,7 +48,10 @@
                                     <label class="required fs-6 fw-semibold mb-2">Location Name</label>
                                 </div>
                                 <div class="col-6 ms-5">
-                                    <x-forms.input placeholder="Eg : Warehouse" name="name"></x-forms.input>
+                                    <x-forms.input placeholder="Eg : Warehouse" name="name" id="locationname"></x-forms.input>
+                                </div>
+                                <div class="d-none">
+                                    <input type="text" value="" class="gps_location" name="gps_location">
                                 </div>
                             </div>
                             <div class="fv-row col-12 col-md-6 pe-lg-19 d-flex mb-5 mt-3 justify-content-between align-items-end">
@@ -242,4 +249,57 @@
 
 @push('scripts')
 		<script src={{asset('customJs/businessJs/locationValidation.js')}}></script>
+
+
+
+
+        {{-- map --}}
+<script>
+    function initMap() {
+        const myLatlng = { lat: 21.9588282, lng: 96.0891032 };
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 8.5,
+            center: myLatlng,
+        });
+        // Create the initial InfoWindow.
+        let infoWindow = new google.maps.InfoWindow({
+            content: "Click the map to get Lat/Lng!",
+            position: myLatlng,
+        });
+
+        infoWindow.open(map);
+        // Configure the click listener.
+        let geolocation=[];
+        const geocoder = new google.maps.Geocoder();
+        map.addListener("click", (mapsMouseEvent) => {
+            // Close the current InfoWindow.
+            infoWindow.close();
+            // Create a new InfoWindow.
+            infoWindow = new google.maps.InfoWindow({
+                position: mapsMouseEvent.latLng,
+            });
+            infoWindow.setContent(
+                JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2),
+            );
+            infoWindow.open(map);
+            geolocation=mapsMouseEvent.latLng.toJSON();
+
+            $('.gps_location').val(geolocation.lat+'-'+geolocation.lng);
+            const geocoderRequest = { location: geolocation };
+            geocoder.geocode(geocoderRequest, (results, status) => {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    console.log(results);
+                    const address = results[2].formatted_address;
+                    $('#locationname').val(address);
+                } else {
+                    console.error("Geocoding failed:", status);
+                }
+            });
+        });
+
+
+    }
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0&callback=initMap&v=weekly"></script>
 @endpush

@@ -345,9 +345,8 @@ class saleController extends Controller
             $request['channel_id']= $request->pos_register_id;
         }elseif($request->type == 'campaign'){
             $request['channel_type'] = 'campaign';
-            $request['channel_id']= $request->campaign_id;
+            $request['channel_id']= $request->channel_id;
         }
-
         DB::beginTransaction();
         try {
             // get payment status
@@ -432,10 +431,10 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
-            logger($e);
+            logger($e.'====');
             DB::rollBack();
             dd($e);
-            logger($e->getMessage());
+            logger($e->getMessage().'====');
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',
@@ -1682,5 +1681,8 @@ class saleController extends Controller
             return RoMService::getKitAvailableQty($request->locationId, $request->productId);
         }
         return '';
+    }
+    public function addChunkData($saleId,Request $request){
+
     }
 }

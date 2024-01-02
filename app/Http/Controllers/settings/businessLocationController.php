@@ -56,7 +56,7 @@ class businessLocationController extends Controller
             return arr($location->locationAddress, 'city');
             })
             ->addColumn('zip_code', function ($location) {
-            return arr($location->locationAddress, 'zip_code');
+            return arr($location->locationAddress, 'zip_postal_code');
             })
             ->addColumn('state', function ($location) {
             return arr($location->locationAddress, 'state');
@@ -116,7 +116,7 @@ class businessLocationController extends Controller
         $address = locationAddress::where('location_id', $bl->id)->first();
         return view('App.businessSetting.location.view', compact('bl', 'address'));
     }
-    public function update(Request $request,$id)
+    public function update(Request $request,$id,locationActions $action)
     {
         $bl = businessLocation::where('id', $id)->first();
         $parentLocation=businessLocation::where('id', $request->parent_location_id)->first();
@@ -126,6 +126,7 @@ class businessLocationController extends Controller
             $request['allow_sale_order'] = $request['allow_sale_order'] ?? 0;
             $data = request()->except('_token');
             $bl->update($data);
+            $action->updateLocationAddress($request,$bl);
             return redirect()->route('business_location')->with(['success' => 'Successfully Updted Location']);
         }else{
             return redirect()->back()->with(['error' => 'Cant Join Parent locations']);

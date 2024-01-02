@@ -28,6 +28,7 @@ class SaleServices
         $this->setting = $settings;
         $this->currency = $settings->currency ?? null;
         $this->accounting_method = $settings->accounting_method ?? null;
+        ini_set('max_input_vars', 2000000);
     }
 
 
@@ -60,6 +61,7 @@ class SaleServices
             'sold_by' => Auth::user()->id,
             'created_by' => Auth::user()->id,
             'channel_type'=>$data->channel_type ?? null,
+            'channel_id'=>$data->channel_id,
         ]);
     }
 
@@ -107,15 +109,15 @@ class SaleServices
                 'uom_id' => $sale_detail['uom_id'],
                 'quantity' => $sale_detail['quantity'],
                 'uom_price' => $sale_detail['uom_price'] ?? 0,
-                'subtotal' =>  $sale_detail['subtotal'],
+                'subtotal' =>  $sale_detail['subtotal'] ?? 0,
                 'discount_type' => $sale_detail['discount_type'],
                 'per_item_discount' => $sale_detail['per_item_discount'],
-                'subtotal_with_discount' => $request->type != 'pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'],
+                'subtotal_with_discount' => $request->type != 'pos' ? $sale_detail['subtotal'] ?? 0  - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
                 'currency_id' => $request->currency_id ?? $currency_id,
                 'price_list_id' => $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
                 'tax_amount' => 0,
                 'per_item_tax' => 0,
-                'subtotal_with_tax' => $request->type != 'pos' ? $sale_detail['subtotal']  - $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'],
+                'subtotal_with_tax' => $request->type != 'pos' ? $sale_detail['subtotal'] ?? 0  - $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
                 'note' => $sale_detail['item_detail_note'] ?? null,
             ];
             // dd($sale_details_data);

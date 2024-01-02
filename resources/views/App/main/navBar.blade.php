@@ -425,7 +425,7 @@
                                 @endif
                                 @if(hasModule('fieldService') && isEnableModule('fieldService'))
                                     <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right"
-                                        data-bs-dismiss="click" title="campagin">
+                                        data-bs-dismiss="click" title="campaign">
                                         <!-- begin::Nav link -->
                                         <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('campaign_icon')"
                                             data-bs-toggle="tab" href="#kt_aside_nav_tab_campaign">
@@ -2277,6 +2277,14 @@
                                                     </div>
                                                 </div>
                                                 <div class="menu-item menu-accordion ">
+                                                    <a class="menu-link @yield('campaign_report_active')" href="{{route('campaign.report')}}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-chart-simple fs-6"></i>
+                                                        </span>
+                                                        <span class="menu-title">Campaign Report</span>
+                                                    </a>
+                                                </div>
+                                                <div class="menu-item menu-accordion ">
                                                     <a class="menu-link @yield('campaign_list_active')" href="{{route('campaign.index')}}">
                                                         <span class="menu-icon">
                                                             <i class="fa-solid fa-list fs-6"></i>
@@ -3859,7 +3867,7 @@
 
     <script src={{asset('customJs/loading/miniLoading.js')}}></script>
     <script src={{asset('customJs/toastrAlert/alert.js')}}></script>
-    @include('App.alert.alert');
+    @include('App.alert.alert')
     <script src={{asset('customJs/loading/miniLoading.js')}}></script>
     @stack('scripts')
 </body>
