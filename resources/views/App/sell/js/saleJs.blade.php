@@ -1105,7 +1105,7 @@
         subtotalCalculation($(this));
     })
 
-    $(document).on('input','.uom_price,.discount_type,.per_item_discount',function(e) {
+    $(document).on('input','.uom_price,.discount_type,.per_item_discount,.sale_amount_input',function(e) {
         sale_amount_cal() ;
         cal_total_sale_amount();
         cal_balance_amount();

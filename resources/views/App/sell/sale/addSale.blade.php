@@ -294,7 +294,7 @@
                                     Sale Amount:(=)
                                 </span>
                                 <div class="input-group input-group-sm">
-                                    <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm" value="0" >
+                                    <input type="text" name="sale_amount" class="sale_amount_input input_number form-control form-control-sm" value="0" readonly>
                                     <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
                                 </div>
                             </div>
