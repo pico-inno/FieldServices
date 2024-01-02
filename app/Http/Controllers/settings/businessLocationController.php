@@ -188,4 +188,22 @@ class businessLocationController extends Controller
         }
 
     }
+
+
+    public function getLocationsForSelect(Request $request)
+    {
+        $q = $request->q;
+
+        $locations = businessLocation::whereNot('location_type', 3)
+            ->where(function ($query) use ($q){
+                if ($q != ''){
+                    $query->where('name', 'like', '%'. $q . '%');
+                } else{
+                    return $query;
+                }
+            })
+            ->paginate(10);
+
+        return response()->json($locations, 200);
+    }
 }
