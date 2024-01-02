@@ -252,6 +252,9 @@
                                 </li>
                                 <!--end::Nav item-->
                                 @endif
+                                @if(hasModule('Manufacturing') && isEnableModule('Manufacturing'))
+                                    @include('manufacturing::layouts.master', ['navbarType' => 'main_icon'])
+                                @endif
                                 @if(multiHasAll(['opening stock', 'stockin', 'stockout', 'stock transfer', 'stock
                                 adjustment']))
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -1561,6 +1564,9 @@
                                         </div>
                                         <!--end::Wrapper-->
                                     </div>
+                                    @if(hasModule('Manufacturing') && isEnableModule('Manufacturing'))
+                                        @include('manufacturing::layouts.master', ['navbarType' => 'main_link'])
+                                    @endif
                                     @if(multiHasAll(['opening stock', 'stockin', 'stockout', 'stock transfer', 'stock
                                     adjustment']))
                                     <!--begin::Tab pane-->

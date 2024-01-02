@@ -289,6 +289,18 @@ function serviceSaleVoucher()
     }
 }
 
+function generateManufacturingOrderNo()
+{
+    $prefix = 'MF';
+
+    if (hasModule('Manufacturing') && isEnableModule('Manufacturing')){
+        $uniqueCount = \Modules\Manufacturing\Entities\ManufacturingOrder::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
+        return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+    }else{
+        return null;
+    }
+}
+
 function saleVoucher($uniqueCount)
 {
     $prefix = getSettingValue('sale_prefix');

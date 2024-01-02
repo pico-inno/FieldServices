@@ -565,12 +565,43 @@ class ProductController extends Controller
         $porducts = Product::where(function ($query) use ($q) {
             if($q!=''){
                 $query->where('name', 'like', '%' . $q . '%');
-//                    ->orWhere('name', 'like', '%' . $q . '%');
             }{
                 return $query;
             }
         })
             ->paginate(10);
         return response()->json($porducts, 200);
+    }
+
+    public function getProductVariation(Request $request){
+        $q = $request->q;
+        $products = Product::select(
+            'products.*',
+            'product_variations.*',
+            'variation_template_values.*',
+            'variation_template_values.name as variation_name',
+            'products.name as name',
+            'products.id as id',
+            'product_variations.id as variation_id'
+        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where(function ($query) use ($q) {
+                if($q!=''){
+                    $query->where('products.name', 'like', '%' . $q . '%');
+                }{
+                    return $query;
+                }
+            })
+            ->with([
+                'product_packaging' => function ($query) use ($q) {
+                    $query->where('package_barcode', $q);
+                },
+                'uom' => function ($q) {
+                    $q->with('unit_category.uomByCategory');
+                },
+                'product_variations.packaging.uom'
+            ])
+            ->paginate(10);
+        return response()->json($products, 200);
+
     }
 }
