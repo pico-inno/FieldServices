@@ -64,6 +64,7 @@ class StockAdjustmentServices
 
     public function update($id, $request)
     {
+
         if ($request->status === 'completed'){
             $status = true;
         }else{
@@ -93,13 +94,27 @@ class StockAdjustmentServices
                 ->latest()
                 ->first();
 
-            $subtotal = $status ? $currentStockBalances->ref_uom_price * $adjustQty : 0;
+            if ($status){
+                if ($adjustmentDetail['new_uom_price'] == 0 ){
+                    $price = $currentStockBalances->ref_uom_price;
+                }else{
+                    $price = $adjustmentDetail['new_uom_price'];
+                }
+            }else{
+                if ($adjustmentDetail['new_uom_price'] == 0){
+                    $price = 0 ;
+                }else{
+                    $price = $adjustmentDetail['new_uom_price'];
+                }
+            }
+
+            $subtotal = $status ? $price * $adjustQty : 0;
 
             $this->packagingServices->updatePackagingForTx($adjustmentDetail,$adjustmentDetail['adjustment_detail_id'],'adjustment');
 
             $preparedAdjustmentDetailData = $this->prepareAdjustmentDetail($adjustmentDetail);
             $preparedAdjustmentDetailData['adjustment_type'] = $adjustmentType;
-            $preparedAdjustmentDetailData['uom_price'] = $status ? $currentStockBalances->ref_uom_price : 0;
+            $preparedAdjustmentDetailData['uom_price'] = $price;
             $preparedAdjustmentDetailData['subtotal'] = $subtotal;
             $preparedAdjustmentDetailData['updated_at'] = now();
             $preparedAdjustmentDetailData['updated_by'] = Auth::id();
@@ -112,7 +127,7 @@ class StockAdjustmentServices
                 $adjustmentDetail['adjustment_detail_id'],
                 $adjustmentType,
                 $referenceUomInfo,
-                $currentStockBalances->ref_uom_price,
+                $price,
                 $this->stockAdjustmentRepository->query()->where('id', $id)->first(),
                 $updatedStockAdjustmentDetail,
                 $subtotal
@@ -218,14 +233,27 @@ class StockAdjustmentServices
                 ->latest()
                 ->first();
 
-            $subtotal = $status ? $currentStockBalances->ref_uom_price * $adjustQty : 0;
+            if ($status){
+                if ($adjustmentDetail['new_uom_price'] !== null){
+                    $price = $adjustmentDetail['new_uom_price'];
+                }else{
+                    $price = $currentStockBalances->ref_uom_price;
+                }
+            }else{
+                if ($adjustmentDetail['new_uom_price'] !== null){
+                    $price = $adjustmentDetail['new_uom_price'];
+                }else{
+                    $price = 0 ;
+                }
+            }
+            $subtotal = $status ? $price * $adjustQty : 0;
 
             $preparedAdjustmentDetailData = $this->prepareAdjustmentDetail($adjustmentDetail);
             $preparedAdjustmentDetailData['product_id'] = $adjustmentDetail['product_id'];
             $preparedAdjustmentDetailData['variation_id'] = $adjustmentDetail['variation_id'];
             $preparedAdjustmentDetailData['adjustment_id'] = $createdStockAdjustment->id;
             $preparedAdjustmentDetailData['adjustment_type'] = $adjustmentType;
-            $preparedAdjustmentDetailData['uom_price'] = $status ? $currentStockBalances->ref_uom_price : 0;
+            $preparedAdjustmentDetailData['uom_price'] = $price;
             $preparedAdjustmentDetailData['subtotal'] = $subtotal;
             $preparedAdjustmentDetailData['created_at'] = now();
             $preparedAdjustmentDetailData['created_by'] = Auth::id();
@@ -243,7 +271,7 @@ class StockAdjustmentServices
                 $createdStockAdjustmentDetail->id,
                 $adjustmentType,
                 $referenceUomInfo,
-                $currentStockBalances->ref_uom_price,
+                $price,
                 $createdStockAdjustment,
                 $createdStockAdjustmentDetail,
                 $subtotal

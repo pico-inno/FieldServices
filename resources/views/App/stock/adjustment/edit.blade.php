@@ -177,8 +177,8 @@
                                             $product=$detail->product;
                                             $product_variation =$detail->toArray()['product_variation'];
                                         @endphp
-                                        <tr class="adjustment_row">
-                                            <td>
+                                        <tr class="adjustment_row" id="{{$key}}">
+                                            <td class="adjustment_col1" @if($detail->adj_quantity > 0) data-bs-toggle="modal" @endif aria-hidden="true" data-bs-target="#new_price_modal_{{$key}}">
                                                 <div class="my-5">
                                                     <span>{{$product->name}}</span>
                                                     <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
@@ -241,11 +241,34 @@
                                             <td class="fv-row">
                                                 <input type="text" class="form-control form-control-sm mb-1"
                                                        name="adjustment_details[{{$key}}][remark]" value="{{$detail->remark}}">
+                                                <input type="hidden" name="adjustment_details[{{$key}}][new_uom_price]" value="@if(intval($detail->uom_price) == 0) 0 @else {{intval($detail->uom_price)}} @endif">
                                             </td>
                                             <th><i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
                                             </th>
                                         </tr>
 
+
+                                        <div class="modal fade" id="new_price_modal_{{$key}}" data-row-id="{{$key}}" tabindex="-1"  tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog mw-400px">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">New Price</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <input type="text" class="form-control form-control-sm new-price-input"  value="{{number_format($detail->uom_price, 2)}}"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-sm btn-primary price-save-changes">Update Price</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
                                     </tbody>
                                 </table>

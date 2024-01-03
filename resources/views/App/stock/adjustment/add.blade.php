@@ -238,4 +238,6 @@
 
     @include('App.stock.adjustment.include.quickSearchProducts')
     <script src={{asset('customJs/stock/validation/adjustmentAdd.js')}}></script>
+
+
 @endpush

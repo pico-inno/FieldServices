@@ -243,9 +243,9 @@
             }
 
             var newRow = `
-                <tr class="adjustment_row">
-                    <td>
-                        <div class="my-5 mt-2">
+                <tr class="adjustment_row" id="${unique_name_id}">
+                    <td class="adjustment_col1" aria-hidden="true" data-bs-target="#new_price_modal_${unique_name_id}">
+                        <div class="my-5 product-name mt-2" >
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                         </div>
@@ -288,13 +288,39 @@
                     <td class="fv-row">
                         <input type="text" class="form-control form-control-sm mb-1"
                             name="adjustment_details[${unique_name_id}][remark]" value="">
+                        <input type="hidden" name="adjustment_details[${unique_name_id}][new_uom_price]">
                     </td>
                     <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
                 </tr>
             `;
 
+
+            let modalTemplate = `
+                                <div class="modal fade" id="new_price_modal_${unique_name_id}" data-row-id="${unique_name_id}" tabindex="-1"  tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog mw-400px">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">New Price</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                    <input type="text" class="form-control form-control-sm new-price-input"  value=""/>
+                                                    </div>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-primary price-save-changes">Update Price</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
             // new row append
             $('#adjustment_table tbody').prepend(newRow);
+            $('body').append(modalTemplate);
             $('.dataTables_empty').addClass('d-none');
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
@@ -330,6 +356,18 @@
         }
 
 
+        $(document).on('click', '.price-save-changes', function() {
+            const modal = $(this).closest('.modal');
+            const unique_name_id = modal.attr('data-row-id');
+
+            let newprice = modal.find('.new-price-input').val();
+
+            if (newprice) {
+                $(`[name="adjustment_details[${unique_name_id}][new_uom_price]"]`).val(newprice);
+            }
+
+            modal.modal('hide');
+        });
 
 
 
@@ -381,16 +419,37 @@
 
         })
         $(document).on('input','.package_qty',function(){
+            sanitizeNumericInput($(this));
             packaging($(this),'*');
 
             changeQtyOnUom($(this));
             calDifferenceQty($(this));
         })
+
         $(document).on('input', '.gnd_quantity', function (){
+            sanitizeNumericInput($(this));
             packaging($(this),'/');
             changeQtyOnUom($(this));
             calDifferenceQty($(this));
+            priceModalEnable($(this));
         })
+
+        function priceModalEnable(e){
+            let parent = e.closest('.adjustment_row');
+            let adjustment_col1 = parent.find('.adjustment_col1');
+
+            setTimeout(function (){
+                let adjustQty = parseFloat(parent.find('.adj_quantity').val());
+
+                if (parseFloat(adjustQty) > 0) {
+
+                    adjustment_col1.attr('data-bs-toggle', 'modal');
+                } else {
+                    adjustment_col1.attr('data-bs-toggle', 'false');
+                }
+
+            }, 900);
+        }
         const packaging=(e,operator)=>{
             let parent = $(e).closest('.adjustment_row');
             let unitQty=parent.find('.gnd_quantity').val();
@@ -495,7 +554,9 @@
 
 
         $(document).on('input', '.adj_quantity', function () {
+            sanitizeNumericInput($(this));
             calGndQuantity($(this));
+            priceModalEnable($(this));
         });
 
         function calGndQuantity(e) {
@@ -676,7 +737,12 @@
 
 // ----------------------------------------------------------------   End::Sale Calculation  -----------------------------------------------------------
 
-
+        function sanitizeNumericInput(inputElement) {
+            var inputText = inputElement.val().trim();
+            var sanitizedInput = inputText === '' ? '0' : inputText.replace(/[^0-9]/g, '');
+            inputElement.val(sanitizedInput);
+            return parseFloat(sanitizedInput);
+        }
 
         function isNullOrNan(val){
             let v=parseFloat(val);

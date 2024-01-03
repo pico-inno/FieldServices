@@ -80,7 +80,6 @@ class StockAdjustmentController extends Controller
      */
     public function store(StoreStockAdjustmentRequest $request,StockAdjustmentServices $adjustmentServices)
     {
-//        return $request;
         try {
             DB::beginTransaction();
             $adjustmentServices->create($request);
@@ -201,6 +200,7 @@ class StockAdjustmentController extends Controller
      */
     public function update(Request $request, string $id, StockAdjustmentServices $stockAdjustmentServices)
     {
+//return $request;
         try {
             DB::beginTransaction();
                 $stockAdjustmentServices->update($id, $request);
