@@ -22,7 +22,10 @@
     <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>
     <style>
         .data-table-body tr td{
-            padding: 3px;
+            padding: 1px;
+        }
+        .data-table-body tr td input{
+            max-width: 100%;
         }
     </style>
 @endsection
@@ -142,7 +145,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card border border-primary-subtle border-top-2 border-left-0 border-right-0 border-bottom-0">
+                <div class="card border border-primary-subtle border-top-2 border-left-0 border-right-0 border-bottom-0" style="overflow-x: hidden;">
                     <div class="card-body px-5">
                         <div class="row align-items-center mb-sm-8">
                             <div class="col-12 col-md-9">

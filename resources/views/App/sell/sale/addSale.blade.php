@@ -22,7 +22,10 @@
     <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>
     <style>
         .data-table-body tr td{
-            padding: 3px;
+            padding: 1px;
+        }
+        .data-table-body tr td input{
+            max-width: 100%;
         }
         @keyframes example {
                 0%   {
@@ -63,7 +66,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card " style="overflow-x: hidden;">
                     <div class="card-body  px-5">
 
                         <div class="row mb-5 mb-sm-10 flex-wrap">
@@ -242,19 +245,19 @@
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-8 text-uppercase gs-0 ">
-                                        <th class="min-w-250px ps-3">Product </th>
-                                        <th class="min-w-200px ">Quantity </th>
+                                        <th class="px-1 min-w-20px text-start" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
+                                        <th class="min-w-100px ps-3 text-start">Product </th>
+                                        <th class="min-w-100px">Quantity </th>
                                         <th class="min-w-100px">UOM </th>
-                                        <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
-                                        <th class="min-w-125px">{{__('product/product.package')}}</th>
+                                        <th class="min-w-100px">{{__('product/product.package_qty')}}</th>
+                                        <th class="min-w-100px">{{__('product/product.package')}}</th>
                                         <th class="min-w-100px" style="max-width: 100px;">Price List</th>
-                                        <th class="min-w-200px">Uom Price</th>
-                                        <th class="min-w-200px">Subtotal</th>
-                                        <th class="min-w-105px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc </th>
+                                        <th class="min-w-100px">Uom Price</th>
+                                        <th class="min-w-100px">Subtotal</th>
+                                        <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc </th>
                                         <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc Amount </th>
                                         {{-- <th class="min-w-125px">Discount Amount</th> --}}
                                         {{-- <th class="min-w-125px">Subtotal</th> --}}
-                                        <th class="pe-1 min-w-50px text-end" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>

@@ -564,10 +564,17 @@
         }
         let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
         var newRow = `
-            <tr class="sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selected_product.product_variations.id}">
+            <tr class="text-center sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selected_product.product_variations.id}">
+                <th class="text-start">
+                    <div
+                        class="d-flex  ${!setting.enable_row ? 'justify-content-around -items-center' :'align-items-center justify-content-end'}">
+                        ${splitRow}
+                        <i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
+                    </div>
+                </th>
                 <td class="d-flex ps-2">
 
-                    <div class="w-300px">
+                    <div class="min-w-70px text-start">
                         <span>${selected_product.name}</span>
                         <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                         <br>
@@ -599,7 +606,7 @@
                 </td>
                 <td>
                     <span class="text-danger-emphasis  stock_alert_${selected_product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
-                    <div class="input-group sale_dialer_${unique_name_id} w-200px" >
+                    <div class="input-group sale_dialer_${unique_name_id} w-175px" >
                         <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
                             <i class="fa-solid fa-minus fs-2"></i>
                         </button>
@@ -660,12 +667,6 @@
                     <input type="hidden" class="line_subtotal_discount" name="sale_details[${unique_name_id}][line_subtotal_discount]" value="0">
                     <input type="hidden" class="currency_id" name="sale_details[${unique_name_id}][currency_id]" value="0">
                 </td>
-                <th class="text-end">
-                    <div class="d-flex  ${!setting.enable_row ? 'justify-content-around -items-center' :'align-items-center justify-content-end'}">
-                        ${splitRow}
-                        <i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
-                    </div>
-                </th>
             </tr>
         `;
             $('.sale_row').hover(
