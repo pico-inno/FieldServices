@@ -144,16 +144,16 @@
                                     </x-location-input>
 
                                     <x-location-input label="Address">
-                                        <x-forms.input placeholder="Address" name="address"></x-forms.input>
+                                        <x-forms.input placeholder="Address" name="address" id="address"></x-forms.input>
                                     </x-location-input>
                                     <x-location-input label="City">
-                                        <x-forms.input placeholder="City" name="city"></x-forms.input>
+                                        <x-forms.input placeholder="City" name="city" id="city"></x-forms.input>
                                     </x-location-input>
                                     <x-location-input label="State">
-                                        <x-forms.input placeholder="State" name="state"></x-forms.input>
+                                        <x-forms.input placeholder="State" name="state" id="state"></x-forms.input>
                                     </x-location-input>
                                     <x-location-input label="Country">
-                                        <x-forms.input placeholder="Country" name="country"></x-forms.input>
+                                        <x-forms.input placeholder="Country" name="country" id="country"></x-forms.input>
                                     </x-location-input>
                                     <x-location-input label="Zip Code:">
                                         <x-forms.input placeholder="Zip Code:" name="zip_postal_code"></x-forms.input>
@@ -288,9 +288,22 @@
             const geocoderRequest = { location: geolocation };
             geocoder.geocode(geocoderRequest, (results, status) => {
                 if (status === google.maps.GeocoderStatus.OK) {
-                    console.log(results);
-                    const address = results[2].formatted_address;
-                    $('#locationname').val(address);
+                    let addresses;
+                    if(results[3]){
+                         addresses=results[3];
+                    }else if(results[2]){
+                         addresses=results[2];
+
+                    }else if(results[1]){
+                         addresses=results[1];
+
+                    }else{
+                         addresses=results[0];
+                    }
+                    addressComponents=addresses.address_components;
+                    setAdderss(addressComponents[0],addressComponents[1],addressComponents[2],addressComponents[addressComponents.length-1]);
+                    const address = addresses.formatted_address;
+                    $('#address').val(address);
                 } else {
                     console.error("Geocoding failed:", status);
                 }
@@ -299,7 +312,13 @@
 
 
     }
+function setAdderss(address='',city='',state='',country=''){
+    $('#address').val(address ?  address.long_name : '');
+    $('#city').val(city? city.long_name : '');
+    $('#state').val(state? state.long_name : '');
+    $('#country').val(country? country.long_name : '');
 
+}
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0&callback=initMap&v=weekly"></script>
 @endpush
