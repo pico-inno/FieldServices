@@ -327,7 +327,7 @@
                                 <!--end::Nav item-->
                                 @endif
                                 <!--begin::Nav item-->
-                                @if(hasView('Expense') && hasView('purchase') && hasView('sale'))
+                                @if(hasView('Expense') && hasView('purchase') && hasView('sell'))
                                     <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                         data-bs-placement="right" data-bs-dismiss="click" title="Reports">
                                         <!--begin::Nav link-->
@@ -1897,7 +1897,7 @@
                                                     </div>
                                                     <!--end:Menu content-->
                                                 </div>
-                                                @if(hasView('Expense') && hasView('purchase') && hasView('sale'))
+                                                @if(hasView('Expense') && hasView('purchase') && hasView('sell'))
                                                     <div class="menu-item  ">
                                                         <a class="menu-link @yield('plReport_active_show')" href="{{route('plReport')}}">
                                                             <span class="menu-title ">Profit/Loss Report</span>
@@ -1918,7 +1918,7 @@
                                                         </a>
                                                     </div>
                                                 @endif
-                                                @if(hasView('product') && hasView('purchase') && hasView('sale'))
+                                                @if(hasView('product') && hasView('purchase') && hasView('sell'))
                                                     <div class="menu-item  ">
                                                         <a class="menu-link @yield('itemReport_active_show')" href="{{route('itemReport')}}">
                                                             <span class="menu-title ">Item Report</span>

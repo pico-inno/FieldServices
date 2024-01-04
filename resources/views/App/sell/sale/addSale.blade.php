@@ -252,8 +252,8 @@
                                         <th class="min-w-100px">{{__('product/product.package_qty')}}</th>
                                         <th class="min-w-100px">{{__('product/product.package')}}</th>
                                         <th class="min-w-100px" style="max-width: 100px;">Price List</th>
-                                        <th class="min-w-100px">Uom Price</th>
-                                        <th class="min-w-100px">Subtotal</th>
+                                        <th class="min-w-150px">Uom Price</th>
+                                        <th class="min-w-150px">Subtotal</th>
                                         <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc </th>
                                         <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc Amount </th>
                                         {{-- <th class="min-w-125px">Discount Amount</th> --}}

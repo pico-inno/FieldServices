@@ -474,7 +474,6 @@
         //----------------------------- start::rom -----------------------------------------------
         let romTags='';
         let locationId=$('[name="business_location_id"]').val();
-        console.log(selected_product,'--d');
         if(selected_product.rom){
             let rom=selected_product.rom;
             if(rom){
@@ -545,7 +544,6 @@
         if(selected_product.rom){
             let rdInput='';
             selected_product.rom.rom_details.forEach(rd=>{
-                console.log(rd);
                 rdInput+=`
                     <div class='rdMainDiv'>
                         <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty=${rd.product_variation.id} value="${rd.quantity}" />
@@ -566,10 +564,9 @@
         var newRow = `
             <tr class="text-center sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selected_product.product_variations.id}">
                 <th class="text-start">
-                    <div
-                        class="d-flex  ${!setting.enable_row ? 'justify-content-around -items-center' :'align-items-center justify-content-end'}">
+                    <div class="d-flex  ${!setting.enable_row ? 'justify-content-around align-items-center' :'align-items-center justify-content-end'}">
                         ${splitRow}
-                        <i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
+                        <i class="fa-solid fa-trash text-danger deleteRow pt-2" type="button"></i>
                     </div>
                 </th>
                 <td class="d-flex ps-2">
@@ -645,13 +642,13 @@
                 <td class=" fv-row">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]">
-                        <span class="input-group-text currencySymbol">${currentCurrency.symbol}</span>
+                        <span class="input-group-text currencySymbol fs-8 p-2">${currentCurrency.symbol}</span>
                     </div>
                 </td>
                 <td>
                     <div class="input-group input-group-sm">
                         <input type="text" class="subtotal form-control form-control-sm input_number" name="sale_details[${unique_name_id}][subtotal]" readonly >
-                        <span class="input-group-text currencySymbol">${currentCurrency.symbol}</span>
+                        <span class="input-group-text currencySymbol fs-8 p-2">${currentCurrency.symbol}</span>
                     </div>
                 </td>
                 <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
@@ -680,7 +677,13 @@
             }
         );
 
-
+        // <td class=" fv-row">
+        //     <div class="input-group input-group-sm">
+        //         <input type="text" class="form-control form-control-sm uom_price input_number" value="0"
+        //             name="sale_details[${unique_name_id}][uom_price]">
+        //         <span class="input-group-text currencySymbol">${currentCurrency.symbol}</span>
+        //     </div>
+        // </td>
         // new row append
         if(parentUniqueNameId == false){
             $('#sale_table tbody').prepend(newRow);
@@ -1039,9 +1042,7 @@
                     rdQty+=$(this).find(`[data-currentromconsuqty=${variationId}]`).val();
                 }
             })
-            console.log(rdQty);
             result+=isNullOrNan(rdQty);
-            console.log(result,rdQty);
             if(product.product_type =='storable' || (product.product_type =='consumeable' && product.total_current_stock_qty != null)){
                 if(result > productsOnSelectData[index].total_current_stock_qty && (allowOverSelling == 0 || status=='delivered')){
                             productsOnSelectData[index].validate=false;
@@ -1112,6 +1113,7 @@
         cal_balance_amount();
         subtotalCalculation($(this));
         lineDiscountCalulation($(this));
+        totalLineDisAmountCal();
 
     })
 
@@ -1121,9 +1123,15 @@
         let uomPrice=parent.find('.uom_price');
         let subtotal=parent.find('.subtotal');
         let discount_amount=parent.find('.discount_amount');
+        let per_item_discount=parent.find('.per_item_discount');
+        let line_subtotal_discount= parent.find('.line_subtotal_discount');
         if(discount_type=='foc'){
+            per_item_discount.val(0);
             uomPrice.val(0);
             subtotal.val(0);
+            line_subtotal_discount.val(0)
+            cal_total_sale_amount();
+            lineDiscountCalulation(e);
             uomPrice.attr('disabled',true);
             subtotal.attr('disabled',true);
             subtotal.attr('disabled',true);
@@ -1132,6 +1140,7 @@
             subtotal.attr('disabled',false);
             discount_amount.attr('disabled',false);
         }
+        totalLineDisAmountCal();
 
 
     }
@@ -1142,6 +1151,7 @@
         cal_balance_amount();
         subtotalCalculation($(this));
         lineDiscountCalulation($(this));
+        totalLineDisAmountCal();
     })
     $(document).on('change','.uom_select',function(e){
         changeQtyOnUom($(this),$(this).val());
@@ -1244,7 +1254,7 @@
     //
     //  This calculation is to calculate subtotal (quantity * uom_price)
     //
-    function subtotalCalculation(e) {
+    async function subtotalCalculation(e) {
         let parent = e.closest('.sale_row');
         let disType=parent.find('.discount_type').val();
         if(disType!='foc'){
@@ -1254,7 +1264,10 @@
             subtotal.val(uom_price * quantity);
             lineDiscountCalulation(e);
         }else{
-        setFoc(e);
+           await setFoc(e);
+           cal_total_sale_amount();
+            lineDiscountCalulation(e);
+            totalLineDisAmountCal();
         }
     }
 
@@ -1297,7 +1310,8 @@
             var value = isNullOrNan($(this).val());
             total_line_amount += value;
         });
-        $('.total_item_discount').val(total_line_amount)
+        console.log(total_line_amount,'total_line_amounttotal_line_amount');
+        $('#total_item_discount').val(total_line_amount)
         sale_amount_cal();
     }
 
