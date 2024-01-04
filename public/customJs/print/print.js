@@ -1,8 +1,10 @@
-function ajaxPrint(url){
+function ajaxPrint(url,layoutId){
     $.ajax({
         url: url,
+        data : {
+            'layoutId' : layoutId
+        },
         success: function (response) {
-            console.log(response,'helllllllllll');
             if (response.type == 'network') {
                 success(response.success);
                 return;

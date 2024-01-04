@@ -213,11 +213,11 @@ class purchasingService
                         <ul class="dropdown-menu z-10 p-5 " aria-labelledby="purchaseDropDown" role="menu">';
                 if (hasView('purchase')) {
                     $html .= '<a class="dropdown-item p-2  px-3 view_detail  fw-semibold"   type="button" data-href="' . route('purchaseDetail', $purchase->id) . '">
-                                view
+                                View
                             </a>';
                 }
                 if (hasPrint('purchase')) {
-                    $html .= ' <a class="dropdown-item p-2  cursor-pointer bg-active-danger fw-semibold print-invoice"  data-href="' . route('print_purchase', $purchase->id) . '">print</a>';
+                    $html .= ' <a class="dropdown-item p-2  cursor-pointer bg-active-danger fw-semibold print-invoice"  data-href="' . route('print_purchase', $purchase->id) . '">Print</a>';
                 }
                 if (hasUpdate('purchase')) {
                     $html .= $editBtn;

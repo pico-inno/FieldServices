@@ -454,7 +454,6 @@ $(document).ready(function(){
 
     $('#OrderStatus').change(function(){
         let received_at=$('#received_at').val();
-        console.log($(this).val(),received_at);
         if(received_at=='' && $(this).val()=='received'){
             var currentDate = new Date();
             var formattedCurrentDate = fp.formatDate(currentDate, "Y-m-d H:i");

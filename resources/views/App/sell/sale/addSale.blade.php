@@ -421,6 +421,8 @@
             <div class="col-12 text-center">
                 <button type="submit" class="btn btn-primary save_btn" data-kt-sale-action="submit" name="save" value='save'>Save</button>
                 <button type="submit" class="btn btn-success save_btn" data-kt-sale-action="submit" name="save" value='save_&_print'>Save & Print</button>
+                <button type="submit" class="btn btn-warning save_btn" data-kt-sale-action="submit" name="save" value='save_&_download_image'>Save & Download Image</button>
+
             </div>
         </form>
     </div>

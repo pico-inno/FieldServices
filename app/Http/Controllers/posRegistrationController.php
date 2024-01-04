@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\printers;
 use App\Models\BusinessUser;
+use App\Models\InvoiceLayout;
 use App\Models\posRegisters;
 use Illuminate\Http\Request;
 use App\Models\paymentAccounts;
@@ -92,7 +93,8 @@ class posRegistrationController extends Controller
         $employee=BusinessUser::where('is_active',1)->get();
         $paymentAccounts=paymentAccounts::get();
         $printers=printers::all();
-        return view('App.restaurants.pos.create',compact('employee','paymentAccounts','printers'));
+        $layouts = InvoiceLayout::all();
+        return view('App.restaurants.pos.create',compact('employee','layouts','paymentAccounts','printers'));
     }
     public function store(Request $request){
 
@@ -107,6 +109,7 @@ class posRegistrationController extends Controller
                 'use_for_res'=>$request->use_for_res ? 1 :0,
                 'printer_id'=>$request->printer_id,
                 'description'=>$request->description,
+                'invoice_layout_id' => $request->layout_id
             ]);
             DB::commit();
             return back()->with(['success'=>'successfully created']);

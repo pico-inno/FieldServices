@@ -90,6 +90,7 @@ use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
@@ -379,11 +380,9 @@ Route::prefix('purchase')->group(function () {
     Route::controller(purchaseController::class)->group(function () {
         Route::get('/list', 'index')->name('purchase_list');
         Route::get('/list/data', 'listData');
-
         Route::get('/add', 'add')->name('purchase_add');
         // Route::get('/new/add', 'purchase_new_add')->name('purchase_new_add');
         Route::post('/store', 'store')->name('purchase_store');
-
         Route::get('{id}/edit', 'edit')->name('purchase_edit');
         Route::post('{id}/update', 'update')->name('purchase_update');
         //invoice
@@ -392,8 +391,6 @@ Route::prefix('purchase')->group(function () {
 
         Route::delete('{id}/softDelete', 'softOneItemDelete');
         Route::delete('softDelete', 'softSelectedDelete');
-
-
         Route::get('{id}/units', 'getUnits');
         Route::get('/get/product', 'getProductForPurchase');
         Route::get('/get/product/v2', 'getProductForPurchaseV2');
@@ -970,6 +967,16 @@ Route::prefix('pos')->group(function () {
         Route::post('{id}/session/store', 'sessionStore')->name('pos.sessionStore');
         Route::post('{id}/session/destory', 'sessionDestory')->name('pos.sessionDestory');
     });
+});
+
+Route::prefix('invoice')->controller(InvoiceController::class)->group(function(){
+    Route::get('index','index')->name('invoice.index');
+    Route::get('create','create')->name('invoice.create');
+    Route::post('add','add')->name('invoice.add');
+    Route::get('detail/{id}','detail')->name('invoice.detail');
+    Route::get('edit/{id}','edit')->name('invoice.edit');
+    Route::post('update','update')->name('invoice.update');
+    Route::get('delete/{id}','delete')->name('invoice.delete');
 });
 //============================ End: POS ==============================================
 // POS

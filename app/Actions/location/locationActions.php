@@ -12,7 +12,6 @@ use App\Models\settings\businessSettings;
 class locationActions
 {
     public function createLocation($data){
-
         try {
             DB::beginTransaction();
             $location_code = $data['location_code']?? businessLocationCode();
@@ -29,6 +28,7 @@ class locationActions
                 'inventory_flow' => $data['inventory_flow'],
                 'price_lists_id'=>$data['price_lists_id'],
                 'gps_location'=>$data['gps_location'],
+                'invoice_layout' => $data['invoice_layout'],
 
             ];
             $location=businessLocation::create($locationData);

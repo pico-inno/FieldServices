@@ -18,6 +18,7 @@ class posRegisters extends Model
         'status',
         'use_for_res',
         'printer_id',
+        'invoice_layout_id'
     ];
     public function printer():HasOne{
         return $this->hasOne(printers::class,'id','printer_id');

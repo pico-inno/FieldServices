@@ -11,6 +11,7 @@ use App\Models\Product\UOM;
 use App\Models\Product\Unit;
 use Illuminate\Http\Request;
 use App\Models\exchangeRates;
+use App\Models\InvoiceLayout;
 use App\Models\stock_history;
 use App\Models\Product\UOMSet;
 use App\Models\Contact\Contact;
@@ -65,7 +66,8 @@ class purchaseController extends Controller
             ->orWhere('type', 'Both')
             ->select('id', 'company_name', 'prefix', 'first_name', 'last_name', 'middle_name')
             ->get();
-        return view('App.purchase.listPurchase', compact('locations', 'suppliers'));
+        $layouts = InvoiceLayout::all();
+        return view('App.purchase.listPurchase', compact('locations', 'suppliers', 'layouts'));
     }
 
     public function add()
@@ -164,21 +166,27 @@ class purchaseController extends Controller
         return redirect()->route('purchase_list')->with(['success' => 'Successfully Updated Purchase']);
     }
 
-
-    public function purhcaseInvoice($id)
+    public function purhcaseInvoice($id,Request $request)
     {
-        $purchase = purchases::with('supplier', 'purchased_by', 'currency')->where('id', $id)->first()->toArray();
+        $purchase = purchases::with('supplier', 'purchase_by','purchase_by', 'currency')->where('id', $id)->first();
+        // dd($purchase->toArray());
         $location = businessLocation::where('id', $purchase['business_location_id'])->first();
         $address = $location->locationAddress;
-        $purchase_details = purchase_details::where('purchases_id', $purchase['id'])
+        $table_text = purchase_details::where('purchases_id', $purchase['id'])
             ->where('is_delete', '0')
             ->with(['product', 'currency', 'purchaseUom', 'productVariation' => function ($q) {
                 $q->with('variationTemplateValue');
             }])
             ->get();
-        $invoiceHtml = view('App.purchase.invoice.invoice', compact('purchase', 'location', 'purchase_details', 'address'))->render();
-        return response()->json(['html' => $invoiceHtml]);
+
+        $layout = InvoiceLayout::find($request->layoutId);
+        $type = "purchase";
+        $invoiceHtml = view('App.invoice.detail', compact('purchase', 'location', 'table_text', 'address', 'layout','type'))->render();
+        preg_match('/<section class="p-5" id="print-section">(.*?)<\/section>/s', $invoiceHtml, $matches);
+        $printSectionHtml = $matches[0];
+        return response()->json(['html' => $printSectionHtml]);
     }
+
     public function purchaseDetail($id)
     {
 
@@ -189,8 +197,12 @@ class purchaseController extends Controller
             'productVariation:id,product_id,variation_template_value_id',
             'productVariation.product:id,name,has_variation,uom_id',
             'productVariation.variationTemplateValue:id,name',
-            'product', 'purchaseUom', 'currency', 'packagingTx')
-        ->where('purchases_id', $id)->where('is_delete', 0)->get();
+            'product',
+            'purchaseUom',
+            'currency',
+            'packagingTx'
+        )
+            ->where('purchases_id', $id)->where('is_delete', 0)->get();
         $setting = $this->setting->getByUser();
         return view('App.purchase.DetailView.purchaseDetail', compact(
             'purchase',
@@ -457,7 +469,7 @@ class purchaseController extends Controller
             'products.id as id',
             'product_variations.id as variation_id'
         )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
-        ->where('products.name', 'like', '%' . $keyword . '%')
+            ->where('products.name', 'like', '%' . $keyword . '%')
             ->when($psku_kw == 'true', function ($q) use ($keyword) {
                 $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
             })
