@@ -29,7 +29,8 @@ class CurrentStockBalance extends Model
         'ref_uom_quantity',
         'ref_uom_price',
         'current_quantity',
-        'created_at'
+        'created_at',
+        'lot_serial_type',
 
     ];
 
