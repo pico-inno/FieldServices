@@ -571,7 +571,7 @@
                 </th>
                 <td class="d-flex ps-2">
 
-                    <div class="min-w-70px text-start">
+                    <div class="min-w-125px text-start fs-7">
                         <span>${selected_product.name}</span>
                         <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                         <br>
@@ -630,8 +630,8 @@
                         ${packagingOption}
                     </select>
                 </td>
-                <td class="fv-row">
-                    <select   class="form-select form-select-sm price_group price_list w-180px" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price" readonly disabled>
+                <td class="fv-row d-none">
+                    <select   class="form-select form-select-sm price_group price_list " data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price" readonly disabled>
                         <option value="default_selling_price">defalut selling price</option>
                         @foreach ($priceLists as $PriceList)
                             <option value="{{$PriceList->id}}">{{$PriceList->name}}</option>

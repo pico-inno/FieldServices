@@ -246,12 +246,12 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-8 text-uppercase gs-0 ">
                                         <th class="px-1 min-w-20px text-start" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
-                                        <th class="min-w-100px ps-3 text-start">Product </th>
+                                        <th class="min-w-100px ps-3 text-start product_name">Product </th>
                                         <th class="min-w-100px">Quantity </th>
                                         <th class="min-w-100px">UOM </th>
                                         <th class="min-w-100px">{{__('product/product.package_qty')}}</th>
                                         <th class="min-w-100px">{{__('product/product.package')}}</th>
-                                        <th class="min-w-100px" style="max-width: 100px;">Price List</th>
+                                        {{-- <th class="min-w-100px" style="max-width: 100px;">Price List</th> --}}
                                         <th class="min-w-150px">Uom Price</th>
                                         <th class="min-w-150px">Subtotal</th>
                                         <th class="min-w-100px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc </th>
