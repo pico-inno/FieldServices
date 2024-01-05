@@ -19,7 +19,7 @@
                             id: `${d.id}-${d.variation_id}`,
                             value: `${d.id}-${d.variation_id}`,
                             text: (d.variation_name !== null) ? `${d.name} - ${d.variation_name}` : d.name,
-                            uom: d.uom, // Add the uom property to the option
+                            uom: d.uom,
                         });
                     })
                     return {

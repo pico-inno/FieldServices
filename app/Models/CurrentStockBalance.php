@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Product\ProductVariation;
 use App\Models\settings\businessLocation;
 use Carbon\Traits\Units;
 use App\Models\Product\UOM;
@@ -46,7 +47,7 @@ class CurrentStockBalance extends Model
 
     public function variation()
     {
-        return $this->belongsTo(Variation::class, 'variation_id');
+        return $this->belongsTo(ProductVariation::class, 'variation_id');
     }
 
     public function transactionDetail()
