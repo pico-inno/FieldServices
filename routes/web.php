@@ -292,17 +292,17 @@ Route::controller(ReportController::class)->group(function () {
 
 
     //=================================Start : Profit And Loss Report =============================
-    Route::get('/profit-loss/report', 'proftLoss')->name('plReport')->middleware(['canView:expense', 'canView:purchase', 'canView:sale']);
+    Route::get('/profit-loss/report', 'proftLoss')->name('plReport')->middleware(['canView:Expense', 'canView:purchase', 'canView:sell']);
 
-    Route::get('/expense/report', 'expenseReport')->name('expenseReport')->middleware(['canView:expense']);
+    Route::get('/expense/report', 'expenseReport')->name('expenseReport')->middleware(['canView:Expense']);
 
     Route::get('/report/pl/data', 'profitLossData');
 
-    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport')->middleware(['canView:sale', 'canView:purchase']);
+    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport')->middleware(['canView:sell', 'canView:purchase']);
 
 
     Route::get('/report/sale-purchase/data', 'salePurchaseData');
-    Route::get('/items/report', 'itemReport')->name('itemReport')->middleware(['canView:product','canView:purchase', 'canView:sale']);
+    Route::get('/items/report', 'itemReport')->name('itemReport')->middleware(['canView:product','canView:purchase', 'canView:sell']);
     Route::get('/items/report/data', 'itemData');
 
     Route::get('/items/couont/data', 'itemCount');
