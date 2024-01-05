@@ -94,7 +94,7 @@
                                             Customer Name
                                         </span>
 
-                                        <input class="form-check-input" type="checkbox" @if($layout->data_text['customer_name']) checked @endif name="customerName" />
+                                        <input class="form-check-input" type="checkbox" @checked($data_text->customer_name) name="customerName" />
                                     </label>
                                     <label
                                         class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
@@ -102,14 +102,14 @@
                                             Supplier Name
                                         </span>
 
-                                        <input class="form-check-input" type="checkbox" @if($layout->data_text['supplier_name']) checked @endif name="supplierName" />
+                                        <input class="form-check-input" type="checkbox" @checked($data_text->supplier_name) name="supplierName" />
                                     </label>
                                     <label
                                         class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
                                         <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
                                             Phone Number
                                         </span>
-                                        <input class="form-check-input" type="checkbox" @if($layout->data_text['phone']) checked @endif name="phone" />
+                                        <input class="form-check-input" type="checkbox" @checked($data_text->phone) name="phone" />
                                     </label>
 
                                     <label
@@ -117,7 +117,7 @@
                                         <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
                                             Address
                                         </span>
-                                        <input class="form-check-input" type="checkbox" @if($layout->data_text['address']) checked @endif name="address" />
+                                        <input class="form-check-input" type="checkbox" @checked($data_text->address)  name="address" />
                                     </label>
                                 </div>
                                 <div class="col-md-6">
@@ -136,7 +136,7 @@
                                         <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
                                             Date
                                         </span>
-                                        <input class="form-check-input" type="checkbox" @if($layout->data_text['date']) checked @endif name="date" checked />
+                                        <input class="form-check-input" type="checkbox" @checked($data_text->date)  name="date" checked />
                                     </label>
 
                                     <label
@@ -145,7 +145,7 @@
                                             Invoice Number
                                         </span>
 
-                                        <input class="form-check-input" type="checkbox" @if($layout->data_text['invoice_number']) checked @endif checked name="invoiceNumber" />
+                                        <input class="form-check-input" type="checkbox" @checked($data_text->invoice_number)   name="invoiceNumber" />
                                     </label>
                                 </div>
 
@@ -157,26 +157,111 @@
 
                         <div class="separator separator-dashed mb-8"></div>
 
-
                         <div class="row mb-10">
-                            <label class="form-label fw-bold fs-6 text-gray-700">Choose Extra Columns</label>
-                            <div class="col-md-3">
-                                <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Number</label>
-                                <input type="checkbox" @if($layout->table_text['number']) checked @endif name="number" class="column">
+                            <label class="form-label fw-bold fs-6 text-gray-700">Column Fields</label>
+                            <div class="col-md-3 mb-3">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($table_text->number->is_show) type="checkbox" value="true"
+                                            name="number[is_show]" id="number" class="column" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="No" name="number[label]" value="No">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($table_text->description->is_show ?? false) type="checkbox" value="true"
+                                            name="description[is_show]" class="description" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" name="description[label]" placeholder="Description"
+                                        value="Description">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($table_text->quantity->is_show ?? false) type="checkbox" value="true"
+                                            name="quantity[is_show]" class="column" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" name="quantity[label]" placeholder="Quantity"
+                                        value="Quantity">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($table_text->uom_price->is_show ?? false) type="checkbox" value="true"
+                                            name="uom_price[is_show]" class="column" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="Unit Price" name="uom_price[label]"
+                                        value="Unit Price">
+                                </div>
                             </div>
 
-                            <div class="col-md-3">
-                                <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Expense</label>
-                                <input type="checkbox" @if($layout->table_text['expense']) checked @endif name="expense" class="column">
+                            <div class="col-md-3 mb-3">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($table_text->discount->is_show ?? false) type="checkbox" value="true"
+                                            name="discount[is_show]" class="column" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="Discount" name="discount[label]"
+                                        value="Discount">
+                                </div>
                             </div>
 
-                            <div class="col-md-3">
-                                <label class="form-check-label ms-0 fs-6 text-gray-700" for="">Discount</label>
-                                <input type="checkbox" @if($layout->table_text['discount']) checked @endif name="discount" class="column">
+                            <div class="col-md-3 mb-3">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($table_text->subtotal->is_show ?? false) type="checkbox" value="true"
+                                            name="subtotal[is_show]" class="subtotal" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="Subtotal" name="subtotal[label]"
+                                        value="Subtotal">
+                                </div>
                             </div>
 
                         </div>
-
+                        <div class="separator separator-dashed mb-8"></div>
+                        <div class="row">
+                            <label class="form-label fw-bold fs-6 text-gray-700">Summary Field</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3 offset-md-9">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($data_text->net_sale_amount->is_show ?? false) type="checkbox" value="true"
+                                            name="net_sale_amount[is_show]" class="expense" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="Net Sale Amount"
+                                        name="net_sale_amount[label]" value="Net Sale Amount">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3 offset-md-9">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($data_text->extra_discount_amount->is_show ?? false) type="checkbox" value="true"
+                                            name="extra_discount_amount[is_show]" class="expense" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="Extra Discount Amount"
+                                        name="extra_discount_amount[label]" value="Extra Discount Amount">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3 offset-md-9">
+                                <div class="input-group input-group-sm">
+                                    <label class="input-group-text cursor-pointer">
+                                        <input class="w-15px  form-check cursor-pointer" @checked($data_text->total_sale_amount->is_show ?? false) type="checkbox" value="true"
+                                            name="total_sale_amount[is_show]" class="total_sale_amount" />
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="Total Amount"
+                                        name="total_sale_amount[label]" value="Total Amount">
+                                </div>
+                            </div>
+                        </div>
                         <div class="separator separator-dashed mb-8"></div>
 
 

@@ -34,7 +34,7 @@
                                 <div class="col-sm-6">
                                     <!--end::Label-->
                                     <div class="fw-semibold  text-gray-600 mb-1 invoice-sales">Sale By:</div>
-                                    <span class="pe-2"><span class="fw-bold text-gray-800 invoice-sales">{{$sale['sold_by']['username']}}</span>
+                                    <span class="pe-2"><span class="fw-bold text-gray-800 invoice-sales">{{$sale['sold']['username']}}</span>
                                         {{-- <span class="fs-7 text-danger d-flex align-items-center fw-semibold">{{$sale['sold_at']}}</span> --}}
                                     <!--end::Label-->
                                     <!--end::Info-->

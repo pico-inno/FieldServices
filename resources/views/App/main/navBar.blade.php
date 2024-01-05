@@ -464,7 +464,16 @@
                                 <!--end:-->
                                 @endif
                                 <!--begin::Tab pane-->
-
+                                <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right"
+                                    data-bs-dismiss="click" title="Invoice">
+                                    <!--begin::Nav link-->
+                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('invoice')"
+                                        data-bs-toggle="tab" href="#kt_aside_nav_tab_invoice">
+                                        <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                                        <i class="fa-solid fa-file-invoice fs-6"></i>
+                                    </a>
+                                    <!--end::Nav link-->
+                                </li>
                                 @if(hasModule('Service') && isEnableModule('Service'))
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                     data-bs-placement="right" data-bs-dismiss="click" title="Service">
@@ -2931,7 +2940,53 @@
                             </div>
                             <!--end::Tab pane-->
                             <!-- begin::Tab pane -->
+                            <div class="tab-pane fade  @yield('invoice_show')" id="kt_aside_nav_tab_invoice" role="tabpanel">
 
+                                <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
+                                    id="kt_aside_menu" data-kt-menu="true">
+                                    <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                        <div class="menu-item pt-1">
+                                            <!--begin:Menu content-->
+                                            <div class="menu-content">
+                                                <span class="menu-heading fw-bold text-uppercase fs-7">Invoice</span>
+                                            </div>
+                                            <!--end:Menu content-->
+                                        </div>
+                                        <!--begin:Menu item-->
+                                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion here show">
+
+                                            <div class="menu-sub menu-sub-accordion">
+                                                <!--begin:Menu item-->
+                                                @if (hasView('product'))
+                                                <!--begin:Menu item-->
+                                                <div class="menu-item">
+                                                    <!--begin:Menu link-->
+                                                    <a class="menu-link @yield('invoice_templates_active')" href="{{ route('invoice.index') }}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-folder-open"></i>
+                                                        </span>
+                                                        <span class="menu-title fs-6">Invoice Templates</span>
+                                                    </a>
+                                                    <!--end:Menu link-->
+                                                </div>
+
+                                                <div class="menu-item">
+                                                    <!--begin:Menu link-->
+                                                    <a class="menu-link @yield('invoice_active')" href="{{ route('invoice.create') }}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-circle-plus"></i>
+                                                        </span>
+                                                        <span class="menu-title fs-6">Create Invoice Templates</span>
+                                                    </a>
+                                                    <!--end:Menu link-->
+                                                </div>
+                                                <!--end:Menu item-->
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             @if(hasModule('Service') && isEnableModule('Service'))
                             <div class="tab-pane fade @yield('service_show')" id="kt_aside_nav_tab_service"
                                 role="tabpanel">

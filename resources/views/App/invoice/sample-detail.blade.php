@@ -6,6 +6,12 @@
 @section('styles')
     <style>
         /* Add other styles as needed */
+
+        @print{
+            #print-section{
+                background-color:white;
+            }
+        }
     </style>
 
     <!-- Include Bootstrap Stylesheet -->
@@ -38,27 +44,27 @@
                             <div class="col-4 float-end">
                                 <a class="btn btn-light text-capitalize border-0" onclick="print()"
                                     data-mdb-ripple-color="dark"><i class="fas fa-print text-primary"></i> Print</a>
-                                <a class="btn btn-light text-capitalize"
-                                    onclick="convertToImage('print-section','TesingImage')" data-mdb-ripple-color="dark"><i
+                                <a class="btn btn-light text-capitalize generateImg"
+                                     data-mdb-ripple-color="dark"><i
                                         class="fa-solid fa-image text-warning"></i>Generate
                                     Image</a>
                             </div>
                             <hr>
                         </div>
-                        <div class="container">
+                        <div class="container" id="print-section">
                             <div class="row">
                                 <div class="col-8">
                                     <ul class="list-unstyled">
                                         <li class="text-muted">To : <span style="color:#5d9fc5 ;">Mr Dean</span>
                                         </li>
-                                        @if ($layout['data_text']['supplier_name'])
+                                        @if ($data_text->supplier_name)
                                             <li class="text-muted">From : <span style="color:#5dc561 ;">U Maung
                                                     Maung</span></li>
                                         @endif
-                                        @if ($layout['data_text']['address'])
+                                        @if ($data_text->address)
                                             <li class="text-muted">Yangon,Myanmar</li>
                                         @endif
-                                        @if ($layout['data_text']['phone'])
+                                        @if ($data_text->phone)
                                             <li class="text-muted"><i class="fas fa-phone"></i> 09-797957976</li>
                                         @endif
                                     </ul>
@@ -68,13 +74,13 @@
                                         <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i>
                                             <span class="fw-bold"> ID:</span>#123-456
                                         </li>
-                                        @if ($layout['data_text']['date'])
+                                        @if ($data_text->date)
                                             <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i>
                                                 <span class="fw-bold">Creation Date:
                                                 </span>{{ $layout['created_at']->format('j/F/Y') }}
                                             </li>
                                         @endif
-                                        @if ($layout['data_text']['purchase_status'])
+                                        @if ($data_text->purchase_status)
                                             <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i>
                                                 <span class="me-1 fw-bold">Status:</span><span
                                                     class="badge bg-warning text-black fw-bold">
@@ -89,51 +95,83 @@
                                 <table class="table table-striped table-borderless">
                                     <thead style="background-color:#84B0CA ;" class="text-white">
                                         <tr class="">
-                                            @if ($layout['table_text']['number'])
+                                            @if ($table_text->number->is_show)
                                                 <th scope="col">#</th>
                                             @endif
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Qty</th>
-                                            <th scope="col">Unit Price</th>
-                                            <th scope="col">Amount</th>
+                                            @if ($table_text->description->is_show)
+                                                <th scope="col">{{$table_text->description->label ?? 'Decritpion'}}</th>
+                                            @endif
+                                            @if ($table_text->quantity->is_show)
+                                                <th scope="col">{{$table_text->quantity->label ?? 'Quantity'}}</th>
+                                            @endif
+                                            @if ($table_text->uom_price->is_show)
+                                                <th scope="col " class="text-end">{{$table_text->uom_price->label ?? 'Uom Price'}}</th>
+                                            @endif
+                                            @if ($table_text->discount->is_show)
+                                                <th scope="col " class="text-end">{{$table_text->discount->label ?? 'Uom Price'}}</th>
+                                            @endif
+                                            @if ($table_text->subtotal->is_show)
+                                                <th scope="col " class="text-end">{{$table_text->subtotal->label ?? 'Subtotal'}}</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @foreach (range(1,4) as $r)
+                                            <tr>
+                                                @if ($table_text->number->is_show)
+                                                    <td scope="col">#</td>
+                                                @endif
+                                                @if ($table_text->description->is_show)
+                                                    <td scope="col">Product {{$r}}</td>
+                                                @endif
+                                                @if ($table_text->quantity->is_show)
+                                                    <td scope="col">{{5 * $r}}</td>
+                                                @endif
+                                                @if ($table_text->uom_price->is_show)
+                                                    <td scope="col" class="text-end">{{price(2000 * $r)}} </td>
+                                                @endif
+                                                @if ($table_text->discount->is_show)
+                                                    <td scope="col" class="text-end">1,000 ks</td>
+                                                @endif
+                                                @if ($table_text->subtotal->is_show)
+                                                    <td scope="col" class="text-end">{{price((2000 * $r)-1000)}}</td>
+                                                @endif
+                                            </tr>
+                                        @endforeach
 
-                                        <tr>
-                                            @if ($layout['table_text']['number'])
-                                                <th scope="row">1</th>
-                                            @endif
-                                            <td>Product 1</td>
-                                            <td>5</td>
-                                            <td>3000</td>
-                                            <td>15000</td>
-                                        </tr>
-                                        <tr>
-                                            @if ($layout['table_text']['number'])
-                                                <th scope="row">1</th>
-                                            @endif
-                                            <td>Product 2</td>
-                                            <td>3</td>
-                                            <td>50000</td>
-                                            <td>150000</td>
-                                        </tr>
-                                        <tr>
-                                            @if ($layout['table_text']['number'])
-                                                <th scope="row">1</th>
-                                            @endif
-                                            <td>Product 3</td>
-                                            <td>6</td>
-                                            <td>4500</td>
-                                            <td>23000</td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="row">
-                                <div class="col-8">
-                                    <p class="ms-3">{!! $layout->note !!}
+                            <div class="row justify-content-end">
+                                <div class="col-6">
+                                    <p class="ms-3">
+                                        {!! $layout->note !!}
 
+                                    </p>
+
+                                </div>
+                                <div class="col-6">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            <tr class="fs-6 fw-bold">
+                                                <td colspan="4" class="text-end ">Subtotal</td>
+                                                <td class=" text-end ">{{ price(16000) }}</td>
+                                            </tr>
+                                            <tr class="fs-6 fw-bold">
+                                                <td colspan="4" class="text-end ">Discount Amount</td>
+                                                <td class=" text-end ">{{ price(1000) }}</td>
+                                            </tr>
+                                            <tr class="fs-6 fw-bold">
+                                                <td colspan="4" class="text-end ">Total Amount</td>
+                                                <td class=" text-end ">{{ price(15000) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row d-none">
+                                <div class="col-8">
+                                    {!! $layout->note !!}
                                 </div>
                                 <div class="col-3">
                                     <ul class="list-unstyled">
@@ -167,4 +205,9 @@
 @push('scripts')
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="{{ asset('customJs/invoice/print.js') }}"></script>
+    <script>
+        $('.generateImg').click(()=>{
+            convertToImage(document.getElementById('print-section'),'TesingImage');
+        })
+    </script>
 @endpush

@@ -48,7 +48,7 @@
     let editSaleDetails=@json($sale_details ?? []);
     let editSale=@json($sale ?? []);
     if (editSaleDetails.length>0) {
-        editSaleDetails.forEach(function(saledetail,index){
+        editSaleDetails.forEach(async function(saledetail,index){
             let secIndex;
             product= productsOnSelectData.find(function(pd,i) {
                 secIndex=i;
@@ -86,13 +86,15 @@
             }else{
                 productsOnSelectData=[...productsOnSelectData,newProductData];
             }
-            setTimeout(() => {
+            setTimeout(async function() {
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
                 uom.select2();
                 let uom_select=uom.val();
                 getPrice(uom);
                 changeQtyOnUom(uom,uom_select);
                 // lineDiscountCalulation(uom);
+                await lineDiscountCalulation($(uom));
+                cal_total_sale_amount();
                 extraDiscCal();
             }, 1000);
         })
@@ -121,7 +123,7 @@
                 packaging($(ev.inputElement),'/');
             })
         });
-                        $('.sale_row').hover(
+        $('.sale_row').hover(
             function() {
                 let unid=$(this).data('unid');
                 $(`[data-unid=${unid}]`).addClass('bg-light');
@@ -641,7 +643,7 @@
                 </td>
                 <td class=" fv-row">
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]">
+                        <input type="text" class="form-control form-control-sm uom_price input_number" value="0" name="sale_details[${unique_name_id}][uom_price]" autocomplete="off">
                         <span class="input-group-text currencySymbol fs-8 p-2">${currentCurrency.symbol}</span>
                     </div>
                 </td>
@@ -1328,7 +1330,7 @@
             let price_after_discount;
             let extra_discount=extraDiscCal();
             price_after_discount=sale_amount - (extra_discount+total_item_discount);
-
+            console.log(price_after_discount,'=============',total_item_discount);
             $('.total_sale_amount').val(price_after_discount);
             $('.paid_amount_input').val(price_after_discount);
             cal_balance_amount();

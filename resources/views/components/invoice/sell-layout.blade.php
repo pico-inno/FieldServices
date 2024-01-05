@@ -1,25 +1,22 @@
-<section class="p-5" id="print-section">
-    <div class="text-center">
+<section class="" id="print-section">
+    <div class="text-center mb-5">
         <h3 class="text-muted">{!! $layout->header_text !!}</h3>
     </div>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <div class="container">
+    <div class="">
         <div class="row">
             <div class="col-8">
                 <ul class="list-unstyled">
-                    {{-- @if ($table_text->purchase_uom)
-                            <li class="text-muted">To : <span
-                                    style="color:#5d9fc5 ;">{{ $table_text->customer->name }}</span>
-                            </li>
-                        @endif --}}
-                    @if ($layout['data_text']['supplier_name'])
-                        <li class="text-muted">From : <span style="color:#5dc561 ;">{{ $sale->sold->username }}</span></li>
+                    @if ($data_text->customer_name)
+                        <li class="text-muted">
+                            <span style="">{{ $sale->customer->getFullNameAttribute() }}</span>
+                        </li>
                     @endif
-                    @if ($layout['data_text']['address'])
-                        <li class="text-muted">{{ $location->name }}</li>
+                    @if ($data_text->address)
+                        <li class="text-muted">{{ $sale->customer->getAddressAttribute() }}</li>
                     @endif
-                    @if ($layout['data_text']['phone'])
-                        <li class="text-muted"><i class="fas fa-phone"></i>097843884888</li>
+                    @if ($data_text->phone)
+                        <li class="text-muted"><i class="fas fa-phone"></i>{{ $sale->customer->mobile}}</li>
                     @endif
                 </ul>
             </div>
@@ -28,13 +25,13 @@
                     <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i>
                         <span class="fw-bold">Voucher No:</span> {{ $sale->sales_voucher_no }}
                     </li>
-                    @if ($layout['data_text']['date'])
+                    @if ($data_text->date)
                         <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i>
-                            <span class="fw-bold">Creation Date:
+                            <span class="fw-bold">Date:
                             </span>{{ $sale->created_at->format('j/F/Y') }}
                         </li>
                     @endif
-                    @if ($layout['data_text']['purchase_status'])
+                    @if ($data_text->purchase_status)
                         <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i>
                             <span class="me-1 fw-bold">Status:</span><span class="badge bg-warning text-black fw-bold">
                                 {{ $sale->status }}</span>
@@ -48,51 +45,83 @@
             <table class="table table-striped table-borderless">
                 <thead style="background-color:#84B0CA ;" class="text-white">
                     <tr class="">
-                        @if ($layout['table_text']['number'])
+                        @if ($table_text->number->is_show)
                             <th scope="col">#</th>
                         @endif
-                        <th scope="col">Name</th>
-                        <th scope="col">Qty</th>
-                        <th scope="col">Unit Price</th>
-                        <th scope="col">Amount</th>
+                        @if ($table_text->description->is_show)
+                            <th scope="col">{{$table_text->description->label ?? 'Decritpion'}}</th>
+                        @endif
+                        @if ($table_text->quantity->is_show)
+                            <th scope="col">{{$table_text->quantity->label ?? 'Quantity'}}</th>
+                        @endif
+                        @if ($table_text->uom_price->is_show)
+                            <th scope="col " class="text-end">{{$table_text->uom_price->label ?? 'Uom Price'}}</th>
+                        @endif
+                        @if ($table_text->discount->is_show)
+                            <th scope="col " class="text-end">{{$table_text->discount->label ?? 'Uom Price'}}</th>
+                        @endif
+                        @if ($table_text->subtotal->is_show)
+                            <th scope="col " class="text-end">{{$table_text->subtotal->label ?? 'Subtotal'}}</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($table_text as $p)
+                    @foreach ($sale_details as $i=>$p)
                         <tr>
-                            @if ($layout['table_text']['number'])
-                                <th scope="row">1</th>
+                            @if ($table_text->number->is_show)
+                                <td scope="col">{{$i+1}}</td>
                             @endif
-                            <td>{{ $p->product->name }}</td>
-                            <td>{{ $p->quantity }}</td>
-                            <td>{{ $p->uom_price }}</td>
-                            <td>{{ $p->subtotal }}</td>
+                            @if ($table_text->description->is_show)
+                                <td scope="col">{{ $p->product->name }}</td>
+                            @endif
+                            @if ($table_text->quantity->is_show)
+                                <td scope="col">{{ fquantity($p->quantity) }} {{$p->uom->short_name}}</td>
+                            @endif
+                            @if ($table_text->uom_price->is_show)
+                                <td scope="col" class="text-end">{{ price($p->uom_price) }}</td>
+                            @endif
+                            @if ($table_text->discount->is_show)
+                                <td scope="col" class="text-end">{{$p->discount_type=='percentage'?fprice($p->per_item_discount).'%':price($p->per_item_discount) }}</td>
+                            @endif
+                            @if ($table_text->subtotal->is_show)
+                                <td scope="col" class="text-end">{{ price($p->subtotal_with_discount) }}</td>
+                            @endif
                         </tr>
                     @endforeach
-
                 </tbody>
             </table>
         </div>
-        <div class="row">
+        <div class="row justify-content-end">
             <div class="col-6">
-                <p class="ms-3">Add additional notes and payment information</p>
+                <p class="ms-3">
+                    {!! $layout->note !!}
+
+                </p>
 
             </div>
+            @php
+                $currecyName=arr($sale->currency,'name');
+            @endphp
             <div class="col-6">
-                <ul class="list-unstyled">
-                    <li class="text-muted ms-3"><span class="text-black me-4">SubTotal</span>{{ $sale->sale_amount }}
-                        {{ $sale->currency->name }}
-                    </li>
-                    <li class="text-muted ms-3 mt-2"><span
-                            class="text-black me-4">Discount()</span>{{ $sale->extra_discount_amount }}
-                        {{ $sale->currency->name }}
-                    </li>
-                </ul>
-                <p class="text-black float-start"><span class="text-black me-3"> Total
-                        Amount</span><span style="font-size: 25px;">{{ $sale->total_sale_amount }}
-                        {{ $sale->currency->name }}</span></p>
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr class="fs-6 fw-bold">
+                            <td colspan="4" class="text-end ">Subtotal</td>
+                            <td class=" text-end ">{{ price($sale->sale_amount) }}</td>
+                        </tr>
+                        <tr class="fs-6 fw-bold">
+                            <td colspan="4" class="text-end ">Discount Amount</td>
+                            <td class=" text-end ">{{ price($sale->extra_discount_amount) }}</td>
+                        </tr>
+                        <tr class="fs-6 fw-bold">
+                            <td colspan="4" class="text-end ">Total Amount</td>
+                            <td class=" text-end ">{{ price($sale->total_sale_amount) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+
         <hr>
         <div class="row">
             <div class="col-9">
@@ -104,5 +133,5 @@
         </div>
 
     </div>
-
 </section>
+

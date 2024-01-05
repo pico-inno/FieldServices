@@ -183,7 +183,7 @@ class saleController extends Controller
                     }
                 }
                 if (hasPrint('sell')) {
-                    $html .= '<a class="dropdown-item p-2  cursor-pointer  print-invoice"  data-href="' . route('print_sale', $saleItem->id) . '">Print</a>';
+                    $html .= '<a class="dropdown-item p-2  cursor-pointer  print-invoice"  data-href="' . route('print_sale', $saleItem->id) . '"     data-layoutId="' . $saleItem->businessLocation->invoice_layout . '">Print</a>';
                 }
 
 
@@ -771,6 +771,7 @@ class saleController extends Controller
                         'subtotal_with_tax' => $request_old_sale['subtotal'] - ($request_old_sale['line_subtotal_discount'] ?? 0),
                         'note' => $request_old_sale['item_detail_note'] ?? null,
                     ];
+                    // dd($request_sale_details_data);
                     // updateQTy
                     // $requestQty = $request_sale_details_data['quantity'];
                     // if ($request_sale_details_data['uom_id'] != $product['uom_id']) {
@@ -1347,7 +1348,7 @@ class saleController extends Controller
         $location = businessLocation::where('id', $sale['business_location_id'])->first();
         $address = $location->locationAddress;
 
-        $table_text = sale_details::with(['productVariation' => function ($q) {
+        $sale_details = sale_details::with(['productVariation' => function ($q) {
             $q->select('id', 'product_id', 'variation_template_value_id')
                 ->with([
                     'product' => function ($q) {
@@ -1361,16 +1362,16 @@ class saleController extends Controller
 
         $layout = InvoiceLayout::find($location->invoice_layout);
         $type="sale";
-
-
-        if ($layout->paper_size  == "80mm") {
-            $invoiceHtml = view('App.sell.print.pos.80mm', compact('sale', 'location', 'table_text', 'address'))->render();
+        if (!$layout) {
+            $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address', 'layout'))->render();
+        } else if ($layout->paper_size  == "80mm") {
+            $invoiceHtml = view('App.sell.print.pos.custom-80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
         } else {
-            $printSectionHtml = view('App.invoice.detail', compact('sale', 'location', 'table_text', 'address', 'layout','type'))->render();
-            // Extract the content of id="print-section" from the HTML
-            preg_match('/<section class="p-5" id="print-section">(.*?)<\/section>/s', $printSectionHtml, $matches);
-            $invoiceHtml = $matches[0];
+            $table_text = json_decode($layout->table_text);
+            $data_text = json_decode($layout->data_text);
+            $invoiceHtml = view('components.invoice.sell-layout', compact('sale', 'sale_details', 'table_text', 'data_text','location', 'table_text', 'address', 'layout','type'))->render();
         }
+        // return response()->json(['html' => $invoiceHtml]);
         return response()->json(['html' => $invoiceHtml]);
     }
 

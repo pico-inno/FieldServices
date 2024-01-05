@@ -160,16 +160,6 @@
                             <input type="text" data-kt-saleItem-table-filter="search"
                                 class="form-control form-control-sm w-250px ps-15" placeholder="Search" />
                         </div>
-                        <div class="col-12">
-                            <select class="form-select form-select-sm fw-bold" id="layoutIdBox" data-kt-select2="true"
-                                data-placeholder="Select option" data-allow-clear="true"
-                                data-kt-supplier-table-filter="supplier" data-hide-search="true">
-                                <option selected disabled></option>
-                                @foreach ($layouts as $layout)
-                                    <option value="{{ $layout->id }}">{{ $layout->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <!--end::Search-->
                     </div>
                     <!--begin::Card title-->
@@ -542,8 +532,9 @@
         $(document).on('click', '.print-invoice', function(e) {
             e.preventDefault();
             loadingOn();
-            var url = $(this).data('href');
-            ajaxPrint(url, layoutId);
+            let lid = $(this).data('layoutId');
+            let url = $(this).data('href');
+            ajaxPrint(url, lid);
         });
 
 

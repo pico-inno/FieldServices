@@ -976,7 +976,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function()
     Route::get('detail/{id}','detail')->name('invoice.detail');
     Route::get('edit/{id}','edit')->name('invoice.edit');
     Route::post('update','update')->name('invoice.update');
-    Route::get('delete/{id}','delete')->name('invoice.delete');
+    Route::get('delete/{id}', 'destory')->name('invoice.delete');
 });
 //============================ End: POS ==============================================
 // POS

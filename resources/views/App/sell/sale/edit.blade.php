@@ -390,7 +390,7 @@
                                             <td class="{{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">
                                                 <input type="text" class="form-control form-control-sm per_item_discount" value="{{round($sale_detail->per_item_discount,2)??0}}" name="sale_details[{{$key}}][per_item_discount]" placeholder="Discount amount">
                                                 <div class='mt-3 d-none'>Discount : <span class="line_discount_txt">0</span>{{$currency->symbol}}</div>
-                                                <input type="hidden" class="line_subtotal_discount" name="sale_details[{{$key}}][line_subtotal_discount]" value="0">
+                                                <input type="hidden" class="line_subtotal_discount" name="sale_details[{{$key}}][line_subtotal_discount]" value="{{round($sale_detail->line_subtotal_discount,2)??0}}">
                                                 {{-- <input type="hidden" class="currency_id" name="sale_details[{{$key}}][currency_id]" value="{{$sale_detail->currency_id}}"> --}}
                                             </td>
                                             <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
