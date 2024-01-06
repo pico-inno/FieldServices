@@ -1,10 +1,18 @@
 @extends('App.main.navBar')
 
-@section('inventory_icon', 'active')
-@section('inventory_show', 'active show')
-@section('current_stock_reports_active_show', 'active show')
-@section('inventory_reports_here_show', 'here show')
 
+@if($nav_type === "inventory")
+    @section('inventory_icon', 'active')
+    @section('inventory_show', 'active show')
+    @section('current_stock_reports_active_show', 'active show')
+    @section('inventory_reports_here_show', 'here show')
+@endif
+@if($nav_type === "report")
+    @section('reports_active', 'active')
+    @section('reports_active_show', 'active show')
+    @section('inventory_reports_here_show', 'here show')
+    @section('current_stock_balance_active_show', 'active show')
+@endif
 
 
 @section('styles')
@@ -12,13 +20,13 @@
 @endsection
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">Current Stock Balance Report</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('report.csb_report')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Reports</li>
-        <li class="breadcrumb-item text-muted">Inventory Reports</li>
-        <li class="breadcrumb-item text-dark">Current Stock Balance</li>
+        <li class="breadcrumb-item text-muted">{{__('common.reports')}}</li>
+        <li class="breadcrumb-item text-muted">{{__('report.inventory_reports')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('common.csb')}}</li>
     </ul>
     <!--end::Breadcrumb-->
 @endsection
@@ -39,7 +47,7 @@
                         <div class="row mb-5 flex-wrap">
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Business Location</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('common.business_locations')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_locations" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
@@ -56,7 +64,7 @@
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Product</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('product/product.product')}}</label>
 
                                 <div class="overflow-hidden  flex-grow-1">
                                     <x-productsearch placeholder='Select Product' name="contact_id" className="form-select form-select-sm  fw-bold filter_product" >
@@ -65,23 +73,11 @@
                                             </x-slot>
                                     </x-productsearch>
                                 </div>
-{{--                                <select class="form-select form-select-sm  fw-bold filter_product" data-kt-select2="true"--}}
-{{--                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">--}}
-{{--                                    <option></option>--}}
-{{--                                    @if(count($products) > 0)--}}
-{{--                                        <option selected value="0">All Products</option>--}}
-{{--                                        @foreach($products as $product)--}}
-{{--                                            <option value="{{$product->id}}">{{$product->name}}</option>--}}
-{{--                                        @endforeach--}}
-{{--                                    @else--}}
-{{--                                        <option selected disabled value="null">No Product</option>--}}
-{{--                                    @endif--}}
-{{--                                </select>--}}
                             </div>
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Category</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('product/product.category')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_category" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
@@ -98,7 +94,7 @@
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Brand</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('product/product.brand')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_brand" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
@@ -119,14 +115,14 @@
 
                             <!--begin::Input group-->
                             <div class="mb-10 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Date</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('common.date')}}</label>
                                 <input class="form-control form-control-sm form-control filter_date" placeholder="Pick date rage"
                                        id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
                             </div>
                             <!--end::Input group-->
                                      <!--begin::Input group-->
                                      <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">View By</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('report.view_by')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_view" data-kt-select2="true"
                                         data-placeholder="Select View Option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
@@ -138,7 +134,7 @@
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Type</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('report.type')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_type" data-kt-select2="true"
                                         data-placeholder="Select View Option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
@@ -175,7 +171,7 @@
                             <!--end::Svg Icon-->
                             <input type="text" data-kt-customer-table-filter="search"
                                    class="form-control form-control w-250px ps-15"
-                                   placeholder="Search" data-current-balance-report="search"/>
+                                   placeholder="{{__('common.search')}}" data-current-balance-report="search"/>
                         </div>
                         <!--end::Search-->
                     </div>
@@ -202,23 +198,13 @@
                                       fill="currentColor"/>
                             </svg>
                         </span>
-                                    <!--end::Svg Icon-->Export
+                                    <!--end::Svg Icon-->
+                                    {{__('common.export')}}
                                 </button>
                                 <!--end::Export-->
 
                         </div>
                         <!--end::Toolbar-->
-                        <!--begin::Group actions-->
-                        <div class="d-flex justify-content-end align-items-center d-none"
-                             data-kt-customer-table-toolbar="selected">
-                            <div class="fw-bold me-5">
-                                <span class="me-2" data-kt-customer-table-select="selected_count"></span>Selected
-                            </div>
-                            <button type="button" class="btn btn-danger"
-                                    data-kt-customer-table-select="delete_selected">Delete Selected
-                            </button>
-                        </div>
-                        <!--end::Group actions-->
                     </div>
                     <!--end::Card toolbar-->
                 </div>
@@ -234,25 +220,23 @@
                         <thead>
                         <!--begin::Table row-->
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                            <th>SKU</th>
-                            <th>Product & Variation</th>
-                            <th>Batch No</th>
-                            <th>Lot/Serial</th>
-                            <th>Location</th>
-                            <th>Category</th>
-                            <th>Brand</th>
+                            <th>{{__('product/product.sku')}}</th>
+                            <th>{{__('product/product.product_and_variation')}}</th>
+                            <th>{{__('common.batch_no')}}</th>
+                            <th>{{__('report.lot_serial')}}</th>
+                            <th>{{__('common.location')}}</th>
+                            <th>{{__('product/product.category')}}</th>
+                            <th>{{__('product/product.brand')}}</th>
 
                             <th>
                                 <span id="stock-qty-header">
-                                    Purchase Qty
+                                    {{__('report.csb.purchase_qty')}}
                                 </span>
                             </th>
                             <th class="text-center">
-{{--                                 <span id="stock-qty-header1">--}}
-                                    Current Qty
-{{--                                </span>--}}
+                                  {{__('report.current_qty')}}
                             </th>
-                            <th class="view-type min-w-100px">UOM</th>
+                            <th class="view-type min-w-100px">{{__('product/unit-and-uom.uom')}}</th>
 
                         </tr>
                         <!--end::Table row-->

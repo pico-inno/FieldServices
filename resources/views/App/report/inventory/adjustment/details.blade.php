@@ -11,13 +11,13 @@
 @endsection
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">Stock Adjustment Details</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('adjustment.stock_adjustment_details')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Reports</li>
-        <li class="breadcrumb-item text-muted">Inventory Reports</li>
-        <li class="breadcrumb-item text-dark">Stock Adjustment Reports</li>
+        <li class="breadcrumb-item text-muted">{{__('common.reports')}}</li>
+        <li class="breadcrumb-item text-muted">{{__('report.inventory_reports')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('adjustment.stock_adjustment_details_reports')}}</li>
     </ul>
     <!--end::Breadcrumb-->
 @endsection
@@ -55,7 +55,7 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Product</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('product/product.product')}}</label>
                                     <div class="overflow-hidden  flex-grow-1">
                                         <x-productsearch placeholder='Select Product' name="contact_id" className="form-select form-select-sm  fw-bold filter_product" >
                                             <x-slot:defaultOption>
@@ -67,7 +67,7 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Adjustment Type</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('adjustment.adjustment_type')}}</label>
                                     <select class="form-select form-select-sm fw-bold filter_adjustment_type" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-table-filter="status" data-hide-search="true">
                                         <option></option>
                                         <option value="all" selected>All</option>
@@ -127,7 +127,7 @@
                                     <path d="M19.0759 3H4.72777C3.95892 3 3.47768 3.83148 3.86067 4.49814L8.56967 12.6949C9.17923 13.7559 9.5 14.9582 9.5 16.1819V19.5072C9.5 20.2189 10.2223 20.7028 10.8805 20.432L13.8805 19.1977C14.2553 19.0435 14.5 18.6783 14.5 18.273V13.8372C14.5 12.8089 14.8171 11.8056 15.408 10.964L19.8943 4.57465C20.3596 3.912 19.8856 3 19.0759 3Z" fill="currentColor" />
                                 </svg>
                             </span>
-                                <!--end::Svg Icon-->Filter</button>
+                                <!--end::Svg Icon-->{{__('report.filter')}}</button>
                             <!--begin::Export-->
                             <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="modal"
                                     data-bs-target="#kt_customers_export_modal">
@@ -145,7 +145,7 @@
                                       fill="currentColor"/>
                             </svg>
                         </span>
-                                <!--end::Svg Icon-->Export
+                                <!--end::Svg Icon-->{{__('common.export')}}
                             </button>
                             <!--end::Export-->
 
@@ -166,16 +166,16 @@
                         <thead>
                         <!--begin::Table row-->
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                            <th class="min-w-125px">SKU</th>
-                            <th class="min-w-125px">Product</th>
-                            <th class="min-w-125px">Variation</th>
-                            <th class="min-w-125px">Adjustment Type</th>
-                            <th class="min-w-125px">Balance Qty</th>
-                            <th class="min-w-125px">Ground Qty</th>
-                            <th class="min-w-125px">Adjustment Qty</th>
-                            <th class="min-w-125px">UOM</th>
-                            <th class="min-w-125px">UOM Price</th>
-                            <th class="min-w-125px">Total</th>
+                            <th class="min-w-125px">{{__('product/product.sku')}}</th>
+                            <th class="min-w-125px">{{__('product/product.product')}}</th>
+                            <th class="min-w-125px">{{__('product/product.variation')}}</th>
+                            <th class="min-w-125px">{{__('adjustment.adjustment_type')}}</th>
+                            <th class="min-w-125px">{{__('adjustment.balance_qty')}}</th>
+                            <th class="min-w-125px">{{__('adjustment.ground_qty')}}</th>
+                            <th class="min-w-125px">{{__('adjustment.adjustment_qty')}}</th>
+                            <th class="min-w-125px">{{__('product/product.uom')}}</th>
+                            <th class="min-w-125px">{{__('product/product.uom_price')}}</th>
+                            <th class="min-w-125px">{{__('common.total')}}</th>
                         </tr>
                         <!--end::Table row-->
                         </thead>
@@ -202,7 +202,7 @@
                         <!--begin::Modal header-->
                         <div class="modal-header">
                             <!--begin::Modal title-->
-                            <h2 class="fw-bold">Export Stock Adjustment</h2>
+                            <h2 class="fw-bold">{{__('adjustment.export_stock_adjustment_details_report')}}</h2>
                             <!--end::Modal title-->
                             <!--begin::Close-->
                             <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">
@@ -228,7 +228,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Select Export Format:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_export_format')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <div id="exportOptions" style="visibility: hidden;" class="w-1px h-1px"></div>
@@ -245,7 +245,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Select Date Range:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_date_range')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
@@ -256,7 +256,7 @@
                                 <!--begin::Row-->
                                 <div class="row fv-row mb-15">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Export Column:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.export_column')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Radio group-->
                                     <div class="d-flex flex-column column_checkboxes">
@@ -351,11 +351,11 @@
                                 <!--begin::Actions-->
                                 <div class="text-center">
                                     <button type="reset" id="kt_customers_export_cancel" class="btn btn-light me-3">
-                                        Discard
+                                        {{__('common.discard')}}
                                     </button>
                                     <button type="submit" id="kt_customers_export_submit" class="btn btn-primary">
-                                        <span class="indicator-label">Submit</span>
-                                        <span class="indicator-progress">Please wait...
+                                        <span class="indicator-label">{{__('common.submit')}}</span>
+                                        <span class="indicator-progress">{{__('common.please_wait')}}...
                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                     </button>
                                 </div>

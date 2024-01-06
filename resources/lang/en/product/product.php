@@ -7,6 +7,8 @@ return [
     'advance' => 'Advance',
     'add' => 'Add',
     'all' => 'All',
+    'variation_sku' => 'Variation SKU',
+    'packaging_barcode' => 'Packaging Barcode',
 
     'brand' => 'Brand',
 
@@ -48,8 +50,8 @@ return [
     'product_type' => 'Product Type',
     'is_variation' => 'Is Variation',
     'purchase_price' => 'Purchase Price',
-    'disable' => 'Disable',
-    'purchase_uom' => 'Purchase UoM',
+
+
     'profit_margin' => 'Profit Margin',
     'print_label' => 'Print Label',
     'alert_quantity' => 'Alert Quantity',
@@ -64,5 +66,8 @@ return [
 
     // new update
     'package'=>'Package',
-    'package_qty'=>'Package Qty'
+    'package_qty'=>'Package Qty',
+    'product_and_variation' => 'Product & Variation',
+    'variation' => "Variation",
+    'uom_price' => 'UOM Price'
 ];

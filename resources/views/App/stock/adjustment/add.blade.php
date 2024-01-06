@@ -66,7 +66,7 @@
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <label class="form-label required" for="status">
-                                        Condition
+                                        {{__('common.condition')}}
                                     </label>
                                     <div class="fv-row">
                                         <select name="condition" class="form-select form-select-sm fw-bold "
@@ -147,7 +147,7 @@
                                     <div class="d-flex align-items-start flex-wrap">
                                         <!--begin::Title-->
                                         <h3 class="text-gray-800 fw-semibold cursor-pointer me-3 mb-0 fs-7 ">
-                                            Click to set Search Keyword
+                                            {{__('common.click_to_set_search_keyword')}}
                                         </h3>
                                         <!--end::Title-->
 
@@ -166,7 +166,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="p_kw" checked disabled />
                                                 <label class="form-check-label cursor-pointer" for="p_kw">
-                                                    Product Name
+                                                   {{__('product/product.name')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -174,7 +174,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="psku_kw" checked />
                                                 <label class="form-check-label cursor-pointer" for="psku_kw">
-                                                    Product Sku
+                                                    {{__('product/product.sku')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -182,7 +182,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="vsku_kw" />
                                                 <label class="form-check-label cursor-pointer" for="vsku_kw">
-                                                    Variation Sku
+                                                    {{__('product/product.variation_sku')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -190,7 +190,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="pgbc_kw" />
                                                 <label class="form-check-label cursor-pointer" for="pgbc_kw">
-                                                    Packaging Barcode
+                                                    {{__('product/product.packaging_barcode')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -209,7 +209,7 @@
                                         <th class="min-w-100px">{{__('adjustment.unit')}}</th>
                                         <th class="w-125px">{{__('adjustment.package_qty')}}</th>
                                         <th class="min-w-100px">{{__('adjustment.package')}}</th>
-                                        <th class="w-200px">Remark</th>
+                                        <th class="w-200px">{{__('common.remark')}}</th>
                                         <th>
                                             <i class="fas fa-trash fw-bold"></i>
                                         </th>

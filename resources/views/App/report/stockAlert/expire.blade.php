@@ -48,7 +48,7 @@
                                 <div class="row mb-5 flex-wrap">
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">Business Location</label>
+                                        <label class="form-label fs-6 fw-semibold">{{__('common.business_locations')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_locations" data-kt-select2="true"
                                                 data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                             <option></option>
@@ -65,7 +65,7 @@
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">Product</label>
+                                        <label class="form-label fs-6 fw-semibold">{{__('product/product.product')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_product" data-kt-select2="true"
                                                 data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">
                                             <option></option>
@@ -82,7 +82,7 @@
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">Category</label>
+                                        <label class="form-label fs-6 fw-semibold">{{__('product/product.category')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_category" data-kt-select2="true"
                                                 data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                             <option></option>
@@ -99,7 +99,7 @@
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">Brand</label>
+                                        <label class="form-label fs-6 fw-semibold">{{__('product/product.brand')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_brand" data-kt-select2="true"
                                                 data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                             <option></option>
@@ -115,7 +115,7 @@
                                     </div>
                                     <!--end::Input group-->
                                     <div class="mb-10 col-4 col-sm12 col-md-3 ">
-                                        <label class="form-label fs-6 fw-semibold">View Stocks</label>
+                                        <label class="form-label fs-6 fw-semibold">{{__('report.view_stocks')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_expire_range" data-kt-select2="true"
                                                 data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                             <option></option>
@@ -176,7 +176,7 @@
                                     <path d="M19.0759 3H4.72777C3.95892 3 3.47768 3.83148 3.86067 4.49814L8.56967 12.6949C9.17923 13.7559 9.5 14.9582 9.5 16.1819V19.5072C9.5 20.2189 10.2223 20.7028 10.8805 20.432L13.8805 19.1977C14.2553 19.0435 14.5 18.6783 14.5 18.273V13.8372C14.5 12.8089 14.8171 11.8056 15.408 10.964L19.8943 4.57465C20.3596 3.912 19.8856 3 19.0759 3Z" fill="currentColor" />
                                 </svg>
                             </span>
-                                <!--end::Svg Icon-->Filter</button>
+                                <!--end::Svg Icon-->{{__('report.filter')}}</button>
 
                             <!--begin::Export-->
                             <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="modal"
@@ -195,7 +195,7 @@
                                       fill="currentColor"/>
                             </svg>
                         </span>
-                                <!--end::Svg Icon-->Export
+                                <!--end::Svg Icon-->{{__('common.export')}}
                             </button>
                             <!--end::Export-->
 
@@ -252,7 +252,7 @@
                         <!--begin::Modal header-->
                         <div class="modal-header">
                             <!--begin::Modal title-->
-                            <h2 class="fw-bold">Export Customers</h2>
+                            <h2 class="fw-bold">{{__('report.stock_expire_alert_reports')}}</h2>
                             <!--end::Modal title-->
                             <!--begin::Close-->
                             <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">
@@ -278,7 +278,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Select Export Format:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_export_format')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <div id="exportOptions" style="visibility: hidden;" class="w-1px h-1px"></div>
@@ -306,7 +306,7 @@
                                 <!--begin::Row-->
                                 <div class="row fv-row mb-15">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Export Column:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.export_column')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Radio group-->
                                     <div class="d-flex flex-column column_checkboxes">
@@ -353,11 +353,11 @@
                                 <!--begin::Actions-->
                                 <div class="text-center">
                                     <button type="reset" id="kt_customers_export_cancel" class="btn btn-light me-3">
-                                        Discard
+                                        {{__('common.discard')}}
                                     </button>
                                     <button type="submit" id="kt_customers_export_submit" class="btn btn-primary">
-                                        <span class="indicator-label">Submit</span>
-                                        <span class="indicator-progress">Please wait...
+                                        <span class="indicator-label">{{__('common.submit')}}</span>
+                                        <span class="indicator-progress">{{__('common.please_wait')}}...
                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                     </button>
                                 </div>

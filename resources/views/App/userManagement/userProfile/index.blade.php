@@ -7,7 +7,7 @@
         <div class="card-header cursor-pointer">
             <!--begin::Card title-->
             <div class="card-title m-0">
-                <h3 class="fw-bold m-0">Profile Details</h3>
+                <h3 class="fw-bold m-0">{{__('user.profile_details')}}</h3>
             </div>
             <!--end::Card title-->
         </div>
@@ -18,7 +18,7 @@
                 <div class="col-md-6">
                     <div class="row mb-7 mt-5">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Date of birth:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.date_of_birth')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -28,7 +28,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Gender:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.gender')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -38,7 +38,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Marital Status:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.marital_status')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -48,7 +48,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Blood Group:C</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.blood_group')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -58,7 +58,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Mobile Number:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.phone')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -68,7 +68,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Alternate contact number:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.contact_number')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -78,7 +78,7 @@
                     </div>
                     <div class="row mb-md-10">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Family contact number:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.family_contact_number')}}:</label>
                         <!--begin::Label-->
                         <!--begin::Label-->
                         <div class="col-6">
@@ -88,7 +88,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Facebook Link:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.facebook_link')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -98,7 +98,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Twitter Link:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.twitter_link')}}:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -110,7 +110,7 @@
                 <div class="col-md-6">
                     <div class="row mb-7 mt-5">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Social Media 1:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.social_media')}} 1:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -120,7 +120,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Social Media 2:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.social_media')}} 2:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -130,7 +130,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Custom field 1:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 1:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -140,7 +140,7 @@
                     </div>
                     <div class="row mb-7">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Custom field 2:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 2:</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-6">
@@ -150,7 +150,7 @@
                     </div>
                     <div class="row mb-10">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Custom field 3:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 3:</label>
                         <!--begin::Label-->
                         <!--begin::Label-->
                         <div class="col-6">
@@ -160,7 +160,7 @@
                     </div>
                     <div class="row mb-10">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Custom field 4:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 4:</label>
                         <!--begin::Label-->
                         <!--begin::Label-->
                         <div class="col-6">
@@ -170,7 +170,7 @@
                     </div>
                     <div class="row mb-10">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Guardian Name:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.guardian_name')}}:</label>
                         <!--begin::Label-->
                         <!--begin::Label-->
                         <div class="col-6">
@@ -180,7 +180,7 @@
                     </div>
                     <div class="row mb-10">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">Language:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('common.language')}}:</label>
                         <!--begin::Label-->
                         <!--begin::Label-->
                         <div class="col-6">
@@ -190,7 +190,7 @@
                     </div>
                     <div class="row mb-10">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">ID Proof Name:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.id_proof_name')}}:</label>
                         <!--begin::Label-->
                         <!--begin::Label-->
                         <div class="col-6">
@@ -200,7 +200,7 @@
                     </div>
                     <div class="row mb-10">
                         <!--begin::Label-->
-                        <label class="col-6 fw-semibold text-muted">ID Proof Number:</label>
+                        <label class="col-6 fw-semibold text-muted">{{__('user.id_proof_number')}}:</label>
                         <!--begin::Label-->
                         <!--begin::Label-->
                         <div class="col-6">
@@ -214,7 +214,7 @@
                     <div class="col-md-6">
                         <div class="row mb-7 mt-5 mb-10">
                             <!--begin::Label-->
-                            <label class="col-6 fw-semibold text-muted">Permanent Address:</label>
+                            <label class="col-6 fw-semibold text-muted">{{__('user.permanent_address')}}:</label>
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-6">
@@ -226,7 +226,7 @@
                     <div class="col-md-6">
                         <div class="row mb-7 mt-5 mb-10">
                             <!--begin::Label-->
-                            <label class="col-6 fw-semibold text-muted">Current Address:</label>
+                            <label class="col-6 fw-semibold text-muted">{{__('user.current_address')}}:</label>
                             <!--end::Label-->
                             <!--begin::Col-->
                             <div class="col-6">

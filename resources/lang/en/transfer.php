@@ -44,6 +44,20 @@ return [
     'cannot_editable_message' => 'The transferred data cannot be changed because its status is "completed". You must change status in order to edit transferred stock.',
     'update' => 'Update',
 
+    //Report
+    'stock_transfer_summary' => 'Stock Transfer Summary',
+    'stock_transfer_reports' => 'Stock Transfer Reports',
+    'export_stock_transfer_report' => 'Export Stock Transfer Report',
+    'stock_transfer_details' => 'Stock Transfer Details',
+    'export_stock_transfer_details_report' => 'Export Stock Transfer Details Report',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+    '' => '',
+
+
 
 
 ];

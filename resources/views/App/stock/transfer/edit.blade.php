@@ -286,7 +286,7 @@
                                 <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="transfer_table">
                                     <thead>
                                     <tr class="fw-bold fs-6">
-                                        <th class="min-w-200px">{{__('transfer.porduct')}}</th>
+                                        <th class="min-w-200px">{{__('transfer.product')}}</th>
                                         <td class="min-w-100px">{{__('transfer.total_current_qty')}}</td>
                                         <th class="w-125px">{{__('transfer.transfer_qty')}}</th>
                                         <th class="min-w-100px">{{__('transfer.unit')}}</th>

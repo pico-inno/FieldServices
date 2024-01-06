@@ -227,7 +227,7 @@
                                 </div>
                                 <!--end::Status-->
                                 <!--begin::Search-->
-                                <a href="{{route('report.currentstockbalance.index')}}" class="btn btn-light btn-sm">View Report</a>
+                                <a href="{{route('report.currentstockbalance.index', 'inventory')}}" class="btn btn-light btn-sm">View Report</a>
                                 <!--end::Search-->
                             </div>
                             <!--begin::Filters-->

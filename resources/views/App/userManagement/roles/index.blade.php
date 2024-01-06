@@ -11,12 +11,12 @@
 
 @section('title')
 <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">{{__('usermanagement/role.roles_list')}}</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('role.roles_list')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">{{__('usermanagement/role.roles')}}</li>
-        <li class="breadcrumb-item text-dark">{{__('usermanagement/role.roles_list')}}</li>
+        <li class="breadcrumb-item text-muted">{{__('role.roles')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('role.roles_list')}}</li>
     </ul>
 <!--end::Breadcrumb-->
 @endsection
@@ -43,7 +43,7 @@
 												</svg>
 											</span>
                             <!--end::Svg Icon-->
-                            <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search role" />
+                            <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="{{__('common.search')}}" />
                         </div>
                         <!--end::Search-->
                     </div>
@@ -62,7 +62,7 @@
 													<rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
 												</svg>
 											</span>
-                                <!--end::Svg Icon-->{{__('usermanagement/role.create')}}</button>
+                                <!--end::Svg Icon-->{{__('role.create_role')}}</button>
                             <!--end::Add Role-->
                             @endif
                         </div>
@@ -79,8 +79,8 @@
                         <thead>
                         <!--begin::Table row-->
                         <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                            <th class="min-w-105px">Role</th>
-                            <th class="text-start min-w-70px">Actions</th>
+                            <th class="min-w-105px">{{__('role.role')}}</th>
+                            <th class="text-start min-w-70px">{{__('common.actions')}}</th>
                         </tr>
                         <!--end::Table row-->
                         </thead>
@@ -110,7 +110,7 @@
                                     @if(hasUpdate('role'))
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-3">
-                                        <a href="{{route('roles.edit', $role->id)}}" class="menu-link px-3">Edit</a>
+                                        <a href="{{route('roles.edit', $role->id)}}" class="menu-link px-3">{{__('common.edit')}}</a>
                                     </div>
                                     <!--end::Menu item-->
                                     @endif
@@ -118,7 +118,7 @@
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-3">
                                         <a class="menu-link px-3" href="#" onclick="event.preventDefault();
-                                           document.getElementById('delete-form-{{$role->id}}').submit();">Delete</a>
+                                           document.getElementById('delete-form-{{$role->id}}').submit();">{{__('common.delete')}}</a>
 
                                         <form id="delete-form-{{$role->id}}" action="{{route('roles.destroy',$role->id)}}" method="POST" class="d-none">
                                             @csrf
@@ -130,10 +130,10 @@
                                 </div>
                                 <!--end::Menu-->
                                 @else
-                                <p>No Actions for this User</p>
+                                <p>{{__('role.no_actions_for_this_user')}}</p>
                                 @endif
                                 @else
-                                    <p>Default Role</p>
+                                    <p>{{__('role.default_role')}}</p>
                                 @endif
                             </td>
                             <!--end::Action=-->

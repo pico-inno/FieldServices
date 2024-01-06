@@ -280,7 +280,7 @@ Route::controller(ReportController::class)->group(function () {
         Route::post('/adjustment-details/filter-list', 'adjustmentDetailsFilter');
 
         //Current Stock Balance
-        Route::get('/current-stock-balance', 'currentStockBalanceIndex')->name('report.currentstockbalance.index');
+        Route::get('/current-stock-balance/{nav_type}', 'currentStockBalanceIndex')->name('report.currentstockbalance.index');
         Route::post('/current-stock-balance/filter-list', 'currentStockBalanceFilter');
 
         //=================================End: Inventory Reports ========================

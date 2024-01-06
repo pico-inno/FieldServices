@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 return [
     'add_uom' => 'Add UoM',
@@ -23,4 +23,5 @@ return [
     'unit_list' => 'Unit List',
     'unit_type' => 'Unit Type',
     'unit' => 'Unit',
+    'uom' => 'UOM'
 ];
