@@ -9,6 +9,7 @@
     var posRegisterId=@json($posRegisterId);
     var sessionId=@json(request('sessionId'));
     var posRegister=@json($posRegister);
+    var layoutId=@json($posRegister->invoice_layout_id);
     var editSale=@json($sale ?? []);
     var saleId=editSale ? editSale.id :'';
     var route=null;
@@ -1602,7 +1603,7 @@
                             let id=results.data;
                             if(results.status==200){
                                 $.ajax({
-                                    url: `/pos/${id}/payment-print-layout`,
+                                    url: `/pos/${id}/payment-print-layout/${layoutId}`,
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                     },

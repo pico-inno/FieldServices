@@ -945,7 +945,7 @@ Route::controller(POSController::class)->group(function () {
     Route::put('/pos/contact-phone/update/{id}', 'phoneOnlyUpdate')->name('pos.contact-phone.update');
 
     Route::get('/pos/create', 'create')->name('pos.create');
-    Route::get('/pos/{id}/payment-print-layout', 'paymentPrintLayout')->name('pos.pryment-print-layout');
+    Route::get('/pos/{id}/payment-print-layout/{layout_id}', 'paymentPrintLayout')->name('pos.pryment-print-layout');
 
     Route::get('/pos/{posRegisterId}/edit/', 'edit')->name('pos.edit');
 

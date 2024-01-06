@@ -17,8 +17,8 @@ return new class extends Migration
             $table->enum('paper_size',['A4','A5','80mm','Legal'])->default('A4');
             $table->enum('paper_type',['classic','detailed','elegant']);
             $table->json('data_text')->nullable();
-            $table->string('header_text');
-            $table->string('footer_text');
+            $table->string('header_text')->nullable();
+            $table->string('footer_text')->nullable();
             $table->longText('note')->nullable();
             $table->json('table_text')->nullable();
             $table->timestamps();

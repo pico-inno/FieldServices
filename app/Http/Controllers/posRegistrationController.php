@@ -124,7 +124,8 @@ class posRegistrationController extends Controller
         $paymentAccounts=paymentAccounts::get();
         $registeredPos=posRegisters::where('id',$id)->first();
         $printers=printers::get();
-
+        $layouts = InvoiceLayout::all();
+        // dd($registeredPos);/
         // for employee
         $employee_ids=json_decode($registeredPos->employee_id);
         $employeeText = '';
@@ -154,7 +155,7 @@ class posRegistrationController extends Controller
             }
         }
 
-        return view('App.restaurants.pos.edit',compact('employee','paymentAccounts','registeredPos','employeeText','accountText','printers'));
+        return view('App.restaurants.pos.edit',compact('employee','paymentAccounts','registeredPos','employeeText','accountText','printers', 'layouts'));
     }
     public function update($id,Request $request){
 
@@ -170,6 +171,7 @@ class posRegistrationController extends Controller
             // 'status'=>$request->status,
                 'printer_id'=>$request->printer_id,
                 'description'=>$request->description,
+                'invoice_layout_id' => $request->layout_id
             ]);
             DB::commit();
             return back()->with(['success'=>'successfully updated']);

@@ -504,7 +504,7 @@ function eighty4Column(...$values){
 }
 
 function eighty5Column(...$values){
-    $width=[18,7,7,7,8];
+    $width=[11,8,10,8,9];
     return printTxtFormat($values,$width);
 }
 function discountTxt($type,$disAmt){
@@ -514,7 +514,7 @@ function discountTxt($type,$disAmt){
         return '';
     }
     else{
-        return '';
+        return '0';
     }
 }
 function calPercentage($type,$disAmt,$originalAmt){

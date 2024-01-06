@@ -1,6 +1,6 @@
 <section class="p-5" id="print-section">
     <div class="text-center">
-        <h3 class="text-muted">{!! $layout->header_text !!}</h3>
+        {{-- <h3 class="text-muted">{!! $layout->header_text !!}</h3> --}}
     </div>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <div class="container">

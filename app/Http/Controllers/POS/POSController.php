@@ -228,7 +228,7 @@ class POSController extends Controller
         });
     }
 
-    public function paymentPrintLayout($id)
+    public function paymentPrintLayout($id, $layout_id)
     {
         // $invoiceLayout = InvoiceLayout::find($request->invoiceLayoutId);
         $sale = sales::with('sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
@@ -237,10 +237,25 @@ class POSController extends Controller
         $address = $location->locationAddress;
         $sale_details = sale_details::with('productVariation.product', 'productVariation.variationTemplateValue', 'product', 'uom', 'currency')
                         ->where('sales_id', $id)->where('is_delete', 0)->get();
-                        // dd($sale);
-        $html = view('App.pos.print.payment2', compact('sale_details','address','location','sale'))->render();
-        logger('--');
-        return response()->json(['html' => $html]);
+
+        // $html = view('App.pos.print.payment2', compact('sale_details','address','location','sale'))->render();
+        $layout = InvoiceLayout::find($layout_id);
+        // dd($layout);
+        $type = "sale";
+        if (!$layout) {
+            $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address', 'layout'))->render();
+        } else if ($layout->paper_size  == "80mm") {
+
+            $table_text = json_decode($layout->table_text);
+            $data_text = json_decode($layout->data_text);
+            // dd($sale_details->toArray());
+            $invoiceHtml = view('App.sell.print.pos.80mmLayout', compact('sale', 'location', 'sale_details', 'address', 'table_text', 'data_text', 'layout'))->render();
+        } else {
+            $table_text = json_decode($layout->table_text);
+            $data_text = json_decode($layout->data_text);
+            $invoiceHtml = view('components.invoice.sell-layout', compact('sale', 'sale_details', 'table_text', 'data_text', 'location', 'table_text', 'address', 'layout', 'type'))->render();
+        }
+        return response()->json(['html' => $invoiceHtml]);
     }
 
     public function contactGet()
