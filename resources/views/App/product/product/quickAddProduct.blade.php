@@ -314,7 +314,7 @@
                                                 <!--end::Label-->
                                                 <div class="input-group mb-5 flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select class="form-select form-select-sm"
+                                                        <select class="form-select form-select-sm unitOfUom"
                                                             name="purchase_uom_id" id="unitOfUom" data-control="select2"
                                                             data-hide-search="true"
                                                             data-placeholder="Select purchase UoM" data-parent='#quick_add_product_form'>
@@ -918,59 +918,113 @@
 
             // ============= > Begin:: For Single Product Type Calculate < ===========
 
-                let singleExc = $('[name="single_exc"]');
-                let singleInc = $('[name="single_inc"]');
-                let singleProfit = $('[name="single_profit"]');
-                let singleSelling = $('[name="single_selling"]');
+            let singleExc = $('[name="single_exc"]');
+            let singleInc = $('[name="single_inc"]');
+            let singleProfit = $('[name="single_profit"]');
+            let singleSelling = $('[name="single_selling"]');
 
-                singleExc.on('keyup', (e) => {
-                    let excVal = e.target.value;
-                    singleInc.val(excVal);
+            let anotherPurchase = $('input[name="purchase_price_for_single"]');
+            let anotherProfit = $('input[name="profit_margin_for_single"]');
+            let anotherSell = $('input[name="sell_price_for_single"]');
 
-                    if(singleSelling.val()){
-                        let profitValue = profitPercentage(singleSelling.val(), excVal);
-                        singleProfit.val(profitValue);
-                        if(isNaN(profitValue)){
-                            singleProfit.val('')
-                        }
+            singleExc.on('keyup', (e) => {
+                let excVal = e.target.value;
+                singleInc.val(excVal);
+                anotherPurchase.val(excVal);
+
+                if(singleSelling.val()){
+                    let profitValue = profitPercentage(singleSelling.val(), excVal);
+                    singleProfit.val(profitValue);
+                    anotherProfit.val(profitValue)
+                    if(isNaN(profitValue)){
+                        singleProfit.val('')
+                        anotherProfit.val('')
                     }
-                })
-                singleInc.on('keyup', (e) => {
-                    let incVal = e.target.value;
-                    singleExc.val(incVal);
+                }
+            })
+            singleInc.on('keyup', (e) => {
+                let incVal = e.target.value;
+                singleExc.val(incVal);
+                anotherPurchase.val(incVal);
 
-                    if(singleSelling.val()){
-                        let profitValue = profitPercentage(singleSelling.val(), incVal);
-                        singleProfit.val(profitValue);
-                        if(isNaN(profitValue)){
-                            singleProfit.val('')
-                        }
+                if(singleSelling.val()){
+                    let profitValue = profitPercentage(singleSelling.val(), incVal);
+                    singleProfit.val(profitValue);
+                    anotherProfit.val(profitValue)
+                    if(isNaN(profitValue)){
+                        singleProfit.val('')
+                        anotherProfit.val('')
                     }
-                })
-                singleProfit.on('keyup', (e) => {
-                    let profitValue = e.target.value;
+                }
+            })
+            singleProfit.on('keyup', (e) => {
+                let profitValue = e.target.value;
+                anotherProfit.val(profitValue)
 
-                    if(singleExc.val() || singleInc.val()){
-                        let resultSelling = sellingPrice(profitValue, singleExc.val());
-                        singleSelling.val(resultSelling);
-                        if(isNaN(resultSelling)){
-                            singleSelling.val('');
-                        }
+                if(singleExc.val() || singleInc.val()){
+                    let resultSelling = sellingPrice(profitValue, singleExc.val());
+                    singleSelling.val(resultSelling);
+                    anotherSell.val(resultSelling)
+                    if(isNaN(resultSelling)){
+                        singleSelling.val('');
+                        anotherSell.val('')
                     }
-                })
-                singleSelling.on('keyup', (e) => {
-                    let sellingValue = e.target.value;
+                }
+            })
+            singleSelling.on('keyup', (e) => {
+                let sellingValue = e.target.value;
+                anotherSell.val(sellingValue)
 
-                    if(singleExc.val() || singleInc.val()){
-                        let resultProfit = profitPercentage(sellingValue, singleExc.val());
-                        singleProfit.val(resultProfit);
-                        if(isNaN(resultProfit)){
-                            singleProfit.val('');
-                        }
+                if(singleExc.val() || singleInc.val()){
+                    let resultProfit = profitPercentage(sellingValue, singleExc.val());
+                    singleProfit.val(resultProfit);
+                    anotherProfit.val(resultProfit)
+                    if(isNaN(resultProfit)){
+                        singleProfit.val('');
+                        anotherProfit.val('')
                     }
-                })
+                }
+            })
 
             // ============= > End:: For Single Product Type Calculate   < ===========
+
+
+            // ============= > Begin:: For Purchase, Profit, Selling price  < ==================
+            $(document).on('input', 'input[name="purchase_price_for_single"]', function() {
+                let value = $(this).val();
+                let profit = $(document).find('input[name="profit_margin_for_single"]').val();
+
+                let sellPrice;
+                if(profit !== ''){
+                    sellPrice = (profit, value);
+
+                    $(document).find('input[name="sell_price_for_single"]').val(sellPrice);
+                    $(document).find('input[name="single_selling"]').val(sellPrice);
+                }
+                $(document).find('input[name="single_exc"]').val(value)
+                $(document).find('input[name="single_inc"]').val(value)
+            })
+
+            $(document).on('input', 'input[name="profit_margin_for_single"]', function() {
+                let value = $(this).val();
+                let purchase = $(document).find('input[name="purchase_price_for_single"]').val();
+                let sellPrice = sellingPrice(value, purchase);
+
+                $(document).find('input[name="sell_price_for_single"]').val(sellPrice)
+                $(document).find('input[name="single_profit"]').val(value)
+                $(document).find('input[name="single_selling"]').val(sellPrice)
+            })
+
+            $(document).on('input', 'input[name="sell_price_for_single"]', function() {
+                let value = $(this).val();
+                let purchase = $(document).find('input[name="purchase_price_for_single"]').val();
+                let profit = profitPercentage(value, purchase);
+
+                $(document).find('input[name="profit_margin_for_single"]').val(profit)
+                $(document).find('input[name="single_profit"]').val(profit)
+                $(document).find('input[name="single_selling"]').val(value)
+            })
+            // ============= > End:: For Purchase, Profit, Selling price  < ==================
 
             // ============= > Begin:: For Variation table repeater  < ===============
                 let newVariation = `
@@ -1223,6 +1277,12 @@
 
             $(document).on('change', 'select[name="uom_id"]', function() {
                 let uom_id = $(this).val();
+
+                let selectedOption = $(this).find('option:selected');
+                let uomName = selectedOption.attr('data-uom-name');
+
+                $('.uom-label').text('('+uomName+')');
+
                 $.ajax({
                     url: `/uom/get/${uom_id}`,
                     type: 'GET',
@@ -1230,22 +1290,28 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(results){
-                        const purchaseUoM = $('#unitOfUom')[0];
-                        purchaseUoM.innerHTML = '';
+                        $('.unitOfUom').empty();
+                        // const purchaseUoM = $('.unitOfUom');
+                        // purchaseUoM.innerHTML = '';
 
-                        const defaultOption = document.createElement('option'); // Create default option
-                        defaultOption.value = '';
-                        defaultOption.text = 'Select an option';
-                        $(purchaseUoM).append(defaultOption);
-
+                        // const defaultOption = document.createElement('option'); // Create default option
+                        // defaultOption.value = '';
+                        // defaultOption.text = 'Select an option';
+                        // $(purchaseUoM).append(defaultOption);
+                        let data=[];
                         for (let item of results) {
-                            let option = document.createElement('option');
-                            option.value = item.id;
-                            option.text = item.name;
-                            purchaseUoM.append(option);
+                            // let option = document.createElement('option');
+                            data=[...data,
+                                {
+                                    'id':item.id,
+                                    'text':item.name
+                                }]
                         }
-
-                        $('#unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                        currentUoMData=data;
+                        $('.unitOfUom').select2({
+                            data,
+                            minimumResultsForSearch: Infinity
+                        }); // Initialize select2 plugin
                     },
                     error: function(e){
                         console.log(e.responseJSON.error);
