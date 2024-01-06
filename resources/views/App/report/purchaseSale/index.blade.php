@@ -57,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 <div class="card py-4 px-5 bg- wallet">
                     <span class="text-start fw-bold mt-3 text-gray-600 ">
                         {{-- <i class="fa-solid fa-shop fs-6 me-2 text-primary"></i> --}}
