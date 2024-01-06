@@ -5,7 +5,15 @@
 @section('invoice_active', 'active')
 
 @section('styles')
+<style>
+    .image-input-placeholder {
+        background-image: url('assets/media/svg/files/blank-image.svg');
+    }
 
+    [data-bs-theme="dark"] .image-input-placeholder {
+        background-image: url('assets/media/svg/files/blank-image-dark.svg');
+    }
+</style>
 @endsection
 @section('title')
     <!--begin::Heading-->
@@ -27,7 +35,7 @@
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <!--begin::Container-->
         <div class="container-xxl" id="location">
-            <form action="{{ route('invoice.add') }}" method="post">
+            <form action="{{ route('invoice.add') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="card" data-kt-sticky="true" data-kt-sticky-name="invoice"
                     data-kt-sticky-offset="{default: false, lg: '200px'}" data-kt-sticky-width="{lg: '250px', lg: '300px'}"
@@ -37,36 +45,72 @@
                     <!--begin::Card body-->
                     <div class="card-body p-10">
                         <!--begin::Input group-->
-                        <div class="mb-10">
-                            <div class="row">
-                                <div class="col-6">
-                                    <label class="form-label fw-bold fs-6 text-gray-700">Layout Name</label>
-                                    <input type="text" class="form-control" name="layoutName" placeholder="Layout-1">
-                                    @error('layoutName') <span class="text-danger">{{ $message }}</span>@enderror
-                                </div>
-                                <!--begin::Label-->
-                                <div class="col-6">
-                                    <label class="form-label fw-bold fs-6 text-gray-700">Paper Size</label>
-                                    <!--end::Label-->
-
-                                    <!--begin::Select-->
-                                    <select name="paperSize" id="paperSize" aria-label="Select a Papersize"
-                                        data-status="filter" data-kt-select2="true" data-hide-search="false"
-                                        data-allow-clear="true" data-hide-search="true" data-placeholder="Select Papersize"
-                                        class="form-select form-select-solid">
-                                        <option value="A4"><b>A4</option>
-                                        <option value="A3"><b>A3</option>
-                                        <option value="A5"><b>A5</option>
-                                        <option value="Legal"><b>Legal</option>
-                                        <option value="80mm"><b>80mm</option>
-                                    </select>
-                                    @error('paperSize') <span class="text-danger">{{ $message }}</span>@enderror
-                                </div>
+                        <div class="row mb-5">
+                            <div class="col-6">
+                                <label class="form-label fw-bold fs-6 text-gray-700">Layout Name</label>
+                                <input type="text" class="form-control" name="layoutName" placeholder="Layout-1">
+                                @error('layoutName') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
-                            <!--end::Select-->
+                            <!--begin::Label-->
+                            <div class="col-6">
+                                <label class="form-label fw-bold fs-6 text-gray-700">Paper Size</label>
+                                <!--end::Label-->
+
+                                <!--begin::Select-->
+                                <select name="paperSize" id="paperSize" aria-label="Select a Papersize"
+                                    data-status="filter" data-kt-select2="true" data-hide-search="false"
+                                    data-allow-clear="true" data-hide-search="true" data-placeholder="Select Papersize"
+                                    class="form-select form-select-solid">
+                                    <option value="A4"><b>Default (For -A4)</option>
+                                    <option value="A3"><b>A3</option>
+                                    <option value="A5"><b>A5</option>
+                                    <option value="Legal"><b>Legal</option>
+                                    <option value="80mm"><b>80mm</option>
+                                </select>
+                                @error('paperSize') <span class="text-danger">{{ $message }}</span>@enderror
+                            </div>
                         </div>
                         <!--end::Input group-->
-
+                        <div class="row">
+                            <div class="col-md-4 mb-5">
+                                <label class="form-label d-block">Business Logo</label>
+                                <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3 "
+                                    data-kt-image-input="true">
+                                    <!--begin::Preview existing avatar-->
+                                    <div class="image-input-wrapper w-100px h-100px"></div>
+                                    <!--end::Preview existing avatar-->
+                                    <!--begin::Label-->
+                                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change Logo">
+                                        <i class="bi bi-pencil-fill fs-7"></i>
+                                        <!--begin::Inputs-->
+                                        <input type="file" name="logo" accept=".png, .jpg, .jpeg" />
+                                        <input type="hidden" name="logo" />
+                                        <!--end::Inputs-->
+                                    </label>
+                                    <!--end::Label-->
+                                    <!--begin::Cancel-->
+                                    <span
+                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                        <i class="bi bi-x fs-2"></i>
+                                    </span>
+                                    <!--end::Cancel-->
+                                    <!--begin::Remove-->
+                                    <span
+                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                        <i class="bi bi-x fs-2"></i>
+                                    </span>
+                                    <!--end::Remove-->
+                                </div>
+                                <div class="text-muted fs-7">Max File Size: 5MB</div>
+                                <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
+                                @error('avatar')
+                                    <div class="text-danger my-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
                         <!--begin::Separator-->
                         <div class="separator separator-dashed mb-8"></div>
                         <!--begin::Input group-->

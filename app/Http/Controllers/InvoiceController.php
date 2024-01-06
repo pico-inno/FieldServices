@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\BusinessUser;
 use Illuminate\Http\Request;
 use App\Models\InvoiceLayout;
+use Illuminate\Support\Facades\DB;
+use App\Services\file\FileServices;
 use App\Models\settings\businessSettings;
 
 class InvoiceController extends Controller
 {
     public $request;
+    public $logofileName;
     public function index()
     {
         $layouts = InvoiceLayout::all();
@@ -25,11 +28,25 @@ class InvoiceController extends Controller
 
     public function add(Request $request)
     {
-        $this->request = $request;
-        // $this->validateInvoiceTemplateData($request);
-        $invoiceTemplateData = $this->getInvoiceTemplateData($request);
-        InvoiceLayout::create($invoiceTemplateData);
-        return redirect()->route('invoice.index')->with('success', 'Successfully Created');
+        try {
+            DB::beginTransaction();
+
+            $this->request = $request;
+            if ($request->hasFile('logo')) {
+                $this->logofileName = FileServices::upload($request->logo, 'logo/invoice/');
+            }
+            // $this->validateInvoiceTemplateData($request);
+            $invoiceTemplateData = $this->getInvoiceTemplateData($request);
+            InvoiceLayout::create($invoiceTemplateData);
+            DB::commit();
+            return redirect()->route('invoice.index')->with('success', 'Successfully Created');
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return back()->with('error', $th->getMessage());
+            //throw $th;
+        }
     }
 
     public function detail($id)
@@ -52,8 +69,16 @@ class InvoiceController extends Controller
     {
         $this->request = $request;
         $this->validateInvoiceTemplateData($request);
+        $layout= InvoiceLayout::find($request->layoutId);
+        $dataText=json_decode($layout->data_text);
+        $datalogo= $dataText->logo ?? null;
+        if($datalogo==$request->logo){
+            $this->logofileName=$request->logo;
+        } elseif ($request->hasFile('logo')) {
+            $this->logofileName = FileServices::upload($request->logo, 'logo/invoice/');
+        }
         $data = $this->getInvoiceTemplateData($request);
-        InvoiceLayout::find($request->layoutId)->update($data);
+        $layout->update($data);
         return redirect()->route('invoice.index');
     }
 
@@ -99,6 +124,7 @@ class InvoiceController extends Controller
     public function getDataText($request)
     {
         return [
+            'logo'=>$this->logofileName,
             'customer_name' => boolval($request->customerName ?? false),
             'supplier_name' => boolval($request->supplierName ?? false),
             'phone' => boolval($request->phone ?? false),

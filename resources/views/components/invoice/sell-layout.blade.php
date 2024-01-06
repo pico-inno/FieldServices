@@ -1,4 +1,24 @@
 <section class="" id="print-section">
+    <style>
+
+        .logo-wrapper{
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .logo{
+            width: 60px;
+            height: 60px;
+            text-align: center;
+        }
+    </style>
+    @php
+        $logo=$data_text->logo ?? null;
+        $url=asset('/storage/logo/invoice/'.$logo);
+    @endphp
+    <div class="text-center  logo-wrapper">
+        <img src="{{$url}}" class="logo" />
+    </div>
     <div class="text-center mb-5">
         <h3 class="text-muted">{!! $layout->header_text !!}</h3>
     </div>
@@ -128,7 +148,7 @@
                 {!! $layout->footer_text !!}
             </div>
             <div class="col-3">
-                <a href="" class="text-primary">{{ $sale->sold->email }}</a>
+                {{-- <a href="" class="text-primary">{{ $sale->sold->email }}</a> --}}
             </div>
         </div>
 

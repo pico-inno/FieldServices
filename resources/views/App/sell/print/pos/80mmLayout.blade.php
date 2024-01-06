@@ -42,12 +42,30 @@
                 padding: 0;
             }
         }
+        .logo-wrapper{
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .logo{
+            width: 60px;
+            height: 60px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
+@php
+    $logo=$data_text->logo ?? null;
+    $url=asset('/storage/logo/invoice/'.$logo);
+@endphp
     {{--
     <pre> --}}
+
+<div class="text-center mb-5 logo-wrapper">
+    <img src="{{$url}}" class="logo" />
+</div>
 @php
 // labels
 $tableDescription=$table_text->description;
@@ -102,8 +120,8 @@ echo '<p>'.
     $layout->header_text
     .'</p>';
 echo '</div>';
+echo '<br><br><br>';
 echo '<pre>';
-echo '<br>';
 // dd($data_text);
 if($data_text->invoice_number){
     echo printFormat('Voucher No','',$sale->sales_voucher_no);
@@ -207,7 +225,6 @@ echo '<div class="text-start">';
     echo '</div>';
 echo "</pre>";
 
-// die;
 @endphp
 </body>
 

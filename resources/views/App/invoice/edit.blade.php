@@ -4,7 +4,27 @@
 @section('invoice_show', 'active show')
 
 @section('styles')
+@php
+    $logo=$data_text->logo ?? null;
+    $url=asset('/storage/logo/invoice/'.$logo);
+@endphp
+@if($logo)
+   <style>
+    .image-input-placeholder {
+        background-image: url({{$url}});
+    }
+</style>
+@else
+<style>
+    .image-input-placeholder {
+        background-image: url({{asset('assets/media/svg/files/blank-image.svg')}});
+    }
 
+    [data-bs-theme="dark"] .image-input-placeholder {
+        background-image: url({{asset('assets/media/svg/files/blank-image.svg')}});
+    }
+</style>
+@endif
 @endsection
 @section('title')
     <!--begin::Heading-->
@@ -26,7 +46,7 @@
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <!--begin::Container-->
         <div class="container-xxl" id="location">
-            <form action="{{ route('invoice.update') }}" method="post">
+            <form action="{{ route('invoice.update') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="card" data-kt-sticky="true" data-kt-sticky-name="invoice"
                     data-kt-sticky-offset="{default: false, lg: '200px'}" data-kt-sticky-width="{lg: '250px', lg: '300px'}"
@@ -37,7 +57,7 @@
                     <!--begin::Card body-->
                     <div class="card-body p-10">
                         <!--begin::Input group-->
-                        <div class="mb-10">
+                        <div class="mb-5">
                             <div class="row">
                                 <div class="col-6">
                                     <label class="form-label fw-bold fs-6 text-gray-700">Layout Name</label>
@@ -68,6 +88,46 @@
                         </div>
                         <!--end::Input group-->
 
+                        <div class="row">
+                            <div class="col-md-4 mb-5">
+                                <label class="form-label d-block">Business Logo</label>
+                                <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3 "
+                                    data-kt-image-input="true">
+                                    <!--begin::Preview existing avatar-->
+                                    <div class="image-input-wrapper w-100px h-100px"></div>
+                                    <!--end::Preview existing avatar-->
+                                    <!--begin::Label-->
+                                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change Logo">
+                                        <i class="bi bi-pencil-fill fs-7"></i>
+                                        <!--begin::Inputs-->
+                                        <input type="file" name="logo" accept=".png, .jpg, .jpeg" value="{{$logo}}" />
+                                        <input type="hidden" name="logo" value="{{$logo}}" />
+                                        <!--end::Inputs-->
+                                    </label>
+                                    <!--end::Label-->
+                                    <!--begin::Cancel-->
+                                    <span
+                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                        <i class="bi bi-x fs-2"></i>
+                                    </span>
+                                    <!--end::Cancel-->
+                                    <!--begin::Remove-->
+                                    <span
+                                        class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                        data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                        <i class="bi bi-x fs-2"></i>
+                                    </span>
+                                    <!--end::Remove-->
+                                </div>
+                                <div class="text-muted fs-7">Max File Size: 5MB</div>
+                                <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
+                                @error('avatar')
+                                    <div class="text-danger my-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
                         <!--begin::Separator-->
                         <div class="separator separator-dashed mb-8"></div>
                         <!--begin::Input group-->
@@ -82,79 +142,72 @@
                         </div>
                         <div class="separator separator-dashed mb-8"></div>
 
-                        <!--begin::Option-->
-                        <div class="mb-10">
-                            <div class="row">
+                        <div class="row mb-10">
 
 
-                                <div class="col-md-6">
-                                    <label
-                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Customer Name
-                                        </span>
+                            <div class="col-md-6">
+                                <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Customer Name
+                                    </span>
 
-                                        <input class="form-check-input" type="checkbox" @checked($data_text->customer_name) name="customerName" />
-                                    </label>
-                                    <label
-                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Supplier Name
-                                        </span>
+                                    <input class="form-check-input" type="checkbox" @checked($data_text->customer_name) name="customerName" />
+                                </label>
+                                <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Supplier Name
+                                    </span>
 
-                                        <input class="form-check-input" type="checkbox" @checked($data_text->supplier_name) name="supplierName" />
-                                    </label>
-                                    <label
-                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Phone Number
-                                        </span>
-                                        <input class="form-check-input" type="checkbox" @checked($data_text->phone) name="phone" />
-                                    </label>
+                                    <input class="form-check-input" type="checkbox" @checked($data_text->supplier_name) name="supplierName" />
+                                </label>
+                                <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Phone Number
+                                    </span>
+                                    <input class="form-check-input" type="checkbox" @checked($data_text->phone) name="phone" />
+                                </label>
 
-                                    <label
-                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Address
-                                        </span>
-                                        <input class="form-check-input" type="checkbox" @checked($data_text->address)  name="address" />
-                                    </label>
-                                </div>
-                                <div class="col-md-6">
-                                    <!--begin::Option-->
-                                    {{-- <label
-                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Purchase Status
-                                        </span>
+                                <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Address
+                                    </span>
+                                    <input class="form-check-input" type="checkbox" @checked($data_text->address)  name="address" />
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <!--begin::Option-->
+                                {{-- <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Purchase Status
+                                    </span>
 
-                                        <input class="form-check-input" type="checkbox" @if($layout->data_text['status']) checked @endif checked name="purchaseStatus" />
-                                    </label> --}}
+                                    <input class="form-check-input" type="checkbox" @if($layout->data_text['status']) checked @endif checked name="purchaseStatus" />
+                                </label> --}}
 
-                                    <label
-                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Date
-                                        </span>
-                                        <input class="form-check-input" type="checkbox" @checked($data_text->date)  name="date" checked />
-                                    </label>
+                                <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Date
+                                    </span>
+                                    <input class="form-check-input" type="checkbox" @checked($data_text->date)  name="date" checked />
+                                </label>
 
-                                    <label
-                                        class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Invoice Number
-                                        </span>
+                                <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Invoice Number
+                                    </span>
 
-                                        <input class="form-check-input" type="checkbox" @checked($data_text->invoice_number)   name="invoiceNumber" />
-                                    </label>
-                                </div>
-
+                                    <input class="form-check-input" type="checkbox" @checked($data_text->invoice_number)   name="invoiceNumber" />
+                                </label>
                             </div>
 
                         </div>
-
-                        <!--end::Option-->
-
                         <div class="separator separator-dashed mb-8"></div>
 
                         <div class="row mb-10">
