@@ -499,7 +499,7 @@ function  eightyTxtFormat(...$values)  {
     return printTxtFormat($values,$width);
 }
 function eighty4Column(...$values){
-    $width=[22,8,8,10];
+    $width=[14,10,10,12];
     return printTxtFormat($values,$width);
 }
 
@@ -527,8 +527,21 @@ function calPercentage($type,$disAmt,$originalAmt){
         return formatNumber($disAmt ?? 0);
     }
 }
+function calPercentageNumber($type, $disAmt, $originalAmt)
+{
+    if ($type == 'percentage') {
+        return ($originalAmt * $disAmt) / 100;
+    } elseif ($type == 'foc') {
+        return 0;
+    } else {
+        return $disAmt;
+    }
+}
 function formatNumber($number) {
     return strpos($number, '.') !== false ? rtrim(rtrim($number, '0'), '.') : $number;
+}
+function formatNumberv2($number){
+    return number_format($number, ($number == round($number) ? 0 : 4),'.',',');
 }
 function getKitAvailableQty($locationId, $productId)
 {

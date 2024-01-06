@@ -58,7 +58,7 @@
                             <th scope="col " class="text-end">{{$table_text->uom_price->label ?? 'Uom Price'}}</th>
                         @endif
                         @if ($table_text->discount->is_show)
-                            <th scope="col " class="text-end">{{$table_text->discount->label ?? 'Uom Price'}}</th>
+                            <th scope="col " class="text-end">{{$table_text->discount->label ?? 'Discount'}}</th>
                         @endif
                         @if ($table_text->subtotal->is_show)
                             <th scope="col " class="text-end">{{$table_text->subtotal->label ?? 'Subtotal'}}</th>

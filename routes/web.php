@@ -95,6 +95,7 @@ use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
+use App\Models\sale\sale_details;
 use App\Services\packaging\packagingServices;
 
 // use App\Models\Manufacturer;
@@ -293,17 +294,17 @@ Route::controller(ReportController::class)->group(function () {
 
 
     //=================================Start : Profit And Loss Report =============================
-    Route::get('/profit-loss/report', 'proftLoss')->name('plReport')->middleware(['canView:expense', 'canView:purchase', 'canView:sale']);
+    Route::get('/profit-loss/report', 'proftLoss')->name('plReport')->middleware(['canView:Expense', 'canView:purchase', 'canView:sell']);
 
-    Route::get('/expense/report', 'expenseReport')->name('expenseReport')->middleware(['canView:expense']);
+    Route::get('/expense/report', 'expenseReport')->name('expenseReport')->middleware(['canView:Expense']);
 
     Route::get('/report/pl/data', 'profitLossData');
 
-    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport')->middleware(['canView:sale', 'canView:purchase']);
+    Route::get('/sale-purchase/report', 'salePurchaseReport')->name('spReport')->middleware(['canView:sell', 'canView:purchase']);
 
 
     Route::get('/report/sale-purchase/data', 'salePurchaseData');
-    Route::get('/items/report', 'itemReport')->name('itemReport')->middleware(['canView:product','canView:purchase', 'canView:sale']);
+    Route::get('/items/report', 'itemReport')->name('itemReport')->middleware(['canView:product','canView:purchase', 'canView:sell']);
     Route::get('/items/report/data', 'itemData');
 
     Route::get('/items/couont/data', 'itemCount');
@@ -892,12 +893,14 @@ Route::controller(TestController::class)->group(function () {
 
 //============================ End: Product ==============================================
 
-// Route::get('/test', function () {
+Route::get('/test', function () {
 
-//     $data=PriceListDetails::where('id','4')->first();
-//     // return view('App.product.product.testProduct');
-//     dd([$data->toArray(),getBase($data)->toArray()[0]]);
-// });
+    $data=sale_details::
+    where('per_item_discount','!=', '0.0000')
+    // ->where('discount_type','percentage')
+    ->select('per_item_discount','discount_type', 'subtotal_with_discount','subtotal','sales_id','quantity','id')->get()->toArray();
+    dd($data);
+});
 
 
 //Route::get('/users', fn()=>view('App.userManagement.users.index'))->name('user.list');

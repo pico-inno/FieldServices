@@ -112,15 +112,15 @@ class SaleServices
                 'subtotal' =>  $sale_detail['subtotal'] ?? 0,
                 'discount_type' => $sale_detail['discount_type'],
                 'per_item_discount' => $sale_detail['per_item_discount'],
-                'subtotal_with_discount' => $request->type != 'pos' ? $sale_detail['subtotal'] ?? 0  - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
+                'subtotal_with_discount' => $request->type != 'pos' ? ($sale_detail['subtotal'] ?? 0 ) - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
                 'currency_id' => $request->currency_id ?? $currency_id,
                 'price_list_id' => $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
                 'tax_amount' => 0,
                 'per_item_tax' => 0,
-                'subtotal_with_tax' => $request->type != 'pos' ? $sale_detail['subtotal'] ?? 0  - $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
+                'subtotal_with_tax' => $request->type != 'pos' ? ($sale_detail['subtotal'] ?? 0)- $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
                 'note' => $sale_detail['item_detail_note'] ?? null,
             ];
-            // dd($sale_details_data);
+            // dd($sale_details_data, $line_subtotal_discount);
             if ($resOrderData) {
                 $sale_details_data['rest_order_id'] = $resOrderData ? $resOrderData->id : null;
                 $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;

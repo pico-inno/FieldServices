@@ -100,7 +100,7 @@ class saleController extends Controller
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
-        $saleItems = $saleItems->get();
+        $saleItems = $saleItems;
 
         return DataTables::of($saleItems)
             ->editColumn('saleItems', function ($saleItems) {
@@ -1365,7 +1365,11 @@ class saleController extends Controller
         if (!$layout) {
             $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address', 'layout'))->render();
         } else if ($layout->paper_size  == "80mm") {
-            $invoiceHtml = view('App.sell.print.pos.custom-80mm', compact('sale', 'location', 'sale_details', 'address'))->render();
+
+            $table_text = json_decode($layout->table_text);
+            $data_text = json_decode($layout->data_text);
+            // dd($sale_details->toArray());
+            $invoiceHtml = view('App.sell.print.pos.80mmLayout', compact('sale', 'location', 'sale_details','address', 'table_text', 'data_text', 'layout'))->render();
         } else {
             $table_text = json_decode($layout->table_text);
             $data_text = json_decode($layout->data_text);
