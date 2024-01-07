@@ -1369,15 +1369,17 @@ class saleController extends Controller
 
             $table_text = json_decode($layout->table_text);
             $data_text = json_decode($layout->data_text);
+            // dd($data_text);
             // dd($sale_details->toArray());
-            $invoiceHtml = view('App.sell.print.pos.80mmLayout', compact('sale', 'location', 'sale_details','address', 'table_text', 'data_text', 'layout'))->render();
+            // $invoiceHtml = view('App.sell.print.pos.80mmLayout', compact('sale', 'location', 'sale_details','address', 'table_text', 'data_text', 'layout'))->render();
+            $invoiceHtml = view('App.sell.print.pos.80mmFixLayout', compact('sale', 'location', 'sale_details', 'address', 'table_text', 'data_text', 'layout'))->render();
         } else {
             $table_text = json_decode($layout->table_text);
             $data_text = json_decode($layout->data_text);
             $invoiceHtml = view('components.invoice.sell-layout', compact('sale', 'sale_details', 'table_text', 'data_text','location', 'table_text', 'address', 'layout','type'))->render();
         }
         // return response()->json(['html' => $invoiceHtml]);
-        return response()->json(['html' => $invoiceHtml]);
+        return response()->json(['html' =>mb_convert_encoding($invoiceHtml, 'UTF-8', 'UTF-8')]);
     }
 
 

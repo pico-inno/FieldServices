@@ -28,6 +28,8 @@ class InvoiceController extends Controller
 
     public function add(Request $request)
     {
+
+        $this->validateInvoiceTemplateData($request);
         try {
             DB::beginTransaction();
 
@@ -35,7 +37,6 @@ class InvoiceController extends Controller
             if ($request->hasFile('logo')) {
                 $this->logofileName = FileServices::upload($request->logo, 'logo/invoice/');
             }
-            // $this->validateInvoiceTemplateData($request);
             $invoiceTemplateData = $this->getInvoiceTemplateData($request);
             InvoiceLayout::create($invoiceTemplateData);
             DB::commit();
@@ -104,8 +105,8 @@ class InvoiceController extends Controller
         $request->validate([
             'layoutName' => 'required',
             'paperSize' => 'required',
-            'header' => 'required',
-            'footer' => 'required'
+            // 'header' => 'required',
+            // 'footer' => 'required'
         ]);
     }
 
