@@ -76,9 +76,7 @@
                                         class="form-select form-select-solid">
                                         <option value="" selected disabled>Choose Paper Size</option>
 
-                                        <option value="A4" @if($layout->paper_size ==="A4") selected @endif><b>A4</option>
-                                        <option value="A5" @if($layout->paper_size === "A5") selected @endif><b>A5</option>
-                                        <option value="Legal" @if($layout->paper_size === "Legal") selected @endif><b>Legal</option>
+                                        <option value="A4" @if($layout->paper_size ==="A4") selected @endif><b>Default (For -A4,A3,A5 and Legal)</option>
                                         <option value="80mm" @if($layout->paper_size === "80mm") selected @endif><b>80mm</option>
                                     </select>
                                     @error('paperSize') <span class="text-danger">{{ $message }}</span>@enderror

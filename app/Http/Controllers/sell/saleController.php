@@ -88,7 +88,8 @@ class saleController extends Controller
 
     public function saleItemsList(Request $request)
     {
-        $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')->with('business_location_id', 'businessLocation', 'customer');
+        $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')
+        ->with('business_location_id', 'businessLocation', 'customer');
         // dd($saleItems->get()->toArray());
 
         if ($request->saleType == 'posSales') {

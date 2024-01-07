@@ -61,11 +61,8 @@
                                     data-status="filter" data-kt-select2="true" data-hide-search="false"
                                     data-allow-clear="true" data-hide-search="true" data-placeholder="Select Papersize"
                                     class="form-select form-select-solid">
-                                    <option value="A4"><b>Default (For -A4)</option>
-                                    <option value="A3"><b>A3</option>
-                                    <option value="A5"><b>A5</option>
-                                    <option value="Legal"><b>Legal</option>
-                                    <option value="80mm"><b>80mm</option>
+                                    <option value="A4">Default (For -A4,A3,A5 and Legal)</option>
+                                    <option value="80mm">80mm</option>
                                 </select>
                                 @error('paperSize') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
