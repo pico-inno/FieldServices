@@ -13,5 +13,12 @@ return [
     'total_purchase_amount'=>'Total Purchase Amount',
     'received_at'=> 'Received At',
 
+    'home'=>'Home',
+    'users'=>'Users',
+    'roles'=>'Roles',
+    'contact'=>'Contact',
+    'products'=>'Proudcts',
+    'import_price_list'=>'Import Pirce List',
+    
 
 ];
