@@ -16,9 +16,11 @@
         $logo=$data_text->logo ?? null;
         $url=asset('/storage/logo/invoice/'.$logo);
     @endphp
-    <div class="text-center  logo-wrapper">
-        <img src="{{$url}}" class="logo" />
-    </div>
+    @if ($logo)
+        <div class="text-center  logo-wrapper">
+            <img src="{{$url}}" class="logo" />
+        </div>
+    @endif
     <div class="text-center mb-5">
         <h3 class="text-muted">{!! $layout->header_text !!}</h3>
     </div>

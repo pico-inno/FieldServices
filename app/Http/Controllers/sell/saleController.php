@@ -53,7 +53,7 @@ use App\Http\Requests\location\locationRequest;
 use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
-use App\Models\InvoiceLayout;
+use App\Models\InvoiceTemplate;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -81,15 +81,14 @@ class saleController extends Controller
     {
         $locations = businessLocation::select('name', 'id', 'parent_location_id')->get();
         $customers = contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
-        $layouts = InvoiceLayout::all();
-        return view('App.sell.sale.allSales', compact('locations', 'customers', 'saleType', 'layouts'));
+        return view('App.sell.sale.allSales', compact('locations', 'customers', 'saleType'));
     }
 
 
     public function saleItemsList(Request $request)
     {
         $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')
-        ->with('business_location_id', 'businessLocation', 'customer');
+            ->with('business_location_id', 'businessLocation', 'customer');
         // dd($saleItems->get()->toArray());
 
         if ($request->saleType == 'posSales') {
@@ -101,7 +100,7 @@ class saleController extends Controller
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
-        $saleItems = $saleItems;
+        $saleItems = $saleItems->get();
 
         return DataTables::of($saleItems)
             ->editColumn('saleItems', function ($saleItems) {
@@ -188,7 +187,7 @@ class saleController extends Controller
                 }
 
 
-                $html .= '<a class="dropdown-item p-2  cursor-pointer download-image" data-name="'.$saleItem->sales_voucher_no.'" data-layoutId="'.$saleItem->businessLocation->invoice_layout .'"  data-href=" '. route('print_sale', $saleItem->id) .' ">Download Image</a>';
+                $html .= '<a class="dropdown-item p-2  cursor-pointer download-image" data-name="' . $saleItem->sales_voucher_no . '" data-layoutId="' . $saleItem->businessLocation->invoice_layout . '"  data-href=" ' . route('print_sale', $saleItem->id) . ' ">Download Image</a>';
 
 
                 if ($saleItem->balance_amount > 0) {
@@ -340,7 +339,7 @@ class saleController extends Controller
     public function store(Request $request, SaleServices $saleService, paymentServices $paymentServices)
     {
         $location = businessLocation::find($request->business_location_id);
-        $layoutId = InvoiceLayout::find($location->invoice_layout);
+        $layoutId = InvoiceTemplate::find($location->invoice_layout);
         $sale_details = $request->sale_details;
         Validator::make($request->toArray(), [
             'sale_details' => 'required',
@@ -362,7 +361,7 @@ class saleController extends Controller
             $request['channel_id'] = $request->pos_register_id;
         } elseif ($request->type == 'campaign') {
             $request['channel_type'] = 'campaign';
-            $request['channel_id']= $request->channel_id;
+            $request['channel_id'] = $request->channel_id;
         }
         DB::beginTransaction();
         try {
@@ -445,23 +444,22 @@ class saleController extends Controller
                         'print' => $sale_data->id,
                         'layoutId' => $layoutId,
                     ]);
-                } elseif($request->save == "save_&_download_image"){
+                } elseif ($request->save == "save_&_download_image") {
                     return redirect()->route('all_sales', 'allSales')->with([
                         'success' => 'Successfully Created Sale',
                         'print' => $sale_data->id,
                         'layoutId' => $layoutId,
                         'name' => $sale_data->sales_voucher_no
                     ]);
-                }
-                else{
+                } else {
                     return redirect()->route('all_sales', 'allSales')->with(['success' => 'Successfully Created Sale']);
                 }
             }
         } catch (Exception $e) {
-            logger($e.'====');
+            logger($e . '====');
             DB::rollBack();
             dd($e);
-            logger($e->getMessage().'====');
+            logger($e->getMessage() . '====');
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',
@@ -1343,7 +1341,7 @@ class saleController extends Controller
 
     public function saleInvoice($id, Request $request)
     {
-        $sale = sales::with('sold_by','sold', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
+        $sale = sales::with('sold_by', 'sold', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
         // dd($sale->toArray());
 
         $location = businessLocation::where('id', $sale['business_location_id'])->first();
@@ -1361,11 +1359,11 @@ class saleController extends Controller
                 ]);
         }, 'product', 'uom', 'currency'])->where('sales_id', $id)->where('is_delete', 0)->get();
 
-        $layout = InvoiceLayout::find($location->invoice_layout);
-        $type="sale";
+        $layout = InvoiceTemplate::find($location->invoice_layout);
+        $type = "sale";
         if (!$layout) {
             $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address', 'layout'))->render();
-        } else if ($layout->paper_size  == "80mm") {
+        } else if ($layout->layout  == "80mm") {
 
             $table_text = json_decode($layout->table_text);
             $data_text = json_decode($layout->data_text);
@@ -1376,10 +1374,10 @@ class saleController extends Controller
         } else {
             $table_text = json_decode($layout->table_text);
             $data_text = json_decode($layout->data_text);
-            $invoiceHtml = view('components.invoice.sell-layout', compact('sale', 'sale_details', 'table_text', 'data_text','location', 'table_text', 'address', 'layout','type'))->render();
+            $invoiceHtml = view('components.invoice.sell-layout', compact('sale', 'sale_details', 'table_text', 'data_text', 'location', 'table_text', 'address', 'layout', 'type'))->render();
         }
         // return response()->json(['html' => $invoiceHtml]);
-        return response()->json(['html' =>mb_convert_encoding($invoiceHtml, 'UTF-8', 'UTF-8')]);
+        return response()->json(['html' => mb_convert_encoding($invoiceHtml, 'UTF-8', 'UTF-8')]);
     }
 
 
@@ -1722,7 +1720,7 @@ class saleController extends Controller
         }
         return '';
     }
-    public function addChunkData($saleId,Request $request){
-
+    public function addChunkData($saleId, Request $request)
+    {
     }
 }

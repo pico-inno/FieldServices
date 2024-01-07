@@ -24,7 +24,7 @@ use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\networkPrinterController;
-use App\Models\InvoiceLayout;
+use App\Models\InvoiceTemplate;
 use App\Models\Product\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use Modules\Restaurant\Entities\table;
@@ -51,35 +51,35 @@ class POSController extends Controller
     }
     public function create()
     {
-        if(request('pos_register_id') && request('sessionId')){
-           try {
-                $sessionId=request('sessionId');
+        if (request('pos_register_id') && request('sessionId')) {
+            try {
+                $sessionId = request('sessionId');
                 $posRegisterId = decrypt(request('pos_register_id'));
-                $posSession=posRegisterSessions::where('id',$sessionId)->where('pos_register_id',$posRegisterId)->where('status','open')->firstOrFail();
-                $posRegisterQry=posRegisters::where('id',$posRegisterId);
+                $posSession = posRegisterSessions::where('id', $sessionId)->where('pos_register_id', $posRegisterId)->where('status', 'open')->firstOrFail();
+                $posRegisterQry = posRegisters::where('id', $posRegisterId);
                 $setting = businessSettings::where('id', Auth::user()->business_id)->first();
-                $checkPos=$posRegisterQry->exists();
-                $currencySymbol=$setting->currency->symbol;
+                $checkPos = $posRegisterQry->exists();
+                $currencySymbol = $setting->currency->symbol;
 
-                if(!$checkPos){
-                    return back()->with(['warning'=>'This POS is not in Register List']);
+                if (!$checkPos) {
+                    return back()->with(['warning' => 'This POS is not in Register List']);
                 }
-                $posRegisterQry = posRegisters::whereJsonContains('employee_id', Auth::user()->id)->where('id',$posRegisterId);
+                $posRegisterQry = posRegisters::whereJsonContains('employee_id', Auth::user()->id)->where('id', $posRegisterId);
                 $checkAccess = $posRegisterQry->exists();
                 if (!$checkAccess) {
                     return redirect()->route('pos.selectPos')->with(['error' => 'Access Denied']);
                 }
-                $posRegister=$posRegisterQry->first();
-                $paymentAccIds=json_decode($posRegister->payment_account_id);
-                $paymentAcc=[];
-                if($paymentAccIds != 0){
-                    $paymentAcc=paymentAccounts::whereIn('id',$paymentAccIds)->get();
+                $posRegister = $posRegisterQry->first();
+                $paymentAccIds = json_decode($posRegister->payment_account_id);
+                $paymentAcc = [];
+                if ($paymentAccIds != 0) {
+                    $paymentAcc = paymentAccounts::whereIn('id', $paymentAccIds)->get();
                 }
-           } catch (\Throwable $th) {
-                return back()->with(['warning'=>'something went wrong']);
-           }
-        }else{
-            return back()->with(['warning'=>'something went wrong']);
+            } catch (\Throwable $th) {
+                return back()->with(['warning' => 'something went wrong']);
+            }
+        } else {
+            return back()->with(['warning' => 'something went wrong']);
         }
         $locations = businessLocation::all();
 
@@ -93,19 +93,19 @@ class POSController extends Controller
         $generics = Generic::all();
         $manufacturers = Manufacturer::all();
         $variations = VariationTemplates::all();
-        $tables=null;
+        $tables = null;
         $reservations = [];
 
-        $reservations=[];
-        if (class_exists('FolioInvoiceDetail')){
+        $reservations = [];
+        if (class_exists('FolioInvoiceDetail')) {
             $reservations = Reservation::with('contact', 'company')->where('is_delete', 0)->get();
         }
         try {
-            $tables=table::get();
+            $tables = table::get();
         } catch (\Throwable $th) {
-            $table=null;
+            $table = null;
         }
-        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations','posRegisterId','posRegister','tables', 'reservations', 'setting', 'currencySymbol'));
+        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations', 'posRegisterId', 'posRegister', 'tables', 'reservations', 'setting', 'currencySymbol'));
     }
 
     public function edit($posRegisterId)
@@ -136,20 +136,20 @@ class POSController extends Controller
             'packagingTx.packaging',
             'productVariation' => function ($q) {
                 $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
-                ->with([
-                    'packaging',
-                    'product' => function ($q) {
-                        $q->select('id', 'name', 'has_variation');
-                    },
-                    'variationTemplateValue' => function ($q) {
-                        $q->select('id', 'name');
-                    }, 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
+                    ->with([
+                        'packaging',
+                        'product' => function ($q) {
+                            $q->select('id', 'name', 'has_variation');
+                        },
+                        'variationTemplateValue' => function ($q) {
+                            $q->select('id', 'name');
+                        }, 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
 
-                ]);
+                    ]);
             },
             'stock' => function ($q) use ($business_location_id) {
                 $q->where('current_quantity', '>', 0)
-                ->where('business_location_id', $business_location_id);
+                    ->where('business_location_id', $business_location_id);
             },
             'Currentstock',  'product' => function ($q) {
                 $q->with(['uom' => function ($q) {
@@ -159,10 +159,10 @@ class POSController extends Controller
                 }]);
             }
         ])
-        ->where('sales_id', $saleId)->where('is_delete', 0)
-        ->withSum(['stock' => function ($q) use ($business_location_id) {
-            $q->where('business_location_id', $business_location_id);
-        }], 'current_quantity');
+            ->where('sales_id', $saleId)->where('is_delete', 0)
+            ->withSum(['stock' => function ($q) use ($business_location_id) {
+                $q->where('business_location_id', $business_location_id);
+            }], 'current_quantity');
         $saleDetails = $sale_details_query->get();
         // dd($saleDetails->toArray());
 
@@ -186,25 +186,25 @@ class POSController extends Controller
             $table = null;
         }
         // dd($saleDetails->toArray());
-        return view('App.pos.edit', compact('sale','setting', 'currencySymbol' ,'paymentAcc', 'saleDetails', 'locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations', 'posRegisterId', 'posRegister', 'tables', 'posSession'));
+        return view('App.pos.edit', compact('sale', 'setting', 'currencySymbol', 'paymentAcc', 'saleDetails', 'locations', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations', 'posRegisterId', 'posRegister', 'tables', 'posSession'));
     }
     public function productVariationsGet()
     {
         $products = Product::with('productVariations')
-                ->where('can_sale',1)
-                ->select('id', 'name', 'sku', 'has_variation','category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image', 'receipe_of_material_id')->get();
+            ->where('can_sale', 1)
+            ->select('id', 'name', 'sku', 'has_variation', 'category_id', 'sub_category_id', 'manufacturer_id', 'generic_id', 'brand_id', 'image', 'receipe_of_material_id')->get();
 
-        $product_with_variations = $products->map(function ($item, $key){
+        $product_with_variations = $products->map(function ($item, $key) {
 
             $to_return_data = [];
-            if($item->has_variation === "single"){
+            if ($item->has_variation === "single") {
                 $item['product_variation_id'] = $item->productVariations[0]->id;
                 $item['default_selling_price'] = $item->productVariations[0]->default_selling_price;
                 $to_return_data[] = $item;
             }
 
-            if($item->has_variation === "variable"){
-                foreach($item->productVariations as $variation){
+            if ($item->has_variation === "variable") {
+                foreach ($item->productVariations as $variation) {
                     $variation['product_variation_id'] = $variation->id;
                     $variation['name'] = $item->name;
                     $variation['image'] = $item->image ?? null;
@@ -230,26 +230,26 @@ class POSController extends Controller
 
     public function paymentPrintLayout($id, $layout_id)
     {
-        // $invoiceLayout = InvoiceLayout::find($request->invoiceLayoutId);
+        // $InvoiceTemplate = InvoiceTemplate::find($request->InvoiceTemplateId);
         $sale = sales::with('sold_by', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
         // dd($sale);
         $location = businessLocation::where('id', $sale['business_location_id'])->first();
         $address = $location->locationAddress;
         $sale_details = sale_details::with('productVariation.product', 'productVariation.variationTemplateValue', 'product', 'uom', 'currency')
-                        ->where('sales_id', $id)->where('is_delete', 0)->get();
+            ->where('sales_id', $id)->where('is_delete', 0)->get();
 
         // $html = view('App.pos.print.payment2', compact('sale_details','address','location','sale'))->render();
-        $layout = InvoiceLayout::find($layout_id);
+        $layout = InvoiceTemplate::find($layout_id);
         // dd($layout);
         $type = "sale";
         if (!$layout) {
             $invoiceHtml = view('App.sell.print.saleInvoice3', compact('sale', 'location', 'sale_details', 'address', 'layout'))->render();
-        } else if ($layout->paper_size  == "80mm") {
+        } else if ($layout->layout  == "80mm") {
 
             $table_text = json_decode($layout->table_text);
             $data_text = json_decode($layout->data_text);
             // dd($sale_details->toArray());
-            $invoiceHtml = view('App.sell.print.pos.80mmLayout', compact('sale', 'location', 'sale_details', 'address', 'table_text', 'data_text', 'layout'))->render();
+            $invoiceHtml = view('App.sell.print.pos.80mmFixLayout', compact('sale', 'location', 'sale_details', 'address', 'table_text', 'data_text', 'layout'))->render();
         } else {
             $table_text = json_decode($layout->table_text);
             $data_text = json_decode($layout->data_text);
@@ -262,7 +262,7 @@ class POSController extends Controller
     {
         $raw_customers = Contact::where('type', 'Customer')->get();
         $customers = [];
-        foreach($raw_customers as $customer){
+        foreach ($raw_customers as $customer) {
             $customer['full_name'] = $customer->getFullNameAttribute();
             $customers[] = $customer;
         }
@@ -302,12 +302,12 @@ class POSController extends Controller
                 'status' => 200,
                 'default_price_list' => $default_price_list,
                 'receivable_amount' => $receivable_amount,
-                'credit_limit'=> $credit_limit
+                'credit_limit' => $credit_limit
             ]);
             // $queries = \DB::getQueryLog();
             // Log::error(count($queries));
 
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 404);
         }
     }
@@ -455,65 +455,67 @@ class POSController extends Controller
             ]);
             // $queries = \DB::getQueryLog();
             // Log::error(count($queries));
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             logger($e);
             return response()->json(['error' => $e->getMessage()], 404);
         }
     }
-    public function recentSale($id){
-        $posRegisterCheck=posRegisters::where('id',$id)->exists();
-        $restaurantOrder=null;
-        if($posRegisterCheck){
+    public function recentSale($id)
+    {
+        $posRegisterCheck = posRegisters::where('id', $id)->exists();
+        $restaurantOrder = null;
+        if ($posRegisterCheck) {
 
-            $posRegister=posRegisters::where('id',$id)->first();
-            if($posRegister->use_for_res == 1){
-                $restaurantOrder=resOrders::where('pos_register_id',$id)
+            $posRegister = posRegisters::where('id', $id)->first();
+            if ($posRegister->use_for_res == 1) {
+                $restaurantOrder = resOrders::where('pos_register_id', $id)
 
-                ->orderBy('id', 'DESC')
-                ->limit(20)->get();
-             }
+                    ->orderBy('id', 'DESC')
+                    ->limit(20)->get();
+            }
         }
-        $posRegisterId=$id;
-        $saleOrders=sales::where('pos_register_id',$id)
-            ->orderBy('id','DESC')
-            ->where('status','order')
+        $posRegisterId = $id;
+        $saleOrders = sales::where('pos_register_id', $id)
+            ->orderBy('id', 'DESC')
+            ->where('status', 'order')
             ->limit(5)
             ->get();
-        $saleDelivered=sales::where('pos_register_id',$id)
-            ->orderBy('id','DESC')
-            ->where('status','delivered')
+        $saleDelivered = sales::where('pos_register_id', $id)
+            ->orderBy('id', 'DESC')
+            ->where('status', 'delivered')
             ->limit(5)
             ->get();
-        $saleDrafts=sales::where('pos_register_id',$id)
-            ->orderBy('id','DESC')
-            ->where('status','draft')
+        $saleDrafts = sales::where('pos_register_id', $id)
+            ->orderBy('id', 'DESC')
+            ->where('status', 'draft')
             ->limit(5)
             ->get();
 
 
-        return view('App.pos.recentTransactions',compact('saleOrders','saleDelivered','saleDrafts','posRegisterId','restaurantOrder','posRegister'));
+        return view('App.pos.recentTransactions', compact('saleOrders', 'saleDelivered', 'saleDrafts', 'posRegisterId', 'restaurantOrder', 'posRegister'));
     }
-    public function closeSession($posRegisterId){
-        $posRegister=posRegisters::where('id',$posRegisterId)->first();
-        $sessionId=request('sessionId');
-        $posSession=posRegisterSessions::where('id',$sessionId)->first();
-        $saleTransactions=posRegisterTransactions::where('register_session_id',$sessionId)
-                                                        ->where('transaction_type','sale')
-                                                        ->where('transaction_type','sale')
-                                                        ->with('sale')
-                                                        ->get();
-        $paymentTransactions=posRegisterTransactions::where('register_session_id',$sessionId)
-                                                        ->whereNotNull('payment_transaction_id')
-                                                        ->with('paymentTransaction')
-                                                        ->get();
+    public function closeSession($posRegisterId)
+    {
+        $posRegister = posRegisters::where('id', $posRegisterId)->first();
+        $sessionId = request('sessionId');
+        $posSession = posRegisterSessions::where('id', $sessionId)->first();
+        $saleTransactions = posRegisterTransactions::where('register_session_id', $sessionId)
+            ->where('transaction_type', 'sale')
+            ->where('transaction_type', 'sale')
+            ->with('sale')
+            ->get();
+        $paymentTransactions = posRegisterTransactions::where('register_session_id', $sessionId)
+            ->whereNotNull('payment_transaction_id')
+            ->with('paymentTransaction')
+            ->get();
 
         $sumAmountOnPaymentAcc = posRegisterTransactions::select('payment_account_id', DB::raw('SUM(transaction_amount) as total_amount'))
-                            ->where('register_session_id',$sessionId)
-                            ->with('paymentAccount')
-                            ->groupBy('payment_account_id','currency_id')
-                            ->get();
-                                                        // dd($sumAmountOnPaymentAcc->toArray());
-        return view('App.pos.closeSession',compact('posRegister','posSession', 'saleTransactions','paymentTransactions','sumAmountOnPaymentAcc'));
+            ->where('register_session_id', $sessionId)
+            ->with('paymentAccount')
+            ->groupBy('payment_account_id', 'currency_id')
+            ->get();
+        // dd($sumAmountOnPaymentAcc->toArray());
+        return view('App.pos.closeSession', compact('posRegister', 'posSession', 'saleTransactions', 'paymentTransactions', 'sumAmountOnPaymentAcc'));
     }
 
 
@@ -524,7 +526,7 @@ class POSController extends Controller
         try {
             $salesQuery = sales::with('contact')->wherePosRegisterId(1)->select('id', 'sales_voucher_no', 'contact_id', 'status', 'total_sale_amount')->get();
 
-            $saleDataCollection = $salesQuery->map(function ($item){
+            $saleDataCollection = $salesQuery->map(function ($item) {
                 $item['contact_name'] = $item->contact->getFullNameAttribute();
                 return $item;
             });
@@ -536,6 +538,4 @@ class POSController extends Controller
             return response()->json(['error' => 'An error occurred while fetching data.'], 500);
         }
     }
-
-
 }

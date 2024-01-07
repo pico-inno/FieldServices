@@ -41,7 +41,11 @@
                         <tbody>
                             @foreach ($layouts as $layout)
                                 <tr>
-                                    <td><a href="{{ route('invoice.detail',$layout->id) }}"> {{ $layout->name }}</a></td>
+                                    <td>
+                                        {{-- <a href="{{ route('invoice.detail',$layout->id) }}"> --}}
+                                            {{ $layout->name }}
+                                        {{-- </a> --}}
+                                    </td>
                                     <td>{{ $layout->created_at->format('j-F-Y') }}</td>
                                     <td>
                                         <a href="{{ route('invoice.edit',$layout->id) }}" class="table-actions btn btn-warning btn-sm">
@@ -55,6 +59,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    {{$layouts->links()}}
                 </div>
 
             </div>

@@ -32,9 +32,9 @@
 
 @section('content')
 
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="content d-flex flex-column flex-column-fluid" id="invoice-container">
         <!--begin::Container-->
-        <div class="container-xxl" id="location">
+        <div class="container-xxl" id="invoice">
             <form action="{{ route('invoice.add') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="card" data-kt-sticky="true" data-kt-sticky-name="invoice"
@@ -46,25 +46,25 @@
                     <div class="card-body p-10">
                         <!--begin::Input group-->
                         <div class="row mb-5">
-                            <div class="col-6">
-                                <label class="form-label fw-bold fs-6 text-gray-700">Layout Name</label>
-                                <input type="text" class="form-control" name="layoutName" placeholder="Layout-1">
-                                @error('layoutName') <span class="text-danger">{{ $message }}</span>@enderror
+                            <div class="col-6 fv-row">
+                                <label class="form-label fw-bold fs-6 text-gray-700">Template Name</label>
+                                <input type="text" class="form-control" name="name" placeholder="Layout-1">
+                                @error('name') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
                             <!--begin::Label-->
-                            <div class="col-6">
-                                <label class="form-label fw-bold fs-6 text-gray-700">Paper Size</label>
+                            <div class="col-6 fv-row">
+                                <label class="form-label fw-bold fs-6 text-gray-700">Layout</label>
                                 <!--end::Label-->
 
                                 <!--begin::Select-->
-                                <select name="paperSize" id="paperSize" aria-label="Select a Papersize"
+                                <select name="layout" id="layout" aria-label="Select a layout"
                                     data-status="filter" data-kt-select2="true" data-hide-search="false"
-                                    data-allow-clear="true" data-hide-search="true" data-placeholder="Select Papersize"
+                                    data-allow-clear="true" data-hide-search="true" data-placeholder="Select layout"
                                     class="form-select form-select-solid">
                                     <option value="A4">Default (For -A4,A3,A5 and Legal)</option>
                                     <option value="80mm">80mm</option>
                                 </select>
-                                @error('paperSize') <span class="text-danger">{{ $message }}</span>@enderror
+                                @error('layout') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
                         </div>
                         <!--end::Input group-->
@@ -198,7 +198,7 @@
 
                         <div class="row mb-10">
                             <label class="form-label fw-bold fs-6 text-gray-700">Column Fields</label>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="number[is_show]" id="number" class="column" />
@@ -206,7 +206,7 @@
                                     <input type="text" class="form-control form-control-sm" placeholder="No" name="number[label]" value="No">
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="description[is_show]" class="description" />
@@ -214,7 +214,7 @@
                                     <input type="text" class="form-control form-control-sm" name="description[label]" placeholder="Description" value="Description">
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="quantity[is_show]" class="column" />
@@ -222,7 +222,7 @@
                                     <input type="text" class="form-control form-control-sm" name="quantity[label]" placeholder="Quantity" value="Quantity">
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="uom_price[is_show]" class="column" />
@@ -231,7 +231,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="discount[is_show]" class="column" />
@@ -240,7 +240,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="subtotal[is_show]" class="subtotal" />
@@ -257,7 +257,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-3 mb-3 offset-md-9">
-                                <div class="input-group input-group-sm">
+                                <div class="input-group input-group-sm fv-row">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true"
                                             name="net_sale_amount[is_show]" class="expense" />
@@ -268,7 +268,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-3 mb-3 offset-md-9">
+                            <div class="col-md-3 mb-3 offset-md-9 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true"
@@ -280,7 +280,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-3 mb-3 offset-md-9">
+                            <div class="col-md-3 mb-3 offset-md-9 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true"
@@ -294,14 +294,14 @@
 
                         <div class="separator separator-dashed mb-8"></div>
                         <div class="row justify-content-between overflow-hidden">
-                            <div class="col-6">
+                            <div class="col-md-6">
                                 <div class="py-5" data-bs-theme="light">
                                     <label class="form-label fw-bold fs-6 text-gray-700">Footer</label>
                                     <textarea name="footer" id="kt_docs_ckeditor_classic2"></textarea>
                                     @error('footer') <span class="text-danger">{{ $message }}</span>@enderror
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6">
                                 <div class="py-5" data-bs-theme="light">
                                     <label class="form-label fw-bold fs-6 text-gray-700">Note</label>
                                     <textarea name="note" id="kt_docs_ckeditor_classic3"></textarea>
@@ -309,11 +309,15 @@
                             </div>
                         </div>
 
+                        <div class="row justify-content-center">
+                            <div class="w-auto">
+                                <button type="submit" id="submit" class="mt-5 btn btn-success ">Save</button>
+                            </div>
+                        </div>
 
                     </div>
                     <!--end::Container-->
                 </div>
-                <button type="submit" class="mt-5 btn btn-success">Save</button>
             </form>
 
         </div>
@@ -324,10 +328,11 @@
 @push('scripts')
     <!-- CKEditor CDN -->
     <script src="https://cdn.ckeditor.com/ckeditor5/23.0.0/classic/ckeditor.js"></script>
+    <script src="{{asset('customJs/invoice/validator.js')}}"></script>
     <script>
         $(document).ready(function() {
-            $('#paperSize').change(function() {
-                let value = $('#paperSize').val();
+            $('#layout').change(function() {
+                let value = $('#layout').val();
                 if (value === "80mm") {
                     $('.column').prop('disabled', true);
                 }
@@ -359,4 +364,7 @@
                 console.error(error);
             });
     </script>
+
+
+
 @endpush

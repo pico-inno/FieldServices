@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\InvoiceLayout;
+use App\Models\InvoiceTemplate;
 use App\Models\locationAddress;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -28,66 +28,65 @@ class businessLocationController extends Controller
     }
     public function addForm()
     {
-        $priceLists=PriceLists::get();
-        $locationType= locationType::get();
-        $locations = businessLocation::orderBy('id','DESC')->get();
-        $invoiceLayouts = InvoiceLayout::all();
-        return view('App.businessSetting.location.add',compact('priceLists','invoiceLayouts', 'locationType', 'locations'));
+        $priceLists = PriceLists::get();
+        $locationType = locationType::get();
+        $locations = businessLocation::orderBy('id', 'DESC')->get();
+        $InvoiceTemplates = InvoiceTemplate::all();
+        return view('App.businessSetting.location.add', compact('priceLists', 'InvoiceTemplates', 'locationType', 'locations'));
     }
-    public function add(Request $request,locationActions $action)
+    public function add(Request $request, locationActions $action)
     {
-        $location=$action->createLocation($request);
-        $action->createLocationAddress($request,$location);
-        return redirect()->route('business_location')->with(['success'=>'Successfully Created Location']);
-
+        $location = $action->createLocation($request);
+        $action->createLocationAddress($request, $location);
+        return redirect()->route('business_location')->with(['success' => 'Successfully Created Location']);
     }
     public function listData()
     {
-        $locations = businessLocation::query()->with('locationAddress','locationType');
+        $locations = businessLocation::query()->with('locationAddress', 'locationType');
         return DataTables::of($locations)
             ->editColumn('name', function ($location) {
                 return businessLocationName($location);
             })
-            ->addColumn('location_type',function($location){
+            ->addColumn('location_type', function ($location) {
                 return $location->locationType->name;
             })
             ->addColumn('address', function ($location) {
                 return arr($location->locationAddress, 'address');
             })
             ->addColumn('city', function ($location) {
-            return arr($location->locationAddress, 'city');
+                return arr($location->locationAddress, 'city');
             })
             ->addColumn('zip_code', function ($location) {
-            return arr($location->locationAddress, 'zip_postal_code');
+                return arr($location->locationAddress, 'zip_postal_code');
             })
             ->addColumn('state', function ($location) {
-            return arr($location->locationAddress, 'state');
+                return arr($location->locationAddress, 'state');
             })
             ->addColumn('country', function ($location) {
-            return arr($location->locationAddress, 'country');
+                return arr($location->locationAddress, 'country');
             })
-            ->addColumn('checkbox',function($location){
+            ->addColumn('checkbox', function ($location) {
                 return
-                '
+                    '
                     <div class="form-check form-check-sm form-check-custom ">
-                        <input class="form-check-input" type="checkbox" data-checked="delete" value='.$location->id.' />
+                        <input class="form-check-input" type="checkbox" data-checked="delete" value=' . $location->id . ' />
                     </div>
                 ';
             })
             ->addColumn('action', function ($location) {
-                $activationBtn=$location->is_active ?
-                            '<a class="dropdown-item p-2 cursor-pointer bg-active-danger text-danger" data-kt-location-table-filter="deactive_row"  data-id="' . $location->id . '">Deactive</a>' :
-                            '<a class="dropdown-item p-2 cursor-pointer bg-active-success text-success" data-kt-location-table-filter="active_row"  data-id="' . $location->id . '">Active</a>' ;
+                $activationBtn = $location->is_active ?
+                    '<a class="dropdown-item p-2 cursor-pointer bg-active-danger text-danger" data-kt-location-table-filter="deactive_row"  data-id="' . $location->id . '">Deactive</a>' :
+                    '<a class="dropdown-item p-2 cursor-pointer bg-active-success text-success" data-kt-location-table-filter="active_row"  data-id="' . $location->id . '">Active</a>';
                 return '
                     <div class="dropdown">
                         <button class="btn btn-sm btn-light-primary btn-active-light-primary fw-semibold fs-7  dropdown-toggle rotate" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             Actions
                         </button>
                         <ul class="dropdown-menu z-10 p-5 " aria-labelledby="dropdownMenuButton1" role="menu">'
-                            .$activationBtn. '
+                    . $activationBtn . '
                             <a data-href="' . route('location_view', $location->id) . '" class="dropdown-item p-2 edit-unit bg-active-primary text-primary view_detail" data-id="' . $location->id . '" >View</a>
-                            <a href="' . route('location_update_form',$location->id) . '" class="dropdown-item p-2 edit-unit bg-active-primary text-primary" data-id="' . $location->id . '" >Edit</a>
-                            <a class="dropdown-item p-2 location_delete_confirm cursor-pointer bg-active-danger text-danger"  data-id="'.$location->id. '" data-kt-location-table-filter="delete_row">Delete</a>
+                            <a href="' . route('location_update_form', $location->id) . '" class="dropdown-item p-2 edit-unit bg-active-primary text-primary" data-id="' . $location->id . '" >Edit</a>
+                            <a class="dropdown-item p-2 location_delete_confirm cursor-pointer bg-active-danger text-danger"  data-id="' . $location->id . '" data-kt-location-table-filter="delete_row">Delete</a>
                         </ul>
                     </div>
                 ';
@@ -98,41 +97,41 @@ class businessLocationController extends Controller
 
     public function updateForm(businessLocation $businessLocation)
     {
-        $bl= $businessLocation;
-        $priceLists=PriceLists::get();
+        $bl = $businessLocation;
+        $priceLists = PriceLists::get();
         $locationType = locationType::get();
         $locations = businessLocation::orderBy('id', 'DESC')
-                ->where('id','!=',$bl->id)
-                ->get();
-                // dd($bl,$locations->toArray());
+            ->where('id', '!=', $bl->id)
+            ->get();
+        // dd($bl,$locations->toArray());
 
         // $locations = businessLocation::orderBy('id', 'DESC')
         //     ->where('id', '!=', $bl->id)
         //     ->where('parent_location_id', '!=', $bl->id)->get();
-        $address = locationAddress::where('location_id',$bl->id)->first();
-        $invoiceLayouts = InvoiceLayout::all();
-        return view('App.businessSetting.location.edit',compact('bl','invoiceLayouts','priceLists','locationType','locations', 'address'));
-
+        $address = locationAddress::where('location_id', $bl->id)->first();
+        $InvoiceTemplates = InvoiceTemplate::all();
+        return view('App.businessSetting.location.edit', compact('bl', 'InvoiceTemplates', 'priceLists', 'locationType', 'locations', 'address'));
     }
-    public function view(businessLocation $businessLocation){
+    public function view(businessLocation $businessLocation)
+    {
         $bl = $businessLocation;
         $address = locationAddress::where('location_id', $bl->id)->first();
         return view('App.businessSetting.location.view', compact('bl', 'address'));
     }
-    public function update(Request $request,$id,locationActions $action)
+    public function update(Request $request, $id, locationActions $action)
     {
 
         $bl = businessLocation::where('id', $id)->first();
-        $parentLocation=businessLocation::where('id', $request->parent_location_id)->first();
-        if($request->parent_location_id != $id && arr($parentLocation, 'parent_location_id') != $id){
+        $parentLocation = businessLocation::where('id', $request->parent_location_id)->first();
+        if ($request->parent_location_id != $id && arr($parentLocation, 'parent_location_id') != $id) {
             $request['is_active'] = $request['is_active'] ?? 0;
             $request['allow_purchase_order'] = $request['allow_purchase_order'] ?? 0;
             $request['allow_sale_order'] = $request['allow_sale_order'] ?? 0;
             $data = request()->except('_token');
             $bl->update($data);
-            $action->updateLocationAddress($request,$bl);
+            $action->updateLocationAddress($request, $bl);
             return redirect()->route('business_location')->with(['success' => 'Successfully Updted Location']);
-        }else{
+        } else {
             return redirect()->back()->with(['error' => 'Cant Join Parent locations']);
         }
     }
@@ -140,18 +139,17 @@ class businessLocationController extends Controller
     // destory each items
     public function destory($id)
     {
-        $blData=businessLocation::where('id',$id)->first();
+        $blData = businessLocation::where('id', $id)->first();
         $blData->delete();
-        $data=[
-            'success'=>'Successfully Deleted'
+        $data = [
+            'success' => 'Successfully Deleted'
         ];
         return response()->json($data, 200);
-
     }
     public function deactive($id)
     {
         $blData = businessLocation::where('id', $id)->first();
-        $blData->update(['is_active'=>0]);
+        $blData->update(['is_active' => 0]);
         $data = [
             'success' => 'Successfully Deactive'
         ];
@@ -169,7 +167,7 @@ class businessLocationController extends Controller
     //destory all selected items
     public function destorySelected()
     {
-        $ids= request('data');
+        $ids = request('data');
         DB::beginTransaction();
 
         try {
@@ -190,7 +188,6 @@ class businessLocationController extends Controller
             logger($e);
             return response()->json($e, 200);
         }
-
     }
 
 
@@ -199,10 +196,10 @@ class businessLocationController extends Controller
         $q = $request->q;
 
         $locations = businessLocation::whereNot('location_type', 3)
-            ->where(function ($query) use ($q){
-                if ($q != ''){
-                    $query->where('name', 'like', '%'. $q . '%');
-                } else{
+            ->where(function ($query) use ($q) {
+                if ($q != '') {
+                    $query->where('name', 'like', '%' . $q . '%');
+                } else {
                     return $query;
                 }
             })

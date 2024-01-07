@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoice_layouts', function (Blueprint $table) {
+        Schema::create('invoice_templates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('paper_size',['A4','A5','80mm','Legal'])->default('A4');
-            $table->enum('paper_type',['classic','detailed','elegant']);
+            $table->string('layout')->nullable();
             $table->json('data_text')->nullable();
             $table->string('header_text')->nullable();
             $table->string('footer_text')->nullable();

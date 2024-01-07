@@ -180,7 +180,7 @@
                                 </x-location-input>
                                 <x-location-input label="Invoice Layout:">
                                     <x-forms.nob-select placeholder="Invoice Layout" name="invoice_layout">
-                                        @foreach ($invoiceLayouts as $layout)
+                                        @foreach ($InvoiceTemplates as $layout)
                                         <option value="{{ $layout->id }}">{{ $layout->name }}</option>
                                         @endforeach
                                     </x-forms.nob-select>

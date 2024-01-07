@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BusinessUser;
 use Illuminate\Http\Request;
-use App\Models\InvoiceLayout;
+use App\Models\InvoiceTemplate;
 use Illuminate\Support\Facades\DB;
 use App\Services\file\FileServices;
 use App\Models\settings\businessSettings;
@@ -15,14 +15,13 @@ class InvoiceController extends Controller
     public $logofileName;
     public function index()
     {
-        $layouts = InvoiceLayout::all();
+        $layouts = InvoiceTemplate::paginate(1);
         return view('App.invoice.index', compact('layouts'));
     }
 
     public function create()
     {
-
-        $businessInfo = businessSettings::select('name','address','city','state','country')->first();
+        $businessInfo = businessSettings::select('name', 'address', 'city', 'state', 'country')->first();
         return view('App.invoice.create', compact('businessInfo'));
     }
 
@@ -38,21 +37,21 @@ class InvoiceController extends Controller
                 $this->logofileName = FileServices::upload($request->logo, 'logo/invoice/');
             }
             $invoiceTemplateData = $this->getInvoiceTemplateData($request);
-            InvoiceLayout::create($invoiceTemplateData);
+            InvoiceTemplate::create($invoiceTemplateData);
             DB::commit();
             return redirect()->route('invoice.index')->with('success', 'Successfully Created');
-
         } catch (\Throwable $th) {
             DB::rollBack();
-
-            return back()->with('error', $th->getMessage());
+            $message = $th->getMessage();
+            dd($message);
+            return redirect()->back()->with('error', 'Something Wrong')->withInput($request->toArray());
             //throw $th;
         }
     }
 
     public function detail($id)
     {
-        $layout = InvoiceLayout::find($id);
+        $layout = InvoiceTemplate::find($id);
         $table_text = json_decode($layout->table_text);
         $data_text = json_decode($layout->data_text);
         return view('App.invoice.sample-detail', compact('layout', 'table_text', 'data_text'));
@@ -60,7 +59,7 @@ class InvoiceController extends Controller
 
     public function edit($id)
     {
-        $layout = InvoiceLayout::find($id);
+        $layout = InvoiceTemplate::find($id);
         $table_text = json_decode($layout->table_text);
         $data_text = json_decode($layout->data_text);
         return view('App.invoice.edit', compact('layout', 'table_text', 'data_text'));
@@ -70,11 +69,11 @@ class InvoiceController extends Controller
     {
         $this->request = $request;
         $this->validateInvoiceTemplateData($request);
-        $layout= InvoiceLayout::find($request->layoutId);
-        $dataText=json_decode($layout->data_text);
-        $datalogo= $dataText->logo ?? null;
-        if($datalogo==$request->logo){
-            $this->logofileName=$request->logo;
+        $layout = InvoiceTemplate::find($request->layoutId);
+        $dataText = json_decode($layout->data_text);
+        $datalogo = $dataText->logo ?? null;
+        if ($datalogo == $request->logo) {
+            $this->logofileName = $request->logo;
         } elseif ($request->hasFile('logo')) {
             $this->logofileName = FileServices::upload($request->logo, 'logo/invoice/');
         }
@@ -90,8 +89,8 @@ class InvoiceController extends Controller
         $table_text = $this->getTableText();
         $data_text = $this->getDataText($request);
         return [
-            'name' => $request->layoutName,
-            'paper_size' => $request->paperSize,
+            'name' => $request->name,
+            'layout' => $request->layout,
             'header_text' => $request->header,
             'footer_text' => $request->footer,
             'note' => $request->note,
@@ -103,8 +102,8 @@ class InvoiceController extends Controller
     private function validateInvoiceTemplateData($request)
     {
         $request->validate([
-            'layoutName' => 'required',
-            'paperSize' => 'required',
+            'name' => 'required',
+            'layout' => 'required',
             // 'header' => 'required',
             // 'footer' => 'required'
         ]);
@@ -125,7 +124,7 @@ class InvoiceController extends Controller
     public function getDataText($request)
     {
         return [
-            'logo'=>$this->logofileName,
+            'logo' => $this->logofileName,
             'customer_name' => boolval($request->customerName ?? false),
             'supplier_name' => boolval($request->supplierName ?? false),
             'phone' => boolval($request->phone ?? false),
@@ -142,7 +141,7 @@ class InvoiceController extends Controller
 
     public function destory($id)
     {
-        InvoiceLayout::where('id', $id)->first()->delete();
+        InvoiceTemplate::where('id', $id)->first()->delete();
         return back()->with('success', 'Successfully Deleted');
     }
     public function getLable($column, $defatult)

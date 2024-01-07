@@ -11,7 +11,7 @@ use App\Models\Product\UOM;
 use App\Models\Product\Unit;
 use Illuminate\Http\Request;
 use App\Models\exchangeRates;
-use App\Models\InvoiceLayout;
+use App\Models\InvoiceTemplate;
 use App\Models\stock_history;
 use App\Models\Product\UOMSet;
 use App\Models\Contact\Contact;
@@ -66,7 +66,7 @@ class purchaseController extends Controller
             ->orWhere('type', 'Both')
             ->select('id', 'company_name', 'prefix', 'first_name', 'last_name', 'middle_name')
             ->get();
-        $layouts = InvoiceLayout::all();
+        $layouts = InvoiceTemplate::all();
         return view('App.purchase.listPurchase', compact('locations', 'suppliers', 'layouts'));
     }
 
@@ -166,25 +166,29 @@ class purchaseController extends Controller
         return redirect()->route('purchase_list')->with(['success' => 'Successfully Updated Purchase']);
     }
 
-    public function purhcaseInvoice($id,Request $request)
+    public function purhcaseInvoice($id, Request $request)
     {
-        $purchase = purchases::with('supplier', 'purchase_by','purchase_by', 'currency')->where('id', $id)->first();
+        $purchase = purchases::with('supplier', 'purchase_by', 'purchase_by', 'currency')->where('id', $id)->first();
         // dd($purchase->toArray());
         $location = businessLocation::where('id', $purchase['business_location_id'])->first();
         $address = $location->locationAddress;
-        $table_text = purchase_details::where('purchases_id', $purchase['id'])
+        $purchase_detail = purchase_details::where('purchases_id', $purchase['id'])
             ->where('is_delete', '0')
             ->with(['product', 'currency', 'purchaseUom', 'productVariation' => function ($q) {
                 $q->with('variationTemplateValue');
             }])
             ->get();
 
-        $layout = InvoiceLayout::find($request->layoutId);
+        $layout = InvoiceTemplate::find($location->invoice_layout);
+
+        $table_text = json_decode($layout->table_text);
+        $data_text = json_decode($layout->data_text);
+        // dd($table_text);
         $type = "purchase";
-        $invoiceHtml = view('App.invoice.detail', compact('purchase', 'location', 'table_text', 'address', 'layout','type'))->render();
-        preg_match('/<section class="p-5" id="print-section">(.*?)<\/section>/s', $invoiceHtml, $matches);
-        $printSectionHtml = $matches[0];
-        return response()->json(['html' => $printSectionHtml]);
+        $invoiceHtml = view('components.invoice.purchase-layout', compact('purchase', 'table_text', 'data_text','location', 'purchase_detail', 'address', 'layout', 'type'))->render();
+        // preg_match('/<section class="p-5" id="print-section">(.*?)<\/section>/s', $invoiceHtml, $matches);
+        // $printSectionHtml = $matches[0];
+        return response()->json(['html' => $invoiceHtml]);
     }
 
     public function purchaseDetail($id)

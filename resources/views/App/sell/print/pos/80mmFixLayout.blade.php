@@ -87,7 +87,7 @@
 
         <div class="row">
             <div class="col-12 col-md-8">
-                <ul class="list-unstyled">
+                <ul class="list-unstyled mb-0">
                     @if ($data_text->customer_name)
                     <li class="text-muted">
                         <span style="">{{ $sale->customer->getFullNameAttribute() }}</span>
@@ -97,15 +97,17 @@
                     <li class="text-muted">{{ $sale->customer->getAddressAttribute() }}</li>
                     @endif
                     @if ($data_text->phone)
-                    <li class="text-muted"><i class="fas fa-phone"></i>{{ $sale->customer->mobile}}</li>
+                    <li class="text-muted">{{ $sale->customer->mobile}}</li>
                     @endif
                 </ul>
             </div>
             <div class="col-12 col-md-4">
-                <ul class="list-unstyled">
-                    <li class="text-muted">
-                        <span class="fw-bold">Voucher No:</span> {{ $sale->sales_voucher_no }}
-                    </li>
+                <ul class="list-unstyled mb-0">
+                    @if ($data_text->invoice_number)
+                        <li class="text-muted">
+                            <span class="fw-bold">Voucher No:</span> {{ $sale->sales_voucher_no }}
+                        </li>
+                    @endif
                     @if ($data_text->date)
                     <li class="text-muted">
                         <span class="fw-bold">Date:
@@ -201,7 +203,7 @@
             </tbody>
         </table>
         </div>
-        <div class="separator border-gray-400 mb-1"></div>
+        {{-- <div class="separator border-gray-400 mb-1"></div> --}}
         <div class="row">
             <div class="col-12">
                 {!! $layout->note !!}
@@ -217,5 +219,5 @@
 </html>
 
 @php
-    die;
+    // die;
 @endphp
