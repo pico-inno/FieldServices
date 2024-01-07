@@ -88,9 +88,8 @@ class saleController extends Controller
     public function saleItemsList(Request $request)
     {
         $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')
-            ->with('business_location_id', 'businessLocation', 'customer');
+            ->with( 'businessLocation', 'customer');
         // dd($saleItems->get()->toArray());
-
         if ($request->saleType == 'posSales') {
             $saleItems = $saleItems->whereNotNull('pos_register_id');
         }
@@ -100,22 +99,32 @@ class saleController extends Controller
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
         }
-        $saleItems = $saleItems->get();
+        $saleItems = $saleItems;
 
         return DataTables::of($saleItems)
             ->editColumn('saleItems', function ($saleItems) {
-                $saleDetails = $saleItems->sale_details;
-                $items = '';
-                foreach ($saleDetails as $key => $sd) {
-                    $variation = $sd->productVariation;
-                    if ($variation) {
-                        $productName = $variation->product->name;
-                        $sku = $variation->product->sku ?? '';
-                        $variationName = $variation->variationTemplateValue->name ?? '';
-                        $items .= "$productName,$variationName,$sku ;";
-                    }
+                return '';
+            })
+            // ->orderColumn('name', function ($data, $order) {
+            //     $data->orderBy('products.name', $order);
+            // })
+            ->filterColumn('saleItems', function ($data, $keyword) {
+                $data->where("sales.sales_voucher_no", 'like', '%' . $keyword . '%')
+                    ->orWhere("sales.sales_voucher_no", 'like', '%' . $keyword . '%');
+            })
+
+            ->filterColumn('businessLocation', function ($data, $keyword) {
+                $data->where("sales.business_location_id",$keyword);
+            })
+
+            ->filterColumn('status', function ($data, $keyword) {
+                $data->where("sales.status", $keyword);
+            })
+
+            ->filterColumn('customer', function ($data, $keyword) {
+                if($keyword != 'all'){
+                    $data->where("sales.contact_id", $keyword);
                 }
-                return $items;
             })
             ->addColumn('checkbox', function ($saleItem) {
                 return
@@ -125,12 +134,12 @@ class saleController extends Controller
                     </div>
                 ';
             })
-            ->editColumn('businessLocation', function ($saleItem) {
+            ->addColumn('businessLocation', function ($saleItem) {
                 return businessLocationName($saleItem->businessLocation);
             })
-            ->editColumn('customer', function ($saleItem) {
+            ->addColumn('customer', function ($saleItem) {
                 if ($saleItem->customer) {
-                    return $saleItem->customer['company_name'] ?? $saleItem->customer['first_name'] . ' ' . $saleItem->customer['middle_name'] . ' ' .  $saleItem->customer['last_name'];
+                    return $saleItem->customer['company_name'] ?? $saleItem->customer->getFullNameAttribute();
                 }
                 return '';
             })

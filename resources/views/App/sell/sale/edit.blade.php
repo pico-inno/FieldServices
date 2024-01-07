@@ -20,8 +20,11 @@
     <link rel="stylesheet" href={{asset("customCss/businessSetting.css")}}>
     <link rel="stylesheet" href={{asset("customCss/customFileInput.css")}}>
     <style>
-        .data-table-body tr td{
-            padding: 3px;
+         .data-table-body tr td{
+            padding: 1px;
+        }
+        .data-table-body tr td input{
+            max-width: 100%;
         }
         @keyframes example {
                 0%   {
@@ -239,17 +242,17 @@
                                 <thead class="bg-light">
                                     <!--begin::Table row-->
                                     <tr class="text-start text-primary fw-bold fs-8 text-uppercase gs-0 ">
+                                        <th class="pe-1"><i class="fa-solid fa-trash text-primary" type="button"></i></th>
                                         <th class="min-w-150px ps-3">Product </th>
                                         <th class="min-w-125px">Quantity </th>
                                         <th class="min-w-125px">UOM </th>
                                         <th class="min-w-125px">{{__('product/product.package_qty')}}</th>
                                         <th class="min-w-125px">{{__('product/product.package')}}</th>
-                                        <th class="min-w-80px" style="max-width: 100px;">Price List</th>
+                                        <th class="min-w-80px d-none" style="max-width: 100px;">Price List</th>
                                         <th class="min-w-125px">Uom Price</th>
                                         <th class="min-w-125px">Subtotal</th>
                                         <th class="min-w-125px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc </th>
                                         <th class="min-w-125px {{$setting->enable_line_discount_for_sale == 1 ? '' :'d-none' }}">Disc Amount </th>
-                                        <th class="pe-1" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -275,6 +278,7 @@
                                             $conusmeQty=getConsumeQty($product->id);
                                         @endphp
                                         <tr class="sale_row sale_row_{{$key}}" data-unid="{{$parentkey}}" data-product="{{$sale_detail->variation_id}}">
+                                            <th><i class="fa-solid fa-trash text-danger deleteRow" type="button"></i></th>
                                             <td class="d-flex ps-2">
 
                                                 <div class="ms-2">
@@ -364,7 +368,7 @@
                                                     @endforeach
                                                 </select>
                                             </td>
-                                            <td class="fv-row">
+                                            <td class="fv-row d-none">
                                                 <select name=""  class="form-select form-select-sm price_group price_list w-180px priceL" data-kt-select2="true" data-hide-search="true" data-placeholder="Select Selling Price" disabled >
                                                     <option value="default_selling_price">defalut selling price</option>b
                                                     @foreach ($priceLists as $priceList)
@@ -393,7 +397,6 @@
                                                 <input type="hidden" class="line_subtotal_discount" name="sale_details[{{$key}}][line_subtotal_discount]" value="{{round($sale_detail->line_subtotal_discount,2)??0}}">
                                                 {{-- <input type="hidden" class="currency_id" name="sale_details[{{$key}}][currency_id]" value="{{$sale_detail->currency_id}}"> --}}
                                             </td>
-                                            <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
                                         </tr>
                                     @endforeach
 

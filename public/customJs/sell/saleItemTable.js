@@ -78,6 +78,7 @@
             }
 
             datatable = $(table).DataTable({
+                 "ordering": false,
                 pageLength: 30,
                 lengthMenu: [10, 20, 30, 50,40,80],
                 'columnDefs': [
@@ -98,7 +99,7 @@
                         data.saleType=$('#saleType').val() ?? 'allSale',
                         data.from_date=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
                         data.to_date=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
-                    }
+                    },
                 },
 
                 columns,
@@ -186,7 +187,7 @@
             if (value === 'all') {
                 value = '';
             }
-            datatable.column(3).search(value).draw();
+            datatable.column(4).search(value).draw();
         });
     }
     var handleStatusFilter = () => {
@@ -197,7 +198,7 @@
             if (value === 'all') {
                 value = '';
             }
-            datatable.column(8).search(value).draw();
+            datatable.column(7).search(value).draw();
         });
     }
 

@@ -79,7 +79,7 @@
                                         data-kt-saleItem-table-filter="businesslocation" data-hide-search="true">
                                         <option value="all">All</option>
                                         @foreach ($locations as $l)
-                                            <option value="{{ $l->name }}">{{ businessLocationName($l) }}</option>
+                                            <option value="{{ $l->id }}">{{ businessLocationName($l) }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -94,7 +94,7 @@
                                         <option></option>
                                         <option value="all">All</option>
                                         @foreach ($customers as $c)
-                                            <option value="{{ $c->first_name }} {{ $c->middle_name }} {{ $c->last_name }}">
+                                            <option value="{{$c->id}}">
                                                 {{ $c->first_name }} {{ $c->middle_name }} {{ $c->last_name }}</option>
                                         @endforeach
                                     </select>
