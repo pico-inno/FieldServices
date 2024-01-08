@@ -10,12 +10,12 @@
 
 @section('title')
 <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">Role Add</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('role.create_role')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Role</li>
-        <li class="breadcrumb-item text-dark">Role Add</li>
+        <li class="breadcrumb-item text-muted">{{__('role.roles_list')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('common.create')}}</li>
     </ul>
 <!--end::Breadcrumb-->
 @endsection
@@ -27,7 +27,7 @@
         <div class="container-xxl" id="kt_content_container">
             <div class="col-12" id="kt_add_role">
                 <div class="d-flex mb-5" data-kt-users-modal-action="close">
-                    <button onclick="window.location.href='{{route('roles.index')}}'" type="reset" class="btn btn-light me-3"><i class="fas fa-arrow-left"></i>Back</button>
+                    <button onclick="window.location.href='{{route('roles.index')}}'" type="reset" class="btn btn-light me-3"><i class="fas fa-arrow-left"></i>{{__('common.back')}}</button>
                 </div>
                     <!--begin::Form-->
                     <form action="{{route('roles.store')}}" method="post" id="kt_modal_add_role_form" class="form">
@@ -40,7 +40,7 @@
                                     <div class="fv-row mb-10">
                                         <!--begin::Label-->
                                         <label class="fs-5 fw-bold form-label mb-2">
-                                            <span class="required">Role name</span>
+                                            <span class="required">{{__('role.role_name')}}</span>
                                         </label>
                                         <!--end::Label-->
                                         <!--begin::Input-->
@@ -57,7 +57,7 @@
                                 <!--begin::Permissions-->
                                 <div class="fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-bold form-label mb-2">Role Permissions</label>
+                                    <label class="fs-5 fw-bold form-label mb-2">{{__('role.role_permissions')}}</label>
                                     <!--end::Label-->
                                     @if (session('permissionError'))
                                         <div class="alert alert-danger">{{session('permissionError')}}</div>
@@ -127,8 +127,8 @@
                                 <div class="text-center pt-15">
 
                                     <button type="submit" class="btn btn-primary" data-kt-roles-modal-action="submit">
-                                        <span class="indicator-label">Create Role</span>
-                                        <span class="indicator-progress">Please wait...
+                                        <span class="indicator-label">{{__('common.create')}}</span>
+                                        <span class="indicator-progress">{{__('common.please_wait')}}...
 														<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                     </button>
                                 </div>

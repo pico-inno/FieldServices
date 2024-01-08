@@ -5,7 +5,7 @@ return [
 
     //Index Page
     'adjustment' => 'Stock Adjustment',
-    'adjustment_list' => 'Stock Adjustment List',
+    'adjustment_list' => 'Adjustment List',
     'list' => 'list',
     'add' => 'add',
     'filter' => 'Filters',
@@ -21,7 +21,6 @@ return [
     'actions' => 'Actions',
     'voucher_no' => 'Voucher No',
     'created_by' => 'Created By',
-
 
     //Create Page
     'location_tip' => 'Which "Business Location" do you want to adjustment',
@@ -45,6 +44,20 @@ return [
     'type' => 'Type',
     'uom_price' => 'UOM Price',
     'total' => 'Total',
+
+
+    //Report
+    'stock_adjustment_summary' => 'Stock Adjustment Summary',
+    'stock_adjustment_reports' => 'Stock Adjustment Reports',
+    'export_stock_adjustment' => 'Export Stock Adjustment',
+    'stock_adjustment_details' => 'Stock Adjustment Details',
+    'stock_adjustment_details_reports' => 'Stock Adjustment Details Reports',
+    'adjustment_type' => 'Adjustment Type',
+    'balance_qty' => 'Balance Qty',
+    'ground_qty' => 'Ground Qty',
+    'export_stock_adjustment_details_report' => 'Export Stock Adjustment Details Report',
+    '' => '',
+    '' => '',
 
 
 

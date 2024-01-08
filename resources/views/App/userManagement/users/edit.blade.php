@@ -7,6 +7,18 @@
 @section('styles')
 @endsection
 
+@section('title')
+    <!--begin::Heading-->
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('user.edit_user')}}</h1>
+    <!--end::Heading-->
+    <!--begin::Breadcrumb-->
+    <ul class="breadcrumb fw-semibold fs-base my-1">
+        <li class="breadcrumb-item text-muted">{{__('user.users_list')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('common.edit')}}</li>
+    </ul>
+    <!--end::Breadcrumb-->
+@endsection
+
 @section('content')
     <!--begin::Content-->
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -14,7 +26,7 @@
         <div class="container-xxl" id="kt_content_container">
             <div class="col-12" id="kt_modal_add_user">
                 <div class="d-flex mb-5" data-kt-users-modal-action="close">
-                    <button onclick="window.location.href='{{route('users.index')}}'" type="reset" class="btn btn-light me-3" data-kt-users-modal-action="close"><i class="fas fa-arrow-left"></i>Back</button>
+                    <button onclick="window.location.href='{{route('users.index')}}'" type="reset" class="btn btn-light me-3" data-kt-users-modal-action="close"><i class="fas fa-arrow-left"></i>{{__('common.back')}}</button>
                 </div>
                 <!--begin::Form-->
                 <form action="{{route('users.update', $user->id)}}" method="post" id="kt_modal_add_user_form" class="form">
@@ -26,7 +38,7 @@
                         <div class="card-header border-0 pt-4">
                             <!--begin::Card title-->
                             <div class="card-title">
-                                <h2>User Information</h2>
+                                <h2>{{__('user.user_information')}}</h2>
                             </div>
                             <!--begin::Card title-->
                         </div>
@@ -38,7 +50,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-2 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fw-semibold fs-6 mb-2">Prefix:</label>
+                                    <label class="fw-semibold fs-6 mb-2">{{__('common.prefix')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="initname" value="{{old('initname', $user->personal_info->initname)}}" class="form-control  mb-3 mb-lg-0" placeholder="Mr / Mrs / Miss"/>
@@ -48,7 +60,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-5 fv-row">
                                     <!--begin::Label-->
-                                    <label class="required fw-semibold fs-6 mb-2">First Name</label>
+                                    <label class="required fw-semibold fs-6 mb-2">{{__('user.first_name')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="first_name" value="{{old('first_name', $user->personal_info->first_name)}}" class="form-control  mb-3 mb-lg-0" placeholder="First Name"/>
@@ -63,7 +75,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-5 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fw-semibold fs-6 mb-2">Last Name</label>
+                                    <label class="fw-semibold fs-6 mb-2">{{__('user.last_name')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="last_name" value="{{old('last_name', $user->personal_info->last_name)}}" class="form-control  mb-3 mb-lg-0" placeholder="Last Name"/>
@@ -75,7 +87,7 @@
                             <!--begin::Input group-->
                             <div class="fv-row mb-7">
                                 <!--begin::Label-->
-                                <label class="fs-6 fw-semibold mb-2">Email Address</label>
+                                <label class="fs-6 fw-semibold mb-2">{{__('user.email')}}</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
                                 <input type="email" name="email" value="{{old('email', $user->email)}}" class="form-control " placeholder="username@domain.xyz">
@@ -97,8 +109,8 @@
                                         <!--end::Input-->
                                         <!--begin::Label-->
                                         <label class="form-check-label" for="kt_modal_add_is_active">
-                                            <div class="fw-bold">Is Active?</div>
-                                            <div class="text-gray-600">User account is activate or deactivate</div>
+                                            <div class="fw-bold">{{__('user.is_active')}}</div>
+                                            <div class="text-gray-600">{{__('user.is_active_description')}}</div>
                                         </label>
                                         <!--end::Label-->
                                     </div>
@@ -116,7 +128,7 @@
                         <div class="card-header border-0 pt-4">
                             <!--begin::Card title-->
                             <div class="card-title">
-                                <h2>Roles and Permissions</h2>
+                                <h2>{{__('user.roles_and_permissions')}}</h2>
                             </div>
                             <!--begin::Card title-->
                         </div>
@@ -126,7 +138,7 @@
                             <!--begin::Input group-->
                             <div class="fv-row mb-7">
                                 <!--begin::Label-->
-                                <label class="required fs-6 fw-semibold mb-2">User Name</label>
+                                <label class="required fs-6 fw-semibold mb-2">{{__('user.user_name')}}</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
                                 <input type="text" name="username" value="{{old('username', $user->username)}}" class="form-control " placeholder="Username">
@@ -146,7 +158,7 @@
                                         <!--begin::Wrapper-->
                                         <div class="mb-1">
                                             <!--begin::Label-->
-                                            <label class="required form-label fw-semibold fs-6 mb-2">Password</label>
+                                            <label class="required form-label fw-semibold fs-6 mb-2">{{__('user.password')}}</label>
                                             <!--end::Label-->
                                             <!--begin::Input wrapper-->
                                             <div class="position-relative mb-3">
@@ -168,7 +180,7 @@
                                         </div>
                                         <!--end::Wrapper-->
                                         <!--begin::Hint-->
-                                        <div class="text-muted">Use 8 or more characters with a mix of letters, numbers &amp; symbols.</div>
+                                        <div class="text-muted">{{__('user.password_info')}}</div>
                                         <!--end::Hint-->
                                         <div class="fv-plugins-message-container invalid-feedback"></div></div>
                                 </div>
@@ -176,7 +188,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-6 fv-row">
                                     <div class="fv-row mb-7 fv-plugins-icon-container">
-                                        <label class="required form-label fw-semibold fs-6 mb-2">Confirm Password</label>
+                                        <label class="required form-label fw-semibold fs-6 mb-2">{{__('user.confirm_password')}}</label>
                                         <input type="password"  name="confirm_password" class="form-control form-control-lg " placeholder="" autocomplete="off">
                                         <div class="fv-plugins-message-container invalid-feedback"></div></div>
                                 </div>
@@ -186,7 +198,7 @@
                             <!--begin::Input group-->
                             <div class="fv-row mb-15">
                                 <!--begin::Label-->
-                                <label class="required fs-6 fw-semibold mb-2">Roles</label>
+                                <label class="required fs-6 fw-semibold mb-2">{{__('role.roles')}}</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
                                 <select name="role_id" aria-label="Select a Roles" data-control="select2" data-placeholder="Select a Roles..." class="form-select" data-hide-search="true" data-dropdown-parent="#kt_modal_add_user">
@@ -202,7 +214,7 @@
                             <div class="row mb-15">
                                 <div class="col-md-6 fv-row">
                                     <!--begin::Label-->
-                                    <label class="required fs-6 fw-semibold mb-2">Access Locations</label>
+                                    <label class="required fs-6 fw-semibold mb-2">{{__('user.access_locations')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <select name="access_location_ids[]" class="form-select" data-control="select2" data-close-on-select="false" data-placeholder="Select an access locations" data-allow-clear="true" multiple="multiple">
@@ -216,7 +228,7 @@
                                 </div>
                                 <div class="col-md-6 fv-row">
                                     <!--begin::Label-->
-                                    <label class="required fs-6 fw-semibold mb-2">Default Location</label>
+                                    <label class="required fs-6 fw-semibold mb-2">{{__('user.default_location')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <select name="default_location_id" aria-label="Select a Roles" data-control="select2" data-placeholder="Select a default locaiton" class="form-select" data-hide-search="true" data-dropdown-parent="#kt_modal_add_user">
@@ -239,7 +251,7 @@
                         <div class="card-header border-0 pt-4">
                             <!--begin::Card title-->
                             <div class="card-title">
-                                <h2>More Information</h2>
+                                <h2>{{__('user.more_information')}}</h2>
                             </div>
                             <!--begin::Card title-->
                         </div>
@@ -251,7 +263,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <label class="fs-6 fw-semibold mb-2" for="kt_datepicker_1">
-                                        <span class="required">Date of birth</span>
+                                        <span class="required">{{__('user.date_of_birth')}}</span>
                                     </label>
                                     <div class="input-group">
                                                         <span class="input-group-text" data-td-target="#kt_datepicker_1" data-td-toggle="datetimepicker">
@@ -264,7 +276,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Gender</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.gender')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <select name="gender" aria-label="Select a Gender" data-control="select2" data-placeholder="Select a Gender..." class="form-select" data-hide-search="true" data-dropdown-parent="#kt_modal_add_user">
@@ -279,7 +291,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Marital Status</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.marital_status')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <select name="marital_status" aria-label="Select a Marital Status" data-control="select2" data-placeholder="Select a Marital Status" class="form-select" data-hide-search="true" data-dropdown-parent="#kt_modal_add_user">
@@ -293,7 +305,7 @@
                                 <!--end::Col-->
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
-                                    <label for="blood-group" class="fs-6 fw-semibold mb-2">Blood Group</label>
+                                    <label for="blood-group" class="fs-6 fw-semibold mb-2">{{__('user.blood_group')}}</label>
                                     <input value="{{old('blood_group', $user->personal_info->blood_group)}}" type="text" name="blood_group" class="form-control " placeholder="Blood Group">
                                 </div>
                                 <!--end::Col-->
@@ -304,7 +316,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Mobile Phone</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.phone')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="contact_number" value="{{old('contact_number', $user->personal_info->contact_number)}}" class="form-control " placeholder="## ### ####">
@@ -314,7 +326,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Alternate contact number</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.contact_number')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="alt_number" value="{{old('alt_number', $user->personal_info->alt_number)}}" class="form-control " placeholder="## ### ####">
@@ -324,7 +336,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Family contact number</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.family_contact_number')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="family_number" value="{{old('family_number', $user->personal_info->family_number)}}" class="form-control " placeholder="## ### ####">
@@ -333,7 +345,7 @@
                                 <!--end::Col-->
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
-                                    <label class="fs-6 fw-semibold mb-2">Facebook Link</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.facebook_link')}}</label>
                                     <input value="{{old('fb_link', $user->personal_info->fb_link)}}" type="text" name="fb_link" class="form-control " placeholder="https://facebook.com/">
                                 </div>
                                 <!--end::Col-->
@@ -344,7 +356,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Twitter Link</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.twitter_link')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="twitter_link" value="{{old('twitter_link', $user->personal_info->twitter_link)}}" class="form-control " placeholder="https://twitter.com/">
@@ -354,7 +366,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Social Media 1</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.social_media')}} 1</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="social_media_1" value="{{old('social_media_1', $user->personal_info->social_media_1)}}" class="form-control " placeholder="Social media 1">
@@ -364,7 +376,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Social Media 2</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.social_media')}} 2</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="social_media_2" value="{{old('social_media_2', $user->personal_info->social_media_2)}}" class="form-control " placeholder="## ### ####">
@@ -373,7 +385,7 @@
                                 <!--end::Col-->
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
-                                    <label class="fs-6 fw-semibold mb-2">Custom field 1</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.custom_field')}} 1</label>
                                     <input value="{{old('custom_field_1', $user->personal_info->custom_field_1)}}" type="text" name="custom_field_1" class="form-control " placeholder="Custom field 1">
                                 </div>
                                 <!--end::Col-->
@@ -384,7 +396,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Custom field 2</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.custom_field')}} 2</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="custom_field_2" value="{{old('custom_field_2', $user->personal_info->custom_field_2)}}" class="form-control " placeholder="Custom field 2">
@@ -394,7 +406,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Custom field 3</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.custom_field')}} 3</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="custom_field_3" value="{{old('custom_field_3', $user->personal_info->custom_field_3)}}" class="form-control " placeholder="Custom field 3">
@@ -404,7 +416,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Custom field 4</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.custom_field')}} 4</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="custom_field_4" value="{{old('custom_field_4', $user->personal_info->custom_field_4)}}" class="form-control " placeholder="Custom field 4">
@@ -413,7 +425,7 @@
                                 <!--end::Col-->
                                 <!--begin::Col-->
                                 <div class="col-md-3 fv-row">
-                                    <label class="fs-6 fw-semibold mb-2">Guardian Name</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.guardian_name')}}</label>
                                     <input value="{{old('guardian_name', $user->personal_info->guardian_name)}}" type="text" name="guardian_name" class="form-control " placeholder="Custom field 1">
                                 </div>
                                 <!--end::Col-->
@@ -424,7 +436,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-4 fv-row">
                                         <!--begin::Label-->
-                                        <label class="fs-6 fw-semibold mb-2">Language</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('common.language')}}</label>
                                         <!--end::Label-->
                                         <!--begin::Col-->
                                         <div class="fv-row">
@@ -487,7 +499,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-4 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">ID Proof Name</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.id_proof_name')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="id_proof_name" value="{{old('id_proof_name', $user->personal_info->id_proof_name)}}" class="form-control " placeholder="ID proof name">
@@ -497,7 +509,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-4 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">ID Proof Number</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.id_proof_number')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="id_proof_number" value="{{old('id_proof_number', $user->personal_info->id_proof_number)}}" class="form-control " placeholder="ID proof number">
@@ -511,7 +523,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-6 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Permanent Address</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.permanent_address')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <textarea name="permanent_address"  class="form-control " cols="10" rows="3">{{old('permanent_address', $user->personal_info->permanent_address)}}</textarea>
@@ -521,7 +533,7 @@
                                 <!--begin::Col-->
                                 <div class="col-md-6 fv-row">
                                     <!--begin::Label-->
-                                    <label class="fs-6 fw-semibold mb-2">Current Address</label>
+                                    <label class="fs-6 fw-semibold mb-2">{{__('user.current_address')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <textarea name="current_address"  class="form-control " cols="10" rows="3">{{old('current_address', $user->personal_info->current_address)}}</textarea>
@@ -534,7 +546,7 @@
                             <!--begin::Input group-->
                             <div class="row g-9 mb-7">
                                 <!--begin::Label-->
-                                <label class="fs-6 fw-semibold mb-2">Bank Details</label>
+                                <label class="fs-6 fw-semibold mb-2">{{__('user.bank_details')}}</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
                                 <input type="text" name="bank_details" value="{{old('bank_details', $user->personal_info->bank_details)}}" class="form-control " placeholder="Bank Details">
@@ -549,8 +561,8 @@
                     <div class="text-center flex-center mt-8">
                     <!--begin::Button-->
                     <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                        <span class="indicator-label">Update User Account</span>
-                        <span class="indicator-progress">Please wait...
+                        <span class="indicator-label">{{__('common.update')}}</span>
+                        <span class="indicator-progress">{{__('common.please_wait')}}...
                                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                     </button>
                     <!--end::Button-->

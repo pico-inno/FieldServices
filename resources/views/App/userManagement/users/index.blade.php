@@ -18,8 +18,8 @@
         {{-- <li class="breadcrumb-item text-muted">
             <a href="../../demo7/dist/index.html" class="text-muted">Home</a>
         </li> --}}
-        <li class="breadcrumb-item text-muted">Users</li>
-        <li class="breadcrumb-item text-dark">Users List</li>
+        <li class="breadcrumb-item text-muted">{{__('user.users')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('user.users_list')}}</li>
     </ul>
 <!--end::Breadcrumb-->
 @endsection
@@ -44,7 +44,7 @@
 												</svg>
 											</span>
                             <!--end::Svg Icon-->
-                            <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="Search user" />
+                            <input type="text" data-kt-user-table-filter="search" class="form-control form-control-solid w-250px ps-14" placeholder="{{__('user.search_user')}}" />
                         </div>
                         <!--end::Search-->
                     </div>
@@ -61,12 +61,14 @@
 													<path d="M19.0759 3H4.72777C3.95892 3 3.47768 3.83148 3.86067 4.49814L8.56967 12.6949C9.17923 13.7559 9.5 14.9582 9.5 16.1819V19.5072C9.5 20.2189 10.2223 20.7028 10.8805 20.432L13.8805 19.1977C14.2553 19.0435 14.5 18.6783 14.5 18.273V13.8372C14.5 12.8089 14.8171 11.8056 15.408 10.964L19.8943 4.57465C20.3596 3.912 19.8856 3 19.0759 3Z" fill="currentColor" />
 												</svg>
 											</span>
-                                <!--end::Svg Icon-->Filter</button>
+                                <!--end::Svg Icon-->
+                            {{__('common.filter')}}
+                            </button>
                             <!--begin::Menu 1-->
                             <div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
                                 <!--begin::Header-->
                                 <div class="px-7 py-5">
-                                    <div class="fs-5 text-dark fw-bold">Filter Options</div>
+                                    <div class="fs-5 text-dark fw-bold">{{__('common.filter_options')}}</div>
                                 </div>
                                 <!--end::Header-->
                                 <!--begin::Separator-->
@@ -76,7 +78,7 @@
                                 <div class="px-7 py-5" data-kt-user-table-filter="form">
                                     <!--begin::Input group-->
                                     <div class="mb-10">
-                                        <label class="form-label fs-6 fw-semibold">Role:</label>
+                                        <label class="form-label fs-6 fw-semibold">{{__('user.role')}}:</label>
                                         <select class="form-select form-select-solid fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-user-table-filter="role" data-hide-search="true">
                                             <option></option>
                                             <option value="Administrator">Administrator</option>
@@ -89,7 +91,7 @@
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
                                     <div class="mb-10">
-                                        <label class="form-label fs-6 fw-semibold">Account Status:</label>
+                                        <label class="form-label fs-6 fw-semibold">{{__('user.account_status')}}:</label>
                                         <select class="form-select form-select-solid fw-bold" data-kt-select2="true" data-placeholder="Select option" data-allow-clear="true" data-kt-user-table-filter="two-step" data-hide-search="true">
                                             <option></option>
                                             <option value="Active">Active</option>
@@ -99,8 +101,8 @@
                                     <!--end::Input group-->
                                     <!--begin::Actions-->
                                     <div class="d-flex justify-content-end">
-                                        <button type="reset" class="btn btn-light btn-active-light-primary fw-semibold me-2 px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="reset">Reset</button>
-                                        <button type="submit" class="btn btn-primary fw-semibold px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="filter">Apply</button>
+                                        <button type="reset" class="btn btn-light btn-active-light-primary fw-semibold me-2 px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="reset">{{__('common.reset')}}</button>
+                                        <button type="submit" class="btn btn-primary fw-semibold px-6" data-kt-menu-dismiss="true" data-kt-user-table-filter="filter">{{__('common.apply')}}</button>
                                     </div>
                                     <!--end::Actions-->
                                 </div>
@@ -119,7 +121,9 @@
 													<path opacity="0.3" d="M18.75 8.25H17.75C17.1977 8.25 16.75 8.69772 16.75 9.25C16.75 9.80228 17.1977 10.25 17.75 10.25C18.3023 10.25 18.75 10.6977 18.75 11.25V18.25C18.75 18.8023 18.3023 19.25 17.75 19.25H5.75C5.19772 19.25 4.75 18.8023 4.75 18.25V11.25C4.75 10.6977 5.19771 10.25 5.75 10.25C6.30229 10.25 6.75 9.80228 6.75 9.25C6.75 8.69772 6.30229 8.25 5.75 8.25H4.75C3.64543 8.25 2.75 9.14543 2.75 10.25V19.25C2.75 20.3546 3.64543 21.25 4.75 21.25H18.75C19.8546 21.25 20.75 20.3546 20.75 19.25V10.25C20.75 9.14543 19.8546 8.25 18.75 8.25Z" fill="currentColor" />
 												</svg>
 											</span>
-                                <!--end::Svg Icon-->Export</button>
+                                <!--end::Svg Icon-->
+                                {{__('common.export')}}
+                            </button>
                             <!--end::Export-->
                             @endif
                             @if (hasCreate('user'))
@@ -132,7 +136,9 @@
 													<rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
 												</svg>
 											</span>
-                                <!--end::Svg Icon-->Add User</button>
+                                <!--end::Svg Icon-->
+                            {{__('user.create_user')}}
+                            </button>
                             <!--end::Add user-->
                             @endif
                         </div>
@@ -140,8 +146,8 @@
                         <!--begin::Group actions-->
                         <div class="d-flex justify-content-end align-items-center d-none" data-kt-user-table-toolbar="selected">
                             <div class="fw-bold me-5">
-                                <span class="me-2" data-kt-user-table-select="selected_count"></span>Selected</div>
-                            <button type="button" class="btn btn-danger" data-kt-user-table-select="delete_selected">Delete Selected</button>
+                                <span class="me-2" data-kt-user-table-select="selected_count"></span>{{__('common.selected')}}</div>
+                            <button type="button" class="btn btn-danger" data-kt-user-table-select="delete_selected">{{__('common.delete_selected')}}</button>
                         </div>
                         <!--end::Group actions-->
                         <!--begin::Modal - Adjust Balance-->
@@ -153,7 +159,7 @@
                                     <!--begin::Modal header-->
                                     <div class="modal-header">
                                         <!--begin::Modal title-->
-                                        <h2 class="fw-bold">Export Users</h2>
+                                        <h2 class="fw-bold">{{__('common.export')}} {{__('user.users')}}</h2>
                                         <!--end::Modal title-->
                                         <!--begin::Close-->
                                         <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
@@ -176,7 +182,7 @@
                                             <!--begin::Input group-->
                                             <div class="fv-row mb-10">
                                                 <!--begin::Label-->
-                                                <label class="fs-6 fw-semibold form-label mb-2">Select Roles:</label>
+                                                <label class="fs-6 fw-semibold form-label mb-2">{{__('common.select')}} {{__('role.roles')}}:</label>
                                                 <!--end::Label-->
                                                 <!--begin::Input-->
                                                 <select name="role" data-control="select2" data-placeholder="Select a role" data-hide-search="true" class="form-select form-select-solid fw-bold">
@@ -193,7 +199,7 @@
                                             <!--begin::Input group-->
                                             <div class="fv-row mb-10">
                                                 <!--begin::Label-->
-                                                <label class="required fs-6 fw-semibold form-label mb-2">Select Export Format:</label>
+                                                <label class="required fs-6 fw-semibold form-label mb-2">{{__('common.select_export_format')}}:</label>
                                                 <!--end::Label-->
                                                 <!--begin::Input-->
                                                 <select name="format" data-control="select2" data-placeholder="Select a format" data-hide-search="true" class="form-select form-select-solid fw-bold">
@@ -208,10 +214,10 @@
                                             <!--end::Input group-->
                                             <!--begin::Actions-->
                                             <div class="text-center">
-                                                <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
+                                                <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">{{__('common.discard')}}</button>
                                                 <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                                                    <span class="indicator-label">Submit</span>
-                                                    <span class="indicator-progress">Please wait...
+                                                    <span class="indicator-label">{{__('common.submit')}}</span>
+                                                    <span class="indicator-progress">{{__('common.please_wait')}}...
 																	<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                                 </button>
                                             </div>
@@ -243,11 +249,11 @@
                                     <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_table_users .form-check-input" value="1" />
                                 </div>
                             </th>
-                            <th class="min-w-125px">User</th>
-                            <th class="min-w-125px">Username</th>
-                            <th class="min-w-125px">Role</th>
-                            <th class="min-w-125px">Status</th>
-                            <th class="text-end min-w-100px">Actions</th>
+                            <th class="min-w-125px">{{__('user.user')}}</th>
+                            <th class="min-w-125px">{{__('user.username')}}</th>
+                            <th class="min-w-125px">{{__('role.role')}}</th>
+                            <th class="min-w-125px">{{__('common.status')}}</th>
+                            <th class="text-start min-w-100px">{{__('common.actions')}}</th>
                         </tr>
                         <!--end::Table row-->
                         </thead>
@@ -300,7 +306,7 @@
                             <td><div class="badge badge-light-{{$user->is_active == 1 ? 'success' : 'danger'}} fw-bold">{{$user->is_active == 1 ? 'Active' : 'Inactive'}}</div></td>
                             <!--begin::Is Active-->
                             <!--begin::Action=-->
-                            <td class="text-end">
+                            <td class="text-start">
                                 <a href="#" class="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
                                     <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
                                     <span class="svg-icon svg-icon-5 m-0">
@@ -314,14 +320,14 @@
                                     @if(hasView('user'))
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-3">
-                                        <a href="{{route('users.show', $user->id)}}" class="menu-link px-3">View</a>
+                                        <a href="{{route('users.show', $user->id)}}" class="menu-link px-3">{{__('common.view')}}</a>
                                     </div>
                                     <!--end::Menu item-->
                                     @endif
                                     @if(hasUpdate('user'))
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-3">
-                                        <a href="{{route('users.edit', $user->id)}}" class="menu-link px-3">Edit</a>
+                                        <a href="{{route('users.edit', $user->id)}}" class="menu-link px-3">{{__('common.edit')}}</a>
                                     </div>
                                     <!--end::Menu item-->
                                     @endif
@@ -329,7 +335,7 @@
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-3">
                                         <a class="menu-link px-3" href="#" onclick="event.preventDefault();
-                                           document.getElementById('delete-form-{{$user->id}}').submit();">Delete</a>
+                                           document.getElementById('delete-form-{{$user->id}}').submit();">{{__('common.delete')}}</a>
 
                                         <form id="delete-form-{{$user->id}}" action="{{route('users.destroy',$user->id)}}" method="POST" class="d-none">
                                             @csrf

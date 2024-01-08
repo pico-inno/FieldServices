@@ -49,6 +49,8 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
+        if ($role->id === 1){ return abort(401); } //for default role
+
         return view('App.userManagement.roles.edit', [
             "role" => $role,
             "role_permissions" => RoleService::getRolePermissions($role->id),

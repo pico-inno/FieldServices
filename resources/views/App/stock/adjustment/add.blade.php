@@ -16,7 +16,7 @@
 
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">NEW{{__('adjustment.create')}}</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('adjustment.create')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
@@ -54,9 +54,10 @@
                                                 data-placeholder="{{__('adjustment.placeholder_location')}}" data-hide-search="true">
                                             <option></option>
                                             @foreach ($locations as $location)
-                                                <option value="{{$location->id}}"  @selected(old('business_location', Auth::user()->default_location_id) == $location->id)>{{businessLocationName($location)}}</option>
+                                                <option value="{{$location->id}}" >{{businessLocationName($location)}}</option>
                                             @endforeach
                                         </select>
+{{--                                            Auth::user()->default_location_id--}}
                                         </div>
                                         <button type="button" class="input-group-text "  data-bs-toggle="tooltip" data-bs-custom-class="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-primary-emphasis'>{{__('adjustment.location_tip')}}</span>">
                                             <i class="fa-solid fa-circle-info text-primary"></i>
@@ -65,7 +66,7 @@
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <label class="form-label required" for="status">
-                                        Condition
+                                        {{__('common.condition')}}
                                     </label>
                                     <div class="fv-row">
                                         <select name="condition" class="form-select form-select-sm fw-bold "
@@ -116,11 +117,14 @@
                             <div class="row align-items-center mb-8">
                                 <div class="col-12">
                                     <div class="input-group quick-search-form p-0">
-                                        <div class="input-group-text">
+
+                                        <span class="input-group-text" id="search-input-type">Keyword</span>
+                                        <input type="text" class="form-control" id="searchInput"
+                                               placeholder="{{__('adjustment.search_products')}}">
+                                        <div class="input-group-text rounded-end-1">
                                             <i class="fa-solid fa-magnifying-glass"></i>
                                         </div>
-                                        <input type="text" class="form-control rounded-end-1" id="searchInput"
-                                               placeholder="{{__('adjustment.search_products')}}">
+
                                         <div
                                             class="quick-search-results overflow-scroll rounded-1 p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
                                             id="autocomplete" data-allow-clear="true"
@@ -128,7 +132,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-5">
+                            <div class="mb-5 search-keyword-block">
                                 <!--begin::Heading-->
                                 <div class="d-flex align-items-start collapsible py-1 toggle mb-0 collapsed user-select-none" data-bs-toggle="collapse"
                                      data-bs-target="#keyword_setting" aria-expanded="false">
@@ -143,7 +147,7 @@
                                     <div class="d-flex align-items-start flex-wrap">
                                         <!--begin::Title-->
                                         <h3 class="text-gray-800 fw-semibold cursor-pointer me-3 mb-0 fs-7 ">
-                                            Click to set Search Keyword
+                                            {{__('common.click_to_set_search_keyword')}}
                                         </h3>
                                         <!--end::Title-->
 
@@ -162,7 +166,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="p_kw" checked disabled />
                                                 <label class="form-check-label cursor-pointer" for="p_kw">
-                                                    Product Name
+                                                   {{__('product/product.name')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -170,7 +174,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="psku_kw" checked />
                                                 <label class="form-check-label cursor-pointer" for="psku_kw">
-                                                    Product Sku
+                                                    {{__('product/product.sku')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -178,7 +182,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="vsku_kw" />
                                                 <label class="form-check-label cursor-pointer" for="vsku_kw">
-                                                    Variation Sku
+                                                    {{__('product/product.variation_sku')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -186,7 +190,7 @@
                                             <div class="form-check form-check-sm user-select-none">
                                                 <input class="form-check-input " type="checkbox" value="on" id="pgbc_kw" />
                                                 <label class="form-check-label cursor-pointer" for="pgbc_kw">
-                                                    Packaging Barcode
+                                                    {{__('product/product.packaging_barcode')}}
                                                 </label>
                                             </div>
                                         </div>
@@ -205,7 +209,7 @@
                                         <th class="min-w-100px">{{__('adjustment.unit')}}</th>
                                         <th class="w-125px">{{__('adjustment.package_qty')}}</th>
                                         <th class="min-w-100px">{{__('adjustment.package')}}</th>
-                                        <th class="w-200px">Remark</th>
+                                        <th class="w-200px">{{__('common.remark')}}</th>
                                         <th>
                                             <i class="fas fa-trash fw-bold"></i>
                                         </th>
@@ -238,4 +242,6 @@
 
     @include('App.stock.adjustment.include.quickSearchProducts')
     <script src={{asset('customJs/stock/validation/adjustmentAdd.js')}}></script>
+
+
 @endpush

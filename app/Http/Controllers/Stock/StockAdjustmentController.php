@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Stock;
 
 
+use App\Helpers\UomHelper;
 use App\Http\Requests\Stock\StoreStockAdjustmentRequest;
 use App\Models\BusinessUser;
 use App\Models\Contact\Contact;
+use App\Models\CurrentStockBalance;
 use App\Models\Stock\StockAdjustment;
 use App\Models\Stock\StockAdjustmentDetail;
 use App\Repositories\LocationRepository;
@@ -147,6 +149,7 @@ class StockAdjustmentController extends Controller
      */
     public function edit(string $id)
     {
+
         $transfer_persons = BusinessUser::with('personal_info')->get();
 //        $locations = businessLocation::all();
         $locations = $this->locationRepository->getforTx();
@@ -169,8 +172,7 @@ class StockAdjustmentController extends Controller
                 ]);
         },
             'stock'=>function($q) use($business_location_id) {
-                $q->where('current_quantity', '>', 0)
-                    ->where('business_location_id', $business_location_id);
+                $q->where('business_location_id', $business_location_id);
             },
             'Currentstock',  'product'=>function($q){
                 $q->with(['uom'=>function($q){
@@ -185,7 +187,7 @@ class StockAdjustmentController extends Controller
                 $q->where('business_location_id', $business_location_id);
             }], 'current_quantity');
         $adjustment_details = $stock_adjustment_details->get();
-
+//return $adjustment_details;
         return view('App.stock.adjustment.edit', [
             'stockAdjustment' => $stockAdjustment,
             'adjustment_details' => $adjustment_details,
@@ -201,6 +203,7 @@ class StockAdjustmentController extends Controller
      */
     public function update(Request $request, string $id, StockAdjustmentServices $stockAdjustmentServices)
     {
+//return $request;
         try {
             DB::beginTransaction();
                 $stockAdjustmentServices->update($id, $request);
@@ -309,91 +312,159 @@ class StockAdjustmentController extends Controller
     public function getProductV3(Request $request)
     {
 
+
         $data = $request->data;
+        $search_type = $data['search_type'];
         $business_location_id = $data['business_location_id'];
         $keyword = $data['query'];
         $variation_id = $data['variation_id'] ?? null;
         $psku_kw = $data['psku_kw'] ?? false;
         $vsku_kw = $data['vsku_kw'] ?? false;
         $pgbc_kw = $data['pgbc_kw'] ?? false;
-        $relations = [
-            'product_packaging' => function ($query) use ($keyword) {
-                $query->where('package_barcode', $keyword);
-            },
-            'uom:id,name,short_name,unit_category_id,unit_type,value,rounded_amount',
-            'uom.unit_category:id,name',
-            'uom.unit_category.uomByCategory:id,name,short_name,unit_type,unit_category_id,value,rounded_amount',
-            'product_variations.packaging.uom',
-            'product_variations.additionalProduct.productVariation.product',
-            'product_variations.additionalProduct.uom',
-            'product_variations.additionalProduct.productVariation.variationTemplateValue',
-            'stock' => function ($query) use ($business_location_id) {
-                $locationIds = childLocationIDs($business_location_id);
-                $query->select('current_quantity', 'business_location_id', 'product_id','id')
-//                    ->where('current_quantity', '>', 0)
-                    ->whereIn('business_location_id', $locationIds);
-            }
-        ];
-        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+
+        $results = null;
+
+
+        if ($search_type == "Keyword"){
             $relations = [
-                'rom.uom.unit_category.uomByCategory',
-                'rom.rom_details.productVariation.product',
-                'rom.rom_details.uom',
-                ...$relations
+                'product_packaging' => function ($query) use ($keyword) {
+                    $query->where('package_barcode', $keyword);
+                },
+                'uom:id,name,short_name,unit_category_id,unit_type,value,rounded_amount',
+                'uom.unit_category:id,name',
+                'uom.unit_category.uomByCategory:id,name,short_name,unit_type,unit_category_id,value,rounded_amount',
+                'product_variations.packaging.uom',
+                'product_variations.additionalProduct.productVariation.product',
+                'product_variations.additionalProduct.uom',
+                'product_variations.additionalProduct.productVariation.variationTemplateValue',
+                'stock' => function ($query) use ($business_location_id, $keyword) {
+                    $locationIds = childLocationIDs($business_location_id);
+                    $query->select('current_quantity', 'business_location_id', 'product_id','id', 'lot_serial_type', 'lot_serial_no', 'ref_uom_price', 'ref_uom_id')
+                        ->whereIn('business_location_id', $locationIds);
+                }
             ];
-        }
-        $products = Product::select(
-            'products.name as name',
-            'products.id as id',
-            'products.product_code',
-            'products.sku',
-            'products.product_type',
-            'products.has_variation',
-            'products.lot_count',
-            'products.uom_id',
-            'products.purchase_uom_id',
-            'products.can_sale',
-            'products.is_recurring',
-            'products.receipe_of_material_id',
+            if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+                $relations = [
+                    'rom.uom.unit_category.uomByCategory',
+                    'rom.rom_details.productVariation.product',
+                    'rom.rom_details.uom',
+                    ...$relations
+                ];
+            }
+            $results = Product::select(
+                'products.name as name',
+                'products.id as id',
+                'products.product_code',
+                'products.sku',
+                'products.product_type',
+                'products.has_variation',
+                'products.lot_count',
+                'products.uom_id',
+                'products.purchase_uom_id',
+                'products.can_sale',
+                'products.is_recurring',
+                'products.receipe_of_material_id',
 
-            'product_variations.product_id',
-            'product_variations.variation_sku',
-            'product_variations.variation_template_value_id',
-            'product_variations.default_selling_price',
-            'product_variations.id as variation_id',
+                'product_variations.product_id',
+                'product_variations.variation_sku',
+                'product_variations.variation_template_value_id',
+                'product_variations.default_selling_price',
+                'product_variations.id as variation_id',
 
-            'variation_template_values.variation_template_id',
-            'variation_template_values.name as variation_name',
-            'variation_template_values.id as variation_template_values_id'
-        )->whereNull('products.deleted_at')
-            ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
-            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
-            ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
-                $query
-                    ->where('can_sale', 1)
-                    ->where('products.name', 'like', '%' . $keyword . '%')
-                    ->when($psku_kw == 'true', function ($q) use ($keyword) {
-                        $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
-                    })
-                    ->when($vsku_kw == 'true', function ($q) use ($keyword) {
-                        $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
-                    })
-                    ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
-                        $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
-                            $query->where('package_barcode', $keyword);
+                'variation_template_values.variation_template_id',
+                'variation_template_values.name as variation_name',
+                'variation_template_values.id as variation_template_values_id'
+            )->whereNull('products.deleted_at')
+                ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+                ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+                ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
+                    $query
+                        ->where('can_sale', 1)
+                        ->where('products.name', 'like', '%' . $keyword . '%')
+                        ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                            $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                        })
+                        ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                            $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                        })
+                        ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                            $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                                $query->where('package_barcode', $keyword);
+                            });
                         });
-                    });
-            })
-            ->when($variation_id, function ($query) use ($variation_id) {
-                $query->where('product_variations.id', $variation_id);
-            })
-            ->with($relations)
-            ->withSum(['stock' => function ($query) use ($business_location_id) {
-                $locationIds = childLocationIDs($business_location_id);
-                $query->whereIn('business_location_id', $locationIds);
-            }], 'current_quantity')
-            ->get()->toArray();
-        return response()->json($products, 200);
+                })
+                ->when($variation_id, function ($query) use ($variation_id) {
+                    $query->where('product_variations.id', $variation_id);
+                })
+                ->with($relations)
+                ->withSum(['stock' => function ($query) use ($business_location_id) {
+                    $locationIds = childLocationIDs($business_location_id);
+                    $query->whereIn('business_location_id', $locationIds);
+                }], 'current_quantity')
+                ->get()->toArray();
+        }
+
+        if ($search_type == "Serial"){
+            $relations = [
+                'product:id,name',
+                  'variation.variationTemplateValue',
+                'uom:id,name,short_name,unit_category_id,unit_type,value,rounded_amount',
+                'uom.unit_category:id,name',
+                'uom.unit_category.uomByCategory:id,name,short_name,unit_type,unit_category_id,value,rounded_amount',
+            ];
+
+            $results = CurrentStockBalance::where('lot_serial_type', 'serial')
+                ->where('lot_serial_no', 'like', '%' . $keyword . '%')
+                ->with($relations);
+
+//            $resultsCount = $results->count();
+//
+//            if ($resultsCount > 1) {
+//                $results->where('current_quantity', '>', 0);
+//            }
+
+            $results = $results->get();
+
+
+
+
+
+            $results = $results->map(function ($result) {
+
+                $stock = [
+                    'business_location_id' => $result['business_location_id'],
+                    'current_quantity' => $result['current_quantity'],
+                    'id' => $result['id'],
+                    'lot_serial_no' => $result['lot_serial_no'],
+                    'lot_serial_type' => $result['lot_serial_type'],
+                    'product_id' => $result['product_id'],
+                    'ref_uom_id' => $result['ref_uom_id'],
+                ];
+
+                $product_variations = [
+                    'id' => $result['variation_id'],
+                  'packaging' => [],
+                ];
+
+                $result['id'] = $result['product_id'];
+                $result['serial_data'] = true;
+                $result['name'] = $result['product']['name'];
+                $result['variation_name'] = optional($result['variation']['variationTemplateValue'])['name'];
+                $result['uom_id'] = $result['ref_uom_id'];
+                $result['product_variations'] = $product_variations;
+                $result['stock'] = [$stock];
+                $result['total_current_stock_qty'] = $result['current_quantity'];
+                $result['smallest_unit'] = $result['uom']['name'];
+                $result['stock_sum_current_quantity'] = $result['current_quantity'];
+                unset($result['business_location_id']);
+//                unset($result['current_quantity']);
+                return $result;
+            });
+
+            $results = $results->toArray();
+
+        }
+        return response()->json($results, 200);
     }
 
 }

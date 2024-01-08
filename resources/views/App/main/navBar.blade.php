@@ -809,7 +809,7 @@
                                                             <i class="bi bi-bar-chart-steps"></i>
                                                             <!--end::Svg Icon-->
                                                         </span>
-                                                        <span class="menu-title">Roles </span>
+                                                        <span class="menu-title">{{__('role.roles')}}</span>
                                                         <span class="menu-arrow"></span>
                                                     </span>
                                                     <!--end:Menu link-->
@@ -825,7 +825,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Roles List</span>
+                                                                <span class="menu-title">{{__('role.roles_list')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -840,7 +840,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Add Role</span>
+                                                                <span class="menu-title">{{__('role.create_role')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -1598,7 +1598,7 @@
                                                     <!--begin:Menu content-->
                                                     <div class="menu-content">
                                                         <span
-                                                            class="menu-heading fw-bold text-uppercase fs-7">Inventory</span>
+                                                            class="menu-heading fw-bold text-uppercase fs-7">{{__('common.inventory')}}</span>
                                                     </div>
                                                     <!--end:Menu content-->
                                                     {{-- Command --}}
@@ -1758,7 +1758,7 @@
                                                             </span>
                                                             <!--end::Svg Icon-->
                                                         </span>
-                                                        <span class="menu-title">Stock Adjustment</span>
+                                                        <span class="menu-title">{{__('adjustment.adjustment')}}</span>
                                                         <span class="menu-arrow"></span>
                                                     </span>
                                                     <!--end:Menu link-->
@@ -1774,7 +1774,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Adjustment List</span>
+                                                                <span class="menu-title">{{__('adjustment.adjustment_list')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -1789,7 +1789,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Add Adjustment</span>
+                                                                <span class="menu-title">{{__('adjustment.create')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -1809,7 +1809,7 @@
                                                 <!--begin:Menu link-->
                                                 <!--begin:Menu link-->
                                                 <a class="menu-link @yield('current_stock_reports_active_show')"
-                                                    href="{{route('report.currentstockbalance.index')}}">
+                                                    href="{{route('report.currentstockbalance.index', 'inventory')}}">
                                                     <span class=" menu-icon">
                                                         <i class="fa-solid fa-arrow-trend-up fs-6"></i>
                                                     </span>
@@ -1831,63 +1831,7 @@
                                     </div>
                                     <!--end::Tab pane-->
                                     @endif
-                                    {{-- @if(hasAll('stock transfer'))
-                                    <!--begin::Tab pane-->
-                                    <div class="tab-pane fade @yield('stock_transfer_show')"
-                                        id="kt_aside_nav_tab_stocks_transfer" role="tabpanel">
-                                        <!--begin::Wrapper-->
-                                        <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
-                                            id="kt_aside_menu" data-kt-menu="true">
-                                            <div id="kt_aside_menu_wrapper" class="menu-fit">
-                                                <div class="menu-item pt-2">
-                                                    <!--begin:Menu content-->
-                                                    <div class="menu-content">
-                                                        <span class="menu-heading fw-bold text-uppercase fs-7">Stocks
-                                                            Transfer</span>
-                                                    </div>
-                                                    <!--end:Menu content-->
-                                                </div>
-                                                <!--begin:Menu item-->
-                                                <div data-kt-menu-trigger="click"
-                                                    class="menu-item menu-accordion here show">
-                                                    @if(hasView('stock transfer'))
-                                                    <!--begin:Menu link-->
-                                                    <div class="menu-item">
-                                                        <!--begin:Menu link-->
-                                                        <a class="menu-link @yield('stock_transfer_active_show')"
-                                                            href="{{ route('stock-transfer.index') }}">
-                                                            <span class="menu-bullet">
-                                                                <span class="bullet bullet-dot"></span>
-                                                            </span>
-                                                            <span class="menu-title">List Stock Transfer</span>
-                                                        </a>
-                                                        <!--end:Menu link-->
-                                                    </div>
-                                                    <!--end:Menu link-->
-                                                    @endif
-                                                    @if(hasCreate('stock transfer'))
-                                                    <!--begin:Menu link-->
-                                                    <div class="menu-item">
-                                                        <!--begin:Menu link-->
-                                                        <a class="menu-link @yield('stock_transfer_add_active_show')"
-                                                            href="{{ route('stock-transfer.create') }}">
-                                                            <span class="menu-bullet">
-                                                                <span class="bullet bullet-dot"></span>
-                                                            </span>
-                                                            <span class="menu-title">Add Stock Transfer</span>
-                                                        </a>
-                                                        <!--end:Menu link-->
-                                                    </div>
-                                                    <!--end:Menu sub-->
-                                                    @endif
-                                                </div>
-                                                <!--end:Menu item-->
-                                            </div>
-                                        </div>
-                                        <!--end::Wrapper-->
-                                    </div>
-                                    <!--end::Tab pane-->
-                                    @endif --}}
+
 
 
 
@@ -2113,7 +2057,7 @@
                                                     class="menu-item menu-accordion @yield('inventory_reports_here_show')">
                                                     <!--begin:Menu link-->
                                                     <span class="menu-link">
-                                                        <span class="menu-title">Inventory Reports</span>
+                                                        <span class="menu-title">{{__('report.inventory_reports')}}</span>
                                                         <span class="menu-arrow"></span>
                                                     </span>
                                                     <!--end:Menu link-->
@@ -2136,7 +2080,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Stock Transfer Summary</span>
+                                                                <span class="menu-title">{{__('transfer.stock_transfer_summary')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -2149,7 +2093,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Stock Transfer Details</span>
+                                                                <span class="menu-title">{{__('transfer.stock_transfer_details')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -2165,7 +2109,7 @@
                                                             <span class="menu-bullet">
                                                                 <span class="bullet bullet-dot"></span>
                                                             </span>
-                                                                    <span class="menu-title">Stock Adjustment Summary</span>
+                                                                    <span class="menu-title">{{__('adjustment.stock_adjustment_summary')}}</span>
                                                                 </a>
                                                                 <!--end:Menu link-->
                                                             </div>
@@ -2178,7 +2122,7 @@
                                                             <span class="menu-bullet">
                                                                 <span class="bullet bullet-dot"></span>
                                                             </span>
-                                                                    <span class="menu-title">Stock Adjustment Details</span>
+                                                                    <span class="menu-title">{{__('adjustment.stock_adjustment_details')}}</span>
                                                                 </a>
                                                                 <!--end:Menu link-->
                                                             </div>
@@ -2190,12 +2134,12 @@
                                                         <!--begin:Menu item-->
                                                         <div class="menu-item">
                                                             <!--begin:Menu link-->
-                                                            <a class="menu-link  @yield('stock_by_lot_active_show')"
-                                                                href="{{route('report.currentstockbalance.index')}}">
+                                                            <a class="menu-link  @yield('current_stock_balance_active_show')"
+                                                                href="{{route('report.currentstockbalance.index', 'report')}}">
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Current Stock Balance</span>
+                                                                <span class="menu-title">{{__('report.current_stock_balance')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -2232,7 +2176,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Stock History</span>
+                                                                <span class="menu-title">{{__('report.stock_history')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -2253,7 +2197,9 @@
 
                                                     <!--begin:Menu link-->
                                                     <span class="menu-link">
-                                                        <span class="menu-title">Stock Alerts</span>
+                                                        <span class="menu-title">
+                                                            {{__('report.stock_alerts')}}
+                                                        </span>
                                                         <span class="menu-arrow"></span>
                                                     </span>
                                                     <!--end:Menu link-->
@@ -2269,7 +2215,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Quantity Alerts</span>
+                                                                <span class="menu-title">{{__('report.quantity_alert')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>
@@ -2282,7 +2228,7 @@
                                                                 <span class="menu-bullet">
                                                                     <span class="bullet bullet-dot"></span>
                                                                 </span>
-                                                                <span class="menu-title">Expire Alerts</span>
+                                                                <span class="menu-title">{{__('report.expire_alert')}}</span>
                                                             </a>
                                                             <!--end:Menu link-->
                                                         </div>

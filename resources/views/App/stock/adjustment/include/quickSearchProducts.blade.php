@@ -4,6 +4,8 @@
     $(document).ready(function () {
         var products;
         let unique_name_id=1;
+        var searchTypeBtn = $('#search-input-type');
+        var searchType = "Keyword";
         let products_length=$('#adjustment_table tbody tr').length-1;
 
         //Edit Session
@@ -56,17 +58,43 @@
 
 
         unique_name_id+=products_length;
+
+
+
         $('#business_location_id').on('change',function(){
             $('#adjustment_table').find('tbody').empty();
             $('#searchInput').prop('disabled', false);
         })
+        if (editAdjustmentDetails.length < 0) {
+            $('#searchInput').prop('disabled', true);
+        }
 
-        $('#searchInput').prop('disabled', true);
+
+
+        searchTypeBtn.on('click', function (){
+            searchType = $(this).text();
+
+            if(searchType === 'Keyword'){
+                $(this).text('Serial');
+                searchType = $(this).text();
+                $('#searchInput').val('');
+                $('.search-keyword-block').addClass('d-none');
+            }else {
+                $(this).text('Keyword');
+                searchType = $(this).text();
+                $('#searchInput').val('');
+                $('.search-keyword-block').removeClass('d-none');
+            }
+
+        })
+
+
 
         // for quick search
         $('.quick-search-form input').on('input', function() {
 
             const query = $(this).val().trim();
+            const search_type = searchType;
             const business_location_id = $('#business_location_id').val();
             const psku_kw = $('#psku_kw').is(':checked');
             const vsku_kw = $('#vsku_kw').is(':checked');
@@ -74,6 +102,7 @@
 
             const data = {
                 business_location_id,
+                search_type,
                 query,
                 psku_kw,
                 vsku_kw,
@@ -108,7 +137,7 @@
                             };
                         },
                         success: function(results){
-
+                            console.log(results);
                             products=results;
                             var html = '';
                             if (results.length > 0) {
@@ -145,8 +174,13 @@
                                         html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
                                     }
                                     html+='</h4>'
-                                    html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${result.has_variation=='variable'?'SKU : '+result.variation_sku :'SKU : '+result.sku} </span>`
+                                    if(searchType === "Serial"){
 
+                                        html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${'SN : '+result.lot_serial_no} </span>`
+
+                                    }else{
+                                        html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${result.has_variation=='variable'?'SKU : '+result.variation_sku :'SKU : '+result.sku} </span>`
+                                    }
 
                                     html += '</div>';
                                 });
@@ -242,10 +276,17 @@
                 })
             }
 
+            let serialInput = selected_product.serial_data == true ? `
+                    <input type="hidden" class="serial_data" name="adjustment_details[${unique_name_id}][serial_data]" value="1">
+                    <input type='hidden' value="${selected_product.lot_serial_no}" name="adjustment_details[${unique_name_id}][lot_serial_no]"  />
+                            <input type='hidden' value="${selected_product.lot_serial_type}" name="adjustment_details[${unique_name_id}][lot_serial_type]"  />
+                    ` : '';
+
+
             var newRow = `
-                <tr class="adjustment_row">
-                    <td>
-                        <div class="my-5 mt-2">
+                <tr class="adjustment_row" id="${unique_name_id}">
+                    <td class="adjustment_col1" aria-hidden="true" data-bs-target="#new_price_modal_${unique_name_id}">
+                        <div class="my-5 product-name mt-2" >
                             <span>${selected_product.name}</span>
                             <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
                         </div>
@@ -256,6 +297,7 @@
                      </td>
                     <td class="d-none">
                         <div>
+                               ${serialInput}
                             <input type='hidden' value="${selected_product.id}" class="product_id"  name="adjustment_details[${unique_name_id}][product_id]"  />
                             <input type='hidden' value="${selected_product.product_variations.id}" class="variation_id" name="adjustment_details[${unique_name_id}][variation_id]"  />
                             <input type='hidden' value="${selected_product.stock[0].id}" class="uom_set_id"  />
@@ -288,13 +330,39 @@
                     <td class="fv-row">
                         <input type="text" class="form-control form-control-sm mb-1"
                             name="adjustment_details[${unique_name_id}][remark]" value="">
+                        <input type="hidden" name="adjustment_details[${unique_name_id}][new_uom_price]" value="${ selected_product.serial_data == true ? selected_product.ref_uom_price : selected_product.default_selling_price}">
                     </td>
                     <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i></th>
                 </tr>
             `;
 
+
+            let modalTemplate = `
+                                <div class="modal fade" id="new_price_modal_${unique_name_id}" data-row-id="${unique_name_id}" tabindex="-1"  tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog mw-400px">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">New Price</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                    <input type="text" class="form-control form-control-sm new-price-input"  value="${ selected_product.serial_data == true ? selected_product.ref_uom_price : selected_product.default_selling_price}"/>
+                                                    </div>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-primary price-save-changes">Update Price</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
             // new row append
             $('#adjustment_table tbody').prepend(newRow);
+            $('body').append(modalTemplate);
             $('.dataTables_empty').addClass('d-none');
             $('.quick-search-results').addClass('d-none');
             $('.quick-search-results').empty();
@@ -315,7 +383,8 @@
 
             optionSelected(selected_product.uom_id,$(`[name="adjustment_details[${unique_name_id}][uom_id]"]`));
             $(`[name="adjustment_details[${unique_name_id}][gnd_quantity]"]`).val($(`[id="current_stock_qty_text_${unique_name_id}"]`).text());
-            $('.adj_quantity').val(0);
+            $(`[name="adjustment_details[${unique_name_id}][adj_quantity]"]`).val(0);
+            // $('.adj_quantity').val(0);
 
 
             if ($('#adjustment_table tbody tr').length > 1) {
@@ -330,6 +399,18 @@
         }
 
 
+        $(document).on('click', '.price-save-changes', function() {
+            const modal = $(this).closest('.modal');
+            const unique_name_id = modal.attr('data-row-id');
+
+            let newprice = modal.find('.new-price-input').val();
+
+            if (newprice) {
+                $(`[name="adjustment_details[${unique_name_id}][new_uom_price]"]`).val(newprice);
+            }
+
+            modal.modal('hide');
+        });
 
 
 
@@ -381,16 +462,58 @@
 
         })
         $(document).on('input','.package_qty',function(){
+
+            let inputElement = $(this);
+            let sanitizedValue = sanitizeNumericInput(inputElement);
+
+            let parent = inputElement.closest('.adjustment_row');
+            let serialDataValue = parent.find('.serial_data').val();
+
+            if (serialDataValue == 1) {
+                inputElement.prop('readonly', true);
+            } else {
+                inputElement.prop('readonly', false);
+            }
+
             packaging($(this),'*');
 
             changeQtyOnUom($(this));
-            calDifferenceQty($(this));
+            // calDifferenceQty($(this));
         })
+
         $(document).on('input', '.gnd_quantity', function (){
+            let inputElement = $(this);
+            let sanitizedValue = sanitizeNumericInput(inputElement);
+
+            let parent = inputElement.closest('.adjustment_row');
+            let serialDataValue = parent.find('.serial_data').val();
+
+            if (serialDataValue == 1 && sanitizedValue > 1) {
+                toastr.error("SN product's ground qty can't greater than 1");
+                inputElement.val(1);
+            }
             packaging($(this),'/');
             changeQtyOnUom($(this));
             calDifferenceQty($(this));
+            priceModalEnable($(this));
         })
+
+        function priceModalEnable(e){
+            let parent = e.closest('.adjustment_row');
+            let adjustment_col1 = parent.find('.adjustment_col1');
+
+            setTimeout(function (){
+                let adjustQty = parseFloat(parent.find('.adj_quantity').val());
+
+                if (parseFloat(adjustQty) > 0) {
+
+                    adjustment_col1.attr('data-bs-toggle', 'modal');
+                } else {
+                    adjustment_col1.attr('data-bs-toggle', 'false');
+                }
+
+            }, 900);
+        }
         const packaging=(e,operator)=>{
             let parent = $(e).closest('.adjustment_row');
             let unitQty=parent.find('.gnd_quantity').val();
@@ -495,7 +618,19 @@
 
 
         $(document).on('input', '.adj_quantity', function () {
+            let inputElement = $(this);
+            let sanitizedValue = sanitizeNumericInput(inputElement);
+
+            let parent = inputElement.closest('.adjustment_row');
+            let serialDataValue = parent.find('.serial_data').val();
+
+            if (serialDataValue == 1 && sanitizedValue > 0) {
+                toastr.error("SN product's adjust qty can't greater than 0");
+                inputElement.val(0);
+            }
+
             calGndQuantity($(this));
+            priceModalEnable($(this));
         });
 
         function calGndQuantity(e) {
@@ -676,14 +811,19 @@
 
 // ----------------------------------------------------------------   End::Sale Calculation  -----------------------------------------------------------
 
-
+        function sanitizeNumericInput(inputElement) {
+            var inputText = inputElement.val().trim();
+            var sanitizedInput = inputText.replace(/[^-0-9.]/g, '');
+            inputElement.val(sanitizedInput);
+            return parseFloat(sanitizedInput);
+        }
 
         function isNullOrNan(val){
             let v=parseFloat(val);
 
-            if(v=='' || v==null || isNaN(v)){
+            if (isNaN(v)) {
                 return 0;
-            }else{
+            } else {
                 return v;
             }
         }

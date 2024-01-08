@@ -11,13 +11,13 @@
 @endsection
 @section('title')
     <!--begin::Heading-->
-    <h1 class="text-dark fw-bold my-0 fs-2">Stock Transfer Details</h1>
+    <h1 class="text-dark fw-bold my-0 fs-2">{{__('transfer.stock_transfer_details')}}</h1>
     <!--end::Heading-->
     <!--begin::Breadcrumb-->
     <ul class="breadcrumb fw-semibold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Reports</li>
-        <li class="breadcrumb-item text-muted">Inventory Reports</li>
-        <li class="breadcrumb-item text-dark">Stock Transfer Details</li>
+        <li class="breadcrumb-item text-muted">{{__('common.reports')}}</li>
+        <li class="breadcrumb-item text-muted">{{__('report.inventory_reports')}}</li>
+        <li class="breadcrumb-item text-dark">{{__('transfer.stock_transfer_details')}}</li>
     </ul>
     <!--end::Breadcrumb-->
 @endsection
@@ -31,14 +31,14 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <h2>Filters</h2>
+                            <h2>{{__('common.filters')}}</h2>
                         </div>
                     </div>
                     <div class="card-body filter-card">
                         <div class="row mb-5 flex-wrap">
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3 ">
-                                <label class="form-label fs-6 fw-semibold">Location (From)</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('transfer.from_location')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_locations_from" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true"
                                         data-kt-stockins-table-filter="location" data-hide-search="true">
@@ -53,7 +53,7 @@
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Location (To)</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('transfer.to_location')}}</label>
                                 <select class="form-select form-select-sm  fw-bold filter_locations_to" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true"
                                         data-kt-stockins-table-filter="location" data-hide-search="true">
@@ -68,7 +68,7 @@
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Product</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('product/product.product')}}</label>
                                 <select class="form-select form-select-sm fw-bold filter_product" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">
                                     <option></option>
@@ -85,7 +85,7 @@
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-10 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Date</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('common.date')}}</label>
                                 <input class="form-control form-control-sm form-control-solid filter_date" placeholder="Pick date rage"
                                        id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
                             </div>
@@ -94,7 +94,7 @@
                         <div class="row mb-5">
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Category</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('product/product.category')}}</label>
                                 <select class="form-select form-select-sm fw-bold filter_category" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
@@ -111,7 +111,7 @@
                             <!--end::Input group-->
                             <!--begin::Input group-->
                             <div class="mb-5 col-6 col-md-3">
-                                <label class="form-label fs-6 fw-semibold">Brand</label>
+                                <label class="form-label fs-6 fw-semibold">{{__('product/product.brand')}}</label>
                                 <select class="form-select form-select-sm fw-bold filter_brand" data-kt-select2="true"
                                         data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
                                     <option></option>
@@ -154,7 +154,7 @@
                             <!--end::Svg Icon-->
                             <input type="text" data-kt-customer-table-filter="search"
                                    class="form-control form-control-solid w-250px ps-15"
-                                   placeholder="Search Stock In Order"/>
+                                   placeholder="{{__('common.search')}}"/>
                         </div>
                         <!--end::Search-->
                     </div>
@@ -181,23 +181,13 @@
                                       fill="currentColor"/>
                             </svg>
                         </span>
-                                    <!--end::Svg Icon-->Export
+                                    <!--end::Svg Icon-->
+                                    {{__('common.export')}}
                                 </button>
                                 <!--end::Export-->
 
                         </div>
                         <!--end::Toolbar-->
-                        <!--begin::Group actions-->
-                        <div class="d-flex justify-content-end align-items-center d-none"
-                             data-kt-customer-table-toolbar="selected">
-                            <div class="fw-bold me-5">
-                                <span class="me-2" data-kt-customer-table-select="selected_count"></span>Selected
-                            </div>
-                            <button type="button" class="btn btn-danger"
-                                    data-kt-customer-table-select="delete_selected">Delete Selected
-                            </button>
-                        </div>
-                        <!--end::Group actions-->
                     </div>
                     <!--end::Card toolbar-->
                 </div>
@@ -213,16 +203,13 @@
                         <thead>
                         <!--begin::Table row-->
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                            <th class="min-w-125px">SKU</th>
-                            <th class="min-w-125px">Product</th>
-                            <th class="min-w-125px">Variation</th>
-                            <th class="min-w-125px">Category</th>
-                            <th class="min-w-125px">Brand</th>
-                            <th class="min-w-125px">UOM</th>
-                            <th class="min-w-125px">Transfer Qty</th>
-                            {{-- <th class="min-w-125px">Transfer Qty <span>(by smallest unit)</span></th> --}}
-                            {{-- <th class="min-w-125px">Price by unit</th>
-                            <th class="min-w-125px">Total Price</th> --}}
+                            <th class="min-w-125px">{{__('product/product.sku')}}</th>
+                            <th class="min-w-125px">{{__('product/product.product')}}</th>
+                            <th class="min-w-125px">{{__('product/product.variation')}}</th>
+                            <th class="min-w-125px">{{__('product/product.category')}}</th>
+                            <th class="min-w-125px">{{__('product/product.brand')}}</th>
+                            <th class="min-w-125px">{{__('product/product.uom')}}</th>
+                            <th class="min-w-125px">{{__('transfer.transfer_qty')}}</th>
 
                         </tr>
                         <!--end::Table row-->
@@ -232,18 +219,6 @@
                         <tbody class="fw-semibold text-gray-600" id="reports-data">
                         </tbody>
                         <!--end::Table body-->
-                        {{-- <tfoot>
-                        <tr class="fw-bold fs-6">
-                            <th class="text-nowrap align-end fs-3">Total Qty:</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-
-                            <th class="text-danger fs-3"></th>
-                            <th class="text-danger fs-3"></th>
-                        </tr>
-                        </tfoot> --}}
                     </table>
                     <!--end::Table-->
                 </div>
@@ -261,7 +236,7 @@
                         <!--begin::Modal header-->
                         <div class="modal-header">
                             <!--begin::Modal title-->
-                            <h2 class="fw-bold">Export Customers</h2>
+                            <h2 class="fw-bold">{{__('transfer.export_stock_transfer_details_report')}}</h2>
                             <!--end::Modal title-->
                             <!--begin::Close-->
                             <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">
@@ -287,7 +262,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Select Export Format:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_export_format')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <div id="exportOptions" style="visibility: hidden;" class="w-1px h-1px"></div>
@@ -304,7 +279,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Select Date Range:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_date_range')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
@@ -317,7 +292,7 @@
                                 <!--begin::Row-->
                                 <div class="row fv-row mb-15">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">Export Column:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.export_column')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Radio group-->
                                     <div class="d-flex flex-column column_checkboxes">
@@ -381,30 +356,6 @@
                                                 class="form-check-label text-gray-600 fw-semibold">Transfer Qty</span>
                                         </label>
                                         <!--end::Radio button-->
-                                        <!--begin::Radio button-->
-                                        {{-- <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
-                                            <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn7"/>
-                                            <span
-                                                class="form-check-label text-gray-600 fw-semibold">Transfer Qty (by smallest unit)</span>
-                                        </label> --}}
-                                        <!--end::Radio button-->
-                                        <!--begin::Radio button-->
-                                        {{-- <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
-                                            <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn8"/>
-                                            <span
-                                                class="form-check-label text-gray-600 fw-semibold">Price by unit</span>
-                                        </label> --}}
-                                        <!--end::Radio button-->
-                                        <!--begin::Radio button-->
-                                        {{-- <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
-                                            <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn9"/>
-                                            <span
-                                                class="form-check-label text-gray-600 fw-semibold">Total Price</span>
-                                        </label> --}}
-                                        <!--end::Radio button-->
                                     </div>
                                     <!--end::Input group-->
                                 </div>
@@ -412,11 +363,11 @@
                                 <!--begin::Actions-->
                                 <div class="text-center">
                                     <button type="reset" id="kt_customers_export_cancel" class="btn btn-light me-3">
-                                        Discard
+                                        {{__('common.discard')}}
                                     </button>
                                     <button type="submit" id="kt_customers_export_submit" class="btn btn-primary">
-                                        <span class="indicator-label">Submit</span>
-                                        <span class="indicator-progress">Please wait...
+                                        <span class="indicator-label">{{__('common.submit')}}</span>
+                                        <span class="indicator-progress">{{__('common.please_wait')}}...
                                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                     </button>
                                 </div>

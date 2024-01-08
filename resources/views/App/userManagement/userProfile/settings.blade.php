@@ -7,7 +7,7 @@
         <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_profile_details" aria-expanded="true" aria-controls="kt_account_profile_details">
             <!--begin::Card title-->
             <div class="card-title m-0">
-                <h3 class="fw-bold m-0">Profile Details</h3>
+                <h3 class="fw-bold m-0">{{__('user.profile_details')}}</h3>
             </div>
             <!--end::Card title-->
         </div>
@@ -24,7 +24,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Avatar</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.avatar')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8">
@@ -64,7 +64,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label required fw-semibold fs-6">Full Name</label>
+                        <label class="col-lg-4 col-form-label required fw-semibold fs-6">{{__('user.full_name')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8">
@@ -99,7 +99,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label required fw-semibold fs-6">Username</label>
+                        <label class="col-lg-4 col-form-label required fw-semibold fs-6">{{__('user.username')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -116,7 +116,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <label class="col-lg-4 col-form-label fw-semibold fs-6">
-                            <span class="required">Date of birth</span>
+                            <span class="required">{{__('user.date_of_birth')}}</span>
                         </label>
                         <div class="col-lg-8 fv-row">
                         <div class="input-group">
@@ -131,7 +131,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Gender</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.gender')}}</label>
                         <!--end::Label-->
                         <!--begin::Input-->
                         <div class="col-lg-8 fv-row">
@@ -148,7 +148,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Marital Status</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.marital')}}</label>
                         <!--end::Label-->
                         <!--begin::Input-->
                         <div class="col-lg-8 fv-row">
@@ -165,7 +165,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Blood Group</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.blood_group')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -177,7 +177,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Language</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('common.language')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -243,7 +243,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Mobile Phone</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.phone')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -255,7 +255,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Alternate contact number</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.contact_number')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -267,7 +267,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Family contact number</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.family_contact_number')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -279,7 +279,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Facebook Link</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.facebook_link')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -291,7 +291,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Twitter Link</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.twitter_link')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -303,7 +303,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Social Media 1</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.social_media')}} 1</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -315,7 +315,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Social Media 2</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.social_media')}} 2</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -327,7 +327,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Custom field 1</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.custom_field')}} 1</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -339,7 +339,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Custom field 2</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.custom_field')}} 2</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -351,7 +351,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Custom field 3</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.custom_field')}} 3</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -363,7 +363,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Custom field 4</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.custom_field')}} 4</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -375,7 +375,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Guardian Name</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.guardian_name')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -387,7 +387,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">ID Proof Name</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.id_proof_name')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -399,7 +399,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">ID Proof Number</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.id_proof_number')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -411,7 +411,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Permanent Address</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.permanent_address')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -423,7 +423,7 @@
                     <!--begin::Input group-->
                     <div class="row mb-6">
                         <!--begin::Label-->
-                        <label class="col-lg-4 col-form-label fw-semibold fs-6">Current Address</label>
+                        <label class="col-lg-4 col-form-label fw-semibold fs-6">{{__('user.current_address')}}</label>
                         <!--end::Label-->
                         <!--begin::Col-->
                         <div class="col-lg-8 fv-row">
@@ -440,7 +440,7 @@
                 <!--begin::Actions-->
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
 {{--                    <button type="reset" class="btn btn-light btn-active-light-primary me-2">Discard</button>--}}
-                    <button type="submit" class="btn btn-primary" >Save Changes</button>
+                    <button type="submit" class="btn btn-primary" >{{__('common.save_changes')}}</button>
                 </div>
                 <!--end::Actions-->
             </form>
@@ -454,7 +454,7 @@
         <!--begin::Card header-->
         <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_signin_method">
             <div class="card-title m-0">
-                <h3 class="fw-bold m-0">Sign-in Method</h3>
+                <h3 class="fw-bold m-0">{{__('user.sign_in_method')}}</h3>
             </div>
         </div>
         <!--end::Card header-->
@@ -466,7 +466,7 @@
                 <div class="d-flex flex-wrap align-items-center">
                     <!--begin::Label-->
                     <div id="kt_signin_email">
-                        <div class="fs-6 fw-bold mb-1">Email Address</div>
+                        <div class="fs-6 fw-bold mb-1">{{__('user.email')}}</div>
                         <div class="fw-semibold text-gray-600">{{$current_user->email}}</div>
                     </div>
                     <!--end::Label-->
@@ -479,20 +479,20 @@
                             <div class="row mb-6">
                                 <div class="col-lg-6 mb-4 mb-lg-0">
                                     <div class="fv-row mb-0">
-                                        <label for="emailaddress" class="form-label fs-6 fw-bold mb-3">Enter New Email Address</label>
+                                        <label for="emailaddress" class="form-label fs-6 fw-bold mb-3">{{__('user.new_email')}}</label>
                                         <input type="email" class="form-control form-control-lg form-control-solid" id="emailaddress" placeholder="Email Address" name="email" value="{{old('email')}}" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="fv-row mb-0">
-                                        <label for="confirmemailpassword" class="form-label fs-6 fw-bold mb-3">Confirm Password</label>
+                                        <label for="confirmemailpassword" class="form-label fs-6 fw-bold mb-3">{{__('user.confirm_password')}}</label>
                                         <input type="password" class="form-control form-control-lg form-control-solid" name="password" id="password" />
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex">
-                                <button id="kt_signin_submit" type="button" class="btn btn-primary me-2 px-6">Update Email</button>
-                                <button id="kt_signin_cancel" type="button" class="btn btn-color-gray-400 btn-active-light-primary px-6">Cancel</button>
+                                <button id="kt_signin_submit" type="button" class="btn btn-primary me-2 px-6">{{__('common.update')}}</button>
+                                <button id="kt_signin_cancel" type="button" class="btn btn-color-gray-400 btn-active-light-primary px-6">{{__('common.cancel')}}</button>
                             </div>
                         </form>
                         <!--end::Form-->
@@ -500,7 +500,7 @@
                     <!--end::Edit-->
                     <!--begin::Action-->
                     <div id="kt_signin_email_button" class="ms-auto">
-                        <button class="btn btn-light btn-active-light-primary">Change Email</button>
+                        <button class="btn btn-light btn-active-light-primary">{{__('user.change_email')}}</button>
                     </div>
                     <!--end::Action-->
                 </div>
@@ -512,7 +512,7 @@
                 <div class="d-flex flex-wrap align-items-center mb-10">
                     <!--begin::Label-->
                     <div id="kt_signin_password">
-                        <div class="fs-6 fw-bold mb-1">Password</div>
+                        <div class="fs-6 fw-bold mb-1">{{__('user.password')}}</div>
                         <div class="fw-semibold text-gray-600">************</div>
                     </div>
                     <!--end::Label-->
@@ -525,27 +525,27 @@
                             <div class="row mb-1">
                                 <div class="col-lg-4">
                                     <div class="fv-row mb-0">
-                                        <label for="currentpassword" class="form-label fs-6 fw-bold mb-3">Current Password</label>
+                                        <label for="currentpassword" class="form-label fs-6 fw-bold mb-3">{{__('user.current_password')}}</label>
                                         <input type="password" class="form-control form-control-lg form-control-solid" name="currentpassword" id="currentpassword" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="fv-row mb-0">
-                                        <label for="newpassword" class="form-label fs-6 fw-bold mb-3">New Password</label>
+                                        <label for="newpassword" class="form-label fs-6 fw-bold mb-3">{{__('user.new_password')}}</label>
                                         <input type="password" class="form-control form-control-lg form-control-solid" name="newpassword" id="newpassword" />
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="fv-row mb-0">
-                                        <label for="confirmpassword" class="form-label fs-6 fw-bold mb-3">Confirm New Password</label>
+                                        <label for="confirmpassword" class="form-label fs-6 fw-bold mb-3">{{__('user.confirm_new_password')}}</label>
                                         <input type="password" class="form-control form-control-lg form-control-solid" name="confirmpassword" id="confirmpassword" />
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-text mb-5">Password must be at least 8 character and contain symbols</div>
+                            <div class="form-text mb-5">{{__('user.password_info')}}</div>
                             <div class="d-flex">
-                                <button id="kt_password_submit" type="button" class="btn btn-primary me-2 px-6">Update Password</button>
-                                <button id="kt_password_cancel" type="button" class="btn btn-color-gray-400 btn-active-light-primary px-6">Cancel</button>
+                                <button id="kt_password_submit" type="button" class="btn btn-primary me-2 px-6">{{__('common.update')}}</button>
+                                <button id="kt_password_cancel" type="button" class="btn btn-color-gray-400 btn-active-light-primary px-6">{{__('common.cancel')}}</button>
                             </div>
                         </form>
                         <!--end::Form-->
@@ -553,7 +553,7 @@
                     <!--end::Edit-->
                     <!--begin::Action-->
                     <div id="kt_signin_password_button" class="ms-auto">
-                        <button class="btn btn-light btn-active-light-primary">Reset Password</button>
+                        <button class="btn btn-light btn-active-light-primary">{{__('user.reset_password')}}</button>
                     </div>
                     <!--end::Action-->
                 </div>
@@ -571,7 +571,7 @@
         <!--begin::Card header-->
         <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_deactivate" aria-expanded="true" aria-controls="kt_account_deactivate">
             <div class="card-title m-0">
-                <h3 class="fw-bold m-0">Deactivate Account</h3>
+                <h3 class="fw-bold m-0">{{__('user.deactivate_account')}}</h3>
             </div>
         </div>
         <!--end::Card header-->
@@ -613,14 +613,14 @@
                     <!--begin::Form input row-->
                     <div class="form-check form-check-solid fv-row">
                         <input name="deactivate" class="form-check-input" type="checkbox" value="0" id="deactivate" />
-                        <label class="form-check-label fw-semibold ps-2 fs-6" for="deactivate">I confirm my account deactivation</label>
+                        <label class="form-check-label fw-semibold ps-2 fs-6" for="deactivate">{{__('user.account_delete_confirm_msg')}}</label>
                     </div>
                     <!--end::Form input row-->
                 </div>
                 <!--end::Card body-->
                 <!--begin::Card footer-->
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
-                    <button id="kt_account_deactivate_account_submit" type="submit" class="btn btn-danger fw-semibold">Deactivate Account</button>
+                    <button id="kt_account_deactivate_account_submit" type="submit" class="btn btn-danger fw-semibold">{{__('user.deactivate_account')}}</button>
                 </div>
                 <!--end::Card footer-->
             </form>

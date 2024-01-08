@@ -11,13 +11,13 @@
     @endsection
     @section('title')
         <!--begin::Heading-->
-        <h1 class="text-dark fw-bold my-0 fs-2">Stock Transfer Summary</h1>
+        <h1 class="text-dark fw-bold my-0 fs-2">{{__('transfer.stock_transfer_summary')}}</h1>
         <!--end::Heading-->
         <!--begin::Breadcrumb-->
         <ul class="breadcrumb fw-semibold fs-base my-1">
-            <li class="breadcrumb-item text-muted">Reports</li>
-            <li class="breadcrumb-item text-muted">Inventory Reports</li>
-            <li class="breadcrumb-item text-dark">Stock Transfer Reports</li>
+            <li class="breadcrumb-item text-muted">{{__('common.reports')}}</li>
+            <li class="breadcrumb-item text-muted">{{__('report.inventory_reports')}}</li>
+            <li class="breadcrumb-item text-dark">{{__('transfer.stock_transfer_reports')}}</li>
         </ul>
         <!--end::Breadcrumb-->
     @endsection
@@ -31,14 +31,14 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">
-                                <h2>Filters</h2>
+                                <h2>{{__('common.filters')}}</h2>
                             </div>
                         </div>
                         <div class="card-body filter-card">
                             <div class="row mb-5 flex-wrap">
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Location (From)</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.from_location')}}</label>
                                     <select class="form-select form-select-sm  fw-bold filter_locations_from" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-stockins-table-filter="location" data-hide-search="true">
@@ -53,7 +53,7 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Location (To)</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.to_location')}}</label>
                                     <select class="form-select form-select-sm fw-bold filter_locations_to" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-stockins-table-filter="location" data-hide-search="true">
@@ -68,7 +68,7 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Transfer Person</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.transfer_person')}}</label>
                                     <select class="form-select form-select-sm fw-bold filter_transferperosn" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-user-table-filter="two-step" data-hide-search="true">
@@ -81,7 +81,7 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Receive Person</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('transfer.receive_person')}}</label>
                                     <select class="form-select form-select-sm fw-bold filter_receiveperosn" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-user-table-filter="two-step" data-hide-search="true">
@@ -96,7 +96,7 @@
                             <div class="row mb-5">
                                 <!--begin::Input group-->
                                 <div class="mb-5 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Status</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('common.status')}}</label>
                                     <select class="form-select form-select-sm fw-bold filter_status" data-kt-select2="true"
                                             data-placeholder="Select option" data-allow-clear="true"
                                             data-kt-user-table-filter="role" data-hide-search="true">
@@ -109,7 +109,7 @@
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="mb-10 col-6 col-md-3">
-                                    <label class="form-label fs-6 fw-semibold">Date</label>
+                                    <label class="form-label fs-6 fw-semibold">{{__('common.date')}}</label>
                                     <input class="form-control form-control-sm form-control-solid filter_date" placeholder="Pick date rage"
                                            id="kt_daterangepicker_4" data-dropdown-parent="#filter"/>
                                 </div>
@@ -142,7 +142,7 @@
                                 <!--end::Svg Icon-->
                                 <input type="text" data-kt-customer-table-filter="search"
                                        class="form-control form-control-solid w-250px ps-15"
-                                       placeholder="Search Stock In Order"/>
+                                       placeholder="{{__('common.search')}}"/>
                             </div>
                             <!--end::Search-->
                         </div>
@@ -169,7 +169,8 @@
                                       fill="currentColor"/>
                             </svg>
                         </span>
-                                    <!--end::Svg Icon-->Export
+                                    <!--end::Svg Icon-->
+                                    {{__('common.export')}}
                                 </button>
                                 <!--end::Export-->
 
@@ -190,13 +191,13 @@
                             <thead>
                             <!--begin::Table row-->
                             <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                                <th class="min-w-125px">Date</th>
-                                <th class="min-w-125px">Voucher No</th>
-                                <th class="min-w-125px">Location (From)</th>
-                                <th class="min-w-125px">Location (To)</th>
+                                <th class="min-w-125px">{{__('common.date')}}</th>
+                                <th class="min-w-125px">{{__('transfer.voucher_no')}}</th>
+                                <th class="min-w-125px">{{__('transfer.from_location')}}</th>
+                                <th class="min-w-125px">{{__('transfer.to_location')}}</th>
                                 {{-- <th class="min-w-125px">Transfer Expense</th> --}}
-                                <th class="min-w-125px">Status</th>
-                                <th class="min-w-125px">Added By</th>
+                                <th class="min-w-125px">{{__('common.status')}}</th>
+                                <th class="min-w-125px">{{__('common.created_by')}}</th>
                             </tr>
                             <!--end::Table row-->
                             </thead>
@@ -223,7 +224,7 @@
                             <!--begin::Modal header-->
                             <div class="modal-header">
                                 <!--begin::Modal title-->
-                                <h2 class="fw-bold">Export Customers</h2>
+                                <h2 class="fw-bold">{{__('transfer.export_stock_transfer_report')}}</h2>
                                 <!--end::Modal title-->
                                 <!--begin::Close-->
                                 <div id="kt_customers_export_close" class="btn btn-icon btn-sm btn-active-icon-primary">
@@ -249,7 +250,7 @@
                                     <!--begin::Input group-->
                                     <div class="fv-row mb-10">
                                         <!--begin::Label-->
-                                        <label class="fs-5 fw-semibold form-label mb-5">Select Export Format:</label>
+                                        <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_export_format')}}:</label>
                                         <!--end::Label-->
                                         <!--begin::Input-->
                                         <div id="exportOptions" style="visibility: hidden;" class="w-1px h-1px"></div>
@@ -266,7 +267,7 @@
                                     <!--begin::Input group-->
                                     <div class="fv-row mb-10">
                                         <!--begin::Label-->
-                                        <label class="fs-5 fw-semibold form-label mb-5">Select Date Range:</label>
+                                        <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_date_range')}}:</label>
                                         <!--end::Label-->
                                         <!--begin::Input-->
                                         <input class="form-control form-control-solid filter_date" placeholder="Pick date rage"
@@ -277,7 +278,7 @@
                                     <!--begin::Row-->
                                     <div class="row fv-row mb-15">
                                         <!--begin::Label-->
-                                        <label class="fs-5 fw-semibold form-label mb-5">Export Column:</label>
+                                        <label class="fs-5 fw-semibold form-label mb-5">{{__('common.export_column')}}:</label>
                                         <!--end::Label-->
                                         <!--begin::Radio group-->
                                         <div class="d-flex flex-column column_checkboxes">

@@ -134,22 +134,86 @@
 
                                 <div class="col-12">
                                     <div class="input-group quick-search-form p-0">
-                                        <div class="input-group-text">
+
+                                        <span class="input-group-text" id="search-input-type">Keyword</span>
+                                        <input type="text" class="form-control" id="searchInput"
+                                               placeholder="{{__('adjustment.search_products')}}">
+                                        <div class="input-group-text rounded-end-1">
                                             <i class="fa-solid fa-magnifying-glass"></i>
                                         </div>
-                                        <input type="text" class="form-control rounded-end-1" id="searchInput"
-                                               placeholder="{{__('adjustment.search_products')}}">
+
                                         <div
                                             class="quick-search-results overflow-scroll rounded-1 p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow"
                                             id="autocomplete" data-allow-clear="true"
                                             style="max-height: 300px;z-index: 100;"></div>
                                     </div>
                                 </div>
-                                {{--                                <div class="col-6 col-md-3 btn-light-primary btn add_new_product_modal my-5 my-lg-0"--}}
-                                {{--                                     data-bs-toggle="modal" type="button"--}}
-                                {{--                                     --}}{{--  data-bs-target="#add_new_product_modal" --}}{{-- data-href="{{ url('purchase/add/supplier')}}">--}}
-                                {{--                                    <i class="fa-solid fa-plus me-2 "></i> Add new product--}}
-                                {{--                                </div>--}}
+                            </div>
+                            <div class="mb-5 search-keyword-block">
+                                <!--begin::Heading-->
+                                <div class="d-flex align-items-start collapsible py-1 toggle mb-0 collapsed user-select-none" data-bs-toggle="collapse"
+                                     data-bs-target="#keyword_setting" aria-expanded="false">
+                                    <!--begin::Icon-->
+                                    <div class="me-1">
+                                        <i class="ki-outline ki-down toggle-on text-primary fs-3"></i>
+                                        <i class="ki-outline ki-right toggle-off fs-3"></i>
+                                    </div>
+                                    <!--end::Icon-->
+
+                                    <!--begin::Section-->
+                                    <div class="d-flex align-items-start flex-wrap">
+                                        <!--begin::Title-->
+                                        <h3 class="text-gray-800 fw-semibold cursor-pointer me-3 mb-0 fs-7 ">
+                                            Click to set Search Keyword
+                                        </h3>
+                                        <!--end::Title-->
+
+                                        <!--begin::Label-->
+                                        <span class="badge badge-light my-1 d-block d-none">React</span>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Section-->
+                                </div>
+                                <!--end::Heading-->
+
+                                <!--begin::Body-->
+                                <div id="keyword_setting" class="fs-6 ms-10 collapse" style="">
+                                    <div class="row mt-5">
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="p_kw" checked disabled />
+                                                <label class="form-check-label cursor-pointer" for="p_kw">
+                                                    Product Name
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="psku_kw" checked />
+                                                <label class="form-check-label cursor-pointer" for="psku_kw">
+                                                    Product Sku
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="vsku_kw" />
+                                                <label class="form-check-label cursor-pointer" for="vsku_kw">
+                                                    Variation Sku
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-check-sm user-select-none">
+                                                <input class="form-check-input " type="checkbox" value="on" id="pgbc_kw" />
+                                                <label class="form-check-label cursor-pointer" for="pgbc_kw">
+                                                    Packaging Barcode
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end::Content-->
                             </div>
                             <div class="table-responsive">
                                 <table class="table align-middle table-row-dashed fs-6 gy-5 mt-10" id="adjustment_table">
@@ -176,9 +240,10 @@
                                         @php
                                             $product=$detail->product;
                                             $product_variation =$detail->toArray()['product_variation'];
+                                            $stock = $detail->stock[0];
                                         @endphp
-                                        <tr class="adjustment_row">
-                                            <td>
+                                        <tr class="adjustment_row" id="{{$key}}">
+                                            <td class="adjustment_col1" @if($detail->adj_quantity > 0) data-bs-toggle="modal" @endif aria-hidden="true" data-bs-target="#new_price_modal_{{$key}}">
                                                 <div class="my-5">
                                                     <span>{{$product->name}}</span>
                                                     <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
@@ -190,6 +255,11 @@
                                             </td>
                                             <td class="d-none">
                                                 <div>
+                                                    @if($stock['lot_serial_type'] == "serial")
+                                                        <input type="hidden" class="serial_data" name="adjustment_details[{{$key}}][serial_data]" value="1">
+                                                        <input type='hidden' value="{{$stock['lot_serial_no']}}" name="adjustment_details[{{$key}}][lot_serial_no]"  />
+                                                        <input type='hidden' value="{{$stock['lot_serial_type']}}" name="adjustment_details[{{$key}}][lot_serial_type]"  />
+                                                    @endif
                                                     <input type="text" value="{{$detail->id}}" name="adjustment_details[{{$key}}][adjustment_detail_id]"/>
                                                     <input type='hidden' value="{{$detail->product_id}}" class="product_id"  name="adjustment_details[{{$key}}][product_id]"  />
                                                     <input type='hidden' value="{{$detail->variation_id}}" class="variation_id" name="adjustment_details[{{$key}}][variation_id]"  />
@@ -241,11 +311,34 @@
                                             <td class="fv-row">
                                                 <input type="text" class="form-control form-control-sm mb-1"
                                                        name="adjustment_details[{{$key}}][remark]" value="{{$detail->remark}}">
+                                                <input type="hidden" name="adjustment_details[{{$key}}][new_uom_price]" value="@if(intval($detail->uom_price) == 0) 0 @else {{intval($detail->uom_price)}} @endif">
                                             </td>
                                             <th><i class="fa-solid fa-trash text-danger deleteRow" type="button"></i>
                                             </th>
                                         </tr>
 
+
+                                        <div class="modal fade" id="new_price_modal_{{$key}}" data-row-id="{{$key}}" tabindex="-1"  tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog mw-400px">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">New Price</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <input type="text" class="form-control form-control-sm new-price-input"  value="{{number_format($detail->uom_price, 2)}}"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-sm btn-primary price-save-changes">Update Price</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endforeach
                                     </tbody>
                                 </table>

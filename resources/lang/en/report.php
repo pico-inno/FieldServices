@@ -14,6 +14,7 @@ return [
     'variation' => 'Variation',
     'stock_alerts' => 'Stock Alerts',
     'expire_alert' => 'Expire Alert',
+    'inventory_reports' => 'Inventory Reports',
 
     //Alert
     'quantity_alert' => 'Quantity Alert',
@@ -48,6 +49,18 @@ return [
 
     //Stock Report
     'current_stock' => 'Current Stock',
+    'current_stock_balance' => 'Current Stock Balance',
+    'stock_history' => 'Stock History',
+    'csb_report' => 'Current Stock Balance Report',
+    'view_by' => 'View By',
+    'type' => 'Type',
+    'lot_serial' => 'Lot/Serial',
+    'purchase_qty' => 'Purchase Qty',
+    'current_qty' => 'Current Qty',
+    'quantity_alerts' => "Quantity Alerts",
+    'view_stocks' => 'View Stocks',
+    'stock_expire_alert_reports' => 'Stock Expire Alert Reports',
+    'stock_quantity_alert_report' => 'Stock Quantity Alert Reports'
 
 
 ];

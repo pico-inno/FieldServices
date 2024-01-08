@@ -51,7 +51,8 @@
                             <!--end::Summary-->
                             <!--begin::Details toggle-->
                             <div class="d-flex flex-stack fs-4 py-3">
-                                <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_details" role="button" aria-expanded="false" aria-controls="kt_user_view_details">Details
+                                <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_details" role="button" aria-expanded="false" aria-controls="kt_user_view_details">
+                                    {{__('common.details')}}
                                     <span class="ms-2 rotate-180">
 													<!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
 													<span class="svg-icon svg-icon-3">
@@ -62,7 +63,9 @@
                                         <!--end::Svg Icon-->
 												</span></div>
                                 <span data-bs-toggle="tooltip" data-bs-trigger="hover" title="Edit customer details">
-													<a href="{{route('users.edit', $user->id)}}" class="btn btn-sm btn-light-primary">Edit</a>
+													<a href="{{route('users.edit', $user->id)}}" class="btn btn-sm btn-light-primary">
+                                                        {{__('common.edit')}}
+                                                    </a>
 												</span>
                             </div>
                             <!--end::Details toggle-->
@@ -71,17 +74,17 @@
                             <div id="kt_user_view_details" class="collapse show">
                                 <div class="pb-5 fs-6">
                                     <!--begin::Details item-->
-                                    <div class="fw-bold mt-5">Username</div>
+                                    <div class="fw-bold mt-5">{{__('user.username')}}</div>
                                     <div class="text-gray-600">{{$user->username}}</div>
                                     <!--begin::Details item-->
                                     <!--begin::Details item-->
-                                    <div class="fw-bold mt-5">Email</div>
+                                    <div class="fw-bold mt-5">{{__('user.email')}}</div>
                                     <div class="text-gray-600">
                                         <a href="#" class="text-gray-600 text-hover-primary">{{$user->email}}</a>
                                     </div>
                                     <!--begin::Details item-->
                                     <!--begin::Details item-->
-                                    <div class="fw-bold mt-5">Is Active?</div>
+                                    <div class="fw-bold mt-5">{{__('user.is_active')}}</div>
                                     <div class="text-gray-600">
                                         <div class="badge badge-light-{{$user->is_active == 1 ? 'primary' : 'danger'}} fw-bold">{{$user->is_active == 1 ? 'Active' : 'Inactive'}}</div>
                                     </div>
@@ -101,17 +104,17 @@
                     <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8">
                         <!--begin:::Tab item-->
                         <li class="nav-item">
-                            <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_user_view_overview_tab">User Information</a>
+                            <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_user_view_overview_tab">{{__('user.user_information')}}</a>
                         </li>
                         <!--end:::Tab item-->
                         <!--begin:::Tab item-->
                         <li class="nav-item">
-                            <a class="nav-link text-active-primary pb-4" data-kt-countup-tabs="true" data-bs-toggle="tab" href="#kt_user_view_overview_security">Documents & Note</a>
+                            <a class="nav-link text-active-primary pb-4" data-kt-countup-tabs="true" data-bs-toggle="tab" href="#kt_user_view_overview_security">{{__('user.documents_and_note')}}</a>
                         </li>
                         <!--end:::Tab item-->
                         <!--begin:::Tab item-->
                         <li class="nav-item">
-                            <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_user_view_overview_events_and_logs_tab">Activities</a>
+                            <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_user_view_overview_events_and_logs_tab">{{__('user.activities')}}</a>
                         </li>
                         <!--end:::Tab item-->
                     </ul>
@@ -126,7 +129,8 @@
                                 <div class="card-body p-5">
                                     <!--being::More Details-->
                                    <div class="fs-4 py-3">
-                                       <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_more_details" role="button" aria-expanded="false" aria-controls="kt_user_view_details">More Informations
+                                       <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_more_details" role="button" aria-expanded="false" aria-controls="kt_user_view_details">
+                                           {{__('user.more_information')}}
                                            <span class="ms-2 rotate-180">
                                             <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
                                             <span class="svg-icon svg-icon-3">
@@ -144,7 +148,7 @@
                                           <div class="col-md-6">
                                               <div class="row mb-7 mt-5">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Date of birth:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.date_of_birth')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -154,7 +158,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Gender:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.gender')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -164,7 +168,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Marital Status:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.marital_status')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -174,7 +178,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Blood Group:C</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.blood_group')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -184,7 +188,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Mobile Number:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.phone')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -194,7 +198,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Alternate contact number:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.contact_number')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -204,7 +208,7 @@
                                               </div>
                                               <div class="row mb-md-10">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Family contact number:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.family_contact_number')}}:</label>
                                                   <!--begin::Label-->
                                                   <!--begin::Label-->
                                                   <div class="col-6">
@@ -214,7 +218,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Facebook Link:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.facebook_link')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -224,7 +228,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Twitter Link:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.twitter_link')}}:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -236,7 +240,7 @@
                                           <div class="col-md-6">
                                               <div class="row mb-7 mt-5">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Social Media 1:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.social_media')}} 1:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -246,7 +250,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Social Media 2:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.social_media')}} 2:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -256,7 +260,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Custom field 1:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 1:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -266,7 +270,7 @@
                                               </div>
                                               <div class="row mb-7">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Custom field 2:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 2:</label>
                                                   <!--end::Label-->
                                                   <!--begin::Col-->
                                                   <div class="col-6">
@@ -276,7 +280,7 @@
                                               </div>
                                               <div class="row mb-10">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Custom field 3:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 3:</label>
                                                   <!--begin::Label-->
                                                   <!--begin::Label-->
                                                   <div class="col-6">
@@ -286,7 +290,7 @@
                                               </div>
                                               <div class="row mb-10">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Custom field 4:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.custom_field')}} 4:</label>
                                                   <!--begin::Label-->
                                                   <!--begin::Label-->
                                                   <div class="col-6">
@@ -296,7 +300,7 @@
                                               </div>
                                               <div class="row mb-10">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Guardian Name:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.guardian_name')}}:</label>
                                                   <!--begin::Label-->
                                                   <!--begin::Label-->
                                                   <div class="col-6">
@@ -306,7 +310,7 @@
                                               </div>
                                               <div class="row mb-10">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">Language:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('common.language')}}:</label>
                                                   <!--begin::Label-->
                                                   <!--begin::Label-->
                                                   <div class="col-6">
@@ -316,7 +320,7 @@
                                               </div>
                                               <div class="row mb-10">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">ID Proof Name:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.id_proof_name')}}:</label>
                                                   <!--begin::Label-->
                                                   <!--begin::Label-->
                                                   <div class="col-6">
@@ -326,7 +330,7 @@
                                               </div>
                                               <div class="row mb-10">
                                                   <!--begin::Label-->
-                                                  <label class="col-6 fw-semibold text-muted">ID Proof Number:</label>
+                                                  <label class="col-6 fw-semibold text-muted">{{__('user.id_proof_number')}}:</label>
                                                   <!--begin::Label-->
                                                   <!--begin::Label-->
                                                   <div class="col-6">
@@ -340,7 +344,7 @@
                                               <div class="col-md-6">
                                                   <div class="row mb-7 mt-5 mb-10">
                                                       <!--begin::Label-->
-                                                      <label class="col-6 fw-semibold text-muted">Permanent Address:</label>
+                                                      <label class="col-6 fw-semibold text-muted">{{__('user.permanent_address')}}:</label>
                                                       <!--end::Label-->
                                                       <!--begin::Col-->
                                                       <div class="col-6">
@@ -352,7 +356,7 @@
                                               <div class="col-md-6">
                                                   <div class="row mb-7 mt-5 mb-10">
                                                       <!--begin::Label-->
-                                                      <label class="col-6 fw-semibold text-muted">Current Address:</label>
+                                                      <label class="col-6 fw-semibold text-muted">{{__('user.id_proof_number')}}:</label>
                                                       <!--end::Label-->
                                                       <!--begin::Col-->
                                                       <div class="col-6">
@@ -369,7 +373,8 @@
                                     <!--end::More Details-->
                                     <!--being::Bank Details-->
                                     <div class="fs-4 py-3">
-                                        <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_bank_details" role="button" aria-expanded="false" aria-controls="kt_user_view_details">Bank Details:
+                                        <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_bank_details" role="button" aria-expanded="false" aria-controls="kt_user_view_details">
+                                            {{__('user.bank_details')}}:
                                             <span class="ms-2 rotate-180">
                                             <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
                                             <span class="svg-icon svg-icon-3">

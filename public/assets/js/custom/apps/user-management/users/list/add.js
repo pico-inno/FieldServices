@@ -66,6 +66,20 @@ var KTUsersAddUser = function () {
                             }
                         }
                     },
+                    'access_location_ids[]': {
+                        validators: {
+                            notEmpty: {
+                                message: 'Access Location is required'
+                            }
+                        }
+                    },
+                    'default_location_id': {
+                        validators: {
+                            notEmpty: {
+                                message: 'Default Location is required'
+                            }
+                        }
+                    },
                 },
 
                 plugins: {

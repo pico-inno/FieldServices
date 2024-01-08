@@ -892,7 +892,7 @@ class ReportController extends Controller
     }
 
 
-    public function currentStockBalanceIndex(){
+    public function currentStockBalanceIndex($nav_type){
         $locations = businessLocation::select('id', 'name', 'parent_location_id')->get();
         $categories = Category::select('id', 'name', 'parent_id')->get();
         $brands = Brand::select('id', 'name',)->get();
@@ -917,6 +917,7 @@ class ReportController extends Controller
 //        return $results;
 
         return view('App.report.inventory.stock.currentBalance', [
+            'nav_type' => $nav_type,
             'locations' => $locations,
             'categories' => $categories,
             'brands' => $brands,
