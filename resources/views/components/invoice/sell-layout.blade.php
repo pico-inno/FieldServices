@@ -12,7 +12,10 @@
             text-align: center;
         }
         .table tr{
-            /* font-size:{{$data_text->tableFontSize ??'16'}}px !important; */
+            font-size:{{$data_text->tableFontSize ??'16'}}px !important;
+        }
+        .headertext{
+            font-size:{{(int) $data_text->tableFontSize+ 2 ??'18'}}px !important;
         }
     </style>
     @php
@@ -24,8 +27,8 @@
             <img src="{{$url}}" class="logo" />
         </div>
     @endif
-    <div class="text-center mb-5">
-        <h3 class="text-muted">{!! $layout->header_text !!}</h3>
+    <div class="text-center mb-3">
+        <h3 class="text-muted headertext">{!! $layout->header_text !!}</h3>
     </div>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <div class="">
@@ -121,7 +124,7 @@
                                 <td scope="col" class="text-end">{{ price($p->uom_price) }}</td>
                             @endif
                             @if ($table_text->discount->is_show)
-                                <td scope="col" class="text-end">{{$p->discount_type=='percentage'?fprice($p->per_item_discount).'%':price($p->per_item_discount) }}</td>
+                                <td scope="col" class="text-end">{{$p->discount_type=='percentage'?price($p->per_item_discount).'%':price($p->per_item_discount) }}</td>
                             @endif
                             @if ($table_text->subtotal->is_show)
                                 <td scope="col" class="text-end">{{ price($p->subtotal_with_discount) }}</td>
@@ -131,7 +134,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="row justify-content-end">
+        <div class="row justify-content-end my-2 mx-1">
             <div class="col-6">
                 <p class="ms-3">
                     {!! $layout->note !!}
@@ -145,25 +148,33 @@
             <div class="col-6">
                 <table class="table table-borderless">
                     <tbody>
-                        <tr class="fs-6 fw-bold">
-                            <td colspan="4" class="text-end ">Subtotal</td>
-                            <td class=" text-end ">{{ price($sale->sale_amount) }}</td>
+                        @if ($data_text->net_sale_amount->is_show)
+                        <tr class="fs-6 fw-semibold mb-0">
+                            <td colspan="4" class="text-end p-0">{{$data_text->net_sale_amount->label}}</td>
+                            <td class=" text-end min-w-column p-0">{{ price($sale->sale_amount) }}</td>
                         </tr>
-                        <tr class="fs-6 fw-bold">
-                            <td colspan="4" class="text-end ">Discount Amount</td>
-                            <td class=" text-end ">{{ price($sale->extra_discount_amount) }}</td>
+                        @endif
+
+                        @if ($data_text->extra_discount_amount->is_show)
+                        <tr class="fs-6 fw-semibold">
+                            <td colspan="4" class="text-end p-0">{{$data_text->extra_discount_amount->label}}</td>
+                            <td class=" text-end min-w-column p-0">{{ price($sale->extra_discount_amount) }}</td>
                         </tr>
-                        <tr class="fs-6 fw-bold">
-                            <td colspan="4" class="text-end ">Total Amount</td>
-                            <td class=" text-end ">{{ price($sale->total_sale_amount) }}</td>
+                        @endif
+
+                        @if ($data_text->total_sale_amount->is_show)
+                        <tr class="fs-6 fw-semibold">
+                            <td colspan="4" class="text-end p-0">{{$data_text->total_sale_amount->label}}</td>
+                            <td class=" text-end min-w-column p-0">{{ price($sale->total_sale_amount) }}</td>
                         </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
         </div>
 
         <hr>
-        <div class="row">
+        <div class="row my-2 mx-1">
             <div class="col-9">
                 {!! $layout->footer_text !!}
             </div>

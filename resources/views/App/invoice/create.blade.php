@@ -65,8 +65,8 @@
                                     data-status="filter" data-kt-select2="true" data-hide-search="false"
                                     data-allow-clear="true" data-hide-search="true" data-placeholder="Select layout"
                                     class="form-select form-select-solid">
-                                    <option value="A4">Default (For -A4,A3,A5 and Legal)</option>
-                                    <option value="80mm">Simple (For - 80mm , 4in,A4,A3)</option>
+                                    <option value="A4">Default (For -A5A4,A3 and Legal)</option>
+                                    <option value="80mm">Simple (For - 80mm , 4in,A5,A4,A3 and legal)</option>
                                 </select>
                                 @error('layout') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
