@@ -61,7 +61,7 @@
                             <div class="row">
                                 <div class="col-6 fv-row">
                                     <label class="form-label fw-bold fs-6 text-gray-700">Template Name</label>
-                                    <input type="text" class="form-control" name="name" value="{{ $layout->name }}" placeholder="Layout-1">
+                                    <input type="text" class="form-control" name="name" value="{{ $layout->name }}" placeholder="Template-1">
                                     @error('name') <span class="text-danger">{{ $message }}</span>@enderror
                                 </div>
                                 <!--begin::Label-->
@@ -178,17 +178,17 @@
                             </div>
                             <div class="col-md-6">
                                 <!--begin::Option-->
-                                {{-- <label
-                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
-                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                        Purchase Status
-                                    </span>
-
-                                    <input class="form-check-input" type="checkbox" @if($layout->data_text['status']) checked @endif checked name="purchaseStatus" />
-                                </label> --}}
-
                                 <label
                                     class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
+                                        Status
+                                    </span>
+
+                                    <input class="form-check-input" type="checkbox" @if($data_text->purchaseStatus ?? false) checked @endif checked name="purchaseStatus" />
+                                </label>
+
+                                <label
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5 cursor-pointer">
                                     <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
                                         Date
                                     </span>
@@ -196,7 +196,7 @@
                                 </label>
 
                                 <label
-                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                                    class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5 cursor-pointer">
                                     <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
                                         Invoice Number
                                     </span>
@@ -216,7 +216,7 @@
                                         <input class="w-15px  form-check cursor-pointer" @checked($table_text->number->is_show) type="checkbox" value="true"
                                             name="number[is_show]" id="number" class="column" />
                                     </label>
-                                    <input type="text" class="form-control form-control-sm" placeholder="No" name="number[label]" value="No">
+                                    <input type="text" class="form-control form-control-sm" placeholder="No" name="number[label]" value="{{$table_text->number->label}}">
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
@@ -226,7 +226,7 @@
                                             name="description[is_show]" class="description" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" name="description[label]" placeholder="Description"
-                                        value="Description">
+                                        value="{{$table_text->description->label}}">
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
@@ -236,7 +236,7 @@
                                             name="quantity[is_show]" class="column" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" name="quantity[label]" placeholder="Quantity"
-                                        value="Quantity">
+                                        value="{{$table_text->quantity->label}}">
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
@@ -246,7 +246,7 @@
                                             name="uom_price[is_show]" class="column" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Unit Price" name="uom_price[label]"
-                                        value="Unit Price">
+                                        value="{{$table_text->uom_price->label}}">
                                 </div>
                             </div>
 
@@ -257,7 +257,7 @@
                                             name="discount[is_show]" class="column" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Discount" name="discount[label]"
-                                        value="Discount">
+                                        value="{{$table_text->discount->label}}">
                                 </div>
                             </div>
 
@@ -268,7 +268,7 @@
                                             name="subtotal[is_show]" class="subtotal" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Subtotal" name="subtotal[label]"
-                                        value="Subtotal">
+                                        value="{{$table_text->subtotal->label}}">
                                 </div>
                             </div>
 
@@ -285,7 +285,7 @@
                                             name="net_sale_amount[is_show]" class="expense" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Net Sale Amount"
-                                        name="net_sale_amount[label]" value="Net Sale Amount">
+                                        name="net_sale_amount[label]" value="{{$data_text->net_sale_amount->label}}">
                                 </div>
                             </div>
                         </div>
@@ -297,7 +297,7 @@
                                             name="extra_discount_amount[is_show]" class="expense" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Extra Discount Amount"
-                                        name="extra_discount_amount[label]" value="Extra Discount Amount">
+                                        name="extra_discount_amount[label]" value="{{$data_text->extra_discount_amount->label}}">
                                 </div>
                             </div>
                         </div>
@@ -309,7 +309,7 @@
                                             name="total_sale_amount[is_show]" class="total_sale_amount" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Total Amount"
-                                        name="total_sale_amount[label]" value="Total Amount">
+                                        name="total_sale_amount[label]" value="{{$data_text->total_sale_amount->label}}">
                                 </div>
                             </div>
                         </div>

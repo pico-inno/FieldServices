@@ -1,10 +1,10 @@
 @php
     $columnCount=0;
-    foreach ($table_text as $key=>$tt) {
-        if($tt->is_show){
-            $columnCount++;
-        }
-    }
+    // foreach ($table_text as $key=>$tt) {
+    //     if($tt->is_show){
+    //         $columnCount++;
+    //     }
+    // }
 @endphp
 <!DOCTYPE html>
 <html lang="en" >
@@ -41,15 +41,12 @@
 }
 
 /* column width */
-/* .description{
-    @if ($columnCount == 5)
-        width: 40% !important;
-    @else
-        width: 10% !important;
-    @endif
+.description{
+    width: 10% !important;
+
 }
 
-.quantity{
+/* .quantity{
     width: 20% !important;
 }
 

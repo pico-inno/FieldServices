@@ -15,7 +15,7 @@ class InvoiceController extends Controller
     public $logofileName;
     public function index()
     {
-        $layouts = InvoiceTemplate::paginate(1);
+        $layouts = InvoiceTemplate::paginate(20);
         return view('App.invoice.index', compact('layouts'));
     }
 

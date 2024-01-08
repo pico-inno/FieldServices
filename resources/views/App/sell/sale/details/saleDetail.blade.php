@@ -122,7 +122,7 @@
                                             $currency=$sd->currency['symbol'] ?? ' ';
                                             $quantityDp=getSettingValue('quantity_decimal_places');
                                         @endphp
-                                        <tr class="fw-bold text-gray-700 fs-7 text-end">
+                                        <tr class="fw-bold text-gray-700 fs-7 text-start">
                                             <td class="pt-6 text-start ps-2">{{$key+1}}</td>
                                             <td class="d-flex align-items-center pt-6">
                                                 <div href="" class="symbol symbol-40px me-2" >

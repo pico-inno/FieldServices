@@ -48,7 +48,7 @@
                         <div class="row mb-5">
                             <div class="col-6 fv-row">
                                 <label class="form-label fw-bold fs-6 text-gray-700">Template Name</label>
-                                <input type="text" class="form-control" name="name" placeholder="Layout-1">
+                                <input type="text" class="form-control" name="name" placeholder="Template-1">
                                 @error('name') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
                             <!--begin::Label-->
@@ -62,7 +62,7 @@
                                     data-allow-clear="true" data-hide-search="true" data-placeholder="Select layout"
                                     class="form-select form-select-solid">
                                     <option value="A4">Default (For -A4,A3,A5 and Legal)</option>
-                                    <option value="80mm">80mm</option>
+                                    <option value="80mm">Simple (For - 80mm , 4in,A4,A3)</option>
                                 </select>
                                 @error('layout') <span class="text-danger">{{ $message }}</span>@enderror
                             </div>
@@ -132,7 +132,7 @@
                                             Customer Name
                                         </span>
 
-                                        <input class="form-check-input cursor-pointer" type="checkbox" name="customerName" />
+                                        <input class="form-check-input cursor-pointer" type="checkbox" checked name="customerName" />
                                     </label>
                                     <label
                                         class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
@@ -163,10 +163,10 @@
                                     <label
                                         class="form-check col-lg-6 form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
                                         <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">
-                                            Purchase Status
+                                            Status
                                         </span>
 
-                                        <input class="form-check-input cursor-pointer" type="checkbox" checked name="purchaseStatus" />
+                                        <input class="form-check-input cursor-pointer" type="checkbox"  name="purchaseStatus" />
                                     </label>
 
                                     <label
