@@ -457,17 +457,7 @@
                                 <!--begin::Tab pane-->
 
                                 @if(hasModule('Service') && isEnableModule('Service'))
-                                <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
-                                    data-bs-placement="right" data-bs-dismiss="click" title="Service">
-                                    <!-- begin::Nav link -->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('service_icon')"
-                                        data-bs-toggle="tab" href="#kt_aside_nav_tab_service">
-                                        <!-- begin::Fontawesome Icon -->
-                                        <i class="fa-solid fa-hand-holding-hand fs-6"></i>
-                                        <!-- end::Fontawesome Icon -->
-                                    </a>
-                                    <!-- end::Nav link -->
-                                </li>
+                                    @include('service::layouts.master', ['navbarType' => 'main_icon'])
                                 @endif
                                 @if(hasModule('RoomManagement') && isEnableModule('RoomManagement'))
                                 <!-- begin::Nav item -->
@@ -2824,68 +2814,7 @@
                             <!-- begin::Tab pane -->
 
                             @if(hasModule('Service') && isEnableModule('Service'))
-                            <div class="tab-pane fade @yield('service_show')" id="kt_aside_nav_tab_service"
-                                role="tabpanel">
-                                <!--begin::Wrapper-->
-                                <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0"
-                                    id="kt_aside_menu" data-kt-menu="true">
-                                    <div id="kt_aside_menu_wrapper" class="menu-fit">
-                                        <div class="menu-item pt-2">
-                                            <!--begin:Menu content-->
-                                            <div class="menu-content">
-                                                <span class="menu-heading fw-bold text-uppercase fs-7">Service</span>
-                                            </div>
-                                            <!--end:Menu content-->
-                                        </div>
-                                        <!--begin:Menu item-->
-                                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion here show">
-                                            <!--begin:Menu link-->
-{{--                                            <div class="menu-item">--}}
-{{--                                                <!--begin:Menu link-->--}}
-{{--                                                <a class="menu-link @yield('service_type_active_show')"--}}
-{{--                                                    href="{{ route('service-type') }}">--}}
-{{--                                                    <span class="menu-bullet">--}}
-{{--                                                        <span class="bullet bullet-dot"></span>--}}
-{{--                                                    </span>--}}
-{{--                                                    <span class="menu-title fs-7">{{ __('service.service_type')--}}
-{{--                                                        }}</span>--}}
-{{--                                                </a>--}}
-{{--                                                <!--end:Menu link-->--}}
-{{--                                            </div>--}}
-                                            <!--end:Menu sub-->
-                                            <!--begin:Menu link-->
-                                            <div class="menu-item">
-                                                <!--begin:Menu link-->
-                                                <a class="menu-link @yield('service_active_show')"
-                                                   href="{{ route('service.index') }}">
-                                                    <span class="menu-bullet">
-                                                        <span class="bullet bullet-dot"></span>
-                                                    </span>
-                                                    <span class="menu-title fs-7">{{ __('service.service') }}</span>
-                                                </a>
-                                                <!--end:Menu link-->
-                                            </div>
-                                            <!--end:Menu sub-->
-                                            <!--begin:Menu link-->
-                                            <div class="menu-item">
-                                                <!--begin:Menu link-->
-                                                <a class="menu-link @yield('service_sales_active_show')"
-                                                   href="{{ route('service-sale') }}">
-                                                    <span class="menu-bullet">
-                                                        <span class="bullet bullet-dot"></span>
-                                                    </span>
-                                                    <span class="menu-title fs-7">{{ __('service.service_sale')
-                                                        }}</span>
-                                                </a>
-                                                <!--end:Menu link-->
-                                            </div>
-                                            <!--end:Menu sub-->
-                                        </div>
-                                        <!--end:Menu item-->
-                                    </div>
-                                </div>
-                                <!--end::Wrapper-->
-                            </div>
+                                @include('service::layouts.master', ['navbarType' => 'nav_link'])
                             @endif
                             <!-- end::Tab pane -->
                             <!-- begin::Tab pane -->
