@@ -1,13 +1,15 @@
 <?php
 
+use App\Models\sale\sales;
 use App\Models\Manufacturer;
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
 use App\Models\Product\UOMSet;
 use App\Services\mailServices;
 use App\Models\Contact\Contact;
 use App\Models\Product\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\sale\sale_details;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
@@ -28,21 +30,23 @@ use App\Http\Middleware\businessActivate;
 use App\Models\settings\businessSettings;
 use App\Models\purchases\purchase_details;
 use App\Http\Controllers\expenseController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\printerController;
 use App\Http\Controllers\currencyController;
-use App\Http\Controllers\languageController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\sell\saleController;
 
 // use App\Http\Controllers\ContactController\CustomerGroupController;
 // use App\Http\Controllers\ContactController\ImportContactsController;
+use App\Http\Controllers\languageController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\sell\saleController;
+use App\Services\packaging\packagingServices;
+
+//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\restaurantController;
 use App\Http\Middleware\permissions\role\view;
 use App\Http\Controllers\Product\UoMController;
-
-//use App\Http\Controllers\Stock\StockTransferController;
 use App\Http\Controllers\exchangeRateController;
 use App\Http\Controllers\openingStockController;
 use App\Http\Controllers\orderDisplayController;
@@ -50,12 +54,12 @@ use App\Http\Controllers\Product\UnitController;
 use App\Http\Controllers\stockHistoryController;
 use App\Http\Controllers\configurationController;
 use App\Http\Controllers\expenseReportController;
+
+// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Report\ReportController;
-
-// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\Stock\StockInController;
 use App\Http\Controllers\settings\FloorController;
 use App\Http\Controllers\Stock\StockOutController;
@@ -90,13 +94,10 @@ use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
-use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
-use App\Models\sale\sale_details;
-use App\Services\packaging\packagingServices;
 
 // use App\Models\Manufacturer;
 
@@ -895,11 +896,39 @@ Route::controller(TestController::class)->group(function () {
 
 Route::get('/test', function () {
 
-    $data=sale_details::
-    where('per_item_discount','!=', '0.0000')
-    // ->where('discount_type','percentage')
-    ->select('per_item_discount','discount_type', 'subtotal_with_discount','subtotal','sales_id','quantity','id')->get()->toArray();
-    dd($data);
+    $datas = sale_details::where('per_item_discount', '!=', '0.0000')->select('id', 'per_item_discount', 'uom_price', 'discount_type', 'subtotal_with_discount', 'subtotal', 'sales_id', 'quantity')->get();
+
+
+    $salesId = [];
+    foreach ($datas as  $sd) {
+        // $calculation = ($sd->uom_price - calPercentageNumber($sd->discount_type, $sd->per_item_discount, $sd->uom_price)) * $sd->quantity;
+        // sale_details::where('id', $sd->id)->update([
+        //     'subtotal_with_discount' => $calculation,
+        //     'subtotal_with_tax' => $calculation,
+        // ]);
+        $sid = $sd->sales_id;
+        $salesId[$sid] = $sid;
+    }
+    // foreach ($salesId as  $id) {
+    //     $sales = sales::where('id', $id)
+    //     ->with('sale_details')
+    //     ->withSum('sale_details', 'subtotal_with_discount')
+    //     ->withSum('sale_details', 'subtotal')
+    //     ->first();
+    //     $updatedPrice= $sales->sale_details_sum_subtotal_with_discount;
+    //     $totalItemDiscount= $sales->sale_details_sum_subtotal- $sales->sale_details_sum_subtotal_with_discount;
+    //     $extraDiscount=calPercentageNumber($sales->extra_discount_type, $sales->extra_discount_amount, $updatedPrice);
+    //     $totalSaleAmt= $updatedPrice - $extraDiscount;
+    //     $sales->update([
+    //         'sale_amount'=> $updatedPrice,
+    //         'total_item_discount'=> $totalItemDiscount,
+    //         'total_sale_amount' => $totalSaleAmt,
+    //     ]);
+    // }
+    dd(sales::where('extra_discount_amount','!=', '0.0000')->get()->toArray());
+    // $data=sale_details::
+    // where('per_item_discount','!=', '0.0000')->select('per_item_discount','discount_type', 'uom_price', 'subtotal_with_discount','subtotal','sales_id','quantity','id')->get()->toArray();
+    // dd($data);
 });
 
 
