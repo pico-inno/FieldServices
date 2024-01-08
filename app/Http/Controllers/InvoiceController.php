@@ -37,6 +37,7 @@ class InvoiceController extends Controller
                 $this->logofileName = FileServices::upload($request->logo, 'logo/invoice/');
             }
             $invoiceTemplateData = $this->getInvoiceTemplateData($request);
+            // dd($invoiceTemplateData);
             InvoiceTemplate::create($invoiceTemplateData);
             DB::commit();
             return redirect()->route('invoice.index')->with('success', 'Successfully Created');
@@ -133,6 +134,7 @@ class InvoiceController extends Controller
             'date' => boolval($request->date ?? false),
             'invoice_number' => boolval($request->invoiceNumber ?? false),
             'status' => boolval($request->status ?? false),
+            'tableFontSize' =>$request->tableFontSize ?? 16,
             'net_sale_amount' => $this->getLableDatas('net_sale_amount', 'Net Sale Amount'),
             'extra_discount_amount' => $this->getLableDatas('extra_discount_amount', 'Extra Discount Amount'),
             'total_sale_amount' => $this->getLableDatas('total_sale_amount', 'Total Amount'),
@@ -153,11 +155,17 @@ class InvoiceController extends Controller
         return $this->request[$column]['is_show'] ?? false;
     }
 
+    public function getWidth($column)
+    {
+        return $this->request[$column]['width'] ?? null;
+    }
+
     public function getLableDatas($column, $defatultLabel)
     {
         return [
             'label' => $this->getLable($column, $defatultLabel),
             'is_show' => $this->checkIsShow($column),
+            'width'=>$this->getWidth($column),
         ];
     }
 }

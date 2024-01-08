@@ -11,6 +11,9 @@
             height: 60px;
             text-align: center;
         }
+        .table tr{
+            /* font-size:{{$data_text->tableFontSize ??'16'}}px !important; */
+        }
     </style>
     @php
         $logo=$data_text->logo ?? null;
@@ -68,22 +71,37 @@
                 <thead style="background-color:#84B0CA ;" class="text-white">
                     <tr class="">
                         @if ($table_text->number->is_show)
-                            <th scope="col">#</th>
+                            <th scope="col" class="min-w-5mm text-start number">#</th>
                         @endif
                         @if ($table_text->description->is_show)
-                            <th scope="col">{{$table_text->description->label ?? 'Decritpion'}}</th>
+                            @php
+                                $desWidth=$table_text->description->width;
+                            @endphp
+                            <th scope="col" class="min-w-column text-start description" @style(["width:$desWidth% !important"=>$desWidth])>{{$table_text->description->label ?? 'Decritpion'}}</th>
                         @endif
                         @if ($table_text->quantity->is_show)
-                            <th scope="col">{{$table_text->quantity->label ?? 'Quantity'}}</th>
+                            @php
+                                $qtyWidth=$table_text->quantity->width;
+                            @endphp
+                            <th scope="col" class="min-w-column quantity" @style(["width:$qtyWidth% !important"=>$qtyWidth])> {{$table_text->quantity->label ?? 'Quantity'}}</th>
                         @endif
                         @if ($table_text->uom_price->is_show)
-                            <th scope="col " class="text-end">{{$table_text->uom_price->label ?? 'Uom Price'}}</th>
+                            @php
+                                $uomWidth=$table_text->uom_price->width;
+                            @endphp
+                            <th scope="col " class="min-w-column text-end uom-price" @style(["width:$uomWidth% !important"=>$uomWidth])>{{$table_text->uom_price->label ?? 'Uom Price'}}</th>
                         @endif
                         @if ($table_text->discount->is_show)
-                            <th scope="col " class="text-end">{{$table_text->discount->label ?? 'Discount'}}</th>
+                            @php
+                                $disWidth=$table_text->discount->width;
+                            @endphp
+                            <th scope="col " class="min-w-column text-end discount" @style(["width:$disWidth% !important"=>$disWidth])>{{$table_text->discount->label ?? 'Discount'}}</th>
                         @endif
                         @if ($table_text->subtotal->is_show)
-                            <th scope="col " class="text-end">{{$table_text->subtotal->label ?? 'Subtotal'}}</th>
+                            @php
+                                $sutotalWidth=$table_text->subtotal->width;
+                            @endphp
+                            <th scope="col " class="min-w-column text-end subtotal" @style(["width:$sutotalWidth% !important"=>$sutotalWidth])>{{$table_text->subtotal->label ?? 'Subtotal'}}</th>
                         @endif
                     </tr>
                 </thead>
@@ -156,4 +174,7 @@
 
     </div>
 </section>
+@php
+    die;
+@endphp
 

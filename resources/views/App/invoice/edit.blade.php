@@ -13,6 +13,10 @@
     .image-input-placeholder {
         background-image: url({{$url}});
     }
+      .h-fit{
+        min-height: 0 !important;
+        height: fit-content !important;
+        }
 </style>
 @else
 <style>
@@ -23,6 +27,10 @@
     [data-bs-theme="dark"] .image-input-placeholder {
         background-image: url({{asset('assets/media/svg/files/blank-image.svg')}});
     }
+    .h-fit{
+        min-height: 0 !important;
+        height: fit-content !important;
+        }
 </style>
 @endif
 @endsection
@@ -210,7 +218,186 @@
 
                         <div class="row mb-10">
                             <label class="form-label fw-bold fs-6 text-gray-700">Column Fields</label>
+                            <div class="row">
+                                <div class="mb-5 fv-row col-md-3">
+                                    <label for="" class="form-label"> Font Size (px) </label>
+                                    <input type="text" class="form-control form-control-sm input_number" placeholder="No" name="tableFontSize"
+                                        value="{{$data_text->tableFontSize ?? 16}}">
+                                </div>
+                            </div>
+
+
                             <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> Number Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none"  for="number">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" @checked($table_text->number->is_show) type="checkbox" value="true"
+                                                name="number[is_show]" id="number" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" placeholder="No" name="number[label]"
+                                                value="{{$table_text->number->label}}">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="number[width]"  value="{{$table_text->number->width}}">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> Description Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="description">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" @checked($table_text->description->is_show) type="checkbox" value="true"
+                                                name="description[is_show]" class="description" id="description" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" name="description[label]"
+                                                placeholder="Description" value="{{$table_text->description->label}}">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="description[width]" value="{{$table_text->description->width}}">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> Quantity Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="quantity">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" @checked($table_text->quantity->is_show) type="checkbox" value="true"
+                                                name="quantity[is_show]" class="quantity" id="quantity" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" name="quantity[label]" placeholder="Quantity"
+                                                value="{{$table_text->quantity->label}}">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="quantity[width]" value="{{$table_text->quantity->width}}">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300 ">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> UoM Price Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="uom_price">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" @checked($table_text->uom_price->is_show) type="checkbox" value="true" id="uom_price"
+                                                name="uom_price[is_show]" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" name="uom_price[label]" placeholder="Uom Price"
+                                                value="{{$table_text->uom_price->label}}">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="uom_price[width]" value="{{$table_text->uom_price->width}}">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300 ">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7">Discount Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="discount">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" @checked($table_text->discount->is_show ?? false) type="checkbox" value="true" id="discount"
+                                                name="discount[is_show]" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" name="discount[label]" placeholder="Discount"
+                                                value="{{$table_text->discount->label}}">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="discount[width]" value="{{$table_text->discount->width}}">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7">Subtotal Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="subtotal">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" @checked($table_text->subtotal->is_show ?? false) type="checkbox" value="true" id="subtotal"
+                                                name="subtotal[is_show]" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" name="subtotal[label]" placeholder="Subtotal"
+                                                value="{{$table_text->subtotal->label}}">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="subtotal[width]" value="{{$table_text->subtotal->width}}">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-3 mb-3">
                                 <div class="input-group input-group-sm fv-row">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" @checked($table_text->number->is_show) type="checkbox" value="true"
@@ -248,9 +435,9 @@
                                     <input type="text" class="form-control form-control-sm" placeholder="Unit Price" name="uom_price[label]"
                                         value="{{$table_text->uom_price->label}}">
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-3 mb-3">
+                            {{-- <div class="col-md-3 mb-3">
                                 <div class="input-group input-group-sm fv-row">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" @checked($table_text->discount->is_show ?? false) type="checkbox" value="true"
@@ -270,7 +457,7 @@
                                     <input type="text" class="form-control form-control-sm" placeholder="Subtotal" name="subtotal[label]"
                                         value="{{$table_text->subtotal->label}}">
                                 </div>
-                            </div>
+                            </div> --}}
 
                         </div>
                         <div class="separator separator-dashed mb-8"></div>

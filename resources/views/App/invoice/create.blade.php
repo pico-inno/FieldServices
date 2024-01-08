@@ -13,6 +13,10 @@
     [data-bs-theme="dark"] .image-input-placeholder {
         background-image: url('assets/media/svg/files/blank-image-dark.svg');
     }
+    .h-fit{
+        min-height: 0 !important;
+        height: fit-content !important;
+    }
 </style>
 @endsection
 @section('title')
@@ -198,56 +202,231 @@
 
                         <div class="row mb-10">
                             <label class="form-label fw-bold fs-6 text-gray-700">Column Fields</label>
-                            <div class="col-md-3 mb-3 fv-row">
+                            <div class="separator my-1"></div>
+                            <div class="row">
+                                <div class="mb-5 fv-row col-md-3">
+                                    <label for="" class="form-label"> Font Size (px) </label>
+                                    <input type="text" class="form-control form-control-sm input_number" placeholder="No" name="tableFontSize" value="16">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> Number Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="number">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" checked type="checkbox" value="true" name="number[is_show]" id="number" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" placeholder="No" name="number[label]" value="No">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto" name="number[width]" value="">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> Description Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="description">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" checked type="checkbox" value="true"
+                                               name="description[is_show]" class="description" id="description" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm"
+                                             name="description[label]" placeholder="Description" value="Description">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="description[width]" value="">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> Quantity Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="quantity">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" checked type="checkbox" value="true"
+                                                name="quantity[is_show]" class="quantity" id="quantity" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm"
+                                                name="quantity[label]" placeholder="Quantity" value="Quantity">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="quantity[width]" value="">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300 ">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7"> UoM Price Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="uom_price">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" checked type="checkbox" value="true" id="uom_price"
+                                               name="uom_price[is_show]" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm"
+                                             name="uom_price[label]" placeholder="Uom Price" value="Uom Price">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="uom_price[width]" value="">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- <div class="col-md-3 mb-3 fv-row d-none">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="number[is_show]" id="number" class="column" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="No" name="number[label]" value="No">
                                 </div>
-                            </div>
-                            <div class="col-md-3 mb-3 fv-row">
+                            </div> --}}
+                            {{-- <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="description[is_show]" class="description" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" name="description[label]" placeholder="Description" value="Description">
                                 </div>
-                            </div>
-                            <div class="col-md-3 mb-3 fv-row">
+                            </div> --}}
+                            {{-- <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="quantity[is_show]" class="column" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" name="quantity[label]" placeholder="Quantity" value="Quantity">
                                 </div>
-                            </div>
-                            <div class="col-md-3 mb-3 fv-row">
+                            </div> --}}
+                            {{-- <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="uom_price[is_show]" class="column" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Unit Price" name="uom_price[label]" value="Unit Price">
                                 </div>
+                            </div> --}}
+
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300 ">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7">Discount Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="discount">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" checked type="checkbox" value="true" id="discount"
+                                                name="discount[is_show]" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" name="discount[label]" placeholder="Discount"
+                                                value="Discount">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="discount[width]" value="">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="col-md-3 mb-3 fv-row">
+                            <div class="col-md-3 mb-3">
+                                <div class="card shadow-none border border-1  border-gray-300">
+                                    <div class="card-header px-3 py-1 h-fit ">
+                                        <label for="" class="form-label card-title fs-7">Subtotal Column </label>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="form-check mb-4 mt-3 cursor-pointer">
+                                            <label class="form-check-label text-gray-800 cursor-pointer user-select-none" for="subtotal">
+                                                Is Show
+                                            </label>
+                                            <input class="cursor-pointer form-check-input" checked type="checkbox" value="true" id="subtotal"
+                                                name="subtotal[is_show]" class="column" />
+
+                                        </div>
+                                        <div class="mb-5 fv-row">
+                                            <label for="" class="form-label"> Label </label>
+                                            <input type="text" class="form-control form-control-sm" name="subtotal[label]" placeholder="Subtotal"
+                                                value="Subtotal">
+                                        </div>
+                                        <div class="">
+                                            <label for="" class="form-label"> Column Width (%) </label>
+                                            <input type="text" class="form-control form-control-sm input_number" placeholder="auto"
+                                                name="subtotal[width]" value="">
+                                            <span class="text-gray-500 inline-block fs-8">Leave Blank To Set auto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="discount[is_show]" class="column" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Discount" name="discount[label]" value="Discount">
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-3 mb-3 fv-row">
+                            {{-- <div class="col-md-3 mb-3 fv-row">
                                 <div class="input-group input-group-sm">
                                     <label class="input-group-text cursor-pointer">
                                         <input class="w-15px  form-check cursor-pointer" checked type="checkbox" value="true" name="subtotal[is_show]" class="subtotal" />
                                     </label>
                                     <input type="text" class="form-control form-control-sm" placeholder="Subtotal" name="subtotal[label]" value="Subtotal">
                                 </div>
-                            </div>
+                            </div> --}}
 
                         </div>
 
