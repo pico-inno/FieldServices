@@ -135,25 +135,29 @@
                                                 </span>
                                                 @endif
                                             </td>
-                                            <td class="pt-6">{{$sd->packagingTx ? round(arr($sd->packagingTx,'quantity') ,$quantityDp): ''}} {{$sd->packagingTx ? '('.$sd->packagingTx->packaging->packaging_name.')' : ''}}</td>
-                                            <td class="pt-6">{{round($sd->quantity,$quantityDp)}}</td>
+                                            <td class="pt-6 text-end">{{$sd->packagingTx ? round(arr($sd->packagingTx,'quantity') ,$quantityDp): ''}} {{$sd->packagingTx ? '('.$sd->packagingTx->packaging->packaging_name.')' : ''}}</td>
+                                            <td class="pt-6 text-end">{{round($sd->quantity,$quantityDp)}}</td>
                                             @if ($sale['status']=='partial')
                                                 <td class="min-w-100px">{{round($sd->delivered_quantity ?? 0,$currencyDp)}}</td>
                                             @endif
-                                            <td class="pt-6">
+                                            <td class="pt-6 text-end">
                                                {{$sd['uom']['name']}}
                                             </td>
-                                            <td class="pt-6">
+                                            <td class="pt-6 text-end">
                                                 {{price($sd->uom_price ?? 0,$sd->currency_id)}}
                                             </td>
-                                            <td class="pt-6 ">
+                                            <td class="pt-6 text-end">
                                                 {{price($sd->subtotal,$sd->currency_id)}}
                                             </td>
-                                            <td class="pt-6">
+                                            <td class="pt-6 text-end">
                                                 {{$sd->discount_type}}
                                             </td>
-                                            <td class="pt-6">
+                                            <td class="pt-6 text-end">
                                                {{fprice($sd->per_item_discount)}} &nbsp; {{$sd->discount_type=='percentage'?'%':$currency }}
+                                               @if ($sd->discount_type == 'percentage')
+                                                    <br>
+                                                    ({{price(calPercentage($sd->discount_type,$sd->per_item_discount,$sd->uom_price))}})
+                                               @endif
                                             </td>
                                             <td class="pt-6 text-dark fw-bolder">
                                                {{price($sd->subtotal_with_discount,$sd->currency_id)}}
@@ -202,7 +206,7 @@
                                         <!--end::Accountnumber-->
                                         <!--begin::Number-->
                                         <div class="text-end fw-bold fs-6 text-gray-800">
-                                            {{price($sale['extra_discount'] ?? 0)}} &nbsp;{{$sale['extra_discount_type']=='percentage'?'%':$currency}}
+                                            {{price($sale['extra_discount_amount'] ?? 0)}} {{$sale['extra_discount_type']=='percentage'?'%':''}}
                                         </div>
                                         <!--end::Number-->
                                     </div>

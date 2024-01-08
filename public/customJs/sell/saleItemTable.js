@@ -232,27 +232,8 @@
                     }
                 }).then(function (result) {
                     if (result.value) {
-                        swal.fire({
-                            text: "Restore sale stock or not  ?",
-                            showCancelButton: true,
-                            buttonsStyling: false,
-                            confirmButtonText: "restore",
-                            cancelButtonText: "not restore",
-                            customClass: {
-                                confirmButton: "btn fw-bold btn-success",
-                                cancelButton: "btn fw-bold btn-danger"
-                            }
-                        }).then(function (result) {
-
                             let id=d.getAttribute('data-id')
-                            let url;
-                            if (result.value) {
-                                url = `/sell/${id}/delete?restore=true`;
-                            }else if (result.dismiss === 'cancel') {
-                                url = `/sell/${id}/delete?restore=false`;
-                            } else{
-                                url = `/sell/${id}/delete?restore=true`;
-                            }
+                            let url = `/sell/${id}/delete?restore=true`;
                             $.ajax({
                                 url,
                                 type: 'DELETE',
@@ -274,7 +255,6 @@
                                     });
                                 }
                             })
-                        })
                     }else if (result.dismiss === 'cancel') {
                         Swal.fire({
                             text: saleItemName + " was not deleted.",

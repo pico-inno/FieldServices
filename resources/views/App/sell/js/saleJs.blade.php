@@ -74,19 +74,28 @@
                 'defaultSellingPrices':saledetail.product_variation.default_selling_price,
                 'sellingPrices':saledetail.product_variation.uom_selling_price,
                 'total_current_stock_qty':totalCurrentStockQty,
+                'existing_qty': editSale.status=='delivered' ? isNullOrNan(saleQty):0,
                 'validate':true,
                 'additional_product':saledetail.product_variation.additional_product,
                 'uom':saledetail.product.uom,
                 'uom_id':saledetail.uom_id,
                 'stock':saledetail.stock,
             };
-            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newProductData.id && p.variation_id === newProductData.product_variations.id);
+            console.log(newProductData);
+            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id == newProductData.product_id && p.variation_id == newProductData.variation_id);
             if(indexToReplace !== -1){
+                let productToReplace=productsOnSelectData[indexToReplace];
+                let existingQty=productToReplace.existing_qty;
+                newProductData.total_current_stock_qty =newProductData.aviable_qty=
+                isNullOrNan(newProductData.total_current_stock_qty)+isNullOrNan(existingQty);
+                newProductData.existing_qty=existingQty;
+                console.log(newProductData,'new ');
                 productsOnSelectData[indexToReplace] = newProductData;
             }else{
                 productsOnSelectData=[...productsOnSelectData,newProductData];
             }
             setTimeout(async function() {
+                console.log(productsOnSelectData,'productsOnSelectData');
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
                 uom.select2();
                 let uom_select=uom.val();
@@ -909,6 +918,10 @@
             };
             const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
             if(indexToReplace !== -1){
+                let productToReplace=productsOnSelectData[indexToReplace];
+                let existingQty=productToReplace.existing_qty;
+                newProductData.total_current_stock_qty =newProductData.aviable_qty= isNullOrNan(newSelectedProduct.stock_sum_current_quantity)+isNullOrNan(existingQty);
+                newProductData.existing_qty=existingQty;
                 productsOnSelectData[indexToReplace] = newProductData;
             }else{
                 productsOnSelectData=[...productsOnSelectData,newProductData];
@@ -1046,6 +1059,7 @@
             })
             result+=isNullOrNan(rdQty);
             if(product.product_type =='storable' || (product.product_type =='consumeable' && product.total_current_stock_qty != null)){
+                console.log(result , productsOnSelectData[index].total_current_stock_qty);
                 if(result > productsOnSelectData[index].total_current_stock_qty && (allowOverSelling == 0 || status=='delivered')){
                             productsOnSelectData[index].validate=false;
                     $(`.stock_alert_${variationId}`).removeClass('d-none');

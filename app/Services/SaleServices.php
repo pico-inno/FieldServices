@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use Carbon\Carbon;
 use App\Helpers\UomHelper;
 use App\Models\sale\sales;
@@ -81,127 +82,142 @@ class SaleServices
 
         $parentSaleItems=[];
         foreach ($sale_details as $key=>$sale_detail) {
-            // dd($sale_details);
             $product = Product::where('id', $sale_detail['product_id'])->select('product_type','id','uom_id')->with('uom')->first();
-            // dd($product);
-            $stock = CurrentStockBalance::where('product_id', $sale_detail['product_id'])
-            ->where('business_location_id', $sale_data->business_location_id)
-                // ->where('id', $sale_detail['stock_id_by_batch_no'])
-                ->with(['product' => function ($q) {
-                    $q->select('id', 'name');
-                }])
-                ->where('variation_id', $sale_detail['variation_id'])
-                ->get()->first();
-            $line_subtotal_discount = $sale_detail['line_subtotal_discount'] ?? 0;
-            $currency_id = $this->currency->id;
-            if(isset($sale_detail['parentUniqueNameId']) && $sale_detail['parentUniqueNameId'] != 'false' && $sale_detail['parentUniqueNameId'] != 'null'){
-                if(isset($parentSaleItems[$sale_detail['parentUniqueNameId']])){
-                    $parentId= $parentSaleItems[$sale_detail['parentUniqueNameId']]->id;
-                }else{
-                    $parentId = $sale_detail['parentSaleDetailId'];
-                }
-            }
-            $sale_details_data = [
-                'sales_id' => $sale_data->id,
-                'product_id' => $sale_detail['product_id'],
-                'parent_id'=> $parentId?? null,
-                'variation_id' => $sale_detail['variation_id'],
-                'uom_id' => $sale_detail['uom_id'],
-                'quantity' => $sale_detail['quantity'],
-                'uom_price' => $sale_detail['uom_price'] ?? 0,
-                'subtotal' =>  $sale_detail['subtotal'] ?? 0,
-                'discount_type' => $sale_detail['discount_type'],
-                'per_item_discount' => $sale_detail['per_item_discount'],
-                'subtotal_with_discount' => $request->type != 'pos' ? ($sale_detail['subtotal'] ?? 0 ) - $line_subtotal_discount :  $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
-                'currency_id' => $request->currency_id ?? $currency_id,
-                'price_list_id' => $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
-                'tax_amount' => 0,
-                'per_item_tax' => 0,
-                'subtotal_with_tax' => $request->type != 'pos' ? ($sale_detail['subtotal'] ?? 0)- $line_subtotal_discount :   $sale_detail['subtotal_with_discount'] ??  $sale_detail['subtotal'] ?? 0,
-                'note' => $sale_detail['item_detail_note'] ?? null,
-            ];
-            // dd($sale_details_data, $line_subtotal_discount);
-            if ($resOrderData) {
-                $sale_details_data['rest_order_id'] = $resOrderData ? $resOrderData->id : null;
-                $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;
-            }
+
+            //SaleDetailCreate
+            $sale_details_data = $this->saleDetailData($request,$sale_data,$sale_detail,$parentSaleItems,$resOrderData);
+
             $created_sale_details = sale_details::create($sale_details_data);
 
-            if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
-                $romCheck = RoMService::isKit($created_sale_details['product_id']);
-                // dd($romCheck);
-                if ($romCheck == 'kit') {
-
-                    // $quantity= $created_sale_details['quantity'];
-                    // if($created_sale_details['uom_id'] != $product['uom_id']){
-                    //     $quantity= UomHelper::changeQtyOnUom($created_sale_details['uom_id'], $product['uom_id'], $quantity);
-                    // };
-
-                    RoMService::createRomTransactions(
-                        $created_sale_details['id'],
-                        'kit_sale_detail',
-                        $request->business_location_id,
-                        $created_sale_details['product_id'],
-                        $created_sale_details['variation_id'],
-                        $created_sale_details['quantity'],
-                        $created_sale_details['uom_id'],
-                    );
-                }
-            }
-
+            // Rom
+            $this->createRomTx($created_sale_details,$request->business_location_id);
+            //packaging
             $packaging->packagingForTx($sale_detail, $created_sale_details['id'], 'sale');
             if (isset($sale_detail['isParent'])) {
                 $parentSaleItems[$sale_detail['isParent']]= $created_sale_details;
             }
-            $refInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($sale_detail['quantity'], $sale_detail['uom_id']);
-            $requestQty = $refInfo['qtyByReferenceUom'];
-            $refUoMId=$refInfo['referenceUomId'];
-            $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
+            // manage stock transactions
+            $this->txManager($request,$sale_data,$created_sale_details,$product);
+        }
+        return;
+    }
 
-            if ($product) {
-                if ($product->product_type != 'storable') {
-                    $stock_history_data = [
-                        'business_location_id' => $sale_data->business_location_id,
-                        'product_id' => $sale_detail['product_id'],
-                        'variation_id' => $sale_detail['variation_id'],
-                        'expired_date' => $sale_detail['expired_date'] ?? null,
-                        'transaction_type' => 'sale',
-                        'transaction_details_id' => $created_sale_details->id,
-                        'increase_qty' => 0,
-                        'ref_uom_id' => $refUoMId,
-                        'decrease_qty' => $requestQty
-                    ];
-                    stock_history::create($stock_history_data);
-                } else {
-                    if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
-                        $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock);
-                        if ($changeQtyStatus == false) {
-                            return 'outOfStock';
-                            // return redirect()->back()->withInput()->with(['warning' => "Out of Stock In " . $stock['product']['name']]);
-                        } else {
-                            // if ($this->setting->lot_control == "off") {
-                            $datas = $changeQtyStatus;
-                            foreach ($datas as $data) {
-                                // dd($datas);
-                                $sale_uom_qty = UomHelper::changeQtyOnUom($data['ref_uom_id'], $created_sale_details->uom_id, $data['stockQty']);
-                                lotSerialDetails::create([
-                                    'transaction_type' => 'sale',
-                                    'transaction_detail_id' => $created_sale_details->id,
-                                    'current_stock_balance_id' => $data['stock_id'],
-                                    'lot_serial_numbers' => $data['lot_serial_no'],
-                                    'uom_quantity' => $sale_uom_qty,
-                                    'uom_id' => $created_sale_details->uom_id,
-                                ]);
-                            }
-                            // }
+    public function saleDetailData($request,$sale_data,$sale_detail, $parentSaleItems,$resOrderData){
+        if (isset($sale_detail['parentUniqueNameId']) && $sale_detail['parentUniqueNameId'] != 'false' && $sale_detail['parentUniqueNameId'] != 'null') {
+            if (isset($parentSaleItems[$sale_detail['parentUniqueNameId']])) {
+                $parentId = $parentSaleItems[$sale_detail['parentUniqueNameId']]->id;
+            } else {
+                $parentId = $sale_detail['parentSaleDetailId'];
+            }
+        }
+
+        $currency_id = $this->currency->id;
+        $subtotal= $sale_detail['subtotal'] ?? 0;
+        $line_subtotal_discount = $sale_detail['line_subtotal_discount'] ?? 0;
+        $subtotal_with_discount_for_pos= $sale_detail['subtotal_with_discount'] ??  $subtotal;
+        $subtotal_with_discount= $request->type == 'pos' ?  $subtotal_with_discount_for_pos : $subtotal - $line_subtotal_discount;
+        $sale_details_data = [
+            'sales_id' => $sale_data->id,
+            'product_id' => $sale_detail['product_id'],
+            'parent_id' => $parentId ?? null,
+            'variation_id' => $sale_detail['variation_id'],
+            'uom_id' => $sale_detail['uom_id'],
+            'quantity' => $sale_detail['quantity'],
+            'uom_price' => $sale_detail['uom_price'] ?? 0,
+            'subtotal' =>  $sale_detail['subtotal'] ?? 0,
+            'discount_type' => $sale_detail['discount_type'],
+            'per_item_discount' => $sale_detail['per_item_discount'],
+            'subtotal_with_discount' => $subtotal_with_discount,
+            'currency_id' => $request->currency_id ?? $currency_id,
+            'price_list_id' => $sale_detail['price_list_id'] == "default_selling_price" ? null :  $sale_detail['price_list_id'],
+            'tax_amount' => 0,
+            'per_item_tax' => 0,
+            'subtotal_with_tax' => $subtotal_with_discount,
+            'note' => $sale_detail['item_detail_note'] ?? null,
+        ];
+        if ($resOrderData) {
+            $sale_details_data['rest_order_id'] = $resOrderData ? $resOrderData->id : null;
+            $sale_details_data['rest_order_status'] = $resOrderData ? 'order' : null;
+        }
+        return $sale_details_data;
+    }
+    public function createRomTx($created_sale_details, $business_location_id){
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            $romCheck = RoMService::isKit($created_sale_details['product_id']);
+            // dd($romCheck);
+            if ($romCheck == 'kit') {
+
+                // $quantity= $created_sale_details['quantity'];
+                // if($created_sale_details['uom_id'] != $product['uom_id']){
+                //     $quantity= UomHelper::changeQtyOnUom($created_sale_details['uom_id'], $product['uom_id'], $quantity);
+                // };
+
+                RoMService::createRomTransactions(
+                    $created_sale_details['id'],
+                    'kit_sale_detail',
+                    $business_location_id,
+                    $created_sale_details['product_id'],
+                    $created_sale_details['variation_id'],
+                    $created_sale_details['quantity'],
+                    $created_sale_details['uom_id'],
+                );
+            }
+        }
+    }
+
+    public function txManager($request, $sale_data,$created_sale_details,$product){
+
+        $stock = CurrentStockBalance::where('product_id', $created_sale_details['product_id'])
+            ->where('business_location_id', $sale_data->business_location_id)
+            ->with(['product' => function ($q) {
+                $q->select('id', 'name');
+            }])
+            ->where('variation_id', $created_sale_details['variation_id'])
+            ->get()->first();
+
+        $refInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($created_sale_details['quantity'], $created_sale_details['uom_id']);
+        $requestQty = $refInfo['qtyByReferenceUom'];
+        $refUoMId = $refInfo['referenceUomId'];
+        $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
+
+        if ($product) {
+            if ($product->product_type != 'storable') {
+                $stock_history_data = [
+                    'business_location_id' => $sale_data->business_location_id,
+                    'product_id' => $created_sale_details['product_id'],
+                    'variation_id' => $created_sale_details['variation_id'],
+                    'expired_date' => $created_sale_details['expired_date'] ?? null,
+                    'transaction_type' => 'sale',
+                    'transaction_details_id' => $created_sale_details->id,
+                    'increase_qty' => 0,
+                    'ref_uom_id' => $refUoMId,
+                    'decrease_qty' => $requestQty
+                ];
+                stock_history::create($stock_history_data);
+            } else {
+                if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
+                    $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock);
+                    if ($changeQtyStatus == false) {
+                        return throw new Exception('outOfStock');
+                    } else {
+                        $datas = $changeQtyStatus;
+                        foreach ($datas as $data) {
+                            // dd($datas);
+                            $sale_uom_qty = UomHelper::changeQtyOnUom($data['ref_uom_id'], $created_sale_details->uom_id, $data['stockQty']);
+                            lotSerialDetails::create([
+                                'transaction_type' => 'sale',
+                                'transaction_detail_id' => $created_sale_details->id,
+                                'current_stock_balance_id' => $data['stock_id'],
+                                'lot_serial_numbers' => $data['lot_serial_no'],
+                                'uom_quantity' => $sale_uom_qty,
+                                'uom_id' => $created_sale_details->uom_id,
+                            ]);
                         }
                     }
                 }
             }
         }
-        return;
     }
-
     public function changeStockQty($requestQty,$refUoMId, $business_location_id, $sale_detail, $current_stock = [])
     {
         $product_id = $sale_detail['product_id'];

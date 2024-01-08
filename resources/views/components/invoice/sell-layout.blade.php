@@ -124,7 +124,14 @@
                                 <td scope="col" class="text-end">{{ price($p->uom_price) }}</td>
                             @endif
                             @if ($table_text->discount->is_show)
-                                <td scope="col" class="text-end">{{$p->discount_type=='percentage'?price($p->per_item_discount).'%':price($p->per_item_discount) }}</td>
+                                <td scope="col" class="text-end">
+                                    {{$p->discount_type=='percentage'?price($p->per_item_discount).'%':price($p->per_item_discount) }}
+                                    @if ($p->discount_type == 'percentage')
+                                    <br>
+                                    ({{price(calPercentage($p->discount_type,$p->per_item_discount,$p->uom_price))}})
+                                    @endif
+                                </td>
+
                             @endif
                             @if ($table_text->subtotal->is_show)
                                 <td scope="col" class="text-end">{{ price($p->subtotal_with_discount) }}</td>
@@ -151,7 +158,7 @@
                         @if ($data_text->net_sale_amount->is_show)
                         <tr class="fs-6 fw-semibold mb-0">
                             <td colspan="4" class="text-end p-0">{{$data_text->net_sale_amount->label}}</td>
-                            <td class=" text-end min-w-column p-0">{{ price($sale->sale_amount) }}</td>
+                            <td class=" text-end min-w-column p-0">{{ price($sale->sale_amount - $sale->total_item_discount) }}</td>
                         </tr>
                         @endif
 
@@ -185,7 +192,4 @@
 
     </div>
 </section>
-@php
-    die;
-@endphp
 

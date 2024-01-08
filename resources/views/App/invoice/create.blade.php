@@ -210,7 +210,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <div class="card shadow-none border border-1  border-gray-300">
+                                <div class="card shadow-none border border-1  border-gray-600">
                                     <div class="card-header px-3 py-1 h-fit ">
                                         <label for="" class="form-label card-title fs-7"> Number Column </label>
                                     </div>
@@ -235,7 +235,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <div class="card shadow-none border border-1  border-gray-300">
+                                <div class="card shadow-none border border-1  border-gray-600">
                                     <div class="card-header px-3 py-1 h-fit ">
                                         <label for="" class="form-label card-title fs-7"> Description Column </label>
                                     </div>
@@ -263,7 +263,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <div class="card shadow-none border border-1  border-gray-300">
+                                <div class="card shadow-none border border-1  border-gray-600">
                                     <div class="card-header px-3 py-1 h-fit ">
                                         <label for="" class="form-label card-title fs-7"> Quantity Column </label>
                                     </div>
@@ -292,7 +292,7 @@
                             </div>
 
                             <div class="col-md-3 mb-3">
-                                <div class="card shadow-none border border-1  border-gray-300 ">
+                                <div class="card shadow-none border border-1  border-gray-600 ">
                                     <div class="card-header px-3 py-1 h-fit ">
                                         <label for="" class="form-label card-title fs-7"> UoM Price Column </label>
                                     </div>
@@ -354,7 +354,7 @@
                             </div> --}}
 
                             <div class="col-md-3 mb-3">
-                                <div class="card shadow-none border border-1  border-gray-300 ">
+                                <div class="card shadow-none border border-1  border-gray-600 ">
                                     <div class="card-header px-3 py-1 h-fit ">
                                         <label for="" class="form-label card-title fs-7">Discount Column </label>
                                     </div>
@@ -383,7 +383,7 @@
                             </div>
 
                             <div class="col-md-3 mb-3">
-                                <div class="card shadow-none border border-1  border-gray-300">
+                                <div class="card shadow-none border border-1  border-gray-600">
                                     <div class="card-header px-3 py-1 h-fit ">
                                         <label for="" class="form-label card-title fs-7">Subtotal Column </label>
                                     </div>

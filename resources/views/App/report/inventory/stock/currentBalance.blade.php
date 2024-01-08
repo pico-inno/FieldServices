@@ -439,9 +439,9 @@
 
 @push('scripts')
 
-    <script src="customJs/reports/inventory/currentStockBalanceExport.js"></script>
-    <script src="customJs/reports/inventory/currentStockBalanceFilter.js"></script>
-    <script src="customJs/toaster.js"></script>
+    <script src="{{asset('customJs/reports/inventory/currentStockBalanceExport.js')}}"></script>
+    <script src="{{asset('customJs/reports/inventory/currentStockBalanceFilter.js')}}"></script>
+    <script src="{{asset('customJs/toaster.js')}}"></script>
 
 
     <script>

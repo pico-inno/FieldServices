@@ -385,7 +385,7 @@ class saleController extends Controller
             $request['payment_status'] = $payment_status;
             $sale_data = $saleService->create($request);
 
-
+            // dd($sale_data->toArray());
             if ($request->reservation_id) {
                 $request['sale_id'] = $sale_data->id;
                 $this->addToReservationFolio($request, true);
@@ -465,10 +465,7 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
-            logger($e . '====');
             DB::rollBack();
-            dd($e);
-            logger($e->getMessage() . '====');
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',
@@ -967,9 +964,7 @@ class saleController extends Controller
             } else {
                 $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $sd->id)->OrderBy('id', 'DESC');
                 if ($lotSerials->exists()) {
-                    if (request('restore') == 'true') {
-                        $this->adjustStock($lotSerials->get());
-                    }
+                    $this->adjustStock($lotSerials->get());
                     foreach ($lotSerials->get() as $lotSerial) {
                         $lotSerial->delete();
                     }

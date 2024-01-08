@@ -192,7 +192,7 @@
             <tbody>
                 @if ($data_text->net_sale_amount->is_show)
                 <tr class="fs-6 fw-semibold mb-0">
-                    <td colspan="4" class="text-end p-0">{{$data_text->net_sale_amount->label}}</td>
+                    <td colspan="4" class="text-end p-0">{{ price($sale->sale_amount - $sale->total_item_discount) }}</td>
                     <td class=" text-end min-w-column p-0">{{ fprice($sale->sale_amount) }}</td>
                 </tr>
                 @endif
