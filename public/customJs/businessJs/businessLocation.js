@@ -135,18 +135,35 @@ var KTlocationsList = function () {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                 },
                                 success: function(s) {
-                                    datatable.ajax.reload();
-                                    Swal.fire({
-                                        text: "You have deleted " + locationName + "!.",
-                                        icon: "success",
-                                        buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
-                                        customClass: {
-                                            confirmButton: "btn fw-bold btn-primary",
-                                        }
-                                    }).then(function () {
-                                        success(s.success);
-                                    });
+                                    console.log(s)
+                                 if (s.success){
+                                     datatable.ajax.reload();
+                                     Swal.fire({
+                                         text: "You have deleted " + locationName + "!.",
+                                         icon: "success",
+                                         buttonsStyling: false,
+                                         confirmButtonText: "Ok, got it!",
+                                         customClass: {
+                                             confirmButton: "btn fw-bold btn-primary",
+                                         }
+                                     }).then(function () {
+                                         success(s.success);
+                                     });
+                                 }
+
+                                 if (s.error){
+                                     datatable.ajax.reload();
+                                     Swal.fire({
+                                         text: s.error,
+                                         icon: "error",
+                                         buttonsStyling: false,
+                                         confirmButtonText: "Ok, got it!",
+                                         customClass: {
+                                             confirmButton: "btn fw-bold btn-primary",
+                                         }
+                                     })
+                                 }
+
                                 }
                             })
                     } else if (result.dismiss === 'cancel') {

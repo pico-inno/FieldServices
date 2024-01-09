@@ -139,12 +139,29 @@ class businessLocationController extends Controller
     // destory each items
     public function destory($id)
     {
-        $blData = businessLocation::where('id', $id)->first();
-        $blData->delete();
-        $data = [
-            'success' => 'Successfully Deleted'
-        ];
-        return response()->json($data, 200);
+        try {
+
+            $isUsedAsParent = businessLocation::where('parent_location_id', $id)->exists();
+
+            if ($isUsedAsParent) {
+                $errorData = [
+                    'error' => 'This location cannot be deleted since it is used as a parent location.'
+                ];
+                return response()->json($errorData, 200);
+            }
+
+            $blData = businessLocation::where('id', $id)->first();
+            $blData->delete();
+            $data = [
+                'success' => 'Successfully Deleted'
+            ];
+            return response()->json($data, 200);
+        }catch (Exception $exception){
+            $errorData = [
+                'error' => 'This location cannot be deleted since transactions are associated with it.'
+            ];
+            return response()->json($errorData);
+        }
     }
     public function deactive($id)
     {
