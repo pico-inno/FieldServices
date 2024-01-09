@@ -34,7 +34,7 @@
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <!--begin::Container-->
         <div class="container-xxl" id="kt_content_container">
-            <form action="{{route('stock-transfer.store')}}" method="POST">
+            <form action="{{route('stock-transfer.store')}}" method="POST" id="stock_transfer_form">
                 @csrf
                 <!--begin::Main column-->
                 <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
@@ -43,90 +43,82 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0">
                             <div class="row mb-3 pt-3">
-                                <div class="col-md-6 mb-4 ">
+                                <div class="col-md-6 mb-4">
                                     <label class="form-label required" for="from_location">
                                       {{__('transfer.from_location')}}
                                     </label>
-                                    <div class="input-group flex-nowrap">
-                                        <select name="from_location" id="business_location_id"
-                                                class="form-select form-select-sm fw-bold "
-                                                data-kt-select2="true" data-hide-search="false"
-                                                data-placeholder="{{__('transfer.placeholder_from_location')}}" data-allow-clear="true"
-                                                data-kt-user-table-filter="role" data-hide-search="true">
-                                            <option></option>
-                                            @foreach ($locations as $location)
-                                                <option {{$location->id == \Illuminate\Support\Facades\Auth::user()->default_location_id ? 'selected' : ''}} value="{{$location->id}}">{{$location->name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                   <div class="fv-row">
+                                       <select name="from_location" id="business_location_id"
+                                               class="form-select form-select-sm fw-bold "
+                                               data-kt-select2="true" data-hide-search="false"
+                                               data-placeholder="{{__('transfer.placeholder_from_location')}}" data-allow-clear="true"
+                                               data-kt-user-table-filter="role" data-hide-search="true">
+                                           <option></option>
+                                           @foreach ($locations as $location)
+                                               <option {{$location->id == \Illuminate\Support\Facades\Auth::user()->default_location_id ? 'selected' : ''}} value="{{$location->id}}">{{$location->name}}</option>
+                                           @endforeach
+                                       </select>
+                                   </div>
                                 </div>
                                 <div class="col-md-6 mb-4">
-                                    <label class="form-label required" for="to_location">
-                                        {{__('transfer.to_location')}}
-                                    </label>
-                                    <div class="input-group flex-nowrap">
-                                        <select name="to_location" class="form-select form-select-sm fw-bold "
-                                                data-kt-select2="true" data-hide-search="false"
-                                                data-placeholder="{{__('transfer.placeholder_to_location')}}" data-allow-clear="true"
-                                                data-kt-user-table-filter="role" data-hide-search="true">
-                                            <option></option>
-                                            @foreach ($locations as $location)
-                                                <option value="{{$location->id}}">{{$location->name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                        <label class="form-label required" for="to_location">
+                                            {{__('transfer.to_location')}}
+                                        </label>
+                                          <div class="fv-row">
+                                              <select name="to_location" class="form-select form-select-sm fw-bold "
+                                                      data-kt-select2="true" data-hide-search="false"
+                                                      data-placeholder="{{__('transfer.placeholder_to_location')}}" data-allow-clear="true"
+                                                      data-hide-search="true">
+                                                  <option></option>
+                                                  @foreach ($locations as $location)
+                                                      <option value="{{$location->id}}">{{$location->name}}</option>
+                                                  @endforeach
+                                              </select>
+                                          </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <!--begin::Input group-->
                                 <div class="col-md-3 mb-4">
-                                    <label class="form-label required">{{__('transfer.transfer_person')}}</label>
-                                    <div class="input-group flex-nowrap">
-                                        <div class="input-group-text">
-                                            <i class="fa-solid fa-user text-muted"></i>
-                                        </div>
-                                        <select name="transfered_person"
-                                                class="form-select form-select-sm  fw-bold rounded-start-0"
-                                                data-kt-select2="true" data-hide-search="false"
-                                                data-placeholder="{{__('transfer.placeholder_transfer_person')}}" data-allow-clear="true"
-                                                data-kt-user-table-filter="role" data-hide-search="true">
-                                            <option></option>
-                                            @foreach($transfer_persons as $transfer_person)
-                                                <option
-                                                    value="{{$transfer_person->id}}">{{$transfer_person->username}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                   <label class="form-label required">{{__('transfer.transfer_person')}}</label>
+                                      <div class="fv-row">
+                                          <select name="transfered_person"
+                                                  class="form-select form-select-sm  fw-bold"
+                                                  data-kt-select2="true" data-hide-search="false"
+                                                  data-placeholder="{{__('transfer.placeholder_transfer_person')}}" data-allow-clear="true"
+                                                  data-hide-search="true">
+                                              <option></option>
+                                              @foreach($transfer_persons as $transfer_person)
+                                                  <option
+                                                      value="{{$transfer_person->id}}">{{$transfer_person->username}}</option>
+                                              @endforeach
+                                          </select>
+                                      </div>
                                 </div>
                                 <!--end::Input group-->
                                 <!--begin::Input group-->
                                 <div class="col-md-3 mb-4">
-                                    <label class="form-label required">{{__('transfer.receive_person')}}</label>
-                                    <div class="input-group flex-nowrap">
-                                        <div class="input-group-text">
-                                            <i class="fa-solid fa-user text-muted"></i>
-                                        </div>
-                                        <select name="received_person"
-                                                class="form-select form-select-sm fw-bold rounded-start-0"
-                                                data-kt-select2="true" data-hide-search="false"
-                                                data-placeholder="{{__('transfer.placeholder_receive_person')}}" data-allow-clear="true"
-                                                data-kt-user-table-filter="role" data-hide-search="true">
-                                            <option></option>
-                                            @foreach($transfer_persons as $transfer_person)
-                                                <option
-                                                    value="{{$transfer_person->id}}">{{$transfer_person->username}}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="fv-row">
+                                        <label class="form-label required">{{__('transfer.receive_person')}}</label>
+                                            <div class="fv-row">
+                                                <select name="received_person"
+                                                        class="form-select form-select-sm fw-bold"
+                                                        data-kt-select2="true" data-hide-search="false"
+                                                        data-placeholder="{{__('transfer.placeholder_receive_person')}}" data-allow-clear="true"
+                                                        data-hide-search="true">
+                                                    <option></option>
+                                                    @foreach($transfer_persons as $transfer_person)
+                                                        <option
+                                                            value="{{$transfer_person->id}}">{{$transfer_person->username}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                     </div>
                                 </div>
                                 <!--end::Input group-->
                                 <div class="col-md-3 mb-4">
                                     <label for="transfered_at" class="form-label required">{{__('transfer.date')}}</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text" data-td-target="#kt_td_picker_basic"
-                                              data-td-toggle="datetimepicker">
-                                            <i class="fas fa-calendar"></i>
-                                        </span>
+                                    <div class="fv-row">
                                         <input name="transfered_at" class="form-control form-control-sm"
                                                id="kt_datepicker_2"/>
                                     </div>
@@ -135,11 +127,11 @@
                                     <label class="form-label required" for="status">
                                         {{__('transfer.status')}}
                                     </label>
-                                    <div class="input-group flex-nowrap">
+                                    <div class="fv-row">
                                         <select name="status" class="form-select form-select-sm fw-bold "
                                                 data-kt-select2="true"
                                                 data-hide-search="true" data-placeholder="{{__('transfer.status')}}"
-                                                data-allow-clear="true" data-kt-user-table-filter="role"
+                                                data-allow-clear="true"
                                                 data-hide-search="true">
                                             <option></option>
                                             <option value="prepared" selected>Prepared</option>
@@ -167,6 +159,11 @@
                     <!--end::General options-->
                     <div class="card">
                         <div class="card-body">
+                            @error('transfer_details')
+                            <div class="alert-danger alert">
+                                {{$errors->first('transfer_details')}}
+                            </div>
+                            @enderror
                             <div class="row align-items-center mb-8">
 
                                 <div class="col-12">
@@ -272,7 +269,7 @@
                                     </thead>
                                     <tbody class="fw-semibold text-gray-600">
                                     <tr class="dataTables_empty text-center">
-                                        <td colspan="8 ">There is no data to show</td>
+                                        <td colspan="8">There is no data to show</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -281,7 +278,15 @@
                     </div>
 
                     <div class="col-12 text-center mt-2 mb-5">
-                        <button type="submit" class="btn btn-primary btn-lg save_btn">{{__('transfer.save')}}</button>
+
+                        <button id="transfer_form_save_btn" type="submit" class="btn btn-primary">
+                            <span class="indicator-label">
+                                {{__('transfer.save')}}
+                            </span>
+                                                <span class="indicator-progress">
+                                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </button>
                     </div>
                 </div>
                 <!--end::Main column-->
@@ -293,6 +298,8 @@
 @endsection
 
 @push('scripts')
+    <script src="{{asset('assets/plugins/global/plugins.bundle.js')}}"></script>
+    <script src="{{asset('customJs/stock/validation/transfer_add.js')}}"></script>
     <script>
         //Begin:  initialize transfer date
         $("#kt_datepicker_2").flatpickr({

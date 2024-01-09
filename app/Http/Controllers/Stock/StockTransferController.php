@@ -29,6 +29,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use function PHPUnit\Framework\isEmpty;
 use function Symfony\Component\String\b;
@@ -88,7 +89,6 @@ class StockTransferController extends Controller
      */
     public function store(StoreStockTransferRequest $request)
     {
-
         DB::transaction(function () use ($request) {
             $settings = businessSettings::all()->first();
             $transfer_details = $request->transfer_details;

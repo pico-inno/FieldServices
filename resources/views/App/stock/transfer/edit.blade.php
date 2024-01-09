@@ -32,7 +32,7 @@
     <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
         <!--begin::Container-->
         <div class="container-xxl" id="kt_content_container">
-            <form action="{{route('stock-transfer.update', $stockTransfer->id)}}" method="POST">
+            <form action="{{route('stock-transfer.update', $stockTransfer->id)}}" method="POST" id="stock_transfer_form">
                 @csrf
                 @method('put')
                 <!--begin::Main column-->
@@ -63,7 +63,7 @@
                                     <label class="form-label required" for="">
                                         {{__('transfer.from_location')}}
                                     </label>
-                                    <div class="input-group flex-nowrap">
+                                    <div class="fv-row">
                                         <select {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} name="from_location" id="business_location_id"
                                                 class="form-select form-select-sm fw-bold "
                                                 data-kt-select2="true" data-hide-search="false"
@@ -84,7 +84,7 @@
                                     <label class="form-label required" for="">
                                         {{__('transfer.to_location')}}
                                     </label>
-                                    <div class="input-group flex-nowrap">
+                                    <div class="fv-row">
                                         <select {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} name="to_location" class="form-select form-select-sm fw-bold "
                                                 data-kt-select2="true" data-hide-search="false"
                                                 data-placeholder="{{__('transfer.placeholder_to_location')}}" data-allow-clear="true"
@@ -105,10 +105,7 @@
                                 <!--begin::Input group-->
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label required">{{__('transfer.transfer_person')}}</label>
-                                    <div class="input-group flex-nowrap">
-                                        <div class="input-group-text">
-                                            <i class="fa-solid fa-user text-muted"></i>
-                                        </div>
+                                    <div class="fv-row">
                                         <select {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} name="transfered_person" class="form-select form-select-sm fw-bold rounded-start-0"
                                                 data-kt-select2="true" data-hide-search="false"
                                                 data-placeholder="{{__('transfer.placeholder_transfer_person')}}" data-allow-clear="true"
@@ -128,10 +125,7 @@
                                 <!--begin::Input group-->
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label required">{{__('transfer.receive_person')}}</label>
-                                    <div class="input-group flex-nowrap">
-                                        <div class="input-group-text">
-                                            <i class="fa-solid fa-user text-muted"></i>
-                                        </div>
+                                    <div class="fv-row">
                                         <select {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} name="received_person" class="form-select form-select-sm fw-bold rounded-start-0"
                                                 data-kt-select2="true" data-hide-search="false"
                                                 data-placeholder="{{__('transfer.placeholder_receive_person')}}" data-allow-clear="true"
@@ -149,11 +143,7 @@
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label for="" class="form-label required">{{__('transfer.date')}}</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text" data-td-target="#kt_td_picker_basic"
-                                              data-td-toggle="datetimepicker">
-                                            <i class="fas fa-calendar"></i>
-                                        </span>
+                                    <div class="fv-row">
                                         <input {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} class="form-control form-control-sm" name="transfered_at" placeholder="Pick a date"
                                                data-td-toggle="datetimepicker" id="kt_datepicker_1"
                                                value="{{date('Y-m-d')}}"/>
@@ -164,7 +154,7 @@
                                     <label class="form-label required" for="status">
                                         {{__('transfer.status')}}
                                     </label>
-                                    <div class="input-group flex-nowrap">
+                                    <div class="fv-row">
                                         <select name="status" class="form-select form-select-sm fw-bold " data-kt-select2="true"
                                                 data-hide-search="true" data-placeholder="Status"
                                                 data-allow-clear="true" data-kt-user-table-filter="role"
@@ -393,7 +383,15 @@
                     </div>
 
                     <div class="col-12 text-center mt-2 mb-5">
-                        <button type="submit" class="btn update_btn btn-primary btn-lg save_btn">{{__('transfer.update')}}</button>
+                        <button id="transfer_form_save_btn" type="submit" class="btn btn-primary">
+                            <span class="indicator-label">
+                              {{__('transfer.update')}}
+                            </span>
+                            <span class="indicator-progress">
+                                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </button>
+{{--                        <button type="submit" class="btn update_btn btn-primary btn-lg save_btn"></button>--}}
                     </div>
                 </div>
                 <!--end::Main column-->
@@ -405,6 +403,8 @@
 @endsection
 
 @push('scripts')
+    <script src="{{asset('assets/plugins/global/plugins.bundle.js')}}"></script>
+    <script src="{{asset('customJs/stock/validation/transfer_add.js')}}"></script>
     <script>
         const date = new Date();
 

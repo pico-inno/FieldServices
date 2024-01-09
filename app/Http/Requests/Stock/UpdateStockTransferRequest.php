@@ -22,7 +22,14 @@ class UpdateStockTransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'transfer_details' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'transfer_details.required' => 'At least one transfer product is required to complete transfer transaction!'
         ];
     }
 }
