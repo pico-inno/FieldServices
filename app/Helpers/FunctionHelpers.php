@@ -731,3 +731,16 @@ function getProductNameInfos($varId){
         'variation_name'=>arr($variation['variation_template_value'],['name'])
     ];
 }
+function mnumber($number)
+{
+    if ($number >= 10000000000) {
+        return fprice(round($number / 1000000000, 1)) . 'B';
+    } elseif ($number >= 100000000) {
+        return fprice(round($number / 1000000, 1)) . 'M';
+    } elseif ($number >= 1000000) {
+        return fprice(round($number / 1000, 1)) . 'K';
+    } else {
+        return fprice($number);
+    }
+}
+

@@ -4,6 +4,48 @@
 @section('styles')
 {{-- css file for this page --}}
 <style>
+
+    /* <div class="row col-lg-7 align-self-stretch mb-3 mb-md-10 h-200px">
+        <div class="col-6">
+            <div class="card py-2 px-5  h-95px">
+                <div class=" mt-5  fw-bold">
+                    <div class=" fs-7 fw-semibold me-4 text-primary">Total Credit :</div>
+                    <p class="fs-2">{{mnumber($account->current_balance)}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card py-2 px-5  h-95px">
+                <div class=" mt-5  fw-bold">
+                    <div class=" fs-7 fw-semibold me-4 text-primary">Total Credit :</div>
+                    <p class="fs-2">{{mnumber($account->current_balance)}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card py-2 px-5  h-95px">
+                <div class=" mt-5  fw-bold">
+                    <div class=" fs-7 fw-semibold me-4 text-primary">Total Credit :</div>
+                    <p class="fs-2">{{mnumber($account->current_balance)}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card py-2 px-5  h-95px">
+                <div class=" mt-5  fw-bold">
+                    <div class=" fs-7 fw-semibold me-4 text-primary">Total Credit :</div>
+                    <p class="fs-2">{{mnumber($account->current_balance)}}</p>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div> */
+
+.wallet{
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1000' height='400' preserveAspectRatio='none' viewBox='0 0 1000 400'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1514%26quot%3b)' fill='none'%3e%3crect width='1000' height='400' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1515%26quot%3b)'%3e%3c/rect%3e%3cpath d='M1000 0L501.35 0L1000 55.01z' fill='rgba(255%2c 255%2c 255%2c .1)'%3e%3c/path%3e%3cpath d='M501.35 0L1000 55.01L1000 189.54L358.95000000000005 0z' fill='rgba(255%2c 255%2c 255%2c .075)'%3e%3c/path%3e%3cpath d='M358.95000000000005 0L1000 189.54L1000 282.14L159.37000000000003 0z' fill='rgba(255%2c 255%2c 255%2c .05)'%3e%3c/path%3e%3cpath d='M159.37 0L1000 282.14L1000 302.81L74.7 0z' fill='rgba(255%2c 255%2c 255%2c .025)'%3e%3c/path%3e%3cpath d='M0 400L64.11 400L0 256.78999999999996z' fill='rgba(0%2c 0%2c 0%2c .1)'%3e%3c/path%3e%3cpath d='M0 256.78999999999996L64.11 400L462.43 400L0 164.37999999999997z' fill='rgba(0%2c 0%2c 0%2c .075)'%3e%3c/path%3e%3cpath d='M0 164.38L462.43 400L769.84 400L0 158.04999999999998z' fill='rgba(0%2c 0%2c 0%2c .05)'%3e%3c/path%3e%3cpath d='M0 158.04999999999998L769.84 400L908.8100000000001 400L0 145.79z' fill='rgba(0%2c 0%2c 0%2c .025)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1514'%3e%3crect width='1000' height='400' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='85%25' y1='137.5%25' x2='15%25' y2='-37.5%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1515'%3e%3cstop stop-color='rgba(14%2c 42%2c 71%2c 1)' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(0%2c 158%2c 247%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+}
     .loading{
         left: 50%;
         top: 40%;
@@ -18,10 +60,6 @@
     }
     tr td:first-child{
     text-align: start;
-}
-.wallet{
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1000' height='400' preserveAspectRatio='none' viewBox='0 0 1000 400'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1514%26quot%3b)' fill='none'%3e%3crect width='1000' height='400' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1515%26quot%3b)'%3e%3c/rect%3e%3cpath d='M1000 0L501.35 0L1000 55.01z' fill='rgba(255%2c 255%2c 255%2c .1)'%3e%3c/path%3e%3cpath d='M501.35 0L1000 55.01L1000 189.54L358.95000000000005 0z' fill='rgba(255%2c 255%2c 255%2c .075)'%3e%3c/path%3e%3cpath d='M358.95000000000005 0L1000 189.54L1000 282.14L159.37000000000003 0z' fill='rgba(255%2c 255%2c 255%2c .05)'%3e%3c/path%3e%3cpath d='M159.37 0L1000 282.14L1000 302.81L74.7 0z' fill='rgba(255%2c 255%2c 255%2c .025)'%3e%3c/path%3e%3cpath d='M0 400L64.11 400L0 256.78999999999996z' fill='rgba(0%2c 0%2c 0%2c .1)'%3e%3c/path%3e%3cpath d='M0 256.78999999999996L64.11 400L462.43 400L0 164.37999999999997z' fill='rgba(0%2c 0%2c 0%2c .075)'%3e%3c/path%3e%3cpath d='M0 164.38L462.43 400L769.84 400L0 158.04999999999998z' fill='rgba(0%2c 0%2c 0%2c .05)'%3e%3c/path%3e%3cpath d='M0 158.04999999999998L769.84 400L908.8100000000001 400L0 145.79z' fill='rgba(0%2c 0%2c 0%2c .025)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1514'%3e%3crect width='1000' height='400' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='85%25' y1='137.5%25' x2='15%25' y2='-37.5%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1515'%3e%3cstop stop-color='rgba(14%2c 42%2c 71%2c 1)' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(0%2c 158%2c 247%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
-    /* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1000' height='400' preserveAspectRatio='none' viewBox='0 0 600 300'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1036%26quot%3b)' fill='none'%3e%3crect width='600' height='300' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1037%26quot%3b)'%3e%3c/rect%3e%3cpath d='M600 0L573.4 0L600 81.1z' fill='rgba(255%2c 255%2c 255%2c .1)'%3e%3c/path%3e%3cpath d='M573.4 0L600 81.1L600 129.1L256.96 0z' fill='rgba(255%2c 255%2c 255%2c .075)'%3e%3c/path%3e%3cpath d='M256.96 0L600 129.1L600 229.92L251.39 0z' fill='rgba(255%2c 255%2c 255%2c .05)'%3e%3c/path%3e%3cpath d='M251.39 0L600 229.92L600 278.90999999999997L126.02999999999999 0z' fill='rgba(255%2c 255%2c 255%2c .025)'%3e%3c/path%3e%3cpath d='M0 300L245.81 300L0 205.22z' fill='rgba(0%2c 0%2c 0%2c .1)'%3e%3c/path%3e%3cpath d='M0 205.22L245.81 300L321.89 300L0 99.42999999999999z' fill='rgba(0%2c 0%2c 0%2c .075)'%3e%3c/path%3e%3cpath d='M0 99.43L321.89 300L352.95 300L0 72.32000000000001z' fill='rgba(0%2c 0%2c 0%2c .05)'%3e%3c/path%3e%3cpath d='M0 72.32L352.95 300L440.91999999999996 300L0 32.13999999999999z' fill='rgba(0%2c 0%2c 0%2c .025)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1036'%3e%3crect width='600' height='300' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='100%25' y1='50%25' x2='0%25' y2='50%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1037'%3e%3cstop stop-color='%230e2a47' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(0%2c 158%2c 247%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e"); */
 }
 </style>
 @endsection
@@ -47,25 +85,25 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::container-->
     <div class="container-xxl" id="kt_content_container">
-        <div class="row align-items-stretch align-self-stretch mb-10">
-            <div class="col-12 col-lg-5">
-               <div class="card py-2 px-5 bg-primary wallet">
+        <div class="row align-items-stretch align-self-stretch ">
+            <div class="col-12 col-lg-5 mb-3 mb-md-10 h-200px">
+               <div class="card py-2 px-5 bg-primary wallet h-100">
                     <span class="text-center fw-bold mt-3 text-white">
                         <i class="las la-wallet text-white fs-2 me-2"></i>
                         {{$account->name}}
                     </span>
-                    <div class="fs-2hx mt-5  fw-bold text-white">
+                    <div class=" mt-5  fw-bold text-white">
                          <div class=" fs-7 fw-semibold me-4">Balance :</div>
-                         {{price($account->current_balance,$account->currency->id)}}
+                         <p class="fs-2x">{{price($account->current_balance,$account->currency->id)}}</p>
                     </div>
-                    <div class="action_btn  mt-10 text-start mb-5">
+                    <div class="action_btn  mt-4 text-start mb-5">
                         <button class="btn btn-light btn-sm px-4 py-2 fs-8 mt-2" id="transfer" data-href="{{route('paymentTransaction.transfer',$account->id)}}" ><i class="fa-solid fa-right-left fs-6 me-1 "></i> Transfer </button>
                         <button class="btn btn-light btn-sm px-4 py-2 fs-8 mt-2" id="withdrawl" data-href="{{route('paymentTransaction.withdrawl',$account->id)}}"><i class="fa-solid fa-upload fs-6 me-1"></i> WithDrawl </button>
                         <button class="btn btn-light btn-sm px-4 py-2 fs-8 mt-2" id="deposit" data-href="{{route('paymentTransaction.deposit',$account->id)}}"><i class="fa-solid fa-download fs-6 me-1"></i> Deposit </button>
                     </div>
                </div>
             </div>
-            <div class="col-12  col-lg-7 align-self-stretch">
+            <div class="col-12 col-lg-7  align-self-stretch mb-3 mb-md-10 h-200px">
                 <div class="card h-100">
                     <div class="card-body pt-9 pb-0">
                         <!--begin::Details-->
@@ -225,10 +263,11 @@
                             <th class="text-end pe-3 min-w-100px">Pay Date</th>
                             <th class="text-end pe-3 min-w-100px">Transaction Type</th>
                             <th class="text-end pe-3 min-w-100px">Transaction Reference No</th>
-                            <th class="text-end pe-3 min-w-100px">Paymet Method</th>
-                            <th class="text-end pe-3 min-w-100px">Paymet Account</th>
-                            <th class="text-end pe-3 min-w-100px">Paymet Type</th>
-                            <th class="text-end pe-3 min-w-100px">Paymet Amount</th>
+                            <th class="text-end pe-3 min-w-100px">Payment Method</th>
+                            <th class="text-end pe-3 min-w-100px">Payment Account</th>
+                            <th class="text-end pe-3 min-w-100px">Payment Type</th>
+                            <th class="text-end pe-3 min-w-100px text-primary">Debit</th>
+                            <th class="text-end pe-3 min-w-100px text-danger">Credit</th>
                             <th class="text-end pe-3 min-w-100px">note</th>
                         </tr>
                         <!--end::Table row-->
@@ -362,9 +401,13 @@ var KTCustomersList = function () {
                     render,
                 },
                 {
-                    name: 'payment_amount',
-                    data: 'payment_amount',
-                    render,
+                    name: 'debit',
+                    data: 'debit',
+                },
+
+                {
+                    name: 'credit',
+                    data: 'credit',
                 },
                 {
                     name:'note',

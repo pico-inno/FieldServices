@@ -27,8 +27,7 @@ class paymentsTransactionsController extends Controller
     }
     public function list($id){
         $transactions=paymentsTransactions::where('payment_account_id',$id)->OrderBy('id','desc')
-        ->with('currency','payment_account')
-        ->get();
+        ->with('currency','payment_account');
         return DataTables::of($transactions)
                 ->editColumn('payment_type',function($transaction){
                     $html='';
@@ -53,6 +52,20 @@ class paymentsTransactionsController extends Controller
                     $formattedDate = $dateTime->format("m-d-Y " );
                     $formattedTime = $dateTime->format(" h:i A " );
                     return $formattedDate.'<br>'.'('.$formattedTime.')';
+                })
+                ->addColumn('debit',function($transaction) {
+                    if ($transaction->payment_type=="debit") {
+                        return price($transaction->payment_amount, $transaction->currency_id);
+                    }else{
+                        return 0;
+                    }
+                })
+                ->addColumn('credit',function($transaction) {
+                    if ($transaction->payment_type=="credit") {
+                        return price($transaction->payment_amount, $transaction->currency_id);
+                    }else{
+                        return 0;
+                    }
                 })
                 ->editColumn('payment_amount',function($transaction){
                     return price($transaction->payment_amount,$transaction->currency_id);
