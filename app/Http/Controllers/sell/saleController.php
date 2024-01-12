@@ -1392,9 +1392,11 @@ class saleController extends Controller
             $sale_detail_qty = UomHelper::getReferenceUomInfoByCurrentUnitQty($lotSerial->uom_quantity, $lotSerial->uom_id)['qtyByReferenceUom'];
 
             $currentStock = CurrentStockBalance::where('id', $lotSerial->current_stock_balance_id);
-            $current_stock_qty = $currentStock->get()->first()->current_quantity;
-            $result = $current_stock_qty + $sale_detail_qty;
-            $currentStock->update(['current_quantity' => $result]);
+            if($currentStock->exists()){
+                $current_stock_qty = $currentStock->get()->first()->current_quantity;
+                $result = $current_stock_qty + $sale_detail_qty;
+                $currentStock->update(['current_quantity' => $result]);
+            }
         }
     }
 
