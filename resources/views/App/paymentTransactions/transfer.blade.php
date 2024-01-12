@@ -56,7 +56,7 @@
                     <div class="col-12">
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Exchange Rate </label>
-                            <input type="text" class="form-control form-control-sm input_number" id="exchange_rate">
+                            <input type="text" class="form-control form-control-sm input_number" name="rate" id="exchange_rate">
                         </div>
                     </div>
                 </div>
@@ -81,10 +81,21 @@
         </form>
     </div>
 </div>
-<script src="{{asset('modules/exchangerate/js/exchangeRate.js')}}"></script>
+
+@if (hasModule('ExchangeRate') && isEnableModule('ExchangeRate'))
+    @php
+    $hasModule= true;
+    @endphp
+    <script src="{{asset('modules/exchangerate/js/exchangeRate.js')}}"></script>
+@else
+ @php
+    $hasModule= false;
+ @endphp
+@endif
 <script>
     numberOnly();
     var exchangeRateValue=0;
+    var hasModule=@json($hasModule ?? false);
     $('[data-kt-select2="true"]').select2();
     $('[data-td-toggle="datetimepicker"]').flatpickr({
         enableTime: true,
@@ -101,14 +112,20 @@
                 let rx_id=$('#rx_account').val();
                 $('#transferSubmit').text('Loading....')
                 $('#transferSubmit').prop('disabled', true);
-                await getExchangeRate(ftxCurreyId,rx_id).then(function(result) {
-                    console.log('Exchange Rate:', result);
-                    exchangeRateValue=result.rate;
+                if(hasModule){
+                    await getExchangeRate(ftxCurreyId,rx_id).then(function(result) {
+                        console.log('Exchange Rate:', result);
+                        exchangeRateValue=result.rate;
+                        $('#exchange_rate').val(exchangeRateValue);
+                    })
+                    .catch(function(error) {
+                        console.error('Error fetching exchange rate:', error);
+                    });
+                }else{
+                    exchangeRateValue=1;
                     $('#exchange_rate').val(exchangeRateValue);
-                })
-                .catch(function(error) {
-                    console.error('Error fetching exchange rate:', error);
-                });
+                }
+
                 $('#transferSubmit').text('Save')
                 $('#transferSubmit').prop('disabled', false);
                 rxAmountCal();

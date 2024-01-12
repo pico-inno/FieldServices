@@ -266,6 +266,7 @@
                             <th class="text-end pe-3 min-w-100px">Payment Method</th>
                             <th class="text-end pe-3 min-w-100px">Payment Account</th>
                             <th class="text-end pe-3 min-w-100px">Payment Type</th>
+                            <th class="text-end pe-3 min-w-100px">Rate</th>
                             <th class="text-end pe-3 min-w-100px text-primary">Debit</th>
                             <th class="text-end pe-3 min-w-100px text-danger">Credit</th>
                             <th class="text-end pe-3 min-w-100px">note</th>
@@ -399,6 +400,10 @@ var KTCustomersList = function () {
                     name: 'payment_type',
                     data: 'payment_type',
                     render,
+                },
+                {
+                    name: 'exchange_rate',
+                    data: 'exchange_rate',
                 },
                 {
                     name: 'debit',

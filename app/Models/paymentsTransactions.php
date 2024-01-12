@@ -15,6 +15,7 @@ public $timestamps=false;
         'payment_voucher_no',
         'payment_date',
         'transaction_type',
+        'exchange_rate',
         'transaction_id',
         'transaction_ref_no',
         'payment_method',

@@ -79,8 +79,7 @@ class paymentsTransactionsController extends Controller
 
     public function withdrawl($id){
         $account=paymentAccounts::where('id',$id)->first();
-        $currencies=Currencies::select('id','symbol')->get();
-        return view('App.paymentTransactions.withdrawl',compact('account', 'currencies'));
+        return view('App.paymentTransactions.withdrawl',compact('account'));
     }
 
     public function deposit($id){
@@ -89,15 +88,13 @@ class paymentsTransactionsController extends Controller
     }
 
 
-    public function storeWithdrawl($id,Request $request){
+    public function storeWithdrawl($id, Request $request)
+    {
         try {
             DB::beginTransaction();
             $withdrawlAmount = $request->withdrawl_amount;
-            $account = paymentAccounts::where('id', $id)->first();
-            if($request->withdrawl_currency_id != $account->currency_id){
-                $withdrawlAmount = $request->withdrawl_amount * $request->rate;
-            };
 
+            $account = paymentAccounts::where('id', $id)->first();
             $currentBalance = $account->current_balance;
             Validator::make([
                 'withdrawlAmount' => $withdrawlAmount,
@@ -120,7 +117,6 @@ class paymentsTransactionsController extends Controller
             DB::commit();
             return back()->with(['success' => 'Successfully withdrawls']);
         } catch (\Throwable $th) {
-            dd($th);
             DB::commit();
             return back()->with(['error' => 'Something Wrong']);
         }
@@ -171,7 +167,8 @@ class paymentsTransactionsController extends Controller
             $tx_amount = $request->tx_amount;
             $rx_amount = $request->rx_amount;
             $payment_date = $request->payment_date;
-            $this->transfer($paymentAccountId, $rx_account_id, $tx_amount, $rx_amount, 'transfer', $payment_date);
+            $rate=$request->rate  ?? 1;
+            $this->transfer($paymentAccountId, $rx_account_id, $tx_amount, $rx_amount,$rate,'transfer', $payment_date);
             DB::commit();
             return back()->with(['success' => 'Successfully transfer']);
         } catch (\Throwable $th) {
@@ -184,6 +181,7 @@ class paymentsTransactionsController extends Controller
             $rx_account_id,
             $tx_amount,
             $rx_amount,
+            $rate=1,
             $status='transfer',
             $payment_date=null,
     )
@@ -208,6 +206,7 @@ class paymentsTransactionsController extends Controller
                 'transaction_type' => $status,
                 'payment_amount' => $tx_amount,
                 'currency_id' => $tx_acc->currency_id,
+                'exchange_rate'=>$rate,
             ]);
 
 
