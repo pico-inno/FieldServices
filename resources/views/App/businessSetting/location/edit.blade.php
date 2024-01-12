@@ -194,6 +194,7 @@
                                 </x-location-input>
                                 <x-location-input label="Invoice Layout:">
                                     <x-forms.nob-select placeholder="Invoice Layout" name="invoice_layout" placeholder="Please Select Layout" data-placeholder="Please Select Invoice Layout">
+                                        <option disabled selected>Select Layout</option>
                                         @foreach ($InvoiceTemplates as $layout)
                                         <option @if($bl->invoice_layout === $layout->id) selected @endif value="{{ $layout->id }}">{{ $layout->name }}</option>
                                         @endforeach
