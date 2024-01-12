@@ -227,3 +227,10 @@
     </div>
 </body>
 </html>
+<<<<<<< Updated upstream
+=======
+
+@php
+    // die;
+@endphp
+>>>>>>> Stashed changes

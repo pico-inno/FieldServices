@@ -14,7 +14,7 @@
 
             <div class="modal-body">
 
-                <div class="row mb-6">
+                <div class="row mb-3">
                     <div class="col-12">
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Transfer Amount </label>
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mb-6">
+                <div class="row mb-3">
                     <div class="col-12">
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Transfer at </label>
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mb-6">
+                <div class="row mb-3">
                     <div class="col-12">
                         <div class="fv-row mb-7">
                             <label class="required fs-6 fw-semibold form-label mb-1 required">Transfer To </label>
@@ -48,6 +48,15 @@
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="fv-row mb-7">
+                            <label class="required fs-6 fw-semibold form-label mb-1 required">Exchange Rate </label>
+                            <input type="text" class="form-control form-control-sm input_number" id="exchange_rate">
                         </div>
                     </div>
                 </div>
@@ -72,10 +81,10 @@
         </form>
     </div>
 </div>
-
-
+<script src="{{asset('modules/exchangerate/js/exchangeRate.js')}}"></script>
 <script>
     numberOnly();
+    var exchangeRateValue=0;
     $('[data-kt-select2="true"]').select2();
     $('[data-td-toggle="datetimepicker"]').flatpickr({
         enableTime: true,
@@ -83,61 +92,89 @@
     });
     var accounts=@json($accounts);
     var currencyDp={{$currencyDp}};
+    var ftxCurreyId={{$current_acc->currency->id ?? 0}};
     (
         function () {
             let exchangeRates=@json($current_acc).currency.exchange_rate;
-            let transferCurrencyRate=exchangeRates ? exchangeRates.rate :1;
 
-            $(document).on('change','#rx_account',function(){
-                rxAmountCal(transferCurrencyRate);
+            $(document).on('change','#rx_account',async function(){
+                let rx_id=$('#rx_account').val();
+                $('#transferSubmit').text('Loading....')
+                $('#transferSubmit').prop('disabled', true);
+                await getExchangeRate(ftxCurreyId,rx_id).then(function(result) {
+                    console.log('Exchange Rate:', result);
+                    exchangeRateValue=result.rate;
+                    $('#exchange_rate').val(exchangeRateValue);
+                })
+                .catch(function(error) {
+                    console.error('Error fetching exchange rate:', error);
+                });
+                $('#transferSubmit').text('Save')
+                $('#transferSubmit').prop('disabled', false);
+                rxAmountCal();
             })
-            $(document).on('change','#transferAmount',function(){
-                rxAmountCal(transferCurrencyRate);
+            $(document).on('input','#transferAmount', function(){
+                rxAmountCal();
             })
-            $(document).on('change','#rx_amount',function(){
-                txAmountCal(transferCurrencyRate);
+            $(document).on('input','#exchange_rate', function(){
+                rxAmountCal();
+            })
+            $(document).on('input','#rx_amount',function(){
+                txAmountCal();
             })
         }
 
     )();
-    function rxAmountCal(transferCurrencyRate){
-        let transferAmount=$('#transferAmount').val() ?? 0;
+    function rxAmountCal(){
         let rx_id=$('#rx_account').val();
         let rx_account=accounts.filter(a=>{
             return a.id==rx_id
         })[0];
         if(rx_account){
+            let transferAmount=$('#transferAmount').val() ?? 0;
             let rx_currency=rx_account.currency;
-            let rx_exchangeRate=rx_currency.exchange_rate ?? 1;
+            let rx_exchangeRate=isNullOrNan($('#exchange_rate').val() ?? 0);
             $('#rx_currency_symbol').text(rx_currency.symbol);
-            let result=exchangeCurrency(transferAmount,transferCurrencyRate,rx_exchangeRate.rate);
+            let result=transferAmount*rx_exchangeRate;
             $('#rx_amount').val(result.toFixed(currencyDp));
         }
     }
-    function txAmountCal(transferCurrencyRate){
+    // function getExchangeRate(fromCurrencyId,toCurrencyId) {
+    //     return new Promise(function(resolve, reject) {
+    //         $.ajax({
+    //             url: `/exchange-rate/get/rate/${fromCurrencyId}/${toCurrencyId}`,
+    //             type: 'GET',
+    //             success: function(s) {
+    //                 $('#exchange_rate').val(s.rate);
+    //                 exchangeRateValue = s.rate;
+    //                 resolve(s);
+    //             },
+    //             error: function(error) {
+    //                 reject(error);
+    //             }
+    //         });
+    //     });
+    // }
+    function txAmountCal(){
         let rx_amount=$('#rx_amount').val();
-        let rx_id=$('#rx_account').val();
-        let rx_account=accounts.filter(a=>{
-            return a.id==rx_id
-        })[0];
-        if(rx_account && rx_amount){
-            let rx_currency=rx_account.currency;
-            let rx_exchangeRate=rx_currency.exchange_rate;
-            let result=exchangeCurrency(rx_amount,rx_exchangeRate.rate,transferCurrencyRate);
+        if(rx_amount){
+            let rx_exchangeRate=isNullOrNan($('#exchange_rate').val() ?? 0);
+            let result=rx_amount/rx_exchangeRate;
             $('#transferAmount').val(result.toFixed(currencyDp));
         }
     }
-    function exchangeCurrency(amount, fromCurrencyRate, toCurrencyRate) {
-            toCurrencyRate=toCurrencyRate ?? 1;
-            fromCurrencyRate=fromCurrencyRate ?? 1;
-            // Convert amount to reference currency (Dollar)
-            var inDollar = amount / fromCurrencyRate;
+    // function exchangeCurrency(amount, fromCurrencyRate, toCurrencyRate) {
 
-            // Convert amount from reference currency to target currency
-            var convertedAmount = inDollar * toCurrencyRate ?? 1;
+    //         toCurrencyRate=toCurrencyRate ?? 1;
+    //         fromCurrencyRate=fromCurrencyRate ?? 1;
+    //         // Convert amount to reference currency (Dollar)
+    //         var inDollar = amount / fromCurrencyRate;
 
-            return convertedAmount;
-        }
+    //         // Convert amount from reference currency to target currency
+    //         var convertedAmount = inDollar * toCurrencyRate ?? 1;
+
+    //         return convertedAmount;
+    //     }
 
 
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Contact\Contact;
 use App\Models\paymentAccounts;
 use App\Helpers\generatorHelpers;
+use App\Models\Currencies;
 use Illuminate\Support\Facades\DB;
 use App\Models\expenseTransactions;
 use App\Models\purchases\purchases;
@@ -78,7 +79,8 @@ class paymentsTransactionsController extends Controller
 
     public function withdrawl($id){
         $account=paymentAccounts::where('id',$id)->first();
-        return view('App.paymentTransactions.withdrawl',compact('account'));
+        $currencies=Currencies::select('id','symbol')->get();
+        return view('App.paymentTransactions.withdrawl',compact('account', 'currencies'));
     }
 
     public function deposit($id){
@@ -91,8 +93,11 @@ class paymentsTransactionsController extends Controller
         try {
             DB::beginTransaction();
             $withdrawlAmount = $request->withdrawl_amount;
-
             $account = paymentAccounts::where('id', $id)->first();
+            if($request->withdrawl_currency_id != $account->currency_id){
+                $withdrawlAmount = $request->withdrawl_amount * $request->rate;
+            };
+
             $currentBalance = $account->current_balance;
             Validator::make([
                 'withdrawlAmount' => $withdrawlAmount,
@@ -115,6 +120,7 @@ class paymentsTransactionsController extends Controller
             DB::commit();
             return back()->with(['success' => 'Successfully withdrawls']);
         } catch (\Throwable $th) {
+            dd($th);
             DB::commit();
             return back()->with(['error' => 'Something Wrong']);
         }
