@@ -95,6 +95,7 @@
 <script>
     numberOnly();
     var exchangeRateValue=0;
+
     var hasModule=@json($hasModule ?? false);
     $('[data-kt-select2="true"]').select2();
     $('[data-td-toggle="datetimepicker"]').flatpickr({
@@ -106,10 +107,14 @@
     var ftxCurreyId={{$current_acc->currency->id ?? 0}};
     (
         function () {
+            var rx_accounts=@json($accounts ?? []);
             let exchangeRates=@json($current_acc).currency.exchange_rate;
 
             $(document).on('change','#rx_account',async function(){
-                let rx_id=$('#rx_account').val();
+                let rx_acc_id=$(this).val();
+                console.log(rx_acc_id);
+                let rx_acc=rx_accounts.find((a)=>a.id == rx_acc_id);
+                let rx_id=rx_acc.currency_id;
                 $('#transferSubmit').text('Loading....')
                 $('#transferSubmit').prop('disabled', true);
                 if(hasModule){
