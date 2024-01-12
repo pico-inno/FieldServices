@@ -467,4 +467,20 @@ class StockAdjustmentController extends Controller
         return response()->json($results, 200);
     }
 
+    public function quickStoreAdjustment(Request $request, StockAdjustmentServices $stockAdjustmentServices)
+    {
+        try {
+            DB::beginTransaction();
+            $data = $stockAdjustmentServices->quickCreate($request);
+            DB::commit();
+            return response()->json([
+                'data' => $data,
+                'message' => 'Adjustment successfully created'
+            ], 201);
+        }catch (Exception $e){
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
 }

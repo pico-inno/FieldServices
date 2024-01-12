@@ -218,6 +218,9 @@ Route::resource('stock-adjustment', StockAdjustmentController::class)->except('d
 Route::delete('stock-adjustment/{id}/delete', [StockAdjustmentController::class, 'softDelete']);
 Route::get('/adjustment/tableData', [StockAdjustmentController::class, 'listData']);
 Route::get('adjustment/print/{id}/invoice', [StockAdjustmentController::class, 'invoicePrint'])->name('adjustment.print');
+
+Route::post('/stock-adjustment/quick-store', [StockAdjustmentController::class, 'quickStoreAdjustment']);
+
 //_End: Stock Adjustment
 
 //Route::get('/stock/{id}/units', [StockInController::class, 'getUnits']);
