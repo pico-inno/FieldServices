@@ -368,6 +368,8 @@ class saleController extends Controller
             $request['currency_id'] = $this->currency->id ?? null;
             $request['channel_type'] = 'pos';
             $request['channel_id'] = $request->pos_register_id;
+            $sold_at=$request['sold_at'] ?? now();
+            $request['sold_at']=$sold_at;
         } elseif ($request->type == 'campaign') {
             $request['channel_type'] = 'campaign';
             $request['channel_id'] = $request->channel_id;
@@ -384,7 +386,6 @@ class saleController extends Controller
             }
             $request['payment_status'] = $payment_status;
             $sale_data = $saleService->create($request);
-
             // dd($sale_data->toArray());
             if ($request->reservation_id) {
                 $request['sale_id'] = $sale_data->id;
@@ -436,7 +437,6 @@ class saleController extends Controller
                     }
                 }
             }
-
             DB::commit();
 
             // response
