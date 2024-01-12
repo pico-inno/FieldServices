@@ -85,7 +85,7 @@
                                         <option value="" selected disabled>Choose Paper Size</option>
 
                                         <option value="A4" @if($layout->layout ==="A4") selected @endif><b>Default (For -A4,A3,A5 and Legal)</option>
-                                        <option value="80mm" @if($layout->layout === "80mm") selected @endif><b>80mm</option>
+                                        <option value="80mm" @if($layout->layout === "80mm") selected @endif><b>Simple (For - 80mm , 4in,A5,A4,A3 and legal)</option>
                                     </select>
                                     @error('layout') <span class="text-danger">{{ $message }}</span>@enderror
                                 </div>
