@@ -299,7 +299,7 @@
         var datatable;
         var table
         console.log(sale_id, 'ssssssssssss')
-        var initCustomerList = function () {
+        var initLogsList = function () {
 
             // Init datatable --- more info on datatables: https://datatables.net/manual/
             datatable = $(table).DataTable({
@@ -363,7 +363,7 @@
                 if (!table) {
                     return;
                 }
-                initCustomerList()
+                initLogsList()
             }
         }
     }();

@@ -170,18 +170,10 @@ Route::controller(UserProfileController::class)->group(function () {
     Route::put('profile/settings_deactivate/{id}', 'deactivate')->name('profile.deactivate');
 });
 //_End: User Profile
-Route::get('logs', function (){
-    $logs = ActivityLog::where('created_by', Auth::id())
-        ->paginate();
 
-    foreach ($logs as $log){
-        $log->created_user = $log->created_user->username;
-    }
-
-    return $logs;
-});
 Route::controller(LogController::class)->prefix('logs')->group(function () {
-
+    Route::get('/', 'index')->name('index.logs');
+    Route::get('/all', 'activityLogsAll');
     Route::get('/current/all', 'currentActivityLogs');
     Route::get('/current/select/all/{id}', 'selectActivityLogs');
     Route::get('/sale-transactions/all/{sale_id}', 'saleTransactionActivityLogs');
