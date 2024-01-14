@@ -54,6 +54,21 @@ class ActivityLogger
         return $this;
     }
 
+    public function autoEvent()
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+
+        if (isset($trace[1]['function'])) {
+            $methodName = $trace[1]['function'];
+
+            if (in_array($methodName, ['store', 'update', 'destroy'])) {
+                $this->event($methodName);
+            }
+        }
+
+        return $this;
+    }
+
     public function save()
     {
         return ActivityLog::create([

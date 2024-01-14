@@ -30,4 +30,16 @@ class LogController extends Controller
 
         return $logs;
     }
+
+    public function saleTransactionActivityLogs($sale_id)
+    {
+        $logs = ActivityLog::where('log_name', 'sale-transaction')
+        ->where('properties->id', $sale_id)->get();
+
+        foreach ($logs as $log) {
+            $log->created_user = $log->created_user->username;
+        }
+
+        return $logs;
+    }
 }

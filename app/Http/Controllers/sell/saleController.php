@@ -438,7 +438,12 @@ class saleController extends Controller
             }
 
             DB::commit();
-
+            activity('sale-transaction')
+                ->log('New Sale creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties(['id' => $sale_data->id, 'status' => $sale_data->status])
+                ->save();
             // response
             if ($request->type == 'pos' || $request->type == "campaign") {
                 return response()->json([
@@ -472,6 +477,11 @@ class saleController extends Controller
                     'message' => 'Something wrong'
                 ], 500);
             } else {
+                activity('sale-transaction')
+                    ->log('New Sale creation has been fail')
+                    ->event('create')
+                    ->status('fail')
+                    ->save();
                 return back()->with(['warning' => 'Something Went Wrong While creating sale']);
             }
         }
@@ -902,6 +912,12 @@ class saleController extends Controller
 
 
             DB::commit();
+            activity('sale-transaction')
+                ->log('New Sale update has been success')
+                ->event('update')
+                ->status('success')
+                ->properties(['id'=> $sales->id, 'status' => $sales->status])
+                ->save();
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with(['warning' => 'Something Went Wrong While update sale voucher']);

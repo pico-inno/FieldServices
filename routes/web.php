@@ -184,6 +184,7 @@ Route::controller(LogController::class)->prefix('logs')->group(function () {
 
     Route::get('/current/all', 'currentActivityLogs');
     Route::get('/current/select/all/{id}', 'selectActivityLogs');
+    Route::get('/sale-transactions/all/{id}', 'saleTransactionActivityLogs');
 });
 //============================ End: User Management ============================================
 
