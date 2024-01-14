@@ -25,6 +25,13 @@ class UserProfileController extends Controller
         return view('App.userManagement.userProfile.index', ['current_user' => $current_user]);
     }
 
+    public function logs(){
+        $current_user_id = Auth::user()->id;
+        $current_user = BusinessUser::with('personal_info','role')->find($current_user_id);
+
+        return view('App.userManagement.userProfile.logs', ['current_user' => $current_user]);
+
+    }
     public function settings(){
         $current_user_id = Auth::user()->id;
         $current_user = BusinessUser::with('personal_info','role')->find($current_user_id);

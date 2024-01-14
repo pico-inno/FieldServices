@@ -32,6 +32,8 @@
     },
     "autoload": {
         "files": [
+            "app/Helpers/activity.php",
+            "app/Helpers/ActivityLogger.php",
             "app/Helpers/PermissionHelpers.php",
             "app/Helpers/PermissionCheckeHelpers.php",
             "app/Helpers/UomHelpers.php",

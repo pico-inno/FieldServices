@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\userManagement\users;
 
 use App\Actions\userManagement\UserAction;
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\BusinessUser;
 use App\Http\Requests\StoreBusinessUserRequest;
 use App\Http\Requests\UpdateBusinessUserRequest;

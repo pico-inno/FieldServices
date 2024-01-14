@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\LogController;
+use App\Models\ActivityLog;
 use App\Models\sale\sales;
 use App\Models\Manufacturer;
 
@@ -161,13 +163,28 @@ Route::resource('roles', RoleController::class);
 Route::controller(UserProfileController::class)->group(function () {
     Route::get('profile', 'index')->name('profile.index');
     Route::get('profile/settings', 'settings')->name('profile.settings');
+    Route::get('profile/logs', 'logs')->name('profile.logs');
     Route::put('profile/settings_info/{id}', 'update_info')->name('profile.info.update');
     Route::put('profile/settings_email/{id}', 'update_email')->name('profile.email.update');
     Route::put('profile/settings_password/{id}', 'update_password')->name('profile.password.update');
     Route::put('profile/settings_deactivate/{id}', 'deactivate')->name('profile.deactivate');
 });
 //_End: User Profile
+Route::get('logs', function (){
+    $logs = ActivityLog::where('created_by', Auth::id())
+        ->paginate();
 
+    foreach ($logs as $log){
+        $log->created_user = $log->created_user->username;
+    }
+
+    return $logs;
+});
+Route::controller(LogController::class)->prefix('logs')->group(function () {
+
+    Route::get('/current/all', 'currentActivityLogs');
+    Route::get('/current/select/all/{id}', 'selectActivityLogs');
+});
 //============================ End: User Management ============================================
 
 //============================ Being: Stock - In, Out, Transfer, Adjustment ===========================================

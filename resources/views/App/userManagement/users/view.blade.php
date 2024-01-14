@@ -810,118 +810,64 @@
                         <!--end:::Tab pane-->
                         <!--begin:::Tab pane-->
                         <div class="tab-pane fade" id="kt_user_view_overview_events_and_logs_tab" role="tabpanel">
-                            <!--begin::Card-->
+                            <!--begin::Login sessions-->
                             <div class="card pt-4 mb-6 mb-xl-9">
                                 <!--begin::Card header-->
-                                <div class="card-header border-0">
-                                    <!--begin::Card title-->
+                                <div class="card-header">
+                                    <!--begin::Heading-->
                                     <div class="card-title">
-                                        <h2>Logs</h2>
+                                        <h3>Account Activity</h3>
                                     </div>
-                                    <!--end::Card title-->
-                                    <!--begin::Card toolbar-->
+                                    <!--end::Heading-->
+                                    <!--begin::Toolbar-->
                                     <div class="card-toolbar">
-                                        <!--begin::Button-->
-                                        <button type="button" class="btn btn-sm btn-light-primary">
-                                            <!--begin::Svg Icon | path: icons/duotune/files/fil021.svg-->
-                                            <span class="svg-icon svg-icon-3">
-															<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-																<path opacity="0.3" d="M19 15C20.7 15 22 13.7 22 12C22 10.3 20.7 9 19 9C18.9 9 18.9 9 18.8 9C18.9 8.7 19 8.3 19 8C19 6.3 17.7 5 16 5C15.4 5 14.8 5.2 14.3 5.5C13.4 4 11.8 3 10 3C7.2 3 5 5.2 5 8C5 8.3 5 8.7 5.1 9H5C3.3 9 2 10.3 2 12C2 13.7 3.3 15 5 15H19Z" fill="currentColor" />
-																<path d="M13 17.4V12C13 11.4 12.6 11 12 11C11.4 11 11 11.4 11 12V17.4H13Z" fill="currentColor" />
-																<path opacity="0.3" d="M8 17.4H16L12.7 20.7C12.3 21.1 11.7 21.1 11.3 20.7L8 17.4Z" fill="currentColor" />
-															</svg>
-														</span>
-                                            <!--end::Svg Icon-->Download Report</button>
-                                        <!--end::Button-->
+                                        <div class="my-1 me-4">
+                                            <!--begin::Select-->
+                                            <select class="form-select form-select-sm form-select-solid w-125px" data-control="select2" data-placeholder="Select Hours" data-hide-search="true">
+                                                <option value="1" selected="selected">1 Hours</option>
+                                                <option value="2">6 Hours</option>
+                                                <option value="3">12 Hours</option>
+                                                <option value="4">24 Hours</option>
+                                            </select>
+                                            <!--end::Select-->
+                                        </div>
                                     </div>
-                                    <!--end::Card toolbar-->
+                                    <!--end::Toolbar-->
                                 </div>
                                 <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body py-0">
+                                <div class="card-body p-0">
                                     <!--begin::Table wrapper-->
                                     <div class="table-responsive">
                                         <!--begin::Table-->
-                                        <table class="table align-middle table-row-dashed fw-semibold text-gray-600 fs-6 gy-5" id="kt_table_users_logs">
-                                            <!--begin::Table body-->
-                                            <tbody>
-                                            <!--begin::Table row-->
+                                        <table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9" id="login_logs_table">
+                                            <!--begin::Thead-->
+                                            <thead class="border-gray-200 fs-5 fw-semibold bg-lighten">
                                             <tr>
-                                                <!--begin::Badge=-->
-                                                <td class="min-w-70px">
-                                                    <div class="badge badge-light-success">200 OK</div>
-                                                </td>
-                                                <!--end::Badge=-->
-                                                <!--begin::Status=-->
-                                                <td>POST /v1/invoices/in_4763_2156/payment</td>
-                                                <!--end::Status=-->
-                                                <!--begin::Timestamp=-->
-                                                <td class="pe-0 text-end min-w-200px">25 Jul 2023, 11:05 am</td>
-                                                <!--end::Timestamp=-->
+                                                <th class="min-w-200px">Timestamp</th>
+                                                <th class="min-w-100px">Log Type</th>
+                                                <th class="min-w-150px">Description</th>
+                                                <th class="min-w-150px">Event</th>
+                                                <th class="min-w-150px">Status</th>
+                                                <th class="min-w-150px">By</th>
                                             </tr>
-                                            <!--end::Table row-->
-                                            <!--begin::Table row-->
-                                            <tr>
-                                                <!--begin::Badge=-->
-                                                <td class="min-w-70px">
-                                                    <div class="badge badge-light-warning">404 WRN</div>
-                                                </td>
-                                                <!--end::Badge=-->
-                                                <!--begin::Status=-->
-                                                <td>POST /v1/customer/c_63de80d6efc9c/not_found</td>
-                                                <!--end::Status=-->
-                                                <!--begin::Timestamp=-->
-                                                <td class="pe-0 text-end min-w-200px">05 May 2023, 11:05 am</td>
-                                                <!--end::Timestamp=-->
-                                            </tr>
-                                            <!--end::Table row-->
-                                            <!--begin::Table row-->
-                                            <tr>
-                                                <!--begin::Badge=-->
-                                                <td class="min-w-70px">
-                                                    <div class="badge badge-light-success">200 OK</div>
-                                                </td>
-                                                <!--end::Badge=-->
-                                                <!--begin::Status=-->
-                                                <td>POST /v1/invoices/in_6878_6767/payment</td>
-                                                <!--end::Status=-->
-                                                <!--begin::Timestamp=-->
-                                                <td class="pe-0 text-end min-w-200px">20 Jun 2023, 6:05 pm</td>
-                                                <!--end::Timestamp=-->
-                                            </tr>
-                                            <!--end::Table row-->
-                                            <!--begin::Table row-->
-                                            <tr>
-                                                <!--begin::Badge=-->
-                                                <td class="min-w-70px">
-                                                    <div class="badge badge-light-danger">500 ERR</div>
-                                                </td>
-                                                <!--end::Badge=-->
-                                                <!--begin::Status=-->
-                                                <td>POST /v1/invoice/in_7328_8135/invalid</td>
-                                                <!--end::Status=-->
-                                                <!--begin::Timestamp=-->
-                                                <td class="pe-0 text-end min-w-200px">05 May 2023, 11:05 am</td>
-                                                <!--end::Timestamp=-->
-                                            </tr>
-                                            <!--end::Table row-->
-                                            <!--begin::Table row-->
-                                            <tr>
-                                                <!--begin::Badge=-->
-                                                <td class="min-w-70px">
-                                                    <div class="badge badge-light-success">200 OK</div>
-                                                </td>
-                                                <!--end::Badge=-->
-                                                <!--begin::Status=-->
-                                                <td>POST /v1/invoices/in_2663_2565/payment</td>
-                                                <!--end::Status=-->
-                                                <!--begin::Timestamp=-->
-                                                <td class="pe-0 text-end min-w-200px">21 Feb 2023, 2:40 pm</td>
-                                                <!--end::Timestamp=-->
-                                            </tr>
-                                            <!--end::Table row-->
+                                            </thead>
+                                            <!--end::Thead-->
+                                            <!--begin::Tbody-->
+                                            <tbody class="fw-6 fw-semibold text-gray-600">
+                                            {{--                    <tr>--}}
+                                            {{--                        <td>--}}
+                                            {{--                            <a href="#" class="text-hover-primary text-gray-600">USA(5)</a>--}}
+                                            {{--                        </td>--}}
+                                            {{--                        <td>--}}
+                                            {{--                            <span class="badge badge-light-success fs-7 fw-bold">OK</span>--}}
+                                            {{--                        </td>--}}
+                                            {{--                        <td>Chrome - Windows</td>--}}
+                                            {{--                        <td>236.125.56.78</td>--}}
+                                            {{--                        <td>2 mins ago</td>--}}
+                                            {{--                    </tr>--}}
                                             </tbody>
-                                            <!--end::Table body-->
+                                            <!--end::Tbody-->
                                         </table>
                                         <!--end::Table-->
                                     </div>
@@ -929,7 +875,7 @@
                                 </div>
                                 <!--end::Card body-->
                             </div>
-                            <!--end::Card-->
+                            <!--end::Login sessions-->
                         </div>
                         <!--end:::Tab pane-->
                     </div>
@@ -949,5 +895,69 @@
 @endsection
 
 @push('scripts')
-    {{-- script for this page --}}
+    <script>
+
+        $(document).ready(function() {
+            let id = {{$user->id}};
+
+            var dataTable = $('#login_logs_table').DataTable({
+                serverSide: true,
+                processing: true,
+                order: [[5, 'desc']],
+                ajax: {
+                    url: `/logs/current/select/all/${id}`,
+                    type: 'GET',
+                },
+                columns: [
+
+                    { data: 'created_at' },
+                    { data: 'log_name' },
+                    { data: 'description' },
+                    { data: 'event' },
+                    { data: 'status' },
+                    { data: 'created_user' },
+
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        render: function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                const dateTime = new Date(data);
+                                const formattedDateTime = dateTime.toLocaleString();
+                                return formattedDateTime;
+                            }
+                            return data;
+                        }
+                    },
+
+                    {
+                        targets: 4,
+                        render: function (data, type, row) {
+                            let badgeClass = 'badge-light-success';
+
+                            if (data === 'fail') {
+                                badgeClass = 'badge-light-danger';
+                            } else if (data === 'warn') {
+                                badgeClass = 'badge-light-warning';
+                            }
+
+                            return `<span class="badge ${badgeClass} fs-7 fw-bold">${data}</span>`;
+                        }
+
+                    },
+                    {
+                        targets: 5,
+                        render: function (data, type, row) {
+                            $username = data.username;
+                            return $username;
+                        }
+                    }
+                ],
+            });
+        });
+
+
+    </script>
 @endpush
+
