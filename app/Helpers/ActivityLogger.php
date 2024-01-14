@@ -27,7 +27,7 @@ class ActivityLogger
     /**
      * Set the event type.
      *
-     * @param string $event The event type (create, update, delete, restore, login, logout).
+     * @param string $event The event type (create, update, delete, restore, login, logout, 'import', 'export', 'upload','download').
      * @return $this
      */
     public function event($event)

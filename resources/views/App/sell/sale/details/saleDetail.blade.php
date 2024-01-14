@@ -247,6 +247,31 @@
                                 <!--end::Section-->
                             </div>
                             <!--end::Container-->
+                            <div class="separator border-2 my-10"></div>
+                            <!--begin::Table wrapper-->
+                            <div class="table-responsive mt-2">
+                                <!--begin::Table-->
+                                <table class="table align-middle table-row-bordered table-row-solid gy-4 gs-9" id="sale_logs_table">
+                                    <!--begin::Thead-->
+                                    <thead class="border-gray-200 text-gray-700 fs-5 fw-semibold bg-lighten">
+                                    <tr>
+                                        <th class="min-w-175px">Timestamp</th>
+                                        <th class="min-w-250px">Description</th>
+                                        <th class="min-w-95px">Event</th>
+                                        <th class="min-w-95px">Status</th>
+                                        <th class="min-w-120px">By</th>
+                                        <th class="min-w-100px">Note</th>
+                                    </tr>
+                                    </thead>
+                                    <!--end::Thead-->
+                                    <!--begin::Tbody-->
+                                    <tbody class="fw-6 fw-semibold text-gray-600" style="vertical-align: text-top">
+                                    </tbody>
+                                    <!--end::Tbody-->
+                                </table>
+                                <!--end::Table-->
+                            </div>
+                            <!--end::Table wrapper-->
                         </div>
                         <!--end::Content-->
                     </div>
@@ -264,5 +289,91 @@
     <script>
         clipboard()
     </script>
+    <script>
+
+    "use strict";
+
+
+    var KTCustomersList = function () {
+        let sale_id = {{$sale['id']}};
+        var datatable;
+        var table
+        console.log(sale_id, 'ssssssssssss')
+        var initCustomerList = function () {
+
+            // Init datatable --- more info on datatables: https://datatables.net/manual/
+            datatable = $(table).DataTable({
+
+                order: [[0, ' ']],
+                processing: true,
+                pageLength: 10,
+                lengthMenu: [10, 20, 30, 50,40,80],
+                serverSide: true,
+                ajax: {
+                    url: `/logs/sale-transactions/all/${sale_id}`,
+                },
+                columns: [
+
+                    { data: 'created_at' },
+                    { data: 'description' },
+                    { data: 'event' },
+                    { data: 'status' },
+                    { data: 'created_user' },
+                    { data: 'properties' },
+
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        render: function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                const dateTime = new Date(data);
+                                const formattedDateTime = dateTime.toLocaleString();
+                                return formattedDateTime;
+                            }
+                            return data;
+                        }
+                    },
+
+                    {
+                        targets: 3,
+                        render: function (data, type, row) {
+                            let badgeClass = 'badge-light-success';
+
+                            if (data === 'fail') {
+                                badgeClass = 'badge-light-danger';
+                            } else if (data === 'warn') {
+                                badgeClass = 'badge-light-warning';
+                            }
+
+                            return `<span class="badge ${badgeClass} fs-7 fw-bold">${data}</span>`;
+                        }
+
+                    },
+                ],
+
+            });
+
+        }
+
+        return {
+            init: function () {
+                table = document.querySelector('#sale_logs_table');
+
+                if (!table) {
+                    return;
+                }
+                initCustomerList()
+            }
+        }
+    }();
+
+
+    KTUtil.onDOMContentLoaded(function () {
+        KTCustomersList.init();
+    });
+
+
+</script>
 
 

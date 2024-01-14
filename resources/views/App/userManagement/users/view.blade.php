@@ -836,7 +836,7 @@
                                 </div>
                                 <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body p-0">
+                                <div class="card-body p-5">
                                     <!--begin::Table wrapper-->
                                     <div class="table-responsive">
                                         <!--begin::Table-->
@@ -844,12 +844,12 @@
                                             <!--begin::Thead-->
                                             <thead class="border-gray-200 fs-5 fw-semibold bg-lighten">
                                             <tr>
-                                                <th class="min-w-200px">Timestamp</th>
+                                                <th class="min-w-175px">Timestamp</th>
                                                 <th class="min-w-100px">Log Type</th>
-                                                <th class="min-w-150px">Description</th>
-                                                <th class="min-w-150px">Event</th>
-                                                <th class="min-w-150px">Status</th>
-                                                <th class="min-w-150px">By</th>
+                                                <th class="min-w-250px">Description</th>
+                                                <th class="min-w-95px">Event</th>
+                                                <th class="min-w-95px">Status</th>
+                                                <th class="min-w-120px">By</th>
                                             </tr>
                                             </thead>
                                             <!--end::Thead-->
@@ -895,66 +895,90 @@
 @endsection
 
 @push('scripts')
+
+
     <script>
 
-        $(document).ready(function() {
+        "use strict";
+
+
+        var KTCustomersList = function () {
             let id = {{$user->id}};
+            var datatable;
+            var table
 
-            var dataTable = $('#login_logs_table').DataTable({
-                serverSide: true,
-                processing: true,
-                order: [[5, 'desc']],
-                ajax: {
-                    url: `/logs/current/select/all/${id}`,
-                    type: 'GET',
-                },
-                columns: [
+            var initCustomerList = function () {
 
-                    { data: 'created_at' },
-                    { data: 'log_name' },
-                    { data: 'description' },
-                    { data: 'event' },
-                    { data: 'status' },
-                    { data: 'created_user' },
+                // Init datatable --- more info on datatables: https://datatables.net/manual/
+                datatable = $(table).DataTable({
 
-                ],
-                columnDefs: [
-                    {
-                        targets: 0,
-                        render: function (data, type, row) {
-                            if (type === 'display' || type === 'filter') {
-                                const dateTime = new Date(data);
-                                const formattedDateTime = dateTime.toLocaleString();
-                                return formattedDateTime;
-                            }
-                            return data;
-                        }
+                    order: [[0, ' ']],
+                    processing: true,
+                    pageLength: 10,
+                    lengthMenu: [10, 20, 30, 50,40,80],
+                    serverSide: true,
+                    ajax: {
+                        url: `/logs/current/select/all/${id}`,
                     },
+                    columns: [
 
-                    {
-                        targets: 4,
-                        render: function (data, type, row) {
-                            let badgeClass = 'badge-light-success';
+                        { data: 'created_at' },
+                        { data: 'log_name' },
+                        { data: 'description' },
+                        { data: 'event' },
+                        { data: 'status' },
+                        { data: 'created_user' },
 
-                            if (data === 'fail') {
-                                badgeClass = 'badge-light-danger';
-                            } else if (data === 'warn') {
-                                badgeClass = 'badge-light-warning';
+                    ],
+                    columnDefs: [
+                        {
+                            targets: 0,
+                            render: function (data, type, row) {
+                                if (type === 'display' || type === 'filter') {
+                                    const dateTime = new Date(data);
+                                    const formattedDateTime = dateTime.toLocaleString();
+                                    return formattedDateTime;
+                                }
+                                return data;
+                            }
+                        },
+
+                        {
+                            targets: 4,
+                            render: function (data, type, row) {
+                                let badgeClass = 'badge-light-success';
+
+                                if (data === 'fail') {
+                                    badgeClass = 'badge-light-danger';
+                                } else if (data === 'warn') {
+                                    badgeClass = 'badge-light-warning';
+                                }
+
+                                return `<span class="badge ${badgeClass} fs-7 fw-bold">${data}</span>`;
                             }
 
-                            return `<span class="badge ${badgeClass} fs-7 fw-bold">${data}</span>`;
-                        }
+                        },
+                    ],
 
-                    },
-                    {
-                        targets: 5,
-                        render: function (data, type, row) {
-                            $username = data.username;
-                            return $username;
-                        }
+                });
+
+            }
+
+            return {
+                init: function () {
+                    table = document.querySelector('#login_logs_table');
+
+                    if (!table) {
+                        return;
                     }
-                ],
-            });
+                    initCustomerList()
+                }
+            }
+        }();
+
+
+        KTUtil.onDOMContentLoaded(function () {
+            KTCustomersList.init();
         });
 
 
