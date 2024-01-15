@@ -35,6 +35,7 @@ class moduleController extends Controller
         $module->enable();
 
         Artisan::call('module:publish');
+        Artisan::call('module:seed '.$ucModuleName);
 
         return back()->with(['success'=>'Successfully Install']);
     }

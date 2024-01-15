@@ -478,11 +478,11 @@ class StockAdjustmentController extends Controller
                 'message' => 'Adjustment successfully created'
             ], 201);
         }catch (Exception $e){
+            logger($e);
             DB::rollBack();
             return response()->json([
                 'message' => $e->getMessage()
             ], 500);
-            return response()->json($e->getMessage(), 500);
         }
     }
 

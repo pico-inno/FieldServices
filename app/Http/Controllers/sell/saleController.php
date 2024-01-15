@@ -67,7 +67,7 @@ class saleController extends Controller
     {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:sell')->only(['index', 'saleItemsList']);
-        $this->middleware('canCreate:sell')->only(['createPage', 'store']);
+        $this->middleware('canCreate:sell')->only(['createPage']);
         $this->middleware('canUpdate:sell')->only(['saleEdit', 'update']);
         $this->middleware('canDelete:sell')->only('softDelete', 'softSelectedDelete');
         $settings = businessSettings::select('lot_control', 'currency_id', 'accounting_method', 'enable_line_discount_for_sale', 'invoice_layout')->with('currency')->first();

@@ -5,12 +5,13 @@ namespace App\Models\sale;
 use App\Models\Currencies;
 use App\Models\BusinessUser;
 use App\Models\Contact\Contact;
+use Modules\Games\Entities\winLogs;
+use Modules\Restaurant\Entities\table;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\settings\businessLocation;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Restaurant\Entities\table;
 
 class sales extends Model
 {
@@ -108,7 +109,7 @@ class sales extends Model
 
     public function winlog()
     {
-        return $this->hasOne(winLogs::class, 'id', 'coupon_id');
+        return $this->hasOne(winLogs::class, 'tx_id', 'id');
     }
 }
 

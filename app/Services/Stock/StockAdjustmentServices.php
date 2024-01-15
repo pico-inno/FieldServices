@@ -187,7 +187,7 @@ class StockAdjustmentServices
                         'lot_serial_no' => null,
                         'ref_uom_id' => $referenceUomInfo['referenceUomId'],
                         'ref_uom_quantity' => $adjAbleQty,
-                        'ref_uom_price' => $currentStockBalances->ref_uom_price,
+                        'ref_uom_price' => $currentStockBalances->ref_uom_price ?? 0,
                         'current_quantity' => $adjAbleQty,
                         'created_at' => now(),
                     ];
