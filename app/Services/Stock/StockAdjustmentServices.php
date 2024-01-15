@@ -88,6 +88,7 @@ class StockAdjustmentServices
             $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($data['gnd_quantity'], $data['uom_id']);
             $groundQty = $referenceUomInfo['qtyByReferenceUom'];
             $changeUomQty = UomHelper::changeQtyOnUom($referenceUomInfo['referenceUomId'],$data['uom_id'], $balance_qty);
+            $adjQty = 0;
             if ($groundQty > $balance_qty){ //10 > 10
                 $adjQty = $groundQty - $balance_qty;
                 $uom_adj_qty = $data['gnd_quantity'] - $changeUomQty;
@@ -98,6 +99,13 @@ class StockAdjustmentServices
                 $adjQty = $balance_qty - $groundQty;
                 $uom_adj_qty = $changeUomQty - $data['gnd_quantity'];
                 $adjustmentType = 'decrease';
+            }
+
+            if ($groundQty == $balance_qty) {
+                return [
+                    "adjust_type" => 'no changes',
+                    "adjust_ref_quantity" => $groundQty
+                ];
             }
 
             $adjAbleQty = $adjQty;

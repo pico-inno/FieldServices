@@ -105,5 +105,10 @@ class sales extends Model
     {
         return $this->morphMany(StockHistory::class, 'transaction');
     }
+
+    public function winlog()
+    {
+        return $this->hasOne(winLogs::class, 'id', 'coupon_id');
+    }
 }
 
