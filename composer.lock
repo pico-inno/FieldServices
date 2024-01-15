@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dec6d2aff9cc3af3727062405c607246",
+    "content-hash": "82ca6a34aaa061d5543740906a5da92a",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1325,6 +1325,54 @@
                 }
             ],
             "time": "2021-10-07T12:57:01+00:00"
+        },
+        {
+            "name": "kopaing/simplelog",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paingsoeko/simplelog-pakcage.git",
+                "reference": "987457925f483f427aba761ada5ffa1aa2cda42f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paingsoeko/simplelog-pakcage/zipball/987457925f483f427aba761ada5ffa1aa2cda42f",
+                "reference": "987457925f483f427aba761ada5ffa1aa2cda42f",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Kopaing\\SimpleLog\\SimpleLogServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/activity.php",
+                    "src/Helpers/ActivityLogger.php"
+                ],
+                "psr-4": {
+                    "Kopaing\\SimpleLog\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "paingsoeko",
+                    "email": "social.kopaing@gmail.com"
+                }
+            ],
+            "description": "For record logs for every activities",
+            "support": {
+                "issues": "https://github.com/paingsoeko/simplelog-pakcage/issues",
+                "source": "https://github.com/paingsoeko/simplelog-pakcage/tree/v1.0.1"
+            },
+            "time": "2024-01-15T05:53:49+00:00"
         },
         {
             "name": "laravel/framework",

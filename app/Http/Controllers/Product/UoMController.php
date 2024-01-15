@@ -9,6 +9,8 @@ use App\Http\Requests\Product\UoM\UoMUpdateRequest;
 use App\Models\Product\UOM;
 use App\Repositories\Product\UnitCategoryRepository;
 use App\Repositories\Product\UOMRepository;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\Mime\DraftEmail;
 
 class UoMController extends Controller
 {
@@ -30,8 +32,25 @@ class UoMController extends Controller
 
     public function create(UoMCreateRequest $request, UOMAction $uomAction)
     {
-        $uomAction->create($request);
-        return redirect()->route('unit-category')->with(['message' => 'UOM created successfully', 'toUOM' => 'to uom tab']);
+        try {
+            DB::beginTransaction();
+            $uomAction->create($request);
+            DB::commit();
+            activity('uom')
+                ->log('New uom creation has been success')
+                ->event('create')
+                ->status('success')
+                ->save();
+            return redirect()->route('unit-category')->with(['message' => 'UOM created successfully', 'toUOM' => 'to uom tab']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('uom')
+                ->log('New uom creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
+            return redirect()->route('unit-category')->with(['message' => 'UOM creation failed', 'toUOM' => 'to uom tab']);
+        }
     }
 
     public function edit(UOM $uom)
@@ -44,15 +63,48 @@ class UoMController extends Controller
 
     public function update(UoMUpdateRequest $request, UOM $uom, UOMAction $uomAction)
     {
-        $uomAction->update($uom->id, $request);
-
-        return redirect(route('unit-category'))->with(['message' => 'UOM updated successfully', 'toUOM' => 'to uom tab']);
+        try {
+            DB::beginTransaction();
+            $uomAction->update($uom->id, $request);
+            DB::commit();
+            activity('uom')
+                ->log('Uom update has been success')
+                ->event('update')
+                ->status('success')
+                ->save();
+            return redirect(route('unit-category'))->with(['message' => 'UOM updated successfully', 'toUOM' => 'to uom tab']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('uom')
+                ->log('Uom update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
+            return redirect(route('unit-category'))->with(['message' => 'UOM update failed', 'toUOM' => 'to uom tab']);
+        }
     }
 
     public function delete(UOM $uom, UOMAction $uomAction)
     {
-        $uomAction->delete($uom->id);
-        return response()->json(['message' => 'UOM deleted successfully']);
+        try {
+            DB::beginTransaction();
+            $uomAction->delete($uom->id);
+            DB::commit();
+            activity('uom')
+                ->log('Uom deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+            return response()->json(['message' => 'UOM deleted successfully']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('uom')
+                ->log('Uom deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            return response()->json(['message' => 'UOM deleted successfully']);
+        }
     }
 
     public function checkUoM($id)

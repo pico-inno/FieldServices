@@ -91,7 +91,12 @@ class purchaseController extends Controller
             DB::beginTransaction();
             $purchase = $service->createPurchase($request);
             DB::commit();
-
+            activity('purchase-transaction')
+                ->log('New purchase creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties($purchase)
+                ->save();
             // return & print
             if ($request->save == 'save_&_print') {
                 return redirect()->route('purchase_list')->with([
@@ -103,6 +108,11 @@ class purchaseController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            activity('purchase-transaction')
+                ->log('New purchase creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
             $filePath = $e->getFile();
             $fileName = basename($filePath);
             if ($fileName == 'UomHelpers.php') {
@@ -153,17 +163,29 @@ class purchaseController extends Controller
         ], [
             'details' => 'required',
         ])->validate();
-        DB::beginTransaction();
+
         try {
-            $service->update($id, $request);
+            DB::beginTransaction();
+             $updatedData = $service->update($id, $request);
             DB::commit();
+            activity('purchase-transaction')
+                ->log('Purchase update has been success')
+                ->event('update')
+                ->status('success')
+                ->properties($updatedData)
+                ->save();
+            return redirect()->route('purchase_list')->with(['success' => 'Successfully Updated Purchase']);
         } catch (Exception $e) {
             DB::rollBack();
+            activity('purchase-transaction')
+                ->log('Purchase update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);
             throw $e;
         }
-        // return back()->with(['success' => 'Successfully Updated Purchase']);
-        return redirect()->route('purchase_list')->with(['success' => 'Successfully Updated Purchase']);
+
     }
 
     public function purhcaseInvoice($id, Request $request)
@@ -221,32 +243,55 @@ class purchaseController extends Controller
 
     public function softOneItemDelete($id)
     {
-        purchases::where('id', $id)->update([
-            'is_delete' => 1,
-            'deleted_by' => Auth::user()->id,
-            'deleted_at' => now()
-        ]);
-        $purchaseDetails = purchase_details::where('purchases_id', $id);
-        foreach ($purchaseDetails->get() as $pd) {
-            CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->delete();
-            stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+        try {
+            DB::beginTransaction();
+            purchases::where('id', $id)->update([
+                'is_delete' => 1,
+                'deleted_by' => Auth::user()->id,
+                'deleted_at' => now()
+            ]);
+            $purchaseDetails = purchase_details::where('purchases_id', $id);
+            foreach ($purchaseDetails->get() as $pd) {
+                CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->delete();
+                stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+            }
+            $purchaseDetails->update([
+                'is_delete' => 1,
+                'deleted_by' => Auth::user()->id,
+                'deleted_at' => now()
+            ]);
+
+
+            DB::commit();
+            activity('purchase-transaction')
+                ->log('Purchase single deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+
+            $data = [
+                'success' => 'Successfully Deleted'
+            ];
+            return response()->json($data, 200);
+        }catch (Exception $exception){
+            DB::rollBack();
+            activity('purchase-transaction')
+                ->log('Purchase single deletion has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
+            $data = [
+                'error' => 'Purchase deletion failed'
+            ];
+            return response()->json($data, 200);
         }
-        $purchaseDetails->update([
-            'is_delete' => 1,
-            'deleted_by' => Auth::user()->id,
-            'deleted_at' => now()
-        ]);
-        $data = [
-            'success' => 'Successfully Deleted'
-        ];
-        return response()->json($data, 200);
     }
 
     public function softSelectedDelete()
     {
-        $ids = request('data');
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
+            $ids = request('data');
             foreach ($ids as $id) {
                 purchases::where('id', $id)->update([
                     'is_delete' => 1,
@@ -270,9 +315,19 @@ class purchaseController extends Controller
             ];
 
             DB::commit();
+            activity('purchase-transaction')
+                ->log('Purchase multi deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
             return response()->json($data, 200);
         } catch (Exception $e) {
             DB::rollBack();
+            activity('purchase-transaction')
+                ->log('Purchase multi deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
             throw $e;
             return response()->json($e, 200);
         }

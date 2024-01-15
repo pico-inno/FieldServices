@@ -17,7 +17,6 @@ class UserAction
 
     public function create($requestData)
     {
-        return DB::transaction(function () use ($requestData) {
             $preparedPersonalInfoData = $this->preparePersonalInfoData($requestData);
             $createdPersonalInfo = $this->businessUserRepository->createPersonalInfo($preparedPersonalInfoData);
 
@@ -25,31 +24,31 @@ class UserAction
             $preparedBusinessUserData['password'] = Hash::make($requestData->password);
             $preparedBusinessUserData['personal_info_id'] = $createdPersonalInfo->id;
 
-            $this->businessUserRepository->create($preparedBusinessUserData);
-        });
+            $createdBusinessUser = $this->businessUserRepository->create($preparedBusinessUserData);
+
+            return $createdBusinessUser;
     }
 
     public function update($requestData, $id)
     {
-        return DB::transaction(function () use ($id, $requestData) {
+
             $businessUser = $this->businessUserRepository->getById($id);
             $preparedBusinessUserData = $this->prepareBusinessUserData($requestData);
             $preparedBusinessUserData['password'] = $requestData->password ? Hash::make($requestData->password) : $businessUser->password;
 
-            $this->businessUserRepository->update($id, $preparedBusinessUserData);
+            $updatedUser = $this->businessUserRepository->update($id, $preparedBusinessUserData);
 
             $preparedPersonalInfoData = $this->preparePersonalInfoData($requestData);
             $this->businessUserRepository->updatePersonalInfo($businessUser->personal_info_id, $preparedPersonalInfoData);
-        });
+
+            return $updatedUser;
     }
 
     public function delete($id)
     {
-        return DB::transaction(function () use ($id){
             $businessUser = $this->businessUserRepository->getById($id);
             $this->businessUserRepository->deletePersonalInfo($businessUser->personal_info_id);
             $this->businessUserRepository->delete($id);
-        });
     }
 
     private function preparePersonalInfoData($data)

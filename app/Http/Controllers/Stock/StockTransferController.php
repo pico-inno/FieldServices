@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Validator;
+use Mockery\Exception;
 use Yajra\DataTables\Facades\DataTables;
 use function PHPUnit\Framework\isEmpty;
 use function Symfony\Component\String\b;
@@ -89,7 +90,8 @@ class StockTransferController extends Controller
      */
     public function store(StoreStockTransferRequest $request)
     {
-        DB::transaction(function () use ($request) {
+        try {
+            DB::beginTransaction();
             $settings = businessSettings::all()->first();
             $transfer_details = $request->transfer_details;
             $transfered_at = date('Y-m-d', strtotime($request->transfered_at));
@@ -221,7 +223,7 @@ class StockTransferController extends Controller
                         $currentStockDetail = CurrentStockBalance::where('id', $lotDetail->current_stock_balance_id)->first();
 
                         // Increase current quantity for "to_location"
-                       CurrentStockBalance::create([
+                        CurrentStockBalance::create([
                             'business_location_id' => $request->to_location,
                             'product_id' => $currentStockDetail->product_id,
                             'variation_id' => $currentStockDetail->variation_id,
@@ -234,7 +236,7 @@ class StockTransferController extends Controller
                             'ref_uom_quantity' => $lotDetail->uom_quantity,
                             'ref_uom_price' => $currentStockDetail->ref_uom_price,
                             'current_quantity' => $lotDetail->uom_quantity,
-                           'created_at' => now(),
+                            'created_at' => now(),
                         ]);
                     }
 
@@ -256,12 +258,24 @@ class StockTransferController extends Controller
                 }
 
             }
+            DB::commit();
+            activity('stock-transfer')
+                ->log('Stock Transfer creation has been success')
+                ->event('creat')
+                ->status('success')
+                ->save();
+            return redirect(route('stock-transfer.index'))->with(['success' => 'Stock transferred successfully']);
+        }catch (Exception $exception){
+            DB::rollBack();
+            activity('stock-transfer')
+                ->log('Stock Transfer creation has been fail')
+                ->event('creat')
+                ->status('fail')
+                ->save();
+            return redirect(route('stock-transfer.index'))
+                ->with(['error' => $exception->getMessage()]);
 
-
-        });
-
-
-        return redirect(route('stock-transfer.index'))->with(['success' => 'Stock transferred successfully']);
+        }
     }
 
     /**
@@ -450,8 +464,9 @@ class StockTransferController extends Controller
 
         $settings =  businessSettings::all()->first();
 
-        DB::beginTransaction();
+
         try {
+            DB::beginTransaction();
             $packagingService=new packagingServices();
             if($oldStatus != 'completed'){
                 $existingTransferDetailIds = [];
@@ -945,9 +960,19 @@ class StockTransferController extends Controller
             }
 
             DB::commit();
+            activity('stock-transfer')
+                ->log('Stock Transfer update has been success')
+                ->event('update')
+                ->status('success')
+                ->save();
             return redirect(route('stock-transfer.index'))->with(['success' => 'Stock transferred successfully']);
         } catch (Exception $e) {
             DB::rollBack();
+            activity('stock-transfer')
+                ->log('Stock Transfer update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return $e->getMessage();
         }
 
@@ -958,8 +983,8 @@ class StockTransferController extends Controller
      */
     public function destroy(StockTransfer $stockTransfer)
     {
-
-        DB::transaction(function () use ($stockTransfer) {
+        try {
+            DB::beginTransaction();
             $details = StockTransferDetail::where('transfer_id', $stockTransfer->id)->get();
             $from_location = $stockTransfer->from_location;
             $to_location = $stockTransfer->to_location;
@@ -995,9 +1020,22 @@ class StockTransferController extends Controller
             StockTransferDetail::where('transfer_id', $stockTransfer->id)->update(['deleted_by' => Auth::id(), 'is_delete' => true]);
             StockTransfer::where('id', $stockTransfer->id)->delete();
             StockTransferDetail::where('transfer_id', $stockTransfer->id)->delete();
-        });
-
-        return redirect(route('stock-transfer.index'))->with(['success' => 'Stockout deleted successfully']);
+            DB::commit();
+            activity('stock-transfer')
+                ->log('Stock Transfer deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+            return redirect(route('stock-transfer.index'))->with(['success' => 'Stockout deleted successfully']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('stock-transfer')
+                ->log('Stock Transfer deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            return $exception->getMessage();
+        }
     }
 
     public function softDelete(string $id){
@@ -1052,7 +1090,11 @@ class StockTransferController extends Controller
             ];
         }
 
-
+        activity('stock-transfer')
+            ->log('Stock Transfer deletion has been success')
+            ->event('delete')
+            ->status('success')
+            ->save();
         return response()->json($data, 200);
 
     }

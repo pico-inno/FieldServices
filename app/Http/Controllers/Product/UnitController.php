@@ -43,9 +43,29 @@ class UnitController extends Controller
 
     public function create(UnitCategoryCreateRequest $request, UnitAction $unitAction)
     {
-        $unitAction->create($request);
-
-        return redirect(route('unit-category'))->with(['message', 'Unit Category created successfully', 'toUnitCate' => 'to unit cate tab']);
+        try {
+            DB::beginTransaction();
+            $unitAction->create($request);
+            DB::commit();
+            activity('unit')
+                ->log('New unit creation has been success')
+                ->event('create')
+                ->status('success')
+                ->save();
+            return redirect(route('unit-category'))
+                ->with(['message', 'Unit Category created successfully',
+                    'toUnitCate' => 'to unit cate tab']);
+        }catch (Exception $exception){
+            DB::rollBack();
+            activity('unit')
+                ->log('New unit creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
+            return redirect(route('unit-category'))
+                ->with(['message', 'Unit Category creation failed',
+                    'toUnitCate' => 'to unit cate tab']);
+        }
     }
 
     public function edit(UnitCategory $unitCategory)
@@ -62,17 +82,52 @@ class UnitController extends Controller
             return redirect()->route('unit-category')->with('toUnitCate', 'cancel');
         }
 
-        $unitAction->update($unitCategory->id, $request);
-
-        return redirect()->route('unit-category')->with(['message', 'Unit Category updated successfully', 'toUnitCate' => 'to unit cate tab']);
+        try {
+            DB::beginTransaction();
+            $unitAction->update($unitCategory->id, $request);
+            DB::commit();
+            activity('unit')
+                ->log('Unit update has been success')
+                ->event('update')
+                ->status('success')
+                ->save();
+            return redirect()->route('unit-category')
+                ->with(['message', 'Unit Category updated successfully',
+                    'toUnitCate' => 'to unit cate tab']);
+        }catch (Exception $exception){
+            DB::rollBack();
+            activity('unit')
+                ->log('Unit update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
+            return redirect()->route('unit-category')
+                ->with(['message', 'Unit Category update failed',
+                    'toUnitCate' => 'to unit cate tab']);
+        }
     }
 
     public function delete(UnitCategory $unitCategory, UnitAction $unitAction)
     {
-        $unitAction->delete($unitCategory->id);
-
-        return response()->json(['message' => 'Unit Category deleted successfully']);
-
+        try {
+            DB::beginTransaction();
+            $unitAction->delete($unitCategory->id);
+            DB::commit();
+            activity('unit')
+                ->log('Unit deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+            return response()->json(['message' => 'Unit Category deleted successfully']);
+        }catch (Exception $exception){
+            DB::rollBack();
+            activity('unit')
+                ->log('Unit deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            return response()->json(['message' => 'Unit Category deletion fail']);
+        }
     }
 
     public function unitCategoryDatas()

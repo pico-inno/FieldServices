@@ -82,14 +82,23 @@ class StockAdjustmentController extends Controller
      */
     public function store(StoreStockAdjustmentRequest $request,StockAdjustmentServices $adjustmentServices)
     {
-//        return $request;
         try {
             DB::beginTransaction();
             $adjustmentServices->create($request);
             DB::commit();
+            activity('stock-adjustment')
+                ->log('Stock Adjustment creation has been success')
+                ->event('create')
+                ->status('success')
+                ->save();
             return redirect(route('stock-adjustment.index'))->with(['success' => 'Stock Adjustment successfully']);
         }catch (Exception $e){
             DB::rollBack();
+            activity('stock-adjustment')
+                ->log('Stock Adjustment creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
             return $e->getMessage();
         }
     }
@@ -208,9 +217,19 @@ class StockAdjustmentController extends Controller
             DB::beginTransaction();
                 $stockAdjustmentServices->update($id, $request);
             DB::commit();
+            activity('stock-adjustment')
+                ->log('Stock Adjustment update has been success')
+                ->event('update')
+                ->status('success')
+                ->save();
             return redirect(route('stock-adjustment.index'))->with(['success' => 'Adjustment successfully edited']);
         }catch(\Exception $e){
             DB::rollBack();
+            activity('stock-adjustment')
+                ->log('Stock Adjustment update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return $e->getMessage();
         }
     }
@@ -223,19 +242,36 @@ class StockAdjustmentController extends Controller
     }
 
     public function softDelete(string $id, StockAdjustmentServices $stockAdjustmentServices){
+        try {
+            DB::beginTransaction();
+            $restore = request()->query('restore');
 
-        $restore = request()->query('restore');
+            if ($restore == 'true') {
+                $stockAdjustmentServices->deleteWithRestore($id);
+                $data = ['success' => 'Adjustment was removed, and the quantity was returned.'];
 
-        if ($restore == 'true') {
-            $stockAdjustmentServices->deleteWithRestore($id);
-            $data = ['success' => 'Adjustment was removed, and the quantity was returned.'];
+            }else{
+                $stockAdjustmentServices->delete($id);
+                $data = ['success' => 'Adjustment was removed'];
+            }
+            DB::commit();
+            activity('stock-adjustment')
+                ->log('Stock Adjustment deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+            return response()->json($data, 200);
+        }catch (Exception $exception){
+            DB::rollBack();
 
-        }else{
-            $stockAdjustmentServices->delete($id);
-            $data = ['success' => 'Adjustment was removed'];
+            activity('stock-adjustment')
+                ->log('Stock Adjustment deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            $data = ['error' => 'Adjustment deletion failed'];
+            return response()->json($data, 200);
         }
-
-        return response()->json($data, 200);
     }
 
     public function listData(Request $request,StockAdjustmentServices $stockAdjustmentServices)

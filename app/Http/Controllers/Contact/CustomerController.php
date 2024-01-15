@@ -11,6 +11,7 @@ use App\Models\Contact\Contact;
 use App\Models\sale\sales;
 use App\Models\paymentsTransactions;
 use App\Models\settings\businessSettings;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use DateTime;
 use Illuminate\Support\Facades\Route;
@@ -102,7 +103,7 @@ class CustomerController extends Controller
 
     public function store(Request $request){
         try{
-            // dd($request->all());
+            DB::beginTransaction();
             $customer_data =  $request->only([
                 'type', 'price_list_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
                 'email', 'is_active', 'tax_number', 'city', 'state', 'country', 'address_line_1',
@@ -147,9 +148,22 @@ class CustomerController extends Controller
             $customer_data['created_by'] = Auth::user()->id;
 
             // dd($customer_data);
-            Contact::create($customer_data);
+            $contact = Contact::create($customer_data);
+            DB::commit();
+            activity('contact')
+                ->log('New customer creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties(['id' => $contact->id])
+                ->save();
             return redirect('/contacts/customers')->with('success','Contact Created Successfully');
         } catch(\Exception $e){
+            DB::rollBack();
+            activity('contact')
+                ->log('New customer creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
             return redirect()->back()->with('error', 'An error occurred while creating the contact');
         }
     }
@@ -169,7 +183,7 @@ class CustomerController extends Controller
 
     public function quickStoreCustomer(Request $request) {
         try{
-            // dd($request->all());
+            DB::beginTransaction();
             $customer_data =  $request->only([
                 'type', 'price_list_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
                 'email', 'is_active', 'tax_number', 'city', 'state', 'country', 'address_line_1',
@@ -249,6 +263,13 @@ class CustomerController extends Controller
 
             $formType = $request->input('form_type');
 
+            DB::commit();
+            activity('contact')
+                ->log('New customer creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties(['id' => $newContactId])
+                ->save();
             if ($formType === 'create') {
                 return redirect('/reservation/create')->with([
                     'success' => 'Contact Created Successfully',
@@ -272,10 +293,22 @@ class CustomerController extends Controller
                     'new_contact_id' => $newContactId,
                     'new_contact_name' => $newContactName]);
             } else {
+                activity('contact')
+                    ->log('New customer creation has been warn due to invalid form type')
+                    ->event('create')
+                    ->status('warn')
+                    ->properties(['id' => $newContactId])
+                    ->save();
                 return redirect()->back()->with('error', 'Invalid form type');
             }
 
         } catch(\Exception $e){
+            DB::rollBack();
+            activity('contact')
+                ->log('New customer creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
             return redirect()->back()->with('error', 'An error occurred while creating the contact');
         }
     }
@@ -287,6 +320,7 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id){
         try{
+            DB::beginTransaction();
             $customer = Contact::find($id);
 
             $customer->type = $request['type'];
@@ -337,6 +371,13 @@ class CustomerController extends Controller
             $customer->updated_by = Auth::user()->id;
 
             $customer->update();
+            DB::commit();
+            activity('contact')
+                ->log('Customer update has been success')
+                ->event('update')
+                ->status('success')
+                ->properties(['id' => $id])
+                ->save();
 
             if($request->input('form_type') === "from_pos"){
                 return response()->json([
@@ -349,22 +390,43 @@ class CustomerController extends Controller
                 return redirect('/contacts/customers')->with('success','Contact Updated Successfully');
             }
         } catch(\Exception $e){
+            DB::rollBack();
+            activity('contact')
+                ->log('Customer update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return redirect()->back()->with('error', 'An error occurred while updating the contact');
         }
     }
 
     public function destroy($id)
     {
-        $customer = Contact::find($id);
 
-        if($customer){
+
+        try {
+            DB::beginTransaction();
+            $customer = Contact::find($id);
             $customer->is_delete = true;
             $customer->save();
             $customer->delete();
+            DB::commit();
+            activity('contact')
+                ->log('Customer deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
 
             return back()->with('success','Contact Deleted Successfully');
-        } else{
-            return back()->with('error','Contact not found');
+
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('contact')
+                ->log('Customer deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            return back()->with('error','Contact deletion failed');
         }
 
     }

@@ -10,6 +10,7 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "biscolab/laravel-recaptcha": "^6.0",
         "guzzlehttp/guzzle": "^7.2",
+        "kopaing/simplelog": "^1.0",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
@@ -32,8 +33,6 @@
     },
     "autoload": {
         "files": [
-            "app/Helpers/activity.php",
-            "app/Helpers/ActivityLogger.php",
             "app/Helpers/PermissionHelpers.php",
             "app/Helpers/PermissionCheckeHelpers.php",
             "app/Helpers/UomHelpers.php",

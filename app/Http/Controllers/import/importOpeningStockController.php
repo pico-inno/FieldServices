@@ -62,10 +62,20 @@ class importOpeningStockController extends Controller
                 DB::rollBack();
                 return back()->with(['warning' => 'Something Went Wrong!']);
             }
+            activity('opening-stock')
+                ->log('Opening Stock import has been success')
+                ->event('import')
+                ->status('success')
+                ->save();
             return redirect()->route('opening_stock_list')->with(['success' => 'Successfully imported!']);
         } catch (\Throwable $th) {
 
             DB::rollBack();
+            activity('opening-stock')
+                ->log('Opening Stock import has been fail')
+                ->event('import')
+                ->status('fail')
+                ->save();
             $failures = null;
             if($th instanceof \Illuminate\Validation\ValidationException){
                 $failures = $th->failures();
@@ -87,6 +97,11 @@ class importOpeningStockController extends Controller
             'Content-Disposition' => 'attachment; filename="importOpeningStock.xls"',
         ];
 
+        activity('opening-stock')
+            ->log('Opening Stock template download has been success')
+            ->event('download')
+            ->status('success')
+            ->save();
         return response()->download($path, 'importOpeningStock.xls', $headers);
     }
 

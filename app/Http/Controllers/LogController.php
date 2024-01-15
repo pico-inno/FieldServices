@@ -10,6 +10,12 @@ use Yajra\DataTables\DataTables;
 
 class LogController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth', 'isActive']);
+    }
+
     public function index()
     {
         $uniqueLogNames = ActivityLog::distinct('log_name')->pluck('log_name');
@@ -114,16 +120,5 @@ class LogController extends Controller
 
             ->rawColumns(['created_user', 'properties'])
             ->make(true);
-
-
-
-//        $logs = ActivityLog::where('log_name', 'sale-transaction')
-//        ->where('properties->id', $sale_id)->get();
-//
-//        foreach ($logs as $log) {
-//            $log->created_user = $log->created_user->username;
-//        }
-//
-//        return $logs;
     }
 }

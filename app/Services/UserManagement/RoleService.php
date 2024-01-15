@@ -35,8 +35,6 @@ class RoleService
 
     private function saveRolePermissionProcess($request, $createRoleAction)
     {
-        try {
-            DB::beginTransaction();
 
             $permissionsId = $request->except('_token', 'name');
             $permissions = array_values($permissionsId);
@@ -50,12 +48,5 @@ class RoleService
 
             dispatch(new RolePermissionJob($role_id, $permissions));
 
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return back()->with(['error' => 'An error occurred. Please try again.']);
-        }
     }
 }

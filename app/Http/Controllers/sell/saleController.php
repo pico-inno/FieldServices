@@ -960,7 +960,7 @@ class saleController extends Controller
             DB::commit();
             activity('sale-transaction')
                 ->log('Sale single deletion has been success')
-                ->event('delete')
+                ->autoEvent()
                 ->status('success')
                 ->save();
 
