@@ -43,16 +43,16 @@ class locationImportController extends Controller
             return back()->with($error);
         }
     }
-    public function dowloadDemoExcel()
+    public function download()
     {
-        $path = public_path('Excel/priceList.xls');
+        $path = public_path('Excel/Import_Location_Template.xlsx');
         if (!file_exists($path)) {
             abort(404);
         }
         $headers = [
             'Content-Type' => 'application/octet-stream',
-            'Content-Disposition' => 'attachment; filename="importPriceList1.xls"',
+            'Content-Disposition' => 'attachment; filename="Import_Location_Template.xlsx"',
         ];
-        return response()->download($path, 'importPriceList.xls', $headers);
+        return response()->download($path, 'Import_Location_Template.xlsx', $headers);
     }
 }

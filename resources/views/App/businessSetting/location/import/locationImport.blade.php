@@ -133,7 +133,7 @@
                         </div>
 
                         <div class="mt-5">
-                            <a href="{{route('download-importProductExcel')}}" download
+                            <a href="{{route('download.importLocationExcel')}}" 
                                 class="btn btn-light-primary btn-sm">
                                 <i class="fas fa-download"></i>{{ __('product/import-product.download_template_file') }}
                             </a>
@@ -162,126 +162,95 @@
                             @php
                             $Instructions = [
                                 [
-                                    'name' => 'Product Name',
-                                    'is_req' => true,
-                                    'instruction' => 'Name of the product',
-                                ],
-                                [
-                                    'name' => 'Brand',
+                                    'name' => 'Location Code',
                                     'is_req' => false,
-                                    'instruction' => 'Name of the brand ',
-                                    'note'=>'If not found new brand with the given name will be created'
+                                    'instruction' => 'Location Code',
                                 ],
                                 [
-                                    'name' => 'UoM',
+                                    'name' => 'Location Name',
                                     'is_req' => true,
-                                    'instruction' => 'Default UOM ',
+                                    'instruction' => 'Name of the location',
                                 ],
                                 [
-                                    'name' => 'Purchase UoM',
+                                    'name' => 'Location Type',
                                     'is_req' => true,
-                                    'instruction' => 'Default UOM For Purchase',
+                                    'instruction' => "Location Type Must Be in  : 'supplier location', 'customer location', 'view', 'internal location', 'transit location' ",
                                 ],
                                 [
-                                    'name' => 'Category',
-                                    'is_req' => false,
-                                    'instruction' => 'Name of the Category',
-                                    'note'=>'If not found new category with the given name will be created'
+                                    'name' => 'Parent Location',
+                                    'is_req' => true,
+                                    'instruction' => 'Parent Location Name',
+                                    'note'=>'Parent location must be created',
+                                ],
+                                [
+                                    'name' => 'Inventory Flow',
+                                    'is_req' => true,
+                                    'instruction' => 'Inventory Flow Type must be in ["fifo","lifo"]'
                                 ],
 
                                 [
-                                    'name' => 'Manufacture',
+                                    'name' => 'Purchase Order',
                                     'is_req' => false,
-                                    'instruction' => 'Name of the Manufacture',
-                                    'note'=>'If not found new Manufacture with the given name will be created.'
+                                    'instruction' => 'Purchase Order value must be [ 0 , 1 ]',
+                                    'note'=>'Purchase Order mean to allow location to only use Stock In and Out'
                                 ],
                                 [
-                                    'name' => 'Generic',
+                                    'name' => 'Sale Order',
                                     'is_req' => false,
-                                    'instruction' => 'Name of the Generic ',
-                                    'note'=>'If not found new generic with the given name under the parent Category will be
-                                    created'
-                                ],
-                                [
-                                    'name' => 'SKU',
+                                    'instruction' => 'Sale Order  [ 0 , 1 ]',
+                                    'note'=>'Sale Order mean to allow location to only use Stock In and Out',
+
+                                ],[
+                                    'name' => 'Default Price List Name',
                                     'is_req' => false,
-                                    'instruction' => 'Product SKU. ',
-                                    'note'=>'If blank an SKU will be automatically generated.',
+                                    'instruction' => 'Price List must be created',
+                                ],[
+                                    'name'=>'Invoice Layout Name',
+                                    'is_req' => false,
+                                    'instruction' => 'Invoice Layout Name must be created in invoice template',
+                                ],[
+                                    'name'=>'Gps Location',
+                                    'is_req' => false,
+                                    'instruction' => 'Lat and Long of location eg.{lat:0001,lang:10000} ',
                                 ],
                                 [
-                                'name' => 'Product Type',
-                                'is_req' => true,
-                                'instruction' => 'Product Type. Available Options: Consumeable , Storable , Serivce',
+                                    'name'=>'address',
+                                    'is_req' => false,
+                                    'instruction' => 'Location Address ',
                                 ],
                                 [
-                                'name' => 'Has Variation',
-                                'is_req' => true,
-                                'instruction' => 'Has product variation? (Single or Variable)',
+                                    'name'=>'Zip Code',
+                                    'is_req' => false,
+                                    'instruction' => ' Zip Code ',
                                 ],
                                 [
-                                'name' => 'Variation Name (Required if product type is variable)',
-                                'is_req' => true,
-                                'instruction' => 'Name of the variation (Ex: Size, Color, etc.)',
+                                    'name'=>'City',
+                                    'is_req' => false,
+                                    'instruction' => ' City ',
                                 ],
                                 [
-                                'name' => 'Variation Values (Required if product type is variable)',
-                                'is_req' => true,
-                                'instruction' => 'Values for the variation separated with \'|\'. (Ex: Red|Blue|Green)',
+                                    'name'=>'State',
+                                    'is_req' => false,
+                                    'instruction' => 'State ',
                                 ],
                                 [
-                                'name' => 'Variation SKUs',
-                                'is_req' => false,
-                                'instruction' => 'SKUs of each variation separated by "|" if product type is variable',
-                                ],
-                                [
-                                'name' => 'Purchase Price ',
-                                'is_req' => false,
-                                'instruction' => 'Default Purchase Price',
-                                ],
-                                // [
-                                // 'name' => 'Purchase Price (Excluding Tax) (Required if Purchase Price Including Tax is
-                                // not given)',
-                                // 'is_req' => true,
-                                // 'instruction' => 'Purchase Price (Excluding Tax) (Only in numbers). For variable
-                                // products, "|" separated values with the same order as Variation Values (Ex: 84|85|88)',
-                                // ],
-                                [
-                                'name' => 'Profit Margin %',
-                                'is_req' => false,
-                                'instruction' => 'Profit Margin (Only in numbers).',
-                                'note'=>'If blank, the default profit margin for the business will be used'
-                                ],
-                                [
-                                'name' => 'Selling Price',
-                                'is_req' => false,
-                                'instruction' => 'Selling Price (Only in numbers). ',
-                                'note'=>'If blank, selling price will be calculated with the given Purchase Price and
-                                Applicable Tax'
-                                ],
-                                [
-                                'name' => 'Can Sale',
-                                'is_req' => true,
-                                'instruction' => 'Can Product use in sale .Option : 0 or 1',
-                                'note'=>"If blank or 0, Product can't search in sale voucher creation",
-                                ],
-                                [
-                                'name' => 'Can Purchase',
-                                'is_req' => true,
-                                'instruction' => 'Can Product use in sale .Option : 0 or 1',
-                                'note'=>"If blank or 0, Product can't search in purchase voucher creation",
-                                ],
-                                [
-                                'name' => 'Can Expense',
-                                'is_req' => false,
-                                'instruction' => 'Can Product use as Expense Product .Option : 0 or 1',
-                                'note'=>"If blank or 0, Product can't search in Expense voucher creation",
+                                    'name'=>'Country',
+                                    'is_req' => false,
+                                    'instruction' => 'Country ',
                                 ],
 
                                 [
-                                'name' => 'Product Description',
-                                'is_req' => false,
-                                'instruction' => 'Description of product',
+                                    'name'=>'Mobile',
+                                    'is_req' => false,
+                                    'instruction' => 'Mobile ',
                                 ],
+
+                                [
+                                    'name'=>'Alt. Number',
+                                    'is_req' => false,
+                                    'instruction' => 'Alternative Mobile Number ',
+                                ],
+
 
                             ];
                             @endphp

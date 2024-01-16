@@ -342,6 +342,7 @@ Route::controller(businessSettingController::class)->group(function () {
 Route::controller(locationImportController::class)->prefix('/import')->group(function () {
     Route::get('/location','index')->name('location.importUi');
     Route::post('/location', 'import')->name('location.import');
+    Route::get('/location/download', 'download')->name('download.importLocationExcel');
 });
 Route::controller(businessLocationController::class)->group(function () {
     Route::prefix('location')->group(function () {
