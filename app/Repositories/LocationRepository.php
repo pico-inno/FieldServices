@@ -22,7 +22,7 @@ class LocationRepository implements LocationRepositoryInterface
             $accessLocationIds= [...$accessLocationIds,...$childLocationIDs];
         }
         $locationQuery =  businessLocation::where('is_active', 1)
-        ->when($accessLocation[0] != 0, function ($query) use ($accessLocationIds) {
+        ->when(isset($accessLocation[0])  && $accessLocation[0] != 0, function ($query) use ($accessLocationIds) {
             $query->whereIn('id', $accessLocationIds);
         });
         return $locationQuery;

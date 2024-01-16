@@ -240,6 +240,7 @@
                                                                     </div>
                                                                 </th> --}}
                                                                 <th></th>
+                                                                <th></th>
                                                                 <th class="text-start min-w-100px">{{ __('product/product.action') }}</th>
                                                                 <th class="min-w-150px">{{ __('product/product.product') }}</th>
                                                                 {{-- <th class="text-start min-w-150px">
@@ -284,6 +285,10 @@
 
                                                     <i class="fas fa-info-circle ms-1 fs-7 text-success cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
                                                     title="Deactived products will not be available for purchase or sell"></i> --}}
+                                                    <div class="d-flex gap-4">
+                                                        <button class="btn btn-primary btn-sm" id="assignBtn">Assign Selected Products To location</button>
+                                                        <button class="btn btn-warning btn-sm" id="removeAssignBtn">Removed Selected Products From location</button>
+                                                    </div>
                                                 </div>
 
                                             {{-- </div>
@@ -449,22 +454,143 @@
     <!-- <script src="{{ asset('customJs/product/productListExport.js') }}"></script> -->
     <script>
 
+        // assign product to location
+        let locations=@json($locations ?? []);
+        let options={};
+        const transformedObject = Object.fromEntries(locations.map(({ id, name }) => [id, name]));
+
+        $('#assignBtn').click(()=>{
+            let checkBoxs=document.querySelectorAll('[data-checked="assign"]');
+            let checkCount=0;
+            let productIds=[];
+            checkBoxs.forEach(c => {
+                if (c.checked) {
+                    checkCount++;
+                    let productId=$(c).val();
+                    productIds=[...productIds,productId];
+                }
+            });
+            if(checkCount <1){
+                Swal.fire({
+                    title: 'Please Select The Products',
+                    // text: "You want to delete it!",
+                    icon: "warning",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                })
+            }else{
+                Swal.fire({
+                    title: "Select Location",
+                    input: "select",
+                    inputOptions:transformedObject,
+                    inputPlaceholder: "Select Locations",
+                    inputValidator: (value) => {
+                        return new Promise((resolve) => {
+                            if (value === "") {
+                                resolve("You need to select location :)");
+                            } else {
+                                $.ajax({
+                                url:'/location-product/store',
+                                type: 'GET',
+                                data:{
+                                    'location_id':value,
+                                    'productIds':productIds,
+                                },
+                                // headers: {
+                                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                // },
+                                    success: function(s) {
+                                        Swal.fire({
+                                            title: 'Successfully Assigned',
+                                            icon: "success",
+                                            confirmButton:true,
+                                            confirmButtonColor: '#3085d6',
+                                            confirmButtonText: 'Ok'
+                                        })
+
+                                        resolve();
+                                    }
+                                })
+                            }
+                        });
+                    }
+                })
+            }
+        })
+        $('#removeAssignBtn').click(()=>{
+            let checkBoxs=document.querySelectorAll('[data-checked="assign"]');
+            let checkCount=0;
+            let productIds=[];
+            checkBoxs.forEach(c => {
+                if (c.checked) {
+                    checkCount++;
+                    let productId=$(c).val();
+                    productIds=[...productIds,productId];
+                }
+            });
+            if(checkCount <1){
+                Swal.fire({
+                    title: 'Please Select The Products',
+                    // text: "You want to delete it!",
+                    icon: "warning",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                })
+            }else{
+                Swal.fire({
+                    title: "Select Location",
+                    input: "select",
+                    inputOptions:transformedObject,
+                    inputPlaceholder: "Select Locations",
+                    inputValidator: (value) => {
+                        return new Promise((resolve) => {
+                            if (value === "") {
+                                resolve("You need to select location :)");
+                            } else {
+                                $.ajax({
+                                url:'/location-product/remove',
+                                type: 'GET',
+                                data:{
+                                    'location_id':value,
+                                    'productIds':productIds,
+                                },
+                                // headers: {
+                                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                // },
+                                    success: function(s) {
+                                        Swal.fire({
+                                            title: 'Successfully Removed From Location',
+                                            icon: "success",
+                                            confirmButton:true,
+                                            confirmButtonColor: '#3085d6',
+                                            confirmButtonText: 'Ok'
+                                        })
+
+                                        resolve();
+                                    }
+                                })
+                            }
+                        });
+                    }
+                })
+            }
+        })
+
         var table;
         $(document).ready(function () {
 
-
             function disablePagination() {
-    // Store the current pagination state
-    var currentPage = table.page();
+                // Store the current pagination state
+                var currentPage = table.page();
 
-    // Disable pagination
-    table.page('all').draw('page');
+                // Disable pagination
+                table.page('all').draw('page');
 
-    // Revert to the original page after the export is complete
-    table.one('draw.dt', function () {
-        table.page(currentPage).draw('page');
-    });
-}
+                // Revert to the original page after the export is complete
+                table.one('draw.dt', function () {
+                    table.page(currentPage).draw('page');
+                });
+            }
 
             var initDatatable = function (){
                 table = $('.Datatable-tb').DataTable({
@@ -480,15 +606,28 @@
 
                 columns: [
                     {
+                    data: 'check_box',
+                    name: 'check_box',
+                    render: function(data, type, full, meta){
+                        console.log(data);
+                        return `
+                            <div class="form-check form-check-sm form-check-custom ">
+                                <input class="form-check-input" type="checkbox" data-checked="assign" value="${data}" />
+                            </div>
+                        `;
+                        }
+                    },
+                    {
                         "className":      'details-control',
                         "orderable":      false,
                         "data":           null,
                         "defaultContent": `
-                                            <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px">
-                                                <i id="toggle" class="fas fa-plus"></i>
-                                            </button>
-                                        `
+                            <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px">
+                                <i id="toggle" class="fas fa-plus"></i>
+                            </button>
+                        `
                     },
+
                     {
                         data: 'action',
                         name: 'action',
@@ -886,6 +1025,9 @@
             success("{{session('message')}}");
 
     @endif
+
+
+
 
         </script>
 @endpush

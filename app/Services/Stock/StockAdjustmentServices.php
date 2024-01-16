@@ -118,7 +118,7 @@ class StockAdjustmentServices
                 'adjustment_id' => $createdStockAdjustment->id,
                 'product_id' => $productVariation->product_id,
                 'variation_id' => $data['variation_id'],
-                'uom_price' => $uomPrice,
+                'uom_price' => $uomPrice ?? 0,
                 'adjustment_type' => $adjustmentType,
                 'uom_id' => $data['uom_id'],
                 'balance_quantity' => $changeUomQty,

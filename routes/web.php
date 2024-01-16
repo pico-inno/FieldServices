@@ -98,6 +98,7 @@ use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
 use App\Http\Controllers\import\locationImportController;
+use App\Http\Controllers\LocationProductController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
@@ -384,6 +385,10 @@ Route::controller(businessLocationController::class)->group(function () {
         Route::post('{id}/update', 'update')->name('location_update');
         Route::get('/get', 'getLocationsForSelect');
     });
+});
+Route::controller(LocationProductController::class)->prefix('location-product')->group(function(){
+    Route::get('/store','store');
+    Route::get('/remove', 'remove');
 });
 
 

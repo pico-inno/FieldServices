@@ -2,35 +2,37 @@
 
 namespace App\Http\Controllers\Product;
 
-use App\Actions\product\ProductAction;
+use Exception;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Models\Product\Product;
+use App\Models\Product\Category;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Actions\product\ProductAction;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Product\PriceListDetails;
+use App\Models\Product\ProductVariation;
+use App\Repositories\LocationRepository;
+use Yajra\DataTables\Facades\DataTables;
+use App\Models\settings\businessLocation;
+use App\Services\product\productServices;
+use App\Repositories\Product\UOMRepository;
+use App\Repositories\Product\BrandRepository;
+use App\Services\packaging\packagingServices;
+use App\Models\Product\VariationTemplateValues;
+use App\Repositories\Product\GenericRepository;
+use App\Repositories\Product\ProductRepository;
+use App\Repositories\Product\CategoryRepository;
+use App\Repositories\Product\VariationRepository;
+use App\Models\Product\ProductVariationsTemplates;
+use App\Repositories\Product\ManufacturerRepository;
+use App\Repositories\Product\UnitCategoryRepository;
 use App\Http\Requests\Product\Product\ProductCreateRequest;
 use App\Http\Requests\Product\Product\ProductUpdateRequest;
-use App\Models\Product\Category;
-use App\Models\Product\PriceListDetails;
-use App\Models\Product\Product;
-use App\Models\Product\ProductVariation;
-use App\Models\Product\ProductVariationsTemplates;
-use App\Models\Product\VariationTemplateValues;
-use App\Models\settings\businessLocation;
-use App\Repositories\Product\BrandRepository;
-use App\Repositories\Product\CategoryRepository;
-use App\Repositories\Product\GenericRepository;
-use App\Repositories\Product\ManufacturerRepository;
-use App\Repositories\Product\ProductRepository;
-use App\Repositories\Product\UnitCategoryRepository;
-use App\Repositories\Product\UOMRepository;
-use App\Repositories\Product\VariationRepository;
 use App\Repositories\UserManagement\BusinessUserRepository;
-use App\Services\packaging\packagingServices;
-use App\Services\product\productServices;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Yajra\DataTables\Facades\DataTables;
+use App\Repositories\interfaces\LocationRepositoryInterface;
 
 class ProductController extends Controller
 {
@@ -75,6 +77,9 @@ class ProductController extends Controller
         $products = Product::with('productVariations', 'category', 'brand')->get();
 
         return DataTables::of($products)
+            ->addColumn('check_box',function($product){
+                return $product->id;
+            })
             ->addColumn('product', function ($product) {
                 $deleted_variation = false;
 
@@ -162,9 +167,12 @@ class ProductController extends Controller
             ->make(true);
     }
 
-    public function index()
+    public function index(
+        LocationRepositoryInterface $locationRepository,
+    )
     {
-        return view('App.product.product.productList');
+        $locations=$locationRepository->locationWithAccessControlQuery()->select('id','name')->get();
+        return view('App.product.product.productList',compact('locations'));
     }
 
     public function add($quickAdd = false)

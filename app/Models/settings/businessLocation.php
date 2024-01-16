@@ -3,6 +3,7 @@
 namespace App\Models\settings;
 
 use App\Models\locationAddress;
+use App\Models\locationProduct;
 use App\Models\locationType;
 use App\Models\Product\PriceLists;
 use App\Models\Stock\Stockin;
@@ -65,5 +66,8 @@ class businessLocation extends Model
     public function pricelist()
     {
         return $this->belongsTo(PriceLists::class, 'price_lists_id');
+    }
+    public function products(){
+        return $this->morphToMany(locationProduct::class,'id','location_id');
     }
 }
