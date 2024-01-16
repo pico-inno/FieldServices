@@ -35,9 +35,14 @@ class ImportProductController extends Controller
             $file = $request->file('import-products');
             // $status = Excel::import(new ProductsImport(), $file);
             $import = new ProductsImport;
-            $import->import($file);
-
+            $importMessage=$import->import($file);
             DB::commit();
+            activity('product-transaction')
+                ->log('Products import has been success')
+                ->event('import')
+                ->status('success')
+                ->save();
+
             return back()->with(['success-swal' => 'Successfully Imported']);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -47,7 +52,11 @@ class ImportProductController extends Controller
                 $failures = $th->failures();
             }
             $error = ['error-swal' => $th->getMessage(), 'failures' => $failures];
-
+            activity('product-transaction')
+                ->log('Product import has been fail')
+                ->event('import')
+                ->status('fail')
+                ->save();
             return back()->with($error);
         }
     }
@@ -62,6 +71,12 @@ class ImportProductController extends Controller
             'Content-Type' => 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename="import_products_csv_template.xls"',
         ];
+
+        activity('product-transaction')
+            ->log('Product template download has been success')
+            ->event('download')
+            ->status('success')
+            ->save();
 
         return response()->download($path, 'import_products_csv_template.xls', $headers);
     }

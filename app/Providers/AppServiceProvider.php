@@ -47,9 +47,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-        if (!Schema::hasTable('sessions')) {
-            Artisan::call('session-create');
-        }
+//        if (!Schema::hasTable('sessions')) {
+//            Artisan::call('session-create');
+//        }
         view()->composer('*', function($view) {
             try {
                 if (Auth::check()) {

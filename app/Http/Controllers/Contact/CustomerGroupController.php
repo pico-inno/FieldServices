@@ -7,6 +7,7 @@ use App\Models\Contact\CustomerGroup;
 use App\Models\Product\PriceLists;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class CustomerGroupController extends Controller
@@ -82,14 +83,30 @@ class CustomerGroupController extends Controller
 
     public function store(Request $request){
         try{
+            DB::beginTransaction();
             $customer_group = $request->only(['name', 'amount', 'price_calculation_type', 'price_list_id']);
             $customer_group['business_id'] = 1;
             $customer_group['created_by'] = Auth::user()->id;
             // dd($customer_group);
-            CustomerGroup::create($customer_group);
+            $customerGroup = CustomerGroup::create($customer_group);
+            DB::commit();
+            activity('contact')
+                ->log('Customer Group creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties(['id' => $customerGroup->id])
+                ->save();
 
             return redirect('/customer-group')->with('success','Customer Group Created Successfully');
         } catch(\Exception $e){
+            DB::rollBack();
+
+            activity('contact')
+                ->log('Customer Group creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
+
             return redirect()->back()->with('error', 'An error occurred while creating the customer group');
         }
     }
@@ -102,6 +119,7 @@ class CustomerGroupController extends Controller
     public function update(Request $request, $id){
         if($request->ajax()){
             try{
+                DB::beginTransaction();
                 $customer_group = CustomerGroup::find($id);
 
                 $customer_group->name = $request['name'];
@@ -109,22 +127,51 @@ class CustomerGroupController extends Controller
                 $customer_group->amount = $request['amount'];
                 $customer_group->price_list_id = $request['price_list_id'];
                 $customer_group->update();
+                DB::commit();
+                activity('contact')
+                    ->log('Customer Group update has been success')
+                    ->event('update')
+                    ->status('success')
+                    ->properties(['id' => $id])
+                    ->save();
 
                 return response()->json(['success' => true, 'msg' => 'Customer Group Updated Successfully']);
             } catch(\Exception $e){
+                DB::rollBack();
+                activity('contact')
+                    ->log('Customer Group creation has been fail')
+                    ->event('update')
+                    ->status('fail')
+                    ->save();
+
                 return response()->json(['success' => false, 'msg' => 'An error occurred while updating the customer group']);
             }
         }
     }
 
     public function destroy($id){
-        $customer_group = CustomerGroup::find($id);
 
-        if($customer_group){
+
+        try{
+            DB::beginTransaction();
+            $customer_group = CustomerGroup::find($id);
             $customer_group->delete();
+            DB::commit();
+
+            activity('contact')
+                ->log('Customer Group deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
 
             return back()->with('success','Customer Group Deleted Successfully');
-        } else{
+        } catch (\Exception $exception){
+            DB::rollBack();
+            activity('contact')
+                ->log('Customer Group deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
             return back()->with('error','Customer group not found');
         }
     }

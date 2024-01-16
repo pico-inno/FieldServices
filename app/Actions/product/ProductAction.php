@@ -28,71 +28,71 @@ class ProductAction
     }
 
     public function create($data){
-        return DB::transaction(function () use ($data){
-           $savedImageName = $this->saveProductImage($data);
-           $preparedProductData = $this->prepareProductData($data);
-           $preparedProductData['image'] = $savedImageName;
-           $preparedProductData['created_by'] = \auth()->id();
 
-           $createdProduct = $this->productRepository->create($preparedProductData);
+       $savedImageName = $this->saveProductImage($data);
+       $preparedProductData = $this->prepareProductData($data);
+       $preparedProductData['image'] = $savedImageName;
+       $preparedProductData['created_by'] = \auth()->id();
 
-           //variation
-            if ($data->has_variation === "variable") { //for variation
+       $createdProduct = $this->productRepository->create($preparedProductData);
 
-                foreach ($data->variation_id as $index => $id) {
+       //variation
+        if ($data->has_variation === "variable") { //for variation
 
-                    $variationData = [
-                        'product_id' => $createdProduct->id,
-                        'variation_sku' => $createdProduct->sku . '-0' . $index,
-                        'variation_template_value_id' => $id,
-                        'default_purchase_price' => $data->exc_purchase[$index],
-                        'profit_percent' => $data->profit_percentage[$index],
-                        'default_selling_price' => $data->selling_price[$index],
-                        'alert_quantity' => $data->alert_quantity[$index],
-                        'created_by' => \auth()->id(),
-                    ];
-                    $createdProductVariation = $this->productRepository->createVariation($variationData);
+            foreach ($data->variation_id as $index => $id) {
 
-                    $this->createOrUpdatePriceListDetail('Variation', $createdProductVariation->id, $data->selling_price[$index]);
-
-                }
-
-            }else{ //for single
-                $preparedProductVariationData = [
+                $variationData = [
                     'product_id' => $createdProduct->id,
-                    'variation_sku' => $createdProduct->sku,
-                    'default_purchase_price' => $data->single_exc,
-                    'profit_percent' => $data->single_profit,
-                    'default_selling_price' => $data->single_selling,
-                    'alert_quantity' => $data->single_alert_quantity,
-                    'created_by' => \auth()->id()
+                    'variation_sku' => $createdProduct->sku . '-0' . $index,
+                    'variation_template_value_id' => $id,
+                    'default_purchase_price' => $data->exc_purchase[$index],
+                    'profit_percent' => $data->profit_percentage[$index],
+                    'default_selling_price' => $data->selling_price[$index],
+                    'alert_quantity' => $data->alert_quantity[$index],
+                    'created_by' => \auth()->id(),
                 ];
-                $this->createOrUpdatePriceListDetail('Product', $createdProduct->id, $data->single_selling);
+                $createdProductVariation = $this->productRepository->createVariation($variationData);
 
-                $this->productRepository->createVariation($preparedProductVariationData);
+                $this->createOrUpdatePriceListDetail('Variation', $createdProductVariation->id, $data->selling_price[$index]);
 
             }
 
-
-            $productVariationsTemplateData = [
+        }else{ //for single
+            $preparedProductVariationData = [
                 'product_id' => $createdProduct->id,
-                'variation_template_id' => $data->variation_name,
-                'created_by' => \auth()->id(),
+                'variation_sku' => $createdProduct->sku,
+                'default_purchase_price' => $data->single_exc,
+                'profit_percent' => $data->single_profit,
+                'default_selling_price' => $data->single_selling,
+                'alert_quantity' => $data->single_alert_quantity,
+                'created_by' => \auth()->id()
             ];
+            $this->createOrUpdatePriceListDetail('Product', $createdProduct->id, $data->single_selling);
 
-            $this->productRepository->createVariationTemplate($productVariationsTemplateData);
+            $this->productRepository->createVariation($preparedProductVariationData);
+
+        }
 
 
-            if ($data->additional_product_details) {
-                $productService = new productServices();
-                $productService->createAdditionalProducts($data->additional_product_details, $createdProduct,true);
-            }
+        $productVariationsTemplateData = [
+            'product_id' => $createdProduct->id,
+            'variation_template_id' => $data->variation_name,
+            'created_by' => \auth()->id(),
+        ];
 
-            if($data->packaging_repeater){
-                $packagingServices= new packagingServices();
-                $packagingServices->createWithBulk($data->packaging_repeater, $createdProduct);
-            }
-        });
+        $this->productRepository->createVariationTemplate($productVariationsTemplateData);
+
+
+        if ($data->additional_product_details) {
+            $productService = new productServices();
+            $productService->createAdditionalProducts($data->additional_product_details, $createdProduct,true);
+        }
+
+        if($data->packaging_repeater){
+            $packagingServices= new packagingServices();
+            $packagingServices->createWithBulk($data->packaging_repeater, $createdProduct);
+        }
+
     }
 
     public function update($product, $data){

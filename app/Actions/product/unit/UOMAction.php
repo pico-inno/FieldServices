@@ -18,27 +18,21 @@ class UOMAction
 
     public function create($uom)
     {
-        return DB::transaction(function () use ($uom) {
-            $data = $this->prepareUomData($uom);
-            $data['created_by'] = auth()->id();
-            $this->uomRepository->create($data);
-        });
+        $data = $this->prepareUomData($uom);
+        $data['created_by'] = auth()->id();
+        $this->uomRepository->create($data);
     }
 
     public function update($id, $uom)
     {
-        return DB::transaction(function () use ($id, $uom) {
-            $data = $this->prepareUomData($uom);
-            $data['updated_by'] = auth()->id();
-            $this->uomRepository->update($id, $data);
-        });
+        $data = $this->prepareUomData($uom);
+        $data['updated_by'] = auth()->id();
+        $this->uomRepository->update($id, $data);
     }
 
 
     public function delete($id){
-        return DB::transaction(function () use ($id){
-           $this->uomRepository->delete($id);
-        });
+       $this->uomRepository->delete($id);
     }
 
     private function prepareUomData($uom)

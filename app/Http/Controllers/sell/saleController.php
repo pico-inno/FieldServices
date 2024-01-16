@@ -457,7 +457,17 @@ class saleController extends Controller
                 }
             }
             DB::commit();
-
+            activity('sale-transaction')
+                ->log('New Sale creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties([
+                    'id'=> $sale_data->id,
+                    'status' => $sale_data->status,
+                    'total_amount' => $sale_data->sale_amount,
+                    'payment_status' => $sale_data->payment_status,
+                ])
+                ->save();
             // response
             if ($request->type == 'pos' || $request->type == "campaign") {
                 return response()->json([
@@ -491,6 +501,11 @@ class saleController extends Controller
                     'message' => 'Something wrong'
                 ], 500);
             } else {
+                activity('sale-transaction')
+                    ->log('New Sale creation has been fail')
+                    ->event('create')
+                    ->status('fail')
+                    ->save();
                 return back()->with(['warning' => 'Something Went Wrong While creating sale']);
             }
         }
@@ -921,8 +936,24 @@ class saleController extends Controller
 
 
             DB::commit();
+            activity('sale-transaction')
+                ->log('New Sale update has been success')
+                ->event('update')
+                ->status('success')
+                ->properties([
+                    'id'=> $sales->id,
+                    'status' => $sales->status,
+                    'total_amount' => $sales->sale_amount,
+                    'payment_status' => $sales->payment_status,
+                ])
+                ->save();
         } catch (Exception $e) {
             DB::rollBack();
+            activity('sale-transaction')
+                ->log('New Sale update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return back()->with(['warning' => 'Something Went Wrong While update sale voucher']);
         }
         // dd($request->toArray());
@@ -939,12 +970,30 @@ class saleController extends Controller
 
     public function softDelete($id)
     {
-        $this->softDeletion($id);
-        $data = [
-            'success' => 'Successfully Deleted'
-        ];
+        try {
+            DB::beginTransaction();
+            $this->softDeletion($id);
+            $data = [
+                'success' => 'Successfully Deleted'
+            ];
+            DB::commit();
+            activity('sale-transaction')
+                ->log('Sale single deletion has been success')
+                ->autoEvent()
+                ->status('success')
+                ->save();
 
-        return response()->json($data, 200);
+            return response()->json($data, 200);
+        }catch (Exception $exception){
+            DB::rollBack();
+            activity('sale-transaction')
+                ->log('Sale single deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+
+            return response()->json($exception->getMessage(), 200);
+        }
     }
     public function softSelectedDelete()
     {
@@ -959,9 +1008,19 @@ class saleController extends Controller
             ];
 
             DB::commit();
+            activity('sale-transaction')
+                ->log('Sale multi-select deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
             return response()->json($data, 200);
         } catch (Exception $e) {
             DB::rollBack();
+            activity('sale-transaction')
+                ->log('Sale multi-select deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
             throw $e;
             return response()->json($e, 200);
         }

@@ -32,6 +32,11 @@ class ImportContactsController extends Controller
             'Content-Disposition' => 'attachment; filename="importContact.xls"',
         ];
 
+        activity('contact')
+            ->log('Contact template download has been success')
+            ->event('download')
+            ->status('success')
+            ->save();
         return response()->download($path, 'importContact.xls', $headers);
     }
     public function import(Request $request){
@@ -49,15 +54,22 @@ class ImportContactsController extends Controller
 
             $file = $request->file('contact_file');
             Excel::import(new contactImport(), $file);
-
             DB::commit();
+            activity('contact')
+                ->log('Contact import has been success')
+                ->event('import')
+                ->status('success')
+                ->save();
             return back()->with(['success'=>'Successfully imported']);
         } catch (\Throwable $th) {
-            // dd($th);
             DB::rollBack();
+            activity('contact')
+                ->log('Contact import has been fail')
+                ->event('import')
+                ->status('fail')
+                ->save();
             $text= "Something Wrong !";
             return redirect()->back()->with(['error' => $text]);
-            //throw $th;
         }
     }
 }

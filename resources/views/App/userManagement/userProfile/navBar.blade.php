@@ -175,6 +175,11 @@
                         <!--end::Nav item-->
                         <!--begin::Nav item-->
                         <li class="nav-item mt-2">
+                            <a class="nav-link text-active-primary ms-0 me-10 py-5 @yield('profile_logs_active_show')" href="{{route('profile.logs')}}">Activity Logs</a>
+                        </li>
+                        <!--end::Nav item-->
+                        <!--begin::Nav item-->
+                        <li class="nav-item mt-2">
                             <a class="nav-link text-active-primary ms-0 me-10 py-5 @yield('profile_settings_active_show')" href="{{route('profile.settings')}}">Settings</a>
                         </li>
                         <!--end::Nav item-->

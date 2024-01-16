@@ -106,9 +106,10 @@ class openingStockController extends Controller
     }
     public function store(Request $request)
     {
-        DB::beginTransaction();
+
 
         try {
+            DB::beginTransaction();
             $opening_stock_details=$request->opening_stock_details;
             Validator::make($request->toArray(),[
                 'opening_stock_details'=>'required',
@@ -138,14 +139,29 @@ class openingStockController extends Controller
                         CurrentStockBalance::create($current_stock_data);
                     }
                 DB::commit();
+                activity('opening-stock')
+                    ->log('Opening Stock creation has been success')
+                    ->event('create')
+                    ->status('success')
+                    ->save();
                 return redirect()->route('opening_stock_list')->with(['success' => ' Opening Stock Successfully created']);
             }else{
+                activity('opening-stock')
+                    ->log('Opening Stock creation has been warn due to require details')
+                    ->event('create')
+                    ->status('warn')
+                    ->save();
                 return back()->with(['warning' => 'Opening Stock Detail is required']);
             }
 
         } catch (\Throwable $e) {
             throw($e);
             DB::rollBack();
+            activity('opening-stock')
+                ->log('Opening Stock creation has been warn due to require fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
             return back()->with(['warning'=>'Something wrong while creating Opening Stock']);
         }
 
@@ -182,8 +198,9 @@ class openingStockController extends Controller
         $opening_stock_data=$this->dataForOpeningStock($request);
         $opening_stock_data['updated_by'] = Auth::user()->id;
         $opening_stock_data['updated_at'] = Carbon::now();
-        DB::beginTransaction();
+
         try {
+            DB::beginTransaction();
             // update  purchase data
             $selectOpeningStock = openingStocks::where('id', $id);
             $stock = $selectOpeningStock->first();
@@ -288,9 +305,19 @@ class openingStockController extends Controller
             // dd('herde');
             DB::commit();
 
+            activity('opening-stock')
+                ->log('Opening Stock update has been success')
+                ->event('update')
+                ->status('success')
+                ->save();
             return redirect()->route('opening_stock_list')->with(['success' => 'Successfully Updated Purchase']);
         } catch (Exception $e) {
             DB::rollBack();
+            activity('opening-stock')
+                ->log('Opening Stock update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return redirect()->route('opening_stock_list')->with(['error' => 'something wrong']);
         }
     }
@@ -396,6 +423,11 @@ class openingStockController extends Controller
         $data = [
             'success' => 'Successfully Deleted'
         ];
+        activity('opening-stock')
+            ->log('Opening Stock single deletion has been success')
+            ->event('delete')
+            ->status('success')
+            ->save();
         return response()->json($data, 200);
     }
 
@@ -427,9 +459,19 @@ class openingStockController extends Controller
             ];
 
             DB::commit();
+            activity('opening-stock')
+                ->log('Opening Stock multi deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
             return response()->json($data, 200);
         } catch (Exception $e) {
             DB::rollBack();
+            activity('opening-stock')
+                ->log('Opening Stock multi deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
             throw $e;
             return response()->json($e, 200);
         }

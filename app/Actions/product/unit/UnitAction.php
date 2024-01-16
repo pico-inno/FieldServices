@@ -18,35 +18,31 @@ class UnitAction
 
     public function create($unit)
     {
-        return DB::transaction(function () use ($unit) {
-            $data = $this->prepareUnitCategoryData($unit);
-            $data['created_by'] = auth()->id();
-            $this->unitCategoryRepository->create($data);
-        });
+        $data = $this->prepareUnitCategoryData($unit);
+        $data['created_by'] = auth()->id();
+        $unitCategory = $this->unitCategoryRepository->create($data);
+
+        return $unitCategory;
     }
 
     public function update($id, $unit)
     {
-        return DB::transaction(function () use ($id, $unit) {
-            $data = $this->prepareUnitCategoryData($unit);
-            $data['updated_by'] = auth()->id();
-            $this->unitCategoryRepository->update($id, $data);
-        });
+        $data = $this->prepareUnitCategoryData($unit);
+        $data['updated_by'] = auth()->id();
+        $this->unitCategoryRepository->update($id, $data);
     }
 
     public function delete($unitCategoryId)
     {
-        return DB::transaction(function () use ($unitCategoryId) {
+        $uomIds = $this->uomRepository->getByCategoryId($unitCategoryId)->pluck('id');
 
-            $uomIds = $this->uomRepository->getByCategoryId($unitCategoryId)->pluck('id');
-
-            if (!$uomIds->isEmpty()) {
-                foreach ($uomIds as $uom_id){
-                    $this->uomRepository->delete($uom_id);
-                }
+        if (!$uomIds->isEmpty()) {
+            foreach ($uomIds as $uom_id){
+                $this->uomRepository->delete($uom_id);
             }
-            $this->unitCategoryRepository->delete($unitCategoryId);
-        });
+        }
+        $this->unitCategoryRepository->delete($unitCategoryId);
+
     }
 
     private function prepareUnitCategoryData($unit)

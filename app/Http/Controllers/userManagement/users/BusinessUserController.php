@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\userManagement\users;
 
 use App\Actions\userManagement\UserAction;
+use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\BusinessUser;
 use App\Http\Requests\StoreBusinessUserRequest;
 use App\Http\Requests\UpdateBusinessUserRequest;
@@ -12,6 +14,7 @@ use App\Models\Role;
 use App\Models\settings\businessLocation;
 use App\Services\UserManagement\UserService;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -51,9 +54,22 @@ class BusinessUserController extends Controller
 
     public function store(StoreBusinessUserRequest $request, UserAction $userAction)
     {
-        $userAction->create($request);
-
-        return redirect(route('users.index'))->with(['success-swal'=>'User created successfully']);
+        try {
+            DB::beginTransaction();
+            $userAction->create($request);
+            DB::commit();
+            activity('user')->log('New business user creation has been success')
+                ->event('create')
+                ->status('success')
+                ->save();
+            return redirect(route('users.index'))->with(['success-swal'=>'User created successfully']);
+        }catch (\Exception $exception){
+            activity('user')->log('New user creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
+            return redirect(route('users.index'))->with(['error'=>'User creation failed']);
+        }
     }
 
 
@@ -83,17 +99,45 @@ class BusinessUserController extends Controller
                 Rule::unique('business_users')->ignore($id)]
         ]);
 
-        $userAction->update($request, $id);
+        try {
+            DB::beginTransaction();
+            $userAction->update($request, $id);
+            DB::commit();
+            activity('user')->log('Business user update has been success')
+                ->event('update')
+                ->status('success')
+                ->save();
 
-        return redirect(route('users.index'))->with(['scuuess-toastr'=>'User updated successfully']);
+            return redirect(route('users.index'))->with(['scuuess-toastr'=>'User updated successfully']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('user')->log('Business user update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
+            return redirect(route('users.index'))->with(['error'=>'User update failed']);
+        }
     }
 
     public function destroy($id, UserAction $userAction)
     {
-
-        $userAction->delete($id);
-
-        return redirect()->route('users.index')->with(['scuuess-toastr'=>'User Deleted Successfully']);
+        try {
+            DB::beginTransaction();
+            $userAction->delete($id);
+            DB::commit();
+            activity('user')->log('Business user deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+            return redirect()->route('users.index')->with(['scuuess-toastr'=>'User Deleted Successfully']);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('user')->log('Business user deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            return redirect()->route('users.index')->with(['error'=>'User deletion failed']);
+        }
     }
 
 
