@@ -2558,6 +2558,15 @@
                                                                 </a>
                                                                 <!--end:Menu link-->
                                                             </div>
+                                                            <div class="menu-item ">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link @yield('import_location_active')" href="{{route('location.importUi')}}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span>
+                                                                    <span class="menu-title fs-6">Import Locations</span>
+                                                                </a>
+                                                            </div>
                                                         @endif
                                                         <!--end:Menu item-->
                                                         <!--end:Menu item-->

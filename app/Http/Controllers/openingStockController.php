@@ -13,18 +13,19 @@ use App\Models\stock_history;
 use App\Models\Product\UOMSet;
 use Illuminate\Support\Carbon;
 use App\Models\Contact\Contact;
+use App\Models\locationAddress;
 use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
-use App\Models\locationAddress;
 use App\Models\openingStockDetails;
-use App\Models\productPackagingTransactions;
 use App\Models\purchases\purchases;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\LocationRepository;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use Illuminate\Support\Facades\Validator;
 use App\Models\purchases\purchase_details;
+use App\Models\productPackagingTransactions;
 use App\Services\packaging\packagingServices;
 
 class openingStockController extends Controller
@@ -46,7 +47,11 @@ class openingStockController extends Controller
     public function OpeningStockData()
     {
 
+        $accessUserLocation = getUserAccesssLocation();
         $openingStocks = openingStocks::where('is_delete', 0)
+        ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
+            $query->whereIn('business_location_id', $accessUserLocation);
+        })
         ->with('business_location_id', 'businessLocation','opening_person')
         ->OrderBy('id', 'desc')
         ->get();
@@ -90,7 +95,8 @@ class openingStockController extends Controller
     public function add()
     {
         $stockin_persons = BusinessUser::with('personal_info')->get();
-        $locations = businessLocation::all();
+
+        $locations = LocationRepository::getTransactionLocation();
 
 
         return view('App.openingStock.add', [
@@ -148,22 +154,27 @@ class openingStockController extends Controller
 
     public function edit($id)
     {
-        $locations = businessLocation::all();
-        $openingStock = openingStocks::where('id', $id)->first();
-        $openingStockDetailsChunks = openingStockDetails::with([
-            'productVariation' => function ($q) {
-                $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
+        try {
+            $locations = LocationRepository::getTransactionLocation();
+            $openingStock = openingStocks::where('id', $id)->first();
+            $voucherLocation = $openingStock->business_location_id;
+            checkLocationAccessForTx($voucherLocation);
+            $openingStockDetailsChunks = openingStockDetails::with([
+                'productVariation' => function ($q) {
+                    $q->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'profit_percent', 'default_selling_price')
                     ->with(
                         [
                             'variationTemplateValue' => function ($q) {
                                 $q->select('id', 'name');
-                            },'packaging.uom'
+                            }, 'packaging.uom'
                         ]
                     );
-            }, 'product', 'packagingTx'
-        ])->where('opening_stock_id', $id)->where('is_delete', 0)->get()->chunk(200);
-        // dd($openingStockDetails->toArray(),productPackagingTransactions::get()->toArray);
-        return view('App.openingStock.edit', compact('openingStock', 'locations',  'openingStockDetailsChunks'));
+                }, 'product', 'packagingTx'
+            ])->where('opening_stock_id', $id)->where('is_delete', 0)->get()->chunk(200);
+            return view('App.openingStock.edit', compact('openingStock', 'locations',  'openingStockDetailsChunks'));
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
     }
     public function update($id,Request $request)
     {
@@ -176,6 +187,8 @@ class openingStockController extends Controller
             // update  purchase data
             $selectOpeningStock = openingStocks::where('id', $id);
             $stock = $selectOpeningStock->first();
+            $voucherLocation=$stock->business_location_id;
+            checkLocationAccessForTx($voucherLocation);
             $selectOpeningStock->update($opening_stock_data);
             if ($request_opening_stock_details) {
 
@@ -277,7 +290,6 @@ class openingStockController extends Controller
 
             return redirect()->route('opening_stock_list')->with(['success' => 'Successfully Updated Purchase']);
         } catch (Exception $e) {
-            dd($e);
             DB::rollBack();
             return redirect()->route('opening_stock_list')->with(['error' => 'something wrong']);
         }

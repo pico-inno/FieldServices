@@ -94,6 +94,7 @@ use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
+use App\Http\Controllers\import\locationImportController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
@@ -338,6 +339,10 @@ Route::controller(businessSettingController::class)->group(function () {
     });
 });
 
+Route::controller(locationImportController::class)->prefix('/import')->group(function () {
+    Route::get('/location','index')->name('location.importUi');
+    Route::post('/location', 'import')->name('location.import');
+});
 Route::controller(businessLocationController::class)->group(function () {
     Route::prefix('location')->group(function () {
         Route::get('/view', 'index')->name('business_location');

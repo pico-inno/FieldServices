@@ -392,7 +392,25 @@ function childLocationIDs($locationId)
     $LocationsIds[] = $locationId;
     return $LocationsIds;
 }
-
+function getUserAccesssLocation(){
+    $accessLocationIds = [];
+    $accessLocations = old('access_location_ids', unserialize(Auth::user()->access_location_ids));
+    foreach ($accessLocations as $accessLocation) {
+        $childLocationIDs = childLocationIDs($accessLocation);
+        $accessLocationIds = [...$accessLocationIds, ...$childLocationIDs];
+    }
+    return $accessLocationIds;
+}
+function checkLocationAccessForTx($voucherLocationId){
+    $accessUserLocation = getUserAccesssLocation();
+    if ($accessUserLocation[0] != 0) {
+        $checkAccessLocation = in_array($voucherLocationId, $accessUserLocation);
+        if (!$checkAccessLocation) {
+            return throw new Exception("Can't Edit this Purchase Voucher. Permission Denied On location");
+        }
+    }
+    return true;
+}
 function address($address)
 {
     // dd($address);

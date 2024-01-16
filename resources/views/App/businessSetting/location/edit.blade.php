@@ -157,16 +157,16 @@
                                 </x-location-input>
 
                                 <x-location-input label="Address">
-                                    <x-forms.input placeholder="Address" name="address" :value="arr($address,'address')"></x-forms.input>
+                                    <x-forms.input placeholder="Address" name="address" id="address" :value="arr($address,'address')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="City">
-                                    <x-forms.input placeholder="City" name="city" :value="arr($address,'city')"></x-forms.input>
+                                    <x-forms.input placeholder="City" name="city" id="city" :value="arr($address,'city')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="State">
-                                    <x-forms.input placeholder="State" name="state" :value="arr($address,'state')"></x-forms.input>
+                                    <x-forms.input placeholder="State" name="state" id="state" :value="arr($address,'state')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="Country">
-                                    <x-forms.input placeholder="Country" name="country" :value="arr($address,'country')"></x-forms.input>
+                                    <x-forms.input placeholder="Country" name="country" id="country" :value="arr($address,'country')"></x-forms.input>
                                 </x-location-input>
                                 <x-location-input label="Zip Code:">
                                     <x-forms.input placeholder="Zip Code:" name="zip_postal_code" :value="arr($address,'zip_postal_code')"></x-forms.input>
@@ -274,10 +274,11 @@
 <script>
     let geoLocation=@json($bl->gps_location);
     let location_name="{{$bl->name}}" ?? '';
-    geoSpllit=geoLocation.split('-');
+    geoSpllit=geoLocation? geoLocation.split('-') : [];
     function initMap() {
-        let lat=Number(geoSpllit[0]);
-        let lng=Number(geoSpllit[1]);
+        let lat=Number(geoSpllit[0] ??  21.958828);
+        let lng=Number(geoSpllit[1] ?? 96.089103);
+        console.log(lat,lng);
         const myLatlng = { lat, lng };
         const map = new google.maps.Map(document.getElementById("map"), {
             zoom: 10,
@@ -293,7 +294,7 @@
         // Configure the click listener.
         let geolocation=[];
         const geocoder = new google.maps.Geocoder();
-        map.addListener("click", (mapsMouseEvent) => {
+                map.addListener("click", (mapsMouseEvent) => {
             // Close the current InfoWindow.
             infoWindow.close();
             // Create a new InfoWindow.
@@ -310,8 +311,22 @@
             const geocoderRequest = { location: geolocation };
             geocoder.geocode(geocoderRequest, (results, status) => {
                 if (status === google.maps.GeocoderStatus.OK) {
-                    const address = results[2].formatted_address;
-                    $('#locationname').val(address);
+                    let addresses;
+                    if(results[3]){
+                         addresses=results[3];
+                    }else if(results[2]){
+                         addresses=results[2];
+
+                    }else if(results[1]){
+                         addresses=results[1];
+
+                    }else{
+                         addresses=results[0];
+                    }
+                    addressComponents=addresses.address_components;
+                    setAdderss(addressComponents[0],addressComponents[1],addressComponents[2],addressComponents[addressComponents.length-1]);
+                    const address = addresses.formatted_address;
+                    $('#address').val(address);
                 } else {
                     console.error("Geocoding failed:", status);
                 }
@@ -320,7 +335,13 @@
 
 
     }
+function setAdderss(address='',city='',state='',country=''){
+    $('#address').val(address ?  address.long_name : '');
+    $('#city').val(city? city.long_name : '');
+    $('#state').val(state? state.long_name : '');
+    $('#country').val(country? country.long_name : '');
 
+}
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0&callback=initMap&v=weekly"></script>

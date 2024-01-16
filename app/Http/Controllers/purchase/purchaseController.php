@@ -120,6 +120,16 @@ class purchaseController extends Controller
     public function edit($id)
     {
         $purchase = purchases::where('id', $id)->first();
+        $purchaseVoucherLocation=$purchase->business_location_id;
+        $accessUserLocation=getUserAccesssLocation();
+        if($accessUserLocation[0] != 0){
+            $checkAccessLocation = in_array($purchaseVoucherLocation, $accessUserLocation);
+            if(!$checkAccessLocation){
+                return back()->with([
+                    'warning' => "Can't Edit this Purchase Voucher. Permission Denied On location"
+                ]);
+            }
+        }
         if (!checkTxEditable($purchase->created_at)) {
             return back()->with([
                 'error' => 'This transaction is not editable.'

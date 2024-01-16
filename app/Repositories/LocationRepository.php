@@ -15,9 +15,15 @@ class LocationRepository implements LocationRepositoryInterface
         return businessLocation::where('id',$id)->first();
     }
     public function locationWithAccessControlQuery(){
-        $accessLocation = old('access_location_ids', unserialize(Auth::user()->access_location_ids));
-        $locationQuery =  businessLocation::where('is_active', 1)->when($accessLocation[0] != 0, function ($query) use ($accessLocation) {
-            $query->whereIn('id', $accessLocation);
+        $accessLocationIds=[];
+        $accessLocations = old('access_location_ids', unserialize(Auth::user()->access_location_ids));
+        foreach ($accessLocations as $accessLocation) {
+            $childLocationIDs = childLocationIDs($accessLocation);
+            $accessLocationIds= [...$accessLocationIds,...$childLocationIDs];
+        }
+        $locationQuery =  businessLocation::where('is_active', 1)
+        ->when($accessLocation[0] != 0, function ($query) use ($accessLocationIds) {
+            $query->whereIn('id', $accessLocationIds);
         });
         return $locationQuery;
     }
@@ -29,7 +35,7 @@ class LocationRepository implements LocationRepositoryInterface
         return $this->locationWithAccessControlQuery()->whereNotIn('location_type', [3])->get();
     }
     public static function getTransactionLocation(){
-        return  businessLocation::where('is_active', 1)
-                ->whereNotIn('location_type',[3])->with('locationAddress')->get();
+        $instance = new self();
+        return  $instance->locationWithAccessControlQuery()->whereNotIn('location_type',[3])->with('locationAddress')->get();
     }
 }

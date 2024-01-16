@@ -29,7 +29,6 @@ class locationActions
                 'price_lists_id'=>$data['price_lists_id'],
                 'gps_location'=>$data['gps_location'],
                 'invoice_layout' => $data['invoice_layout'],
-
             ];
             $location=businessLocation::create($locationData);
             DB::commit();

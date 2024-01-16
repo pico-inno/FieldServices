@@ -35,12 +35,12 @@ class ImportProductController extends Controller
             $file = $request->file('import-products');
             // $status = Excel::import(new ProductsImport(), $file);
             $import = new ProductsImport;
-            $importMessage=$import->import($file);
+            $import->import($file);
 
             DB::commit();
             return back()->with(['success-swal' => 'Successfully Imported']);
         } catch (\Throwable $th) {
-            Db::rollBack();
+            DB::rollBack();
 
             $failures = null;
             if($th instanceof \Illuminate\Validation\ValidationException){

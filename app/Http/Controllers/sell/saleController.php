@@ -19,6 +19,7 @@ use App\Models\stock_history;
 use App\Services\SaleServices;
 use Illuminate\Support\Carbon;
 use App\Models\Contact\Contact;
+use App\Models\InvoiceTemplate;
 use App\Models\locationAddress;
 use App\Models\paymentAccounts;
 use App\Models\Product\Product;
@@ -53,7 +54,7 @@ use App\Http\Requests\location\locationRequest;
 use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
-use App\Models\InvoiceTemplate;
+use App\Repositories\interfaces\LocationRepositoryInterface;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -63,7 +64,10 @@ class saleController extends Controller
     private $setting;
     private $currency;
     private $accounting_method;
-    public function __construct()
+    public $locations;
+    public function __construct(
+        LocationRepositoryInterface $locationRepository,
+    )
     {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:sell')->only(['index', 'saleItemsList']);
@@ -74,6 +78,7 @@ class saleController extends Controller
         $this->setting = $settings;
         $this->currency = $settings->currency ?? null;
         $this->accounting_method = $settings->accounting_method ?? null;
+        $this->locations=$locationRepository;
     }
 
 
@@ -87,7 +92,13 @@ class saleController extends Controller
 
     public function saleItemsList(Request $request)
     {
-        $saleItems = sales::query()->where('is_delete', 0)->orderBy('id', 'DESC')
+
+        $accessUserLocation = getUserAccesssLocation();
+        $saleItems = sales::query()->where('is_delete', 0)
+            ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
+                $query->whereIn('business_location_id', $accessUserLocation);
+            })
+            ->orderBy('id', 'DESC')
             ->with( 'businessLocation', 'customer');
         // dd($saleItems->get()->toArray());
         if ($request->saleType == 'posSales') {
@@ -278,36 +289,40 @@ class saleController extends Controller
     // for edit page
     public function saleEdit($id)
     {
-        $locations = LocationRepository::getTransactionLocation();
-        $products = Product::with('productVariations')->get();
-        $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
-        $priceLists = PriceLists::select('id', 'name', 'description')->get();
-        $defaultPriceListId = getSystemData('defaultPriceListId');
-        // $priceGroups = PriceGroup::select('id', 'name', 'description')->get();
-        // $locations = businessLocation::all();
-        $setting = businessSettings::first();
-        $currency = $this->currency;
 
-        $exchangeRates = [];
-        if (class_exists('exchangeRates')) {
-            $exchangeRates = exchangeRates::get();
-        }
+        try {
+            $sale = sales::with('currency')->where('id', $id)->get()->first();
+            $voucherLocation = $sale->business_location_id;
+            checkLocationAccessForTx($voucherLocation);
+            $locations = LocationRepository::getTransactionLocation();
+            $products = Product::with('productVariations')->get();
+            $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
+            $priceLists = PriceLists::select('id', 'name', 'description')->get();
+            $defaultPriceListId = getSystemData('defaultPriceListId');
+            // $priceGroups = PriceGroup::select('id', 'name', 'description')->get();
+            // $locations = businessLocation::all();
+            $setting = businessSettings::first();
+            $currency = $this->currency;
 
-        $sale = sales::with('currency')->where('id', $id)->get()->first();
-        $business_location_id = $sale->business_location_id;
-        $ckRelations = [];
-        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
-            $ckRelations = [
-                'kitSaleDetails.product',
-                'kitSaleDetails.uom',
-            ];
-        }
-        $sale_details_query = sale_details::with([
-            ...$ckRelations,
-            'packagingTx',
-            'currency',
-            'productVariation' => function ($q) {
-                $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
+            $exchangeRates = [];
+            if (class_exists('exchangeRates')) {
+                $exchangeRates = exchangeRates::get();
+            }
+
+            $business_location_id = $sale->business_location_id;
+            $ckRelations = [];
+            if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+                $ckRelations = [
+                    'kitSaleDetails.product',
+                    'kitSaleDetails.uom',
+                ];
+            }
+            $sale_details_query = sale_details::with([
+                ...$ckRelations,
+                'packagingTx',
+                'currency',
+                'productVariation' => function ($q) {
+                    $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                     ->with([
                         'packaging.uom',
                         'product' => function ($q) {
@@ -317,32 +332,32 @@ class saleController extends Controller
                             $q->select('id', 'name');
                         }, 'additionalProduct.productVariation.product', 'additionalProduct.uom', 'additionalProduct.productVariation.variationTemplateValue'
                     ]);
-            },
-            'stock' => function ($q) use ($business_location_id) {
-                $locationIds = childLocationIDs($business_location_id);
-                $q->where('current_quantity', '>', 0)
+                },
+                'stock' => function ($q) use ($business_location_id) {
+                    $locationIds = childLocationIDs($business_location_id);
+                    $q->where('current_quantity', '>', 0)
                     ->whereIn('business_location_id', $locationIds);
-            },
-            'Currentstock',  'product' => function ($q) {
-                $q->with(['uom' => function ($q) {
-                    $q->with(['unit_category' => function ($q) {
-                        $q->with('uomByCategory');
+                },
+                'Currentstock',  'product' => function ($q) {
+                    $q->with(['uom' => function ($q) {
+                        $q->with(['unit_category' => function ($q) {
+                            $q->with('uomByCategory');
+                        }]);
                     }]);
-                }]);
-            },
-        ])
-            ->where('sales_id', $id)->where('is_delete', 0)
-            ->withSum(['stock' => function ($q) use ($business_location_id) {
-                $locationIds = childLocationIDs($business_location_id);
-                $q->whereIn('business_location_id', $locationIds);
-            }], 'current_quantity');
-        $sale_details = $sale_details_query->get();
-        $currencies = Currencies::get();
-        $defaultCurrency = $this->currency;
-        // $child_sale_details = $sale_details_query->whereNotNull('parent_sale_details_id', '!=', null)->get();
-        // dd($sale_details->toArray());
-        // dd($sale_details->toArray());
-        return view('App.sell.sale.edit', compact('products', 'defaultPriceListId', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
+                },
+            ])
+                ->where('sales_id', $id)->where('is_delete', 0)
+                ->withSum(['stock' => function ($q) use ($business_location_id) {
+                    $locationIds = childLocationIDs($business_location_id);
+                    $q->whereIn('business_location_id', $locationIds);
+                }], 'current_quantity');
+            $sale_details = $sale_details_query->get();
+            $currencies = Currencies::get();
+            $defaultCurrency = $this->currency;
+            return view('App.sell.sale.edit', compact('products', 'defaultPriceListId', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
+        } catch (\Throwable $th) {
+            return back()->with('error',$th->getMessage());
+        }
     }
     // sale store
     public function store(Request $request, SaleServices $saleService, paymentServices $paymentServices)
@@ -378,6 +393,8 @@ class saleController extends Controller
         }
         DB::beginTransaction();
         try {
+
+            checkLocationAccessForTx($request->business_location_id);
             // get payment status
             if ($request->paid_amount == 0) {
                 $payment_status = 'due';

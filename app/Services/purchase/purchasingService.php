@@ -137,7 +137,12 @@ class purchasingService
      */
     public function listData($request)
     {
+
+        $accessUserLocation = getUserAccesssLocation();
         $purchases = purchases::where('is_delete', 0)
+                    ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
+                        $query->whereIn('business_location_id', $accessUserLocation);
+                    })
                     ->with('business_location_id', 'businessLocation', 'supplier')
                     ->OrderBy('id', 'desc');
         if ($request->filled('form_data') && $request->filled('to_date')) {

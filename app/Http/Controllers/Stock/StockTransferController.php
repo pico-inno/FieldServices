@@ -2,37 +2,38 @@
 
 namespace App\Http\Controllers\Stock;
 
+use DateTime;
 use App\Helpers\UomHelper;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Stock\StoreStockTransferRequest;
-use App\Http\Requests\Stock\UpdateStockTransferRequest;
-use App\Models\lotSerialDetails;
-use App\Models\BusinessUser;
-use App\Models\CurrentStockBalance;
-use App\Models\Product\PriceGroup;
-use App\Models\Product\Product;
-use App\Models\Product\Unit;
 use App\Models\Product\UOM;
+use App\Models\BusinessUser;
+use App\Models\Product\Unit;
+use Illuminate\Http\Request;
+use App\Models\stock_history;
 use App\Models\Product\UOMSet;
-use App\Models\productPackagingTransactions;
+use App\Models\Stock\Stockout;
+use Illuminate\Support\Carbon;
+use App\Models\Product\Product;
+use App\Models\lotSerialDetails;
+use App\Models\Product\PriceGroup;
+use Illuminate\Support\Facades\DB;
+use App\Models\CurrentStockBalance;
+use App\Models\Stock\StockTransfer;
+use App\Http\Controllers\Controller;
+use App\Models\Stock\StockoutDetail;
+use Illuminate\Support\Facades\Auth;
+use function PHPUnit\Framework\isEmpty;
+use App\Repositories\LocationRepository;
+use function Symfony\Component\String\b;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
-use App\Models\Stock\Stockout;
-use App\Models\Stock\StockoutDetail;
-use App\Models\Stock\StockTransfer;
 use App\Models\Stock\StockTransferDetail;
-use App\Models\stock_history;
-use App\Services\packaging\packagingServices;
-use DateTime;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
-use function PHPUnit\Framework\isEmpty;
-use function Symfony\Component\String\b;
+use App\Models\productPackagingTransactions;
+use App\Services\packaging\packagingServices;
+use App\Http\Requests\Stock\StoreStockTransferRequest;
+use App\Http\Requests\Stock\UpdateStockTransferRequest;
 
 class StockTransferController extends Controller
 {
@@ -68,7 +69,8 @@ class StockTransferController extends Controller
     public function create()
     {
         $transfer_persons = BusinessUser::with('personal_info')->get();
-        $locations = businessLocation::all();
+
+        $locations = LocationRepository::getTransactionLocation();
         $products = Product::with('productVariations')->get();
 
         $setting=businessSettings::first();
@@ -330,7 +332,7 @@ class StockTransferController extends Controller
             $finalCheck = lotSerialDetails::whereIn('transaction_type', ['sale', 'stock_out'])->whereIn('current_stock_balance_id', $current)->get();
             if ($finalCheck->count() == 0) {
                 $transfer_persons = BusinessUser::with('personal_info')->get();
-                $locations = businessLocation::all();
+                $locations = LocationRepository::getTransactionLocation();
                 $setting=businessSettings::first();
                 $currency=$this->currency;
                 $transfer = StockTransfer::with('currency')->where('id', $stockTransfer->id)->get()->first();
