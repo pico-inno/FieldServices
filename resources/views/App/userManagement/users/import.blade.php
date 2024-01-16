@@ -130,144 +130,160 @@
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td>Contact type <small class="text-muted">(Required)</small></td>
+                                <td>Prefix <small class="text-muted">(Optional)</small></td>
                                 <td>
-                                    Available Options: <strong><br> 1 = Customer, <br> 2 = Supplier <br> 3 =
-                                        Both</strong>
+                                    Available Options: <strong><br> Mr, <br> Mrs <br> Miss</strong>
                                 </td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>Prefix <small class="text-muted">(Optional)</small></td>
+                                <td><span class="required">First Name</span> <small class="text-muted">(Required)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td>First Name <small class="text-muted">(Required)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Middle name <small class="text-muted">(Optional)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
                                 <td>Last Name <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>6</td>
-                                <td>Business Name <br><small class="text-muted">(Required if contact type is
-                                        supplier or both)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>Contact ID <small class="text-muted">(Optional)</small></td>
-                                <td>Leave blank to auto generate Contact ID</td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>Tax number <small class="text-muted">(Optional)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>Opening Balance <small class="text-muted">(Optional)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>Pay term <br><small class="text-muted">(Required if contact type is
-                                        supplier or both)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>11</td>
-                                <td>Pay term period <br><small class="text-muted">(Required if contact type
-                                        is supplier or both)</small></td>
-                                <td><strong>Available Options: days and months</strong></td>
-                            </tr>
-                            <tr>
-                                <td>12</td>
-                                <td>Credit Limit <small class="text-muted">(Optional)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>13</td>
+                                <td>4</td>
                                 <td>Email <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
+                                <td>5</td>
+                                <td><span class="required">Username</span> <small class="text-muted">(Required)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td><span class="required">Password</span> <small class="text-muted">(Required)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td><span class="required">Role Name</span> <small class="text-muted">(Required)</small></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td><span class="required">Access Location Name</span> <small class="text-muted">(Required)</small></td>
+                                <td>(Location Name 1, Location Name 2)</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td><span class="required">Default Location Name</span> <small class="text-muted">(Required)</small></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Date Of Birth<br><small class="text-muted">(Optional)</small></td>
+                                <td>Format Y-m-d (2023-03-25)</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Gender<br><small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>Marital Status<small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>Blood Group <small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
                                 <td>14</td>
-                                <td>Mobile <small class="text-muted">(Required)</small></td>
+                                <td>Phone <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>15</td>
-                                <td>Alternate contact number <small class="text-muted">(Optional)</small>
+                                <td>Contact Number <small class="text-muted">(Optional)</small>
                                 </td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>16</td>
-                                <td>Landline <small class="text-muted">(Optional)</small></td>
+                                <td>Family Contact Number <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>17</td>
-                                <td>City <small class="text-muted">(Optional)</small></td>
+                                <td>Facebook Link <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>18</td>
-                                <td>State <small class="text-muted">(Optional)</small></td>
+                                <td>Twitter Link <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>19</td>
-                                <td>Country <small class="text-muted">(Optional)</small></td>
+                                <td>Social Media 1 <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>20</td>
-                                <td>Address line 1 <small class="text-muted">(Optional)</small></td>
+                                <td>Social Media 1 <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>21</td>
-                                <td>Address line 2 <small class="text-muted">(Optional)</small></td>
+                                <td>Social Media 2 <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>22</td>
-                                <td>Zip Code <small class="text-muted">(Optional)</small></td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>23</td>
-                                <td>Date of birth <small class="text-muted">(Optional)</small></td>
-                                <td>Format Y-m-d (2023-03-25)</td>
-                            </tr>
-                            <tr>
-                                <td>24</td>
                                 <td>Custom Field 1 <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>25</td>
+                                <td>23</td>
                                 <td>Custom Field 2 <small class="text-muted">(Optional)</small></td>
-                                <td>&nbsp;</td>
+                                <td></td>
                             </tr>
                             <tr>
-                                <td>26</td>
+                                <td>24</td>
                                 <td>Custom Field 3 <small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>27</td>
+                                <td>25</td>
                                 <td>Custom Field 4 <small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>26</td>
+                                <td>Guardian Name<small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>27</td>
+                                <td>Language<small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>26</td>
+                                <td>ID Proof Name<small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>27</td>
+                                <td>ID Proof Number<small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>26</td>
+                                <td>Permanent Address<small class="text-muted">(Optional)</small></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>27</td>
+                                <td>Current Address<small class="text-muted">(Optional)</small></td>
                                 <td>&nbsp;</td>
                             </tr>
                         </tbody>
