@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use http\Client\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\JsonResponse;
 
 class LoginController extends Controller
 {
@@ -41,15 +42,52 @@ class LoginController extends Controller
         return 'username';
     }
 
+
     protected function authenticated(\Illuminate\Http\Request $request, $user)
     {
+
+        $log = activity('account')
+            ->event('login')
+            ->log('This account has been login')->save();
+
         if (!$user->is_active) {
+
+            activity('account')
+                ->log('This account access has been fail')
+                ->status('fail')->update($log->id);
+
             auth()->logout();
             return back()->withErrors([
                 'account_inactive' => 'Your account has been deactivated.',
             ]);
         }
+
+        activity('account')->status('success')->update($log->id);
+
         return redirect()->intended($this->redirectTo);
+    }
+
+    public function logout(\Illuminate\Http\Request $request)
+    {
+        $log = activity('account')
+            ->event('logout')
+            ->log('This account has been logout')->save();
+
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        if ($response = $this->loggedOut($request)) {
+            return $response;
+        }
+
+        activity('account')->status('success')->update($log->id);
+
+        return $request->wantsJson()
+            ? new JsonResponse([], 204)
+            : redirect('/');
     }
     public function __construct()
     {

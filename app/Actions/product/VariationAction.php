@@ -13,7 +13,7 @@ class VariationAction
     }
 
     public function create($templateData, $templateValuesData){
-        return DB::transaction(function () use ($templateData, $templateValuesData){
+
             $preparedTemplateData = $this->prepareVariationTemplateData($templateData);
             $preparedTemplateData['created_by'] = auth()->id();
             $template = $this->variationRepository->createTemplate($preparedTemplateData);
@@ -24,41 +24,44 @@ class VariationAction
                 $preparedTemplateValuesData['created_by'] = auth()->id();
                 $this->variationRepository->createTemplateValues($preparedTemplateValuesData);
             }
-        });
+
+            return $template;
+
     }
 
     public function update($variation_id, $templateData, $templateValuesData){
-        return DB::transaction(function () use ($variation_id, $templateData, $templateValuesData){
-            $preparedTemplateData = $this->prepareVariationTemplateData($templateData);
-            $preparedTemplateData['updated_by'] = auth()->id();
 
-            $this->variationRepository->updateTemplate($variation_id, $preparedTemplateData);
+        $preparedTemplateData = $this->prepareVariationTemplateData($templateData);
+        $preparedTemplateData['updated_by'] = auth()->id();
 
-            foreach ($templateValuesData as $templateValue){
-                $preparedTemplateValuesData = $this->prepareVariationTemplateValuesData($templateValue);
+        $variation_template = $this->variationRepository->updateTemplate($variation_id, $preparedTemplateData);
 
-                if ($templateValue['id'] === null) {
-                    $preparedTemplateValuesData['variation_template_id'] = $variation_id;
-                    $preparedTemplateValuesData['created_by'] = auth()->id();
-                    $this->variationRepository->createTemplateValues($preparedTemplateValuesData);
-                }else{
-                    $preparedTemplateValuesData['updated_by'] = auth()->id();
-                    $this->variationRepository->updateTemplateValues($templateValue['id'], $preparedTemplateValuesData);
-                }
+        foreach ($templateValuesData as $templateValue){
+            $preparedTemplateValuesData = $this->prepareVariationTemplateValuesData($templateValue);
 
+            if ($templateValue['id'] === null) {
+                $preparedTemplateValuesData['variation_template_id'] = $variation_id;
+                $preparedTemplateValuesData['created_by'] = auth()->id();
+                $this->variationRepository->createTemplateValues($preparedTemplateValuesData);
+            }else{
+                $preparedTemplateValuesData['updated_by'] = auth()->id();
+                $this->variationRepository->updateTemplateValues($templateValue['id'], $preparedTemplateValuesData);
             }
-        });
+
+        }
+
+        return $variation_template;
     }
 
     public function delete($id)
     {
-        return DB::transaction(function () use ($id) {
+
             $this->variationRepository->deleteTemplate($id);
 
             $ids = $this->variationRepository->getTemplateValuesByTemplateId($id)->pluck('id');
 
             $this->variationRepository->deleteTemplateValues($ids);
-        });
+
     }
     private function prepareVariationTemplateData($templateData){
         return [

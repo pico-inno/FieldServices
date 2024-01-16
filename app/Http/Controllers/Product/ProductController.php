@@ -185,25 +185,42 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
+        try {
+            DB::beginTransaction();
+            $productAction->create($request);
+            DB::commit();
+            activity('product-transaction')
+                ->log('Product creation has been success')
+                ->event('create')
+                ->properties(['product_name' => $request->product_name])
+                ->status('success')
+                ->save();
 
-        $productAction->create($request);
-
-        if ($request->save === "save") {
-            return redirect()->route('products')->with('message', 'Product created successfully');
+            if ($request->save === "save") {
+                return redirect()->route('products')->with('message', 'Product created successfully');
+            }
+            if ($request->save === "save_and_another") {
+                return redirect()->route('product.add')->with('message', 'Product created successfully');
+            }
+            if ($request->input('form_type') === 'from_pos') {
+                return response()->json(['success' => true, 'message' => 'Product created successfully']);
+            }
+            if ($request->save === "app_opening_stock") {
+                return view('App.openingStock.add', [
+                    'stockin_persons' => $this->businessUserRepository->getAllWithRelationships(['personal_info']),
+                    'locations' => businessLocation::all(),
+                ]);
+            }
+        }catch (Exception $exception){
+            DB::rollBack();
+            $message = $exception->getMessage();
+            activity('product-transaction')
+                ->log('Product creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
+            return redirect()->route('products')->with('error', "Product created fail due to $message");
         }
-        if ($request->save === "save_and_another") {
-            return redirect()->route('product.add')->with('message', 'Product created successfully');
-        }
-        if ($request->input('form_type') === 'from_pos') {
-            return response()->json(['success' => true, 'message' => 'Product created successfully']);
-        }
-        if ($request->save === "app_opening_stock") {
-            return view('App.openingStock.add', [
-                'stockin_persons' => $this->businessUserRepository->getAllWithRelationships(['personal_info']),
-                'locations' => businessLocation::all(),
-            ]);
-        }
-
     }
 
     public function edit(Product $product, productServices $productServices)
@@ -254,9 +271,8 @@ class ProductController extends Controller
 
     public function update(ProductUpdateRequest $request, Product $product)
     {
-
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             // Update Product
             $img_name = $this->saveProductImage($request, $product->image);
             $productData = $this->prepareProductData($request, $img_name, false);
@@ -282,12 +298,22 @@ class ProductController extends Controller
             ]);
 
             DB::commit();
+            activity('product-transaction')
+                ->log('Product update has been success')
+                ->event('update')
+                ->properties(['product_name' => $request->product_name])
+                ->status('success')
+                ->save();
             if ($request->has('save')) {
                 return redirect('/product');
             }
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
+            activity('product-transaction')
+                ->log('Product update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return back()->with('message', $e->getMessage());
         }
     }
@@ -296,16 +322,28 @@ class ProductController extends Controller
     {
 
         if ($product->receipe_of_material_id !== null && $product->product_type === 'consumeable'){
+            activity('product-transaction')
+                ->log('Product deletion has been warn due to associated with one or more combo/kit template')
+                ->event('delete')
+                ->properties(['product_name' => $product->name])
+                ->status('warn')
+                ->save();
             return response()->json(['error' => 'This product is associated with one or more combo/kit template. Delete the combo/kit template or associate them with a different product.']);
         }
 
         if ($product->receipe_of_material_id !== null && $product->product_type === 'service'){
+            activity('product-transaction')
+                ->log('Product deletion has been warn due to associated with one or more service template')
+                ->event('delete')
+                ->properties(['product_name' => $product->name])
+                ->status('warn')
+                ->save();
             return response()->json(['error' => 'This product is associated with one or more service template. Delete the service template or associate them with a different product.']);
         }
 
-        DB::beginTransaction();
-        try {
 
+        try {
+            DB::beginTransaction();
             $productVariationIds = ProductVariation::where('product_id', $product->id)->get()->pluck('id'); // to delete
             ProductVariation::whereIn('id', $productVariationIds)->update(['deleted_by' => Auth::user()->id]);
 
@@ -318,37 +356,55 @@ class ProductController extends Controller
             $product->delete();
             ProductVariation::destroy($productVariationIds);
 
-            // to UOMSellingPrice
-            // $toDeleteUomSelling = UOMSellingprice::byProductVariationIds($productVariationIds)->get()->pluck('id');
-            // UOMSellingprice::byId($toDeleteUomSelling)->update(['deleted_by' => Auth::user()->id]);
-            // UOMSellingprice::destroy($toDeleteUomSelling);
-
             DB::commit();
-            return response()->json(['message' => 'Deleted Sucessfully Product']);
+            activity('product-transaction')
+                ->log('Product deletion has been success')
+                ->event('delete')
+                ->properties(['product_name' => $product->name])
+                ->status('success')
+                ->save();
+            return response()->json(['message' => 'Deleted Successfully Product']);
         } catch (Exception $e) {
             DB::rollBack();
+            activity('product-transaction')
+                ->log('Product deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            return back()->with('message', $e->getMessage());
         }
     }
 
     // Product Variation Delete
     public function deleteProductVariation($id)
     {
-        DB::beginTransaction();
+
         try {
+            DB::beginTransaction();
             $productVariation = ProductVariation::find($id);
             $productVariation->deleted_by = Auth::user()->id;
             $productVariation->save();
 
             $productVariation->delete();
-
-            // to UOMSellingPrice
-            // UOMSellingprice::where('product_variation_id', $id)->update(['deleted_by' => Auth::user()->id]);
-            // UOMSellingprice::where('product_variation_id', $id)->delete();
-
             DB::commit();
-            return response()->json(['message' => 'Deleted Sucessfully Product variation']);
+
+            activity('product-transaction')
+                ->log('Product Variation deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+
+            return response()->json(['message' => 'Deleted Successfully Product variation']);
         } catch (Exception $e) {
             DB::rollBack();
+
+            activity('product-transaction')
+                ->log('Product Variation deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+
+            return back()->with('message', $e->getMessage());
         }
     }
 

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\LogController;
+use App\Http\Controllers\userManagement\users\ImportUserController;
+use App\Models\ActivityLog;
 use App\Models\sale\sales;
 use App\Models\Manufacturer;
 
@@ -151,6 +154,10 @@ Route::controller(DashboardController::class)->group(function () {
 Route::get('lang/{code}', [languageController::class, 'change'])->name('lang.change');
 //_Being: Users
 Route::resource('users', BusinessUserController::class);
+Route::get('business-users/import', [ImportUserController::class, 'index'])->name('users.import');
+Route::get('business-users/import/template-download', [ImportUserController::class, 'download'])->name('users.import.template-download');
+Route::post('business-users/import', [ImportUserController::class, 'store'])->name('users.import.store');
+
 //_End: Users
 
 //_Being: Roles
@@ -161,6 +168,7 @@ Route::resource('roles', RoleController::class);
 Route::controller(UserProfileController::class)->group(function () {
     Route::get('profile', 'index')->name('profile.index');
     Route::get('profile/settings', 'settings')->name('profile.settings');
+    Route::get('profile/logs', 'logs')->name('profile.logs');
     Route::put('profile/settings_info/{id}', 'update_info')->name('profile.info.update');
     Route::put('profile/settings_email/{id}', 'update_email')->name('profile.email.update');
     Route::put('profile/settings_password/{id}', 'update_password')->name('profile.password.update');
@@ -168,6 +176,13 @@ Route::controller(UserProfileController::class)->group(function () {
 });
 //_End: User Profile
 
+Route::controller(LogController::class)->prefix('logs')->group(function () {
+    Route::get('/', 'index')->name('index.logs');
+    Route::get('/all', 'activityLogsAll');
+    Route::get('/current/all', 'currentActivityLogs');
+    Route::get('/current/select/all/{id}', 'selectActivityLogs');
+    Route::get('/sale-transactions/all/{sale_id}', 'saleTransactionActivityLogs');
+});
 //============================ End: User Management ============================================
 
 //============================ Being: Stock - In, Out, Transfer, Adjustment ===========================================

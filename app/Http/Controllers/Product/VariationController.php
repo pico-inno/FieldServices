@@ -11,6 +11,7 @@ use App\Models\Product\VariationTemplates;
 use App\Repositories\Product\ProductRepository;
 use App\Repositories\Product\VariationRepository;
 use App\Services\product\VariationService;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -47,9 +48,31 @@ class VariationController extends Controller
     public function create(VariationCreateRequest $request, VariationAction $variationAction)
     {
 
-        $variationAction->create($request, $request->variation_value);
 
-        return redirect()->route('variations')->with('message', 'Variation created successfully');
+        try {
+            DB::beginTransaction();
+            $variation_data = $variationAction->create($request, $request->variation_value);
+            DB::commit();
+
+            activity('variation-transaction')
+                ->log('Variation creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties($variation_data)
+                ->save();
+
+
+            return redirect()->route('variations')->with('message', 'Variation created successfully');
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('variation-transaction')
+                ->log('Variation creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
+            return redirect()->route('variations')->with('message', $exception->getMessage());
+        }
+
 
     }
 
@@ -63,11 +86,32 @@ class VariationController extends Controller
 
     public function update(VariationTemplates $variation, VariationUpdateRequest $request, VariationAction $variationAction)
     {
+        try {
+            DB::beginTransaction();
+            $variation_data = $variationAction->update($variation->id, $request, $request->variation_values);
+            DB::commit();
 
-        $variationAction->update($variation->id, $request, $request->variation_values);
+            activity('variation-transaction')
+                ->log('Variation update has been success')
+                ->event('update')
+                ->status('success')
+                ->properties($variation_data)
+                ->save();
 
-        return redirect()->route('variations')->with('message', 'Variation updated successfully');
+            return redirect()->route('variations')->with('message', 'Variation updated successfully');
 
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('variation-transaction')
+                ->log('Variation update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->properties($variation_data)
+                ->save();
+
+            return redirect()->route('variations')->with('message', $exception->getMessage());
+
+        }
     }
 
     public function delete(VariationTemplates $variation, VariationAction $variationAction)
@@ -76,12 +120,36 @@ class VariationController extends Controller
         $products = $this->productRepository->queryVariation()->whereIn('variation_template_value_id', $variation_value_ids)->get();
 
         if (!$products->isEmpty()){
+            activity('variation-transaction')
+                ->log('Variation deletion has been warn due to associated with one or more product')
+                ->event('delete')
+                ->status('warn')
+                ->save();
+
             return response()->json(['error' => 'This variation is associated with one or more product. Delete these products or associate them with a different variation.']);
         }
 
-        $variationAction->delete($variation->id);
+        try {
+            DB::beginTransaction();
+            $variationAction->delete($variation->id);
+            DB::commit();
 
-        return response()->json(['message' => "Variation deleted successfully"]);
+            activity('variation-transaction')
+                ->log('Variation deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+
+            return response()->json(['message' => "Variation deleted successfully"]);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('variation-transaction')
+                ->log('Variation deletion has been fail')
+                ->event('delete')
+                ->status('fail')
+                ->save();
+            return response()->json(['message' => $exception->getMessage()]);
+        }
 
     }
 

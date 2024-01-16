@@ -105,6 +105,7 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         try{
+            DB::beginTransaction();
             // dd($request->all());
             $supplier_data = $request->only([
                 'type', 'price_list_id', 'company_name', 'prefix', 'first_name', 'middle_name', 'last_name',
@@ -150,10 +151,22 @@ class SupplierController extends Controller
             $supplier_data['business_id'] = 1;
             $supplier_data['created_by'] = Auth::user()->id;
 
-        // dd($supplier_data);
-            Contact::create($supplier_data);
+            $contact = Contact::create($supplier_data);
+            DB::commit();
+            activity('contact')
+                ->log('New supplier creation has been success')
+                ->event('create')
+                ->status('success')
+                ->properties(['id' => $contact->id])
+                ->save();
             return redirect('/contacts/suppliers')->with('success','Contact Created Successfully');
         } catch(\Exception $e){
+            DB::rollBack();
+            activity('contact')
+                ->log('New supplier creation has been fail')
+                ->event('create')
+                ->status('fail')
+                ->save();
             return redirect()->back()->with('error', 'An error occurred while creating the contact');
         }
     }
@@ -168,6 +181,7 @@ class SupplierController extends Controller
     public function update(Request $request, $id)
     {
         try{
+            DB::beginTransaction();
             $supplier = Contact::find($id);
 
             $supplier->type = $request['type'];
@@ -214,24 +228,48 @@ class SupplierController extends Controller
 
             $supplier->update();
 
+            DB::commit();
+            activity('contact')
+                ->log('Supplier update has been success')
+                ->event('update')
+                ->status('success')
+                ->properties(['id' => $id])
+                ->save();
             return redirect('/contacts/suppliers')->with('success','Contact Updated Successfully');
         } catch(\Exception $e){
+            DB::rollBack();
+            activity('contact')
+                ->log('Supplier update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
             return redirect()->back()->with('error', 'An error occurred while updating the contact');
         }
     }
 
     public function destroy($id)
     {
-        $supplier = Contact::find($id);
-
-        if($supplier){
+        try {
+            DB::beginTransaction();
+            $supplier = Contact::find($id);
             $supplier->is_delete = true;
             $supplier->save();
             $supplier->delete();
-
+            DB::commit();
+            activity('contact')
+                ->log('Supplier deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
             return back()->with('success','Contact Deleted Successfully');
-        } else{
-            return back()->with('error','Contact not found');
+        }catch (\Exception $exception){
+            DB::rollBack();
+            activity('contact')
+                ->log('Supplier deletion has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
+            return back()->with('error','Contact deletion fail');
         }
 
     }
