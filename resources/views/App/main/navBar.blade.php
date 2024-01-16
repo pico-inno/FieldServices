@@ -782,6 +782,22 @@
                                                         </div>
                                                         <!--end:Menu item-->
                                                         @endif
+                                                        @if(hasImport('user'))
+                                                            <!--begin:Menu item-->
+                                                            <div class="menu-item">
+                                                                <!--begin:Menu link-->
+                                                                <a class="menu-link  @yield('user_import_active_show')"
+                                                                   href="{{route('users.import')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                    <span
+                                                                        class="menu-title">Import Users</span>
+                                                                </a>
+                                                                <!--end:Menu link-->
+                                                            </div>
+                                                            <!--end:Menu item-->
+                                                        @endif
                                                     </div>
                                                     <!--end:Menu sub-->
                                                     <!--end:Menu sub-->

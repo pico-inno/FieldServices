@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\userManagement\users\ImportUserController;
 use App\Models\ActivityLog;
 use App\Models\sale\sales;
 use App\Models\Manufacturer;
@@ -153,6 +154,10 @@ Route::controller(DashboardController::class)->group(function () {
 Route::get('lang/{code}', [languageController::class, 'change'])->name('lang.change');
 //_Being: Users
 Route::resource('users', BusinessUserController::class);
+Route::get('business-users/import', [ImportUserController::class, 'index'])->name('users.import');
+Route::get('business-users/import/template-download', [ImportUserController::class, 'download'])->name('users.import.template-download');
+Route::post('business-users/import', [ImportUserController::class, 'store'])->name('users.import.store');
+
 //_End: Users
 
 //_Being: Roles
