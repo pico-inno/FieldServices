@@ -120,6 +120,11 @@ class Product extends Model
         return $this->hasOne(productPackaging::class, 'product_id', 'id');
     }
 
+    public function packaging(): HasMany
+    {
+        return $this->hasMany(productPackaging::class, 'product_id', 'id');
+    }
+
     public function rom(): HasOne
     {
         return $this->hasOne(ReceipeOfMaterial::class, 'id', 'receipe_of_material_id');

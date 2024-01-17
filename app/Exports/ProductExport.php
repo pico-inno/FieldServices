@@ -15,7 +15,7 @@ class ProductExport implements FromView,ShouldAutoSize
     public function view(): View
     {
 
-        $products = Product::with('productVariations', 'category', 'brand')->get();
+        $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
         return view('App.product.export.productListTemplate',compact('products'));
     }
 }
