@@ -69,5 +69,7 @@ return [
     'package_qty'=>'Package Qty',
     'product_and_variation' => 'Product & Variation',
     'variation' => "Variation",
-    'uom_price' => 'UOM Price'
+    'uom_price' => 'UOM Price',
+
+    'assign_location' => 'Assign Location'
 ];

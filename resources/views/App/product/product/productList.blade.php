@@ -41,71 +41,67 @@
                             <div class="row mb-5">
                                 <div class="col-md-3 mb-5">
                                     <label class="h5" for="">Product Type:</label>
-                                    <select class="form-select form-select-sm" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
-                                        <option>All</option>
-                                        <option value="1">Single</option>
-                                        <option value="0">Variable</option>
-                                        <option value="">Combo</option>
+                                    <select id="product_type_filter" class="form-select form-select-sm" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
+                                        <option value="all" selected>All</option>
+                                        @foreach($product_types as $product_type)
+                                            <option value="{{$product_type}}">{{$product_type}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-3 mb-5">
                                     <label class="h5" for="">Category:</label>
-                                    <select class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
-                                        <option>All</option>
-                                        <option value="1">Color</option>
-                                        <option value="0">Underware</option>
-                                        <option value="">Shirt</option>
+                                    <select id="category_filter" class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
+                                        <option value="all">All</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{$category}}">{{$category}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-3 mb-5">
-                                    <label class="h5" for="">Unit:</label>
-                                    <select class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
-                                        <option>All</option>
-                                        <option value="1">Pieces</option>
-                                        <option value="0">ဘူး</option>
-                                        <option value="">ထည်</option>
+                                    <label class="h5" for="">Brand:</label>
+                                    <select id="brand_filter" class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
+                                        <option value="all">All</option>
+                                        @foreach($brands as $brand)
+                                            <option value="{{$brand}}">{{$brand}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-3 mb-5">
-                                    <label class="h5" for="">Tax:</label>
-                                    <select class="form-select form-select-sm" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
-                                        <option>All</option>
+                                    <label class="h5" for="">Generic:</label>
+                                    <select id="generic_filter" class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
+                                        @if($generics->count() > 0)
+                                            <option value="all">All</option>
+                                            @foreach($generics as $generic)
+                                                <option value="{{$generic}}">{{$generic}}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </div>
                             </div>
                             <div class="row mb-5">
                                 <div class="col-md-3 mb-5">
-                                    <label class="h5" for="">Brand:</label>
-                                    <select class="form-select" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
-                                        <option>All</option>
-                                        <option value="1">Alphine</option>
-                                        <option value="0">iPhone</option>
-                                        <option value="">Lux</option>
+                                    <label class="h5" for="">Manufacture:</label>
+                                    <select id="manufacture_filter" class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
+                                        @if($manufactures->count() > 0)
+                                            <option value="all">All</option>
+                                            @foreach($manufactures as $manufacture)
+                                                <option value="{{$manufacture}}">{{$manufacture}}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </div>
                                 <div class="col-md-3 mb-5">
-                                    <label class="h5" for="">Business Location:</label>
-                                    <select class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
-                                        <option>All</option>
-                                        <option value="1">None</option>
-                                        <option value="0">Demo Business (BL0001)</option>
-                                        <option value="">Lux (BL0003)</option>
+                                    <label class="h5" for="">Location:</label>
+                                    <select id="location_filter" class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
+                                        @if($locations->count() > 0)
+                                            <option value="all">All</option>
+                                            @foreach($locations as $location)
+                                                <option value="{{$location->name}}">{{$location->name}}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </div>
-                                <div class="col-md-3 mb-5">
-                                    <label for=""></label>
-                                    <select class="form-select form-select-sm" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
-                                        <option>All</option>
-                                        <option value="1">Active</option>
-                                        <option value="0">Inactive</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-5">
-                                    <label class="h5" for="">Device Model:</label>
-                                    <select class="form-select form-select-sm" data-control="select2" data-hide-search="true" data-placeholder="Select an option">
-                                        <option>All</option>
-                                    </select>
-                                </div>
+
                             </div>
 
                             <div class="form-check form-check-custom form-check-solid">
@@ -248,6 +244,7 @@
                                                                     title="Product will be available only in this business locations"></i>
                                                                 </th> --}}
                                                                 <th class="text-start min-w-150px">{{ __('product/product.sku') }}</th>
+                                                                <th class="text-start min-w-150px">{{ __('product/product.assign_location') }}</th>
                                                                 <th class="text-start min-w-150px">{{ __('product/product.purchase_price') }}</th>
                                                                 <th class="text-start min-w-100px">{{ __('product/product.sell_price') }}</th>
                                                                 {{-- <th class="text-start min-w-150px">Current Stock</th> --}}
@@ -755,6 +752,10 @@
                         name: 'sku',
                     },
                     {
+                        data: 'assign_location',
+                        name: 'assign_location',
+                    },
+                    {
                         data: 'purchase_price',
                         name: 'purchase_price',
                         render: function(data) {
@@ -785,23 +786,9 @@
                     {
                         data: 'category',
                         name: 'category',
-                        render: function(data){
-                            let category;
-                            if(data.parentCategory && data.subCategory){
-                                category = data.parentCategory + " ," + data.subCategory;
-                            }
-                            if(data.parentCategory && !data.subCategory){
-                                category = data.parentCategory;
-                            }
-                            if(!data.parentCategory && data.subCategory){
-                                category = data.subCategory;
-                            }
-                            if(category === undefined){
-                                category = '';
-                            }
-                            return category;
-                        }
+
                     },
+
                     {
                         data: 'brand',
                         name: 'brand'
@@ -843,6 +830,59 @@
             $('#search').on('keyup', function() {
                 table.search(this.value).draw();
             });
+
+            $('#location_filter').on('change', function() {
+                let value = this.value;
+                if (value === 'all') {
+                    value = '';
+                }
+                table.column(5).search(value).draw();
+            });
+
+            $('#product_type_filter').on('change', function() {
+                let value = this.value;
+                if (value === 'all') {
+                    value = '';
+                }
+                table.column(8).search(value).draw();
+            });
+
+            $('#category_filter').on('change', function () {
+                let value = this.value;
+                if (value === 'all') {
+                    value = '';
+                }
+
+                table.column('category:name').search(value).draw();
+            });
+
+
+
+
+            $('#brand_filter').on('change', function() {
+                let value = this.value;
+                if (value === 'all') {
+                    value = '';
+                }
+                table.column(10).search(value).draw();
+            });
+
+            $('#generic_filter').on('change', function() {
+                let value = this.value;
+                if (value === 'all') {
+                    value = '';
+                }
+                table.column(11).search(value).draw();
+            });
+
+            $('#manufacture_filter').on('change', function() {
+                let value = this.value;
+                if (value === 'all') {
+                    value = '';
+                }
+                table.column(12).search(value).draw();
+            });
+
 
             // Product - DELETE
             $(document).on('click', '.product-delete-confirm', function(e) {
@@ -1083,32 +1123,10 @@
              }
              exportButtons();
         });
+        @if(session('message'))
 
+        success("{{session('message')}}");
+
+        @endif
     </script>
-    <script>
-
-{{--        @if(session('error-swal'))--}}
-{{--        Swal.fire({--}}
-{{--            text: '{{session('error-swal')}}',--}}
-{{--            icon: "error",--}}
-{{--            buttonsStyling: false,--}}
-{{--            showCancelButton: false,--}}
-{{--            confirmButtonText: "Ok",--}}
-{{--            cancelButtonText: "Delete",--}}
-{{--            customClass: {--}}
-{{--                confirmButton: "btn fw-bold btn-primary",--}}
-{{--            }--}}
-{{--        });--}}
-{{--        @endif--}}
-
-    @if(session('message'))
-
-            success("{{session('message')}}");
-
-    @endif
-
-
-
-
-        </script>
 @endpush
