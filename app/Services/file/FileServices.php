@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class FileServices
 {
-    public static function upload($file,$path='/' ,$nameAlgo='uuid',$isImage=true,$service='local',$type=''){
+    public static function upload($file,$path='/' ,$nameAlgo='uuid',$isImage=false,$service='local',$type=''){
         self::validate($file);
         $extension = $file->getClientOriginalExtension();
         $uuid = Uuid::uuid4()->toString();
