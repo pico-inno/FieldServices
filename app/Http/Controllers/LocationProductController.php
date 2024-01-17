@@ -9,15 +9,21 @@ use Illuminate\Http\Request;
 class LocationProductController extends Controller
 {
     public function store(Request $request){
-        $locationId=$request->location_id;
-        $productIds=$request->productIds;
-        foreach ($productIds as $productId) {
-            $check=locationProduct::where('location_id',$locationId)->where('product_id', $productId)->exists();
-            if(!$check){
-                locationProduct::create([
-                    'location_id' => $locationId,
-                    'product_id' => $productId
-                ]);
+        $locationIds = $request->locationIds;
+        $productIds = $request->productIds;
+        foreach ($locationIds as $locationId) {
+            if($locationId){
+                foreach ($productIds as $productId) {
+                    if($productId){
+                        $check = locationProduct::where('location_id', $locationId)->where('product_id', $productId)->exists();
+                        if (!$check) {
+                            locationProduct::create([
+                                'location_id' => $locationId,
+                                'product_id' => $productId
+                            ]);
+                        }
+                    }
+                }
             }
         }
         return response()->json([
@@ -28,12 +34,18 @@ class LocationProductController extends Controller
     }
     public function remove(Request $request)
     {
-        $locationId = $request->location_id;
+        $locationIds = $request->locationIds;
         $productIds = $request->productIds;
-        foreach ($productIds as $productId) {
-             locationProduct::where('location_id', $locationId)
-             ->where('product_id', $productId)
-             ->delete();
+        foreach ($locationIds as $locationId) {
+            if($locationId){
+                foreach ($productIds as $productId) {
+                    if($productId){
+                        locationProduct::where('location_id', $locationId)
+                        ->where('product_id', $productId)
+                        ->delete();
+                    }
+                }
+            }
         }
         return response()->json([
             'success' => 'Successfully Assigned'

@@ -446,6 +446,73 @@
         <!--end::Container-->
     </div>
     <!--end::Content-->
+    <div class="modal fade" tabindex="-1" id="locationSelect">
+        <div class="modal-dialog w-md-600px modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Select Location</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                        aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <div class="col-12">
+                        <form action="" id="locationAsssignForm">
+                            <select class="form-select form-select-solid" data-control="select2" id="locationSelect2" data-close-on-select="false"
+                                data-placeholder="Select an option" data-allow-clear="true" multiple="multiple">
+                                <option></option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light">Close</button>
+                    <button type="button" class="btn btn-primary" id="locationAssignChanges">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" tabindex="-1" id="locationRemove">
+            <div class="modal-dialog w-md-600px modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Select Location To Remove Product</h3>
+
+                        <!--begin::Close-->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                            aria-label="Close">
+                            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="col-12">
+                            <form action="" id="locationRemoveAsssignForm">
+                                <select class="form-select form-select-solid" data-control="select2" id="locationRemoveSelect2"
+                                    data-close-on-select="false" data-placeholder="Select an option" data-allow-clear="true"
+                                    multiple="multiple">
+                                    <option></option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light">Close</button>
+                        <button type="button" class="btn btn-danger" id="locationRemoveChanges">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection
 
 @push('scripts')
@@ -453,12 +520,14 @@
     <script src="{{asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <!-- <script src="{{ asset('customJs/product/productListExport.js') }}"></script> -->
     <script>
-
+        const modal = new bootstrap.Modal($('#locationSelect'));
+        const removeModal = new bootstrap.Modal($('#locationRemove'));
         // assign product to location
         let locations=@json($locations ?? []);
-        let options={};
         const transformedObject = Object.fromEntries(locations.map(({ id, name }) => [id, name]));
-
+        var options=locations.map((l)=>{
+            return {'id':l.id,'text':l.name}
+        })
         $('#assignBtn').click(()=>{
             let checkBoxs=document.querySelectorAll('[data-checked="assign"]');
             let checkCount=0;
@@ -479,44 +548,78 @@
                     confirmButtonText: 'Ok'
                 })
             }else{
-                Swal.fire({
-                    title: "Select Location",
-                    input: "select",
-                    inputOptions:transformedObject,
-                    inputPlaceholder: "Select Locations",
-                    inputValidator: (value) => {
-                        return new Promise((resolve) => {
-                            if (value === "") {
-                                resolve("You need to select location :)");
-                            } else {
-                                $.ajax({
-                                url:'/location-product/store',
-                                type: 'GET',
-                                data:{
-                                    'location_id':value,
-                                    'productIds':productIds,
-                                },
-                                // headers: {
-                                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                // },
-                                    success: function(s) {
-                                        Swal.fire({
-                                            title: 'Successfully Assigned',
-                                            icon: "success",
-                                            confirmButton:true,
-                                            confirmButtonColor: '#3085d6',
-                                            confirmButtonText: 'Ok'
-                                        })
-
-                                        resolve();
-                                    }
-                                })
-                            }
-                        });
+                $('#locationSelect2').select2({data:options});
+                modal.show();
+                $(document).off().on('click','#locationAssignChanges',async function(){
+                    let locationIds=$('#locationSelect2').val();
+                    console.log(locationIds);
+                    if(locationIds.length > 0){
+                        $('#locationAssignChanges').prop('disabled', true).text('loading.....');
+                        await assign(locationIds,productIds);
+                        $('#locationAssignChanges').prop('disabled', false).text('Save');
+                        $('#locationSelect2').val('');
+                        modal.hide();
                     }
+
                 })
             }
         })
+        function assign(locationIds,productIds){
+            return new Promise((resolve, reject)=>{
+                $.ajax({
+                    url:'/location-product/store',
+                    type: 'GET',
+                    data:{
+                        locationIds,
+                        productIds,
+                    },
+                    // headers: {
+                    //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    // },
+                    success: function(s) {
+                        Swal.fire({
+                            title: 'Successfully Assigned',
+                            icon: "success",
+                            confirmButton:true,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                        resolve();
+                    },
+                    error:function(){
+                        resolve();
+                    }
+                })
+            })
+        }
+        function remove(locationIds,productIds){
+            return new Promise((resolve, reject)=>{
+                $.ajax({
+                    url:'/location-product/remove',
+                    type: 'GET',
+                    data:{
+                        locationIds,
+                        productIds,
+                    },
+                    // headers: {
+                    //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    // },
+                    success: function(s) {
+                        Swal.fire({
+                            title: 'Successfully Removed',
+                            icon: "success",
+                            confirmButton:true,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        })
+                        resolve();
+                    },
+                    error:function(){
+                        resolve();
+                    }
+                })
+            })
+        }
         $('#removeAssignBtn').click(()=>{
             let checkBoxs=document.querySelectorAll('[data-checked="assign"]');
             let checkCount=0;
@@ -537,42 +640,20 @@
                     confirmButtonText: 'Ok'
                 })
             }else{
-                Swal.fire({
-                    title: "Select Location",
-                    input: "select",
-                    inputOptions:transformedObject,
-                    inputPlaceholder: "Select Locations",
-                    inputValidator: (value) => {
-                        return new Promise((resolve) => {
-                            if (value === "") {
-                                resolve("You need to select location :)");
-                            } else {
-                                $.ajax({
-                                url:'/location-product/remove',
-                                type: 'GET',
-                                data:{
-                                    'location_id':value,
-                                    'productIds':productIds,
-                                },
-                                // headers: {
-                                //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                // },
-                                    success: function(s) {
-                                        Swal.fire({
-                                            title: 'Successfully Removed From Location',
-                                            icon: "success",
-                                            confirmButton:true,
-                                            confirmButtonColor: '#3085d6',
-                                            confirmButtonText: 'Ok'
-                                        })
-
-                                        resolve();
-                                    }
-                                })
-                            }
-                        });
+                $('#locationRemoveSelect2').select2({data:options});
+                removeModal.show();
+                $(document).off('click').on('click','#locationRemoveChanges',async function(){
+                    let locationIds=$('#locationRemoveSelect2').val();
+                    if(locationIds.length > 0){
+                        $('#locationRemoveChanges').prop('disabled', true).text('loading.....');
+                        await remove(locationIds,productIds);
+                        $('#locationRemoveChanges').prop('disabled', false).text('Save');
+                        $('#locationRemoveSelect2').val('');
+                        removeModal.hide();
                     }
+
                 })
+
             }
         })
 
