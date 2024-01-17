@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Models\locationProduct;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -92,6 +93,16 @@ class ProductController extends Controller
                 return ['image' => $product->image, 'name' => $product->name, 'deleted_variation' => $deleted_variation];
                 // return ['image' => $product->image, 'name' => $product->name];
             })
+            ->addColumn('assign_location', function ($product){
+                $data = locationProduct::where('product_id',$product->id)
+                    ->with(['location:id,name'])
+                    ->get()
+                    ->pluck('location.name')
+                    ->toArray();
+                $result = implode(', ', $data);
+
+                return $result;
+            })
             ->addColumn('purchase_price', function ($product) {
                 $purchase_price = null;
                 $variation_values = null;
@@ -136,7 +147,18 @@ class ProductController extends Controller
                     $subCategory = Category::with('parentCategory', 'childCategory')->find($product->sub_category_id)->name ?? null;
                 }
 
-                return ['parentCategory' => $parentCategory, 'subCategory' => $subCategory];
+
+                if ($parentCategory && $subCategory) {
+                    return $parentCategory + ", " + $subCategory;
+                }
+                if ($parentCategory) {
+                    return $parentCategory;
+                }
+                if ($subCategory) {
+                    return $subCategory;
+                }
+                return '';
+//                return ['parentCategory' => $parentCategory, 'subCategory' => $subCategory];
             })
             ->addColumn('brand', function ($product) {
                 $brand = null;
@@ -163,7 +185,7 @@ class ProductController extends Controller
 
                 return $product->id;
             })
-            ->rawColumns(['product', 'purchase_price', 'category', 'brand', 'generic', 'manufacturer', 'action'])
+            ->rawColumns(['product', 'assign_location', 'purchase_price', 'category', 'brand', 'generic', 'manufacturer', 'action'])
             ->make(true);
     }
 
@@ -171,8 +193,21 @@ class ProductController extends Controller
         LocationRepositoryInterface $locationRepository,
     )
     {
+//        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
+        $categories = $this->categoryRepository->query()->select('name')->distinct()->pluck('name');
+        $brands = $this->brandRepository->query()->select('name')->distinct()->pluck('name');
+        $generics = $this->genericRepository->query()->select('name')->distinct()->pluck('name');
+        $manufactures = $this->manufacturerRepository->query()->select('name')->distinct()->pluck('name');
+         $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type');
         $locations=$locationRepository->locationWithAccessControlQuery()->select('id','name')->get();
-        return view('App.product.product.productList',compact('locations'));
+        return view('App.product.product.productList',compact(
+            'locations',
+            'product_types',
+            'categories',
+            'brands',
+            'generics',
+            'manufactures'
+        ));
     }
 
     public function add($quickAdd = false)

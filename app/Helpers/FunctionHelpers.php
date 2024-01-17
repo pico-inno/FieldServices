@@ -762,3 +762,14 @@ function mnumber($number)
     }
 }
 
+function getUomName($uom_id)
+{
+    $uom = UOM::where('id', $uom_id)->first()->name;
+
+    if ($uom){
+       return $uom;
+    }
+
+    return '';
+}
+
