@@ -6,6 +6,7 @@
             <th style="font-weight: bold;">Product Name</th>
             <th style="font-weight: bold;">Variation Name</th>
             <th  style="font-weight: bold;">SKU</th>
+            <th  style="font-weight: bold;">Assign Locations</th>
             <th  style="font-weight: bold;">Purchase Price</th>
             <th  style="font-weight: bold;">Selling Price</th>
             <th  style="font-weight: bold;">Product Type</th>
@@ -44,6 +45,14 @@
                     $package_data[] =$data;
                 }
             }
+
+              $location = \App\Models\locationProduct::where('product_id',$p->id)
+                        ->with(['location:id,name'])
+                        ->get()
+                        ->pluck('location.name')
+                        ->toArray();
+            $assign_locations = implode(', ', $location);
+
         @endphp
             @if ($p->has_variation=='variable')
                 @foreach ($p->productVariations as $v)
@@ -51,6 +60,7 @@
                     <td>{{$p->name}}</td>
                     <td>{{$v->variationTemplateValue->name}}</td>
                     <td>{{$v->variation_sku}}</td>
+                    <td>{{$assign_locations}}</td>
                     <td>{{ $v->default_purchase_price }}</td>
                     <td>{{ $v->default_selling_price}}</td>
                     <td>{{ $p->product_type ?? null }}</td>
@@ -73,6 +83,7 @@
                 <td>{{$p->name}}</td>
                 <td></td>
                 <td>{{$p->sku}}</td>
+                <td>{{$assign_locations}}</td>
                 <td>{{ $p->productVariations[0]->default_purchase_price ?? 0 }}</td>
                 <td>{{  $p->productVariations[0]->default_selling_price ?? 0 }}</td>
                 <td>{{ $p->product_type ?? null}}</td>
