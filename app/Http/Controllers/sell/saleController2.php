@@ -50,7 +50,7 @@ use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
 
-class saleController extends Controller
+class saleController2 extends Controller
 {
     private $setting;
     private $currency;

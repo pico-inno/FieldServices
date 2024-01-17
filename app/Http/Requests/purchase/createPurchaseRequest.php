@@ -4,7 +4,7 @@ namespace App\Http\Requests\purchase;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreatePurchaseRequest extends FormRequest
+class createPurchaseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
