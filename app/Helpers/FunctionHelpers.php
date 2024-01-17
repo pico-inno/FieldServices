@@ -390,6 +390,7 @@ function childLocationIDs($locationId)
 {
     $LocationsIds = businessLocation::where('parent_location_id', $locationId)->select('id')->pluck('id')->toArray();
     $LocationsIds[] = $locationId;
+    logger([$LocationsIds,$locationId]);
     return $LocationsIds;
 }
 function getUserAccesssLocation(){
@@ -399,6 +400,7 @@ function getUserAccesssLocation(){
         $childLocationIDs = childLocationIDs($accessLocation);
         $accessLocationIds = [...$accessLocationIds, ...$childLocationIDs];
     }
+    logger($accessLocationIds);
     return $accessLocationIds;
 }
 function checkLocationAccessForTx($voucherLocationId){

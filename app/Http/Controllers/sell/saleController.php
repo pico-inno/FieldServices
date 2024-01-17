@@ -394,7 +394,7 @@ class saleController extends Controller
         DB::beginTransaction();
         try {
 
-            checkLocationAccessForTx($request->business_location_id);
+            // checkLocationAccessForTx($request->business_location_id);
             // get payment status
             if ($request->paid_amount == 0) {
                 $payment_status = 'due';
@@ -1371,6 +1371,7 @@ class saleController extends Controller
                 $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()->toArray();
+            // dd($products);
         return response()->json($products, 200);
     }
     public function getSuggestionProduct(Request $request)

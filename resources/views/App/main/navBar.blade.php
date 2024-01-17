@@ -463,6 +463,7 @@
                                 </li>
                                 <!--end:-->
                                 @endif
+                                @if(hasUpdate('business setting'))
                                 <!--begin::Tab pane-->
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right"
                                     data-bs-dismiss="click" title="Invoice">
@@ -474,6 +475,7 @@
                                     </a>
                                     <!--end::Nav link-->
                                 </li>
+                                @endif
                                 @if(hasModule('Service') && isEnableModule('Service'))
                                     @include('service::layouts.master', ['navbarType' => 'main_icon'])
                                 @endif
