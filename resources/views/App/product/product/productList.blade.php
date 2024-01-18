@@ -235,7 +235,12 @@
                                                                         <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_ecommerce_products_table .form-check-input" value="1" />
                                                                     </div>
                                                                 </th> --}}
-                                                                <th></th>
+                                                                <th>
+                                                                    <div class="form-check form-check-sm form-check-custom  me-3">
+                                                                        <input class="form-check-input" data-checked="selectAll" id="selectAll" type="checkbox" data-kt-check="true"
+                                                                            data-kt-check-target="#kt_saleItem_table .form-check-input" value="" />
+                                                                    </div>
+                                                                </th>
                                                                 <th></th>
                                                                 <th class="text-start min-w-100px">{{ __('product/product.action') }}</th>
                                                                 <th class="min-w-150px">{{ __('product/product.product') }}</th>
@@ -525,6 +530,13 @@
         var options=locations.map((l)=>{
             return {'id':l.id,'text':l.name}
         })
+
+        $(document).on('click','#selectAll',function() {
+            let checkBoxs=document.querySelectorAll('[data-checked="assign"]');
+            checkBoxs.forEach(c => {
+                $(c).prop('checked', $(this).prop('checked'))
+            });
+        });
         $('#assignBtn').click(()=>{
             let checkBoxs=document.querySelectorAll('[data-checked="assign"]');
             let checkCount=0;
@@ -581,6 +593,7 @@
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Ok'
                         })
+                        $('.checkAssign').prop('checked',false);
                         resolve();
                     },
                     error:function(){
@@ -610,6 +623,7 @@
                             confirmButtonText: 'Ok'
                         })
                         resolve();
+                        $('.checkAssign').prop('checked',false);
                     },
                     error:function(){
                         resolve();
@@ -675,6 +689,11 @@
                 processing: true,
                 paging:true,
                 serverSide: true,
+                'columnDefs': [
+                // Disable ordering on column 0 (checkbox)
+                    { orderable: false, targets: 0 },
+                    { orderable: false, targets: 1 }
+                ],
                 ajax: {
                     url: '/product-datas',
                     data: function (d) {
@@ -687,10 +706,10 @@
                     data: 'check_box',
                     name: 'check_box',
                     render: function(data, type, full, meta){
-                        console.log(data);
+
                         return `
                             <div class="form-check form-check-sm form-check-custom ">
-                                <input class="form-check-input" type="checkbox" data-checked="assign" value="${data}" />
+                                <input class="form-check-input checkAssign" type="checkbox" data-checked="assign" value="${data}" />
                             </div>
                         `;
                         }
