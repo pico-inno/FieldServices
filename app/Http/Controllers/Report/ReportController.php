@@ -349,7 +349,7 @@ class ReportController extends Controller
                                 'id' => $product['id'],
 //                                'purchase_data' => $purchase,
                                 'location_name' => $purchase['businessLocation']['name'],
-                                'supplier_name' => $purchase['supplier']['company_name'] ??  $purchase['supplier']['company_name']['first_name'],
+                                'supplier_name' => $purchase['supplier']['company_name'] ??  $purchase['supplier']['company_name']['first_name'] ?? '',
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
                                 'variation_id' => $variation['id'],
@@ -1201,7 +1201,7 @@ class ReportController extends Controller
     public function profitLossData(Request $request){
         $filterData = isFilter($request->toArray());
         $grossProfit = price(reportServices::grossProfit($filterData));
-        // $netProfit = price(reportServices::netProfit($filterData));
+        $netProfit = price(reportServices::netProfit($filterData));
         // outcome
         if(!$filterData){
             $tlOsAmount = totalOSTransactionAmount($filterData);
@@ -1214,12 +1214,13 @@ class ReportController extends Controller
         $tlOutcome = $tlOsAmount  + $tlExAmount+$tlPAmount;
 
         //income
-        $tlCsAmount = closingStocks($filterData);
+        if($filterData) {
+            $tlCsAmount = closingStocksCal($filterData)+ closingStocksCal($filterData,true);
+        }else{
+            $tlCsAmount = closingStocksCal(false);
+        }
         $tlSAmount = totalSaleAmount($filterData);
         $tlIncome = $tlCsAmount + $tlSAmount;
-
-
-        $netProfit=$tlIncome-$tlOutcome;
         $data = [
             'grossProfit' => $grossProfit,
             'netProfit' => $netProfit,

@@ -674,16 +674,15 @@ function totalSaleDiscount($filterData = false)
 }
 function closingStocks($filterData = false)
 {
-    if (!$filterData) {
-        return closingStocksCal() ;
-    } else {
-        return closingStocksCal($filterData) + closingStocksCal($filterData, true);
-    }
+    // if (!$filterData) {
+        return closingStocksCal($filterData) ;
+    // } else {
+    //     return closingStocksCal($filterData) + closingStocksCal($filterData, true);
+    // }
 }
 
 function closingStocksCal($filterData = false, $betweenDateRage = false)
 {
-    // dd(stock_history::get()->toArray());
     $stockHistories = stock_history::select('variation_id', DB::raw('SUM(increase_qty) as totalIncreaseQty'), DB::raw('SUM(decrease_qty) as totalDecreaseQty'))
         ->when(isset($filterData['from_date']) && !$betweenDateRage, function ($q) use ($filterData) {
             $q->whereDate('created_at', '<', $filterData['from_date']);
@@ -695,14 +694,10 @@ function closingStocksCal($filterData = false, $betweenDateRage = false)
         ->groupBy('variation_id')
         ->get()
         ->toArray();
-    // $avgPrice = CurrentStockBalance::select('variation_id', DB::raw('AVG(ref_uom_price) as total_price'))
-    $avgPrice = CurrentStockBalance::select('variation_id',DB::raw("SUM((ref_uom_price * ref_uom_quantity)/ref_uom_quantity) as total_price"))
+
+    $avgPrice = CurrentStockBalance::select('variation_id',DB::raw("SUM(ref_uom_price * ref_uom_quantity)/SUM(ref_uom_quantity) as total_price"))
         ->when(isset($filterData['from_date']) && !$betweenDateRage, function ($q) use ($filterData) {
             $q->whereDate('created_at', '<', $filterData['from_date']);
-        })
-        ->when(isset($filterData['from_date']) && isset($filterData['to_date']) && $betweenDateRage, function ($q) use ($filterData) {
-            $q->whereDate('created_at', '>=', $filterData['from_date'])
-                ->whereDate('created_at', '<=', $filterData['to_date']);
         })
         ->groupBy('variation_id')
         ->get()
@@ -716,7 +711,22 @@ function closingStocksCal($filterData = false, $betweenDateRage = false)
         $price = $avgPrice[$varId]['total_price'] ?? 0;
         $totalPrice += $totalQTy * $price;
     }
+
     return $totalPrice;
+}
+
+
+function avgPriceCalculation($variationId){
+    $avgPrice = CurrentStockBalance::select('variation_id',
+     DB::raw("SUM(ref_uom_price * ref_uom_quantity)/SUM(ref_uom_quantity) as total_price")
+     )
+    ->when($variationId,function($query)use($variationId){
+        $query->where('variation_id',$variationId);
+    })
+    ->groupBy('variation_id')
+    ->first();
+    // dd($avgPrice['total_price']/ $avgPrice['ref_qty']);
+    return $avgPrice;
 }
 
 function getOptionName($type,$id){

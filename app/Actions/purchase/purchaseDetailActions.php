@@ -104,10 +104,12 @@ class purchaseDetailActions
                             "ref_uom_price" => $per_ref_uom_price,
                             "ref_uom_quantity" => $requestQty,
                             "current_quantity" => $currentResultQty >= 0 ? $currentResultQty :  0,
+                            "created_at" => $request->received_at
                         ]);
                         stock_history::where('transaction_details_id', $purchase_detail_id)->where('transaction_type', 'purchase')->first()->update([
                             'increase_qty' => $requestQty,
                             "business_location_id" => $request->business_location_id,
+                            "created_at"=> $request->received_at
                         ]);
                     } else {
                         return redirect()->route('purchase_list')->with(['warning' => 'Something wrong on Updating Purchase']);

@@ -670,7 +670,7 @@ class saleController extends Controller
                     if ($product->product_type == 'storable') {
                         // stock adjustment
                         if ($saleBeforeUpdate->status != 'delivered' && $request->status == "delivered" && !$lotSerialCheck && $businessLocation->allow_sale_order == 0) {
-                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $request_old_sale);
+                            $changeQtyStatus = $saleService->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $request_old_sale,[], $sales);
                             if ($changeQtyStatus == false) {
                                 return back()->with(['error' => "product Out of Stock"]);
                             } else {
@@ -865,7 +865,7 @@ class saleController extends Controller
                     if ($requestQty > 0) {
                         stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->update([
                             'decrease_qty' => $requestQty,
-                            'created_at' => $request_old_sale['delivered_at'] ?? now(),
+                            'created_at' => $sales['sold_at'] ?? now(),
                         ]);
                     } else {
                         stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->delete();
@@ -964,6 +964,7 @@ class saleController extends Controller
                 ])
                 ->save();
         } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
             activity('sale-transaction')
                 ->log('New Sale update has been fail')

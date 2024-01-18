@@ -2,6 +2,7 @@
 
 namespace App\Services\Report;
 
+use App\Helpers\UomHelper;
 use App\Models\Product\Product;
 use App\Models\sale\sales;
 use App\Models\openingStocks;
@@ -26,35 +27,60 @@ class reportServices
         return $reportService->adjustmentDetailsFilterProcess($filterData);
     }
     //Adjustment
-    public static function grossProfit($filterData=''){
-        // dd($filterData);
-        $totalPurchaseAmount= totalPurchaseAmount($filterData);
-        $totalSaleAmount = totalSaleAmount($filterData);
-        return $totalSaleAmount- $totalPurchaseAmount;
+    public static function grossProfit($filterData=false){
+            $totalSaleAmount = totalSaleAmount($filterData);
+            $cogs=0;
+            $sales= saleTxData($filterData)->select('id')
+                    ->with('sale_details:id,sales_id,quantity,uom_id,variation_id', 'sale_details.uom:id,unit_category_id',
+                    'sale_details.uom.unit_category:id,name',
+                    'sale_details.uom.unit_category.uomByCategory:id,name,unit_category_id,unit_type')
+                    ->get();
+            $avgPriceContainer=[];
+            foreach ($sales as $sale) {
+                foreach ($sale->sale_details as $sd) {
+                    $uoms=$sd->uom->unit_category->toArray()['uom_by_category'] ?? [];
+                    $refUomQty=0;
+                    foreach ($uoms as $uom) {
+                        if($uom['unit_type']== 'reference'){
+                            $refUomQty = UomHelper::changeQtyOnUom($sd->uom_id,$uom['id'],$sd->quantity);
+                            break;
+                        }
+                    }
+                    if(!isset($avgPriceContainer[$sd->variation_id])){
+                        $avgPrice = avgPriceCalculation($sd->variation_id, $filterData);
+                        $avgPriceContainer[$sd->variation_id] = $avgPrice;
+                    }else{
+                        $avgPrice= $avgPriceContainer[$sd->variation_id];
+                    }
+                    $cogs+= $avgPrice->total_price * $refUomQty;
+                }
+            }
+            $result= $totalSaleAmount-$cogs;
+        return $result;
     }
     public static function netProfit($filterData = ''){
         //outcome
 
-        $totalPurchaseAmount =  totalPurchaseAmount($filterData);
-        if (!$filterData) {
-            $totalOSAmount = totalOSTransactionAmount($filterData);
-        } else {
-            $totalOSAmount = totalOSTransactionAmount($filterData) ;
-        }
+        // $totalPurchaseAmount =  totalPurchaseAmount($filterData);
+        // if (!$filterData) {
+        //     $totalOSAmount = totalOSTransactionAmount($filterData);
+        // } else {
+        //     $totalOSAmount = totalOSTransactionAmount($filterData) ;
+        // }
         $totalExpenseAmount = totalExpenseAmount();
-        $totalSaleAmount =(int) totalSaleAmount($filterData);
-        $closingStocks = closingStocksCal($filterData);
+        // $totalSaleAmount =(int) totalSaleAmount($filterData);
+        // $closingStocks = closingStocksCal($filterData);
 
 
 
-        $totalOutcome=(int) $totalPurchaseAmount+ $totalOSAmount + $totalExpenseAmount;
-        $totalIncomeAmount=$totalSaleAmount + $closingStocks;
+        // $totalOutcome=(int) $totalPurchaseAmount+ $totalOSAmount + $totalExpenseAmount;
+        // $totalIncomeAmount=$totalSaleAmount + $closingStocks;
 
         // dd($totalOutcome, $totalIncomeAmount);
         // dd($totalIncomeAmount, $totalOutcome);
         // dd($totalSaleAmount, $closingStocks);
-
-        return $totalIncomeAmount - $totalOutcome;
+        $grossProfit=self::grossProfit($filterData );
+        return  $grossProfit - $totalExpenseAmount;
     }
 
 

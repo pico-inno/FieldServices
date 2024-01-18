@@ -196,7 +196,7 @@ class SaleServices
                 stock_history::create($stock_history_data);
             } else {
                 if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
-                    $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock);
+                    $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock, $sale_data);
                     if ($changeQtyStatus == false) {
                         return throw new Exception('outOfStock');
                     } else {
@@ -218,7 +218,7 @@ class SaleServices
             }
         }
     }
-    public function changeStockQty($requestQty,$refUoMId, $business_location_id, $sale_detail, $current_stock = [])
+    public function changeStockQty($requestQty,$refUoMId, $business_location_id, $sale_detail,$current_stock = [], $sales)
     {
         $product_id = $sale_detail['product_id'];
         $sale_detail_id = $sale_detail['id'];
@@ -248,7 +248,7 @@ class SaleServices
                     $stocks = $stocks->get();
                 }
                 $qtyToRemove = $requestQty;
-                $this->createStockHistory($business_location_id,$sale_detail,$requestQty, $refUoMId);
+                $this->createStockHistory($business_location_id,$sale_detail,$requestQty, $refUoMId,$sales);
                 // dd($requestQty);
                 $data = [];
                 foreach ($stocks as  $stock) {
@@ -325,7 +325,7 @@ class SaleServices
         // }
 
     }
-    public function createStockHistory($business_location_id,$sale_detail,$reqQty, $refUoMId){
+    public function createStockHistory($business_location_id,$sale_detail,$reqQty, $refUoMId, $sales){
         $stock_history_data = [
             'business_location_id' => $business_location_id,
             'product_id' => $sale_detail['product_id'],
@@ -336,7 +336,7 @@ class SaleServices
             'increase_qty' => 0,
             'decrease_qty'=> $reqQty,
             'ref_uom_id' => $refUoMId,
-            'created_at' => now(),
+            'created_at' => $sales['sold_at'] ?? now(),
         ];
         stock_history::create($stock_history_data);
     }

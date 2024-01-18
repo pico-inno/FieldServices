@@ -62,7 +62,7 @@
                     <div class="fs-2hx mt-5  fw-bold ">
                         <i class="fa-solid fa-spinner fa-spin fs-2hx loader  "></i>
                         <span class="grossProfit"></span>
-                        <div class=" fs-9 text-gray-500 fw-semibold mt-4">Total Sale Amount- Total Purchase Amount<br> &nbsp;</div>
+                        <div class=" fs-9 text-gray-500 fw-semibold mt-4">Total Sale Amount- Total COGS Amount<br> &nbsp;</div>
                     </div>
                 </div>
             </div>
@@ -186,6 +186,7 @@
             ranges: {
                 "Today": [moment(), moment()],
                 "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
+                "The Day Before": [moment().subtract(2, "days"), moment().subtract(1, "days")],
                 "Last 7 Days": [moment().subtract(6, "days"), moment()],
                 "Last 30 Days": [moment().subtract(29, "days"), moment()],
                 "This Month": [moment().startOf("month"), moment().endOf("month")],

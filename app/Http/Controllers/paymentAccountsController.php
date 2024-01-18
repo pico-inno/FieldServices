@@ -76,21 +76,29 @@ class paymentAccountsController extends Controller
     }
 
     public function update($id,Request $request){
-        $data=$this->getPaymentData($request);
-        paymentAccounts::where('id',$id)->first()->update($data);
-        paymentsTransactions::where('payment_account_id',$id)
-                            ->where('transaction_type','opening_amount')
-                            ->where('payment_type','debit')
-                            ->first()
-                            ->update([
-                                'payment_amount'=>$request->opening_amount,
-                                'currency_id'=>$request->currency_id,
-                            ]);
-                            // dd([
-                            //     'payment_amount'=>$request->opening_amount,
-                            //     'currency_id'=>$request->currency_id,
-                            // ]);
-        return redirect()->back()->with(['success'=>'successfully added']);
+        try {
+            DB::beginTransaction();
+            $data = $this->getPaymentData($request);
+            $pabeforeUpdated = paymentAccounts::where('id', $id)->first();
+            $priceExcOa= $pabeforeUpdated['current_balance'] - $pabeforeUpdated['opening_amount'];
+            $data['current_balance'] = $priceExcOa + $request['opening_amount'] ;
+            paymentsTransactions::where('payment_account_id', $id)
+            ->where('transaction_type', 'opening_amount')
+            ->where('payment_type', 'debit')
+            ->first()
+            ->update([
+                'payment_amount' => $request->opening_amount,
+                'currency_id' => $request->currency_id,
+            ]);
+            $pabeforeUpdated->update($data);
+            DB::commit();
+            return redirect()->back()->with(['success' => 'successfully added']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+            return redirect()->back()->with(['error'=>'Something Wrong']);
+            //throw $th;
+        }
     }
 
     public function destory(Request $request){
