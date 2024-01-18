@@ -935,14 +935,14 @@ class ReportController extends Controller
         $filterBrand = $request->data['filter_brand'];
         $dateRange = $request->data['filter_date'];
         $filterType = $request->data['filter_type'];
-        $dates = explode(' - ', $dateRange);
 
-        $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
-        $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
+        if ($dateRange){
+            $dates = explode(' - ', $dateRange);
 
+            $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[0])->startOfDay();
+            $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
 
-
-
+        }
 
         if ($filterType == 2){
             $query = CurrentStockBalance::with(['uom', 'packaging_uom', 'location:id,name,parent_location_id'])
@@ -955,17 +955,23 @@ class ReportController extends Controller
                     'current_stock_balance.variation_id as csb_variation_id',
 
                 )
-                ->whereBetween('current_stock_balance.created_at', [$startDate, $endDate])
                 ->where('current_quantity', '>', 0)
                 ->leftJoin('product_packaging_transactions', function ($join) {
                 $join->on('current_stock_balance.transaction_type', '=', 'product_packaging_transactions.transaction_type')
                     ->on('current_stock_balance.transaction_detail_id', '=', 'product_packaging_transactions.transaction_details_id');
             })
                 ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id', '=', 'product_packagings.id');
+
+            if ($dateRange){
+                $query->whereBetween('current_stock_balance.created_at', [$startDate, $endDate]);
+            }
         }else{
             $query = CurrentStockBalance::with(['uom','location:id,name,parent_location_id'])
-                ->whereBetween('created_at', [$startDate, $endDate])
                 ->where('current_quantity', '>', 0);
+
+            if ($dateRange){
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
         }
 
         if ($request->data['filter_locations'] != 0) {
