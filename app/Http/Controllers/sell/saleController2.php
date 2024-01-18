@@ -237,7 +237,7 @@ class saleController2 extends Controller
         $currencies = Currencies::get();
         $locations = businessLocation::all();
         $exchangeRates = [];
-        if (class_exists('Modules\ExchangeRate\Entities\exchangeRates')) {
+        if (hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
             $exchangeRates = exchangeRates::get();
         }
         return view('App.sell.sale.addSale', compact('locations', 'products', 'customers', 'priceLists', 'setting', 'defaultCurrency', 'paymentAccounts', 'currencies', 'exchangeRates'));
@@ -255,7 +255,7 @@ class saleController2 extends Controller
         $currency = $this->currency;
 
         $exchangeRates = [];
-        if (class_exists('exchangeRates')) {
+        if (hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
             $exchangeRates = exchangeRates::get();
         }
 
@@ -1223,7 +1223,7 @@ class saleController2 extends Controller
 
     public function postToRegistrationFolio($id)
     {
-        if (class_exists(hospitalFolioInvoiceDetails::class)) {
+        if (hasModule('HospitalManagement') && isEnableModule('HospitalManagement')) {
             $folioDetailQuery = hospitalFolioInvoiceDetails::where('transaction_type', 'sale')
                 ->where('transaction_id', $id);
             $checkFolioDetails = $folioDetailQuery->exists();

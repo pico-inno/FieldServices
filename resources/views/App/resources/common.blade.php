@@ -7,6 +7,7 @@
     // php code
 @endphp
 <script>
+
     let settings=@json(getSettings());
     function isNullOrNan(val){
         let v=parseFloat(val);
@@ -23,9 +24,21 @@
     const qDecimal=(price)=>{
         return isNullOrNan(price).toFixed(settings.quantity_decimal_places);
     }
-    const fpDecimal=(number,reqs)=>{
+
+    const dfpDecimal=(number,symbolPosition='b')=>{
+        let currency=settings.currency ?? '';
+        let decimalSeparator=currency.decimal_separator ?? '.';
+        let thousandsSeparator=currency.thoundsand_seprator=='comma' ? ',' : ',';
+        return  formatNumber(isNullOrNan(number),decimalSeparator,thousandsSeparator)+' '+currency.symbol;
+    }
+    const nfpDecimal=(number,currency={},symbolPosition='b')=>{
+        let decimalSeparator=currency.decimal_separator ?? '.';
+        let thousandsSeparator=currency.thoundsand_seprator=='comma' ? ',' : ',';
+        return  formatNumber(isNullOrNan(number),decimalSeparator,thousandsSeparator)+' '+currency.symbol;
+    }
+    const fpDecimal=(number,reqs=[])=>{
         let decimalSeparator;
-        let thousandsSeparator=reqs['thoundsand_seprator'];
+        let thousandsSeparator=reqs['thoundsand_seprator'] ?? ',';
         return formatNumber(isNullOrNan(number),decimalSeparator,thousandsSeparator);
     }
 

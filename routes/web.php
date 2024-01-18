@@ -926,38 +926,13 @@ Route::controller(TestController::class)->group(function () {
 Route::get('/test', function () {
 
     $datas = sale_details::where('per_item_discount', '!=', '0.0000')->select('id', 'per_item_discount', 'uom_price', 'discount_type', 'subtotal_with_discount', 'subtotal', 'sales_id', 'quantity')->get();
-
-
     $salesId = [];
     foreach ($datas as  $sd) {
-        // $calculation = ($sd->uom_price - calPercentageNumber($sd->discount_type, $sd->per_item_discount, $sd->uom_price)) * $sd->quantity;
-        // sale_details::where('id', $sd->id)->update([
-        //     'subtotal_with_discount' => $calculation,
-        //     'subtotal_with_tax' => $calculation,
-        // ]);
         $sid = $sd->sales_id;
         $salesId[$sid] = $sid;
     }
-    // foreach ($salesId as  $id) {
-    //     $sales = sales::where('id', $id)
-    //     ->with('sale_details')
-    //     ->withSum('sale_details', 'subtotal_with_discount')
-    //     ->withSum('sale_details', 'subtotal')
-    //     ->first();
-    //     $updatedPrice= $sales->sale_details_sum_subtotal_with_discount;
-    //     $totalItemDiscount= $sales->sale_details_sum_subtotal- $sales->sale_details_sum_subtotal_with_discount;
-    //     $extraDiscount=calPercentageNumber($sales->extra_discount_type, $sales->extra_discount_amount, $updatedPrice);
-    //     $totalSaleAmt= $updatedPrice - $extraDiscount;
-    //     $sales->update([
-    //         'sale_amount'=> $updatedPrice,
-    //         'total_item_discount'=> $totalItemDiscount,
-    //         'total_sale_amount' => $totalSaleAmt,
-    //     ]);
-    // }
     dd(sales::where('extra_discount_amount','!=', '0.0000')->get()->toArray());
-    // $data=sale_details::
-    // where('per_item_discount','!=', '0.0000')->select('per_item_discount','discount_type', 'uom_price', 'subtotal_with_discount','subtotal','sales_id','quantity','id')->get()->toArray();
-    // dd($data);
+
 });
 
 

@@ -94,12 +94,18 @@ class saleController extends Controller
     {
 
         $accessUserLocation = getUserAccesssLocation();
-        $saleItems = sales::query()->where('is_delete', 0)
+        $saleItems = sales::query()->where('sales.is_delete', 0)
             ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
                 $query->whereIn('business_location_id', $accessUserLocation);
             })
             ->orderBy('id', 'DESC')
-            ->with( 'businessLocation', 'customer');
+            ->select('sales.*',
+            'contacts.first_name', 'contacts.last_name', 'contacts.middle_name', 'contacts.company_name',
+            'business_locations.name'
+            )
+            ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
+            ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
+            ->with( 'businessLocation', 'customer', 'currency:symbol,id');
         // dd($saleItems->get()->toArray());
         if ($request->saleType == 'posSales') {
             $saleItems = $saleItems->whereNotNull('pos_register_id');
@@ -108,7 +114,7 @@ class saleController extends Controller
             $saleItems = $saleItems->whereNull('pos_register_id');
         }
         if ($request->filled('from_date') && $request->filled('to_date')) {
-            $saleItems = $saleItems->whereDate('created_at', '>=', $request->from_date)->whereDate('created_at', '<=', $request->to_date);
+            $saleItems = $saleItems->whereDate('sales.created_at', '>=', $request->from_date)->whereDate('sales.created_at', '<=', $request->to_date);
         }
         $saleItems = $saleItems;
 
@@ -120,8 +126,18 @@ class saleController extends Controller
             //     $data->orderBy('products.name', $order);
             // })
             ->filterColumn('saleItems', function ($data, $keyword) {
-                $data->where("sales.sales_voucher_no", 'like', '%' . $keyword . '%')
-                    ->orWhere("sales.sales_voucher_no", 'like', '%' . $keyword . '%');
+                $data->when(rtrim($keyword),function($mainquery)use($keyword){
+                    $mainquery->where("sales.sales_voucher_no", 'like', '%' . $keyword . '%')
+                        ->orWhere(function ($subQuery) use ($keyword) {
+                            $subQuery->where("contacts.first_name", 'like', '%' . $keyword . '%')
+                                ->orWhere("contacts.last_name", 'like', '%' . $keyword . '%')
+                                ->orWhere("contacts.middle_name", 'like', '%' . $keyword . '%')
+                                ->orWhere("contacts.company_name", 'like', '%' . $keyword . '%');
+                        })
+                        ->orWhere(function ($subQuery) use ($keyword) {
+                            $subQuery->where("business_locations.name", 'like', '%' . $keyword . '%');
+                        });
+                });
             })
 
             ->filterColumn('businessLocation', function ($data, $keyword) {
@@ -156,9 +172,6 @@ class saleController extends Controller
             })
             ->editColumn('sold_at', function ($saleItem) {
                 return fDate($saleItem->sold_at, true);
-            })
-            ->editColumn('sale_amount', function ($saleItem) {
-                return price($saleItem->total_sale_amount, $saleItem->currency_id);
             })
             ->editColumn('status', function ($purchase) {
                 $html = '';
@@ -235,7 +248,9 @@ class saleController extends Controller
         $relations = [
             'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
         ];
-        class_exists('Modules\Restaurant\Entities\table') ? $relations[] = 'table' : '';
+        if(hasModule('restaurant') && isEnableModule('restaurant')){
+            $relations[] = 'table';
+        }
         $sale = sales::with(...$relations)->where('id', $id)->first()->toArray();
 
         $location = businessLocation::where("id", $sale['business_location_id'])->first();
@@ -305,7 +320,7 @@ class saleController extends Controller
             $currency = $this->currency;
 
             $exchangeRates = [];
-            if (class_exists('exchangeRates')) {
+            if (class_exists('exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
                 $exchangeRates = exchangeRates::get();
             }
 
@@ -1484,7 +1499,7 @@ class saleController extends Controller
 
     public function postToRegistrationFolio($id)
     {
-        if (class_exists(hospitalFolioInvoiceDetails::class)) {
+        if (hasModule('HospitalManagement') && isEnableModule('HospitalManagement')) {
             $folioDetailQuery = hospitalFolioInvoiceDetails::where('transaction_type', 'sale')
                 ->where('transaction_id', $id);
             $checkFolioDetails = $folioDetailQuery->exists();

@@ -293,10 +293,10 @@ class StockTransferController extends Controller
         $receivedPerson = BusinessUser::find($stockTransfer->received_person);
 
         $modifiedStockTransfer = $stockTransfer;
-        $modifiedStockTransfer->from_location_name = $fromLocation->name;
-        $modifiedStockTransfer->to_location_name = $toLocation->name;
-        $modifiedStockTransfer->transfered_person_name = $transferedPerson->username;
-        $modifiedStockTransfer->received_person_name = $receivedPerson->username;
+        $modifiedStockTransfer->from_location_name = $fromLocation->name ?? '';
+        $modifiedStockTransfer->to_location_name = $toLocation->name ?? '';
+        $modifiedStockTransfer->transfered_person_name = $transferedPerson->username ?? '';
+        $modifiedStockTransfer->received_person_name = $receivedPerson->username ?? '';
 
         $stock_transfer_details = StockTransferDetail::with([
             'productVariation.product:id,name',

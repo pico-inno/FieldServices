@@ -97,7 +97,8 @@ class POSController extends Controller
         $reservations = [];
 
         $reservations = [];
-        if (class_exists('FolioInvoiceDetail')) {
+
+        if (hasModule('Reservation') && isEnableModule('Reservation')) {
             $reservations = Reservation::with('contact', 'company')->where('is_delete', 0)->get();
         }
         try {

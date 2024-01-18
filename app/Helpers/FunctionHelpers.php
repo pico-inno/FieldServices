@@ -155,6 +155,7 @@ function isUsePaymnetAcc()
 function getSettings()
 {
     return businessSettings::where('id', Auth::user()->business_id)
+        ->with('currency')
         ->first();
 }
 
@@ -304,6 +305,12 @@ function generateManufacturingOrderNo()
 function saleVoucher($uniqueCount)
 {
     $prefix = getSettingValue('sale_prefix');
+    return generatorHelpers::generateVoucher($prefix, $uniqueCount);
+}
+
+function customerCode($uniqueCount)
+{
+    $prefix = 'C';
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
 function purchaseVoucher()

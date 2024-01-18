@@ -21,7 +21,7 @@ class Currencies extends Model
         'decimal_separator',
     ];
     public function exchangeRate(){
-        if(class_exists(exchangeRates::class)){
+        if(hasModule('ExchangeRate') && isEnableModule('ExchangeRate')){
             return $this->belongsTo(exchangeRates::class,'id','currency_id');
         }
         return $this->hasMany(Currencies::class,'id','id');

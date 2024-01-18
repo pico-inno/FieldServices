@@ -46,7 +46,24 @@
                     name: 'customer'
                 }, {
                     data: 'sale_amount',
-                    name: 'sale_amount'
+                    name: 'sale_amount',
+                    render: (data, display, value) => {
+                        return nfpDecimal(data,value.currency,'a');
+                    }
+                },
+                {
+                    data: 'paid_amount',
+                    name: 'paid_amount',
+                    render: (data, display, value) => {
+                        return nfpDecimal(data,value.currency,'a');
+                    }
+                },
+                 {
+                    data: 'balance_amount',
+                    name: 'balance_amount',
+                    render: (data, display, value) => {
+                        return nfpDecimal(data,value.currency,'a');
+                    }
                 },
                 {
                     data: "businessLocation",
@@ -79,8 +96,8 @@
 
             datatable = $(table).DataTable({
                  "ordering": false,
-                pageLength: 30,
-                lengthMenu: [10, 20, 30, 50,40,80],
+                pageLength: 25,
+                lengthMenu: [15, 25, 35, 45,50,80],
                 'columnDefs': [
                 // Disable ordering on column 0 (checkbox)
                     { orderable: false, targets: 0 },
@@ -103,7 +120,39 @@
                 },
 
                 columns,
+                footerCallback: function (row, data, start, end, display) {
+                    console.log(data,'sdfs',data.currency );
+                    let api = this.api();
 
+                    // Remove the formatting to get integer data for summation
+                    let intVal = function (i) {
+                        return typeof i === 'string'
+                            ? i.replace(/[\$,]/g, '') * 1
+                            : typeof i === 'number'
+                            ? i
+                            : 0;
+                    };
+
+                    // Total over this page
+                    var pageTotal = api
+                        .column(5, { page: 'current' })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    api.column(5).footer().innerHTML = dfpDecimal(pageTotal);
+
+
+                    var pageBalanceTotal = api
+                        .column(6, { page: 'current' })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    api.column(6).footer().innerHTML = dfpDecimal(pageBalanceTotal) ;
+
+                    var pageBalanceTotal = api
+                        .column(7, { page: 'current' })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    api.column(7).footer().innerHTML = dfpDecimal(pageBalanceTotal) ;
+                }
             });
 
             // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
@@ -147,7 +196,7 @@
             if (value === 'all') {
                 value = '';
             }
-            datatable.column(6).search(value).draw();
+            datatable.column(8).search(value).draw();
         });
     }
     // var DateRangeFilter = () => {
@@ -198,7 +247,7 @@
             if (value === 'all') {
                 value = '';
             }
-            datatable.column(7).search(value).draw();
+            datatable.column(9).search(value).draw();
         });
     }
 

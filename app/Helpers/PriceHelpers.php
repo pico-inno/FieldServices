@@ -23,7 +23,7 @@ function roundDown($number,$power){
 
 
 function exchangeCurrency($amount, $fromCurrencyid, $toCurrencyid) {
-    if(class_exists(Modules\ExchangeRate\Entities\exchangeRates\exchangeRates::class)){
+    if(hasModule('ExchangeRate') && isEnableModule('ExchangeRate')){
         $fromCurrency=exchangeRates::where('id',$fromCurrencyid)->first();
         $toCurrency=exchangeRates::where('id',$toCurrencyid)->first();
         if($fromCurrency !=null && $toCurrency != null){

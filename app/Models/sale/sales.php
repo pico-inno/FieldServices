@@ -55,7 +55,7 @@ class sales extends Model
     }
     public function customer()
     {
-        return $this->hasOne(Contact::class,'id','contact_id');
+        return $this->hasOne(Contact::class,'id', 'contact_id');
     }
     public function table()
     {
