@@ -1,5 +1,6 @@
 "use strict";
 
+
 var datatable;
 // Class definition
 var KTCustomersList = function () {
@@ -31,7 +32,6 @@ var KTCustomersList = function () {
                     searchable: true
                 }
             ],
-            // order: [[2, 'desc']],
             processing: true,
             serverSide: true,
                ajax: {
@@ -130,9 +130,9 @@ var KTCustomersList = function () {
     // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
     var handleSearchDatatable = () => {
         const filterSearch = document.querySelector('[data-kt-purchase-table-filter="search"]');
-        filterSearch.addEventListener('keyup', function (e) {
+        filterSearch.addEventListener('keyup',debounce( function (e) {
             datatable.search(e.target.value).draw();
-        });
+        }));
     }
     // var handleDateFilterDatatable = () => {
     //     const filterSearch = document.querySelector('[data-kt-date-filter="date"]');

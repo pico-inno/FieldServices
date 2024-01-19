@@ -148,7 +148,6 @@ class purchasingService
         if ($request->filled('form_data') && $request->filled('to_date')) {
             $purchases = $purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
         }
-        $purchases = $purchases->get();
         return DataTables::of($purchases)
             ->addColumn('checkbox', function ($purchase) {
                 return
@@ -158,17 +157,17 @@ class purchasingService
                     </div>
                 ';
             })
-            ->editColumn('location', function ($purchase) {
+            ->addColumn('location', function ($purchase) {
                 return businessLocationName(arr($purchase, 'businessLocation'));
             })
-            ->editColumn('supplier', function ($purchase) {
+            ->addColumn('supplier', function ($purchase) {
                 return arr($purchase->supplier, 'company_name') ?? arr($purchase->supplier, 'first_name');
             })
 
-            ->editColumn('date', function ($purchase) {
+            ->addColumn('date', function ($purchase) {
                 return fDate($purchase->created_at, true);
             })
-            ->editColumn('purchaseItems', function ($purchase) {
+            ->addColumn('purchaseItems', function ($purchase) {
                 $purchaseDetails = $purchase->purchase_details;
                 $items = '';
                 foreach ($purchaseDetails as $key => $pd) {
@@ -180,7 +179,7 @@ class purchasingService
                 }
                 return $items;
             })
-            ->editColumn('status', function ($purchase) {
+            ->addColumn('status', function ($purchase) {
                 $html = '';
                 if ($purchase->status == 'received') {
                     $html = "<span class='badge badge-success'> Received </span>";
@@ -196,7 +195,7 @@ class purchasingService
                 return $html;
                 // return $purchase->supplier['company_name'] ?? $purchase->supplier['first_name'];
             })
-            ->editColumn('payment_status', function ($e) {
+            ->addColumn('payment_status', function ($e) {
                 if ($e->payment_status == 'due') {
                     return '<span class="badge badge-warning">Pending</span>';
                 } elseif ($e->payment_status == 'partial') {

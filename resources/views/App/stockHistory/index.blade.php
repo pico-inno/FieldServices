@@ -66,11 +66,11 @@
                     <div class="col-sm-2 col-6 me-sm-5 mb-3 mb-sm-0 ms-3">
                         <input type="text" class="form-control form-control-sm" placeholder="Search Product" data-filter="input">
                     </div>
-                    <div class="col-sm-2 col-6">
-                        <select name="locationfilter" id="locationFilter" class="form-select form-select-sm" data-control="select2" data-placeholder="Filter Location" data-filter="location" placeholder="Filter Location" data-allow-clear="true">
-                            <option></option>
+                    <div class="col-sm-2 col-6 me-sm-5 mb-3">
+                        <select name="locationfilter" id="locationFilter" class="form-select form-select-sm" data-control="select2" data-placeholder="Filter Location" data-filter="from-location" placeholder="Filter Location" data-allow-clear="true">
+                            <option value="all" selected> All</option>
                             @foreach ($locations as $l)
-                                <option value="{{$l->name}}">{{$l->name}}</option>
+                                <option value="{{$l->id}}">{{$l->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -118,6 +118,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('customJs/debounce.js') }}"></script>
     <script>
 
         "use strict";
@@ -144,19 +145,18 @@
 
                 // Init datatable --- more info on datatables: https://datatables.net/manual/
                 datatable = $(table).DataTable({
+                    "ordering": false,
                     'columnDefs': [
                         // Disable ordering on column 0 (checkbox)
                         {
                             targets: [0], // Replace 0 with the index of the column you want to hide
                             visible: false,
                             searchable: true
-                        },
-                        { orderable: false, targets: 0 },
+                        }
                     ],
-                    order: [[0, ' ']],
                     processing: true,
-                    pageLength: 30,
-                    lengthMenu: [10, 20, 30, 50,40,80],
+                    pageLength: 15,
+                    lengthMenu: [15, 20, 30, 50,40,80],
                     serverSide: true,
                     ajax: {
                         url: '/stock-history/get/list/',
@@ -214,7 +214,8 @@
                 // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
                 datatable.on('draw', function () {
 
-                    handleBusinessLocationFilter();
+                    handleBusinessFromLocationFilter();
+                    handleBusinessToLocationFilter();
 
                 });
             }
@@ -224,26 +225,32 @@
             // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
             var handleSearchDatatable = () => {
                 const filterSearch = document.querySelector('[data-filter="input"]');
-                filterSearch.addEventListener('keyup', function (e) {
-
-                    datatable.column(2).search(e.target.value).draw();
-                    // datatable.search(e.target.value).draw();
-                });
+                filterSearch.addEventListener('keyup', debounce(function (e) {
+                    datatable.search(e.target.value).draw();
+                }));
             }
 
 
 
-            var handleBusinessLocationFilter = () => {
-                const filterStatus = document.querySelector('[data-filter="location"]');
+            var handleBusinessFromLocationFilter = () => {
+                const filterStatus = document.querySelector('[data-filter="from-location"]');
                 $(filterStatus).on('change', e => {
                     let value = e.target.value;
-                    console.log(value);
                     if (value === 'all') {
                         value = '';
                     }
-                    datatable.column(0).search(value).draw();
+                    datatable.column(3).search(value).draw();
 
-                    // datatable.search(value).draw();
+                });
+            }
+            var handleBusinessToLocationFilter = () => {
+                const filterStatus = document.querySelector('[data-filter="from-location"]');
+                $(filterStatus).on('change', e => {
+                    let value = e.target.value;
+                    if (value === 'all') {
+                        value = '';
+                    }
+                    datatable.column(4).search(value).draw();
 
                 });
             }
@@ -263,7 +270,8 @@
                     handleSearchDatatable();
                     // handleDeleteRows();
                     // // handleStatusFilter();
-                    handleBusinessLocationFilter();
+                    handleBusinessFromLocationFilter();
+                    handleBusinessToLocationFilter();
                     // DateRangeFilter();
                     // handleCustomerFilter();
                     // handleStatusFilter();

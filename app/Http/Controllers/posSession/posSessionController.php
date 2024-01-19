@@ -57,6 +57,7 @@ class posSessionController extends Controller
         try {
             DB::beginTransaction();
             if($statusCheck==false){
+
                 if(getSettingsValue('use_paymentAccount')){
                     // transfer_account
                     $tx=paymentAccounts::where('id',$request->tx_account);
@@ -69,9 +70,10 @@ class posSessionController extends Controller
                     $rx_acc_currency_id=$rx_acc->currency_id;
                     $rx_amount=$request->opening_amount;
 
+
                     // make transfer
                     $paymentsTransactionController=new paymentsTransactionsController();
-                    $paymentTransaction=$paymentsTransactionController->transfer($request->tx_account,$request->rx_account,$request->opening_amount,$rx_amount,'opening_amount');
+                    $paymentTransaction=$paymentsTransactionController->transfer($request->tx_account,$request->rx_account,$request->opening_amount,$rx_amount,1,'opening_amount');
                 }
 
                $posSession= posRegisterSessions::create([
@@ -97,6 +99,7 @@ class posSessionController extends Controller
             DB::commit();
             return redirect()->route('pos.create',['pos_register_id'=>encrypt($posRegisteredId),'sessionId'=>$posSession->id]);
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollBack();
             return back()->with(['warning'=>'Something Went Wrong!']);
 

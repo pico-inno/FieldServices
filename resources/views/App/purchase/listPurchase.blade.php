@@ -393,6 +393,7 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('customJs/debounce.js') }}"></script>
         <script src={{asset('customJs/Purchases/purchaseTable.js')}}></script>
         <script src="{{asset('customJs/Purchases/payment/payment.js')}}"></script>
         <script src={{asset('customJs/toastrAlert/alert.js')}}></script>

@@ -13,6 +13,7 @@ use App\Models\CurrentStockBalance;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Modules\StockInOut\Entities\StockoutDetail;
+use PDO;
 
 class stockHistoryController extends Controller
 {
@@ -29,13 +30,19 @@ class stockHistoryController extends Controller
     {
         $currencyDp=getSettingValue('currency_decimal_places');
         $quantityDp=getSettingValue('quantity_decimal_places');
-        $histories = stock_history::with('productVariation')
+        $histories = stock_history::query()
+                    ->select('stock_histories.*','products.name')
+                    ->leftJoin('products', 'stock_histories.product_id', '=', 'products.id')
                     ->orderBy('id','DESC')
+                    ->with(
+                        'productVariation.variationTemplateValue',
+                        'business_location:id,name',
+                    )
                     ->when(!hasModule('StockInOut') ,function($q){
-                        $q->whereNotIn('transaction_type', ['stock_in', 'stock_out']);
-                    });
+                        $q->whereNotIn('stock_histories.transaction_type', ['stock_in', 'stock_out']);
+                    })
+                    ;
                     // ->get();
-
         // $openingBalances = [];
 
         // foreach ($histories as $history) {
@@ -68,10 +75,32 @@ class stockHistoryController extends Controller
 
 
         return DataTables::of($histories)
-            ->editColumn('location',function($history) {
+            ->filter(function ($history) {
+                if (rtrim(request('search')['value'])) {
+                    $keyword= request('search')['value'];
+                    $history->where('products.name', 'like',"%".$keyword."%");
+                }else{
+                    $history;
+                }
+
+            })
+            ->filterColumn('from', function ($data, $id) {
+                if($id !='all' && rtrim($id)){
+                    $data->where("stock_histories.business_location_id", $id);
+                }
+            })
+
+
+            ->filter(function ($history) {
+                if (rtrim(request('search')['value'])) {
+                    $keyword = request('search')['value'];
+                    $history->where('products.name', 'like', "%" . $keyword . "%");
+                }
+            })
+            ->addColumn('location',function($history) {
                 return $history->business_location->name;
             })
-            ->editColumn('product', function ($history) {
+            ->addColumn('product', function ($history) {
                 $variation = $history->productVariation;
                 if ($variation) {
                     $variationTemplateValue = $variation->variationTemplateValue;
@@ -83,7 +112,7 @@ class stockHistoryController extends Controller
             ->editColumn('created_at', function ($history) {
                 return fdate($history->created_at,false,true);
             })
-            ->editColumn('from',function($history){
+            ->addColumn('from',function($history){
                 if($history->transaction_type=='sale' || $history->transaction_type=='stock_out'){
                     return $history->business_location->name;
                 }else{
@@ -95,7 +124,7 @@ class stockHistoryController extends Controller
                 }
                 return $history->business_location->name;
             })
-            ->editColumn('to',function($history){
+            ->addColumn('to',function($history){
                 if($history->transaction_type=='sale' ){
                     $customer=$history->saleDetail->sale->customer;
                     return  $customer ? $customer['first_name'] : '';
@@ -106,23 +135,23 @@ class stockHistoryController extends Controller
                 }
                 return $history->business_location->name;
             })
-            ->editColumn('increase_qty', function ($history) use($quantityDp) {
+            ->addColumn('increase_qty', function ($history) use($quantityDp) {
                 // return "<span class='badge badge-primary'>". $history->increase_qty .' '. $history->uom->short_name ."</span>";
                 return  $history->increase_qty >0 ? "<span class='text-success fw-bold'>".number_format( $history->increase_qty,$quantityDp,'.') ."</span>":'-' ;
             })
-            ->editColumn('decrease_qty', function ($history) use($quantityDp) {
+            ->addColumn('decrease_qty', function ($history) use($quantityDp) {
                 // return "<span class='badge badge-danger'>". $history->decrease_qty  . "</span>";
                 return $history->decrease_qty >0 ? "<span class='text-danger fw-bold'>". number_format($history->decrease_qty,$quantityDp) ."</span>":'-' ;
             })
-            ->editColumn('balance_qty', function ($history) {
+            ->addColumn('balance_qty', function ($history) {
                 return $history->balance_qty;
             })
-            ->editColumn('uom', function ($history) {
+            ->addColumn('uom', function ($history) {
                 $uom=$history->uom->short_name;
                 return "<span class='pe-3'>$uom</span>";
             })
 
-            ->editColumn('reference', function ($history) {
+            ->addColumn('reference', function ($history) {
 
                 $html = '-';
                 if($history->transaction_type=='sale'){
@@ -192,6 +221,7 @@ class stockHistoryController extends Controller
             // })
             ->rawColumns(['increase_qty','decrease_qty','transaction_type','uom','date','reference','balance_qty'])
             ->make(true);
+        // ->toJson();
 
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\expenseTransactions;
 use App\Models\purchases\purchases;
+use App\Models\sale\sale_details;
 
 class reportServices
 {
@@ -57,6 +58,52 @@ class reportServices
             }
             $result= $totalSaleAmount-$cogs;
         return $result;
+    }
+    //Adjustment
+    public static function grossProfit2($filterData = false)
+    {
+        $totalSaleAmount = totalSaleAmount($filterData);
+        $cogs = 0;
+        $sales = sale_details::query()
+        ->select(
+        //     'sale_details.id as detial_id', 'sale_details.product_id','sale_details.quantity',
+        // 'lot_serial_details.current_stock_balance_id',
+        //     'lot_serial_details.uom_quantity',
+        //     'current_stock_balance.ref_uom_price',
+            DB::raw('sale_details.subtotal_with_discount-(lot_serial_details.uom_quantity * current_stock_balance.ref_uom_price) as profit'))
+        ->leftJoin('lot_serial_details', 'lot_serial_details.transaction_detail_id','=', 'sale_details.id')
+        ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id','=', 'current_stock_balance.id')
+        ->where('lot_serial_details.transaction_type','=','sale')
+        // ->with(
+        //     'sale_details:id,sales_id',
+        //     'sale_details.lotSerialDetail',
+        //     'sale_details.lotSerialDetail.current_stock_balance:id,ref_uom_price',
+        // )
+        ->orderBy('sale_details.id','DESC')
+        ->get()
+            ->sum('profit');
+        // $avgPriceContainer = [];
+        // foreach ($sales as $sale) {
+        //     foreach ($sale->sale_details as $sd) {
+        //         $uoms = $sd->uom->unit_category->toArray()['uom_by_category'] ?? [];
+        //         $refUomQty = 0;
+        //         foreach ($uoms as $uom) {
+        //             if ($uom['unit_type'] == 'reference') {
+        //                 $refUomQty = UomHelper::changeQtyOnUom($sd->uom_id, $uom['id'], $sd->quantity);
+        //                 break;
+        //             }
+        //         }
+        //         if (!isset($avgPriceContainer[$sd->variation_id])) {
+        //             $avgPrice = avgPriceCalculation($sd->variation_id, $filterData);
+        //             $avgPriceContainer[$sd->variation_id] = $avgPrice;
+        //         } else {
+        //             $avgPrice = $avgPriceContainer[$sd->variation_id];
+        //         }
+        //         $cogs += $avgPrice->total_price * $refUomQty;
+        //     }
+        // }
+        // $result = $totalSaleAmount - $cogs;
+        return $sales;
     }
     public static function netProfit($filterData = ''){
         //outcome

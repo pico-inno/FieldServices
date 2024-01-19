@@ -99,15 +99,12 @@
                 pageLength: 25,
                 lengthMenu: [15, 25, 35, 45,50,80],
                 'columnDefs': [
-                // Disable ordering on column 0 (checkbox)
                     { orderable: false, targets: 0 },
                     { orderable: false, targets: 1 },
                     {    targets: [2],
-                        visible: false,
-                        searchable: true
+                        visible: false
                     }
                 ],
-                order: [[1, 'desc']],
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -171,9 +168,9 @@
     // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
     var handleSearchDatatable = () => {
         const filterSearch = document.querySelector('[data-kt-saleItem-table-filter="search"]');
-        filterSearch.addEventListener('keyup', function (e) {
+        filterSearch.addEventListener('keyup', debounce(function (e) {
             datatable.search(e.target.value).draw();
-        });
+        }));
     }
     var handleDateFilterDatatable = () => {
         const filterSearch = document.querySelector('[data-kt-date-filter="date"]');

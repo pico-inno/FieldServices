@@ -124,6 +124,8 @@
                         $('#exchange_rate').val(exchangeRateValue);
                     })
                     .catch(function(error) {
+                        exchangeRateValue=1;
+                        $('#exchange_rate').val(exchangeRateValue);
                         console.error('Error fetching exchange rate:', error);
                     });
                 }else{

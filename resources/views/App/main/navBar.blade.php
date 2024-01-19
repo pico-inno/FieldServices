@@ -3214,7 +3214,8 @@
                                             <div class="menu-item">
                                                 <!-- begin::Menu link -->
                                                 <a class="menu-link @yield('reservation_list_active_show')"
-                                                    href="{{route('reservation.index')}}">
+                                                    href="{{route('reservation.index')}}"
+                                                    >
                                                     <span class="menu-bullet">
                                                         <span class="bullet bullet-dot"></span>
                                                     </span>

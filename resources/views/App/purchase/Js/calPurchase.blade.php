@@ -483,7 +483,7 @@
     })
 
     $(document).on('input','#payment input',function () {
-        total_purchase_amount_cal();
+        total_purchase_amount_cal(false);
         total_balance_amount_cal();
     })
 
@@ -659,7 +659,7 @@
         }
     }
 
-    function total_purchase_amount_cal() {
+    function total_purchase_amount_cal(changePaidAmount=true) {
 
         setTimeout(() => {
 
@@ -697,7 +697,9 @@
             result=isNullOrNan(price_after_discount)+isNullOrNan(purchaseExpense);
             $('#total_purchase_amount').val(pDecimal(result));
             $('#total_purchase_amount_txt').text(fpDecimal(result,currentCurrency));
-            $('#paid_amount').val(result);
+            if(changePaidAmount){
+                $('#paid_amount').val(result);
+            }
 
 
         }, 100);

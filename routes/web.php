@@ -924,7 +924,7 @@ Route::controller(TestController::class)->group(function () {
 //============================ End: Product ==============================================
 
 Route::get('/test', function () {
-
+    dd(reportServices::grossProfit(), '',reportServices::grossProfit2());
     $datas = sale_details::where('per_item_discount', '!=', '0.0000')->select('id', 'per_item_discount', 'uom_price', 'discount_type', 'subtotal_with_discount', 'subtotal', 'sales_id', 'quantity')->get();
     $salesId = [];
     foreach ($datas as  $sd) {

@@ -317,6 +317,7 @@
     <script>
         var saleType = @json($saleType ?? '')
     </script>
+    <script src="{{ asset('customJs/debounce.js') }}"></script>
     <script src="{{ asset('customJs/sell/saleItemTable.js') }}"></script>
     <script src="{{ asset('customJs/sell/payment/payment.js') }}"></script>
     <script src="{{ asset('customJs/print/print.js') }}"></script>
