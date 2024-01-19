@@ -267,16 +267,16 @@ var KTCustomersExport = function () {
     $("#kt_daterangepicker_4").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
     start2 = start;
     end2 = end;
-    $("#kt_daterangepicker_5").data("daterangepicker").setStartDate(start2);
-    $("#kt_daterangepicker_5").data("daterangepicker").setEndDate(end2);
+    // $("#kt_daterangepicker_5").data("daterangepicker").setStartDate(start2);
+    // $("#kt_daterangepicker_5").data("daterangepicker").setEndDate(end2);
 }
 
     function cb2(start, end) {
     $("#kt_daterangepicker_5").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
     start1 = start;
     end1 = end;
-    $("#kt_daterangepicker_4").data("daterangepicker").setStartDate(start1);
-    $("#kt_daterangepicker_4").data("daterangepicker").setEndDate(end1);
+    // $("#kt_daterangepicker_4").data("daterangepicker").setStartDate(start1);
+    // $("#kt_daterangepicker_4").data("daterangepicker").setEndDate(end1);
 }
 
     $("#kt_daterangepicker_4").daterangepicker({
@@ -293,7 +293,7 @@ var KTCustomersExport = function () {
         "Last Year": [moment().subtract(1, "year").startOf("year"), moment().subtract(1, "year").endOf("year")]
     }
 
-}, cb1);
+}, cb1).val('');
 
     $("#kt_daterangepicker_5").daterangepicker({
     startDate: start2,
@@ -309,7 +309,7 @@ var KTCustomersExport = function () {
         "Last Year": [moment().subtract(1, "year").startOf("year"), moment().subtract(1, "year").endOf("year")]
     }
 
-    }, cb2);
+    }, cb2).val('');
 
     cb1(start1, end1);
     cb2(start2, end2);
