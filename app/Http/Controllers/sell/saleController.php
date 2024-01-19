@@ -94,19 +94,34 @@ class saleController extends Controller
     {
 
         $accessUserLocation = getUserAccesssLocation();
-        $saleItems = sales::query()->where('sales.is_delete', 0)
+        $saleItems = sales::query()
+            ->orderBy('id', 'DESC')
+            ->select(
+                'sales.id',
+                'sales.sold_at',
+                'sales.contact_id',
+                'sales.status',
+                'sales.table_id',
+                'sales.sale_amount',
+                'sales.total_sale_amount',
+                'sales.paid_amount',
+                'sales.balance_amount',
+                'sales.business_location_id',
+                'sales.sales_voucher_no',
+                'sales.currency_id',
+                'contacts.first_name',
+                'contacts.last_name',
+                'contacts.middle_name',
+                'contacts.company_name',
+                'business_locations.name'
+            )
+            ->where('sales.is_delete', 0)
             ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
                 $query->whereIn('business_location_id', $accessUserLocation);
             })
-            ->orderBy('id', 'DESC')
-            ->select('sales.*',
-            'contacts.first_name', 'contacts.last_name', 'contacts.middle_name', 'contacts.company_name',
-            'business_locations.name'
-            )
             ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
             ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
-            ->with( 'businessLocation', 'customer', 'currency:symbol,id');
-        // dd($saleItems->get()->toArray());
+            ->with('businessLocation:id,name,parent_location_id', 'customer:id,company_name,first_name,last_name,middle_name', 'currency:symbol,id');
         if ($request->saleType == 'posSales') {
             $saleItems = $saleItems->whereNotNull('pos_register_id');
         }

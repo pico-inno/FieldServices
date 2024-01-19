@@ -121,7 +121,6 @@
 
                 columns,
                 footerCallback: function (row, data, start, end, display) {
-                    console.log(data,'sdfs',data.currency );
                     let api = this.api();
 
                     // Remove the formatting to get integer data for summation

@@ -674,11 +674,7 @@ function totalSaleDiscount($filterData = false)
 }
 function closingStocks($filterData = false)
 {
-    // if (!$filterData) {
-        return closingStocksCal($filterData) ;
-    // } else {
-    //     return closingStocksCal($filterData) + closingStocksCal($filterData, true);
-    // }
+    return closingStocksCal($filterData) ;
 }
 
 function closingStocksCal($filterData = false, $betweenDateRage = false)
