@@ -45,13 +45,11 @@
                     data: 'customer',
                     name: 'customer'
                 }, {
-                    data: 'sale_amount',
-                    name: 'sale_amount',
+                    data: 'total_sale_amount',
+                    name: 'total_sale_amount',
                     render: (data, display, value) => {
-                        if (value.currency) {
-                            return nfpDecimal(data,value.currency,'a');
-                        }
-                        return 0.00;
+                        return nfpDecimal(data,value.currency,'a');
+
                     }
                 },
                 {
