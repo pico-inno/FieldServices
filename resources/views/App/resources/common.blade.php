@@ -32,9 +32,10 @@
         return  formatNumber(isNullOrNan(number),decimalSeparator,thousandsSeparator)+' '+currency.symbol;
     }
     const nfpDecimal=(number,currency={},symbolPosition='b')=>{
-        let decimalSeparator=currency.decimal_separator ?? '.';
-        let thousandsSeparator=currency.thoundsand_seprator=='comma' ? ',' : ',';
-        return  formatNumber(isNullOrNan(number),decimalSeparator,thousandsSeparator)+' '+currency.symbol;
+        let decimalSeparator=currency ? currency.decimal_separator: '.';
+        let thousandsSeparator=',';
+        let symbol=currency? currency.symbol: '';
+        return  formatNumber(isNullOrNan(number),decimalSeparator,thousandsSeparator)+' '+symbol;
     }
     const fpDecimal=(number,reqs=[])=>{
         let decimalSeparator;

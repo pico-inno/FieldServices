@@ -48,7 +48,10 @@
                     data: 'sale_amount',
                     name: 'sale_amount',
                     render: (data, display, value) => {
-                        return nfpDecimal(data,value.currency,'a');
+                        if (value.currency) {
+                            return nfpDecimal(data,value.currency,'a');
+                        }
+                        return 0.00;
                     }
                 },
                 {
