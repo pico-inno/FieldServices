@@ -690,7 +690,7 @@
                     }
                 },
                 error:function(e){
-                    console.log(e);
+                    console.log(e,'--------------');
                     status=e.status;
                     if(status==405){
                         warning('Method Not Allow!');
@@ -1032,6 +1032,7 @@
             changeQtyOnUom(newInvoiceSidebar, selected_product.uom.id);
             totalSubtotalAmountCalculate();
             totalDisPrice();
+            checkStock(newInvoiceSidebar);
         })
 
         $('#all_product_list').on('click', '.each_product', function(e) {
@@ -1952,7 +1953,6 @@
 
         // Sale With Payment
         $(document).on('click', '.payment_save_btn', function() {
-            console.log('click');
             if(checkContact()){
                 let dataForSale = datasForSale('delivered',false,true,true);
 
@@ -1972,6 +1972,13 @@
                         }
                     })
                 }else{
+                    let qtyValidate = productsOnSelectData.find(function (pd) {
+                        return pd.validate==false;
+                    });
+                    if(qtyValidate){
+                        error('Products Are Out Of Stock');
+                        return;
+                    }
                     ajaxToStorePosData(dataForSale);
                 }
             }
