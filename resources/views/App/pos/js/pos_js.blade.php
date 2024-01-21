@@ -17,7 +17,8 @@
     var creditLimit=0;
     var receiveAbleAmount=0;
     var uniqueNameId=1;
-    var contactId=editSale.contact_id ?? 3;
+    var contactId=editSale.contact_id ?? 1 ;
+    let isGetContact =editSale ? false:true;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -912,7 +913,6 @@
             isGetProductVariations = true;
         }
 
-        let isGetContact = false;
         if(!isGetContact){
             getContacts(contactId);
             isGetContact = true;
@@ -1852,6 +1852,7 @@
             let saleDetailOrders = datasForSale('order').sale_details;
             $('#services').val('dine_in').trigger('change');
             if(saleDetailOrders){
+                isGetContact=false;
                 if(saleDetailOrders.length>0){
                     let orderComponent='';
                     editSaleDetails.forEach((sd,index) => {

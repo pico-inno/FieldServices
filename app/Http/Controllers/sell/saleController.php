@@ -979,8 +979,10 @@ class saleController extends Controller
                 ])
                 ->save();
         } catch (Exception $e) {
-            dd($e);
+
             DB::rollBack();
+
+            logger($e);
             activity('sale-transaction')
                 ->log('New Sale update has been fail')
                 ->event('update')

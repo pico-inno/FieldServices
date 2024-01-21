@@ -16,6 +16,7 @@
                 resultsForSelect=[];
                 let data=results.data;
                 data.map(function(d) {
+                    console.log(d);
                     resultsForSelect.push({
                         id: d.id,
                         text: `${d.prefix ?? '' } ${d.first_name ?? ''} ${d.middle_name ?? ''} ${d.last_name ?? ''} - (${d.mobile ?? '-'})`

@@ -53,6 +53,8 @@ class POSController extends Controller
     {
         if (request('pos_register_id') && request('sessionId')) {
             try {
+
+                $walkInCustomer = optional(Contact::where('type', 'Customer')->orWhere('type', 'Both')->where('first_name', 'Walk-In Customer')->first());
                 $sessionId = request('sessionId');
                 $posRegisterId = decrypt(request('pos_register_id'));
                 $posSession = posRegisterSessions::where('id', $sessionId)->where('pos_register_id', $posRegisterId)->where('status', 'open')->firstOrFail();
@@ -106,7 +108,7 @@ class POSController extends Controller
         } catch (\Throwable $th) {
             $table = null;
         }
-        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations', 'posRegisterId', 'posRegister', 'tables', 'reservations', 'setting', 'currencySymbol'));
+        return view('App.pos.create', compact('locations', 'paymentAcc', 'price_lists',  'currentStockBalance', 'categories', 'generics', 'manufacturers', 'brands', 'uoms', 'variations', 'posRegisterId', 'posRegister', 'tables', 'reservations', 'setting', 'currencySymbol', 'walkInCustomer'));
     }
 
     public function edit($posRegisterId)

@@ -125,7 +125,7 @@ class packagingServices
 
     public function updatePackagingForTx($data, $txd_id,$type)
     {
-        if ($data['packaging_id'] && $data['packaging_quantity'] ) {
+        if (isset($data['packaging_id']) && isset($data['packaging_quantity'])) {
             $packagingQry=productPackagingTransactions::where('transaction_details_id', $txd_id);
             if($packagingQry->exists()){
                 return $packagingQry->where('transaction_type',$type)

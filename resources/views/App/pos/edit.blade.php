@@ -261,12 +261,18 @@
                                                     <input type="hidden" name="subtotal_with_discount" value="{{$sd->subtotal_with_discount}}" />
                                                     <input type="hidden" name="cost_price" value="{{$sd->uom_price}}" />
                                                     <input type="hidden" name="_default_sell_price" value="{{$sd->uom_price * 1}}" />
-
-                                                    <input type="hidden" name="packaging_quantity" class='packaging_quantity' value="{{arr($sd->toArray()['packaging_tx'],'quantity')}}" />
-                                                    <input type="hidden" name="packaging_id" class='packaging_id' value="{{arr($sd->toArray()['packaging_tx']['packaging'],'id')}}" />
-                                                    <input type="hidden" name="packagingUom" class="form-control packagingUom" value="{{arr($sd->toArray()['packaging_tx']['packaging'],'uom_id')}}">
-                                                    <input type="hidden" name="packageQtyForCal" class="form-control packageQtyForCal" value="{{arr($sd->toArray()['packaging_tx']['packaging'],'quantity')}}">
-                                                    <input type="hidden" name="pkgname" class="form-control pkgname" value="{{arr($sd->toArray()['packaging_tx']['packaging'],'packaging_name')}}">
+                                                    @if (isset($sd->toArray()['packaging_tx']))
+                                                        <input type="hidden" name="packaging_quantity" class='packaging_quantity'
+                                                            value="{{arr($sd->toArray()['packaging_tx'],'quantity')}}" />
+                                                        <input type="hidden" name="packaging_id" class='packaging_id'
+                                                            value="{{arr($sd->toArray()['packaging_tx']['packaging'],'id')}}" />
+                                                        <input type="hidden" name="packagingUom" class="form-control packagingUom"
+                                                            value="{{arr($sd->toArray()['packaging_tx']['packaging'],'uom_id')}}">
+                                                        <input type="hidden" name="packageQtyForCal" class="form-control packageQtyForCal"
+                                                            value="{{arr($sd->toArray()['packaging_tx']['packaging'],'quantity')}}">
+                                                        <input type="hidden" name="pkgname" class="form-control pkgname"
+                                                            value="{{arr($sd->toArray()['packaging_tx']['packaging'],'packaging_name')}}">
+                                                    @endif
                                                     <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
                                                         <span class="product-name">
                                                             {{$product->name}}
@@ -282,10 +288,12 @@
                                                             <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_{{$sd->variation_id}}">{{$product->uom->name}}</span>
                                                         <br>
                                                         <span class="fs-7 fw-semibold text-gray-600 product-sku">SKU : {{$product->sku ?? ''}}</span>
+                                                        @if (isset($sd->toArray()['packaging_tx']))
                                                         <div>
                                                             <span class="pkg-qty">{{$sd->toArray()['packaging_tx']['quantity']}}</span>
                                                             <span class="pkg">{{$sd->toArray()['packaging_tx']['packaging']['packaging_name']}}</span>
                                                         </div>
+                                                        @endif
                                                     </td>
                                                     <td class="min-w-50px ps-0 pe-0 exclude-modal">
                                                         <input type="text" name="selling_price[]" class="form-control form-control-sm" value="{{fprice($sd->uom_price)}}" >
