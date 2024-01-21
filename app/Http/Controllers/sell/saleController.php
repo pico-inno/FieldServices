@@ -181,7 +181,6 @@ class saleController extends Controller
                 return businessLocationName($saleItem->businessLocation);
             })
             ->addColumn('customer', function ($saleItem) {
-                dd($saleItem->customer);
                 if ($saleItem->customer) {
                     return $saleItem->customer['company_name'] ?? $saleItem->customer->getFullNameAttribute();
                 }
