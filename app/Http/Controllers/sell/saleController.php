@@ -86,7 +86,7 @@ class saleController extends Controller
     {
         $locations = businessLocation::select('name', 'id', 'parent_location_id')->get();
         $customers = contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
-        return view('App.sell.sale.allSales', compact('locations', 'customers', 'saleType'));
+        return view('App.sell.sale.allSalesTable', compact('locations', 'customers', 'saleType'));
     }
 
 

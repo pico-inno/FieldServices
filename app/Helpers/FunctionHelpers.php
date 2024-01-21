@@ -62,6 +62,12 @@ function getReferenceUomId($currentUomId)
     return $referenceUnit;
 }
 
+function formatPrice($price, $currency)
+{
+    $formattedPrice = number_format($price,2, '.', ',');
+    $symobl= $currency['symbol'] ?? '';
+    return $formattedPrice .' '. $symobl;
+}
 function price($price, $currencyId = 'default')
 {
     $loadSetting = SettingHelpers::load();

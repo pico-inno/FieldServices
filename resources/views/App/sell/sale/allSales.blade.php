@@ -314,6 +314,7 @@
 @endsection
 
 @push('scripts')
+
     <script>
         var saleType = @json($saleType ?? '')
     </script>
