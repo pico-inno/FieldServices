@@ -489,12 +489,14 @@
             let rom=selected_product.rom;
             if(rom){
                 rom.rom_details.forEach(rd=>{
-                    romTags+=
-                    `
-                    <span class="badge badge-light">
-                        ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
-                    </span>
-                    `;
+                    if(rd.product_variation){
+                        romTags+=
+                        `
+                        <span class="badge badge-light">
+                            ${rd.product_variation.product.name} x ${rd.quantity} ${rd.uom.short_name}
+                        </span>
+                        `;
+                    }
                 })
             }
         }
@@ -555,13 +557,16 @@
         if(selected_product.rom){
             let rdInput='';
             selected_product.rom.rom_details.forEach(rd=>{
-                rdInput+=`
+                if(rd.product_variation){
+                    rdInput+=`
                     <div class='rdMainDiv'>
-                        <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty=${rd.product_variation.id} value="${rd.quantity}" />
-                        <input type="hidden" class="romQty" data-romvaridqty=${rd.product_variation.id} value="${rd.quantity}"  />
-                        <input type="hidden" class="romUom" data-romvariduom=${rd.product_variation.id} value="${rd.uom_id}"  />
+                        <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty=${rd.product_variation.id}
+                            value="${rd.quantity}" />
+                        <input type="hidden" class="romQty" data-romvaridqty=${rd.product_variation.id} value="${rd.quantity}" />
+                        <input type="hidden" class="romUom" data-romvariduom=${rd.product_variation.id} value="${rd.uom_id}" />
                     </div>
-                `
+                    `
+                }
             })
             $currentQtyText=`
             <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
@@ -1082,13 +1087,17 @@
         }
 
         function romAviableQtyCheck(locationId,productId,uom,DOM,uomTextDOM){
-            $.ajax({
+                $.ajax({
                 url: `/sell/rom/aviable/qty/check`,
                 data:{
                     locationId,productId
                 },
                 type: 'GET',
                 error:function(e){
+                    const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === productId);
+                    if(productsOnSelectData[indexToReplace]){
+                        productsOnSelectData[indexToReplace].total_current_stock_qty=0;
+                    }
                     status=e.status;
                     if(status==405){
                         warning('Method Not Allow!');
@@ -1539,7 +1548,7 @@
             }else{
                 return true;
             };
-        }else if(priceStage.applied_type=='Category'){
+        }else if(priceStage.applied_type=='Category' && product){
             let categoryId=product.category_id;
             if(priceStage.applied_value==categoryId){
                 if(!priceSettingToUi(priceStage,parentDom,product,dfs)){

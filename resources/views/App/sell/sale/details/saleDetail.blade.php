@@ -126,7 +126,9 @@
                                             <td class="pt-6 text-start ps-2">{{$key+1}}</td>
                                             <td class="d-flex align-items-center pt-6">
                                                 <div href="" class="symbol symbol-40px me-2" >
-                                                    <div class="symbol-label"  style="background-image:url({{asset("storage/product-image/$p->image")}});"></div>
+                                                    @if ($p)
+                                                        <div class="symbol-label" style="background-image:url({{asset(" storage/product-image/$p->image")}});"></div>
+                                                    @endif
                                                 </div>
                                                 {{arr($p,'name','','Unknown Product')}}
                                                 @if(isset($product_variation['variation_template_value']))
