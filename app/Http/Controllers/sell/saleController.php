@@ -109,6 +109,7 @@ class saleController extends Controller
                 'sales.business_location_id',
                 'sales.sales_voucher_no',
                 'sales.currency_id',
+                'contacts.prefix',
                 'contacts.first_name',
                 'contacts.last_name',
                 'contacts.middle_name',
@@ -121,7 +122,7 @@ class saleController extends Controller
             })
             ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
             ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
-            ->with('businessLocation:id,name,parent_location_id', 'customer:id,company_name,first_name,last_name,middle_name', 'currency:symbol,id');
+            ->with('businessLocation:id,name,parent_location_id', 'customer:id,prefix,company_name,first_name,last_name,middle_name', 'currency:symbol,id');
         if ($request->saleType == 'posSales') {
             $saleItems = $saleItems->whereNotNull('pos_register_id');
         }
@@ -180,6 +181,7 @@ class saleController extends Controller
                 return businessLocationName($saleItem->businessLocation);
             })
             ->addColumn('customer', function ($saleItem) {
+                dd($saleItem->customer);
                 if ($saleItem->customer) {
                     return $saleItem->customer['company_name'] ?? $saleItem->customer->getFullNameAttribute();
                 }
