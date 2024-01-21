@@ -105,7 +105,23 @@ function fquantity($qty)
     $formattedQty = number_format($qty, $setting->quantity_decimal_places, '.', '');
     return $formattedQty;
 }
-
+function getFullNameAttribute($contact)
+{
+    $name_array = [];
+    if (isset($contact['prefix'])) {
+        $name_array[] = $contact['prefix'];
+    }
+    if (isset($contact['first_name'])) {
+        $name_array[] = $contact['first_name'];
+    }
+    if (isset($contact['middle_name'])) {
+        $name_array[] = $contact['middle_name'];
+    }
+    if (isset($contact['last_name'])) {
+        $name_array[] = $contact['last_name'];
+    }
+    return implode(' ', $name_array);
+}
 function fDate($date, $br = false, $time = true)
 {
     $dateTime = date_create($date);

@@ -268,7 +268,12 @@
                             </div>
                         </td>
                         <td>{{$s['sales_voucher_no']}}</td>
-                        <td>{{$s['first_name']}}</td>
+                        <td>{{$s['company_name'] ?? getFullNameAttribute([
+                           'prefix'=> $s['prefix'],
+                            'first_name'=>$s['first_name'],
+                            'last_name'=>$s['last_name'],
+                            'middle_name'=>$s['middle_name'],
+                        ])}}</td>
                         <td>{{formatPrice($s['total_sale_amount'] ?? 0,$s->currency)}}</td>
                         <td>{{formatPrice($s['total_paid_amount'] ?? 0,$s->currency)}}</td>
                         <td>{{formatPrice($s['total_balance_amount'] ?? 0,$s->currency)}}</td>
