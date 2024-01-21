@@ -238,31 +238,39 @@
                                 </button>
                                 <div class="z-3">
                                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="saleItemDropDown" role="menu">
-                                        <a class="dropdown-item p-2   view_detail" type="button"
-                                            data-href="{{route('saleDetail', $s->id)}}">
-                                            View
-                                        </a>
-                                        <a href="{{route('saleEdit', $s->id)}}"
-                                            class="dropdown-item p-2   edit-unit ">Edit</a>
-                                        <a class="dropdown-item p-2  cursor-pointer  print-invoice"
-                                            data-href="{{route('print_sale', $s->id)}}"
-                                            data-layoutId="{{$s->invoice_layout}}">Print</a>
-                                        <a class="dropdown-item p-2  cursor-pointer download-image"
-                                            data-name="' . $s->sales_voucher_no . '"
-                                            data-layoutId="{{$s->invoice_layout}}"
-                                            data-href="{{route('print_sale', $s->id)}}">Download Image</a>
-
+                                        @if ($hasView)
+                                            <a class="dropdown-item p-2   view_detail" type="button" data-href="{{route('saleDetail', $s->id)}}">
+                                                View
+                                            </a>
+                                        @endif
+                                        @if ($hasUpdate)
+                                            <a href="{{route('saleEdit', $s->id)}}" class="dropdown-item p-2   edit-unit ">Edit</a>
+                                        @endif
+                                        @if ($hasPrint)
+                                            <a class="dropdown-item p-2  cursor-pointer  print-invoice"
+                                                data-href="{{route('print_sale', $s->id)}}"
+                                                data-layoutId="{{$s->invoice_layout}}">Print</a>
+                                            <a class="dropdown-item p-2  cursor-pointer download-image" data-name="' . $s->sales_voucher_no . '"
+                                                data-layoutId="{{$s->invoice_layout}}" data-href="{{route('print_sale', $s->id)}}">Download Image</a>
+                                        @endif
+                                        @if ($s->balance_amount > 0)
                                         <a class="dropdown-item p-2 cursor-pointer " id="paymentCreate"
                                             data-href="{{route('paymentTransaction.createForSale', ['id' => $s->id, 'currency_id' => $s->currency_id])}}">Add
                                             Payment</a>
+                                        @endif
+
                                         <a class="dropdown-item p-2 cursor-pointer " id="viewPayment"
                                             data-href="{{route('paymentTransaction.viewForSell', $s->id)}}">View
                                             Payment</a>
-                                        <a type="button" class="dropdown-item p-2  post-to-reservation"
-                                            data-href="{{route('postToReservationFolio', $s->id)}}">Post to
-                                            Reservation</a>
-                                        <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger"
-                                            data-id="{{$s->id}}" data-kt-saleItem-table="delete_row">Delete</a>
+                                            @if ($hasHospital)
+                                                <a type="button" class="dropdown-item p-2  post-to-reservation"
+                                                    data-href="{{route('postToReservationFolio', $s->id)}}">Post to
+                                                    Reservation</a>
+                                            @endif
+                                        @if ($hasDelete)
+                                                <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger" data-id="{{$s->id}}"
+                                                    data-kt-saleItem-table="delete_row">Delete</a>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>
