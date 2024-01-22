@@ -17,6 +17,14 @@ class AllSaleTable extends Component
     public $customerFilterId = 'all';
     public $statusFilter='all';
     public $filterDate;
+    public $saleType;
+
+    public function __construct()
+    {
+        $this->queryString= [...$this->queryString,
+            'businesslocationFilterId', 'customerFilterId'
+        ];
+    }
 
     public function updated()
     {
@@ -24,8 +32,8 @@ class AllSaleTable extends Component
     }
     public function render()
     {
-
         $search = $this->search;
+        $saleType= $this->saleType;
         $businesslocationFilterId = $this->businesslocationFilterId;
         $customerFilterId=$this->customerFilterId;
         $statusFilter=$this->statusFilter;
@@ -94,6 +102,12 @@ class AllSaleTable extends Component
                     ->where('sales.is_delete', 0)
                     ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
                         $query->whereIn('business_location_id', $accessUserLocation);
+                    })
+                    ->when($saleType == 'sales', function ($query){
+                            $query->whereNull('pos_register_id');
+                    })
+                    ->when($saleType == 'posSales', function ($query) {
+                            $query->whereNotNull('pos_register_id');
                     })
                     ->with('currency:id,symbol')
                     ->paginate($this->perPage);

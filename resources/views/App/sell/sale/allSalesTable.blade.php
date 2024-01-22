@@ -70,7 +70,7 @@
 
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <div class="container-xxl" id="kt_content_container">
-        <livewire:sale.AllSaleTable/>
+    <livewire:sale.AllSaleTable :saleType='$saleType' />
 
 
         <div id="fake-div">
@@ -101,7 +101,20 @@
 <script src="{{ asset('customJs/print/print.js') }}"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
-    let printId = "{{ session('print') }}";
+
+
+
+
+
+
+
+
+
+
+
+
+
+        let printId = "{{ session('print') }}";
         let layoutId = " {{ session('layoutId') }}";
         let url = `/sell/print/${printId}/Invoice`;
         let name = "{{ session('name') }}";

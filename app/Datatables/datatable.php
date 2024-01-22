@@ -5,7 +5,7 @@ namespace App\Datatables;
 trait datatable
 {
     //from livewire
-    protected $queryString = ['search', 'perPage', 'businesslocationFilterId', 'customerFilterId'];
+    protected $queryString = ['search', 'perPage'];
 
     //customize
 

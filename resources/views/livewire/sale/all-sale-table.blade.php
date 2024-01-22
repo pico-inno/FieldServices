@@ -191,7 +191,7 @@
                     <tr class="text-end text-gray-600 fw-bold fs-7 text-uppercase gs-0">
                         <th class="w-10px pe-2">
                             <div class="form-check form-check-sm form-check-custom  me-3">
-                                <input class="form-check-input" data-checked="selectAll" id="selectAll" type="checkbox"
+                                <input class="form-check-input checkForDelete" data-checked="selectAll" id="selectAll" type="checkbox"
                                     data-kt-check="true" data-kt-check-target="#kt_saleItem_table .form-check-input"
                                     value="" />
                             </div>
@@ -226,7 +226,7 @@
                     <tr class="text-end">
                         <td>
                             <div class="form-check form-check-sm form-check-custom ">
-                                <input class="form-check-input" type="checkbox" data-checked="delete"
+                                <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
                                     value='{{$s->id}}' />
                             </div>
                         </td>
@@ -343,7 +343,9 @@
     <script wire:ignore>
 
     $(document).ready(function() {
-        console.log('hello');
+        let table = document.querySelector('#kt_saleItem_table');
+        initToggleToolbar(table);
+        handleDeleteRows();
         $('#select2').select2().on('select2:select', function (e) {
             @this.set('businesslocationFilterId', $('#select2').select2("val"));
         });
@@ -379,5 +381,209 @@
             }
         }, cb);
     });
+
+
+        // Delete location
+    var handleDeleteRows = () => {
+        // Select all delete buttons
+        const deleteButtons = document.querySelectorAll('[data-kt-saleItem-table="delete_row"]');
+        deleteButtons.forEach(d => {
+            // Delete button on click
+            d.addEventListener('click', function (e) {
+                e.preventDefault();
+                console.log('hello');
+                // Select parent row
+                const parent = e.target.closest('tr');
+
+                // Get saleItem name
+                const saleItemName = parent.querySelectorAll('td')[2].innerText;
+
+                // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
+                Swal.fire({
+                    text: "Are you sure you want to delete " + saleItemName + "?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    confirmButtonText: "Yes, delete!",
+                    cancelButtonText: "No, cancel",
+                    customClass: {
+                        confirmButton: "btn fw-bold btn-danger",
+                        cancelButton: "btn fw-bold btn-active-light-primary"
+                    }
+                }).then(function (result) {
+                    if (result.value) {
+                            let id=d.getAttribute('data-id')
+                            let url = `/sell/${id}/delete?restore=true`;
+                            $.ajax({
+                                url,
+                                type: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(s) {
+                                    $('.checkForDelete').prop('checked',false);
+                                    @this.set('statusFilter', $('#statusFilter').select2("val"));
+                                    Swal.fire({
+                                        text: "You have deleted " + saleItemName + "!.",
+                                        icon: "success",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn fw-bold btn-primary",
+                                        }
+                                    }).then(function () {
+                                        success(s.success);
+                                    });
+                                }
+                            })
+                    }else if (result.dismiss === 'cancel') {
+                        Swal.fire({
+                            text: saleItemName + " was not deleted.",
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn fw-bold btn-primary",
+                            }
+                        });
+                    }
+
+                });
+            })
+        });
+    }
+
+            // Init toggle toolbar
+    var initToggleToolbar = (table) => {
+        // Toggle selected action toolbar
+        // Select all checkboxes
+        const checkboxes = table.querySelectorAll('[data-checked="delete"]');
+        const selectAll = table.querySelector('#selectAll');
+        // Select elements
+        const deleteSelected = document.querySelector('[data-kt-saleItem-table-select="delete_selected"]');
+
+        // Toggle delete selected toolbar
+        checkboxes.forEach(c => {
+            // Checkbox on click event
+            c.addEventListener('click', function () {
+                console.log('click');
+                setTimeout(function () {
+                    toggleToolbars(table);
+                }, 50);
+            });
+        });
+        selectAll.addEventListener('click',function () {
+                setTimeout(function () {
+                    toggleToolbars(table);
+                }, 50);
+        })
+
+        // Deleted selected rows
+        deleteSelected.addEventListener('click', function () {
+            // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
+            Swal.fire({
+                text: "Are you sure you want to delete selected locations?",
+                icon: "warning",
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: "Yes, delete!",
+                cancelButtonText: "No, cancel",
+                customClass: {
+                    confirmButton: "btn fw-bold btn-danger",
+                    cancelButton: "btn fw-bold btn-active-light-primary"
+                }
+            }).then(function (result) {
+                if (result.value) {
+                            let url;
+                            if (result.value) {
+                                url = `/sell/deletee/selected?restore=true`;
+                            }else if (result.dismiss === 'cancel') {
+                                url = `/sell/deletee/selected?restore=false`;
+                            } else{
+                                url = `/sell/deletee/selected?restore=true`;
+                            }
+                            let data=[];
+                            checkboxes.forEach(c => {
+                                if (c.checked) {
+                                    data = [...data,c.value];
+                                }
+                            });
+                            $.ajax({
+                                url,
+                                type: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                data: {
+                                data,
+                                },
+                                success: function(s) {
+                                    $('.checkForDelete').prop('checked',false);
+                                    @this.set('statusFilter', $('#statusFilter').select2("val"));
+                                    Swal.fire({
+                                        text: "You have deleted selected sale vouchers!.",
+                                        icon: "success",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn fw-bold btn-primary",
+                                        }
+                                    }).then(function () {
+                                        //sth
+                                        success(s.success);
+                                        toggleToolbars(table);
+
+                                    });
+
+                                }
+                            })
+                            const headerCheckbox = table.querySelectorAll('[type="checkbox"]')[0];
+                            headerCheckbox.checked = false;
+
+                } else if (result.dismiss === 'cancel') {
+                    Swal.fire({
+                        text: "Selected locations was not deleted.",
+                        icon: "error",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok, got it!",
+                        customClass: {
+                            confirmButton: "btn fw-bold btn-primary",
+                        }
+                    });
+                }
+            });
+        });
+    }
+    const toggleToolbars = (table) => {
+            // Define variables
+            const toolbarBase = document.querySelector('[data-kt-saleItem-table-toolbar="base"]');
+            const toolbarSelected = document.querySelector('[data-kt-saleItem-table-toolbar="selected"]');
+            const selectedCount = document.querySelector('[data-kt-saleItem-table-select="selected_count"]');
+
+            // Select refreshed checkbox DOM elements
+            const allCheckboxes = table.querySelectorAll('tbody [type="checkbox"]');
+
+            // Detect checkboxes state & count
+            let checkedState = false;
+            let count = 0;
+
+            // Count checked boxes
+            allCheckboxes.forEach(c => {
+            if (c.checked) {
+                checkedState = true;
+                count++;
+            }
+            });
+
+            // Toggle toolbars
+            if (checkedState) {
+            selectedCount.innerHTML = count;
+            toolbarBase.classList.add('d-none');
+            toolbarSelected.classList.remove('d-none');
+            } else {
+            toolbarBase.classList.remove('d-none');
+            toolbarSelected.classList.add('d-none');
+            }
+            }
 </script>
 </div>
