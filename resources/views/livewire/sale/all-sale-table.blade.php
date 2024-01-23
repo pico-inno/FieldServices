@@ -63,14 +63,6 @@
                                 data-dropdown-parent="#filter" />
                         </div>
                         <!--end::Input group-->
-                        {{-- <div class=" col-4 col-sm12 col-md-3 ">
-                            <div class="form-check col-md-4 ">
-                                <input class="form-check-input" type="checkbox" value="" id="subscriptions" />
-                                <label class="form-check-label text-gray-900" for="subscriptions">
-                                    Subscriptions
-                                </label>
-                            </div>
-                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -283,8 +275,8 @@
                             'middle_name'=>$s['middle_name'],
                         ])}}</td>
                         <td>{{formatPrice($s['total_sale_amount'] ?? 0,$s->currency)}}</td>
-                        <td>{{formatPrice($s['total_paid_amount'] ?? 0,$s->currency)}}</td>
-                        <td>{{formatPrice($s['total_balance_amount'] ?? 0,$s->currency)}}</td>
+                        <td>{{formatPrice($s['paid_amount'] ?? 0,$s->currency)}}</td>
+                        <td>{{formatPrice($s['balance_amount'] ?? 0,$s->currency)}}</td>
                         <td>{{$s['location_name']}}</td>
                         <td>
                             @php
@@ -316,10 +308,10 @@
                         <th colspan="2" class="min-w-125px text-dark text-end  pe-3">
                             {{formatPrice($saleData->sum('total_sale_amount'),$saleData[0]->currency ?? [])}}</th>
                         <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
-                            {{formatPrice($saleData->sum('total_paid_amount'),$saleData[0]->currency ?? [])}}
+                            {{formatPrice($saleData->sum('paid_amount'),$saleData[0]->currency ?? [])}}
                         </th>
                         <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
-                            {{formatPrice($saleData->sum('total_balance_amount'),$saleData[0]->currency ?? [])}}
+                            {{formatPrice($saleData->sum('balance_amount'),$saleData[0]->currency ?? [])}}
                         </th>
                     </tr>
                 </tfoot>

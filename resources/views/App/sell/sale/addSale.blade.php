@@ -162,7 +162,7 @@
                                     <div class="input-group-text">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
+                                    <input type="search" onkeypress="preventEnterSubmit(event)" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
                                     <div class="quick-search-results overflow-scroll rounded-1 p-3 position-absolute d-none card w-100 mt-18  card  autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
@@ -453,7 +453,11 @@
 
 @push('scripts')
 <script>
-
+    function preventEnterSubmit(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+      }
+    }
     $('[data-td-toggle="sold_at"]').flatpickr({
         enableTime: true,
         dateFormat: "Y-m-d H:i",

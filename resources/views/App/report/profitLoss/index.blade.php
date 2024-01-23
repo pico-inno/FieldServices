@@ -31,9 +31,9 @@
     <div class="container-xxl" id="kt_content_container">
         <div class="card p-0 mb-5">
             <div class="card-title px-5 py-2 d-flex justify-content-between align-items-center border border-1 border-gray-200 border-top-0 border-left-0 border-right-0">
-                <div class="d-flex">
+                <div class="d-flex justify-content-center align-items-center">
                     <i class="fa-solid fa-filter fs-2 me-3 text-gray-400"></i>
-                    <h4 class="reportLabel">Overall</h4><h4> &nbsp;Report</h4>
+                    <h4 class="reportLabel fs-2 ">Overall</h4><h4 class="fs-2 text-gray-600"> &nbsp;Report</h4>
                 </div>
                 <div class="">
                     <button class="btn btn-sm btn-light-primary refresh" title="Refresh"><i
@@ -43,9 +43,10 @@
             </div>
             <div class="card-body px-0 py-2 ps-5 row justify-content-between">
                 <div class="col-5 d-flex justify-content-center align-items-center gap-2">
-                    <input type="text" class="form-control form-control-sm" id="datePicker" placeholder="Pick date rage" data-kt-date-filter="date" data-allow-clear="true">
+                    <input type="text" class="form-control form-control-sm" id="datePicker" value="" placeholder="Pick date rage" data-kt-date-filter="date" data-allow-clear="true">
                     <select name="" id="priceCalMethod" class="form-select form-select-sm" data-control="select2" placeholder="Price Cal" data-placeholder="Price Cal" data-hide-search="true">
-                        <option value="avg">Average</option>
+                        <option value="cogs">Cogs</option>
+                        {{-- <option value="avg">Average</option> --}}
                     </select>
                 </div>
             </div>
@@ -59,10 +60,39 @@
                             Gross Profit
                         </span>
                     </span>
-                    <div class="fs-2hx mt-5  fw-bold ">
+                    <div class="fs-2hx mt-5  fw-bold mb-3">
                         <i class="fa-solid fa-spinner fa-spin fs-2hx loader  "></i>
                         <span class="grossProfit"></span>
-                        <div class=" fs-9 text-gray-500 fw-semibold mt-4">Total Sale Amount- Total COGS Amount<br> &nbsp;</div>
+                        <div class=" fs-9 text-gray-500 fw-semibold mt-4">Total Sale Amount- Total COGS Amount &nbsp;</div>
+                    </div>
+                    <div class="">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-rounded table-striped  gy-3 gs-3">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold fs-7">Total Sale Amount</td>
+                                        <td class="text-end fw-bold ">
+                                            <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
+                                            <span class="tlSAmount"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">COGS (-) </td>
+                                        <td class="text-end fw-bold ">
+                                            <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
+                                            <span class="cogs"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7 text-primary">Gross Profit (=)</td>
+                                        <td class="text-end fw-bold ">
+                                            <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
+                                           <span class="grossProfit"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,11 +102,39 @@
                         <i class="fa-solid fa-sack-dollar fs-6 me-2 text-success"></i>
                         <span class="text-success">Net Profit</span>
                     </span>
-                    <div class="fs-2hx mt-5  fw-bold ">
+                    <div class="fs-2hx mt-5  fw-bold mb-3 ">
                         <i class="fa-solid fa-spinner fa-spin fs-2hx loader  "></i>
                         <span class="netProfit"></span>
-                        <div class=" fs-9 text-gray-500 fw-semibold mt-4">
-                            (Total Sale Amount + Closing Stock Ammount + Total Other Incoming Amount) &minus;<br>(Total Purchase Amount + Total Opening Stock Amount+ Total Expense Amount)</div>
+                        <div class=" fs-9 text-gray-500 fw-semibold mt-4">(Gross Profit -Total Expense)</div>
+                    </div>
+                    <div class="">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-rounded table-striped  gy-3 gs-3">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold fs-7">Gross Profit</td>
+                                        <td class="text-end fw-bold ">
+                                            <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
+                                            <span class="grossProfit"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">Total Expense Amount (-) </td>
+                                        <td class="text-end fw-bold ">
+                                            <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
+                                            <span class="tlExAmount"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7 text-success">Net Profit (=)</td>
+                                        <td class="text-end fw-bold ">
+                                            <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
+                                            <span class="netProfit"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,7 +146,7 @@
                         <table class="table table-hover table-rounded table-striped  gy-3 gs-3">
                             <tbody>
                                 <tr>
-                                    <td class="fw-bold fs-7">Total Opening Stock Amount ( Inc: Opening Stock Transactions)</td>
+                                    <td class="fw-bold fs-7">Total Opening Stock Amount <br> ( Inc: Opening Stock Transactions)</td>
                                     <td class="text-end fw-bold ">
                                         <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
                                         <span class="tlOsAmount"></span>
@@ -108,13 +166,6 @@
                                         <span class="tlExAmount"></span>
                                     </td>
                                 </tr>
-                                {{-- <tr>
-                                    <td class="fw-bold fs-6">Total</td>
-                                    <td class="text-end fw-bold ">
-                                        <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
-                                        <span class="tlOutcome"></span>
-                                    </td>
-                                </tr> --}}
                             </tbody>
                         </table>
                     </div>
@@ -126,7 +177,7 @@
                         <table class="table table-hover table-rounded table-striped  gy-3 gs-3">
                             <tbody>
                                 <tr>
-                                    <td class="fw-bold fs-7">Total Closing Stock Amount</td>
+                                    <td class="fw-bold fs-7">Total Closing Stock Amount <br><br></td>
                                     <td class="text-end fw-bold ">
                                         <i class="fa-solid fa-ellipsis fa-fade fs-2 loader"></i>
                                         <span class="tlCsAmount"></span>
@@ -186,7 +237,7 @@
             ranges: {
                 "Today": [moment(), moment()],
                 "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
-                "The Day Before": [moment().subtract(2, "days"), moment().subtract(1, "days")],
+                // "The Day Before": [moment().subtract(2, "days"), moment().subtract(1, "days")],
                 "Last 7 Days": [moment().subtract(6, "days"), moment()],
                 "Last 30 Days": [moment().subtract(29, "days"), moment()],
                 "This Month": [moment().startOf("month"), moment().endOf("month")],
@@ -232,6 +283,7 @@
             $('.tlPAmount').text('');
             $('.tlExAmount').text('');
             $('.tlOutcome').text('');
+            $('.cogs').text('');
 
             $('.tlCsAmount').text('');
             $('.tlSAmount').text('');
@@ -248,6 +300,7 @@
             $('.tlPAmount').text(data.tlPAmount);
             $('.tlExAmount').text(data.tlExAmount);
             $('.tlOutcome').text(data.tlOutcome);
+            $('.cogs').text(data.cogs);
 
 
             $('.tlCsAmount').text(data.tlCsAmount);

@@ -224,8 +224,20 @@ var KTCustomersList = function () {
                                             confirmButton: "btn fw-bold btn-primary",
                                         }
                                     }).then(function () {
-                                        success(s.success);
                                     });
+                                },
+                                error: function (response, error) {
+                                    let message = response.responseJSON.message
+                                    Swal.fire({
+                                        text: message,
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn fw-bold btn-primary",
+                                        }
+                                    })
+
                                 }
                             })
                     } else if (result.dismiss === 'cancel') {
@@ -318,6 +330,20 @@ var KTCustomersList = function () {
                                     //sth
                                     success(s.success);
                                 });
+                            },
+
+                            error: function (response, error) {
+                                let message = response.responseJSON.message
+                                Swal.fire({
+                                    text: message,
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn fw-bold btn-primary",
+                                    }
+                                })
+
                             }
                         })
                         // Swal.fire({

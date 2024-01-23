@@ -137,7 +137,7 @@ class purchasingService
      */
     public function listData($request)
     {
-
+        // dd($request->has('from_data') , $request->has('to_date'));
         $accessUserLocation = getUserAccesssLocation();
         $purchases = purchases::where('is_delete', 0)
                     ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
@@ -145,8 +145,10 @@ class purchasingService
                     })
                     ->with('business_location_id', 'businessLocation', 'supplier')
                     ->OrderBy('id', 'desc');
-        if ($request->filled('form_data') && $request->filled('to_date')) {
-            $purchases = $purchases->whereDate('created_at', '>=', $request->form_data)->whereDate('created_at', '<=', $request->to_date);
+        if ($request->has('from_date') && $request->has('to_date')) {
+            // dd('her');
+            $purchases = $purchases->whereDate('received_at', '>=', $request->from_date)
+                    ->whereDate('received_at', '<=', $request->to_date);
         }
         return DataTables::of($purchases)
             ->addColumn('checkbox', function ($purchase) {
@@ -221,7 +223,7 @@ class purchasingService
                             </a>';
                 }
                 if (hasPrint('purchase')) {
-                    $html .= ' <a class="dropdown-item p-2  cursor-pointer bg-active-danger fw-semibold print-invoice"  data-href="' . route('print_purchase', $purchase->id) . '">Print</a>';
+                    $html .= ' <a class="dropdown-item p-2  cursor-pointer bg-active-danger fw-semibold print-invoice"  data-href="' . route('f', $purchase->id) . '">Print</a>';
                 }
                 if (hasUpdate('purchase')) {
                     $html .= $editBtn;

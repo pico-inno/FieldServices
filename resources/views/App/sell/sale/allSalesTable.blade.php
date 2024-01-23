@@ -70,7 +70,8 @@
 
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <div class="container-xxl" id="kt_content_container">
-    <livewire:sale.AllSaleTable :saleType='$saleType' />
+
+        <livewire:sale.AllSaleTable :saleType='$saleType' />
 
 
         <div id="fake-div">

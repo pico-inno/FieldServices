@@ -12,121 +12,104 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\expenseTransactions;
+use App\Models\lotSerialDetails;
 use App\Models\purchases\purchases;
 use App\Models\sale\sale_details;
 
 class reportServices
 {
     //Adjustment
-    public static function adjustmentSummary($filterData){
+    public static function adjustmentSummary($filterData)
+    {
         $reportService = new reportServices();
         return $reportService->adjustmentSummaryFilterProcess($filterData);
     }
 
-    public static function adjustmentDetails($filterData){
+    public static function adjustmentDetails($filterData)
+    {
         $reportService = new reportServices();
         return $reportService->adjustmentDetailsFilterProcess($filterData);
     }
     //Adjustment
-    public static function grossProfit($filterData=false){
-            $totalSaleAmount = totalSaleAmount($filterData);
-            $cogs=0;
-            $sales= saleTxData($filterData)->select('id')
-                    ->with('sale_details:id,sales_id,quantity,uom_id,variation_id', 'sale_details.uom:id,unit_category_id',
-                    'sale_details.uom.unit_category:id,name',
-                    'sale_details.uom.unit_category.uomByCategory:id,name,unit_category_id,unit_type')
-                    ->get();
-            $avgPriceContainer=[];
-            foreach ($sales as $sale) {
-                foreach ($sale->sale_details as $sd) {
-                    $uoms=$sd->uom->unit_category->toArray()['uom_by_category'] ?? [];
-                    $refUomQty=0;
-                    foreach ($uoms as $uom) {
-                        if($uom['unit_type']== 'reference'){
-                            $refUomQty = UomHelper::changeQtyOnUom($sd->uom_id,$uom['id'],$sd->quantity);
-                            break;
-                        }
-                    }
-                    if(!isset($avgPriceContainer[$sd->variation_id])){
-                        $avgPrice = avgPriceCalculation($sd->variation_id, $filterData);
-                        $avgPriceContainer[$sd->variation_id] = $avgPrice;
-                    }else{
-                        $avgPrice= $avgPriceContainer[$sd->variation_id];
-                    }
-                    $cogs+= $avgPrice->total_price * $refUomQty;
-                }
-            }
-            $result= $totalSaleAmount-$cogs;
-        return $result;
-    }
-    //Adjustment
-    public static function grossProfit2($filterData = false)
+    public static function grossProfit($filterData = false)
     {
         $totalSaleAmount = totalSaleAmount($filterData);
         $cogs = 0;
-        $sales = sale_details::query()
-        ->select(
-        //     'sale_details.id as detial_id', 'sale_details.product_id','sale_details.quantity',
-        // 'lot_serial_details.current_stock_balance_id',
-        //     'lot_serial_details.uom_quantity',
-        //     'current_stock_balance.ref_uom_price',
-            DB::raw('sale_details.subtotal_with_discount-(lot_serial_details.uom_quantity * current_stock_balance.ref_uom_price) as profit'))
-        ->leftJoin('lot_serial_details', 'lot_serial_details.transaction_detail_id','=', 'sale_details.id')
-        ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id','=', 'current_stock_balance.id')
-        ->where('lot_serial_details.transaction_type','=','sale')
-        // ->with(
-        //     'sale_details:id,sales_id',
-        //     'sale_details.lotSerialDetail',
-        //     'sale_details.lotSerialDetail.current_stock_balance:id,ref_uom_price',
-        // )
-        ->orderBy('sale_details.id','DESC')
-        ->get()
-            ->sum('profit');
-        // $avgPriceContainer = [];
-        // foreach ($sales as $sale) {
-        //     foreach ($sale->sale_details as $sd) {
-        //         $uoms = $sd->uom->unit_category->toArray()['uom_by_category'] ?? [];
-        //         $refUomQty = 0;
-        //         foreach ($uoms as $uom) {
-        //             if ($uom['unit_type'] == 'reference') {
-        //                 $refUomQty = UomHelper::changeQtyOnUom($sd->uom_id, $uom['id'], $sd->quantity);
-        //                 break;
-        //             }
-        //         }
-        //         if (!isset($avgPriceContainer[$sd->variation_id])) {
-        //             $avgPrice = avgPriceCalculation($sd->variation_id, $filterData);
-        //             $avgPriceContainer[$sd->variation_id] = $avgPrice;
-        //         } else {
-        //             $avgPrice = $avgPriceContainer[$sd->variation_id];
-        //         }
-        //         $cogs += $avgPrice->total_price * $refUomQty;
-        //     }
-        // }
-        // $result = $totalSaleAmount - $cogs;
-        return $sales;
+        $sales = saleTxData($filterData)->select('id')
+            ->with(
+                'sale_details:id,sales_id,quantity,uom_id,variation_id',
+                'sale_details.uom:id,unit_category_id',
+                'sale_details.uom.unit_category:id,name',
+                'sale_details.uom.unit_category.uomByCategory:id,name,unit_category_id,unit_type'
+            )
+            ->get();
+        $avgPriceContainer = [];
+        foreach ($sales as $sale) {
+            foreach ($sale->sale_details as $sd) {
+                $uoms = $sd->uom->unit_category->toArray()['uom_by_category'] ?? [];
+                $refUomQty = 0;
+                foreach ($uoms as $uom) {
+                    if ($uom['unit_type'] == 'reference') {
+                        $refUomQty = UomHelper::changeQtyOnUom($sd->uom_id, $uom['id'], $sd->quantity);
+                        break;
+                    }
+                }
+                if (!isset($avgPriceContainer[$sd->variation_id])) {
+                    $avgPrice = avgPriceCalculation($sd->variation_id, $filterData);
+                    $avgPriceContainer[$sd->variation_id] = $avgPrice;
+                } else {
+                    $avgPrice = $avgPriceContainer[$sd->variation_id];
+                }
+                $cogs += $avgPrice->total_price * $refUomQty;
+            }
+        }
+        $result = $totalSaleAmount - $cogs;
+        return $result;
     }
-    public static function netProfit($filterData = ''){
+    //Adjustment
+    public static function grossProfitCalWithCogs($filterData = false)
+    {
+        
+        $cogs=self::cogs($filterData);
+        $sale= sales::where('is_delete', '!=', '1')
+                ->where("status", 'delivered')
+                ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+                    $query->whereDate('sold_at', '>=', $filterData['from_date'])
+                        ->whereDate('sold_at', '<=', $filterData['to_date']);
+                })
+                ->sum('total_sale_amount');
+        return $sale-$cogs;
+    }
+    public static function cogs($filterData = false)
+    {
+        $cogs = sale_details::query()
+            ->select(
+                // 'sales.total_sale_amount as profit',
+                DB::raw('stock_histories.decrease_qty * current_stock_balance.ref_uom_price as cogs')
+            )
+            ->leftJoin('stock_histories', 'stock_histories.transaction_details_id', '=', 'sale_details.id')
+            ->leftJoin('lot_serial_details', 'lot_serial_details.transaction_detail_id', '=', 'sale_details.id')
+            ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
+            ->where('sales.is_delete', 0)
+            ->where('sale_details.is_delete', 0)
+            ->where("sales.status", 'delivered')
+            ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+            ->where('lot_serial_details.transaction_type', '=', 'sale')
+            ->where('stock_histories.transaction_type', '=', 'sale')
+            ->orderBy('sale_details.id', 'DESC')
+            ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+                $query->whereDate('sales.sold_at', '>=', $filterData['from_date'])
+                ->whereDate('sales.sold_at', '<=', $filterData['to_date']);
+            })
+            ->get()
+            ->sum('cogs');
+        return $cogs;
+    }
+    public static function netProfit($filterData = '')
+    {
         //outcome
-
-        // $totalPurchaseAmount =  totalPurchaseAmount($filterData);
-        // if (!$filterData) {
-        //     $totalOSAmount = totalOSTransactionAmount($filterData);
-        // } else {
-        //     $totalOSAmount = totalOSTransactionAmount($filterData) ;
-        // }
-        $totalExpenseAmount = totalExpenseAmount();
-        // $totalSaleAmount =(int) totalSaleAmount($filterData);
-        // $closingStocks = closingStocksCal($filterData);
-
-
-
-        // $totalOutcome=(int) $totalPurchaseAmount+ $totalOSAmount + $totalExpenseAmount;
-        // $totalIncomeAmount=$totalSaleAmount + $closingStocks;
-
-        // dd($totalOutcome, $totalIncomeAmount);
-        // dd($totalIncomeAmount, $totalOutcome);
-        // dd($totalSaleAmount, $closingStocks);
-        $grossProfit=self::grossProfit($filterData );
+        $totalExpenseAmount = totalExpenseAmount($filterData);
+        $grossProfit = self::grossProfitCalWithCogs($filterData);
         return  $grossProfit - $totalExpenseAmount;
     }
 
@@ -198,17 +181,18 @@ class reportServices
         $productIds = $adjustmentDetails->pluck('product_id')->unique()->toArray();
 
         $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
-            ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
-                $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
-                    ->with(['variationTemplateValue' => function ($query) {
-                        $query->select('id', 'name', 'variation_template_id')
-                            ->with(['variationTemplate:id,name']);
+            ->with([
+                'category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
+                    $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
+                        ->with(['variationTemplateValue' => function ($query) {
+                            $query->select('id', 'name', 'variation_template_id')
+                                ->with(['variationTemplate:id,name']);
+                        }]);
+                }, 'uom' => function ($q) {
+                    $q->with(['unit_category' => function ($q) {
+                        $q->with('uomByCategory');
                     }]);
-            }, 'uom' => function ($q) {
-                $q->with(['unit_category' => function ($q) {
-                    $q->with('uomByCategory');
-                }]);
-            }
+                }
             ])
             ->whereIn('id', $productIds);
 
@@ -216,14 +200,14 @@ class reportServices
             $finalProduct->where('id', $filterProduct);
         }
 
-//        if ($filterCategory != 0) {
-//            $finalProduct->where('category_id', $filterCategory);
-//        }
-//
-//        if ($filterBrand != 0) {
-//            $finalProduct->where('brand_id', $filterBrand);
-//        }
-//
+        //        if ($filterCategory != 0) {
+        //            $finalProduct->where('category_id', $filterCategory);
+        //        }
+        //
+        //        if ($filterBrand != 0) {
+        //            $finalProduct->where('brand_id', $filterBrand);
+        //        }
+        //
         $finalProduct = $finalProduct->get()->toArray();
 
         $result = [];
@@ -264,10 +248,8 @@ class reportServices
                     }
                 }
             }
-
         }
 
         return $result;
     }
 }
-

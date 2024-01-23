@@ -99,7 +99,7 @@
                 let uom=$(`[name="sale_details[${index}][uom_id]"]`);
                 uom.select2();
                 let uom_select=uom.val();
-                getPrice(uom);
+                // getPrice(uom);
                 changeQtyOnUom(uom,uom_select);
                 // lineDiscountCalulation(uom);
                 await lineDiscountCalulation($(uom));

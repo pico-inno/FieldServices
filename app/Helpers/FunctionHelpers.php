@@ -581,7 +581,7 @@ function calPercentageNumber($type, $disAmt, $originalAmt)
     if ($type == 'percentage') {
         return ($originalAmt * $disAmt) / 100;
     } elseif ($type == 'foc') {
-        return 0;
+        return  $disAmt;
     } else {
         return $disAmt;
     }
@@ -622,12 +622,12 @@ function queryFilter($query, $filterData = false, $dateColumn = 'created_at')
 
 function purchaeTxData($filterData = false)
 {
-    $purchase = purchases::query()->where('is_delete', 0);
+    $purchase = purchases::query()->where('is_delete', 0)->where("status", 'received');
     return queryFilter($purchase, $filterData, 'received_at');
 }
 function saleTxData($filterData = false)
 {
-    $purchase = sales::query()->where('is_delete', 0);
+    $purchase = sales::query()->where('is_delete', 0)->where("status", 'delivered');
     return queryFilter($purchase, $filterData,'sold_at');
 }
 function isFilter($arr){
@@ -658,7 +658,8 @@ function totalPurchaseDiscountAmt($filterData = false)
 function totalOSTransactionAmount($filterData = false)
 {
     $tranactions = openingStocks::query()->where('is_delete', 0);
-    $resultPrice = queryFilter($tranactions, $filterData, 'opening_date')->sum('total_opening_amount');
+    $resultPrice = queryFilter($tranactions, $filterData, 'opening_date')
+                    ->sum('total_opening_amount');
     return $resultPrice;
 }
 function totalExpenseAmount($filterData = false)
@@ -732,7 +733,102 @@ function closingStocksCal($filterData = false, $betweenDateRage = false)
 
     return $totalPrice;
 }
+function osWithFromCs($filterData = false)
+{
+    $decreasePrice = stock_history::query()
+        ->select(
+            DB::raw('stock_histories.decrease_qty * current_stock_balance.ref_uom_price as totalSaleAmount')
+        )
+        ->where('stock_histories.transaction_type', 'sale')
+        ->where('sales.is_delete','!=',1)
+        ->leftJoin('sale_details', 'stock_histories.transaction_details_id', '=', 'sale_details.id')
+        ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
+        ->leftJoin('lot_serial_details', 'stock_histories.transaction_details_id', 'lot_serial_details.transaction_detail_id')
+        ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+        ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($q) use ($filterData) {
+            $q->whereDate('sales.sold_at', '<', $filterData['from_date']);
+        })
+        ->where("status", 'delivered')
+        ->get()
+        ->sum('totalSaleAmount');
+    $IncreasePrice  = purchases::where('is_delete', '!=', '1')
+        ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+            $query->whereDate('received_at', '<', $filterData['from_date']);
+        })
+        ->where("status", 'received')
+        ->sum('total_purchase_amount');
+    $IncreaseOsPrice  = openingStocks::where('is_delete', '!=', '1')
+        ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+            $query->whereDate('opening_date', '<', $filterData['from_date']);
+        })
+        ->sum('total_opening_amount');
 
+    $totalPrice = $IncreasePrice + $IncreaseOsPrice  - $decreasePrice;
+
+    return $totalPrice;
+}
+function closingStocksCalWithCogs($filterData = false)
+{
+    $decreasePrice =stock_history::query()
+                    ->select(
+                        DB::raw('stock_histories.decrease_qty * current_stock_balance.ref_uom_price as totalSaleAmount')
+                    )
+                    ->where('stock_histories.transaction_type','sale')
+                    ->where('sales.is_delete','!=', 1)
+                    ->leftJoin('sale_details', 'stock_histories.transaction_details_id', '=','sale_details.id')
+                    ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
+                    ->where("sales.status", 'delivered')
+                    ->leftJoin('lot_serial_details', 'stock_histories.transaction_details_id', 'lot_serial_details.transaction_detail_id')
+                    ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+                    ->when(isset($filterData['from_date']) && isset($filterData['to_date']) , function ($q) use ($filterData) {
+                        $q->whereDate('sales.sold_at', '<=', $filterData['to_date']);
+                    })
+                    ->get()
+                    ->sum('totalSaleAmount');
+
+                    // dd($decreasePrice);
+    $IncreasePrice  = purchases::where('is_delete', '!=', '1')
+        ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+            $query->whereDate('received_at', '<=', $filterData['to_date']);
+        })
+        ->where("status", 'received')
+        ->sum('total_purchase_amount');
+
+    $IncreaseOsPrice  = openingStocks::where('is_delete', '!=', '1')
+        ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+            $query->whereDate('opening_date','<=', $filterData['to_date']);
+        })
+        ->sum('total_opening_amount');
+
+    $totalPrice = ($IncreasePrice + $IncreaseOsPrice) - $decreasePrice;
+
+
+
+
+
+
+    // dd($IncreaseOsPrice);
+    // dd($decreasePrice, $IncreasePrice);
+    // dd($totalPrice, $decreasePrice);
+    // $avgPrice = CurrentStockBalance::select('variation_id', DB::raw("SUM(ref_uom_price * ref_uom_quantity)/SUM(ref_uom_quantity) as total_price"))
+    //     ->when(isset($filterData['from_date']) && !$betweenDateRage, function ($q) use ($filterData) {
+    //         $q->whereDate('created_at', '<', $filterData['from_date']);
+    //     })
+    //     ->groupBy('variation_id')
+    //     ->get()
+    //     ->keyBy('variation_id')
+    //     ->toArray();
+    // $totalPrice = 0;
+    // foreach ($stockHistories as $i => $stockHistory) {
+    //     $totalQTy = $stockHistory['totalIncreaseQty'] - $stockHistory['totalDecreaseQty'];
+    //     // dd($stockHistory['totalIncreaseQty'] , $stockHistory['totalDecreaseQty']);
+    //     $varId = $stockHistory['variation_id'];
+    //     $price = $avgPrice[$varId]['total_price'] ?? 0;
+    //     $totalPrice += $totalQTy * $price;
+    // }
+
+    return $totalPrice;
+}
 
 function avgPriceCalculation($variationId){
     $avgPrice = CurrentStockBalance::select('variation_id',

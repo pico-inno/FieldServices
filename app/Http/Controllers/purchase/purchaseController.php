@@ -67,7 +67,7 @@ class purchaseController extends Controller
             ->select('id', 'company_name', 'prefix', 'first_name', 'last_name', 'middle_name')
             ->get();
         $layouts = InvoiceTemplate::all();
-        return view('App.purchase.listPurchase', compact('locations', 'suppliers', 'layouts'));
+        return view('App.purchase.tables.purchaseTable', compact('locations', 'suppliers', 'layouts'));
     }
 
     public function add()
@@ -262,16 +262,22 @@ class purchaseController extends Controller
             ]);
             $purchaseDetails = purchase_details::where('purchases_id', $id);
             foreach ($purchaseDetails->get() as $pd) {
-                CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->delete();
-                stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+                $csQuery=CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->first();
+
+                if($csQuery->current_quantity < $csQuery->ref_uom_quantity){
+                    throw new Exception("Can't Delete this Purchase Transactions. Because stocks are already out from this transactions.");
+                }else{
+                    $csQuery->delete();
+                    stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+
+                    $purchaseDetails->update([
+                        'is_delete' => 1,
+                        'deleted_by' => Auth::user()->id,
+                        'deleted_at' => now()
+                    ]);
+                }
+
             }
-            $purchaseDetails->update([
-                'is_delete' => 1,
-                'deleted_by' => Auth::user()->id,
-                'deleted_at' => now()
-            ]);
-
-
             DB::commit();
             activity('purchase-transaction')
                 ->log('Purchase single deletion has been success')
@@ -284,6 +290,7 @@ class purchaseController extends Controller
             ];
             return response()->json($data, 200);
         }catch (Exception $exception){
+            logger($exception);
             DB::rollBack();
             activity('purchase-transaction')
                 ->log('Purchase single deletion has been fail')
@@ -291,9 +298,9 @@ class purchaseController extends Controller
                 ->status('fail')
                 ->save();
             $data = [
-                'error' => 'Purchase deletion failed'
+                'message' => $exception->getMessage()
             ];
-            return response()->json($data, 200);
+            return response()->json($data, 400);
         }
     }
 
@@ -309,15 +316,20 @@ class purchaseController extends Controller
                     'deleted_at' => now()
                 ]);
                 $purchaseDetails = purchase_details::where('purchases_id', $id);
-
-                $purchaseDetails->update([
-                    'is_delete' => 1,
-                    'deleted_by' => Auth::user()->id,
-                    'deleted_at' => now()
-                ]);
                 foreach ($purchaseDetails->get() as $pd) {
-                    CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->delete();
-                    stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+                    $csQuery = CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->first();
+
+                    if ($csQuery->current_quantity < $csQuery->ref_uom_quantity) {
+                        throw new Exception("Can't Delete This Purchase Transactions. Because some stocks are already out from this transactions.");
+                    } else {
+                        $csQuery->delete();
+                        stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
+                        $purchaseDetails->update([
+                            'is_delete' => 1,
+                            'deleted_by' => Auth::user()->id,
+                            'deleted_at' => now()
+                        ]);
+                    }
                 }
             }
             $data = [
@@ -338,8 +350,10 @@ class purchaseController extends Controller
                 ->event('delete')
                 ->status('fail')
                 ->save();
-            throw $e;
-            return response()->json($e, 200);
+            $data = [
+                'message' => $e->getMessage()
+            ];
+            return response()->json($data, 400);
         }
     }
 

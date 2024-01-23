@@ -78,6 +78,7 @@
                                     <th class="min-w-175px">Purchase Price</th>
                                     <th class="min-w-175px">Customer</th>
                                     <th class="min-w-175px">Location</th>
+                                    <th class="min-w-175px">Sale Voucher No</th>
                                     <th class="min-w-175px">Sell Qty</th>
                                     <th class="min-w-175px">Selling price</th>
                                     <th class="min-w-175px">Subtotal</th>
@@ -163,6 +164,10 @@
                 {
                     data: 'sell_qty',
                     name: 'sell_qty'
+                },
+                {
+                    data:'sales_voucher_no',
+                    name:'sales_voucher_no',
                 },
 
                 {

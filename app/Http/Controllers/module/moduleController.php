@@ -29,6 +29,7 @@ class moduleController extends Controller
     public function install(Request $request){
         $decryptName=decrypt($request->module_name);
         $ucModuleName=ucwords($decryptName);
+        Artisan::call('optimize:clear');
          Artisan::call('module:migrate', ['module' => $ucModuleName]);
         Artisan::call('module:seed', ['module' => $ucModuleName]);
         $module = Module::find($ucModuleName);
@@ -36,6 +37,7 @@ class moduleController extends Controller
 
         Artisan::call('module:publish');
         Artisan::call('module:seed '.$ucModuleName);
+
 
         return back()->with(['success'=>'Successfully Install']);
     }

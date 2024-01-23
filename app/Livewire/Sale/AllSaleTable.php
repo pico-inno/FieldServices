@@ -93,7 +93,8 @@ class AllSaleTable extends Component
                         $query->where('contacts.id', '=', $customerFilterId);
                     })
                     ->when(isset($filterDate), function ($query) use ($filterDate) {
-                        $query->whereDate('sales.created_at', '>=', $filterDate[0])->whereDate('sales.created_at', '<=', $filterDate[1]);
+                        $query->whereDate('sales.sold_at', '>=', $filterDate[0])
+                                ->whereDate('sales.sold_at', '<=', $filterDate[1]);
                     })
 
                     ->when($statusFilter != 'all', function ($query) use ($statusFilter) {

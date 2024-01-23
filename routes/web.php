@@ -103,6 +103,8 @@ use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
+use App\Models\openingStockDetails;
+use App\Models\openingStocks;
 
 // use App\Models\Manufacturer;
 
@@ -133,10 +135,10 @@ Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('
 // Auth::routes();
 Auth::routes(['register' => false]);
 //_Being: Auth
-Route::get('/', function() {
-    if(hasModule('fieldService') && isEnableModule('fieldService')){
+Route::get('/', function () {
+    if (hasModule('fieldService') && isEnableModule('fieldService')) {
         return redirect()->route('campaign.index');
-    }else{
+    } else {
         return redirect()->route('home');
     }
 });
@@ -325,7 +327,7 @@ Route::controller(ReportController::class)->group(function () {
 
 
     Route::get('/report/sale-purchase/data', 'salePurchaseData');
-    Route::get('/items/report', 'itemReport')->name('itemReport')->middleware(['canView:product','canView:purchase', 'canView:sell']);
+    Route::get('/items/report', 'itemReport')->name('itemReport')->middleware(['canView:product', 'canView:purchase', 'canView:sell']);
     Route::get('/items/report/data', 'itemData');
 
     Route::get('/items/couont/data', 'itemCount');
@@ -356,7 +358,7 @@ Route::controller(businessSettingController::class)->group(function () {
 });
 
 Route::controller(locationImportController::class)->prefix('/import')->group(function () {
-    Route::get('/location','index')->name('location.importUi');
+    Route::get('/location', 'index')->name('location.importUi');
     Route::post('/location', 'import')->name('location.import');
     Route::get('/location/download', 'download')->name('download.importLocationExcel');
 });
@@ -386,8 +388,8 @@ Route::controller(businessLocationController::class)->group(function () {
         Route::get('/get', 'getLocationsForSelect');
     });
 });
-Route::controller(LocationProductController::class)->prefix('location-product')->group(function(){
-    Route::get('/store','store');
+Route::controller(LocationProductController::class)->prefix('location-product')->group(function () {
+    Route::get('/store', 'store');
     Route::get('/remove', 'remove');
 });
 
@@ -429,13 +431,13 @@ Route::prefix('purchase')->group(function () {
     });
 });
 
-Route::get('purchase/order', fn() => view('App.purchase.purchaseOrder'))->name('purchase_order');
+Route::get('purchase/order', fn () => view('App.purchase.purchaseOrder'))->name('purchase_order');
 // Route::get('purchase/add', fn () => view('App.purchase.addPurchase'))->name('purchase_add');
-Route::get('purchase/add/order', fn() => view('App.purchase.purchaseOrderAdd'))->name('purchase_order_add');
-Route::get('purchase/add/supplier', fn() => view('App.purchase.supplierAdd'))->name('purchase_supplier_add');
+Route::get('purchase/add/order', fn () => view('App.purchase.purchaseOrderAdd'))->name('purchase_order_add');
+Route::get('purchase/add/supplier', fn () => view('App.purchase.supplierAdd'))->name('purchase_supplier_add');
 // Route::get('purchase/list', fn () => view('App.purchase.listPurchase'))->name('purchase_list');
-Route::get('purchase/list/return', fn() => view('App.purchase.listPurchaseReturn'))->name('purchase_list_return');
-Route::get('purchase/list/return/add', fn() => view('App.purchase.addListPurchaseReturn'))->name('add_purchase_list_return');
+Route::get('purchase/list/return', fn () => view('App.purchase.listPurchaseReturn'))->name('purchase_list_return');
+Route::get('purchase/list/return/add', fn () => view('App.purchase.addListPurchaseReturn'))->name('add_purchase_list_return');
 
 //============================ End::purchase ============================================
 
@@ -476,18 +478,18 @@ Route::prefix('sell')->group(function () {
     });
 });
 
-Route::get('sell/order', fn() => view('App.sell.sale.saleOrder'))->name('sale_order');
+Route::get('sell/order', fn () => view('App.sell.sale.saleOrder'))->name('sale_order');
 // Route::get('add/sell', fn () => view('App.sell.sale.addSale'))->name('add_sale');
-Route::get('add/sell/order', fn() => view('App.sell.sale.addSaleOrder'))->name('add_sale_order');
-Route::get('sell/list/pos', fn() => view('App.sell.pos.listPos'))->name('list_pos');
+Route::get('add/sell/order', fn () => view('App.sell.sale.addSaleOrder'))->name('add_sale_order');
+Route::get('sell/list/pos', fn () => view('App.sell.pos.listPos'))->name('list_pos');
 
-Route::get('sell/list/drafts', fn() => view('App.sell.draft.listDraft'))->name('list_drafts');
-Route::get('sell/drafts/add', fn() => view('App.sell.draft.addDraft'))->name('add_draft');
+Route::get('sell/list/drafts', fn () => view('App.sell.draft.listDraft'))->name('list_drafts');
+Route::get('sell/drafts/add', fn () => view('App.sell.draft.addDraft'))->name('add_draft');
 
-Route::get('sell/list/quotations', fn() => view('App.sell.quotations.list'))->name('list_quotations');
-Route::get('sell/quotation/add', fn() => view('App.sell.quotations.add'))->name('add_quotations');
+Route::get('sell/list/quotations', fn () => view('App.sell.quotations.list'))->name('list_quotations');
+Route::get('sell/quotation/add', fn () => view('App.sell.quotations.add'))->name('add_quotations');
 
-Route::get('sell/shipments', fn() => view('App.sell.shipments'))->name('shipments');
+Route::get('sell/shipments', fn () => view('App.sell.shipments'))->name('shipments');
 
 
 //============================ End::Sale ============================================
@@ -924,15 +926,123 @@ Route::controller(TestController::class)->group(function () {
 //============================ End: Product ==============================================
 
 Route::get('/test', function () {
-    dd(reportServices::grossProfit(), '',reportServices::grossProfit2());
+
+
+
+
+    $datas = sale_details::query()
+        // where('per_item_discount', '!=', '0.0000')
+        ->where('is_delete', 0)
+        ->select('id', 'per_item_discount', 'uom_price', 'discount_type', 'subtotal_with_discount', 'subtotal', 'sales_id', 'quantity')
+        ->get();
+
+
+    $salesId = [];
+    foreach ($datas as  $sd) {
+        $calculation = ($sd->uom_price - calPercentageNumber($sd->discount_type, $sd->per_item_discount ?? 0, $sd->uom_price)) * $sd->quantity;
+        sale_details::where('id', $sd->id)->update([
+            'subtotal' => $sd->uom_price * $sd->quantity,
+            'subtotal_with_discount' => $calculation,
+            'subtotal_with_tax' => $calculation,
+        ]);
+        $sid = $sd->sales_id;
+        $salesId[$sid] = $sid;
+    }
+
+
+    foreach ($salesId as  $id) {
+
+        $query = sales::where('sales.id', $id)->where('sales.is_delete', 0);
+        $sales=$query->first();
+
+        $sdQuery= sale_details::query()->where('sales_id',$sales->id)->where('is_delete', 0);
+        $sale_details_sum_subtotal_with_discount= $sdQuery->sum('sale_details.subtotal_with_discount');
+        $sale_details_sum_subtotal = $sdQuery->sum('sale_details.subtotal');
+
+        $updatedPrice = $sale_details_sum_subtotal_with_discount;
+        $totalItemDiscount = $sale_details_sum_subtotal - $sales->sale_details_sum_subtotal_with_discount;
+        $extraDiscount = calPercentageNumber($sales->extra_discount_type, $sales->extra_discount_amount, $updatedPrice) ??0;
+        // dd($sales->extra_discount_type, $extraDiscount, $sales->extra_discount_amount, $updatedPrice);
+        $totalSaleAmt = $updatedPrice - $extraDiscount;
+        $paidAmount= $sales->paid_amount;
+        $originalSaleAmt=$sales->total_sale_amount;
+        if($paidAmount == $originalSaleAmt){
+            $balance_amount = 0;
+            $paidAmount = $totalSaleAmt;
+        }elseif($paidAmount < $originalSaleAmt){
+            $balance_amount=$sales->balance_amount;
+            $paidAmount= $totalSaleAmt- $sales->balance_amount;
+        }elseif($paidAmount > $originalSaleAmt){
+            $balance_amount = $sales->balance_amount;
+            $paidAmount = $totalSaleAmt + $sales->balance_amount;
+        }
+        $sales->update([
+            'sale_amount' => $sale_details_sum_subtotal,
+            'total_item_discount' => $totalItemDiscount,
+            'total_sale_amount' => $totalSaleAmt,
+            'balance_amount' => $balance_amount,
+            'paid_amount'=> $paidAmount,
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $saleCount=sales::where("is_delete", "!=", '1')->count();
+    for ($i=0; $i <= $saleCount; $i++) {
+        $sales = sales::where("is_delete", "!=", '1')
+        ->where('id', $i)
+        ->where('status', 'delivered')->sum("total_sale_amount");
+        $sd = sale_details::where("is_delete", "!=", '1')
+            ->where('sales_id', $i)
+            ->sum(DB::raw('subtotal_with_discount'));
+            if($sd!=$sales){
+                dd(sales::where("is_delete", "!=", '1')
+                ->where('id', $i)->get()->toArray());
+            }
+    }
+    dd('here');
+
+    $os = openingStocks::where("is_delete", "!=", '1')->sum("total_opening_amount");
+    $osd = openingStockDetails::where("is_delete", "!=", '1')
+            ->sum(DB::raw('uom_price * quantity'));
+    dd($os,$osd);
+    $purcases=purchases::where("is_delete","!=",'1')->sum("total_purchase_amount");
+    $purcasesd = purchase_details::where("is_delete", "!=", '1')
+                // ->sum('subtotal_with_discount');
+                ->sum(DB::raw('uom_price * quantity'));
+    dd($purcases, $purcasesd);
+    dd(reportServices::grossProfit(), '', reportServices::grossProfitCalWithCogs());
     $datas = sale_details::where('per_item_discount', '!=', '0.0000')->select('id', 'per_item_discount', 'uom_price', 'discount_type', 'subtotal_with_discount', 'subtotal', 'sales_id', 'quantity')->get();
     $salesId = [];
     foreach ($datas as  $sd) {
         $sid = $sd->sales_id;
         $salesId[$sid] = $sid;
     }
-    dd(sales::where('extra_discount_amount','!=', '0.0000')->get()->toArray());
-
+    dd(sales::where('extra_discount_amount', '!=', '0.0000')->get()->toArray());
 });
 
 
@@ -1005,13 +1115,13 @@ Route::prefix('pos')->group(function () {
     });
 });
 
-Route::prefix('invoice')->controller(InvoiceController::class)->group(function(){
-    Route::get('index','index')->name('invoice.index');
-    Route::get('create','create')->name('invoice.create');
-    Route::post('add','add')->name('invoice.add');
-    Route::get('detail/{id}','detail')->name('invoice.detail');
-    Route::get('edit/{id}','edit')->name('invoice.edit');
-    Route::post('update','update')->name('invoice.update');
+Route::prefix('invoice')->controller(InvoiceController::class)->group(function () {
+    Route::get('index', 'index')->name('invoice.index');
+    Route::get('create', 'create')->name('invoice.create');
+    Route::post('add', 'add')->name('invoice.add');
+    Route::get('detail/{id}', 'detail')->name('invoice.detail');
+    Route::get('edit/{id}', 'edit')->name('invoice.edit');
+    Route::post('update', 'update')->name('invoice.update');
     Route::get('delete/{id}', 'destory')->name('invoice.delete');
 });
 //============================ End: POS ==============================================
@@ -1023,14 +1133,3 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function()
 Route::get('/pos/edit', function () {
     return view('App.pos.edit');
 });
-
-
-
-
-
-
-
-
-
-
-

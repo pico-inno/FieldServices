@@ -2320,6 +2320,16 @@
                                                         </a>
                                                     </div>
                                                 @endif
+                                                @if(hasView('campaign report'))
+                                                <div class="menu-item  ">
+                                                    <a class="menu-link @yield('campaign_setting_active')" href="{{route("fieldService.name")}}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-gear fs-6"></i>
+                                                        </span>
+                                                        <span class="menu-title">Settings</span>
+                                                    </a>
+                                                </div>
+                                                @endif
                                             </div>
                                             <!--end::Wrapper-->
                                         </div>
