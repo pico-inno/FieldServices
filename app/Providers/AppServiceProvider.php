@@ -50,17 +50,17 @@ class AppServiceProvider extends ServiceProvider
 //        if (!Schema::hasTable('sessions')) {
 //            Artisan::call('session-create');
 //        }
-        // view()->composer('*', function($view) {
-        //     try {
-        //         if (Auth::check()) {
-        //             $user = Auth::user()->personal_info;
-        //             $language=$user->language =='mm' ? 'my' : $user->language;
-        //             app()->setLocale($language ?? 'en');
-        //         }
+        view()->composer('*', function($view) {
+            try {
+                if (Auth::check()) {
+                    $user = Auth::user()->personal_info;
+                    $language=$user->language =='mm' ? 'my' : $user->language;
+                    app()->setLocale($language ?? 'en');
+                }
 
-        //     } catch (\Throwable $th) {
-        //     }
-        // });
+            } catch (\Throwable $th) {
+            }
+        });
 
         Paginator::useBootstrapFive();
         Relation::morphMap([
