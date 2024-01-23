@@ -46,6 +46,12 @@ class bugFix extends Command
             ]);
             $sid = $sd->sales_id;
             $salesId[$sid] = $sid;
+
+            if($sd->uom_price != ($sd->subtotal / $sd->quantity)){
+                logger([
+                    $sd
+                ]);
+            }
         }
 
         $bar->finish();

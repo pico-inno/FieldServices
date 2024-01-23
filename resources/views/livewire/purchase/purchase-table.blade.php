@@ -250,7 +250,7 @@
                                         @endif
                                         @if ($p->balance_amount > 0)
                                         <a class="dropdown-item p-2 cursor-pointer " id="paymentCreate"
-                                            data-href="{{'paymentTransaction.createForPurchase', ['id' => $p->id, 'currency_id' => $p->currency_id]}}">Add
+                                            data-href="{{route('paymentTransaction.createForPurchase', ['id' => $p->id, 'currency_id' => $p->currency_id])}}">Add
                                             Payment</a>
                                         @endif
 
