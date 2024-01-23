@@ -10,7 +10,7 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "biscolab/laravel-recaptcha": "^6.0",
         "guzzlehttp/guzzle": "^7.2",
-        "intervention/image": "^2",
+        "intervention/image": "^3",
         "kopaing/simplelog": "^1.0",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
