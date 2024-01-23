@@ -30,25 +30,24 @@ class bugFix extends Command
     {
 
         $datas = sale_details::query()
-        // where('per_item_discount', '!=', '0.0000')
-        ->where('is_delete',0)
-        ->select('id','per_item_discount', 'uom_price', 'discount_type', 'subtotal_with_discount', 'subtotal', 'sales_id', 'quantity')
-        ->get();
+            // where('per_item_discount', '!=', '0.0000')
+            ->where('is_delete', 0)
+            ->select('id', 'per_item_discount', 'uom_price', 'discount_type', 'subtotal_with_discount', 'subtotal', 'sales_id', 'quantity')
+            ->get();
 
         $bar = $this->output->createProgressBar(count($datas));
 
-        $salesId=[];
-        $bar->start();
+        $salesId = [];
         foreach ($datas as  $sd) {
             $bar->advance();
-            $calculation= ($sd->uom_price - calPercentageNumber($sd->discount_type, $sd->per_item_discount ?? 0, $sd->uom_price)) * $sd->quantity;
+            $calculation = ($sd->uom_price - calPercentageNumber($sd->discount_type, $sd->per_item_discount ?? 0, $sd->uom_price)) * $sd->quantity;
             sale_details::where('id', $sd->id)->update([
-                'subtotal'=>$sd->uom_price*$sd->quantity,
-                'subtotal_with_discount'=> $calculation,
+                'subtotal' => $sd->uom_price * $sd->quantity,
+                'subtotal_with_discount' => $calculation,
                 'subtotal_with_tax' => $calculation,
             ]);
-            $sid= $sd->sales_id;
-            $salesId[$sid]= $sid;
+            $sid = $sd->sales_id;
+            $salesId[$sid] = $sid;
         }
 
         $bar->finish();
@@ -58,31 +57,41 @@ class bugFix extends Command
         foreach ($salesId as  $id) {
 
             $newBar->advance();
-            $sales = sales::where('sales.id', $id)
-            ->select('sales.*',
-                DB::raw('SUM(sale_details.subtotal_with_discount) as sale_details_sum_subtotal_with_discount'),
-                DB::raw('SUM(sale_details.subtotal) as sale_details_sum_subtotal'),
-            )
-            ->where('sales.is_delete',0)
-            ->with('sale_details')
-            ->leftJoin('sale_details', 'sale_details.id','=','sales.id')
-            ->where('sale_details.is_delete', 0)
-            // ->withSum('sale_details', 'subtotal_with_discount')
-            // ->withSum('sale_details', 'subtotal')
-            ->first();
-            $updatedPrice = $sales->sale_details_sum_subtotal_with_discount;
-            $totalItemDiscount = $sales->sale_details_sum_subtotal - $sales->sale_details_sum_subtotal_with_discount;
-            $extraDiscount = calPercentageNumber($sales->extra_discount_type, $sales->extra_discount_amount, $updatedPrice);
-            $totalSaleAmt = $updatedPrice - $extraDiscount;
+            $query = sales::where('sales.id', $id)->where('sales.is_delete', 0);
+            $sales = $query->first();
 
-            $balance_amount = $sales->balance_amount == 0 ? 0: $sales->paid_amount - $totalSaleAmt;
+            $sdQuery = sale_details::query()->where('sales_id', $sales->id)->where('is_delete', 0);
+            $sale_details_sum_subtotal_with_discount = $sdQuery->sum('sale_details.subtotal_with_discount');
+            $sale_details_sum_subtotal = $sdQuery->sum('sale_details.subtotal');
+
+            $updatedPrice = $sale_details_sum_subtotal_with_discount;
+            $totalItemDiscount = $sale_details_sum_subtotal - $sales->sale_details_sum_subtotal_with_discount;
+            $extraDiscount = calPercentageNumber($sales->extra_discount_type, $sales->extra_discount_amount, $updatedPrice) ?? 0;
+            // dd($sales->extra_discount_type, $extraDiscount, $sales->extra_discount_amount, $updatedPrice);
+            $totalSaleAmt = $updatedPrice - $extraDiscount;
+            $paidAmount = $sales->paid_amount;
+            $originalSaleAmt = $sales->total_sale_amount;
+            if ($paidAmount == $originalSaleAmt) {
+                $balance_amount = 0;
+                $paidAmount = $totalSaleAmt;
+            } elseif ($paidAmount < $originalSaleAmt) {
+                $balance_amount = $sales->balance_amount;
+                $paidAmount = $totalSaleAmt - $sales->balance_amount;
+            } elseif ($paidAmount > $originalSaleAmt) {
+                $balance_amount = $sales->balance_amount;
+                $paidAmount = $totalSaleAmt + $sales->balance_amount;
+            }
             $sales->update([
-                'sale_amount' => $sales->sale_details_sum_subtotal,
+                'sale_amount' => $sale_details_sum_subtotal,
                 'total_item_discount' => $totalItemDiscount,
                 'total_sale_amount' => $totalSaleAmt,
-                'balance_amount'=> $balance_amount
+                'balance_amount' => $balance_amount,
+                'paid_amount' => $paidAmount,
             ]);
         }
+
+
         $newBar->finish();
+
     }
 }
