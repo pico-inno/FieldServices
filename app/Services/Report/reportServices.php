@@ -69,7 +69,7 @@ class reportServices
     //Adjustment
     public static function grossProfitCalWithCogs($filterData = false)
     {
-        
+
         $cogs=self::cogs($filterData);
         $sale= sales::where('is_delete', '!=', '1')
                 ->where("status", 'delivered')

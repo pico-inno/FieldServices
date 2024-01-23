@@ -33,12 +33,12 @@
             <div class="card-title px-5 py-2 d-flex justify-content-between align-items-center border border-1 border-gray-200 border-top-0 border-left-0 border-right-0">
                 <div class="d-flex justify-content-center align-items-center">
                     <i class="fa-solid fa-filter fs-2 me-3 text-gray-400"></i>
-                    <h4 class="reportLabel fs-2 ">Overall</h4><h4 class="fs-2 text-gray-600"> &nbsp;Report</h4>
+                    <h4 class="reportLabel fs-2 ">Today</h4><h4 class="fs-2 text-gray-600"> &nbsp;Report</h4>
                 </div>
                 <div class="">
                     <button class="btn btn-sm btn-light-primary refresh" title="Refresh"><i
                             class="fa-solid fa-rotate-right fs-3"></i></button>
-                    <button class="btn btn-sm btn-light-danger btn-active-danger clearFilter">Clear Filter</button>
+                    <button class="btn btn-sm btn-success  clearFilter">OverAll</button>
                 </div>
             </div>
             <div class="card-body px-0 py-2 ps-5 row justify-content-between">
@@ -223,9 +223,9 @@
 @push('scripts')
 <script>
     $(document).ready(function(){
-        getData();
-        var start = moment().subtract(1, "M");
-        var end = moment();
+        // getData({from_date,to_date,priceCalMethod});
+        // $("#datePicker").data('daterangepicker').setStartDate(start);
+        // $("#datePicker").data('daterangepicker').setEndDate(end);
         function cb(start, end,label) {
             $("#datePicker").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
             $('.reportLabel').text(label);
@@ -243,7 +243,15 @@
                 "This Month": [moment().startOf("month"), moment().endOf("month")],
                 "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
             }
-        }, cb).val('');
+        }, cb);
+
+        var start = moment().subtract(1, "M");
+        var end = moment();
+        cb(start,end);
+        let from_date=datePicker.data('daterangepicker').startDate.format('YYYY-MM-DD');
+        let to_date=datePicker.data('daterangepicker').endDate.format('YYYY-MM-DD');
+        let priceCalMethod= $('#priceCalMethod').val() ;
+        getData({from_date,to_date,priceCalMethod})
 
         $('#datePicker').change(function(){
             intiDataSearch();
