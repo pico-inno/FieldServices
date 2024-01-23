@@ -63,6 +63,7 @@ class AllSaleTable extends Component
                         'sales.sales_voucher_no',
                         'sales.currency_id',
                         'contacts.company_name',
+                        'contacts.prefix',
                         'contacts.first_name',
                         'contacts.last_name',
                         'contacts.middle_name',

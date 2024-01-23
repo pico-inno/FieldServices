@@ -75,6 +75,7 @@ class PurchaseTable extends Component
                 'purchases.purchase_voucher_no',
                 'purchases.currency_id',
                 'contacts.company_name',
+                'contacts.prefix',
                 'contacts.first_name',
                 'contacts.last_name',
                 'contacts.middle_name',
