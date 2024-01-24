@@ -87,5 +87,8 @@ class RolesTableSeeder extends Seeder
         })->pluck('id');
 
         $storeKeeperRole->permissions()->sync($stockkeeperPermissions);
+
+        $nf=new NewFeatureSeeder();
+        $nf->run();
     }
 }

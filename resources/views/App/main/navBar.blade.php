@@ -2320,7 +2320,7 @@
                                                         </a>
                                                     </div>
                                                 @endif
-                                                @if(hasView('campaign report'))
+                                                @if(hasUpdate('campaign setting'))
                                                 <div class="menu-item  ">
                                                     <a class="menu-link @yield('campaign_setting_active')" href="{{route("fieldService.name")}}">
                                                         <span class="menu-icon">
@@ -3733,7 +3733,7 @@
                             <!--begin::Menu separator-->
                             <div class="separator my-2"></div>
                             <div class="menu-item text-start px-5">
-                                <a href="#" class="d-md-none d-flex  btn btn-icon justify-content-start btn-sm bg-body btn-color-gray-600 px-5 btn-active-color-primary h-40px w-auto"
+                                <a href="#" class="d-lg-none d-flex  btn btn-icon justify-content-start btn-sm bg-body btn-color-gray-600 px-5 btn-active-color-primary h-40px w-auto"
                                 data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-attach="parent"
                                 data-kt-menu-placement="bottom-end">
                                     @php
@@ -3778,7 +3778,7 @@
                                             </span>ภาษาไทย</a>
                                     </div>
                                 </div>
-                                <div class="separator my-2"></div>
+                                <div class="separator my-2 d-lg-none"></div>
                             </div>
                             <div class="menu-item px-5">
                                 <a class="menu-link px-5" href="{{ route('logout') }}" onclick="event.preventDefault();

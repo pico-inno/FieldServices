@@ -2,18 +2,19 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\activateBusinessCheckMiddleware;
+use App\Http\Middleware\install;
+use App\Http\Middleware\CheckSession;
+use App\Http\Middleware\ViewPermission;
+use App\Http\Middleware\businessActivate;
 use App\Http\Middleware\CreatePermission;
 use App\Http\Middleware\DeletePermission;
+use App\Http\Middleware\UpdatePermission;
+use App\Http\Middleware\UploadPermission;
 use App\Http\Middleware\InstallPermission;
 use App\Http\Middleware\TransferPermission;
 use App\Http\Middleware\UninstallPermission;
-use App\Http\Middleware\UpdatePermission;
-use App\Http\Middleware\UploadPermission;
-use App\Http\Middleware\ViewPermission;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-use App\Http\Middleware\businessActivate;
-use App\Http\Middleware\install;
+use App\Http\Middleware\activateBusinessCheckMiddleware;
 
 class Kernel extends HttpKernel
 {
@@ -44,7 +45,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
-            \App\Http\Middleware\CheckSession::class,
+            // CheckSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
