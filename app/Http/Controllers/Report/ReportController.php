@@ -1110,6 +1110,7 @@ class ReportController extends Controller
 
             $mergeAllBatchStocks = $mergedStocks;
         } elseif ($filterView == 3) {
+            $mergeAllBatchStocks = $currentStocks;
         } else {
             if ($currentStocks->count() > 0) {
                 foreach ($currentStocks as $currentStock) {
