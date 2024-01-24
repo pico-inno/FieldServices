@@ -157,7 +157,8 @@
                         <!--begin::Container-->
                         <div class="d-flex justify-content-end">
                             @php
-                                $purchaseCurrency=$purchase['currency']['symbol'] ?? ''
+                                $purchaseCurrency=$purchase['currency']['symbol'] ?? '';
+                                $currencyId=isset($purchase['currency']) ? $purchase['currency']['id']:'';
                             @endphp
                             <!--begin::Section-->
                             <div class="mw-300px">
@@ -168,7 +169,7 @@
                                     <!--end::Accountname-->
                                     <!--begin::Label-->
                                     <div class="text-end fw-bold fs-6 text-gray-800">
-                                        {{price($purchase['purchase_amount'] ?? 0,$pd->currency_id)}}</div>
+                                        {{price($purchase['purchase_amount'] ?? 0,$currencyId)}}</div>
                                     <!--end::Label-->
                                 </div>
                                 <!--end::Item-->
@@ -192,7 +193,7 @@
                                     <!--end::Accountnumber-->
                                     <!--begin::Number-->
                                     <div class="text-end fw-bold fs-6 text-gray-800">
-                                        {{price($purchase['purchase_expense'],$pd->currency_id)}}</div>
+                                        {{price($purchase['purchase_expense'],$currencyId)}}</div>
                                     <!--end::Number-->
                                 </div>
                                 <!--end::Item-->
@@ -203,7 +204,7 @@
                                     <!--end::Code-->
                                     <!--begin::Label-->
                                     <div class="text-end fw-bold fs-6 text-gray-800">
-                                        {{price($purchase['total_purchase_amount'],$pd->currency_id)}}</div>
+                                        {{price($purchase['total_purchase_amount'],$currencyId)}}</div>
                                     <!--end::Label-->
                                 </div>
                                 <!--end::Item-->
