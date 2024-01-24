@@ -944,6 +944,10 @@ Route::controller(TestController::class)->group(function () {
 //============================ End: Product ==============================================
 
 Route::get('/test', function () {
+    dd(
+        openingStocks::where('is_delete',0)->sum('total_opening_amount'),
+        openingStockDetails::where('is_delete',0)->sum(DB::raw('quantity * uom_price'))
+    );
     dd('Go Back !');
 });
 

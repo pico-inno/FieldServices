@@ -85,7 +85,7 @@ class reportServices
         $cogs = sale_details::query()
             ->select(
                 // 'sales.total_sale_amount as profit',
-                DB::raw('stock_histories.decrease_qty * current_stock_balance.ref_uom_price as cogs')
+                DB::raw('lot_serial_details.ref_uom_quantity * current_stock_balance.ref_uom_price as cogs')
             )
             ->leftJoin('stock_histories', 'stock_histories.transaction_details_id', '=', 'sale_details.id')
             ->leftJoin('lot_serial_details', 'lot_serial_details.transaction_detail_id', '=', 'sale_details.id')
@@ -100,6 +100,59 @@ class reportServices
             ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
                 $query->whereDate('sales.sold_at', '>=', $filterData['from_date'])
                 ->whereDate('sales.sold_at', '<=', $filterData['to_date']);
+            })
+            ->get()
+            ->sum('cogs');
+        return $cogs;
+    }
+    public static function cogsForOs($filterData = false)
+    {
+        $cogs = sale_details::query()
+            ->select(
+                // 'sales.total_sale_amount as profit',
+                DB::raw('lot_serial_details.ref_uom_quantity * current_stock_balance.ref_uom_price as cogs')
+            )
+            ->leftJoin('stock_histories', 'stock_histories.transaction_details_id', '=', 'sale_details.id')
+            ->leftJoin('lot_serial_details', 'lot_serial_details.transaction_detail_id', '=', 'sale_details.id')
+            ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
+            ->where('sales.is_delete', 0)
+            ->where('sale_details.is_delete', 0)
+            ->where("sales.status", 'delivered')
+            ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+            ->where('lot_serial_details.transaction_type', '=', 'sale')
+            ->where('stock_histories.transaction_type', '=', 'sale')
+            ->orderBy('sale_details.id', 'DESC')
+            ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+                // $query->whereDate('sales.sold_at', '>=', $filterData['from_date'])
+                // ->whereDate('sales.sold_at', '<=', $filterData['to_date']);
+            $query->whereDate('sales.sold_at', '<', $filterData['from_date']);
+            })
+            ->get()
+            ->sum('cogs');
+        return $cogs;
+    }
+    public static function cogsForCs($filterData = false)
+    {
+        $cogs = sale_details::query()
+            ->select(
+                // 'sales.total_sale_amount as profit',
+                DB::raw('lot_serial_details.ref_uom_quantity * current_stock_balance.ref_uom_price as cogs')
+            )
+            ->leftJoin('stock_histories', 'stock_histories.transaction_details_id', '=', 'sale_details.id')
+            ->leftJoin('lot_serial_details', 'lot_serial_details.transaction_detail_id', '=', 'sale_details.id')
+            ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
+            ->where('sales.is_delete', 0)
+            ->where('sale_details.is_delete', 0)
+            ->where("sales.status", 'delivered')
+            ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
+            ->where('lot_serial_details.transaction_type', '=', 'sale')
+            ->where('stock_histories.transaction_type', '=', 'sale')
+            ->orderBy('sale_details.id', 'DESC')
+            ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
+                // $query->whereDate('sales.sold_at', '>=', $filterData['from_date'])
+                // ->whereDate('sales.sold_at', '<=', $filterData['to_date']);
+                 $query->whereDate('sales.sold_at', '<=', $filterData['to_date']);
+                // $query->whereDate('sales.sold_at', '<', $filterData['from_date']);
             })
             ->get()
             ->sum('cogs');

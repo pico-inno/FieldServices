@@ -18,6 +18,7 @@ class lotSerialDetails extends Model
         'expired_date',
         'uom_id',
         'uom_quantity',
+        'ref_uom_quantity',
     ];
 
 

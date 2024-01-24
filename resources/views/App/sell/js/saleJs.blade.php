@@ -117,7 +117,6 @@
             let diaO = new KTDialer(e, {
                 min: 0,
                 step: 1,
-                decimals: 2
             });
 
             diaO.on('kt.dialer.change',function(ev) {

@@ -27,6 +27,7 @@ use App\Models\settings\businessSettings;
 use Modules\ComboKit\Services\RoMService;
 use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
 use App\Actions\currentStockBalance\currentStockBalanceActions;
+use App\Services\Report\reportServices;
 
 function hasModule($moduleName)
 {
@@ -735,22 +736,7 @@ function closingStocksCal($filterData = false, $betweenDateRage = false)
 }
 function osWithFromCs($filterData = false)
 {
-    $decreasePrice = stock_history::query()
-        ->select(
-            DB::raw('stock_histories.decrease_qty * current_stock_balance.ref_uom_price as totalSaleAmount')
-        )
-        ->where('stock_histories.transaction_type', 'sale')
-        ->where('sales.is_delete','!=',1)
-        ->leftJoin('sale_details', 'stock_histories.transaction_details_id', '=', 'sale_details.id')
-        ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
-        ->leftJoin('lot_serial_details', 'stock_histories.transaction_details_id', 'lot_serial_details.transaction_detail_id')
-        ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
-        ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($q) use ($filterData) {
-            $q->whereDate('sales.sold_at', '<', $filterData['from_date']);
-        })
-        ->where("status", 'delivered')
-        ->get()
-        ->sum('totalSaleAmount');
+    $decreasePrice = reportServices::cogsForOs($filterData);
     $IncreasePrice  = purchases::where('is_delete', '!=', '1')
         ->when(isset($filterData['from_date']) && isset($filterData['to_date']), function ($query) use ($filterData) {
             $query->whereDate('received_at', '<', $filterData['from_date']);
@@ -762,29 +748,13 @@ function osWithFromCs($filterData = false)
             $query->whereDate('opening_date', '<', $filterData['from_date']);
         })
         ->sum('total_opening_amount');
-
     $totalPrice = $IncreasePrice + $IncreaseOsPrice  - $decreasePrice;
 
     return $totalPrice;
 }
 function closingStocksCalWithCogs($filterData = false)
 {
-    $decreasePrice =stock_history::query()
-                    ->select(
-                        DB::raw('stock_histories.decrease_qty * current_stock_balance.ref_uom_price as totalSaleAmount')
-                    )
-                    ->where('stock_histories.transaction_type','sale')
-                    ->where('sales.is_delete','!=', 1)
-                    ->leftJoin('sale_details', 'stock_histories.transaction_details_id', '=','sale_details.id')
-                    ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
-                    ->where("sales.status", 'delivered')
-                    ->leftJoin('lot_serial_details', 'stock_histories.transaction_details_id', 'lot_serial_details.transaction_detail_id')
-                    ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
-                    ->when(isset($filterData['from_date']) && isset($filterData['to_date']) , function ($q) use ($filterData) {
-                        $q->whereDate('sales.sold_at', '<=', $filterData['to_date']);
-                    })
-                    ->get()
-                    ->sum('totalSaleAmount');
+    $decreasePrice =reportServices::cogsForCs($filterData);
 
                     // dd($decreasePrice);
     $IncreasePrice  = purchases::where('is_delete', '!=', '1')

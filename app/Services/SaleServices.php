@@ -211,6 +211,7 @@ class SaleServices
                                 'lot_serial_numbers' => $data['lot_serial_no'],
                                 'uom_quantity' => $sale_uom_qty,
                                 'uom_id' => $created_sale_details->uom_id,
+                                'ref_uom_quantity' => $data['stockQty'],
                             ]);
                         }
                     }
