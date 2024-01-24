@@ -12,84 +12,57 @@ var KTSignupGeneral = function() {
     var handleForm  = function(e) {
         // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
         validator = FormValidation.formValidation(
-			form,
-			{
-				fields: {
-					'first-name': {
-						validators: {
-							notEmpty: {
-								message: 'First Name is required'
-							}
-						}
+            form,
+            {
+                fields: {
+                    'first_name': {
+                        validators: {
+                            notEmpty: {
+                                message: 'First Name is required'
+                            }
+                        }
                     },
-                    'last-name': {
-						validators: {
-							notEmpty: {
-								message: 'Last Name is required'
-							}
-						}
-					},
-					'email': {
+                    // 'last-name': {
+                    // 	validators: {
+                    // 		notEmpty: {
+                    // 			message: 'Last Name is required'
+                    // 		}
+                    // 	}
+                    // },
+                    'phone': {
                         validators: {
                             regexp: {
-                                regexp: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                message: 'The value is not a valid email address',
+                                regexp: /^[0-9]+$/,
+                                message: 'The value is not a valid phone number',
                             },
-							notEmpty: {
-								message: 'Email address is required'
-							}
-						}
-					},
-                    'password': {
-                        validators: {
                             notEmpty: {
-                                message: 'The password is required'
-                            },
-                            callback: {
-                                message: 'Please enter valid password',
-                                callback: function(input) {
-                                    if (input.value.length > 0) {
-                                        return validatePassword();
-                                    }
-                                }
+                                message: 'Phone number is required'
                             }
                         }
                     },
-                    'confirm-password': {
-                        validators: {
-                            notEmpty: {
-                                message: 'The password confirmation is required'
-                            },
-                            identical: {
-                                compare: function() {
-                                    return form.querySelector('[name="password"]').value;
-                                },
-                                message: 'The password and its confirm are not the same'
-                            }
-                        }
-                    },
-                    'toc': {
-                        validators: {
-                            notEmpty: {
-                                message: 'You must accept the terms and conditions'
-                            }
-                        }
-                    }
-				},
-				plugins: {
-					trigger: new FormValidation.plugins.Trigger({
+
+                    // 'toc': {
+                    //     validators: {
+                    //         notEmpty: {
+                    //             message: 'You must accept the terms and conditions'
+                    //         }
+                    //     }
+                    // }
+                },
+                plugins: {
+                    trigger: new FormValidation.plugins.Trigger({
                         event: {
                             password: false
-                        }  
+                        }
                     }),
-					bootstrap: new FormValidation.plugins.Bootstrap5({
+                    bootstrap: new FormValidation.plugins.Bootstrap5({
                         rowSelector: '.fv-row',
                         eleInvalidClass: '',  // comment to enable invalid state icons
                         eleValidClass: '' // comment to enable valid state icons
                     })
-				}
-			}
-		);
+                }
+            }
+        );
 
         // Handle form submit
         submitButton.addEventListener('click', function (e) {
@@ -97,66 +70,23 @@ var KTSignupGeneral = function() {
 
             validator.revalidateField('password');
 
-            validator.validate().then(function(status) {
-		        if (status == 'Valid') {
-                    // Show loading indication
+            validator.validate().then(function (status) {
+                if (status === 'Valid') {
                     submitButton.setAttribute('data-kt-indicator', 'on');
-
-                    // Disable button to avoid multiple click 
                     submitButton.disabled = true;
-
-                    // Simulate ajax request
-                    setTimeout(function() {
-                        // Hide loading indication
-                        submitButton.removeAttribute('data-kt-indicator');
-
-                        // Enable button
-                        submitButton.disabled = false;
-
-                        // Show message popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
-                        Swal.fire({
-                            text: "You have successfully reset your password!",
-                            icon: "success",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
-                            customClass: {
-                                confirmButton: "btn btn-primary"
-                            }
-                        }).then(function (result) {
-                            if (result.isConfirmed) { 
-                                form.reset();  // reset form                    
-                                passwordMeter.reset();  // reset password meter
-                                //form.submit();
-
-                                //form.submit(); // submit form
-                                var redirectUrl = form.getAttribute('data-kt-redirect-url');
-                                if (redirectUrl) {
-                                    location.href = redirectUrl;
-                                }
-                            }
-                        });
-                    }, 1500);   						
+                    form.submit();
                 } else {
-                    // Show error popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
-                    Swal.fire({
-                        text: "Sorry, looks like there are some errors detected, please try again.",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
-                        customClass: {
-                            confirmButton: "btn btn-primary"
-                        }
-                    });
+                    console.log('Form validation failed');
                 }
-		    });
+            });
         });
 
         // Handle password input
-        form.querySelector('input[name="password"]').addEventListener('input', function() {
-            if (this.value.length > 0) {
-                validator.updateFieldStatus('password', 'NotValidated');
-            }
-        });
+        // form.querySelector('input[name="password"]').addEventListener('input', function() {
+        //     if (this.value.length > 0) {
+        //         validator.updateFieldStatus('password', 'NotValidated');
+        //     }
+        // });
     }
 
     // Password input validation

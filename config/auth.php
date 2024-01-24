@@ -39,18 +39,12 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'admins',
-            'hash' => false,
-            'storage_key' => 'admin_user_id',
-            'table' => 'admin_sessions',
 
         ],
 
         'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
-            'hash' => false,
-            'storage_key' => 'customer_user_id',
-            'table' => 'customer_sessions',
         ],
     ],
 

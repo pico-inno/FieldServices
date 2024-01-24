@@ -120,7 +120,7 @@ use App\Models\openingStocks;
 */
 
 
-Route::prefix('admin')->group(function () {
+Route::prefix(env('ADMIN_ROUTE_PREFIX', 'admin'))->group(function () {
 
     Auth::routes(['register' => false]);
     Route::middleware('guest:web')->group(function (){

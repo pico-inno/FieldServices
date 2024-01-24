@@ -32,6 +32,7 @@ class LoginController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+
     /**
      * Create a new controller instance.
      *
@@ -112,7 +113,8 @@ class LoginController extends Controller
             ->event('logout')
             ->log('This account has been logout')->save();
 
-        $this->guard()->logout();
+//        $this->guard()->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
@@ -126,7 +128,7 @@ class LoginController extends Controller
 
         return $request->wantsJson()
             ? new JsonResponse([], 204)
-            : redirect('/');
+            : redirect('/admin');
     }
     public function __construct()
     {
