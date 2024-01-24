@@ -119,22 +119,42 @@ use App\Models\openingStocks;
 |
 */
 
-Route::get('/create/business', [businessActivationController::class, 'activationForm'])->name('activationForm')->middleware('businessActivate');
-Route::post('/store/business', [businessActivationController::class, 'store'])->name('businessActivation.store')->middleware('businessActivate');
-Route::get('/install', [configurationController::class, 'envConfigure'])->name('envConfigure')->middleware('install');
-Route::post('/intall/store', [configurationController::class, 'store'])->name('envConfigure.store')->middleware('install');
-Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
-Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
-Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('envConfigure.dataSeed');
-// Route::get('/', function () {
-//     return view('App.dashboard');
-// });
+
+Route::prefix('admin')->group(function () {
+
+    Auth::routes(['register' => false]);
+    Route::middleware('guest:web')->group(function (){
+        Route::get('/', function (){ return redirect(\route('login')); } );
+        Auth::routes();
+        Auth::routes(['except' => 'logout']);
+    });
+
+    Route::middleware('auth:web')->group(function (){
+        Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    });
+
+
+    Route::get('/create/business', [businessActivationController::class, 'activationForm'])->name('activationForm')->middleware('businessActivate');
+    Route::post('/store/business', [businessActivationController::class, 'store'])->name('businessActivation.store')->middleware('businessActivate');
+    Route::get('/install', [configurationController::class, 'envConfigure'])->name('envConfigure')->middleware('install');
+    Route::post('/intall/store', [configurationController::class, 'store'])->name('envConfigure.store')->middleware('install');
+    Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
+    Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
+    Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('envConfigure.dataSeed');
+
+    Route::get('/home', [DashboardController::class, 'index'])->name('home');
+
+
+
+
+
+});
+
+
 
 
 //============================ Being: User Management ==========================================
-// Auth::routes();
-Auth::routes(['register' => false]);
-//_Being: Auth
+
 Route::get('/', function () {
     if (hasModule('fieldService') && isEnableModule('fieldService')) {
         return redirect()->route('campaign.index');
@@ -142,12 +162,10 @@ Route::get('/', function () {
         return redirect()->route('home');
     }
 });
-//_End: Auth
+
 
 //Being: Dashboard
 Route::controller(DashboardController::class)->group(function () {
-    Route::get('/home', 'index')->name('home');
-
     //Filter
     Route::post('/dashboard/current-balance-filter', 'currentBalanceFilter');
     Route::post('/dashboard/total-current-qty', 'totalCurrentBalanceQty');

@@ -38,9 +38,22 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'admins',
+            'hash' => false,
+            'storage_key' => 'admin_user_id',
+            'table' => 'admin_sessions',
+
+        ],
+
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+            'hash' => false,
+            'storage_key' => 'customer_user_id',
+            'table' => 'customer_sessions',
         ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -60,16 +73,18 @@ return [
     */
 
     'providers' => [
-        'users' => [
+
+        'admins' => [
             'driver' => 'eloquent',
             'model' => \App\Models\BusinessUser::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => \Modules\Ecommerce\Entities\CustomerUser::class,
+        ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------

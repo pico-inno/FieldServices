@@ -906,3 +906,8 @@ function getUomName($uom_id)
     return '';
 }
 
+function getTotalCurrentBalance($variation_id)
+{
+    $totalCurrentStock = CurrentStockBalance::where('variation_id', $variation_id)->sum('current_quantity');
+    return intval($totalCurrentStock);
+}
