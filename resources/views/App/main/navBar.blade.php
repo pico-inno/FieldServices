@@ -3739,13 +3739,15 @@
                                     @php
                                         $lang=Auth::user()->personal_info->language;
                                     @endphp
-                                    @if ($lang=='en')
-                                        English <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
-                                    @elseif ($lang=='my')
+
+                                    @if ($lang=='my')
                                         မြန်မာ <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/myanmar.svg")}} alt="" />
                                     @elseif ($lang=='th')
                                         ภาษาไทย <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/thailand.svg")}} alt="" />
+                                    @else
+                                        English <img class="w-15px h-15px rounded-1 ms-2" src={{asset("assets/media/flags/united-states.svg")}} alt="" />
                                     @endif
+
 
                                     </a>
                                 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-color fw-semibold py-4 fs-base w-150px"
