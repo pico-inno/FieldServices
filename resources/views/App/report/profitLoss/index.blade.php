@@ -42,12 +42,18 @@
                 </div>
             </div>
             <div class="card-body px-0 py-2 ps-5 row justify-content-between">
-                <div class="col-5 d-flex justify-content-center align-items-center gap-2">
-                    <input type="text" class="form-control form-control-sm" id="datePicker" value="" placeholder="Pick date rage" data-kt-date-filter="date" data-allow-clear="true">
-                    <select name="" id="priceCalMethod" class="form-select form-select-sm" data-control="select2" placeholder="Price Cal" data-placeholder="Price Cal" data-hide-search="true">
-                        <option value="cogs">Cogs</option>
-                        {{-- <option value="avg">Average</option> --}}
-                    </select>
+                <div class="row d-flex justify-content-start align-items-center gap-2">
+                    <div class="col-lg-3 col-md-5 col-12">
+                        <input type="text" class="form-control form-control-sm" id="datePicker" value="" placeholder="Pick date rage"
+                            data-kt-date-filter="date" data-allow-clear="true" autocomplete="off">
+                    </div>
+                    <div class="col-lg-3 col-md-5 col-12">
+                        <select name="" id="priceCalMethod" class="form-select form-select-sm" data-control="select2" placeholder="Price Cal"
+                            data-placeholder="Price Cal" data-hide-search="true">
+                            <option value="cogs">Cogs</option>
+                            {{-- <option value="avg">Average</option> --}}
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
