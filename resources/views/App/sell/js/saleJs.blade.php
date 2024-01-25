@@ -1231,6 +1231,9 @@
                             checkStock($(this));
                             rowCount = $('#sale_table tbody tr').length;
                             $('.total_item').text(rowCount-1);
+                            cal_total_sale_amount();
+                            cal_balance_amount();
+                            sale_amount_cal();
                         }
                     });
     });

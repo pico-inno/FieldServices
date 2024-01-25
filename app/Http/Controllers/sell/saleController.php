@@ -530,7 +530,7 @@ class saleController extends Controller
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '500',
-                    'message' => 'Something wrong'
+                    'message' => $e->getMessage()
                 ], 500);
             } else {
                 activity('sale-transaction')
@@ -560,8 +560,424 @@ class saleController extends Controller
         ]);
     }
 
+    public function update2($id, Request $request, SaleServices $saleService)
+    {
+        $requestSaleDetailsData = $request->sale_details ?? [];
+        // I fetch  sales data ,one for store as old data that fetch form database and one is to update data and after updated ,if you call slaes the will be updated!!
+        $saleBefUpdate = sales::where('id', $id)->first();
+        $businessLocationId= $saleBefUpdate->business_location_id;
+        if ($request->type == 'pos') {
+            $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
+        }
+        try {
+            DB::beginTransaction();
+
+            //
+            // -----------------------------update sale data -------------
+            //
+            $updatedSaleData=$saleService->update($id,$request);
+            $this->txUpdateForPos($request, $saleBefUpdate,$updatedSaleData);
 
 
+            $requestToUpdateSaleDetails = array_filter($requestSaleDetailsData, function ($item) {
+                return isset($item['sale_detail_id']);
+            });
+            //
+            // ----------------------------- remove sale detail data -------------
+            //
+            $this->removeSaleDetialsData($id, $requestToUpdateSaleDetails);
+            if (count($requestSaleDetailsData) > 0) {
+                //request to update sale detail
+
+
+
+                //
+                // ----------------------------- createNew Sale Detail Data -------------
+                //
+                $newSaleDetailsData = array_filter($requestSaleDetailsData, function ($item) {
+                    return !isset($item['sale_detail_id']);
+                });
+                if (count($newSaleDetailsData) > 0) {
+                    $resOrderData = null;
+                    if ($request->type == 'pos' && $registeredPos->use_for_res == 1) {
+                        $resOrderData = $this->resOrderCreation($updatedSaleData, $request);
+                        $saleService->saleDetailCreation($request, $updatedSaleData, $newSaleDetailsData, $resOrderData);
+                    } else {
+                        $saleService->saleDetailCreation($request, $updatedSaleData, $newSaleDetailsData, $resOrderData);
+                    }
+                }
+
+                //
+                // ----------------------------- Update Sale Detail Data -------------
+                //
+                foreach ($requestToUpdateSaleDetails as $requestToUpdateSaleDetail) {
+                    if (count($requestToUpdateSaleDetail) <= 1) {
+                        continue;
+                    };
+                    //
+                    //  Init Data Sections
+                    //
+                    $requestToUpdateSaleDetailId = $requestToUpdateSaleDetail['sale_detail_id'];
+
+
+                    //fetching
+                    $beforeUpdateSaleDetailData = sale_details::where('id', $requestToUpdateSaleDetailId)->with('kitSaleDetails')->where('is_delete', 0)->first();
+                    $productId = $beforeUpdateSaleDetailData['product_id'];
+                    $variation_id = $beforeUpdateSaleDetailData['variation_id'];
+                    $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
+                    $product = Product::where('id', $productId)->select('product_type', 'id', 'uom_id')->first();
+                    $requestToUpdateSaleDetail['id']= $requestToUpdateSaleDetailId;
+                    //
+                    // checking
+                    //
+                    $lotSerialCheck = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $requestToUpdateSaleDetailId)->exists();
+
+
+                    $refUomInfoForRequestToUpdate= UomHelper::getReferenceUomInfoByCurrentUnitQty($requestToUpdateSaleDetail['quantity'], $requestToUpdateSaleDetail['uom_id']);
+                    $requestToUpdateQtyByRef = $refUomInfoForRequestToUpdate['qtyByReferenceUom'];
+                    $requestToUpdateUomIdByRef = $refUomInfoForRequestToUpdate['referenceUomId'];
+
+                    $beforeUpdateSaleDetailQtyByRef = UomHelper::getReferenceUomInfoByCurrentUnitQty($beforeUpdateSaleDetailData['quantity'], $beforeUpdateSaleDetailData['uom_id'])['qtyByReferenceUom'];
+                    if ($product->product_type == 'storable') {
+                        // stock adjustment
+                        if ($saleBefUpdate['status'] != 'delivered' && $request->status == "delivered" && !$lotSerialCheck) {
+                            $changeQtyStatus = $saleService->changeStockQty($requestToUpdateQtyByRef, $requestToUpdateUomIdByRef, $request->business_location_id, $requestToUpdateSaleDetail, [], $updatedSaleData);
+                            if ($changeQtyStatus == false) {
+                                return back()->with(['error' => "product Out of Stock"]);
+                            } else {
+                                $stocksTracks = $changeQtyStatus;
+                                foreach ($stocksTracks as $stocksTrack) {
+                                    $sale_uom_qty = UomHelper::changeQtyOnUom($stocksTrack['ref_uom_id'], $requestToUpdateSaleDetail['uom_id'], $stocksTrack['stockQty']);
+                                    $bsd = lotSerialDetails::create([
+                                        'transaction_type' => 'sale',
+                                        'transaction_detail_id' => $requestToUpdateSaleDetailId,
+                                        'current_stock_balance_id' => $stocksTrack['stock_id'],
+                                        'lot_serial_numbers' => $stocksTrack['lot_serial_no'],
+                                        'uom_quantity' => $sale_uom_qty,
+                                        'uom_id' => $requestToUpdateSaleDetail['uom_id'],
+                                        'ref_uom_quantity'=> $stocksTrack['stockQty'],
+                                    ]);
+                                }
+                            }
+                        } elseif ($saleBefUpdate->status == 'delivered' && $request->status != "delivered") {
+                            $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $requestToUpdateSaleDetailId);
+                            stock_history::where('transaction_details_id', $requestToUpdateSaleDetailId)->where('transaction_type', 'sale')->delete();
+                            if ($lotSerials->exists()) {
+                                $this->adjustStock($lotSerials->get());
+                                foreach ($lotSerials->get() as $lotSerial) {
+                                    $lotSerial->delete();
+                                }
+                            };
+                        } else {
+                            if ($requestToUpdateQtyByRef > $beforeUpdateSaleDetailQtyByRef) {
+                                $locationIds = childLocationIDs($businessLocation->id);
+                                $current_stock = CurrentStockBalance::where('product_id', $productId)
+                                    ->whereIn('business_location_id', $locationIds)
+                                    ->where('variation_id', $variation_id)
+                                    ->where('current_quantity', '>', '0');
+                                $availableStocks = $current_stock->get();
+                                $availableQty = $current_stock->sum('current_quantity');
+
+                                $qtyToRemoveByRefUom = $requestToUpdateQtyByRef - $beforeUpdateSaleDetailQtyByRef;
+
+                                if ($qtyToRemoveByRefUom > $availableQty) {
+                                    return redirect()->route('all_sales', 'allSales')->with(['warning' => 'out of stock']);
+                                }
+                                // $qtyToRemove = $requestToUpdateSaleDetail['quantity'] - $beforeUpdateSaleDetailData['quantity'];
+
+                                foreach ($availableStocks as $stock) {
+
+                                    $stockQtyBySdUom = round(UomHelper::changeQtyOnUom($stock['ref_uom_id'], $requestToUpdateSaleDetail['uom_id'], $stock['current_quantity']), 2);
+                                    $stockQtyByRef = $stock['current_quantity'];
+
+                                    if ($qtyToRemoveByRefUom >= $stockQtyByRef) {
+                                        $csbQuery=CurrentStockBalance::where('id', $stock['id'])->first();
+                                        $lotSerialDetailsByStock = lotSerialDetails::where('transaction_type', 'sale')
+                                                                    ->where('transaction_detail_id', $requestToUpdateSaleDetailId)
+                                                                    ->where('current_stock_balance_id', $stock['id']);
+                                        $lotSerialDetailsByStockQuery= $lotSerialDetailsByStock->first();
+
+                                        if ($lotSerialDetailsByStock->exists()) {
+                                            $lotSerialDetailsByStockQuery->update([
+                                                'uom_id' => $requestToUpdateSaleDetail['uom_id'],
+                                                'uom_quantity' => $stockQtyBySdUom+ $lotSerialDetailsByStockQuery['uom_quantity'],
+                                                'ref_uom_quantity'=> $stockQtyByRef + $lotSerialDetailsByStockQuery['ref_uom_quantity'],
+                                            ]);
+                                        } else {
+                                            lotSerialDetails::create([
+                                                'transaction_type' => 'sale',
+                                                'transaction_detail_id' => $requestToUpdateSaleDetailId,
+                                                'current_stock_balance_id' =>  $stock['id'],
+                                                'lot_serial_numbers' => $stock->lot_serial_no,
+                                                'uom_quantity' => $stockQtyBySdUom,
+                                                'uom_id' =>  $requestToUpdateSaleDetail['uom_id'],
+                                                'ref_uom_quantity' => $stockQtyByRef,
+                                            ]);
+                                        }
+                                        $csbQuery->update([
+                                            'current_quantity' => 0,
+                                        ]);
+                                        $qtyToRemoveByRefUom -= $stockQtyBySdUom;
+                                    } else {
+                                        $qtyToRemoveByRequestUpdateUom = UomHelper::changeQtyOnUom($requestToUpdateUomIdByRef,$requestToUpdateSaleDetail['uom_id'], $qtyToRemoveByRefUom);
+                                        $leftStockQtyByRef = $stockQtyByRef - $qtyToRemoveByRefUom;
+
+                                        $csbQuery = CurrentStockBalance::where('id', $stock->id)->first();
+                                        $csbQuery->update([
+                                            'current_quantity' => $leftStockQtyByRef,
+                                        ]);
+
+
+                                        $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $requestToUpdateSaleDetailId)
+                                                            ->where('current_stock_balance_id', $stock['id']);
+
+
+                                        if ($lotSerialDetails->exists()) {
+                                            $lotSerialDetailUomQty = $lotSerialDetails->first()->uom_quantity;
+                                            $lotSerialDetailUomQtyByRef = $lotSerialDetails->first()->ref_uom_quantity;
+                                            $lotSerialDetails->update([
+                                                'uom_quantity' => $lotSerialDetailUomQty + $qtyToRemoveByRequestUpdateUom,
+                                                'ref_uom_quantity' => $lotSerialDetailUomQtyByRef + $qtyToRemoveByRefUom,
+                                            ]);
+                                        } else {
+                                            lotSerialDetails::create([
+                                                'transaction_type' => 'sale',
+                                                'transaction_detail_id' =>  $requestToUpdateSaleDetailId,
+                                                'current_stock_balance_id' => $stock->id,
+                                                'lot_serial_numbers' => $stock->lot_serial_no,
+                                                'uom_quantity' =>  $qtyToRemoveByRequestUpdateUom,
+                                                'ref_uom_quantity' =>  $qtyToRemoveByRefUom,
+                                                'uom_id' => $qtyToRemoveByRefUom,
+                                            ]);
+                                        }
+                                        $qtyToRemoveByRefUom = 0;
+                                        break;
+                                    }
+                                }
+                            } elseif ($requestToUpdateQtyByRef <= $beforeUpdateSaleDetailQtyByRef) {
+                                $qtyToReplaceByRefUom = $beforeUpdateSaleDetailQtyByRef- $requestToUpdateQtyByRef;
+
+                                $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')
+                                                ->where('transaction_detail_id', $requestToUpdateSaleDetailId)->OrderBy('id', 'DESC')->get();
+                                foreach ($lotSerialDetails as $bsd) {
+
+                                    if ($qtyToReplaceByRefUom > $bsd->ref_uom_quantity) {
+                                        lotSerialDetails::where('id', $bsd->id)->first()->delete();
+                                        $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
+                                        $current_stock->update([
+                                            'current_quantity' =>  $current_stock->current_quantity + $bsd->ref_uom_quantity,
+                                        ]);
+                                        $qtyToReplaceByRefUom -= $bsd->ref_uom_quantity;
+                                        if ($qtyToReplaceByRefUom <= 0) {
+                                            break;
+                                        }
+                                    } elseif ($qtyToReplaceByRefUom <= $bsd->ref_uom_quantity) {
+
+                                        $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
+                                        $refUomQtyForLs= $bsd->ref_uom_quantity - $qtyToReplaceByRefUom;
+                                        $qtyToReplaceByRequestUpdateUom=round(UomHelper::changeQtyOnUom($requestToUpdateUomIdByRef, $requestToUpdateSaleDetail['uom_id'], $refUomQtyForLs),4);
+
+                                        // dd($requestToUpdateUomIdByRef, $requestToUpdateSaleDetail['uom_id'], $qtyToReplaceByRefUom);
+                                        if ($qtyToReplaceByRequestUpdateUom == 0) {
+                                            lotSerialDetails::where('id', $bsd->id)->first()->delete();
+                                        } else {
+                                            lotSerialDetails::where('id', $bsd->id)->first()->update([
+                                                'uom_quantity' => $qtyToReplaceByRequestUpdateUom ,
+                                                'ref_uom_quantity' => $refUomQtyForLs,
+                                            ]);
+                                        }
+                                        $current_stock->update([
+                                            'current_quantity' =>  $current_stock->current_quantity + $qtyToReplaceByRefUom,
+                                        ]);
+                                        $qtyToReplaceByRefUom = 0;
+                                        break;
+                                    }
+                                }
+
+                                // dd($saleDetailsByParent->toArray());
+                            }
+                            // dd('wh');
+                        };
+                    }
+
+                    //
+                    // updated Detail Item Data
+                    //
+                    $this->updateSaleDetailData($requestToUpdateSaleDetailId, $requestToUpdateSaleDetail, $businessLocationId);
+
+                }
+            }
+            DB::commit();
+
+            activity('sale-transaction')
+            ->log('New Sale update has been success')
+            ->event('update')
+                ->status('success')
+                ->properties([
+                    'id' => $updatedSaleData->id,
+                    'status' => $updatedSaleData->status,
+                    'total_amount' => $updatedSaleData->sale_amount,
+                    'payment_status' => $updatedSaleData->payment_status,
+                ])
+                ->save();
+            if ($request->type == 'pos') {
+                return response()->json([
+                    'status' => '200',
+                    'message' => 'successfully Updated'
+                ], 200);
+            } else {
+                // return redirect()->back()->with(['success' => 'successfully updated']);
+                return redirect()->route('all_sales', 'allSales')->with(['success' => 'successfully updated']);
+            }
+        } catch (Exception $e) {
+            Db::rollBack();
+            activity('sale-transaction')
+                ->log('New Sale update has been fail')
+                ->event('update')
+                ->status('fail')
+                ->save();
+            return back()->with(['warning' => 'Something Went Wrong While update sale voucher']);
+        }
+
+    }
+
+    public function txUpdateForPos($request,$saleBefUpdate,$saleData){
+        if ($request->paid_amount > 0) {
+            if ($request->type == 'pos') {
+                $multiPayment = $request->multiPayment;
+                foreach ($multiPayment as $mp) {
+                    $data = [
+                        'payment_voucher_no' => generatorHelpers::paymentVoucher(),
+                        'payment_date' => now(),
+                        'transaction_type' => 'sale',
+                        'transaction_id' => $saleData->id,
+                        'transaction_ref_no' => $saleData->sales_voucher_no,
+                        'payment_method' => 'card',
+                        'payment_account_id' => $mp['payment_account_id'] ?? null,
+                        'payment_type' => 'debit',
+                        'payment_amount' => $mp['payment_amount'],
+                        'currency_id' => $saleData->currency_id,
+                    ];
+                    $paymentTransaction = paymentsTransactions::create($data);
+                    $pRSQry = posRegisterTransactions::where('transaction_type', 'sale')->where('transaction_id', $saleData->id)->select('register_session_id')->first();
+                    if ($pRSQry) {
+                        $sessionId = $pRSQry->register_session_id;
+                    }
+                    posRegisterTransactions::create([
+                        'register_session_id' => $sessionId ?? null,
+                        'payment_account_id' => $mp['payment_account_id'] ?? null,
+                        'transaction_type' => 'sale',
+                        'transaction_id' => $saleData->id,
+                        'transaction_amount' =>  $mp['payment_amount'],
+                        'currency_id' => $request->currency_id,
+                        'payment_transaction_id' => $paymentTransaction->id ?? null,
+                    ]);
+
+                    $suppliers = Contact::where('id', $saleData->contact_id)->first();
+                    $suppliers_receivable = $suppliers->receivable_amount;
+                    $suppliers->update([
+                        'receivable_amount' => ($suppliers_receivable - $saleBefUpdate->balance_amount) +  $saleBefUpdate->balance_amount
+                    ]);
+                }
+                $suppliers = Contact::where('id', $saleBefUpdate->contact_id)->first();
+                $suppliers_receivable = $suppliers->receivable_amount;
+                $suppliers->update([
+                    'receivable_amount' => ($suppliers_receivable - $saleBefUpdate->balance_amount) + $request->balance_amount,
+                ]);
+            }
+        }
+    }
+
+    public function removeSaleDetialsData($id, $requestToUpdateSaleDetails)
+    {
+        // dd($requestToUpdateSaleDetails);
+        $requestToUpdateSaleDetails = array_column($requestToUpdateSaleDetails, 'sale_detail_id');
+        //get added sale_details_ids from database
+        $fetch_sale_details = sale_details::where('sales_id', $id)->where('is_delete', 0)->select('id')->get()->toArray();
+        $get_fetched_sale_details_id = array_column($fetch_sale_details, 'id');
+        //to remove edited sale_detais that are already created
+        $idToRemoveSaleDetails = array_diff($get_fetched_sale_details_id, $requestToUpdateSaleDetails); //for delete row
+
+        foreach ($idToRemoveSaleDetails as $sale_detail_id) {
+
+            $sale_details = sale_details::where('id', $sale_detail_id)->where('is_delete', 0);
+            $sale_details_count = count($sale_details->get()->toArray());
+            if ($sale_details_count > 0) {
+                $get_sale_details = $sale_details->first();
+                $lotSerials = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $get_sale_details->id);
+
+                if ($lotSerials->exists()) {
+                    $this->adjustStock($lotSerials->get());
+                    foreach ($lotSerials->get() as $lotSerial) {
+                        $lotSerial->delete();
+                    }
+                };
+                stock_history::where('transaction_details_id', $sale_detail_id)->where('transaction_type', 'sale')->delete();
+                $sale_details->update([
+                    'is_delete' => 1,
+                    'deleted_at' => now(),
+                    'deleted_by' => Auth::user()->id,
+                ]);
+            }
+        }
+    }
+    public function updateSaleDetailData($requestToUpdateSaleDetailId,$requestToUpdateSaleDetail, $businessLocationId){
+        $sale_details = sale_details::where('id', $requestToUpdateSaleDetailId)->with('kitSaleDetails')->where('is_delete', 0)->first();
+        // smallest qty from client
+        $refUomInfoForSd = UomHelper::getReferenceUomInfoByCurrentUnitQty($requestToUpdateSaleDetail['quantity'], $requestToUpdateSaleDetail['uom_id']);
+        $requestQtyByRef = $refUomInfoForSd['qtyByReferenceUom'];
+
+        $prepareRequestToUpdateSaleDetail = [
+            'uom_id' => $requestToUpdateSaleDetail['uom_id'],
+            'quantity' => $requestToUpdateSaleDetail['quantity'],
+            'uom_price' => $requestToUpdateSaleDetail['uom_price'],
+            'subtotal' =>  $requestToUpdateSaleDetail['subtotal'],
+            'discount_type' => $requestToUpdateSaleDetail['discount_type'],
+            'per_item_discount' => $requestToUpdateSaleDetail['per_item_discount'],
+            'subtotal_with_discount' => $requestToUpdateSaleDetail['subtotal'] - ($requestToUpdateSaleDetail['line_subtotal_discount'] ?? 0),
+            'currency_id' => $sale_details['currency_id'],
+            'price_list_id' => $requestToUpdateSaleDetail['price_list_id'] == "default_selling_price" ? null :   $requestToUpdateSaleDetail['price_list_id'],
+            'subtotal_with_tax' => $requestToUpdateSaleDetail['subtotal'] - ($requestToUpdateSaleDetail['line_subtotal_discount'] ?? 0),
+            'note' => $requestToUpdateSaleDetail['item_detail_note'] ?? null,
+            'updated_by'=> Auth::user()->id,
+        ];
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            RoMService::updateRomTransactions(
+                $requestToUpdateSaleDetailId,
+                'kit_sale_detail',
+                $businessLocationId,
+                $requestToUpdateSaleDetail['product_id'],
+                $requestToUpdateSaleDetail['variation_id'],
+                $requestToUpdateSaleDetail['quantity'],
+                $requestToUpdateSaleDetail['uom_id'],
+                $sale_details['quantity'],
+                $sale_details['uom_id']
+            );
+        }
+        $packagingService = new packagingServices();
+        $packagingService->updatePackagingForTx($requestToUpdateSaleDetail, $requestToUpdateSaleDetailId, 'sale');
+        if ($requestToUpdateSaleDetail['quantity'] <= 0) {
+            $prepareRequestToUpdateSaleDetail['is_delete']  = 1;
+            $prepareRequestToUpdateSaleDetail['deleted_at']  = now();
+            $prepareRequestToUpdateSaleDetail['is_delete']  = Auth::user()->id;
+            $sale_details->update($prepareRequestToUpdateSaleDetail);
+        } else {
+            $sale_details->update($prepareRequestToUpdateSaleDetail);
+        };
+
+        if ($requestQtyByRef > 0) {
+            stock_history::where('transaction_details_id', $requestToUpdateSaleDetailId)->where('transaction_type', 'sale')->update([
+                'decrease_qty' => $requestQtyByRef,
+                'created_at' => $sales['sold_at'] ?? now(),
+            ]);
+        } else {
+            stock_history::where('transaction_details_id', $requestToUpdateSaleDetailId)->where('transaction_type', 'sale')->delete();
+        }
+        return [
+            'preapredSaleDetailData'=> $requestToUpdateSaleDetail,
+            'updatedSaleDetailData'=> $sale_details
+        ];
+    }
 
 
     public function update($id, Request $request, SaleServices $saleService)

@@ -11,6 +11,7 @@ use App\Models\Product\Product;
 use App\Models\lotSerialDetails;
 use App\Models\sale\sale_details;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use Illuminate\Support\Facades\Auth;
 use App\Models\settings\businessLocation;
@@ -64,6 +65,27 @@ class SaleServices
             'channel_type'=>$data->channel_type ?? null,
             'channel_id'=>$data->channel_id,
         ]);
+    }
+    public function update($id,$data){
+        $sales = sales::where('id', $id)->first();
+        $saleData = [
+            'contact_id' => $data['contact_id'],
+            'status' => $data['status'],
+            'sale_amount' => $data['sale_amount'],
+            'total_item_discount' => $data['total_item_discount'],
+            'extra_discount_type' => $data['extra_discount_type'],
+            'extra_discount_amount' => $data['extra_discount_amount'],
+            'total_sale_amount' => $data['total_sale_amount'],
+            'currency_id' => $data['currency_id'],
+            'updated_by' => Auth::user()->id ?? $id,
+            'sold_at' => $data['sold_at'],
+        ];
+        if ($data['type'] == 'pos') {
+            $saleData['paid_amount'] = $data['paid_amount'];
+            $saleData['balance_amount'] = $data['balance_amount'];
+        }
+        $sales->update($saleData);
+        return $sales;
     }
 
     /**
@@ -219,6 +241,17 @@ class SaleServices
             }
         }
     }
+    /**
+     * changeStockQty
+     *
+     * @param  mixed $requestQty must be ref
+     * @param  mixed $refUoMId
+     * @param  mixed $business_location_id
+     * @param  mixed $sale_detail
+     * @param  mixed $current_stock
+     * @param  mixed $sales
+     * @return void
+     */
     public function changeStockQty($requestQty,$refUoMId, $business_location_id, $sale_detail,$current_stock = [], $sales)
     {
         $product_id = $sale_detail['product_id'];

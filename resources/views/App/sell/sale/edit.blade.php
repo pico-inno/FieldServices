@@ -331,7 +331,7 @@
                                             {{-- <td class="">
                                                 <input class="form-control form-control-sm uom_set" placeholder="UOM SET" value="{{$sale_detail->toArray()['uom_set']['uomset_name']}}" disabled/>
                                             </td> --}}
-                                            <td>
+                                            <td class="w-175px">
                                                 <span class="text-danger-emphasis  stock_alert_{{$sale_detail->variation_id}} d-none fs-7 p-2">* Out of Stock</span>
                                                 <div class="dialer_obj input-group-sm sale_dialer_{{$key}} input-group mb-2 flex-nowrap">
                                                     <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
