@@ -196,7 +196,7 @@
                             <!--begin::Pos product-->
                             <div class=" bg-transparent border-0 my-3 mb-10" style="height: 85%; overflow: scroll;">
                                 <!--begin::Nav-->
-                                <div class="row mb-10 p-5  flex-wrap justify-content-center" id="all_product_list">
+                                <div class="row mb-10 p-5  flex-wrap justify-content-center align-items-stretch" id="all_product_list">
 
                                 </div>
                                 <!--end::Nav-->

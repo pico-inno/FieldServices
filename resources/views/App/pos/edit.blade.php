@@ -391,7 +391,7 @@
                                                             <input class="btn-check" type="radio" name="method" value="0" />
                                                             <!--end::Input-->
                                                             <!--begin::Title-->
-                                                            <span class="fs-7 fw-bold d-block sale_credit">Credit</span>
+                                                            <span class="fs-7 fw-bold d-block sale_credit">Save As Credit</span>
                                                             <!--end::Title-->
                                                         </label>
                                                         <!--end::Radio-->
@@ -399,12 +399,12 @@
                                                         @if ($posRegister->use_for_res=='1')
                                                             <label  data-bs-toggle="modal" id="order_confirm_modal_btn" data-bs-target="#order_confirm_modal" class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 border-gray-100 hover-elevate-up w-100 px-4 order_confirm_modal_btn" data-kt-button="true">
                                                                 <input class="btn-check" type="radio" name="method" value="1" />
-                                                                <span class="  text-dark fw-bold  rounded-0">Order</span>
+                                                                <span class="  text-dark fw-bold  rounded-0">Save As Order</span>
                                                             </label>
                                                         @else
                                                             <label class="for_disable_btn mb-3 btn btn-light  btn-sm  border border-1 border-gray-600 hover-elevate-up w-100 px-4 finalizeOrder" data-kt-button="true">
                                                                 {{-- <input class="btn-check" type="radio" name="method" value="1" /> --}}
-                                                                <span class=" text-dark fw-bold  rounded-0">Order</span>
+                                                                <span class=" text-dark fw-bold  rounded-0">Save As Order</span>
                                                             </label>
                                                         @endif
 
@@ -414,7 +414,7 @@
                                                         <!--begin::Radio-->
                                                         <label class="for_disable_btn mb-3 btn  btn-sm  {{$sale->status=='draft'?'bg-primary' : 'bg-light'}} btn-color-gray-900  border border-1 border-gray-600  hover-elevate-up w-100 px-4 " data-kt-button="true">
                                                             <input class="btn-check" type="radio" name="method" value="3" />
-                                                            <span class="fs-7 text-dark fw-bold d-block sale_draft">Draft</span>
+                                                            <span class="fs-7 text-dark fw-bold d-block sale_draft">Save As Draft</span>
                                                         </label>
                                                         <!--end::Radio-->
                                                         <!--begin::Radio-->
@@ -457,7 +457,7 @@
             <!--begin::Content-->
             <div class="content pb-15 d-flex flex-column flex-column-fluid ms-8 d-none d-lg-none d-xl-none d-xxl-none " id="pos_second_content"  style="height: 100vh">
                 <!--begin::container-->
-                <div class="container-xxl" id="pos_second_content_container"  style="height: 100%;">
+                <div class="container-xxl" id="pos_second_content_container"  style="height: 90%;">
                     <div class="card  card-flush" style="height: 100%; overflow: hidden">
                         <div class="card-body p-5">
                             <div class="row mb-1">

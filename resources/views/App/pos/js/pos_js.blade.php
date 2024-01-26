@@ -121,7 +121,7 @@
                                 <input type="text" class="form-control form-control-sm mb-2 mb-md-0" name="pay_amount" placeholder="" value=""/>
                             </div>
                             @if (isUsePaymnetAcc())
-                                <div class="col-md-5 col-sm-5 col-5 ">
+                                <div class="col-md-5 col-12 ">
                                     <label class="form-label fw-bold">Payment Account:</label>
                                     <select class="form-select mb-2 form-select-sm paymentRepeaterAccount payment_account" name="payment_account"  data-control="select2" data-hide-search="true" data-placeholder="Select Payment Account">
                                         <option></option>
@@ -870,8 +870,8 @@
                     // Loop through each item in the response data
                     $.each(result, function(index, item) {
                         productsHtml += `
-                        <div class="p-1 col-lg-2 col-md-2 col-2 min-w-125px cursor-pointer each_product user-select-none">
-                            <div class="card">
+                        <div class="p-1 col-lg-2 col-md-2 col-6 min-w-125px cursor-pointer each_product user-select-none">
+                            <div class="card h-100">
                                 <input type="hidden" name="category_id" value="${item.category_id}">
                                 <input type="hidden" name="sub_category_id" value="${item.sub_category_id}">
                                 <input type="hidden" name="brand_id" value="${item.brand_id}">
@@ -2210,6 +2210,9 @@
 
         // if edit mode
         if (editSaleDetails.length>0) {
+            $(document).ready(()=>{
+                $("#invoice_side_bar").is(':hidden') ?$('#pos_shopping_cart').click() :'';
+            })
             setTimeout(() => {
                 suggestionProductEvent();
                 editSaleDetails.forEach(function(saleDetail,index){
