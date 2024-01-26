@@ -1360,6 +1360,9 @@ class ReportController extends Controller
             ->leftJoin('opening_stocks', 'opening_stock_details.opening_stock_id', '=', 'opening_stocks.id')
             ->where('purchase_details.is_delete', 0)
             ->where('sale_details.is_delete', 0)
+
+            ->where('purchases.is_delete', 0)
+            ->where('sales.is_delete', 0)
             ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
             ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
             // ->where('products.id',6601)
