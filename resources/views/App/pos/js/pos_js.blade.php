@@ -17,7 +17,7 @@
     var creditLimit=0;
     var receiveAbleAmount=0;
     var uniqueNameId=1;
-    var contactId=editSale.contact_id ?? 1 ;
+    var contactId=editSale.contact_id ?? 3 ;
     let isGetContact =editSale ? false:true;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
