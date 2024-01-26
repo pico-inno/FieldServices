@@ -109,7 +109,7 @@ class sales extends Model
 
     public function winlog()
     {
-        return $this->hasOne(winLogs::class, 'tx_id', 'id');
+        return $this->hasMany(winLogs::class, 'tx_id', 'id');
     }
 }
 

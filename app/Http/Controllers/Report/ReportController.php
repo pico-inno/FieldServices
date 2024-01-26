@@ -1354,15 +1354,12 @@ class ReportController extends Controller
                     ->where('lot_serial_details.transaction_detail_id', '=', DB::raw('sale_details.id'));
             })
             ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
-
             ->leftJoin('purchase_details', 'current_stock_balance.transaction_detail_id', '=', 'purchase_details.id')
             ->leftJoin('purchases', 'purchase_details.purchases_id', '=', 'purchases.id')
-
             ->leftJoin('opening_stock_details', 'current_stock_balance.transaction_detail_id', '=', 'opening_stock_details.id')
             ->leftJoin('opening_stocks', 'opening_stock_details.opening_stock_id', '=', 'opening_stocks.id')
-
-            // ->where('purchases.is_delete', 0)
-            // ->where('sales.is_delete', 0)
+            ->where('purchase_details.is_delete', 0)
+            ->where('sale_details.is_delete', 0)
             ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
             ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
             // ->where('products.id',6601)
