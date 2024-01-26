@@ -161,13 +161,14 @@
                     data: 'location',
                     name: 'location'
                 },
-                {
-                    data: 'sell_qty',
-                    name: 'sell_qty'
-                },
+
                 {
                     data:'sales_voucher_no',
                     name:'sales_voucher_no',
+                },
+                {
+                    data: 'sell_qty',
+                    name: 'sell_qty'
                 },
 
                 {
