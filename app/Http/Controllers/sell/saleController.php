@@ -552,6 +552,7 @@ class saleController extends Controller
     public function resOrderCreation($sale_data, $request)
     {
         return resOrders::create([
+            'table_id'=>$sale_data['table_id'],
             'order_voucher_no' => generatorHelpers::resOrderVoucherNo(),
             'order_status' => 'order',
             'location_id' => $sale_data->business_location_id,
@@ -1873,7 +1874,7 @@ class saleController extends Controller
         return response()->json($result, 200);
     }
 
-    public function saleInvoice($id, Request $request)
+    public function saleInvoice($id)
     {
         $sale = sales::with('sold_by', 'sold', 'confirm_by', 'customer', 'updated_by', 'currency')->where('id', $id)->first();
         // dd($sale->toArray());

@@ -30,6 +30,9 @@
                                     <thead>
                                         <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
                                             <th>Product</th>
+                                            @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                            <th>Table</th>
+                                            @endif
                                             <th>Customer</th>
                                             <th>Amount</th>
                                             <th>Actions</th>
@@ -45,6 +48,9 @@
                                         @foreach ($saleDelivered as $sd)
                                             <tr>
                                                 <td>{{$sd->sales_voucher_no}}</td>
+                                                @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                                <th>{{$sd->table ? $sd->table->table_no : ''}}</th>
+                                                @endif
                                                 <td>{{arr($sd->customer,'first_name')}}</td>
                                                 <td>{{price($sd->total_sale_amount,$sd->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
@@ -106,6 +112,9 @@
                                     <thead>
                                         <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
                                             <th>Product</th>
+                                            @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                            <th>Table</th>
+                                            @endif
                                             <th>Customer</th>
                                             <th>Amount</th>
                                             <th>Actions</th>
@@ -116,6 +125,9 @@
                                         @foreach ($saleDrafts as $sdf)
                                             <tr>
                                                 <td>{{$sdf->sales_voucher_no}}</td>
+                                                @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                                <th>{{$sdf->table ? $sdf->table->table_no : ''}}</th>
+                                                @endif
                                                 <td>{{arr($sdf->customer,'first_name')}}</td>
                                                 <td>{{price($sdf->total_sale_amount,$sdf->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
@@ -178,6 +190,9 @@
                                     <thead>
                                         <tr class="fw-semibold fs-6 text-gray-600 border-bottom border-gray-200">
                                             <th>Product</th>
+                                            @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                                <th>Table</th>
+                                            @endif
                                             <th>Customer</th>
                                             <th>Amount</th>
                                             <th>Actions</th>
@@ -192,6 +207,9 @@
                                         @foreach ($saleOrders as $so)
                                             <tr>
                                                 <td>{{$so->sales_voucher_no}}</td>
+                                                @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                                    <th>{{$so->table ? $so->table->table_no : ''}}</th>
+                                                @endif
                                                 <td>{{arr($so->customer,'first_name')}}</td>
                                                 <td>{{price($so->total_sale_amount,$so->currency_id)}}</td>
                                                 <td class="d-flex flex-row">
@@ -250,6 +268,9 @@
                                     <thead>
                                         <tr class="fw-semibold fs-6 text-gray-800 border-bottom border-gray-200">
                                             <th>Order Voucher No</th>
+                                            @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                            <th>Table</th>
+                                            @endif
                                             <th>Order Status</th>
                                             <th>location</th>
                                             <th>services</th>
@@ -265,11 +286,22 @@
                                             @foreach ($restaurantOrder as $ro)
                                                 <tr>
                                                     <td>{{$ro->order_voucher_no}}</td>
-                                                    <td>{{$ro->order_status}}</td>
+                                                    @if (hasModule('restaurant') && isEnableModule('restaurant'))
+                                                        <th>{{$ro->table ? $ro->table->table_no : ''}}</th>
+                                                    @endif
+                                                    <td>
+                                                        @if ($ro->order_status == 'order')
+                                                            <span class="badge badge-secondary">order</span>
+                                                        @elseif($ro->order_status == 'ready')
+                                                            <span class="badge badge-success">order</span>
+                                                        @elseif($ro->order_status == 'preparing')
+                                                            <span class="badge badge-primary">Preparing</span>
+                                                        @endif
+                                                    </td>
                                                     <td>{{$ro->location->name}}</td>
                                                     <td>
                                                         @if ($ro->services=='dine_in')
-                                                            <span class="badge bade-sm badge badge-primary">Dine In</span>
+                                                            <span class="badge bade-sm badge badge-info">Dine In</span>
                                                         @elseif ($ro->services=='delivery')
                                                             <span class="badge bade-sm badge badge-info">Delivary</span>
                                                         @elseif ($ro->services=='take_away')

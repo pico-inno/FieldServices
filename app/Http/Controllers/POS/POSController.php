@@ -467,12 +467,16 @@ class POSController extends Controller
     {
         $posRegisterCheck = posRegisters::where('id', $id)->exists();
         $restaurantOrder = null;
+        $isRestuarantModule=hasModule('restaurant') && isEnableModule('restaurant');
         if ($posRegisterCheck) {
 
             $posRegister = posRegisters::where('id', $id)->first();
             if ($posRegister->use_for_res == 1) {
                 $restaurantOrder = resOrders::where('pos_register_id', $id)
 
+                    ->when($isRestuarantModule, function ($query) {
+                        return $query->with('table');
+                    })
                     ->orderBy('id', 'DESC')
                     ->limit(20)->get();
             }
@@ -481,17 +485,26 @@ class POSController extends Controller
         $saleOrders = sales::where('pos_register_id', $id)
             ->orderBy('id', 'DESC')
             ->where('status', 'order')
-            ->limit(5)
+            ->when($isRestuarantModule,function($query){
+               return $query->with('table');
+            })
+            ->limit(10)
             ->get();
         $saleDelivered = sales::where('pos_register_id', $id)
             ->orderBy('id', 'DESC')
             ->where('status', 'delivered')
-            ->limit(5)
+            ->when($isRestuarantModule, function ($query) {
+                return $query->with('table');
+            })
+            ->limit(10)
             ->get();
         $saleDrafts = sales::where('pos_register_id', $id)
             ->orderBy('id', 'DESC')
             ->where('status', 'draft')
-            ->limit(5)
+            ->when($isRestuarantModule, function ($query) {
+                return $query->with('table');
+            })
+            ->limit(10)
             ->get();
 
 

@@ -3,7 +3,6 @@
 <!--begin::Head-->
 
 <head>
-    <base href="../" />
     <title>ERPPOS</title>
     <meta charset="utf-8" />
     <meta name="description" content="သင့်လုပ်ငန်းနဲ့ အသင့်တော်ဆုံး PICO SBS ကိုသုံး" />
