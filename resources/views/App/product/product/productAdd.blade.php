@@ -724,7 +724,7 @@
 
 @push('scripts')
     <script src="{{asset('customJs/product/addValidation.js')}}"></script>
-    <script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+    <script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
     <script src="{{ asset('customJs/product/packagingValidation.js') }}"></script>
     @include('App.product.JS.productQuickSearch')
