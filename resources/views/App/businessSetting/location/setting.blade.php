@@ -153,5 +153,5 @@
 @endsection
 
 @push('scripts')
-		<script src="assets/js/custom/apps/ecommerce/customers/listing/add.js"></script>
+		<script src="{{asset('assets/js/custom/apps/ecommerce/customers/listing/add.js')}}"></script>
 @endpush

@@ -334,7 +334,7 @@
 @endsection
 
 @push('scripts')
-<script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+<script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
 <script src="{{asset('customJs/hospital/validation.js')}}"></script>
 @include('App.Js.registrationJs')
 @endpush

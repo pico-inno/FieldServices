@@ -611,7 +611,7 @@
         });
     </script>
     <!--begin::Custom Javascript(used for this page only)-->
-    <script src="assets/js/custom/apps/user-management/users/list/table.js"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/table.js')}}"></script>
     <script src="assets/js/custom/apps/user-management/users/list/export-users.js"></script>
     <script src="assets/js/custom/apps/user-management/users/list/edit.js"></script>
 

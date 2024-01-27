@@ -385,8 +385,8 @@
 
 @push('scripts')
 		{{-- <script src={{asset('customJs/Purchases/purchasesOrderList.js')}}></script> --}}
-		<script src="assets/js/custom/apps/ecommerce/customers/listing/add.js"></script>
-		<script src="assets/js/custom/apps/ecommerce/customers/listing/export.js"></script>
+		<script src="{{asset('assets/js/custom/apps/ecommerce/customers/listing/add.js')}}"></script>
+		<script src="{{asset('assets/js/custom/apps/ecommerce/customers/listing/export.js')}}"></script>
         <script>
             var start = moment().subtract(29, "days");
             var end = moment();

@@ -22,32 +22,32 @@
     </ul>
 <!--end::Breadcrumb-->
 @endsection
-@section('content') 
+@section('content')
     <!--begin::Content-->
 	<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
 		<!--begin::Container-->
 		<div class="container-xxl" id="kt_content_container">
 			<form id="kt_ecommerce_settings_general_form" class="form" action="{{ route('variation.create') }}" method="POST">
 				@csrf
-			
-				<div class="card card-flush">		
+
+				<div class="card card-flush">
 					<div class="card-body">
 						<div class="tab-content" id="myTabContent">
 							<div class="tab-pane fade show active" id="kt_ecommerce_settings_general" role="tabpanel">
-								
+
 									<div class="row mb-7">
 										<div class="col-md-9 offset-md-3">
 											<h2>{{ __('product/variation.add_variation') }}</h2>
 										</div>
 									</div>
-					
+
 									<div class="row fv-row mb-7">
 										<div class="col-md-3 text-md-end">
 											<label class="fs-6 fw-semibold form-label mt-3">
 												<span class="required">{{ __('product/variation.variation_name') }}</span>
 											</label>
 										</div>
-										<div class="col-md-6">						
+										<div class="col-md-6">
 											<input type="text" class="form-control form-control-sm form-control-solid" name="variation_name" value="" placeholder="Variation name"/>
 											@error('variation_name')
 												<div class="text-danger my-2">{{ $message }}</div>
@@ -55,14 +55,14 @@
 										</div>
 										<div class="col-md-3"></div>
 									</div>
-					
+
 									<div class="row fv-row mb-7">
 										<div class="col-md-3 text-md-end">
 											<label class="fs-6 fw-semibold form-label mt-3">
 												<span class="">{{ __('product/variation.add_variation_value') }}</span>
 											</label>
-										</div>							
-										<div class="col-md-9" id="kt_docs_repeater_basic">							
+										</div>
+										<div class="col-md-9" id="kt_docs_repeater_basic">
 											<div class="form-group">
 												<div data-repeater-list="variation_value">
 													<div data-repeater-item>
@@ -78,28 +78,28 @@
 														</div>
 													</div>
 												</div>
-											</div>								
+											</div>
 											<div class="form-group mt-5">
 												<a href="javascript:;" data-repeater-create class="btn btn-sm btn-light-primary">
 													<i class="la la-plus"></i>{{ __('product/product.add') }}
 												</a>
 											</div>
-									
-										</div>							
+
+										</div>
 									</div>
-								</div>							
-							</div>					
-						</div>				
+								</div>
+							</div>
+						</div>
 					</div>
-			
+
 					<div class="d-flex justify-content-start mt-5">
-             
+
                         <a href="{{ url('/variation') }}"  class="btn btn-light me-5 btn-sm">{{ __('product/product.cancle') }}</a>
-       
+
                         <button type="submit" class="btn btn-primary btn-sm">
                             {{ __('product/product.save') }}
                         </button>
-                
+
                     </div>
 			</form>
 		</div>
@@ -109,7 +109,7 @@
 @endsection
 
 @push('scripts')
-    <script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+    <script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
     <script>
         $('#kt_docs_repeater_basic').repeater({
             initEmpty: false,

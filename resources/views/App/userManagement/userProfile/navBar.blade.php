@@ -200,10 +200,10 @@
 
 @push('scripts')
     <!--begin::Custom Javascript(used for this page only)-->
-    <script src="assets/js/custom/account/settings/signin-methods.js"></script>
+    <script src="{{asset('assets/js/custom/account/settings/signin-methods.js')}}"></script>
 {{--    <script src="assets/js/custom/account/settings/profile-details.js"></script>--}}
-    <script src="assets/js/custom/account/settings/deactivate-account.js"></script>
-    <script src="assets/js/custom/pages/user-profile/general.js"></script>
+    <script src="{{asset('assets/js/custom/account/settings/deactivate-account.js')}}"></script>
+    <script src="{{asset('assets/js/custom/pages/user-profile/general.js')}}"></script>
     <script src="assets/js/widgets.bundle.js"></script>
     <script src="assets/js/custom/widgets.js"></script>
     <script src="assets/js/custom/apps/chat/chat.js"></script>

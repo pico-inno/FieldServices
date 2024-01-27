@@ -664,7 +664,7 @@
 @endsection
 
 @push('scripts')
-<script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
+<script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
 <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
 
 <script>

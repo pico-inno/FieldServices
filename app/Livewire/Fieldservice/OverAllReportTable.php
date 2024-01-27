@@ -16,21 +16,27 @@ class OverAllReportTable extends Component
     use WithPagination, datatable;
 
     public $businesslocationFilterId = 'all';
-    public $customerFilterId = 'all';
-    public $statusFilter = 'all';
+    public $pgFilterId = 'all';
+    public $categotryFilterId = 'all';
     public $filterDate;
     public $saleType;
+
+    public function updated()
+    {
+        $this->resetPage();
+    }
     public function render()
     {
         $search = $this->search;
         $businesslocationFilterId = $this->businesslocationFilterId;
-        $customerFilterId = $this->customerFilterId;
-        $statusFilter = $this->statusFilter;
+        $pgFilterId = $this->pgFilterId;
+        $categotryFilterId = $this->categotryFilterId;
         $filterDate = $this->filterDate;
 
 
         $locations = businessLocation::select('name', 'id', 'parent_location_id')->get();
-        $employee = BusinessUser::select('username', 'id')->get();
+        $employee = BusinessUser::select('username', 'id','personal_info_id')
+                    ->with('personal_info:first_name,last_name,id')->get();
         $categories = Category::select('name', 'id')->get();
         $datas = sale_details::select(
             'sale_details.variation_id',
@@ -42,9 +48,16 @@ class OverAllReportTable extends Component
             'product_variations.variation_sku',
             'sales.created_by',
             'product_packaging_transactions.product_packaging_id',
+            'product_packaging_transactions.quantity as pkgQty',
+            'product_packagings.packaging_name as pkg',
             'sales.created_at',
+            'outlet.name as outlet',
             'categories.name as category_name',
-            'uom.short_name as uom'
+            'uom.short_name as uom',
+            'pf.first_name as pg_fs',
+            'pf.last_name as pg_ls',
+            'pg.username as pg_name',
+            'fscampaign.name as campaignName'
         )
             ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
             ->where('sales.channel_type', '=', 'campaign')
@@ -61,25 +74,26 @@ class OverAllReportTable extends Component
                     ->where('product_packaging_transactions.transaction_type', '=', 'sale');
                 }
             )
+            ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id' ,'=','product_packagings.id')
+            ->leftJoin('business_locations  as outlet', 'fscampaign.business_location_id', '=', 'outlet.id')
+            ->leftJoin('business_users  as pg', 'sales.created_by', '=', 'pg.id')
+            ->leftJoin('personal_infos  as pf', 'pg.personal_info_id', '=', 'pf.id')
+            // ->leftJoin('business_locations as outlet', 'campaign_business_location_id.product_packaging_id', '=', 'outlet.id')
+            ->when($businesslocationFilterId != 'all', function ($query) use ($businesslocationFilterId) {
+                $query->where('outlet.id', '=', $businesslocationFilterId);
+            })
+             ->when($pgFilterId != 'all', function ($query) use ($pgFilterId) {
+                $query->where('pg.id', '=', $pgFilterId);
+            })
+            ->when($categotryFilterId != 'all', function ($query) use ($categotryFilterId) {
+                $query->where('categories.id', '=', $categotryFilterId);
+            })
             ->when(isset($filterDate), function ($query) use ($filterDate) {
                 $query->whereDate('sales.sold_at', '>=', $filterDate[0])
                     ->whereDate('sales.sold_at', '<=', $filterDate[1]);
             })
-            // ->groupBy(
-            //     'sale_details.variation_id',
-            //     'sales.business_location_id',
-            //     'categories.name',
-            //     'fscampaign.name',
-            //     'fscampaign.business_location_id',
-            //     'fscampaign.id',
-            //     'sales.created_at',
-            //     'product_packaging_transactions.product_packaging_id',
-            //     'sales.created_by',
-            //     'products.name',
-            //     'stock_histories.ref_uom_id',
-            //     'product_variations.variation_sku'
-            // )
-            ->paginate('10');
+            // dd($datas->toArray());
+            ->paginate('30');
         return view('livewire.fieldservice.over-all-report-table',compact('datas','locations','employee','categories'));
     }
 }

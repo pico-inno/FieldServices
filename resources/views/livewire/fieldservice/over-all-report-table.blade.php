@@ -1,14 +1,16 @@
-<style>
-    .pagination{
-        justify-content: center !important;
-        }
-        @media(min-width:780px){
-        .pagination{
-        justify-content: end !important;
-        }
-        }
-</style>
+
 <div class="">
+    <style>
+        .pagination {
+            justify-content: center !important;
+        }
+
+        @media(min-width:780px) {
+            .pagination {
+                justify-content: end !important;
+            }
+        }
+    </style>
     <div class="accordion-collapse collapse show" id="kt_accordion_1_body_2" aria-labelledby="kt_accordion_1_header_2"
         data-bs-parent="#kt_accordion_1" wire:ignore>
         <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5">
@@ -23,7 +25,7 @@
                         <div class="col-12 col-md-4 col-lg-3 mb-5">
                             <label class="form-label  fs-6 fw-semibold">date:</label>
                             <input class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
-                                data-kt-saleItem-table-filter="dateRange" id="kt_daterangepicker_4"
+                                data-kt-table-filter="dateRange" id="kt_daterangepicker_4"
                                 data-dropdown-parent="#filter" />
                         </div>
                         <div class="col-12 col-md-4 col-lg-3 mb-5">
@@ -31,7 +33,8 @@
                                 <i class="fa-solid fa-circle fs-9 text-primary me-1"></i>
                                 Filter By Outlet:</label>
                             <select class="form-select form-select-sm fw-bold locationFilter"
-                                data-placeholder="Select option" id="select2" data-kt-select2="true"
+                            data-allow-clear="true"
+                                data-placeholder="Select option" id="outletfilter" data-kt-select2="true"
                                 data-kt-table-filter="outlet">
                                 <option value="all">All</option>
                                 @foreach ($locations as $l)
@@ -43,12 +46,13 @@
                             <label class="form-label  fs-6 fw-semibold">
                                 <i class="fa-solid fa-circle fs-9 text-success me-1"></i>
                                 Filter By PG:</label>
-                            <select class="form-select form-select-sm fw-bold locationFilter"
-                                data-placeholder="Select option" id="select2employee" data-kt-select2="true"
+                            <select class="form-select form-select-sm fw-bold pgFilter"
+                                data-allow-clear="true"
+                                data-placeholder="Select option" id="pgFilter" data-kt-select2="true"
                                 data-kt-table-filter="employee">
                                 <option value="all">All</option>
                                 @foreach ($employee as $e)
-                                <option value="{{ $e->id }}">{{ $e->username }}</option>
+                                <option value="{{ $e->id }}">{{ $e->personal_info->first_name }}{{ $e->personal_info->last_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -56,10 +60,11 @@
                             <label class="form-label  fs-6 fw-semibold">
                                 {{-- <i class="fa-solid fa-circle fs-9 text-success me-1"></i> --}}
                                 Category:</label>
-                            <select class="form-select form-select-sm fw-bold locationFilter"
-                                data-placeholder="Select option" id="select2category" data-kt-select2="true"
+                            <select class="form-select form-select-sm fw-bold categoryFilter"
+                                data-allow-clear="true"
+                                data-placeholder="Select option" id="categoryFilter" data-kt-select2="true"
                                 data-kt-table-filter="category">
-                                {{-- <option value="all">All</option> --}}
+                                <option value="all">All</option>
                                 @foreach ($categories as $c)
                                 <option value="{{ $c->id }}">{{ $c->name }}</option>
                                 @endforeach
@@ -153,13 +158,12 @@
                                     <x-datatable.sort-icon field="contacts.first_name" :sortField="$sortField" :sortAsc="$sortAsc" />
                                 </div>
                             </th>
-                            <th class="text-start pe-3 min-w-100px text-end">UOM</th>
+                            <th class="text-start pe-3 min-w-100px">UOM</th>
                             <th class="text-start pe-3 min-w-100px">package Qty </th>
                             <th class="text-start pe-3 min-w-100px">Pkg</th>
                             <th class="text-start pe-3 min-w-100px">Outlet</th>
-                            <th class="text-start pe-3 min-w-100px">Employee Location</th>
+                            <th class="text-start pe-3 min-w-100px">PG</th>
                             <th class="text-start pe-3 min-w-100px">Campaign</th>
-                            <th class="text-start pe-3 min-w-100px">Employee</th>
                             <th class="text-start pe-3 min-w-100px "> Date</th>
                         </tr>
                         <!--end::Table row-->
@@ -169,13 +173,16 @@
                     <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                         @foreach ($datas as $data)
-                        <tr class="text-end">
+                        <tr class="">
                             <td class="text-start">{{$data['name']}}</td>
                             <td class="text-start">{{$data['category_name']}}</td>
                             <td>{{$data['uom']}}</td>
-                            <td>{{formatPrice($data['paid_amount'] ?? 0,$data->currency)}}</td>
-                            <td>{{formatPrice($data['balance_amount'] ?? 0,$data->currency)}}</td>
-                            <td>{{$data['location_name']}}</td>
+                            <td>{{$data['pkgQty']}}</td>
+                            <td>{{$data['pkg']}}</td>
+                            <td>{{$data['outlet']}}</td>
+                            <td>{{$data['pg_fs']}}{{$data['pg_ls']}}</td>
+                            <td>{{$data['campaignName']}}</td>
+                            <td>{{fdate($data['created_at'])}}</td>
                             {{-- <td>
                                 @php
                                 $status=$s->status;
@@ -221,247 +228,47 @@
     </div>
     <script wire:ignore>
         $(document).ready(function() {
-        let table = document.querySelector('#kt_saleItem_table');
-        initToggleToolbar(table);
-        handleDeleteRows();
-        $('#select2').select2().on('select2:select', function (e) {
-            @this.set('businesslocationFilterId', $('#select2').select2("val"));
-        });
-         $('#customerFilter').select2().on('select2:select', function (e) {
-            @this.set('customerFilterId', $('#customerFilter').select2("val"));
-        });
-
-         $('#statusFilter').select2().on('select2:select', function (e) {
-            @this.set('statusFilter', $('#statusFilter').select2("val"));
-        });
-
-        // cb(start, end);
-        var start = moment().subtract(1, "M");
-        var end = moment();
-
-        function cb(start, end) {
-            $("#kt_daterangepicker_4").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
-            let startDate=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
-            let endDate=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
-            @this.set('filterDate', [startDate,endDate]);
-        }
-
-        $("#kt_daterangepicker_4").daterangepicker({
-            startDate: start,
-            endDate: end,
-            ranges: {
-            "Today": [moment(), moment()],
-            "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
-            "Last 7 Days": [moment().subtract(6, "days"), moment()],
-            "Last 30 Days": [moment().subtract(29, "days"), moment()],
-            "This Month": [moment().startOf("month"), moment().endOf("month")],
-            "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
-            }
-        }, cb);
-    });
-
-
-        // Delete location
-    var handleDeleteRows = () => {
-        // Select all delete buttons
-        const deleteButtons = document.querySelectorAll('[data-kt-saleItem-table="delete_row"]');
-        deleteButtons.forEach(d => {
-            // Delete button on click
-            d.addEventListener('click', function (e) {
-                e.preventDefault();
-                console.log('hello');
-                // Select parent row
-                const parent = e.target.closest('tr');
-
-                // Get saleItem name
-                const saleItemName = parent.querySelectorAll('td')[2].innerText;
-
-                // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
-                Swal.fire({
-                    text: "Are you sure you want to delete " + saleItemName + "?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    buttonsStyling: false,
-                    confirmButtonText: "Yes, delete!",
-                    cancelButtonText: "No, cancel",
-                    customClass: {
-                        confirmButton: "btn fw-bold btn-danger",
-                        cancelButton: "btn fw-bold btn-active-light-primary"
-                    }
-                }).then(function (result) {
-                    if (result.value) {
-                            let id=d.getAttribute('data-id')
-                            let url = `/sell/${id}/delete?restore=true`;
-                            $.ajax({
-                                url,
-                                type: 'DELETE',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                success: function(s) {
-                                    $('.checkForDelete').prop('checked',false);
-                                    @this.set('statusFilter', $('#statusFilter').select2("val"));
-                                    Swal.fire({
-                                        text: "You have deleted " + saleItemName + "!.",
-                                        icon: "success",
-                                        buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
-                                        customClass: {
-                                            confirmButton: "btn fw-bold btn-primary",
-                                        }
-                                    }).then(function () {
-                                        success(s.success);
-                                    });
-                                }
-                            })
-                    }else if (result.dismiss === 'cancel') {
-                        Swal.fire({
-                            text: saleItemName + " was not deleted.",
-                            icon: "error",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
-                            customClass: {
-                                confirmButton: "btn fw-bold btn-primary",
-                            }
-                        });
-                    }
-
-                });
-            })
-        });
-    }
-
-            // Init toggle toolbar
-    var initToggleToolbar = (table) => {
-        // Toggle selected action toolbar
-        // Select all checkboxes
-        const checkboxes = table.querySelectorAll('[data-checked="delete"]');
-        const selectAll = table.querySelector('#selectAll');
-        // Select elements
-        const deleteSelected = document.querySelector('[data-kt-saleItem-table-select="delete_selected"]');
-
-        // Toggle delete selected toolbar
-        checkboxes.forEach(c => {
-            // Checkbox on click event
-            c.addEventListener('click', function () {
-                console.log('click');
-                setTimeout(function () {
-                    toggleToolbars(table);
-                }, 50);
+            // handleDeleteRows();
+            $('#outletfilter').select2().on('select2:select', function (e) {
+                @this.set('businesslocationFilterId', $('#outletfilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('businesslocationFilterId', 'all');
             });
-        });
-        selectAll.addEventListener('click',function () {
-                setTimeout(function () {
-                    toggleToolbars(table);
-                }, 50);
-        })
+            $('#pgFilter').select2().on('select2:select', function (e) {
+                @this.set('pgFilterId', $('#pgFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('pgFilterId', 'all');
+            });
 
-        // Deleted selected rows
-        deleteSelected.addEventListener('click', function () {
-            // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
-            Swal.fire({
-                text: "Are you sure you want to delete selected locations?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, delete!",
-                cancelButtonText: "No, cancel",
-                customClass: {
-                    confirmButton: "btn fw-bold btn-danger",
-                    cancelButton: "btn fw-bold btn-active-light-primary"
+            $('#categoryFilter').select2().on('select2:select', function (e) {
+                @this.set('categotryFilterId', $('#categoryFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('categotryFilterId','all');
+            });;
+
+            // cb(start, end);
+            var start = moment().subtract(1, "M");
+            var end = moment();
+
+            function cb(start, end) {
+                $("#kt_daterangepicker_4").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
+                let startDate=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                let endDate=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                @this.set('filterDate', [startDate,endDate]);
+            }
+
+            $("#kt_daterangepicker_4").daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                "Today": [moment(), moment()],
+                "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
+                "Last 7 Days": [moment().subtract(6, "days"), moment()],
+                "Last 30 Days": [moment().subtract(29, "days"), moment()],
+                "This Month": [moment().startOf("month"), moment().endOf("month")],
+                "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
                 }
-            }).then(function (result) {
-                if (result.value) {
-                            let url;
-                            if (result.value) {
-                                url = `/sell/deletee/selected?restore=true`;
-                            }else if (result.dismiss === 'cancel') {
-                                url = `/sell/deletee/selected?restore=false`;
-                            } else{
-                                url = `/sell/deletee/selected?restore=true`;
-                            }
-                            let data=[];
-                            checkboxes.forEach(c => {
-                                if (c.checked) {
-                                    data = [...data,c.value];
-                                }
-                            });
-                            $.ajax({
-                                url,
-                                type: 'DELETE',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                data: {
-                                data,
-                                },
-                                success: function(s) {
-                                    $('.checkForDelete').prop('checked',false);
-                                    @this.set('statusFilter', $('#statusFilter').select2("val"));
-                                    Swal.fire({
-                                        text: "You have deleted selected sale vouchers!.",
-                                        icon: "success",
-                                        buttonsStyling: false,
-                                        confirmButtonText: "Ok, got it!",
-                                        customClass: {
-                                            confirmButton: "btn fw-bold btn-primary",
-                                        }
-                                    }).then(function () {
-                                        //sth
-                                        success(s.success);
-                                        toggleToolbars(table);
-
-                                    });
-
-                                }
-                            })
-                            const headerCheckbox = table.querySelectorAll('[type="checkbox"]')[0];
-                            headerCheckbox.checked = false;
-
-                } else if (result.dismiss === 'cancel') {
-                    Swal.fire({
-                        text: "Selected locations was not deleted.",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok, got it!",
-                        customClass: {
-                            confirmButton: "btn fw-bold btn-primary",
-                        }
-                    });
-                }
-            });
+            }, cb);
         });
-    }
-    const toggleToolbars = (table) => {
-            // Define variables
-            const toolbarBase = document.querySelector('[data-kt-saleItem-table-toolbar="base"]');
-            const toolbarSelected = document.querySelector('[data-kt-saleItem-table-toolbar="selected"]');
-            const selectedCount = document.querySelector('[data-kt-saleItem-table-select="selected_count"]');
-
-            // Select refreshed checkbox DOM elements
-            const allCheckboxes = table.querySelectorAll('tbody [type="checkbox"]');
-
-            // Detect checkboxes state & count
-            let checkedState = false;
-            let count = 0;
-
-            // Count checked boxes
-            allCheckboxes.forEach(c => {
-            if (c.checked) {
-                checkedState = true;
-                count++;
-            }
-            });
-
-            // Toggle toolbars
-            if (checkedState) {
-            selectedCount.innerHTML = count;
-            toolbarBase.classList.add('d-none');
-            toolbarSelected.classList.remove('d-none');
-            } else {
-            toolbarBase.classList.remove('d-none');
-            toolbarSelected.classList.add('d-none');
-            }
-            }
     </script>
 </div>

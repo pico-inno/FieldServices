@@ -96,13 +96,13 @@
 @push('scripts')
     <!--begin::Javascript-->
     <script>var hostUrl = "assets/";</script>
-    <script src="assets/plugins/custom/tinymce/tinymce.bundle.js"></script>
+    <script src="{{asset('assets/plugins/custom/tinymce/tinymce.bundle.js')}}"></script>
 
 
     <!--begin::Custom Javascript(used for this page only)-->
-    <script src="assets/js/custom/apps/user-management/users/list/table.js"></script>
-    <script src="assets/js/custom/apps/user-management/users/list/export-users.js"></script>
-    <script src="assets/js/custom/apps/user-management/users/list/add.js"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/table.js')}}"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/export-users.js')}}"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/add.js')}}"></script>
     <!--end::Custom Javascript-->
 
 

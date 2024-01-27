@@ -629,10 +629,10 @@
     </script>
 
     <!--begin::Custom Javascript(used for this page only)-->
-    <script src="assets/js/custom/apps/user-management/users/list/table.js"></script>
-    <script src="assets/js/custom/apps/user-management/users/list/export-users.js"></script>
-    <script src="assets/js/custom/apps/user-management/users/list/add.js"></script>
-    <script src="assets/plugins/global/plugins.bundle.js"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/table.js')}}"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/export-users.js')}}"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/add.js')}}"></script>
+    <script src="{{asset('assets/plugins/global/plugins.bundle.js')}}"></script>
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
 

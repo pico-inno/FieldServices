@@ -265,6 +265,6 @@
 @endsection
 
 @push('scripts')
-   <script src="assets/plugins/custom/formrepeater/formrepeater.bundle.js"></script>
-   <script src="assets/js/custom/apps/ecommerce/catalog/save-category.js"></script>
+   <script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
+   <script src="{{asset('assets/js/custom/apps/ecommerce/catalog/save-category.js')}}"></script>
 @endpush

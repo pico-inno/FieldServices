@@ -146,6 +146,6 @@
     <!--end::Content-->
 @endsection
 @push('scripts')
-    <script src="assets/js/custom/apps/user-management/roles/list/add.js"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/roles/list/add.js')}}"></script>
 
 @endpush
