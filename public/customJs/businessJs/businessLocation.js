@@ -30,7 +30,7 @@ var KTlocationsList = function () {
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'location/data',
+                url: '/location/data',
             },
 
             columns: [
