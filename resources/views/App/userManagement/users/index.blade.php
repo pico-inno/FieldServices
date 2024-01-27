@@ -370,10 +370,10 @@
     <script>var hostUrl = "assets/";</script>
 
     <!--begin::Custom Javascript(used for this page only)-->
-    <script src="assets/js/custom/apps/user-management/users/list/table.js"></script>
-    <script src="assets/js/custom/apps/user-management/users/list/export-users.js"></script>
-    <script src="assets/js/custom/apps/user-management/users/list/add.js"></script>
-    <script src="customJs/toaster.js"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/table.js')}}"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/export-users.js')}}"></script>
+    <script src="{{asset('assets/js/custom/apps/user-management/users/list/add.js')}}"></script>
+    <script src="{{asset('customJs/toaster.js')}}"></script>
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
 

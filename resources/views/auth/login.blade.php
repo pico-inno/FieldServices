@@ -185,7 +185,7 @@
 <!--end::Main-->
 <!--begin::Javascript-->
 <!--begin::Custom Javascript(used for this page only)-->
-<script src="assets/js/custom/authentication/sign-in/general.js"></script>
+<script src="{{asset('assets/js/custom/authentication/sign-in/general.js')}}"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
         function onSubmit(token) {
