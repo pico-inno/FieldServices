@@ -419,7 +419,7 @@ class saleController extends Controller
         } elseif ($request->type == 'campaign') {
             $request['channel_type'] = 'campaign';
             $request['channel_id'] = $request->channel_id;
-            $sold_at = $request['sold_at'] ?? now();
+            $sold_at = now();
             $request['sold_at'] = $sold_at;
         }
         DB::beginTransaction();

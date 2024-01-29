@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\LogController;
-use App\Http\Controllers\userManagement\users\ImportUserController;
-use App\Models\ActivityLog;
+use Livewire\Livewire;
 use App\Models\sale\sales;
+use App\Models\ActivityLog;
 use App\Models\Manufacturer;
-
 use Illuminate\Http\Request;
+
+use App\Models\openingStocks;
 use App\Models\Product\UOMSet;
 use App\Services\mailServices;
 use App\Models\Contact\Contact;
@@ -15,6 +15,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\sale\sale_details;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
+use App\Models\openingStockDetails;
 use App\Models\purchases\purchases;
 use Illuminate\Support\Facades\App;
 use Nwidart\Modules\Facades\Module;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\openingStocks\Import;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\SMSController;
 use App\Services\Report\reportServices;
 use App\Http\Controllers\mailController;
@@ -35,17 +37,18 @@ use App\Models\purchases\purchase_details;
 use App\Http\Controllers\expenseController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\POS\POSController;
-use App\Http\Controllers\printerController;
-use App\Http\Controllers\currencyController;
 
 // use App\Http\Controllers\ContactController\CustomerGroupController;
 // use App\Http\Controllers\ContactController\ImportContactsController;
+use App\Http\Controllers\printerController;
+use App\Http\Controllers\currencyController;
 use App\Http\Controllers\languageController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\sell\saleController;
-use App\Services\packaging\packagingServices;
 
 //use App\Http\Controllers\Stock\StockTransferController;
+use App\Http\Controllers\sell\saleController;
+use App\Livewire\FieldService\AttendanceList;
+use App\Services\packaging\packagingServices;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\restaurantController;
 use App\Http\Middleware\permissions\role\view;
@@ -54,19 +57,21 @@ use App\Http\Controllers\exchangeRateController;
 use App\Http\Controllers\openingStockController;
 use App\Http\Controllers\orderDisplayController;
 use App\Http\Controllers\Product\UnitController;
+
+// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\stockHistoryController;
 use App\Http\Controllers\configurationController;
 use App\Http\Controllers\expenseReportController;
-
-// use App\Http\Controllers\Product\PriceGroupController;
 use App\Http\Controllers\export\ExportController;
 use App\Http\Controllers\module\moduleController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Stock\StockInController;
+use App\Livewire\Fieldservice\OverAllReportTable;
 use App\Http\Controllers\settings\FloorController;
 use App\Http\Controllers\Stock\StockOutController;
 use App\Http\Controllers\deliveryChannelController;
+use App\Http\Controllers\LocationProductController;
 use App\Http\Controllers\paymentAccountsController;
 use App\Http\Controllers\posRegistrationController;
 use App\Http\Controllers\Product\GenericController;
@@ -89,6 +94,7 @@ use App\Http\Controllers\Service\ServiceSalesController;
 use App\Http\Controllers\Contact\CustomerGroupController;
 use App\Http\Controllers\hospitalFolioInvoicesController;
 use App\Http\Controllers\hospitalRegistrationsController;
+use App\Http\Controllers\import\locationImportController;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Http\Controllers\Product\ImportProductController;
 use App\Http\Controllers\Stock\StockAdjustmentController;
@@ -97,14 +103,11 @@ use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
-use App\Http\Controllers\import\locationImportController;
-use App\Http\Controllers\LocationProductController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
+use App\Http\Controllers\userManagement\users\ImportUserController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
-use App\Models\openingStockDetails;
-use App\Models\openingStocks;
 
 // use App\Models\Manufacturer;
 
@@ -146,6 +149,13 @@ Route::get('/migration/form', [configurationController::class, 'migrationForm'])
 Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('envConfigure.dataSeed');
 
 
+// Livewire::setScriptRoute(function($handle) {
+//     return Route::get('/lmapnext/livewire/livewire.js', $handle);
+// });
+
+// Livewire::setUpdateRoute(function($handle) {
+//     return Route::get('/lmapnext/livewire/update', $handle);
+// });
 
 
 //============================ Being: User Management ==========================================
