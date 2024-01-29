@@ -1,4 +1,3 @@
-
 <div class="">
     <style>
         .pagination {
@@ -11,7 +10,11 @@
             }
         }
     </style>
-    <div class="accordion-collapse collapse show" id="kt_accordion_1_body_2" aria-labelledby="kt_accordion_1_header_2"
+    <div class="">
+        
+        {{-- <input wire:model.live.debounce.50ms="search"  type="text"> --}}
+    </div>
+    {{-- <div class="accordion-collapse collapse show" id="kt_accordion_1_body_2" aria-labelledby="kt_accordion_1_header_2"
         data-bs-parent="#kt_accordion_1" wire:ignore>
         <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5">
             <div class="card">
@@ -22,72 +25,26 @@
                 </div>
                 <div class="card-body p-5 p-sm-7">
                     <div class="row mb-5 flex-wrap">
-
-                            <div class="row">
-                                <div class="col-12 col-md-4 col-lg-3 mb-5">
-                                    <label class="form-label  fs-6 fw-semibold">date:</label>
-                                    <input class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
-                                        data-kt-table-filter="dateRange" id="kt_daterangepicker_4" data-dropdown-parent="#filter" />
-                                </div>
-
-                                @if ($deraultCampaignId ==null)
-                                <div class="col-12 col-md-4 col-lg-3 mb-5">
-                                    <label class="form-label  fs-6 fw-semibold">
-                                        Filter By Campaign:</label>
-                                    <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
-                                        data-placeholder="Select option" id="campaignfilter" data-kt-select2="true" data-kt-table-filter="outlet">
-                                        <option value="all">All</option>
-                                        @foreach ($campaigns as $campaign)
-                                        <option value="{{$campaign['id']}}">{{ $campaign['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                 @endif
-                            </div>
-
                         <div class="row">
-
-                            @if ($deraultCampaignId ==null)
+                            <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                <label class="form-label  fs-6 fw-semibold">Filter By Date:</label>
+                                <input class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
+                                    data-kt-table-filter="dateRange" id="attendanceDatePicker" data-dropdown-parent="#filter" />
+                            </div>
+                            @if($campaign_id===null)
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
                                 <label class="form-label  fs-6 fw-semibold">
-                                    <i class="fa-solid fa-circle fs-9 text-primary me-1"></i>
-                                    Filter By Outlet:</label>
-                                <select class="form-select form-select-sm fw-bold locationFilter" data-allow-clear="true"
-                                    data-placeholder="Select option" id="outletfilter" data-kt-select2="true" data-kt-table-filter="outlet">
+                                    Filter By Campaign:</label>
+                                <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
+                                    data-placeholder="Select option" id="campaignfilter" data-kt-select2="true" data-kt-table-filter="outlet">
                                     <option value="all">All</option>
-                                    @foreach ($locations as $l)
-                                    <option value="{{$l->id}}">{{ businessLocationName($l) }}</option>
+                                    @foreach ($campaigns as $campaign)
+                                    <option value="{{$campaign['id']}}">{{ $campaign['name'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             @endif
-                            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                                <label class="form-label  fs-6 fw-semibold">
-                                    <i class="fa-solid fa-circle fs-9 text-success me-1"></i>
-                                    Filter By PG:</label>
-                                <select class="form-select form-select-sm fw-bold pgFilter" data-allow-clear="true" data-placeholder="Select option"
-                                    id="pgFilter" data-kt-select2="true" data-kt-table-filter="employee">
-                                    <option value="all">All</option>
-                                    @foreach ($employee as $e)
-                                    <option value="{{ $e->id }}">{{ $e->personal_info->first_name }}{{ $e->personal_info->last_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                                <label class="form-label  fs-6 fw-semibold">
-                                    {{-- <i class="fa-solid fa-circle fs-9 text-success me-1"></i> --}}
-                                    Category:</label>
-                                <select class="form-select form-select-sm fw-bold categoryFilter" data-allow-clear="true"
-                                    data-placeholder="Select option" id="categoryFilter" data-kt-select2="true" data-kt-table-filter="category">
-                                    <option value="all">All</option>
-                                    @foreach ($categories as $c)
-                                    <option value="{{ $c->id }}">{{ $c->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
-                        <!--end::Input group-->
                     </div>
                 </div>
             </div>
@@ -153,11 +110,13 @@
                             </span>
                             <!--end::Svg Icon-->Filter
                         </button>
-                        <button type="button" class="btn btn-sm btn-light-success me-3 collapsed" type="button" wire:click="export">
+                        <button type="button" class="btn btn-sm btn-light-success me-3 collapsed" type="button"
+                            wire:click="export">
                             <i class="fa-solid fa-upload"></i>
                             Export With Filter
                         </button>
-                        <button type="button" class="btn btn-sm btn-light-dark me-3 collapsed" type="button" wire:click="export(false)">
+                        <button type="button" class="btn btn-sm btn-light-dark me-3 collapsed" type="button"
+                            wire:click="export(false)">
                             <i class="fa-solid fa-upload"></i>
                             Export All
                         </button>
@@ -179,56 +138,50 @@
         </div>
         <div class="card-body pt-0 saleTableCard table-responsive position-relative" id="">
 
-            @if($dataLoading)
-                <div class="position-absolute w-fit  top-10 bg-white p-3 rounded-1 border border-1 border-gray-500 " wire:loading
-                        wire:target style="top: 40px;left:50%;">
-                        <h2 class="text-primary">Loading....</h2>
-                    </div>
-            @endif
+            <div class="position-absolute w-fit  top-10 bg-white p-3 rounded-1 border border-1 border-gray-500 "
+                wire:loading style="top: 40px;left:50%;z-index:9999;">
+                <h2 class="text-primary">Loading....</h2>
+            </div>
 
             <div class="table-responsive">
                 <table class="table align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table"
                     data-sticky-header="true">
                     <thead>
                         <tr class="text-end text-gray-600 fw-bold fs-7 text-uppercase gs-0">
-                            <th class="min-w-100px cursor-pointer text-start cursor-pointer" wire:click="sortBy('products.name')">
-                                Product Name
-                                <x-datatable.sort-icon field="products.name" :sortField="$sortField" :sortAsc="$sortAsc" />
+                            <th class="text-start pe-3 min-w-100px cursor-pointer">Product Name
                             </th>
-                            <th class="text-start pe-3 min-w-100px">Quantity</th>
-                            <th class="text-start pe-3 min-w-100px">UOM</th>
-                            <th class="text-start pe-3 min-w-100px">package Qty </th>
-                            <th class="text-start pe-3 min-w-100px">Pkg</th>
-                            <th class="min-w-100px cursor-pointer text-start cursor-pointer" wire:click="sortBy('categories.name')">
-                                <div class="">
-                                    <span>Category</span>
-                                    <x-datatable.sort-icon field="categories.name" :sortField="$sortField" :sortAsc="$sortAsc" />
-                                </div>
+                            <th class="text-start pe-3 min-w-100px">Category Name
                             </th>
-                            <th class="text-start pe-3 min-w-150px">Outlet</th>
-                            <th class="text-start pe-3 min-w-150px">PG</th>
-                            <th class="text-start pe-3 min-w-150px">Campaign</th>
-                            <th class="text-start pe-3 min-w-100px cursor-pointer" wire:click="sortBy('sales.created_at')"> Date <x-datatable.sort-icon field="sales.created_at" :sortField="$sortField" :sortAsc="$sortAsc" /></th>
+                            <th class="text-end pe-3 min-w-100px">Total Qty</th>
+                            <th class="text-end pe-3 min-w-100px ">Total Price</th>
                         </tr>
                         <!--end::Table row-->
                     </thead>
                     <!--end::Table head-->
                     <!--begin::Table body-->
                     <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
-
-                        @foreach ($datas as $data)
-                        <tr class="">
-                            <td class="text-start">{{$data['name']}}</td>
-                            <td>{{$data['quantity']}}</td>
-                            <td>{{$data['uom']}}</td>
-                            <td>{{$data['pkgQty']}}</td>
-                            <td>{{$data['pkg']}}</td>
-                            <td class="text-start">{{$data['category_name']}}</td>
-                            <td>{{$data['outlet']}}</td>
-                            <td>{{$data['pg_fs']}}{{$data['pg_ls']}}</td>
-                            <td>{{$data['campaignName']}}</td>
-                            <td>{{fdate($data['created_at'])}}</td
+                        @if(count($datas)===0)
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                There Is No Data To Show
+                            </td>
                         </tr>
+                        @endif
+                        @foreach ($datas as $data)
+                            <tr class="">
+                                <th>
+                                    {{$data['name']}}
+                                </th>
+                                <th>
+                                    {{$data['category_name']}}
+                                </th>
+                                <th class="text-end">
+                                    {{formatNumberv2($data['totalQty'])}} {{$data['uom']}}
+                                </th>
+                                <th class="text-end">
+                                    {{formatNumberv2($data['totalPrice'])}} {{$currency['symbol'] ?? ''}}
+                                </th>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -251,46 +204,42 @@
         </div>
     </div>
     <script >
-
         $(document).ready(function() {
             // handleDeleteRows();
-            // window.addEventListener('contentChanged', event => {
-                $('#outletfilter').select2().on('select2:select', function (e) {
-                    @this.set('businesslocationFilterId', $('#outletfilter').select2("val"));
-                }).on('select2:unselect', function (e) {
-                    @this.set('businesslocationFilterId', 'all');
-                });
-                $('#pgFilter').select2().on('select2:select', function (e) {
-                    @this.set('pgFilterId', $('#pgFilter').select2("val"));
-                }).on('select2:unselect', function (e) {
-                    @this.set('pgFilterId', 'all');
-                });
-
-                $('#categoryFilter').select2().on('select2:select', function (e) {
-                    @this.set('categotryFilterIdOA', $('#categoryFilter').select2("val"));
-                }).on('select2:unselect', function (e) {
-                    @this.set('categotryFilterIdOA','all');
-                });
-                $('#campaignfilter').select2().on('select2:select', function (e) {
-                    @this.set('campaignFilterId', $('#campaignfilter').select2("val"));
-                }).on('select2:unselect', function (e) {
-                    @this.set('campaignFilterId','all');
-                });
+            // $('#outletfilter').select2().on('select2:select', function (e) {
+            //     @this.set('businesslocationFilterId', $('#outletfilter').select2("val"));
+            // }).on('select2:unselect', function (e) {
+            //     @this.set('businesslocationFilterId', 'all');
+            // });
+            // $('#pgFilter').select2().on('select2:select', function (e) {
+            //     @this.set('pgFilterId', $('#pgFilter').select2("val"));
+            // }).on('select2:unselect', function (e) {
+            //     @this.set('pgFilterId', 'all');
             // });
 
+            // $('#categoryFilter').select2().on('select2:select', function (e) {
+            //     @this.set('categotryFilterId', $('#categoryFilter').select2("val"));
+            // }).on('select2:unselect', function (e) {
+            //     @this.set('categotryFilterId','all');
+            // });
+            // $('#campaignfilter').select2().on('select2:select', function (e) {
+            //     @this.set('campaignFilterId', $('#campaignfilter').select2("val"));
+            // }).on('select2:unselect', function (e) {
+            //     @this.set('campaignFilterId','all');
+            // });
 
             // cb(start, end);
             var start = moment().subtract(1, "M");
             var end = moment();
 
             function cb(start, end) {
-                $("#kt_daterangepicker_4").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
-                let startDate=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
-                let endDate=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
-                @this.set('filterDate', [startDate,endDate]);
+                $("#attendanceDatePicker").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
+                let startDate=$('#attendanceDatePicker').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                let endDate=$('#attendanceDatePicker').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                @this.set('productFilterData', [startDate,endDate]);
             }
 
-            $("#kt_daterangepicker_4").daterangepicker({
+            $("#attendanceDatePicker").daterangepicker({
                 startDate: start,
                 endDate: end,
                 ranges: {
@@ -303,5 +252,5 @@
                 }
             }, cb);
         });
-    </script>
+    </script> --}}
 </div>

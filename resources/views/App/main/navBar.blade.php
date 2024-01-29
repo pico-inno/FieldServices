@@ -2276,6 +2276,14 @@
                                                             <span class="menu-title">Campaign Report</span>
                                                         </a>
                                                     </div>
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('campaign_item_report_active')" href="{{route('campaign.item.report')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-chart-area fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Campaign Item Report</span>
+                                                        </a>
+                                                    </div>
                                                 @endif
 
                                                     <div class="menu-item  ">
