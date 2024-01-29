@@ -305,6 +305,8 @@ Route::controller(ReportController::class)->group(function () {
         //Being: Expire Alert
         Route::get('/alert-expire', 'expireAlert')->name('report.stockAlert.expire');
         Route::post('/alert-expire/filter-list', 'expireAlertFilter');
+        Route::post('/alert-expire/remove', 'removeExpireItem')
+            ->name('alert.expire.remove');
         //End: Expire Alert
 
 

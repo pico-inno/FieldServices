@@ -3,15 +3,21 @@
 namespace App\Http\Controllers\Report;
 
 use App\Helpers\UomHelper;
+use App\Models\lotSerialDetails;
 use App\Models\sale\sales;
 use App\Models\BusinessUser;
 use App\Models\Product\Unit;
+use App\Models\stock_history;
+use App\Repositories\Stock\StockAdjustmentRepository;
+use App\Services\Stock\StockAdjustmentServices;
+use Faker\Core\Number;
 use Illuminate\Http\Request;
 use App\Models\Product\Brand;
 use App\Models\Stock\Stockout;
 use App\Models\Contact\Contact;
 use App\Models\Product\Product;
 use App\Models\Product\Category;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\purchases\purchases;
@@ -20,6 +26,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Stock\StockAdjustment;
 use App\Services\Report\reportServices;
 use Modules\StockInOut\Entities\Stockin;
+use mysql_xdevapi\Exception;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 
@@ -575,7 +582,8 @@ class ReportController extends Controller
         }
 
 
-        $query = CurrentStockBalance::with(['uom', 'location:id,name']);
+        $query = CurrentStockBalance::with(['uom', 'location:id,name'])->whereNotNull('expired_date')
+            ->where('current_quantity', '>', 0);
 
         if ($dateInterval) {
             $query->where('expired_date', '<=', $dateInterval);
@@ -621,24 +629,24 @@ class ReportController extends Controller
 
         $finalProduct = $finalProductQuery->get()->toArray();
 
-        $mergedStocks = [];
-        foreach ($currentStocks as $currentStock) {
-            $productId = $currentStock['product_id'];
-            $variationId = $currentStock['variation_id'];
-            $locationId = $currentStock['location']['id'];
-
-            $key = $productId . '_' . $variationId . '_' . $locationId;
-
-            if (!isset($mergedStocks[$key])) {
-                $mergedStocks[$key] = $currentStock;
-            } else {
-                $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
-                $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
-            }
-        }
+//        $mergedStocks = [];
+//        foreach ($currentStocks as $currentStock) {
+//            $productId = $currentStock['product_id'];
+//            $variationId = $currentStock['variation_id'];
+//            $locationId = $currentStock['location']['id'];
+//
+//            $key = $productId . '_' . $variationId . '_' . $locationId;
+//
+//            if (!isset($mergedStocks[$key])) {
+//                $mergedStocks[$key] = $currentStock;
+//            } else {
+//                $mergedStocks[$key]['ref_uom_quantity'] += $currentStock['ref_uom_quantity'];
+//                $mergedStocks[$key]['current_quantity'] += $currentStock['current_quantity'];
+//            }
+//        }
 
         $result = [];
-        foreach ($mergedStocks as $currentStock) {
+        foreach ($currentStocks as $currentStock) {
             foreach ($finalProduct as $product) {
                 if ($product['id'] == $currentStock['product_id']) {
                     $variations = $product['product_variations'];
@@ -647,6 +655,7 @@ class ReportController extends Controller
                         if ($variation['id'] == $currentStock['variation_id']) {
                             $variationProduct = [
                                 'id' => $product['id'],
+                                'csb_id' => $currentStock['id'],
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
                                 'product_type' => $product['product_type'],
@@ -659,7 +668,7 @@ class ReportController extends Controller
                                 'ref_uom_name' => $currentStock['uom']['name'],
                                 'ref_uom_short_name' => $currentStock['uom']['short_name'],
                                 'purchase_qty' => $currentStock['ref_uom_quantity'],
-                                'current_qty' => $currentStock['current_quantity'],
+                                'current_qty' => number_format($currentStock['current_quantity'], 2,'.',''),
                                 'expired_date' => $currentStock['expired_date'],
                             ];
                             $result[] = $variationProduct;
@@ -670,6 +679,100 @@ class ReportController extends Controller
         }
 
         return response()->json($result, 200);
+    }
+
+    function removeExpireItem(Request $request, StockAdjustmentRepository $stockAdjustmentRepository)
+    {
+        try {
+            DB::beginTransaction();
+            $currentStockBalances = CurrentStockBalance::whereIn('id', $request->ids)
+                ->get();
+
+            $currentLocation = null;
+            $createdStockAdjustmentId = null;
+
+            foreach($currentStockBalances as $balance){
+
+                $location = $balance['business_location_id'];
+                $toRemoveQty = $balance['current_quantity'];
+                $subtotal = $balance['ref_uom_price'] * $toRemoveQty;
+
+                // Check if the location has changed
+                if ($location != $currentLocation) {
+                    $preparedAdjustmentData = [
+                        'business_location' => $location,
+                        'adjustment_voucher_no' => stockAdjustmentVoucherNo(),
+                        'condition' => 'expire',
+                        'status' => 'completed',
+                        'increase_subtotal' => 0,
+                        'decrease_subtotal' => $subtotal,
+                        'adjustmented_at' => now(),
+                        'created_at' => now(),
+                        'created_by' =>  Auth::id(),
+                    ];
+
+                    $createdStockAdjustment = $stockAdjustmentRepository->create($preparedAdjustmentData);
+                    $createdStockAdjustmentId = $createdStockAdjustment->id;
+                    $currentLocation = $location;
+                }else{
+                    $stockAdjustmentRepository->query()->where('id',$createdStockAdjustmentId)
+                        ->increment('decrease_subtotal', $subtotal);
+                }
+
+                $preparedAdjustmentDetailData = [
+                    'product_id' => $balance['product_id'],
+                    'variation_id' => $balance['variation_id'],
+                    'uom_id' => $balance['ref_uom_id'],
+                    'adjustment_id' => $createdStockAdjustmentId,
+                    'adjustment_type' => 'decrease',
+                    'uom_price' => $balance['ref_uom_price'],
+                    'subtotal' => $subtotal,
+                    'balance_quantity' => $toRemoveQty,
+                    'gnd_quantity' => 0,
+                    'adj_quantity' => $toRemoveQty,
+                    'created_at' => now(),
+                    'created_by' =>  Auth::id(),
+                ];
+
+                $createdStockAdjustmentDetail = $stockAdjustmentRepository->createDetail($preparedAdjustmentDetailData);
+
+                stock_history::create([
+                    'business_location_id' => $location,
+                    'product_id' => $balance['product_id'],
+                    'variation_id' => $balance['variation_id'],
+                    'lot_serial_numbers' => $balance['lot_serial_no'],
+                    'expired_date' => $balance['expired_date'],
+                    'transaction_type' => 'adjustment',
+                    'transaction_details_id' => $createdStockAdjustmentDetail->id,
+                    'increase_qty' => 0,
+                    'decrease_qty' => $toRemoveQty,
+                    'ref_uom_id' => $balance['ref_uom_id'],
+                    'balance_quantity' => 0,
+                    'created_at' => now(),
+                ]);
+
+                lotSerialDetails::create([
+                    'transaction_type' => 'adjustment',
+                    'transaction_detail_id' => $createdStockAdjustmentDetail->id,
+                    'current_stock_balance_id' => $balance['id'],
+                    'lot_serial_numbers' => $balance['lot_serial_no'],
+                    'expired_date' => $balance['expired_date'],
+                    'uom_id' => $balance['ref_uom_id'],
+                    'uom_quantity' => $toRemoveQty,
+                    'ref_uom_quantity' => $toRemoveQty,
+                ]);
+
+
+                CurrentStockBalance::where('id', $balance['id'])
+                    ->update(['current_quantity' => 0]);
+            }
+            DB::commit();
+            return response()->json(['message' => 'success'], 200);
+        }catch(Exception $exception){
+            DB::rollBack();
+            return response()->json(['message' => 'error', 'data' => $exception], 200);
+        }
+
     }
     //End: Expire ALert
 

@@ -7,7 +7,7 @@
 
 
 @section('styles')
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css"/>
     <style>
         .billDiv tr td{
             padding: 8px 0 !important;
@@ -48,9 +48,9 @@
                                 <div class="row mb-5 flex-wrap">
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">{{__('common.business_locations')}}</label>
+                                        <label class="form-label fs-6 fw-semibold" for="locationFilter">{{__('common.business_locations')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_locations" data-kt-select2="true"
-                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
+                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true" id="locationFilter">
                                             <option></option>
                                             @if(count($locations) > 0)
                                                 <option selected value="0">All Locations</option>
@@ -65,9 +65,9 @@
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">{{__('product/product.product')}}</label>
+                                        <label class="form-label fs-6 fw-semibold" for="productFilter">{{__('product/product.product')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_product" data-kt-select2="true"
-                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="false">
+                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="false" id="productFilter">
                                             <option></option>
                                             @if(count($products) > 0)
                                                 <option selected value="0">All Products</option>
@@ -82,9 +82,9 @@
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">{{__('product/product.category')}}</label>
+                                        <label class="form-label fs-6 fw-semibold" for="categoryFilter">{{__('product/product.category')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_category" data-kt-select2="true"
-                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
+                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true" id="categoryFilter">
                                             <option></option>
                                             @if(count($categories) > 0)
                                                 <option selected value="0">All Categories</option>
@@ -99,9 +99,9 @@
                                     <!--end::Input group-->
                                     <!--begin::Input group-->
                                     <div class="mb-5 col-6 col-md-3">
-                                        <label class="form-label fs-6 fw-semibold">{{__('product/product.brand')}}</label>
+                                        <label class="form-label fs-6 fw-semibold" for="brandFilter">{{__('product/product.brand')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_brand" data-kt-select2="true"
-                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
+                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true" id="brandFilter">
                                             <option></option>
                                             @if(count($brands) > 0)
                                                 <option selected value="0">All Brands</option>
@@ -115,9 +115,9 @@
                                     </div>
                                     <!--end::Input group-->
                                     <div class="mb-10 col-4 col-sm12 col-md-3 ">
-                                        <label class="form-label fs-6 fw-semibold">{{__('report.view_stocks')}}</label>
+                                        <label class="form-label fs-6 fw-semibold" for="expireRangeFilter">{{__('report.view_stocks')}}</label>
                                         <select class="form-select form-select-sm  fw-bold filter_expire_range" data-kt-select2="true"
-                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
+                                                data-placeholder="Select option" data-allow-clear="true" data-hide-search="true" id="expireRangeFilter">
                                             <option></option>
                                             <option value="0" selected>All</option>
                                             <option value="expired">Expired</option>
@@ -158,9 +158,10 @@
                             </svg>
                         </span>
                             <!--end::Svg Icon-->
+                            <label for="search_input"></label>
                             <input type="text" data-kt-customer-table-filter="search"
-                                   class="form-control form-control-solid w-250px ps-15"
-                                   placeholder="{{__('report.search')}}" id="search_input"/>
+                                                                     class="form-control form-control-solid w-250px ps-15"
+                                                                     placeholder="{{__('report.search')}}" id="search_input"/>
                         </div>
                         <!--end::Search-->
                     </div>
@@ -168,7 +169,7 @@
                     <!--begin::Card toolbar-->
                     <div class="card-toolbar">
                         <!--begin::Toolbar-->
-                        <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                        <div class="d-flex justify-content-end " data-kt-customer-table-toolbar="base">
                             <button type="button" class="btn btn-sm btn-light-primary me-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kt_accordion_1_body_2" aria-expanded="false" aria-controls="kt_accordion_1_body_2">
                                 <!--begin::Svg Icon | path: icons/duotune/general/gen031.svg-->
                                 <span class="svg-icon svg-icon-2">
@@ -201,6 +202,13 @@
 
                         </div>
                         <!--end::Toolbar-->
+                        <!--begin::Group actions-->
+                        <div class="d-flex justify-content-end align-items-center d-none" data-kt-purchase-table-toolbar="selected">
+                            <div class="fw-bold me-5">
+                                <span class="me-2" data-kt-purchase-table-select="selected_count"></span>Selected</div>
+                            <button type="button" class="btn btn-danger" data-kt-purchase-table-select="delete_selected">Delete Selected</button>
+                        </div>
+                        <!--end::Group actions-->
                     </div>
                     <!--end::Card toolbar-->
                 </div>
@@ -220,11 +228,16 @@
                             <thead>
                             <!--begin::Table row-->
                             <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                                <th class="w-10px pe-2">
+                                    <div class="form-check form-check-sm form-check-custom me-3">
+                                        <label for="select-all-checkbox"></label><input class="form-check-input" data-checked="selectAll" type="checkbox" data-kt-check="true" value="" id="select-all-checkbox">
+                                    </div>
+                                </th>
                                 <th class="min-w-100px">{{__('report.product')}}</th>
                                 <th class="min-w-100px">{{__('report.sku')}}</th>
                                 <th class="min-w-100px">{{__('report.business_locations')}}</th>
                                 <th class="min-w-100px">{{__('report.expire_date')}}</th>
-
+                                <th class="min-w-80px">Quantity</th>
                             </tr>
                             <!--end::Table row-->
                             </thead>
@@ -278,7 +291,7 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row mb-10">
                                     <!--begin::Label-->
-                                    <label class="fs-5 fw-semibold form-label mb-5">{{__('common.select_export_format')}}:</label>
+                                    <label class="fs-5 fw-semibold form-label mb-5" for="exportFormat">{{__('common.select_export_format')}}:</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <div id="exportOptions" style="visibility: hidden;" class="w-1px h-1px"></div>
@@ -383,7 +396,12 @@
 @endsection
 
 @push('scripts')
-    <script src="customJs/reports/stockAlert/expireAlertExport.js"></script>
-    <script src="customJs/reports/stockAlert/expireAlertFilter.js"></script>
-    <script src="customJs/toaster.js"></script>
+    <script>
+        const removeExpireItemApi = "{{ route('alert.expire.remove') }}";
+    </script>
+    <script src="{{ asset('customJs/reports/stockAlert/expireAlertExport.js') }}"></script>
+    <script src="{{ asset('customJs/reports/stockAlert/expireAlertFilter.js') }}"></script>
+    <script src="{{ asset('customJs/toaster.js') }}"></script>
+
+
 @endpush

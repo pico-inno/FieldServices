@@ -75,6 +75,7 @@
                                             <option></option>
                                             <option value="normal" @selected(old('condition') == 'normal') selected>Normal</option>
                                             <option value="abnormal" @selected(old('condition') == 'abnormal')>Abnormal</option>
+                                            <option value="expire" @selected(old('expire') == 'expire')>Expire</option>
                                         </select>
                                     </div>
                                 </div>

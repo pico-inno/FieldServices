@@ -7,7 +7,7 @@
 
 
 @section('styles')
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ assert('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css"/>
     <style>
         .billDiv tr td{
             padding: 8px 0 !important;
@@ -373,7 +373,7 @@
 @endsection
 
 @push('scripts')
-    <script src="customJs/reports/stockAlert/quantityAlertExport.js"></script>
-    <script src="customJs/reports/stockAlert/quantityAlertFilter.js"></script>
-    <script src="customJs/toaster.js"></script>
+    <script src="{{ asset('customJs/reports/stockAlert/quantityAlertExport.js') }}"></script>
+    <script src="{{ asset('customJs/reports/stockAlert/quantityAlertFilter.js') }}"></script>
+    <script src="{{ asset('customJs/toaster.js') }}"></script>
 @endpush
