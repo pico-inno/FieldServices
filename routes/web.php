@@ -133,22 +133,17 @@ Route::prefix(env('ADMIN_ROUTE_PREFIX', 'admin'))->group(function () {
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     });
 
-
-    Route::get('/create/business', [businessActivationController::class, 'activationForm'])->name('activationForm')->middleware('businessActivate');
-    Route::post('/store/business', [businessActivationController::class, 'store'])->name('businessActivation.store')->middleware('businessActivate');
-    Route::get('/install', [configurationController::class, 'envConfigure'])->name('envConfigure')->middleware('install');
-    Route::post('/intall/store', [configurationController::class, 'store'])->name('envConfigure.store')->middleware('install');
-    Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
-    Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
-    Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('envConfigure.dataSeed');
-
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
 
 
-
-
-
 });
+Route::get('/create/business', [businessActivationController::class, 'activationForm'])->name('activationForm')->middleware('businessActivate');
+Route::post('/store/business', [businessActivationController::class, 'store'])->name('businessActivation.store')->middleware('businessActivate');
+Route::get('/install', [configurationController::class, 'envConfigure'])->name('envConfigure')->middleware('install');
+Route::post('/intall/store', [configurationController::class, 'store'])->name('envConfigure.store')->middleware('install');
+Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
+Route::get('/migration/form', [configurationController::class, 'migrationForm'])->name('envConfigure.migrationForm');
+Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('envConfigure.dataSeed');
 
 
 
