@@ -7,7 +7,9 @@ use App\Models\lotSerialDetails;
 use App\Models\sale\sales;
 use App\Models\BusinessUser;
 use App\Models\Product\Unit;
+use App\Models\Stock\StockTransferDetail;
 use App\Models\stock_history;
+use App\Repositories\interfaces\LocationRepositoryInterface;
 use App\Repositories\Stock\StockAdjustmentRepository;
 use App\Services\Stock\StockAdjustmentServices;
 use Faker\Core\Number;
@@ -31,15 +33,18 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 
 use App\Models\settings\businessSettings;
-use App\Http\Controllers\sell\saleController;
-use Modules\StockInOut\Entities\StockinDetail;
-use App\Http\Controllers\Contact\CustomerController;
+
+
 
 class ReportController extends Controller
 {
-    public function __construct()
+    private $locations;
+    public function __construct(
+        LocationRepositoryInterface $locationRepository,
+    )
     {
         $this->middleware(['auth', 'isActive']);
+        $this->locations = $locationRepository;
     }
 
     //Start: Sale
@@ -524,12 +529,13 @@ class ReportController extends Controller
     public function expireAlert()
     {
 
-        $locations = businessLocation::select('id', 'name')->get();
+//        $locations = businessLocation::select('id', 'name')->get();
         $customers = Contact::where('type', 'Customer')->get();
 
         $categories = Category::select('id', 'name', 'parent_id')->get();
         $brands = Brand::select('id', 'name',)->get();
         $products = Product::select('id', 'name')->get();
+        $locations = $this->locations->getforTx();
 
         return view('App.report.stockAlert.expire', [
             'locations' => $locations,
@@ -551,6 +557,7 @@ class ReportController extends Controller
 
         $currentDate = now();
 
+        $expire_alert_day = getSettingsValue('expire_alert_day');
 
         $dateInterval = null;
         $expiredCondition = false;
@@ -575,6 +582,9 @@ class ReportController extends Controller
                 break;
             case 'expired':
                 $expiredCondition = true;
+                break;
+            case '0':
+                $dateInterval = now()->addDays($expire_alert_day)->format('Y-m-d');
                 break;
             default:
 
@@ -773,6 +783,117 @@ class ReportController extends Controller
             return response()->json(['message' => 'error', 'data' => $exception], 200);
         }
 
+    }
+
+    function transferExpireItem(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $currentStockBalances = CurrentStockBalance::whereIn('id', $request->ids)
+                ->get();
+
+            $currentLocation = null;
+            $createdTransferId = null;
+
+            foreach($currentStockBalances as $balance){
+
+                $location = $balance['business_location_id'];
+                $toRemoveQty = $balance['current_quantity'];
+
+                if ($location != $request->location){
+                    // Check if the location has changed
+                    if ($location != $currentLocation) {
+
+                        $stock_transfer = StockTransfer::create([
+                            'transfer_voucher_no' => stockTransferVoucher(),
+                            'from_location' => $location,
+                            'to_location' => $request->location,
+                            'transfered_at' => now(),
+                            'transfered_person' => Auth::id(),
+                            'status' => 'completed',
+                            'received_person' => Auth::id(),
+                            'created_at' => now(),
+                            'created_by' => Auth::id(),
+                        ]);
+
+                        $createdTransferId = $stock_transfer->id;
+                        $currentLocation = $location;
+                    }
+
+
+                    $transferDetail = StockTransferDetail::create([
+                        'transfer_id' => $createdTransferId,
+                        'product_id' => $balance['product_id'],
+                        'variation_id' => $balance['variation_id'],
+                        'uom_id' => $balance['ref_uom_id'],
+                        'quantity' => $toRemoveQty,
+                        'uom_price' => $balance['ref_uom_price'],
+                        'subtotal' => $balance['ref_uom_price'] * $toRemoveQty,
+                        'per_item_expense' => 0,
+                        'expense' => 0,
+                        'subtotal_with_expense' => 0,
+                        'per_ref_uom_price' => $balance['ref_uom_price'],
+                        'ref_uom_id' => $balance['ref_uom_id'],
+                        'currency_id' => getSettingsValue('currency_id'),
+                        'created_at' => now(),
+                        'created_by' => Auth::id(),
+                    ]);
+
+                    stock_history::create([
+                        'business_location_id' => $location,
+                        'product_id' => $balance['product_id'],
+                        'variation_id' => $balance['variation_id'],
+                        'lot_serial_numbers' => $balance['lot_serial_no'],
+                        'expired_date' => $balance['expired_date'],
+                        'transaction_type' => 'transfer',
+                        'transaction_details_id' => $transferDetail->id,
+                        'increase_qty' => 0,
+                        'decrease_qty' => $toRemoveQty,
+                        'ref_uom_id' => $balance['ref_uom_id'],
+                        'balance_quantity' => 0,
+                        'created_at' => now(),
+                    ]);
+
+                    lotSerialDetails::create([
+                        'transaction_type' => 'transfer',
+                        'transaction_detail_id' => $transferDetail->id,
+                        'current_stock_balance_id' => $balance['id'],
+                        'lot_serial_numbers' => $balance['lot_serial_no'],
+                        'expired_date' => $balance['expired_date'],
+                        'uom_id' => $balance['ref_uom_id'],
+                        'uom_quantity' => $toRemoveQty,
+                        'ref_uom_quantity' => $toRemoveQty,
+                    ]);
+
+
+                    CurrentStockBalance::create([
+                        'business_location_id' => $request->location,
+                        'product_id' => $balance['product_id'],
+                        'variation_id' => $balance['variation_id'],
+                        'transaction_type' => 'transfer',
+                        'transaction_detail_id' => $transferDetail->id,
+                        'batch_no' => $balance['batch_no'],
+                        'lot_serial_no' => $balance['lot_serial_no'],
+                        'expired_date' => $balance['expired_date'],
+                        'ref_uom_id' => $balance['ref_uom_id'],
+                        'ref_uom_quantity' => $balance['current_quantity'],
+                        'ref_uom_price' => $balance['ref_uom_price'],
+                        'current_quantity' => $balance['current_quantity'],
+                        'created_at' => now(),
+                        'lot_serial_type' => $balance['lot_serial_type'],
+                    ]);
+
+                    CurrentStockBalance::where('id', $balance['id'])
+                        ->update(['current_quantity' => 0]);
+                }
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'success'], 200);
+        }catch(Exception $exception){
+            DB::rollBack();
+            return response()->json(['message' => 'error', 'data' => $exception], 200);
+        }
     }
     //End: Expire ALert
 

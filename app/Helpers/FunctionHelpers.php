@@ -342,9 +342,10 @@ function purchaseVoucher()
     $uniqueCount = purchases::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
-function stockTransferVoucher($uniqueCount)
+function stockTransferVoucher()
 {
     $prefix = getSettingValue('stock_transfer_prefix');
+    $uniqueCount = StockTransfer::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
     return generatorHelpers::generateVoucher($prefix, $uniqueCount);
 }
 function stockAdjustmentVoucherNo()

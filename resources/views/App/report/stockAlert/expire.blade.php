@@ -55,7 +55,7 @@
                                             @if(count($locations) > 0)
                                                 <option selected value="0">All Locations</option>
                                                 @foreach($locations as $location)
-                                                    <option value="{{$location->id}}">{{$location->name}}</option>
+                                                    <option value="{{$location->id}}">{{ businessLocationName($location) }}</option>
                                                 @endforeach
                                             @else
                                                 <option selected disabled value="null">No locations</option>
@@ -119,7 +119,7 @@
                                         <select class="form-select form-select-sm  fw-bold filter_expire_range" data-kt-select2="true"
                                                 data-placeholder="Select option" data-allow-clear="true" data-hide-search="true" id="expireRangeFilter">
                                             <option></option>
-                                            <option value="0" selected>All</option>
+                                            <option value="0" selected>Default</option>
                                             <option value="expired">Expired</option>
                                             <option value="expire_week">Expiring in a week</option>
                                             <option value="expire_15_days">Expiring in 15 days</option>
@@ -128,6 +128,7 @@
                                             <option value="expire_6_months">Expiring in 6 months</option>
                                             <option value="expire_year">Expiring in a year</option>
                                         </select>
+                                        <div class="text-muted">Default (Expired and settings' expire alert day)</div>
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +207,8 @@
                         <div class="d-flex justify-content-end align-items-center d-none" data-kt-purchase-table-toolbar="selected">
                             <div class="fw-bold me-5">
                                 <span class="me-2" data-kt-purchase-table-select="selected_count"></span>Selected</div>
-                            <button type="button" class="btn btn-danger" data-kt-purchase-table-select="delete_selected">Delete Selected</button>
+                            <button type="button" class="btn btn-sm btn-warning me-3" data-kt-purchase-table-select="adjustment_selected">Adjustment Selected</button>
+                            <button type="button" class="btn btn-sm btn-primary" data-kt-purchase-table-select="transfer_selected">Transfer Selected</button>
                         </div>
                         <!--end::Group actions-->
                     </div>
@@ -385,6 +387,42 @@
                 <!--end::Modal dialog-->
             </div>
             <!--end::Modal - New Card-->
+
+            <div class="modal fade" tabindex="-1" id="locationSelect" aria-modal="true" role="dialog">
+                <div class="modal-dialog w-md-600px modal-dialog-centered" data-select2-id="select2-data-22-k17d">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Select Transfer Location</h3>
+
+                            <!--begin::Close-->
+                            <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                            </div>
+                            <!--end::Close-->
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="col-12" data-select2-id="select2-data-21-le2c">
+                                <select class="form-select form-select-sm  fw-bold to_transfer_location" data-kt-select2="true"
+                                        data-placeholder="Select option" data-allow-clear="true" data-hide-search="true">
+                                    <option></option>
+                                    @if(count($locations) > 0)
+                                        @foreach($locations as $location)
+                                            <option value="{{$location->id}}">{{ businessLocationName($location) }}</option>
+                                        @endforeach
+                                    @else
+                                        <option selected disabled value="null">No locations</option>
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="locationChanges">Transfer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!--end::Modals-->
 
 
@@ -396,12 +434,20 @@
 @endsection
 
 @push('scripts')
+
     <script>
-        const removeExpireItemApi = "{{ route('alert.expire.remove') }}";
+        let locations = @json( $locations);
     </script>
+
     <script src="{{ asset('customJs/reports/stockAlert/expireAlertExport.js') }}"></script>
     <script src="{{ asset('customJs/reports/stockAlert/expireAlertFilter.js') }}"></script>
     <script src="{{ asset('customJs/toaster.js') }}"></script>
+
+
+
+    </script>
+
+
 
 
 @endpush

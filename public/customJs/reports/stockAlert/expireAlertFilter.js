@@ -148,11 +148,11 @@
          }
      }
 
-     $('[data-kt-purchase-table-select="delete_selected"]').on('click', function () {
+     $('[data-kt-purchase-table-select="adjustment_selected"]').on('click', function () {
 
          if (filterExpire.val() != 'expired'){
              Swal.fire({
-                 text: "Unexpired items cannot be deleted from this section",
+                 text: "Unexpired items cannot be adjustment from this section",
                  icon: "error",
                  buttonsStyling: false,
                  confirmButtonText: "Ok, got it!",
@@ -174,7 +174,7 @@
          }
 
          Swal.fire({
-             text: "Do you want to remove expired items from current stock balance?",
+             text: "Do you want to remove(adjustment) expired items from current stock balance?",
              icon: "warning",
              showCancelButton: true,
              buttonsStyling: false,
@@ -187,7 +187,7 @@
          }).then(function (result) {
              if (result.value) {
                  $.ajax({
-                     url: self.removeExpireItemApi,
+                     url: '/reports/alert-expire/adjustment',
                      type: 'POST',
                      headers: {
                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -230,6 +230,78 @@
          });
 
      });
+
+
+     $('[data-kt-purchase-table-select="transfer_selected"]').on('click', function () {
+
+         if (filterExpire.val() != 'expired'){
+             Swal.fire({
+                 text: "Unexpired items cannot be transfer from this section",
+                 icon: "error",
+                 buttonsStyling: false,
+                 confirmButtonText: "Ok, got it!",
+                 customClass: {
+                     confirmButton: "btn fw-bold btn-primary",
+                 }
+             });
+             return;
+         }
+
+         var selectedIds = [];
+         $('.record-checkbox:checked').each(function () {
+             selectedIds.push($(this).val());
+         });
+
+
+         if (selectedIds.length === 0) {
+             alert('Please select records to delete.');
+             return;
+         }
+
+         $('#locationSelect').modal('show');
+
+         $('#locationChanges').on('click', function (){
+
+             let selectedLocation = $('.to_transfer_location').val();
+             if (selectedLocation == null) {
+                 alert('Please select transfer location.');
+                 return;
+             }
+
+             $.ajax({
+                 url: '/reports/alert-expire/transfer',
+                 type: 'POST',
+                 headers: {
+                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                 },
+                 data: { ids: selectedIds,     location: selectedLocation },
+                 success: function (response) {
+                     if (response.message == 'success'){
+                         console.log(response.data ,'dataaaaaaaaaa');
+
+                         Swal.fire({
+                             text: "Selected expired items was successfully transfer.",
+                             icon: "success",
+                             buttonsStyling: false,
+                             confirmButtonText: "Ok, got it!",
+                             customClass: {
+                                 confirmButton: "btn fw-bold btn-primary",
+                             }
+                         }).then(function (){
+                             document.location.reload();
+                         });
+                         updateToolbarVisibility();
+                     }
+                 },
+                 error: function (error) {
+                     console.error('Error deleting records:', error);
+                 }
+             });
+         })
+
+
+     });
+
 
 
  });
