@@ -27,6 +27,7 @@ class configurationController extends Controller
             updenvWithoutQuote($request->toArray());
             return redirect()->route('envConfigure.migrationForm');
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             return back()->with(['error'=>'Something is wrong']);
         }
     }
