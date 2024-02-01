@@ -110,6 +110,7 @@
                                             <option></option>
                                             <option value="prepared" @selected($stockAdjustment->status == 'prepared') {{ $stockAdjustment->status == 'completed' ? 'disabled' : '' }} >Prepared</option>
                                             <option value="completed" @selected($stockAdjustment->status == 'completed')>Completed</option>
+                                            <option value="expire" @selected($stockAdjustment->status == 'expire')>Expire</option>
                                         </select>
                                         <input type="hidden" value="{{$stockAdjustment->status}}" name="old_status">
                                     </div>

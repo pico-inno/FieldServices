@@ -58,6 +58,11 @@
                                     <!--begin::Billing & shipping-->
                                     <div class="d-flex flex-column flex-sm-row gap-7 gap-md-10 fw-bold">
                                         <div class="flex-root d-flex flex-column">
+                                            <span class="text-muted"> Condition </span>
+                                            <span class="fs-6">{{$stockAdjustment->condition ?? ''}}</span>
+                                        </div>
+                                        <div class="flex-root d-flex flex-column"></div>
+                                        <div class="flex-root d-flex flex-column">
                                             <span class="text-muted">{{__('adjustment.increase_subtotal')}}</span>
                                             <span class="fs-6 text-success">{{$stockAdjustment->increase_subtotal ?? ''}}</span>
                                         </div>

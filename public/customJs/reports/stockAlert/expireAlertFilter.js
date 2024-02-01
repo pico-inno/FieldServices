@@ -1,9 +1,7 @@
  $(document).ready(function () {
 
-     console.log('work');
     // $('#stock_reports_table').DataTable();
     var dataTable = $('#alert_expire_reports_table').DataTable();
-
     var saleReportsTableBody = $('#alert_expire_reports_table tbody');
     var filterCard = $('.filter-card');
      var filterLocations = filterCard.find('.filter_locations');
@@ -11,6 +9,7 @@
      var filterCategory = filterCard.find('.filter_category');
      var filterBrand = filterCard.find('.filter_brand');
     var filterExpire = filterCard.find('.filter_expire_range');
+     var selectedIds = [];
 
      $('#search_input').on('keyup', function () {
          dataTable.search(this.value).draw();
@@ -70,20 +69,17 @@
 
                         var rowData = [
 
+                            '<div class="form-check form-check-sm form-check-custom me-3">' +
+                            '<input class="form-check-input record-checkbox" type="checkbox" data-kt-check="true" value="' + item.csb_id + '">' +
+                            '</div>',
                             item.name ,
                             item.sku ?? '',
                             item.location_name ?? '-',
                             item.expired_date ?'<span class="text-dark">'+item.expired_date+'</span>' : '-',
-                            // '<span class="text-danger">' +parseFloat(item.current_qty).toFixed(2)+ (item.ref_uom_short_name ? '(' + item.ref_uom_short_name + ')' : '(' + item.ref_uom_name + ')') + '</span>',
+                            item.current_qty,
 
-
-                            // item.sale_data.supplier.company_name ?? '-',
-                            // item.category_name ?? '',
-                            // item.brand_name ?? '',
-                            // parseFloat(item.quantity).toFixed(2) + (item.uom_short_name ? ' (' + item.uom_short_name + ')' : ''),
-                            // parseFloat(item.uom_price).toFixed(2) ,
-                            // (item.uom_price * item.quantity).toFixed(2),
                         ];
+
                         dataTable.row.add(rowData).draw();
                     });
 
@@ -103,59 +99,137 @@
                 },
 
         });
-} catch (error) {
-    console.error(error);
-}
-}
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
-});
 
-  // $("#alert_expire_reports_table").DataTable({
-  //     "footerCallback": function(row, data, start, end, display) {
-  //         var api = this.api(),
-  //             data;
-  //
-  //         // Remove the formatting to get integer data for summation
-  //         var intVal = function(i) {
-  //             return typeof i === "string" ?
-  //                 i.replace(/[\$,]/g, "") * 1 :
-  //                 typeof i === "number" ?
-  //                     i : 0;
-  //         };
-  //
-  //         // Total over all pages
-  //         // total = api
-  //         //     .column( 8 )
-  //         //     .data()
-  //         //     .reduce( function (a, b) {
-  //         //         return intVal(a) + intVal(b);
-  //         //     }, 0 );
-  //
-  //         // Total over this page
-  //         pageTotal = api
-  //             .column( 8, { page: 'current'} )
-  //             .data()
-  //             .reduce( function (a, b) {
-  //                 return intVal(a) + intVal(b);
-  //             }, 0 );
-  //
-  //         // Update footer
-  //         $( api.column( 7 ).footer() ).html(
-  //             'Ks '+pageTotal
-  //         );
-  //
-  //         // qtyTotal = api
-  //         //     .column( 6, { page: 'current'} )
-  //         //     .data()
-  //         //     .reduce( function (a, b) {
-  //         //         return intVal(a) + intVal(b);
-  //         //     }, 0 );
-  //         //
-  //         //
-  //         // $( api.column( 6 ).footer() ).html(
-  //         //     qtyTotal
-  //         // );
-  //
-  //
-  //     }
-  // });
+     $('#select-all-checkbox').on('change', function () {
+         var isChecked = $(this).prop('checked');
+         $('.record-checkbox').prop('checked', isChecked);
+         updateSelectedIds();
+     });
+
+     $('.record-checkbox').on('change', function () {
+         updateSelectedIds();
+     });
+
+     function updateSelectedIds() {
+         var selectedIds = [];
+         $('.record-checkbox:checked').each(function () {
+             selectedIds.push($(this).val());
+         });
+         console.log('Selected IDs:', selectedIds);
+     }
+
+     $(document).on('change', '.record-checkbox', function () {
+         updateToolbarVisibility();
+     });
+
+
+     $('#select-all-checkbox').on('change', function () {
+         var isChecked = $(this).prop('checked');
+         $('.record-checkbox').prop('checked', isChecked);
+         updateToolbarVisibility();
+     });
+
+
+     function updateToolbarVisibility() {
+         var selectedCount = $('.record-checkbox:checked').length;
+
+         if (selectedCount > 0) {
+             $('[data-kt-customer-table-toolbar="base"]').addClass('d-none');
+             $('[data-kt-purchase-table-toolbar="selected"]').removeClass('d-none');
+             $('[data-kt-purchase-table-select="selected_count"]').text(selectedCount);
+         } else {
+             $('[data-kt-customer-table-toolbar="base"]').removeClass('d-none');
+             $('[data-kt-purchase-table-toolbar="selected"]').addClass('d-none');
+         }
+     }
+
+     $('[data-kt-purchase-table-select="delete_selected"]').on('click', function () {
+
+         if (filterExpire.val() != 'expired'){
+             Swal.fire({
+                 text: "Unexpired items cannot be deleted from this section",
+                 icon: "error",
+                 buttonsStyling: false,
+                 confirmButtonText: "Ok, got it!",
+                 customClass: {
+                     confirmButton: "btn fw-bold btn-primary",
+                 }
+             });
+             return;
+         }
+         var selectedIds = [];
+         $('.record-checkbox:checked').each(function () {
+             selectedIds.push($(this).val());
+         });
+
+
+         if (selectedIds.length === 0) {
+             alert('Please select records to delete.');
+             return;
+         }
+
+         Swal.fire({
+             text: "Do you want to remove expired items from current stock balance?",
+             icon: "warning",
+             showCancelButton: true,
+             buttonsStyling: false,
+             confirmButtonText: "Yes, delete!",
+             cancelButtonText: "No, cancel",
+             customClass: {
+                 confirmButton: "btn fw-bold btn-danger",
+                 cancelButton: "btn fw-bold btn-active-light-primary"
+             }
+         }).then(function (result) {
+             if (result.value) {
+                 $.ajax({
+                     url: self.removeExpireItemApi,
+                     type: 'POST',
+                     headers: {
+                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                     },
+                     data: { ids: selectedIds },
+                     success: function (response) {
+                         if (response.message == 'success'){
+                             console.log('Records deleted successfully:', response);
+
+                             Swal.fire({
+                                 text: "Selected expired items was successfully deleted.",
+                                 icon: "success",
+                                 buttonsStyling: false,
+                                 confirmButtonText: "Ok, got it!",
+                                 customClass: {
+                                     confirmButton: "btn fw-bold btn-primary",
+                                 }
+                             }).then(function (){
+                                 document.location.reload();
+
+                             });
+                             updateToolbarVisibility();
+                         }
+                     },
+                     error: function (error) {
+                         console.error('Error deleting records:', error);
+                     }
+                 });
+             } else if (result.dismiss === 'cancel') {
+                 Swal.fire({
+                     text: "Selected expired items was not deleted.",
+                     icon: "error",
+                     buttonsStyling: false,
+                     confirmButtonText: "Ok, got it!",
+                     customClass: {
+                         confirmButton: "btn fw-bold btn-primary",
+                     }
+                 });
+             }
+         });
+
+     });
+
+
+ });
