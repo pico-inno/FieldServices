@@ -57,7 +57,7 @@
                                     data-placeholder="Select option" id="outletfilter" data-kt-select2="true" data-kt-table-filter="outlet">
                                     <option value="all">All</option>
                                     @foreach ($locations as $l)
-                                    <option value="{{$l->id}}">{{ businessLocationName($l) }}</option>
+                                    <option value="{{$l['id']}}">{{ businessLocationName($l) }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -70,7 +70,7 @@
                                     id="pgFilter" data-kt-select2="true" data-kt-table-filter="employee">
                                     <option value="all">All</option>
                                     @foreach ($employee as $e)
-                                    <option value="{{ $e->id }}">{{ $e->personal_info->first_name }}{{ $e->personal_info->last_name }}</option>
+                                    <option value="{{ $e['id'] }}">{{ $e['personal_info']['first_name'] }}{{ $e['personal_info']['last_name'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -82,7 +82,7 @@
                                     data-placeholder="Select option" id="categoryFilter" data-kt-select2="true" data-kt-table-filter="category">
                                     <option value="all">All</option>
                                     @foreach ($categories as $c)
-                                    <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                    <option value="{{ $c['id'] }}">{{ $c['name'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -216,18 +216,18 @@
                     <!--begin::Table body-->
                     <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
-                        @foreach ($datas as $data)
-                        <tr class="">
+                        @foreach ($datas as $i=>$data)
+                        <tr class="" :key="$i">
                             <td class="text-start">{{$data['name']}}</td>
                             <td>{{$data['quantity']}}</td>
                             <td>{{$data['uom']}}</td>
                             <td>{{$data['pkgQty']}}</td>
                             <td>{{$data['pkg']}}</td>
-                            <td class="text-start">{{$data['category_name']}}</td>
+                            <td class="text-start">{{$data['category_name'] ?? ''}}</td>
                             <td>{{$data['outlet']}}</td>
                             <td>{{$data['pg_fs']}}{{$data['pg_ls']}}</td>
                             <td>{{$data['campaignName']}}</td>
-                            <td>{{fdate($data['created_at'])}}</td
+                            <td>{{fdate($data['soldAt'])}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -301,7 +301,7 @@
                 "This Month": [moment().startOf("month"), moment().endOf("month")],
                 "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
                 }
-            }, cb);
+            }, cb).val('');
         });
     </script>
 </div>

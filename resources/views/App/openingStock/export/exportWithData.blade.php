@@ -7,7 +7,7 @@
 <table>
     <thead>
         <tr>
-            <th colspan="5" style="text-align: center;font-weight: bold; font-size: 19px">
+            <th colspan="5" rowspan="2" style="text-align: center;font-weight: bold; font-size: 19px">
                 Daily Summary Report
             </th>
         </tr>
@@ -19,7 +19,7 @@
         <tr>
 
             <th  colspan="5" style="text-align: center;font-weight: bold; font-size: 10px">
-              Report  Date : {{fdate(now())}}
+              Report  Date : {{fdate($dateFilter)}}
             </th>
         </tr>
         <tr>
@@ -51,8 +51,8 @@
     $attendanceRecord=Modules\FieldService\Entities\attendanceRecords::where('campaign_id',$campaignId)
                                                     ->where('employee_id',$id)
                                                     ->orderBy('id','DESC')
-                                                    ->whereDate('checkin_datetime',now())->first();
-    $txs=productSummary($campaignId,$id);
+                                                    ->whereDate('checkin_datetime',$dateFilter)->first();
+    $txs=productSummary($campaignId,$id,$dateFilter);
     // dd($txs);
 @endphp
     <table>

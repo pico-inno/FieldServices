@@ -16,17 +16,26 @@ class DailyReportExport implements FromView,ShouldAutoSize
     */
 
     public $campaignId;
-    public function __construct($campaignId)
+    public $dateFilter;
+    public function __construct($campaignId,$dateFilter)
     {
         $this->campaignId=$campaignId;
+        $this->dateFilter=$dateFilter;
     }
     public function view(): View
     {
+
         $campaignId=$this->campaignId;
+        $dateFilter=$this->dateFilter;
         $campaign= FsCampaign::where('id',$campaignId)->with('leader','location')->first();
-        $campaignMemberId = json_decode($campaign->campaign_member);
+        $PBIds = json_decode($campaign->campaign_member);
         $leaderId=$campaign['campaign_leader'];
-        $PBIds=[$leaderId,...$campaignMemberId ];
-        return view('App.openingStock.export.exportWithData',compact('PBIds','campaignId'));
+        $PBIds=array_unique($PBIds);
+        if (!in_array($leaderId, $PBIds)) {
+            $PBIds[] = $leaderId;
+        }
+
+        // dd($PBIds,$campaignId,$fromDate,$toDate);
+        return view('App.openingStock.export.exportWithData',compact('PBIds','campaignId','dateFilter'));
     }
 }

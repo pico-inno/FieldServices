@@ -77,7 +77,7 @@ class AttendanceList extends Component
             $query->where('fscampaign.id', '=', $campaignFilterId);
         })
         ->orderBy('attendance_records.id', 'DESC');
-        $attendanceRecords =  $attendanceRecords->paginate(30);
+        $attendanceRecords =  $attendanceRecords->paginate(15);
         return view('livewire.fieldservice.attendance-list', compact('attendanceRecords'));
     }
 }

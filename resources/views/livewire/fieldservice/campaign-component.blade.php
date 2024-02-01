@@ -103,7 +103,7 @@
                                     </button>
 
                                 @elseif ($AllCampaign->status!='start' && $AllCampaign->campaign_leader!=Auth::user()->id)
-                                    <button class="bg-dark text-white btn btn-sm" disabled> Campaign Not Start</button>
+                                    <button class="bg-dark text-white btn btn-sm" disabled>{{__('fieldservice::campaign.campaign_not_start')}}</button>
                                 @else
                                     @if (getStatus($AllCampaign->id,Auth::user()->id)=='checkIn')
                                         <a href="{{route('campaign.ptx',$AllCampaign->id)}}" class="btn btn-sm  btn-outline btn-primary fs-8 py-2">

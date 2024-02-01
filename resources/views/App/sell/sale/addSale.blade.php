@@ -93,7 +93,7 @@
                                         <i class="fa-solid fa-user text-muted"></i>
                                     </div>
                                     <div class="overflow-hidden  flex-grow-1">
-                                        <x-customersearch placeholder='Select customer name' name="contact_id" className=" form-select-sm contact_id fw-bold rounded-start-0" >
+                                        <x-customersearch placeholder='Select customer name' name="contact_id"  className=" form-select-sm contact_id fw-bold rounded-start-0" >
                                                 <x-slot:defaultOption>
                                                 <option value="{{$walkInCustomer->id}}" selected>
                                                     {{$walkInCustomer->getFullNameAttribute()}}-{{'('.arr($walkInCustomer,'mobile','-').')'}}</option>

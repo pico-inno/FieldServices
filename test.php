@@ -1,0 +1,27 @@
+<?php
+    {"slices":[
+        {"text":"SAMSUNG TV","aviaQty":0,"message":"YOU WIN SAMSUNG TV","background":"#011af3","color":"#fff"},
+        {"text":"SANDWICH MAKER","aviaQty":0,"message":"YOU WIN SANDWICH MAKER","background":"#9575cd","color":"#fff"},
+        {"text":"GIFT VOU. 300,000 KS.","aviaQty":0,"message":"YOU WIN GIFT VOU. 300,000 KS.","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT VOU. 200,000 KS.","aviaQty":0,"message":"YOU WIN GIFT VOU. 200,000 KS.","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT VOU. 100,000 KS.","aviaQty":0,"message":"GIFT VOU. 100,000 KS.","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT VOU. 50,000 KS.","aviaQty":0,"message":"YOU WIN GIFT VOU. 50,000 KS.","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT VOU. 30,000 KS.","aviaQty":0,"message":"YOU WIN GIFT VOU. 30,000 KS.","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT POINTS 1000","aviaQty":0,"message":"YOU WIN GIFT POINTS 1000","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT POINTS 500","aviaQty":0,"message":"YOU WIN GIFT POINTS 500","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT POINTS 300","aviaQty":6,"message":"YOU WIN GIFT POINTS 300","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT POINTS 200","aviaQty":12,"message":"YOU WIN GIFT POINTS 200","background":"#9575CD","color":"#fff"},
+        {"text":"GIFT POINTS 100","aviaQty":9,"message":"YOU WIN GIFT POINTS 100","background":"#9575CD","color":"#fff"},
+        {"text":"DENTISTE' 100G","aviaQty":0,"message":"YOU WIN DENTISTE' 100G","background":"#9575cd","color":"#fff"},
+        {"text":"DENTISTE' 50G","aviaQty":7,"message":"YOU WIN DENTISTE' 50G","background":"#9575CD","color":"#fff"},
+        {"text":"DENTISTE' TRAVEL SET","aviaQty":32,"message":"YOU WIN DENTISTE' TRAVEL SET","background":"#9575CD","color":"#fff"},
+        {"text":"MC JEANS MASK","aviaQty":0,"message":"YOU WIN MC JEANS MASK","background":"#9575CD","color":"#fff"},
+        {"text":"SABINA MASK","aviaQty":11,"message":"YOU WIN SABINA MASK","background":"#9575CD","color":"#fff"},
+        {"text":"LTD MASK","aviaQty":14,"message":"YOU WIN LTD MASK","background":"#9575CD","color":"#fff"},
+        {"text":"GQ MASK","aviaQty":'@',"message":"YOU WIN GQ MASK","background":"#9575CD","color":"#fff"},
+        {"text":"HEAVY MASK","aviaQty":0,"message":"YOU WIN HEAVY MASK","background":"#9575CD","color":"#fff"},
+        {"text":"MC JEANS HAT","aviaQty":0,"message":"YOU WIN MC JEANS HAT","background":"#9575CD","color":"#fff"},
+        {"text":"MC JEANS BAG","aviaQty":5,"message":"YOU WIN MC JEANS BAG","background":"#9575CD","color":"#fff"}
+        ,{"text":"DEVY HAND BAG","aviaQty":11,"message":"YOU WIN DEVY HAND BAG","background":"#9575CD","color":"#fff"},
+        {"text":"DEVY CIRCLE BAG","aviaQty":0,"message":"YOU WIN DEVY CIRCLE BAG","background":"#9575CD","color":"#fff"}],
+        "width":510,"rotates":10,"frame":1,"type":"spin","slice":{"background":"#b4b4b4","selected":{"color":"#fe0303"}},"text":{"color":"#020000","size":11,"offset":5,"arc":"false"},"line":{"width":1,"color":"#f7f6f8"},"outer":{"width":2,"color":"#53008a"},"inner":{"width":5,"color":"#cfc9c9"},"center":{"width":2,"rotate":"true"},"marker":{"background":"#ff2d00","animate":"true"}}

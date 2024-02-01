@@ -61,9 +61,7 @@
             </div>
 
             @if (hasView('campaign report'))
-            <div class="card-toolbar">
-                <a href="{{route('campaign.report.export',$campaign->id)}}" class="btn btn-success">Export Daily Report</a>
-            </div>
+                <livewire:DailyReportExportBtn :campaignId="$campaign->id">
             @endif
         </div>
         <div class="card-body user-select-none">
@@ -176,55 +174,58 @@
         </div>
     </div>
 
-<script>
-    let glocation=@json($campaign->location->gps_location);
-    // if(glocation){
-        let location_name="{{$campaign->location->name}}";
-        geoSpllit=glocation.split('-');
 
-        let lat=Number(geoSpllit[0]);
-        let lng=Number(geoSpllit[1]);
-        const myLatlng = { lat, lng };
-        $("#kt_daterangepicker_1").daterangepicker();
+    @if ($campaign->location->gps_location)
+        <script>
+            let glocation=@json($campaign->location->gps_location);
+            if(glocation){
+                let location_name="{{$campaign->location->name}}";
+                geoSpllit=glocation.split('-');
 
-        let geolocation=myLatlng;
-        initMap();
-        async function initMap() {
-            // Request needed libraries.
-            const { Map } = await google.maps.importLibrary("maps");
-            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-            const map = new Map(document.getElementById("map"), {
-            center: geolocation,
-            zoom: 10.5,
-            mapId: "4504f8b37365c3d0",
-            });
-            const marker = new AdvancedMarkerElement({
-            map,
-            position: geolocation,
-            });
+                let lat=Number(geoSpllit[0]);
+                let lng=Number(geoSpllit[1]);
+                const myLatlng = { lat, lng };
+                $("#kt_daterangepicker_1").daterangepicker();
 
-            const geocoder = new google.maps.Geocoder();
-            const geocoderRequest = { location: geolocation };
-            geocoder.geocode(geocoderRequest, (results, status) => {
+                let geolocation=myLatlng;
+                initMap();
+                async function initMap() {
+                    // Request needed libraries.
+                    const { Map } = await google.maps.importLibrary("maps");
+                    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+                    const map = new Map(document.getElementById("map"), {
+                    center: geolocation,
+                    zoom: 10.5,
+                    mapId: "4504f8b37365c3d0",
+                    });
+                    const marker = new AdvancedMarkerElement({
+                    map,
+                    position: geolocation,
+                    });
 
-                if (status === google.maps.GeocoderStatus.OK) {
-                    console.log(results);
-                    const address = results[2].formatted_address;
-                    $('.currentLocationName').val(address);
+                    const geocoder = new google.maps.Geocoder();
+                    const geocoderRequest = { location: geolocation };
+                    geocoder.geocode(geocoderRequest, (results, status) => {
 
-                console.log("Address:", address);
-                } else {
-                console.error("Geocoding failed:", status);
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            console.log(results);
+                            const address = results[2].formatted_address;
+                            $('.currentLocationName').val(address);
+
+                        console.log("Address:", address);
+                        } else {
+                        console.error("Geocoding failed:", status);
+                        }
+                    });
                 }
-            });
-        }
-    // }else{
-    //     $('#map').addClass('d-none');
-    // }
+            }else{
+                $('#map').addClass('d-none');
+            }
 
 
-</script>
-<script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0&callback=initMap&v=weekly">
-</script>
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0&callback=initMap&v=weekly">
+        </script>
+    @endif
+
 </div>

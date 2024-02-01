@@ -125,23 +125,31 @@ function getFullNameAttribute($contact)
 }
 function fDate($date, $br = false, $time = true)
 {
-    $dateTime = date_create($date);
-    $setting = getSettings();
-    $formattedDate = $dateTime->format("$setting->date_format");
     // dd($setting->time_format);
-    if ($setting->time_format == '12') {
-        $formattedTime = $dateTime->format(" h:i A ");
-    } else {
-        $formattedTime = $dateTime->format(" H:i A ");
-    }
-    if ($time) {
-        if ($br) {
-            return $formattedDate . '<br>' . '(' . $formattedTime . ')';
-        } else {
-            return $formattedDate . ' ' . '(' . $formattedTime . ')';
+    if($date){
+        $dateTime = date_create($date);
+        $setting = getSettings();
+        if($setting->date_format){
+            $formattedDate = $dateTime->format("$setting->date_format");
+        }else{
+            $formattedDate=$dateTime->format("m/d/Y");
         }
-    } else {
-        return $formattedDate;
+        if ($setting->time_format == '12') {
+            $formattedTime = $dateTime->format(" h:i A ");
+        } else {
+            $formattedTime = $dateTime->format(" H:i A ");
+        }
+        if ($time) {
+            if ($br) {
+                return $formattedDate . '<br>' . '(' . $formattedTime . ')';
+            } else {
+                return $formattedDate . ' ' . '(' . $formattedTime . ')';
+            }
+        } else {
+            return $formattedDate;
+        }
+    }else{
+        return $date;
     }
 }
 
@@ -882,7 +890,7 @@ function getTotalCurrentBalance($variation_id)
     return intval($totalCurrentStock);
 }
 
-function productSummary($campaignId,$userId){
+function productSummary($campaignId,$userId,$dateFilter){
     return sale_details::query()
     ->select(
     'products.name',
@@ -907,7 +915,7 @@ function productSummary($campaignId,$userId){
     ->where('fscampaign.id','=',$campaignId)
     ->where('sales.created_by','=',$userId)
     ->orderBy('categories.name','ASC')
-    ->whereDate('sales.sold_at',now())
+    ->whereDate('sales.sold_at','=',$dateFilter)
     ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name')
     ->get();
 }

@@ -153,6 +153,12 @@
                             <th class="text-start pe-3 min-w-100px" >Category Name
                                 {{-- <x-datatable.sort-icon field="categories.name" :sortField="$sortField" :sortAsc="$sortAsc" /> --}}
                             </th>
+
+                            @if(!$defaultCampaignId)
+                            <th class="text-start ">
+                                Campaign Name
+                            </th>
+                            @endif
                             <th class="text-end pe-3 min-w-100px">Total Qty</th>
                             <th class="text-end pe-3 min-w-100px ">Total Price</th>
                         </tr>
@@ -175,11 +181,16 @@
                                 <th>
                                     {{$data['category_name']}}
                                 </th>
+                                @if(!$defaultCampaignId)
+                                <th class="text-start">
+                                    {{$data['campaign']}}
+                                </th>
+                                @endif
                                 <th class="text-end">
                                     {{formatNumberv2($data['totalQty'])}} {{$data['uom']}}
                                 </th>
                                 <th class="text-end">
-                                    {{formatNumberv2($data['totalPrice'])}} {{$currency['symbol'] ?? ''}}
+                                    {{formatNumberv2($data['totalPrice'])}} {{$currency['symbol'] ?? 'ks'}}
                                 </th>
                             </tr>
                         @endforeach
@@ -190,11 +201,11 @@
                                 Total
                             </th>
                             <th class="text-end">
-                                {{$datas->sum('totalQty')}}
+                                {{formatNumberv2($datas->sum('totalQty'))}}
                             </th>
 
                             <th class="text-end">
-                                {{$datas->sum('totalPrice')}} {{$currency['symbol'] ?? ''}}
+                                {{formatNumberv2($datas->sum('totalPrice'))}} {{$currency['symbol'] ?? 'ks'}}
                             </th>
                         </tr>
                     </tfoot>

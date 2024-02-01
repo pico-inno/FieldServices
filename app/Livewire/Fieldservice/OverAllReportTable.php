@@ -34,13 +34,17 @@ class OverAllReportTable extends Component
     public $campaigns;
     public $query;
     public $campaignId=null;
-    public function mount(){
+    public function __construct()
+    {
+
         $this->sortField = 'products.id';
+    }
+    public function mount(){
         $this->locations = businessLocation::select('name', 'id', 'parent_location_id')->get();
         $this->employee = BusinessUser::select('username', 'id', 'personal_info_id')
-            ->with('personal_info:first_name,last_name,id')->get();
-        $this->categories = Category::select('name', 'id')->get();
-        $this->campaigns = FsCampaign::select('id', 'name')->get();
+            ->with('personal_info:first_name,last_name,id')->get()->toArray();
+        $this->categories = Category::select('name', 'id')->get()->toArray();
+        $this->campaigns = FsCampaign::select('id', 'name')->get()->toArray();
     }
     public function updated()
     {
@@ -66,6 +70,7 @@ class OverAllReportTable extends Component
     }
     public function render()
     {
+
         $search = $this->search;
         $businesslocationFilterId = $this->businesslocationFilterId;
         $pgFilterId = $this->pgFilterId;
@@ -74,8 +79,8 @@ class OverAllReportTable extends Component
         $campaignFilterId = $this->campaignFilterId;
         $this->dataLoading = true;
         $campaignId=$this->campaignId ?? null;
-        $deraultCampaignId=$this->deraultCampaignId;
-        $dataQuery= sale_details::query()
+        $deraultCampaignId=$this->deraultCampaignId ?? null;
+        $datas= sale_details::query()
             ->select(
                 'sale_details.variation_id',
                 'fscampaign.name as campaign_name',
@@ -96,10 +101,11 @@ class OverAllReportTable extends Component
                 'pf.first_name as pg_fs',
                 'pf.last_name as pg_ls',
                 'pg.username as pg_name',
-                'fscampaign.name as campaignName'
+                'fscampaign.name as campaignName',
+                'sales.sold_at as soldAt'
             )
 
-            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+            // ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
             ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
             ->where('sales.channel_type', '=', 'campaign')
             ->leftJoin('fscampaign', 'sales.channel_id', 'fscampaign.id')
@@ -143,8 +149,7 @@ class OverAllReportTable extends Component
             ->when(isset($filterDate), function ($query) use ($filterDate) {
                 $query->whereDate('sales.sold_at', '>=', $filterDate[0])
                     ->whereDate('sales.sold_at', '<=', $filterDate[1]);
-            });
-        $datas=$dataQuery->paginate('15');
+            })->paginate('15');
 
         $this->dataLoading = true;
         return view('livewire.fieldservice.over-all-report-table',compact('datas'));

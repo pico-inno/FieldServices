@@ -51,6 +51,7 @@ class CampaignProductSummeryReport extends Component
             'products.name',
             'uom.short_name as uom',
             'categories.name as category_name',
+            'fscampaign.name as campaign',
                 DB::raw("SUM(stock_histories.decrease_qty) as totalQty"),
                 DB::raw("SUM(total_sale_amount) as totalPrice")
             )
@@ -86,7 +87,7 @@ class CampaignProductSummeryReport extends Component
                 $query->where('categories.id','=',$categotryFilterId);
             })
 
-            ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name')
+            ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name','fscampaign.name')
             ->paginate(15);
         return view('livewire.campaignProductSummeryReport',compact('datas','categories'));
     }

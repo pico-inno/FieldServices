@@ -1,13 +1,13 @@
 <div>
     @if(hasUpload('campaign'))
     <button class="btn btn-primary btn-sm mb-5" id="addPhoto" >
-        <i class="fa-solid fa-plus-circle"></i>   Add Photo
+        <i class="fa-solid fa-plus-circle"></i>   {{__('fieldservice::actions.add_post')}}
     </button>
     <div class="modal fade " tabindex="-1" id="modal">
         <div class="modal-dialog w-md-600px w-100 modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content mb-20">
                 <div class="modal-header py-2">
-                    <h3 class="modal-title">Add Photo</h3>
+                    <h3 class="modal-title"> {{__('fieldservice::actions.add_post')}}</h3>
                     <!--begin::Close-->
                     <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                         <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
@@ -41,7 +41,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" class="btn btn-primary">{{__('fieldservice::actions.post_save')}}</button>
                 </div>
                 </form>
             </div>
