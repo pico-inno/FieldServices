@@ -4,6 +4,7 @@ namespace App\Models\Stock;
 
 use App\Models\Currencies;
 use App\Models\CurrentStockBalance;
+use App\Models\lotSerialDetails;
 use App\Models\Product\Product;
 use App\Models\Product\ProductVariation;
 use App\Models\Product\Unit;
@@ -93,6 +94,17 @@ class StockTransferDetail extends Model
     public function packagingTx() {
         return $this->hasOne(productPackagingTransactions::class, 'transaction_details_id', 'id')
             ->where('transaction_type','transfer');
+    }
+
+    public function lot_serial_details(): HasMany
+    {
+        return $this->hasMany(LotSerialDetails::class, 'transaction_detail_id', 'id')
+            ->where('transaction_type', 'transfer');
+    }
+
+    public function current_stock()
+    {
+        return $this->hasMany(CurrentStockBalance::class, 'variation_id', 'variation_id');
     }
 
 }
