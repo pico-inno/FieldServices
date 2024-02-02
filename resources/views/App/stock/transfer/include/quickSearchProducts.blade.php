@@ -12,7 +12,7 @@
 
 
         var mainLocation = null;
-        var mainLocation = {{ optional($stockTransfer)->from_location }};
+        var mainLocation = {{ $stockTransfer?->from_location ?? 0 }};
 
         unique_name_id+=products_length;
 
@@ -369,7 +369,7 @@
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel"> </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
+                                                <input type="hidden" class="csb_qty" value="${item.stock_sum_current_quantity}" />
                                             </div>
                                             <div class="modal-body">
 
@@ -396,7 +396,7 @@
 
                                           ${generateLotOption(item)}
                                         </select>
-                                        <input type="hidden" id="itemData" value='${JSON.stringify(item)}'>
+                                        <input type="hidden" class="item_data" id="itemData" value='${JSON.stringify(item)}'>
                                     </td>
                                     <td>
                                         <input type="number" name="lot_serial_qty[]" class="form-control form-control-sm">
@@ -438,9 +438,6 @@
 
             let itemObject = firstRow.find('.item_data').val();
 
-
-
-            // console.log(aa);
             const itemData = JSON.parse(itemObject);
 
             console.log(itemData, 'itemdata')
@@ -508,9 +505,7 @@
 
 
         $(document).on('click', '.modal-btn-save-changes', function() {
-
             const modalId = $(this).closest('.modal').attr('id');
-
 
             const unique_name_id = modalId.substring("batch_lot_selection_modal_".length);
 
@@ -552,6 +547,10 @@
 
         });
 
+
+            $('.modal-btn-save-changes').first().trigger('click');
+
+
         function eachModalcalculateTotalQuantity(modalId) {
             let totalQuantity = 0;
             const uniqueModal = $('#' + modalId);
@@ -560,7 +559,7 @@
             const $addButton = uniqueModal.find('.btn-add-row');
 
 
-            const demandQuantity = parseInt(uniqueModal.find('.demand_qty_in_lot').val()) || 0;
+            const demandQuantity = parseInt(uniqueModal.find('.csb_qty').val()) || 0;
 
             modalNumberInputs.each(function() {
                 const value = parseInt($(this).val()) || 0;
