@@ -224,7 +224,7 @@ class SaleServices
                         $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock, $sale_data);
                     };
                     if ($changeQtyStatus == false) {
-                        return throw new Exception('outOfStock');
+                        return throw new Exception('Product Out of Stock!');
                     } else {
                         $datas = $changeQtyStatus;
                         foreach ($datas as $data) {

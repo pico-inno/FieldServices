@@ -233,7 +233,7 @@
                                     {{__('report.csb.purchase_qty')}}
                                 </span>
                             </th>
-                            <th class="text-center">
+                            <th class="text-start">
                                   {{__('report.current_qty')}}
                             </th>
                             <th class="view-type min-w-100px">{{__('product/unit-and-uom.uom')}}</th>

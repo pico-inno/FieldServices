@@ -2,6 +2,7 @@
 
 namespace App\Actions\purchase;
 
+use App\Helpers\generatorHelpers;
 use App\Helpers\UomHelper;
 use App\Models\Product\Product;
 use App\Models\CurrentStockBalance;
@@ -160,6 +161,7 @@ class purchaseDetailActions
         $batchNo = UomHelper::generateBatchNo($purchase_detail_data['variation_id']);
         $per_ref_uom_price_by_default_currency = exchangeCurrency($purchase_detail_data['per_ref_uom_price'], $purchase['currency_id'], $this->currency->id) ?? 0;
         $purchaseDetailId= $purchase_detail_data['purchase_detail_id'] ?? $purchase_detail_data['id'];
+        $lotNumber=generatorHelpers::generateLotSerialNo();
         return [
             "business_location_id" => $purchase['business_location_id'],
             "product_id" => $purchase_detail_data['product_id'],
@@ -175,7 +177,7 @@ class purchaseDetailActions
             "currency_id" => $purchase->currency_id,
             "created_at" => $purchase->received_at,
             "lot_serial_type"=>'lot',
-            "lot_serial_no"=>'LP-'.$purchaseDetailId
+            "lot_serial_no"=>$lotNumber
         ];
     }
 

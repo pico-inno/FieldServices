@@ -26,6 +26,10 @@
         <link rel="stylesheet" href={{asset("customCss/scrollbar.css")}}>
         <style>
 
+            .clicked {
+            background-color: red;
+            border: 2px solid blue;
+            }
             #invoice_with_sidebar tr td{
                 padding: 3px;
                 }
@@ -864,7 +868,7 @@
                             <div class="col-12">
                                 <label for="" class="fs-5 mb-1">Batch/Lot/Expire Date</label>
                                 <select class="form-select mb-2 form-select-sm rounded-0" id="lot_serial_modal_input" name="lot_serial_modal_input"
-                                    data-control="select2" data-placeholder="Select Batch/Lot/Expire Date" placeholder="Select Batch/Lot/Expire Date" data-hide-search="true" data-allow-clear="true">
+                                    data-control="select2" data-placeholder="Select Batch/Lot/Expire Date" placeholder="Select Batch/Lot/Expire Date" >
 
 
                                 </select>

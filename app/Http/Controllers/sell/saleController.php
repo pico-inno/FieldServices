@@ -527,13 +527,11 @@ class saleController extends Controller
         } catch (Exception $e) {
             logger($e);
             DB::rollBack();
-
-            dd($e);
             if ($request->type == 'pos') {
                 return response()->json([
-                    'status' => '500',
+                    'status' => '422',
                     'message' => $e->getMessage()
-                ], 500);
+                ], 422);
             } else {
                 activity('sale-transaction')
                     ->log('New Sale creation has been fail')

@@ -235,7 +235,6 @@ function updenvWithoutQuote($newEnvVariables)
         } else {
             // If the key doesn't exist, add it to the .env file
             $str .= "\n$key=$newValue";
-            dd('what');
         }
 
         // Refresh the environment variables

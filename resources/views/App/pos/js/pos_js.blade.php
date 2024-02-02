@@ -21,6 +21,7 @@
     let isGetContact =editSale ? false:true;
 
     var accounting_method=setting.accounting_method;
+    var lotControl=setting.lot_control;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -267,7 +268,7 @@
                                 </button>
 
                             </div>
-                            <span class="text-danger-emphasis  stock_alert_${product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
+                            <span class="text-danger-emphasis stock_alert stock_alert_${product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
                             <select class=" form-select form-select-sm invoice_unit_select" data-control="select2">
                                 ${uomsData.map(unit => `<option value="${unit.id}" ${unit.id === (packagingUom ?? product.uom.id) ? 'selected' : ''}>${unit.text}</option>`).join('')}
                             </select>
@@ -493,6 +494,20 @@
                 result = currentRefQty;
             }
 
+            // let currentStock=parent.find('.stock_quantity_unit').text();
+            // console.log(currentStock,'========');
+            // let lot_serial_modal_input_val = parent.find('select[name="lot_serial_modal_input"]').val();
+            // let selectedLotOption =parent.find('#lot_serial_modal_input').find(':selected');
+            // let lotUom=selectedLotOption.data('uomid');
+            // let lotQtyForCal = selectedLotOption.data('qty');
+
+
+            // let variation_id=current_tr.find('input[name="variation_id"]').val();
+            // let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+            // let uoms=product.uom.unit_category.uom_by_category;
+            // let currentUomId=current_tr.find('.invoice_unit_select').val();
+
+
             parent.find('.stock_quantity_unit').text(result);
             parent.find('.stock_quantity_name').text(newUomInfo.name);
             getPrice(parent);
@@ -551,32 +566,67 @@
             })[0];
 
 
-            let result=0;
-            $(`#${parentTBody} .invoice_row_${variationId}`).each(function(){
-                let parent = $(`tbody#${parentTBody}`).find($(this).closest('.invoiceRow'));
-                let quantity = Number(parent.find('input[name="quantity[]"]').val());
-                let uom_id = Number(parent.find('.invoice_unit_select').val());
-                const currentUom = uoms.filter(function ($u) {
-                    return $u.id == uom_id;
-                })[0];
-                let refQty = getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
-                if(product.sale_qty){
-                    const saleUoM = uoms.filter(function ($u) {
-                        return $u.id == product.uom_id;
+                let result=0;
+                let resultByStock=[];
+                $(`#${parentTBody} .invoice_row_${variationId}`).each(function(){
+                    let parent = $(`tbody#${parentTBody}`).find($(this).closest('.invoiceRow'));
+                    let quantity = Number(parent.find('input[name="quantity[]"]').val());
+                    let uom_id = Number(parent.find('.invoice_unit_select').val());
+                    const currentUom = uoms.filter(function ($u) {
+                        return $u.id == uom_id;
                     })[0];
-                    refQty -= getReferenceUomInfoByCurrentUomQty(product.sale_qty,saleUoM,referenceUom)['qtyByReferenceUom'];
+                    let refQty = getReferenceUomInfoByCurrentUomQty(quantity,currentUom,referenceUom)['qtyByReferenceUom'];
+
+                    if(product.sale_qty){
+                        const saleUoM = uoms.filter(function ($u) {
+                            return $u.id == product.uom_id;
+                        })[0];
+                        refQty -= getReferenceUomInfoByCurrentUomQty(product.sale_qty,saleUoM,referenceUom)['qtyByReferenceUom'];
+                    }
+                    result += isNullOrNan(refQty);
+                    if(lotControl == 'on'){
+
+                        let lot_serial_val = parent.find('input[name="lot_serial_val"]').val();
+                        if(lot_serial_val && lot_serial_val!='fifo' && lot_serial_val!='lifo'){
+                            let resultLot=resultByStock.findIndex(r=>r.id==lot_serial_val);
+                            if(resultLot == -1){
+                                console.log('heredeer');
+                                if(product.stock){
+                                   let stock= product.stock.find(s=>s.id==lot_serial_val);
+                                   if(stock){
+                                        let stoctLeftQty=stock.current_quantity -refQty
+                                        resultByStock=[{
+                                            id:stock.id,
+                                            current_quantity:stoctLeftQty,
+                                        },...resultByStock];
+                                   }
+
+                                }
+                            }else{
+                                resultByStock[0].current_quantity-=refQty;
+                            }
+                        };
+                    }
+                })
+
+                // console.log()
+                if(product.product_type == 'storable'){
+                    let qty=isNullOrNan(productsOnSelectData[index].stock_sum_current_quantity);
+                    if(result > productsOnSelectData[index].stock_sum_current_quantity){
+                        productsOnSelectData[index].validate=false;
+                        $(`.stock_alert_${variationId}`).removeClass('d-none');
+                    }else{
+                        productsOnSelectData[index].validate=true;
+                        $(`.stock_alert_${variationId}`).addClass('d-none');
+                    }
                 }
-                result += isNullOrNan(refQty);
-            })
-            if(product.product_type == 'storable'){
-                if(result > productsOnSelectData[index].stock_sum_current_quantity){
-                    productsOnSelectData[index].validate=false;
-                    $(`.stock_alert_${variationId}`).removeClass('d-none');
-                }else{
-                    productsOnSelectData[index].validate=true;
-                    $(`.stock_alert_${variationId}`).addClass('d-none');
+
+                if(lotControl == 'on' ){
+                    let checkBylot=resultByStock.find(rs=>rs.current_quantity<0);
+                    if(checkBylot){
+                        $('input[type="hidden"][name="lot_serial_val"][value='+checkBylot.id+']').closest('.invoiceRow').find(`.stock_alert`).removeClass('d-none');
+                    }
                 }
-            }
 
         }
 
@@ -701,7 +751,7 @@
                     }else if(status==419){
                         error('Session Expired')
                     }else if(status==422){
-                        error(e.message)
+                        error(e.responseJSON.message)
                     }else{
                         error(' Something Went Wrong! Error Status: '+status )
                     };
@@ -877,7 +927,7 @@
                     $.each(result, function(index, item) {
                         productsHtml += `
                         <div class="p-1 col-lg-2 col-md-2 col-6 min-w-125px cursor-pointer each_product user-select-none">
-                            <div class="card h-100">
+                            <div class="card h-100 clickable-card">
                                 <input type="hidden" name="category_id" value="${item.category_id}">
                                 <input type="hidden" name="sub_category_id" value="${item.sub_category_id}">
                                 <input type="hidden" name="brand_id" value="${item.brand_id}">
@@ -912,6 +962,12 @@
                 }
             });
         }
+        $(document).on('click','.each_product',function(){
+            $(this).find('.clickable-card').addClass("border border-1 border-primary m-1");
+            setTimeout(() => {
+                $(this).find('.clickable-card').removeClass("border border-1 border-primary m-1");
+            }, 100);
+        })
 
         let isGetProductVariations = false;
         if(!isGetProductVariations){
@@ -1360,18 +1416,47 @@
             let product=productsOnSelectData.find(p=>p.variation_id==variation_id);
 
             let batchOption='';
-            let defaultStockOption=`<option value='${accounting_method}' selected>${accounting_method.toUpperCase()}</option>`;
+            let defaultStockOption=`<option value='${accounting_method}' selected data-expiredDate=""  data-qty="lifo" data-uomid="ref">${accounting_method.toUpperCase()}</option>`;
             if(product.stock){
                 product.stock.forEach(s => {
                     batchOption+=`
-                        <option value="${s.id}" ${lot_serial_val == s.id ?'selected' :''}  data-qty="${s.current_quantity}" data-uomid="${s.ref_uom_id}" >
-                            ${s.lot_serial_no} (${s.expired_date ? s.expired_date  :''})
+                        <option value="${s.id}" ${lot_serial_val == s.id ?'selected' :''}  data-expiredDate="${s.expired_date ?? ''}" data-qty="${s.current_quantity ?? 0}" data-uomid="${s.ref_uom_id}" >
+                            ${s.lot_serial_no}
                         </option>
                     `;
                 });
             }
             $('#lot_serial_modal_input').append(defaultStockOption);
             $('#lot_serial_modal_input').append(batchOption);
+                // Format options
+                const optionFormat = (item) => {
+                    if (!item.id) {
+                        return item.text;
+                    }
+
+                    var span = document.createElement('span');
+                    var template = '';
+
+                    template += '<div class="d-flex align-items-center rounded rounded-1" data-qty="hello">';
+                    template += '<div class="d-flex flex-column">'
+                    template += '<span class="fw-bold fs-7">' + item.text + '</span>';
+                    template += '<span class="text-muted fs-8 fw-bold text-dark">' + item.element.getAttribute('data-expiredDate') + '</span>';
+                    template += '</div>';
+                    template += '</div>';
+
+                    span.innerHTML = template;
+
+                    return $(span);
+                }
+                $('#lot_serial_modal_input').select2({
+                    placeholder: "Select an option",
+                    // minimumResultsForSearch: Infinity,
+                    templateSelection: optionFormat,
+                    templateResult: optionFormat
+                });
+
+
+
             let packagingOption='';
             if(product.packaging){
                 product.packaging.forEach((pk)=>{
@@ -1471,7 +1556,28 @@
             let packagingUom=selectedOption.data('uomid');
             let packageQtyForCal = selectedOption.data('qty');
             let pkgname = selectedOption.data('pkgname');
+
             let lot_serial_modal_input_val = parent.find('select[name="lot_serial_modal_input"]').val();
+            let selectedLotOption =parent.find('#lot_serial_modal_input').find(':selected');
+            let lotUom=selectedLotOption.data('uomid');
+            let lotQtyForCal = selectedLotOption.data('qty');
+
+
+            let variation_id=current_tr.find('input[name="variation_id"]').val();
+            let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+            let uoms=product.uom.unit_category.uom_by_category;
+            let currentUomId=current_tr.find('.invoice_unit_select').val();
+
+            // let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
+            // console.log(currentUomId,lotUom,lotQtyForCal,uoms);
+            if(lot_serial_modal_input_val != 'fifo' && lot_serial_modal_input_val !='lifo'){
+                let qtyByCurrentUnit= changeQtyOnUom2(lotUom,currentUomId,lotQtyForCal,uoms).resultQty;
+                current_tr.find('.stock_quantity_unit').text(qtyByCurrentUnit);
+            }else{
+                let qtyByCurrentUnit= changeQtyOnUom2(product.uom_id,currentUomId,product.stock_sum_current_quantity,uoms).resultQty;
+                current_tr.find('.stock_quantity_unit').text(qtyByCurrentUnit);
+            }
+
             // current_tr.find('input[name="each_selling_price"]').val(selling_price_group);
             current_tr.find('input[name="discount_type"]').val(dis_type);
             if(dis_type.toLowerCase() == 'foc'){

@@ -104,7 +104,7 @@
                             item.category_name ? item.category_name : '-',
                             item.brand_name ?  item.brand_name : '-',
                             Number(item.purchase_qty).toFixed(2)+' '+short_name,
-                            Number(item.current_qty).toFixed(2)+' '+short_name,
+                            `<span class="fw-bold text-dark">${Number(item.current_qty).toFixed(2)+' '+short_name}</span>`,
                             long_name,
                         ];
                         // if (filterViewVal == 3) {
