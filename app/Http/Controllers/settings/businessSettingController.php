@@ -98,6 +98,8 @@ class businessSettingController extends Controller
             'city'=>$request->city,
             'state'=>$request->state,
             'country'=>$request->country,
+
+            'expire_alert_day' => $request->expire_alert_day,
         ];
         $oldData = businessSettings::where('id', Auth::user()->business_id)->first();
         $logoPath = $this->saveLogo($request, $oldData->logo);

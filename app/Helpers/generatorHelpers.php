@@ -9,6 +9,7 @@ use App\Models\CurrentStockBalance;
 use App\Models\paymentsTransactions;
 use App\Models\resOrders;
 use App\Models\sale\sales;
+use Illuminate\Support\Str;
 
 class generatorHelpers
 {
@@ -66,4 +67,18 @@ class generatorHelpers
         $voucherNo = sprintf($prefixTxt. $numberCount, ($uniqueCount + 1));
         return $voucherNo;
     }
+
+    public static function generateLotSerialNo()
+    {
+        $lastCurrentStockCount = CurrentStockBalance::orderBy('id', 'DESC')->select('id')->first()->id ?? 0;
+
+        $uuid = substr(Str::uuid()->toString(), 0, 4);
+
+        $formattedId = sprintf('SysLot'. ($lastCurrentStockCount + 1));
+
+        $lotSerialNo = $formattedId . '-' . $uuid;
+
+        return $lotSerialNo;
+    }
+
 }

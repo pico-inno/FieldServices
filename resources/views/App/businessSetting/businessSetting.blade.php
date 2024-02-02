@@ -858,7 +858,23 @@
                                                         </x-forms.nob-select>
                                                     </x-slot>
                                                 </x-setting.setting-row>
+
                                             </div>
+                                        <div class="row mb-5 justify-content-between">
+                                            <div class="col-12 col-lg-6 d-flex mb-5 justify-content-between">
+                                                <div class="">
+                                                    <label class="fs-6 fw-semibold form-label mt-3" for="expire_alert_day">
+                                                        <span class="required">Expire Alert Day</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-6">
+                                                    <input type="text" name="expire_alert_day" value="{{ $settingData->expire_alert_day }}" class="form-control form-control-sm border-left-0 border-top-0 border-right-0 rounded-0"  autocomplete="off" id="expire_alert_day" placeholder="Expire Alert Day">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-lg-6 d-flex mb-5 justify-content-between">
+
+                                            </div>
+                                        </div>
                                             {{-- <div class="row row-cols">
                                                 <div class="col-md-12 mb-7 col-lg-4  d-flex align-items-center" >
                                                     <div class="form-check form-check-custom">

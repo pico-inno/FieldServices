@@ -110,6 +110,7 @@ class businessSettings extends Model
         'city',
         'state',
         'country',
+        'expire_alert_day'
     ];
 
     public function currency(){

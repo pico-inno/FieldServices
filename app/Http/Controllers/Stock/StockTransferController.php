@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Stock;
 
+use App\Services\Stock\CurrentStockBalanceServices;
+use App\Services\Stock\StockTransferServices;
 use DateTime;
 use App\Helpers\UomHelper;
 use App\Models\Product\UOM;
@@ -93,8 +95,10 @@ class StockTransferController extends Controller
      */
     public function store(StoreStockTransferRequest $request)
     {
+//        return  $request;
         try {
             DB::beginTransaction();
+            $csbService = new CurrentStockBalanceServices();
             $settings = businessSettings::all()->first();
             $transfer_details = $request->transfer_details;
             $transfered_at = date('Y-m-d', strtotime($request->transfered_at));
@@ -115,7 +119,7 @@ class StockTransferController extends Controller
             ]);
 
             foreach ($transfer_details as $transfer_detail) {
-
+                $lotSerialDetails = json_decode($transfer_detail['lot_sertial_details'], true);
                 $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($transfer_detail['quantity'],$transfer_detail['uom_id']);
                 $requestQty=$referencUomInfo['qtyByReferenceUom'];
 
@@ -164,83 +168,52 @@ class StockTransferController extends Controller
                         'created_at' => $transfered_at,
                     ]);
 
+                    if (getSettingsValue('lot_control') == 'on'){
+                        foreach($lotSerialDetails as $lotSerialDetail){
+//dd($lotSerialDetail);
+                            $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($lotSerialDetail['lot_serial_qty'], $transfer_detail['uom_id']);
+                            $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
 
-                    // Decrease current quantity for "from_location"
-                    $currentBalances = CurrentStockBalance::where('business_location_id', $request->from_location)
-                        ->where('product_id', $transfer_detail['product_id'])
-                        ->where('variation_id', $transfer_detail['variation_id'])
-                        ->where('current_quantity', '>', 0)
-                        ->when($settings->accounting_method == 'fifo', function ($query) {
-                            return $query->orderBy('id');
-                        }, function ($query) {
-                            return $query->orderByDesc('id');
-                        })
-                        ->get();
-
-                    foreach ($currentBalances as $balance) {
-                        $stockQty = $balance->current_quantity;
-
-                        if ($qtyToDecrease > $stockQty) { //10 8 6 /2 2 10
-                            $balance->update([
-                                'current_quantity' => 0,
-                            ]);
-
-                            //record decreased qty to lot serial details
-                            $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $stockQty);
-
-
-                            $qtyToDecrease -= $stockQty;
-                        }elseif($stockQty > $qtyToDecrease){ //10 > 6
-                            $leftStockQty = $stockQty - $qtyToDecrease;
-
-                            $balance->update([
-                                'current_quantity' => $leftStockQty,
-                            ]);
-
-                            //record decreased qty to lot serial details
-                            $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $qtyToDecrease);
-
-
-                            break;
-                        }elseif($stockQty == $qtyToDecrease){
-                            $balance->update([
-                                'current_quantity' => 0,
-                            ]);
-
-                            //record decreased qty to lot serial details
-                            $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $stockQty);
-                            //transfer detail record to history
-
-                            break;
+                            $csbService->removeQuantityFromCsb(
+                                $transferDetail->id,
+                                'transfer',
+                                $request->from_location,
+                                $transfer_detail['variation_id'],
+                                $transfer_detail['uom_id'],
+                                $qtyToDecrease,
+                                $lotSerialDetail['lot_serial_no'],
+                            );
                         }
-                    }
+                    }else{
+                        $csbService->removeQuantityFromCsb(
+                            $transferDetail->id,
+                            'transfer',
+                            $request->from_location,
+                            $transfer_detail['variation_id'],
+                            $transfer_detail['uom_id'],
+                            $qtyToDecrease,
+                            null,
 
+                        );
+                    }
 
                 }
 
                 if ($request->status == 'completed'){
+
                     $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
                         ->where('transaction_detail_id', $transferDetail->id)->get();
 
                     foreach ($lotSerialDetails as $lotDetail){
-                        $currentStockDetail = CurrentStockBalance::where('id', $lotDetail->current_stock_balance_id)->first();
 
-                        // Increase current quantity for "to_location"
-                        CurrentStockBalance::create([
-                            'business_location_id' => $request->to_location,
-                            'product_id' => $currentStockDetail->product_id,
-                            'variation_id' => $currentStockDetail->variation_id,
-                            'transaction_type' => 'transfer',
-                            'transaction_detail_id' => $transferDetail->id,
-                            'expired_date' => $currentStockDetail->expired_date,
-                            'batch_no' => $currentStockDetail->batch_no,
-                            'lot_serial_no' => $currentStockDetail->lot_serial_no,
-                            'ref_uom_id' => $currentStockDetail->ref_uom_id,
-                            'ref_uom_quantity' => $lotDetail->uom_quantity,
-                            'ref_uom_price' => $currentStockDetail->ref_uom_price,
-                            'current_quantity' => $lotDetail->uom_quantity,
-                            'created_at' => now(),
-                        ]);
+                        $csbService->duplicateCsbTransaction(
+                            $lotDetail->current_stock_balance_id,
+                            $request->to_location,
+                            $transferDetail->id,
+                            'transfer',
+                            $lotDetail->ref_uom_quantity,
+                            null,
+                        );
                     }
 
                     stock_history::create([
@@ -256,7 +229,6 @@ class StockTransferController extends Controller
                         'ref_uom_id' => $referenceUomInfo['referenceUomId'],
                         'created_at' => $transfered_at,
                     ]);
-
 
                 }
 
@@ -408,6 +380,10 @@ class StockTransferController extends Controller
             $transfer = StockTransfer::with('currency')->where('id', $stockTransfer->id)->get()->first();
             $business_location_id=$transfer->from_location;
             $stock_transfer_details = StockTransferDetail::with([
+                'current_stock' => function ($query) use ($business_location_id){
+                    $query->where('business_location_id', $business_location_id);
+                },
+                'lot_serial_details',
                 'packagingTx',
                 'currency',
                 'productVariation' => function ($q) {
@@ -438,7 +414,15 @@ class StockTransferController extends Controller
                 ->withSum(['stock' => function ($q) use ($business_location_id) {
                     $q->where('business_location_id', $business_location_id);
                 }], 'current_quantity');
-            $transfer_details= $stock_transfer_details->get();
+
+
+             $transfer_details = $stock_transfer_details->get();
+
+//            foreach ($transfer_details as $detail) {
+//                $product['current_stock'] = $product['product_variations']['current_stock'];
+//            }
+//            unset($product);
+
 
             return view('App.stock.transfer.edit', [
                 'stockTransfer' => $stockTransfer,
@@ -460,9 +444,11 @@ class StockTransferController extends Controller
     public function update(UpdateStockTransferRequest $request, StockTransfer $stockTransfer)
     {
 
-        $requestStocktransferDetails = $request->transfer_details;
+
+
         $oldStatus = $stockTransfer->status;
         $newStatus = $request->status;
+//        return $request;
         $transfered_at = date('Y-m-d', strtotime($request->transfered_at));
 
         $settings =  businessSettings::all()->first();
@@ -471,303 +457,243 @@ class StockTransferController extends Controller
         try {
             DB::beginTransaction();
             $packagingService=new packagingServices();
-            if($oldStatus != 'completed'){
-                $existingTransferDetailIds = [];
+            $csbService = new CurrentStockBalanceServices();
+            $stockTransferService = new StockTransferServices();
+            $requestStocktransferDetails = $request->transfer_details;
+            $oldStatus = $stockTransfer->status;
+            $newStatus = $request->status;
 
-                $existingTransferDetails = array_filter($requestStocktransferDetails, function ($detail) {
-                    return isset($detail['transfer_detail_id']);
-                });
+            StockTransfer::where('id', $stockTransfer->id)->update([
+                'to_location' => $request->to_location,
+                'transfered_at' => $transfered_at,
+                'status' => $request->status,
+                'remark' => $request->remark,
+                'updated_by' => Auth::id(),
+            ]);
 
-                $newTransferDetails = array_filter($requestStocktransferDetails, function ($detail) {
-                    return !isset($detail['transfer_detail_id']);
-                });
+            $existingTransferDetails = array_filter($requestStocktransferDetails, function ($detail) {
+                return isset($detail['transfer_detail_id']);
+            });
 
+            $newTransferDetails = array_filter($requestStocktransferDetails, function ($detail) {
+                return !isset($detail['transfer_detail_id']);
+            });
 
-                StockTransfer::where('id', $stockTransfer->id)->update([
-                    'to_location' => $request->to_location,
-                    'transfered_at' => $transfered_at,
-                    'status' => $request->status,
-                    'remark' => $request->remark,
-                    'updated_by' => \auth()->id()
-                ]);
+            foreach ($existingTransferDetails as $transferDetail) {
+                    $lotSerialDetails = json_decode($transferDetail['lot_sertial_details'], true);
 
-
-                // ========== Being:: Update existing row ==========
-                foreach ($existingTransferDetails as $transferDetail) {
                     $transferDetailId = $transferDetail['transfer_detail_id'];
 
                     $packagingService->updatePackagingForTx($transferDetail,$transferDetailId,'transfer');
+
                     $newQty = $transferDetail['quantity'];
+
+                    $new_uom_info = UomHelper::getReferenceUomInfoByCurrentUnitQty($newQty, $transferDetail['uom_id']);
+                    $new_ref_qty = $new_uom_info['qtyByReferenceUom'];
+
                     $beforeEditQty = $transferDetail['before_edit_quantity'];
 
+                    $before_edit_uom_info = UomHelper::getReferenceUomInfoByCurrentUnitQty($beforeEditQty, $transferDetail['uom_id']);
+                    $before_edit_ref_qty = $before_edit_uom_info['qtyByReferenceUom'];
+
+
                     $stockTransferDetailData = [
-                        'remark' => $transferDetail['remark'],
-                        'quantity' => $newQty,
-                        'uom_id' => $transferDetail['uom_id'],
-                        'updated_at' => now(),
-                        'updated_by' => Auth::id(),
-                    ];
+//                                'remark' => $transferDetail['remark'],
+                                'quantity' => $newQty,
+                                'uom_id' => $transferDetail['uom_id'],
+                                'updated_at' => now(),
+                                'updated_by' => Auth::id(),
+                            ];
 
 
                     StockTransferDetail::where('id', $transferDetailId)
                         ->where('transfer_id', $stockTransfer->id)
                         ->update($stockTransferDetailData);
 
-                    $referenceUomInfoForHis = UomHelper::getReferenceUomInfoByCurrentUnitQty($newQty, $transferDetail['uom_id']);
+
+                   if (getSettingsValue('lot_control') == 'on'){
+
+                       if ($oldStatus == 'in_transit' && ($newStatus == 'in_transit' || $newStatus == 'completed')) {
+
+                           stock_history::where('transaction_type', 'transfer')
+                               ->where('transaction_details_id', $transferDetailId)
+                               ->update([
+                                   'decrease_qty' => $new_ref_qty
+                               ]);
+
+
+                           $existingLotDetails = array_filter($lotSerialDetails, function ($detail) {
+                               return isset($detail['lot_serial_detail_id']);
+                           });
+
+                           $newLotDetails = array_filter($lotSerialDetails, function ($detail) {
+                               return !isset($detail['lot_serial_detail_id']);
+                           });
+
+                           $existingLotDetailIds = array_column($existingLotDetails, 'lot_serial_detail_id');
+
+                           foreach($existingLotDetails as $lotSerialDetail){
+                               $csbService->updateStockOutTransaction(
+                                   $transferDetailId,
+                                   'transfer',
+                                   $request->from_location,
+                                   $transferDetail['variation_id'],
+                                   $transferDetail['uom_id'],
+                                   $lotSerialDetail['lot_serial_qty'],
+                                   $lotSerialDetail['before_edit_lot_serial_qty'],
+                                   $lotSerialDetail['lot_serial_no'],
+                               );
+                           }
+
+                           $removeLotDetails = lotSerialDetails::where('transaction_type', 'transfer')
+                               ->where('transaction_detail_id', $transferDetailId)
+                               ->whereNotIn('id', $existingLotDetailIds)
+                               ->get();
+
+                           if ($removeLotDetails) {
+                               foreach ($removeLotDetails as $lotSerialDetail) {
+
+                                   $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
+                                   $currentStockBalance->current_quantity += $lotSerialDetail->ref_uom_quantity;
+                                   $currentStockBalance->save();
+
+                                   $lotSerialDetail->delete();
+                               }
+                           }
+
+                           foreach ($newLotDetails as $lotSerialDetail) {
+
+                               $new_lot_uom_info = UomHelper::getReferenceUomInfoByCurrentUnitQty($lotSerialDetail['lot_serial_qty'], $transferDetail['uom_id']);
+                               $lot_ref_qty = $new_lot_uom_info['qtyByReferenceUom'];
+//
+
+
+                                   $csbService->removeQuantityFromCsb(
+                                       $transferDetailId,
+                                       'transfer',
+                                       $request->from_location,
+                                       $transferDetail['variation_id'],
+                                       $transferDetail['uom_id'],
+                                       $lot_ref_qty,
+                                       $lotSerialDetail['lot_serial_no'],
+                                   );
 
 
 
-                    $currentBalances = CurrentStockBalance::where('business_location_id', $request->from_location)
-                        ->where('product_id', $transferDetail['product_id'])
-                        ->where('variation_id', $transferDetail['variation_id'])
-                        ->where('current_quantity', '>', 0)
-                        ->when($settings->accounting_method == 'fifo', function ($query) {
-                            return $query->orderBy('id');
-                        }, function ($query) {
-                            return $query->orderByDesc('id');
-                        })
-                        ->get();
+                           }
 
-                    if($newStatus == 'prepared' || $newStatus == 'pending'){
+                       }
+                   }else{
+
+
+                       if($oldStatus == 'in_transit' && ($newStatus == 'prepared' || $newStatus == 'pending')){
+                               stock_history::where('transaction_type', 'transfer')
+                                   ->where('transaction_details_id', $transferDetailId)->delete();
+
+                               $restoreLotSerialDetails = lotSerialDetails::where('transaction_detail_id', $transferDetailId)
+                                   ->where('transaction_type', 'transfer')
+                                   ->get();
+
+                               foreach ($restoreLotSerialDetails as $restoreDetail){
+                                   $currentStockBalance = CurrentStockBalance::where('id', $restoreDetail->current_stock_balance_id)->first();
+                                   $currentStockBalance->current_quantity += $restoreDetail->uom_quantity;
+                                   $currentStockBalance->save();
+                                   $restoreDetail->delete();
+                               }
+                       }
+
+                       if (($oldStatus == 'prepared' || $oldStatus == 'pending') && ($newStatus == 'in_transit' || $newStatus == 'completed')) {
+
+                           stock_history::create([
+                               'business_location_id' => $request->from_location,
+                               'product_id' => $transferDetail['product_id'],
+                               'variation_id' => $transferDetail['variation_id'],
+                               'lot_serial_no' => null,
+                               'expired_date' => null,
+                               'transaction_type' => 'transfer',
+                               'transaction_details_id' => $transferDetailId,
+                               'increase_qty' => 0,
+                               'decrease_qty' => $new_ref_qty,
+                               'ref_uom_id' => $new_uom_info['referenceUomId'],
+                               'created_at' => $transfered_at,
+                           ]);
+
+
+
+                           $csbService->removeQuantityFromCsb(
+                               $transferDetailId,
+                               'transfer',
+                               $request->from_location,
+                               $transferDetail['variation_id'],
+                               $transferDetail['uom_id'],
+                               $new_ref_qty,
+                               null,
+                           );
+                       }
+
+
+                       if ($oldStatus == 'in_transit' && ($newStatus == 'in_transit' || $newStatus == 'completed')){
+
+
                         stock_history::where('transaction_type', 'transfer')
-                            ->where('transaction_details_id', $transferDetail['transfer_detail_id'])->delete();
-                        if($oldStatus == 'in_transit'){
-                            $restoreLotSerialDetails = lotSerialDetails::where('transaction_detail_id', $transferDetailId)
-                                ->where('transaction_type', 'transfer')
-                                ->get();
-
-                            foreach ($restoreLotSerialDetails as $restoreDetail){
-                                $currentStockBalance = CurrentStockBalance::where('id', $restoreDetail->current_stock_balance_id)->first();
-                                $currentStockBalance->current_quantity += $restoreDetail->uom_quantity;
-                                $currentStockBalance->save();
-                                $restoreDetail->delete();
-                            }
-                        }
-                    }
-
-                    if ($newStatus == 'in_transit' || $newStatus == 'completed') {
-
-                        $stock_history = stock_history::where('transaction_type', 'transfer')
                             ->where('transaction_details_id', $transferDetailId)
-                            ->first();
-
-                        if ($stock_history){
-                            $stock_history->decrease_qty = $referenceUomInfoForHis['qtyByReferenceUom'];
-                            $stock_history->ref_uom_id = $referenceUomInfoForHis['referenceUomId'];
-                            $stock_history->created_at = $request->transfered_at;
-                            $stock_history->save();
-                        }else{
-                            stock_history::create([
-                                'business_location_id' => $request->from_location,
-                                'product_id' => $transferDetail['product_id'],
-                                'variation_id' => $transferDetail['variation_id'],
-                                'lot_serial_no' => null,
-                                'expired_date' => null,
-                                'transaction_type' => 'transfer',
-                                'transaction_details_id' => $transferDetailId,
-                                'increase_qty' => 0,
-                                'decrease_qty' => $referenceUomInfoForHis['qtyByReferenceUom'],
-                                'ref_uom_id' => $referenceUomInfoForHis['referenceUomId'],
-                                'created_at' => $transfered_at,
-                            ]);
-                        }
-
-
-                        if ($newQty > $beforeEditQty || ($newQty == $beforeEditQty && $newStatus == 'in_transit')) {
-                            $updateableQty = ($oldStatus == 'prepared' || $oldStatus == 'pending' || $newQty == $beforeEditQty) ? $newQty : ($newQty - $beforeEditQty);
-                            $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($updateableQty, $transferDetail['uom_id']);
-                            $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
-
-
-                            foreach ($currentBalances as $balance) {
-                                $currentQty = $balance->current_quantity;
-                                $checkLotDetail = lotSerialDetails::where('transaction_type', 'transfer')
-                                    ->where('transaction_detail_id', $transferDetailId)
-                                    ->where('current_stock_balance_id', $balance->id)
-                                    ->first();
-
-                                if ($qtyToDecrease > $currentQty) {
-                                    $this->updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, 'transfer', $currentQty);
-                                    $balance->update([
-                                        'current_quantity' => 0,
-                                    ]);
-                                    $qtyToDecrease -= $currentQty;
-                                } elseif ($currentQty > $qtyToDecrease) {
-                                    $this->updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, 'transfer', $qtyToDecrease);
-                                    $balance->update([
-                                        'current_quantity' => $currentQty - $qtyToDecrease,
-                                    ]);
-                                    break;
-                                } elseif ($currentQty == $qtyToDecrease) {
-                                    $this->updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, 'transfer', $qtyToDecrease);
-                                    $balance->update([
-                                        'current_quantity' => $currentQty - $qtyToDecrease,
-                                    ]);
-                                    $qtyToDecrease -= $currentQty;
-
-                                    if ($qtyToDecrease == 0) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        if ($oldStatus == 'prepared' || $oldStatus == 'pending') {
-                            if ($beforeEditQty > $newQty ||  ($newQty == $beforeEditQty && $newStatus == 'completed')) {
-                                $updateableQty = $newQty;
-                                $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($updateableQty, $transferDetail['uom_id']);
-                                $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
-
-                                foreach ($currentBalances as $balance) {
-                                    $currentQty = $balance->current_quantity;
-                                    $checkLotDetail = lotSerialDetails::where('transaction_type', 'transfer')
-                                        ->where('transaction_detail_id', $transferDetailId)
-                                        ->where('current_stock_balance_id', $balance->id)
-                                        ->first();
-
-                                    if ($qtyToDecrease > $currentQty) {
-                                        $this->updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, 'transfer', $currentQty);
-                                        $balance->update([
-                                            'current_quantity' => 0,
-                                        ]);
-                                        $qtyToDecrease -= $currentQty;
-                                    } elseif ($currentQty > $qtyToDecrease) {
-                                        $this->updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, 'transfer', $qtyToDecrease);
-                                        $balance->update([
-                                            'current_quantity' => $currentQty - $qtyToDecrease,
-                                        ]);
-                                        break;
-                                    } elseif ($currentQty == $qtyToDecrease) {
-                                        $this->updateOrCreateLotSerialDetails($checkLotDetail, $transferDetailId, $balance, 'transfer', $qtyToDecrease);
-                                        $balance->update([
-                                            'current_quantity' => $currentQty - $qtyToDecrease,
-                                        ]);
-                                        $qtyToDecrease -= $currentQty;
-
-                                        if ($qtyToDecrease == 0) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if ($beforeEditQty > $newQty) {
-                                $updateableQty = $beforeEditQty - $newQty;
-                                $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($updateableQty, $transferDetail['uom_id']);
-                                $qtyToReincrease = $referenceUomInfo['qtyByReferenceUom'];
-
-                                $lotSerialDetails = lotSerialDetails::where('transaction_detail_id', $transferDetailId)
-                                    ->where('transaction_type', 'transfer')
-                                    ->when($settings->accounting_method == 'fifo', function ($query) {
-                                        return $query->orderByDesc('current_stock_balance_id');
-                                    }, function ($query) {
-                                        return $query->orderBy('current_stock_balance_id');
-                                    })
-                                    ->get();
-
-                                foreach ($lotSerialDetails as $lotSerialDetail) {
-                                    $stockQty = $lotSerialDetail->uom_quantity;
-
-                                    if ($qtyToReincrease >= $stockQty) {
-                                        $qtyToReincrease -= $stockQty;
-
-                                        $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
-                                        $currentStockBalance->current_quantity += $stockQty;
-                                        $currentStockBalance->save();
-
-                                        $lotSerialDetail->delete();
-
-                                        if ($qtyToReincrease == $stockQty) {
-                                            CurrentStockBalance::where('transaction_detail_id', $transferDetailId)
-                                                ->where('transaction_type', 'transfer')
-                                                ->where('batch_no', $currentStockBalance->batch_no)
-                                                ->delete();
-                                        }
-
-                                        if ($qtyToReincrease == 0) {
-                                            break;
-                                        }
-                                    } elseif ($stockQty > $qtyToReincrease) {
-                                        $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
-                                        $currentStockBalance->current_quantity += $qtyToReincrease;
-                                        $currentStockBalance->save();
-
-                                        $lotSerialDetail->uom_quantity -= $qtyToReincrease;
-                                        $lotSerialDetail->save();
-                                        break;
-                                    } else {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-
-
-                    if ($newStatus == 'completed'){
-
-                        StockTransfer::where('id', $stockTransfer->id)
                             ->update([
-                                'received_at' => now(),
-                                'received_person' => Auth::id(),
+                                'decrease_qty' => $new_ref_qty
                             ]);
 
-                        $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
-                            ->where('transaction_detail_id', $transferDetailId)->get();
-
-                            stock_history::create([
-                                'business_location_id' => $request->to_location,
-                                'product_id' => $transferDetail['product_id'],
-                                'variation_id' => $transferDetail['variation_id'],
-                                'lot_serial_no' => null,
-                                'expired_date' => null,
-                                'transaction_type' => 'transfer',
-                                'transaction_details_id' => $transferDetailId,
-                                'increase_qty' => $referenceUomInfoForHis['qtyByReferenceUom'],
-                                'decrease_qty' => 0,
-                                'ref_uom_id' => $referenceUomInfoForHis['referenceUomId'],
-                                'created_at' => $transfered_at,
-                            ]);
-//                        }
-
-                        foreach ($lotSerialDetails as $lotDetail){
-                            $currentStockDetail = CurrentStockBalance::where('id', $lotDetail->current_stock_balance_id)->first();
-
-                            // Increase current quantity for "to_location"
-                            CurrentStockBalance::create([
-                                'business_location_id' => $request->to_location,
-                                'product_id' => $currentStockDetail->product_id,
-                                'variation_id' => $currentStockDetail->variation_id,
-                                'transaction_type' => 'transfer',
-                                'transaction_detail_id' => $transferDetailId,
-                                'expired_date' => $currentStockDetail->expired_date,
-                                'batch_no' => $currentStockDetail->batch_no,
-                                'lot_serial_no' => $currentStockDetail->lot_serial_no,
-                                'ref_uom_id' => $currentStockDetail->ref_uom_id,
-                                'ref_uom_quantity' => $lotDetail->uom_quantity,
-                                'ref_uom_price' => $currentStockDetail->ref_uom_price,
-                                'current_quantity' => $lotDetail->uom_quantity,
-                                'created_at' => now(),
-                            ]);
-                        }
-
-                    }
 
 
-                    $existingTransferDetailIds[] = $transferDetailId;
-                }
+                           $csbService->updateStockOutTransaction(
+                               $transferDetailId,
+                               'transfer',
+                               $request->from_location,
+                               $transferDetail['variation_id'],
+                               $transferDetail['uom_id'],
+                               $newQty,
+                               $beforeEditQty,
+                               null,
+                           );
+                       }
 
-                // ========== Being:: Update existing row ==========
+
+                       if ( $newStatus == 'completed') {
 
 
-                // ========== Being:: Delete rows that were not updated ==========
-                $transactionDetails = StockTransferDetail::where('transfer_id', $stockTransfer->id)
-                    ->whereNotIn('id', $existingTransferDetailIds)
-                    ->get();
+                           StockTransfer::where('id', $stockTransfer->id)
+                               ->update([
+                                   'received_at' => now(),
+                                   'received_person' => Auth::id(),
+                               ]);
+
+                           $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
+                               ->where('transaction_detail_id', $transferDetailId)->get();
+
+                           foreach ($lotSerialDetails as $lotDetail) {
+
+                               $csbService->duplicateCsbTransaction(
+                                   $lotDetail->current_stock_balance_id,
+                                   $request->to_location,
+                                   $transferDetailId,
+                                   'transfer',
+                                   $lotDetail->ref_uom_quantity,
+                                   null,
+                               );
+                           }
+                       }
 
 
+
+                   }
+                $existingTransferDetailIds[] = $transferDetailId;
+            }
+
+            // ========== Being:: Update existing row ==========
+
+
+            // ========== Being:: Delete rows that were not updated ==========
+            $transactionDetails = StockTransferDetail::where('transfer_id', $stockTransfer->id)
+                ->whereNotIn('id', $existingTransferDetailIds)
+                ->get();
 
                 foreach ($transactionDetails as $transactionDetail){
 
@@ -782,7 +708,6 @@ class StockTransferController extends Controller
                     $restoreLotSerialDetails = lotSerialDetails::where('transaction_detail_id', $transactionDetail->id)
                         ->where('transaction_type', 'transfer')
                         ->get();
-
 
                     foreach ($restoreLotSerialDetails as $restoreDetail){
                         $currentStockBalance = CurrentStockBalance::where('id', $restoreDetail->current_stock_balance_id)->first();
@@ -827,10 +752,6 @@ class StockTransferController extends Controller
                     $packaging=new packagingServices();
                     $packaging->packagingForTx($transfer_detail,$transferDetail->id,'transfer');
 
-                    $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($transfer_detail['quantity'], $transfer_detail['uom_id']);
-                    $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
-                    $qtyToIncrease = $referenceUomInfo['qtyByReferenceUom'];
-
 
                     if ($request->status == 'in_transit' || $request->status == 'completed') {
 
@@ -848,56 +769,53 @@ class StockTransferController extends Controller
                             'created_at' => $transfered_at,
                         ]);
 
+                        if (getSettingsValue('lot_control') == 'on'){
+                            foreach($lotSerialDetails as $lotSerialDetail){
 
-                        // Decrease current quantity for "from_location"
-                        $currentBalances = CurrentStockBalance::where('business_location_id', $request->from_location)
-                            ->where('product_id', $transfer_detail['product_id'])
-                            ->where('variation_id', $transfer_detail['variation_id'])
-                            ->where('current_quantity', '>', 0)
-                            ->when($settings->accounting_method == 'fifo', function ($query) {
-                                return $query->orderBy('id');
-                            }, function ($query) {
-                                return $query->orderByDesc('id');
-                            })
-                            ->get();
-//1
-                        foreach ($currentBalances as $balance) {
-                            $stockQty = $balance->current_quantity; //2 5 5 5
+                                $referenceUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($lotSerialDetail['lot_serial_qty'], $transfer_detail['uom_id']);
+                                $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
 
-                            if ($qtyToDecrease > $stockQty) { //13 > 2
-                                $balance->update([
-                                    'current_quantity' => 0,
-                                ]);
-
-                                //record decreased qty to lot serial details
-                                $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $stockQty);
-
-                                $qtyToDecrease -= $stockQty;
-                                //transfer detail record to history
-//                                $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $currentBalances = 0);
-
-                            }elseif($stockQty > $qtyToDecrease){ //1 > 5
-                                $leftStockQty = $stockQty - $qtyToDecrease;
-
-                                $balance->update([
-                                    'current_quantity' => $leftStockQty,
-                                ]);
-
-                                //record decreased qty to lot serial details
-                                $this->recordLotSerialDetails($transferDetail->id,$balance, 'transfer', $qtyToDecrease);
-                                //transfer detail record to history
-//                                $this->recordHistories($request->from_location, $transferDetail, $qtyToDecrease, 'decrease', $leftStockQty);
-
-                                break;
+                                $csbService->removeQuantityFromCsb(
+                                    $transferDetail->id,
+                                    'transfer',
+                                    $request->from_location,
+                                    $transfer_detail['variation_id'],
+                                    $transfer_detail['uom_id'],
+                                    $lotSerialDetail['lot_serial_no'],
+                                    $qtyToDecrease
+                                );
                             }
+                        }else{
+                            $csbService->removeQuantityFromCsb(
+                                $transferDetail->id,
+                                'transfer',
+                                $request->from_location,
+                                $transfer_detail['variation_id'],
+                                $transfer_detail['uom_id'],
+                                null,
+                                $qtyToDecrease
+                            );
                         }
 
                     }
 
-                    if ($request->status == 'completed') {
+                    if ($request->status == 'completed'){
 
+                        $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
+                            ->where('transaction_detail_id', $transferDetail->id)->get();
 
-                        //transfer detail record to history
+                        foreach ($lotSerialDetails as $lotDetail){
+
+                            $csbService->duplicateCsbTransaction(
+                                $lotDetail->current_stock_balance_id,
+                                $request->to_location,
+                                $transferDetail->id,
+                                'transfer',
+                                $lotDetail->ref_uom_quantity,
+                                null,
+                            );
+                        }
+
                         stock_history::create([
                             'business_location_id' => $request->to_location,
                             'product_id' => $transfer_detail['product_id'],
@@ -912,55 +830,27 @@ class StockTransferController extends Controller
                             'created_at' => $transfered_at,
                         ]);
 
-                        $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
-                            ->where('transaction_detail_id', $transferDetail->id)->get();
-
-                        foreach ($lotSerialDetails as $lotDetail) {
-                            $currentStockDetail = CurrentStockBalance::where('id', $lotDetail->current_stock_balance_id)->first();
-
-                            // Increase current quantity for "to_location"
-                            $current_stock_balance_increment_new = CurrentStockBalance::create([
-                                'business_location_id' => $request->to_location,
-                                'product_id' => $currentStockDetail->product_id,
-                                'variation_id' => $currentStockDetail->variation_id,
-                                'transaction_type' => 'transfer',
-                                'transaction_detail_id' => $transferDetail->id,
-                                'expired_date' => $currentStockDetail->expired_date,
-                                'batch_no' => $currentStockDetail->batch_no,
-                                'lot_serial_no' => $currentStockDetail->lot_serial_no,
-                                'ref_uom_id' => $currentStockDetail->ref_uom_id,
-                                'ref_uom_quantity' => $lotDetail->uom_quantity,
-                                'ref_uom_price' => $currentStockDetail->ref_uom_price,
-                                'current_quantity' => $lotDetail->uom_quantity,
-                                'created_at' => now(),
-                            ]);
-
-//                            $this->recordHistories($request->to_location, $transferDetail, $qtyToIncrease, 'increase', $lotDetail->uom_quantity );
-                        }
-
-
                     }
 
                 }
                 // ========== End:: Create new rows ==========
-            }
 
-            if($oldStatus == 'completed'){
-                StockTransfer::where('id', $stockTransfer->id)->update([
-                    'status' => $request->status,
-                ]);
+                if($oldStatus == 'completed'){
+                    StockTransfer::where('id', $stockTransfer->id)->update([
+                        'status' => $request->status,
+                    ]);
 
-                if($newStatus == 'in_transit'){
-                    foreach($requestStocktransferDetails as $detail) {
-                        CurrentStockBalance::where('transaction_type', 'transfer')
-                            ->where('transaction_detail_id', $detail['transfer_detail_id'])->delete();
+                    if($newStatus == 'in_transit'){
+                        foreach($requestStocktransferDetails as $detail) {
+                            CurrentStockBalance::where('transaction_type', 'transfer')
+                                ->where('transaction_detail_id', $detail['transfer_detail_id'])->delete();
 
-                        stock_history::where('business_location_id', $request->to_location)
-                            ->where('transaction_type', 'transfer')
-                            ->where('transaction_details_id', $detail['transfer_detail_id'])->delete();
+                            stock_history::where('business_location_id', $request->to_location)
+                                ->where('transaction_type', 'transfer')
+                                ->where('transaction_details_id', $detail['transfer_detail_id'])->delete();
+                        }
                     }
                 }
-            }
 
             DB::commit();
             activity('stock-transfer')
@@ -1396,8 +1286,6 @@ class StockTransferController extends Controller
         $business_location_id = $request->data['business_location_id'];
         $q = $request->data['query'];
 
-//        $business_location_id = $request->data['business_location_id'];
-//        $q = $request->data['query'];
         $variation_id=$request->data['variation_id'] ?? null;
 
         $products = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'uom_id', 'purchase_uom_id')
@@ -1700,6 +1588,102 @@ class StockTransferController extends Controller
             ->leftJoin('units', 'uoms.unit_id', '=', 'units.id')
             ->select('units.id', 'name as text')
             ->get();
+    }
+
+    public function getProductForQuickSearch(Request $request)
+    {
+        $data = $request->data;
+        $business_location_id = $data['business_location_id'];
+        $keyword = $data['query'];
+        $variation_id = $data['variation_id'] ?? null;
+        $psku_kw = $data['psku_kw'] ?? false;
+        $vsku_kw = $data['vsku_kw'] ?? false;
+        $pgbc_kw = $data['pgbc_kw'] ?? false;
+        $relations = [
+            'product_packaging' => function ($query) use ($keyword) {
+                $query->where('package_barcode', $keyword);
+            },
+            'uom:id,name,short_name,unit_category_id,unit_type,value,rounded_amount',
+            'uom.unit_category:id,name',
+            'uom.unit_category.uomByCategory:id,name,short_name,unit_type,unit_category_id,value,rounded_amount',
+            'product_variations.current_stock',
+            'product_variations.packaging.uom',
+            'product_variations.additionalProduct.productVariation.product',
+            'product_variations.additionalProduct.uom',
+            'product_variations.additionalProduct.productVariation.variationTemplateValue',
+            'stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->select('current_quantity', 'business_location_id', 'product_id', 'id')
+                    ->where('current_quantity', '>', 0)
+                    ->whereIn('business_location_id', $locationIds);
+            },
+        ];
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            $relations = [
+                'rom.uom.unit_category.uomByCategory',
+                'rom.rom_details.productVariation.product',
+                'rom.rom_details.uom',
+                ...$relations
+            ];
+        }
+        $products = Product::select(
+            'products.name as name',
+            'products.id as id',
+            'products.product_code',
+            'products.sku',
+            'products.product_type',
+            'products.has_variation',
+            'products.lot_count',
+            'products.uom_id',
+            'products.purchase_uom_id',
+            'products.can_sale',
+            'products.is_recurring',
+            'products.receipe_of_material_id',
+
+            'product_variations.product_id',
+            'product_variations.variation_sku',
+            'product_variations.variation_template_value_id',
+            'product_variations.default_selling_price',
+            'product_variations.id as variation_id',
+
+            'variation_template_values.variation_template_id',
+            'variation_template_values.name as variation_name',
+            'variation_template_values.id as variation_template_values_id'
+        )->whereNull('products.deleted_at')
+            ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
+                $query
+                    ->where('can_sale', 1)
+                    ->where('products.name', 'like', '%' . $keyword . '%')
+                    ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                            $query->where('package_barcode', $keyword);
+                        });
+                    });
+            })
+            ->when($variation_id, function ($query) use ($variation_id) {
+                $query->where('product_variations.id', $variation_id);
+            })
+            ->with($relations)
+            ->withSum(['stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->whereIn('business_location_id', $locationIds);
+            }], 'current_quantity')
+            ->get()->toArray();
+
+        foreach ($products as &$product) {
+            $product['current_stock'] = $product['product_variations']['current_stock'];
+        }
+        unset($product);
+
+        return response()->json($products, 200);
     }
 
 
