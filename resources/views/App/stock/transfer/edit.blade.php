@@ -395,7 +395,7 @@
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel"></h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    <input type="hidden" class="demand_qty_in_lot" value="" />
+                                    <input type="hidden" class="csb_qty" value="{{$detail->stock_sum_current_quantity}}" />
                                 </div>
                                 <div class="modal-body">
                                     <table class="table table-rounded table-striped border gy-7 gs-7" id="lotSerialTable_{{ $key }}">

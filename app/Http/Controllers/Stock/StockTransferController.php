@@ -446,13 +446,8 @@ class StockTransferController extends Controller
 
 
 
-        $oldStatus = $stockTransfer->status;
-        $newStatus = $request->status;
-//        return $request;
+
         $transfered_at = date('Y-m-d', strtotime($request->transfered_at));
-
-        $settings =  businessSettings::all()->first();
-
 
         try {
             DB::beginTransaction();
@@ -580,6 +575,31 @@ class StockTransferController extends Controller
 
 
 
+                           }
+
+                           if ( $newStatus == 'completed') {
+
+
+                               StockTransfer::where('id', $stockTransfer->id)
+                                   ->update([
+                                       'received_at' => now(),
+                                       'received_person' => Auth::id(),
+                                   ]);
+
+                               $lotSerialDetails = lotSerialDetails::where('transaction_type', 'transfer')
+                                   ->where('transaction_detail_id', $transferDetailId)->get();
+
+                               foreach ($lotSerialDetails as $lotDetail) {
+
+                                   $csbService->duplicateCsbTransaction(
+                                       $lotDetail->current_stock_balance_id,
+                                       $request->to_location,
+                                       $transferDetailId,
+                                       'transfer',
+                                       $lotDetail->ref_uom_quantity,
+                                       null,
+                                   );
+                               }
                            }
 
                        }
