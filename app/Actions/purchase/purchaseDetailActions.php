@@ -159,12 +159,13 @@ class purchaseDetailActions
         $referencUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($purchase_detail_data['quantity'], $purchase_detail_data['purchase_uom_id']);
         $batchNo = UomHelper::generateBatchNo($purchase_detail_data['variation_id']);
         $per_ref_uom_price_by_default_currency = exchangeCurrency($purchase_detail_data['per_ref_uom_price'], $purchase['currency_id'], $this->currency->id) ?? 0;
+        $purchaseDetailId= $purchase_detail_data['purchase_detail_id'] ?? $purchase_detail_data['id'];
         return [
             "business_location_id" => $purchase['business_location_id'],
             "product_id" => $purchase_detail_data['product_id'],
             "variation_id" => $purchase_detail_data['variation_id'],
             "transaction_type" => $type,
-            "transaction_detail_id" => $purchase_detail_data['purchase_detail_id'] ?? $purchase_detail_data['id'],
+            "transaction_detail_id" =>$purchaseDetailId,
             "expired_date" => arr($purchase_detail_data, 'expired_date','',null),
             'batch_no' => $batchNo,
             "ref_uom_id" => $referencUomInfo['referenceUomId'],
@@ -173,6 +174,8 @@ class purchaseDetailActions
             "current_quantity" => $referencUomInfo['qtyByReferenceUom'],
             "currency_id" => $purchase->currency_id,
             "created_at" => $purchase->received_at,
+            "lot_serial_type"=>'lot',
+            "lot_serial_no"=>'LP-'.$purchaseDetailId
         ];
     }
 

@@ -19,6 +19,8 @@
     var uniqueNameId=1;
     var contactId=editSale.contact_id ?? 3 ;
     let isGetContact =editSale ? false:true;
+
+    var accounting_method=setting.accounting_method;
     @if(isset($sale))
         route="{{route('update_sale',$sale->id)}}"
     @endif
@@ -220,6 +222,7 @@
                     <input type="hidden" name="lot_no" value="0" />
                     <input type="hidden" name="variation_id" value="${product.product_variations.id}" />
                     <input type="hidden" name="each_selling_price" value="" />
+                    <input type="hidden" name="lot_serial_val" value='${accounting_method}'/>
                     <input type="hidden" name="discount_type" value="" />
                     <input type="hidden" name="per_item_discount" value="" />
                     <input type="hidden" name="subtotal_with_discount" value="" />
@@ -780,6 +783,7 @@
                 let per_item_discount = parent.find('input[name="per_item_discount"]').val();
                 let subtotal_with_discount = parent.find('input[name="subtotal_with_discount"]').val();
                 let item_detail_note = parent.find('input[name="item_detail_note"]').val();
+                let lot_serial_val = parent.find('input[name="lot_serial_val"]').val();
 
                 let packaging_id = parent.find('input[name="packaging_id"]').val();
                 let packaging_quantity = parent.find('input[name="packaging_quantity"]').val();
@@ -795,6 +799,7 @@
                     parentSaleDetailId,
                     packaging_quantity,
                     packaging_id,
+                    lot_serial_val,
                     'product_id': product_id,
                     'variation_id': variation_id,
                     'uom_id': uom_id,
@@ -808,7 +813,8 @@
                     'tax_amount': null,
                     'subtotal_with_tax': null,
                     'currency_id': null,
-                    'delivered_quantity': null
+                    'delivered_quantity': null,
+
                 };
                 sale_details.push(raw_sale_details);
             })
@@ -1346,9 +1352,26 @@
 
             let packaging_id = current_tr.find('input[name="packaging_id"]').val();
             let packaging_quantity = current_tr.find('input[name="packaging_quantity"]').val();
+            let lot_serial_val = current_tr.find('input[name="lot_serial_val"]').val();
             // let filtered_product = productsOnSelectData.filter( item => item.product_id == product_id && item.variation_id == variation_id);
             $('#packaging_modal').empty();
+            $('#lot_serial_modal_input').empty();
+            $('#lot_serial_modal_input').empty();
             let product=productsOnSelectData.find(p=>p.variation_id==variation_id);
+
+            let batchOption='';
+            let defaultStockOption=`<option value='${accounting_method}' selected>${accounting_method.toUpperCase()}</option>`;
+            if(product.stock){
+                product.stock.forEach(s => {
+                    batchOption+=`
+                        <option value="${s.id}" ${lot_serial_val == s.id ?'selected' :''}  data-qty="${s.current_quantity}" data-uomid="${s.ref_uom_id}" >
+                            ${s.lot_serial_no} (${s.expired_date ? s.expired_date  :''})
+                        </option>
+                    `;
+                });
+            }
+            $('#lot_serial_modal_input').append(defaultStockOption);
+            $('#lot_serial_modal_input').append(batchOption);
             let packagingOption='';
             if(product.packaging){
                 product.packaging.forEach((pk)=>{
@@ -1448,6 +1471,7 @@
             let packagingUom=selectedOption.data('uomid');
             let packageQtyForCal = selectedOption.data('qty');
             let pkgname = selectedOption.data('pkgname');
+            let lot_serial_modal_input_val = parent.find('select[name="lot_serial_modal_input"]').val();
             // current_tr.find('input[name="each_selling_price"]').val(selling_price_group);
             current_tr.find('input[name="discount_type"]').val(dis_type);
             if(dis_type.toLowerCase() == 'foc'){
@@ -1461,6 +1485,7 @@
                 current_tr.find('input[name="item_detail_note"]').val(item_detail_note);
             }
             current_tr.find('input[name="packaging_id"]').val(packaging_id);
+            current_tr.find('input[name="lot_serial_val"]').val(lot_serial_modal_input_val);
             current_tr.find('input[name="packaging_quantity"]').val(packaging_quantity);
             current_tr.find('input[name="packagingUom"]').val(packagingUom);
             current_tr.find('input[name="packageQtyForCal"]').val(packageQtyForCal);

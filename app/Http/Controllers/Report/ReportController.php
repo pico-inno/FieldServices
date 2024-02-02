@@ -1449,7 +1449,8 @@ class ReportController extends Controller
             'opening_date',
             'transfered_at',
             'received_person',
-            'transferLocaiton.name as transferLocaitonName'
+            'transferLocaiton.name as transferLocaitonName',
+            'stockLocation.name as stockLocationName'
         )
             ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
             ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
@@ -1470,11 +1471,15 @@ class ReportController extends Controller
             ->leftJoin('transfer_details', 'current_stock_balance.transaction_detail_id', '=', 'transfer_details.id')
             ->leftJoin('transfers', 'transfer_details.transfer_id', '=', 'transfers.id')
 
+            ->leftJoin('stockin_details', 'current_stock_balance.transaction_detail_id', '=', 'stockin_details.id')
+            ->leftJoin('stockins', 'stockin_details.stockin_id', '=', 'stockins.id')
+
             ->where('sale_details.is_delete', 0)
             ->where('sales.is_delete', 0)
             ->leftJoin('contacts as supplier', 'purchases.contact_id', '=', 'supplier.id')
             ->leftJoin('business_users as openingPerson', 'opening_stocks.opening_person', '=', 'openingPerson.id')
             ->leftJoin('business_locations as transferLocaiton', 'transfers.to_location', '=', 'transferLocaiton.id')
+            ->leftJoin('business_locations as stockLocation', 'stockins.business_location_id', '=', 'business_locations.id')
             // ->where('products.id',6601)
             // ->whereNotNull('sales.id')
         ;
@@ -1484,7 +1489,10 @@ class ReportController extends Controller
                 if ($data->csbT == 'purchase') {
                     return $data->purchase_voucher_no;
                 } elseif ($data->csbT == 'opening_stock') {
-                    return $data->opening_stock_voucher_no;
+                    return $data->stockin_voucher_no;
+                }
+                elseif ($data->csbT == 'stock_in') {
+                    return $data->stockin_voucher_no;
                 }
                 elseif ($data->csbT == 'transfer') {
                     return $data->transfer_voucher_no;
@@ -1499,6 +1507,8 @@ class ReportController extends Controller
                     return fDate($data->osDate, false, false);
                 } elseif ($data->csbT == 'transfer') {
                     return $data->transfered_at;
+                } elseif ($data->csbT == 'stock_in') {
+                    return $data->stockin_date;
                 }
                 return '';
             })
@@ -1510,6 +1520,9 @@ class ReportController extends Controller
                 } elseif ($data->csbT == 'transfer') {
                     return $data->transferLocaitonName;
                 }
+                // elseif ($data->csbT == 'stock_in') {
+                //     return $data->stockLocationName;
+                // }
                 return '';
             })
             ->rawColumns(['purchase_date'])->make(true);

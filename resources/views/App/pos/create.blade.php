@@ -859,6 +859,19 @@
                     </div>
 
                     <div class="modal-body">
+                        @if($setting['lot_control'])
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label for="" class="fs-5 mb-1">Batch/Lot/Expire Date</label>
+                                <select class="form-select mb-2 form-select-sm rounded-0" id="lot_serial_modal_input" name="lot_serial_modal_input"
+                                    data-control="select2" data-placeholder="Select Batch/Lot/Expire Date" placeholder="Select Batch/Lot/Expire Date" data-hide-search="true" data-allow-clear="true">
+
+
+                                </select>
+                            </div>
+                        </div>
+                        @endif
+
                         <div class="row mb-5">
                             <div class="col-12">
                                 <label for="" class="fs-5 mb-1">Packaging</label>

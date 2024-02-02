@@ -119,7 +119,7 @@ class SaleServices
                 $parentSaleItems[$sale_detail['isParent']]= $created_sale_details;
             }
             // manage stock transactions
-            $this->txManager($request,$sale_data,$created_sale_details,$product);
+            $this->txManager($request,$sale_data,$created_sale_details,$product,$sale_detail);
         }
         return;
     }
@@ -187,7 +187,7 @@ class SaleServices
         }
     }
 
-    public function txManager($request, $sale_data,$created_sale_details,$product){
+    public function txManager($request, $sale_data,$created_sale_details,$product,$requestSaleDetails){
 
         $stock = CurrentStockBalance::where('product_id', $created_sale_details['product_id'])
             ->where('business_location_id', $sale_data->business_location_id)
@@ -218,7 +218,11 @@ class SaleServices
                 stock_history::create($stock_history_data);
             } else {
                 if ($request->status == 'delivered' && $businessLocation->allow_sale_order == 0) {
-                    $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock, $sale_data);
+                    if(isset($requestSaleDetails['lot_serial_val']) && $requestSaleDetails['lot_serial_val']!=$this->accounting_method && $request->type == 'pos'){
+                        $changeQtyStatus = $this->changeStockQtyById($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $requestSaleDetails['lot_serial_val'], $sale_data);
+                    }else{
+                        $changeQtyStatus = $this->changeStockQty($requestQty, $refUoMId, $request->business_location_id, $created_sale_details->toArray(), $stock, $sale_data);
+                    };
                     if ($changeQtyStatus == false) {
                         return throw new Exception('outOfStock');
                     } else {
@@ -261,7 +265,7 @@ class SaleServices
         $product = Product::where('id', $product_id)->select('product_type')->first();
         if ($product->product_type == 'storable') {
             $variation_id = $sale_detail['variation_id'];
-            $totalStocks = CurrentStockBalance::select('id', 'current_stock_id')
+            $totalStocks = CurrentStockBalance::select('id')
                             ->where('product_id', $product_id)
                             ->where('variation_id', $variation_id)
                             ->whereIn('business_location_id', $locationIds)
@@ -357,6 +361,31 @@ class SaleServices
         // }else{
         //     return false;
         // }
+
+    }
+    public function changeStockQtyById($requestQty,$refUoMId, $business_location_id, $sale_detail,$current_stock_id, $sales)
+    {
+        $cbs = CurrentStockBalance::select('id','current_quantity','batch_no','lot_serial_no','ref_uom_id')
+                        ->where('id',$current_stock_id)
+                        ->first();
+        if ($requestQty > $cbs['current_quantity'] && $cbs) {
+            return false;
+        } else {
+            $balanceQty=$cbs['current_quantity']-$requestQty;
+            $data =[ [
+                'stockQty' => $cbs['current_quantity'],
+                'batch_no' => $cbs['batch_no'],
+                'lot_serial_no' => $cbs['lot_serial_no'],
+                'ref_uom_id' => $cbs['ref_uom_id'],
+                'stock_id' => $cbs['id']
+            ]];
+            $cbs->update([
+                'current_quantity'=>$balanceQty
+            ]);
+            $this->createStockHistory($business_location_id,$sale_detail,$requestQty, $refUoMId,$sales);
+
+            return $data;
+        }
 
     }
     public function createStockHistory($business_location_id,$sale_detail,$reqQty, $refUoMId, $sales){
