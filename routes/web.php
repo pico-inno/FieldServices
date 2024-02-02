@@ -248,6 +248,7 @@ Route::get('stock-transfer/{id}/invoice-print', [StockTransferController::class,
 Route::resource('stock-transfer', StockTransferController::class)->except('destroy');
 Route::delete('stock-transfer/{id}/delete', [StockTransferController::class, 'softDelete']);
 Route::get('/transfer/tableData', [StockTransferController::class, 'listData']);
+Route::get('/transfer/product/quick-search', [StockTransferController::class, 'getProductForQuickSearch'])->name('transfer.product.quicksearch');
 Route::get('transfer/print/{id}/invoice', [StockTransferController::class, 'invoicePrint'])->name('transfer.print');
 //_End: Stock Transfer
 
@@ -310,8 +311,10 @@ Route::controller(ReportController::class)->group(function () {
         //Being: Expire Alert
         Route::get('/alert-expire', 'expireAlert')->name('report.stockAlert.expire');
         Route::post('/alert-expire/filter-list', 'expireAlertFilter');
-        Route::post('/alert-expire/remove', 'removeExpireItem')
-            ->name('alert.expire.remove');
+        Route::post('/alert-expire/adjustment', 'removeExpireItem')
+            ->name('alert.expire.adjustment');
+        Route::post('/alert-expire/transfer', 'transferExpireItem')
+            ->name('alert.expire.transfer');
         //End: Expire Alert
 
 

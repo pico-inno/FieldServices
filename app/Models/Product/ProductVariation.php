@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Models\CurrentStockBalance;
 use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\AdditionalProduct;
@@ -56,6 +57,11 @@ class ProductVariation extends Model
 
     public function uomSellingPrice(){
         return $this->hasMany(UOMSellingprice::class, 'product_variation_id','id');
+    }
+
+    public function current_stock()
+    {
+        return $this->hasMany(CurrentStockBalance::class, 'variation_id', 'id');
     }
 
 

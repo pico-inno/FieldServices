@@ -297,7 +297,7 @@
                                             $product=$detail->product;
                                             $product_variation =$detail->toArray()['product_variation'];
                                         @endphp
-                                        <tr class="transfer_row">
+                                        <tr class="transfer_row" data-row-id="{{ $key }}">
                                             <td>
                                                 <div class="my-5">
                                                     <span>{{$product->name}}</span>
@@ -322,10 +322,16 @@
                                             </td>
 
                                             <td>
-{{--                                                <span class="text-danger-emphasis  stock_alert_{{$detail->variation_id}} d-none fs-7 p-2">* Out of Stock</span>--}}
                                                 <div class="input-group transfer_dialer_${unique_name_id}" >
-                                                    <input  {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} type="text" class="form-control form-control-sm quantity form-control-sm quantity-{{$detail->variation_id}}"   placeholder="quantity" name="transfer_details[{{$key}}][quantity]" value="{{round($detail->quantity,2)}}" data-kt-dialer-control="input"/>
+                                                    @if(getSettingsValue('lot_control') == 'on')
+                                                    <input {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} type="text" class="form-control form-control-sm transfer_qty quantity form-control-sm" name="transfer_details[{{$key}}][quantity]"   aria-hidden="true" data-bs-toggle="modal" data-bs-target="#batch_lot_selection_modal_{{$key}}" value="{{round($detail->quantity,2)}}" readonly/>
+                                                    @else
+                                                    <input  {{ $stockTransfer->status == 'completed' ? 'readonly' : '' }} type="text" class="form-control form-control-sm quantity form-control-sm  quantity-{{$detail->variation_id}}"   placeholder="quantity" name="transfer_details[{{$key}}][quantity]" value="{{round($detail->quantity,2)}}" data-kt-dialer-control="input"/>
+                                                    @endif
                                                 </div>
+                                                @if($stockTransfer->status == 'completed')
+                                                    <input type="hidden" class="form-control form-control-sm quantity form-control-sm  quantity-{{$detail->variation_id}}"   name="transfer_details[{{$key}}][quantity]" value="{{round($detail->quantity,2)}}"/>
+                                                @endif
                                                 <input type="hidden" class="before_edit_quantity" name="transfer_details[{{$key}}][before_edit_quantity]" value="{{round($detail->quantity,2)}}">
                                             </td>
 
@@ -335,6 +341,9 @@
                                                         <option value="{{$uom['id']}}" @selected($uom['id']==$detail->uom_id)>{{$uom['name']}}</option>
                                                     @endforeach
                                                 </select>
+                                                @if($stockTransfer->status == 'completed')
+                                                    <input type="hidden" name="transfer_details[{{$key}}][uom_id]" value="{{ $detail->uom_id }}">
+                                                @endif
                                             </td>
                                             <td class="fv-row">
                                                 <input type="text"  {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
@@ -354,30 +363,15 @@
                                             </td>
                                             <td>
                                                 <input {{ $stockTransfer->status == 'completed' ? 'disabled' : '' }} type="text" class="form-control form-control-sm" name="transfer_details[{{$key}}][remark]" value="{{$detail->remark}}">
+                                                <input type="hidden" class="modal-data-input" name="transfer_details[{{ $key }}][lot_sertial_details]" value="">
                                             </td>
                                             <th><i class="fa-solid fa-trash text-danger deleteRow" type="button" ></i>
                                             </th>
                                         </tr>
-
                                     @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                            {{-- <div class="separator my-5"></div>
-                            <div class="col-4 float-end mt-3">
-                                <table class="col-12 ">
-                                    <tbody>
-                                    <tr>
-                                        <th>Total Item:</th>
-                                        <td class="rowcount text-left fs-4" id="total_item">0</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Net Total Amount</th>
-                                        <td class="rowSum text-left fs-4 net_purchase_total_amount_text" id=''>0</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div> --}}
 
                         </div>
                     </div>
@@ -391,9 +385,89 @@
                                 Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                             </span>
                         </button>
-{{--                        <button type="submit" class="btn update_btn btn-primary btn-lg save_btn"></button>--}}
                     </div>
                 </div>
+                @foreach($stock_transfer_details as $key=>$detail)
+
+                    <div class="modal fade batchLotModal" data-item="{{ $detail }}" id="batch_lot_selection_modal_{{$key}}"  tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog mw-800px">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <input type="hidden" class="csb_qty" value="{{$detail->stock_sum_current_quantity}}" />
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-rounded table-striped border gy-7 gs-7" id="lotSerialTable_{{ $key }}">
+                                        <thead>
+                                        <tr>
+                                            <th>Lot Serial</th>
+                                            <th class="min-w-40px">Quantity</th>
+                                            <th>UOM</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="lot_serial_body">
+                                        @foreach($detail->lot_serial_details as $key=>$lot_serial_detail)
+                                            <tr class="lot_serial_row">
+                                                <td>
+                                                    <input type="hidden" name="lot_serial_detail_id[]" value="{{ $lot_serial_detail->id }}">
+                                                    <select class="form-select form-select-sm lot_selection"
+                                                            name="lot_serial_no[]"
+                                                            data-kt-repeater="select2" data-hide-search="true"
+                                                            data-placeholder="Select Batch" >
+                                                        <option value="">Select Lot</option>
+                                                        @foreach($detail->current_stock as $csb)
+                                                            <option @selected($lot_serial_detail->lot_serial_numbers == $csb->lot_serial_no) value="{{ $csb->lot_serial_no }}" data-lotqty="{{ $csb->current_quantity + $lot_serial_detail->ref_uom_quantity }}">
+                                                               <span> {{ $csb->lot_serial_no }} ({{ number_format($csb->current_quantity,2) }}) - </span><br>
+                                                                <span>{{ $csb->expired_date }}</span>
+                                                            </option>
+                                                        @endforeach
+
+                                                    </select>
+                                                    <input type="hidden" id="itemData" value='${JSON.stringify(item)}'>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="lot_serial_qty[]" value="{{ $lot_serial_detail->ref_uom_quantity }}" class="form-control form-control-sm">
+                                                    <input type="hidden" name="before_edit_lot_serial_qty[]" class="hidden_lot_qty" value="{{ $lot_serial_detail->ref_uom_quantity }}">
+                                                    <input type="hidden" class="item_data" id="itemData" value="{{ $detail }}">
+
+                                                </td>
+                                                <td>
+                                                    {{ $detail->uom->name }}
+                                                </td>
+                                                <td class="text-center">
+
+
+                                                    @if($key !== 0)
+                                                        <button class="btn btn-sm btn-light-danger btn-remove-row">
+                                                            <i class="ki-duotone ki-trash fs-5">
+                                                                <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span>
+                                                            </i>
+                                                        </button>
+                                                    @else
+                                                        <button class="btn btn-sm btn-light-primary btn-add-row" type="button">
+                                                            <i class="ki-duotone ki-plus fs-5"></i>
+                                                        </button>
+                                                    @endif
+
+
+
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary modal-btn-save-changes">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
                 <!--end::Main column-->
             </form>
         </div>
@@ -414,6 +488,9 @@
         $('[data-td-toggle="datetimepicker"]').flatpickr({
             dateFormat: "Y-m-d",
         });
+
+
+        $('.lot_selection').select2();
 
     </script>
     @include('App.stock.transfer.include.quickSearchProducts')

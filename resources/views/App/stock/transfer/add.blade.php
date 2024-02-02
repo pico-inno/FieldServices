@@ -31,7 +31,7 @@
 @endsection
 @section('content')
     <!--begin::Content-->
-    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="content d-flex flex-column flex-column-fluid transfer_content" id="kt_content">
         <!--begin::Container-->
         <div class="container-xxl" id="kt_content_container">
             <form action="{{route('stock-transfer.store')}}" method="POST" id="stock_transfer_form">
@@ -293,8 +293,11 @@
             </form>
         </div>
         <!--end::Container-->
+
     </div>
     <!--end::Content-->
+
+
 @endsection
 
 @push('scripts')
