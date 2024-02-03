@@ -474,6 +474,15 @@
             let product = productsOnSelectData.find( product => product.variation_id == variationId );
             let quantity = isNullOrNan(product.stock_sum_current_quantity);
 
+            let lotSerialVal = parent.find('input[name="lot_serial_val"]').val();
+            if(lotSerialVal && lotSerialVal!=='fifo' && lotSerialVal!=='lifo'){
+                if(product.stock.length >0){
+
+                    let stock=product.stock.find((s)=>s.id==lotSerialVal);
+                    quantity=stock.ref_uom_quantity;
+                }
+            }
+
             const uoms = product.uom.unit_category.uom_by_category;
 
             const newUomInfo = uoms.filter(uom => uom.id == newUomId)[0];

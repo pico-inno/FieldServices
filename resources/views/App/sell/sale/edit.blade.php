@@ -46,7 +46,10 @@
 
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <div class="container-xxl" id="sale_container">
-        <form action={{route('update_sale',$sale->id)}} method="POST" id="sale_form">
+        <form action={{route('update_sale',[
+            'id'=>$sale->id,
+            'sale_type'=>'ecommerce'
+        ])}} method="POST" id="sale_form">
             @csrf
             <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5" >
                 <div class="fv-row">

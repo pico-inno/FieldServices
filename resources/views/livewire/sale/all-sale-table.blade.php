@@ -1,4 +1,52 @@
 <div class="">
+    @if ($saleType=='ecommerce')
+        <div class="row mb-3">
+            <div class="col-lg-2 col-md-3 col-6">
+                <div class="card  p-1 position-relative">
+                    <div class="z-index-3">
+                        <livewire:NewEcommerceOrderCount />
+                    </div>
+                    <div class="card-body p-5 py-2">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div class="p-3 rounded-circle bg-warning-active me-3">
+                                <svg class="text-white" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M17 22q-2.075 0-3.537-1.463T12 17q0-2.075 1.463-3.537T17 12q2.075 0 3.538 1.463T22 17q0 2.075-1.463 3.538T17 22m.5-5.2v-2.3q0-.2-.15-.35T17 14q-.2 0-.35.15t-.15.35v2.275q0 .2.075.388t.225.337l1.525 1.525q.15.15.35.15t.35-.15q.15-.15.15-.35t-.15-.35zM5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h4.175q.275-.875 1.075-1.437T12 1q1 0 1.788.563T14.85 3H19q.825 0 1.413.588T21 5v4q0 .425-.288.713T20 10q-.425 0-.712-.288T19 9V5h-2v2q0 .425-.288.713T16 8H8q-.425 0-.712-.288T7 7V5H5v14h4.5q.425 0 .713.288T10.5 20q0 .425-.288.713T9.5 21zm7-16q.425 0 .713-.288T13 4q0-.425-.288-.712T12 3q-.425 0-.712.288T11 4q0 .425.288.713T12 5"/>
+                                </svg>
+                            </div>
+                            <div class=" d-block fw-bold">
+                                <div class="">
+                                    <span class="fs-3 fw-bolder">
+                                        {{$pedningCount <= 99 ?$pedningCount :'99+' }}
+                                    </span>
+                                </div>
+                                <span class="fs-9">Pending Orders</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-6">
+                <div class="card  p-1">
+                    <div class="card-body p-5 py-2">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div class="p-3 rounded-circle bg-primary-active me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-white" width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="m17.275 20.25l3.475-3.45l-1.05-1.05l-2.425 2.375l-.975-.975l-1.05 1.075zM6 9h12V7H6zm12 14q-2.075 0-3.537-1.463T13 18q0-2.075 1.463-3.537T18 13q2.075 0 3.538 1.463T23 18q0 2.075-1.463 3.538T18 23M3 22V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v6.675q-.7-.35-1.463-.513T18 11H6v2h7.1q-.425.425-.787.925T11.675 15H6v2h5.075q-.05.25-.062.488T11 18q0 1.05.288 2.013t.862 1.837L12 22l-1.5-1.5L9 22l-1.5-1.5L6 22l-1.5-1.5z"/></svg>
+                            </div>
+                            <div class=" d-block fw-bold">
+                                <div class="">
+                                    <span class="fs-3 fw-bolder">
+                                        {{$orderCount <= 99 ?$orderCount :'99+' }}
+                                    </span>
+                                </div>
+                                <span class="fs-9"> Orders</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="accordion-collapse collapse" id="kt_accordion_1_body_2" aria-labelledby="kt_accordion_1_header_2"
         data-bs-parent="#kt_accordion_1" wire:ignore>
         <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5" >
@@ -177,7 +225,7 @@
                 wire:loading style="top: 40px;left:50%;">
                 <h2 class="text-primary">Loading....</h2>
             </div>
-            <table class="table align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table"
+            <table class="table table-hover  align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table"
                 data-sticky-header="true">
                 <thead>
                     <tr class="text-end text-gray-600 fw-bold fs-7 text-uppercase gs-0">
@@ -191,7 +239,7 @@
                         <th class="min-w-100px text-center">
                             Actions
                         </th>
-                        <th class="min-w-100px cursor-pointer" wire:click="sortBy('sales_voucher_no')">
+                        <th class="min-w-100px cursor-pointer text-start" wire:click="sortBy('sales_voucher_no')">
                             Sale Voucher No
                             <x-datatable.sort-icon field="sales_voucher_no" :sortField="$sortField" :sortAsc="$sortAsc" />
                         </th>
@@ -215,7 +263,7 @@
                 <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                     @foreach ($saleData as $s)
-                    <tr class="text-end">
+                    <tr class="text-end sale-row  cursor-pointer">
                         <td>
                             <div class="form-check form-check-sm form-check-custom ">
                                 <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
@@ -236,7 +284,10 @@
                                             </a>
                                         @endif
                                         @if ($hasUpdate)
-                                            <a href="{{route('saleEdit', $s->id)}}" class="dropdown-item p-2   edit-unit ">Edit</a>
+                                            <a href="{{route('saleEdit', [
+                                                'id'=>$s->id,
+                                                'sale_type'=>$saleType
+                                            ])}}" class="dropdown-item p-2   edit-unit ">Edit</a>
                                         @endif
                                         @if ($hasPrint)
                                             <a class="dropdown-item p-2  cursor-pointer  print-invoice"
@@ -267,7 +318,15 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{$s['sales_voucher_no']}}</td>
+                        <td class="text-start view_detail"  data-href="{{route('saleDetail', $s->id)}}">
+                            <div class="d-flex justify-content-start align-items-start">
+                                {{$s['sales_voucher_no']}}
+                                @if (isset($s['isRead'])&&$s['isRead'] == null && $s['channel_type']=='ecommerce')
+
+                                    <i class="fa-solid fa-circle text-danger fs-10 ms-3 noti"></i>
+                                @endif
+                            </div>
+                        </td>
                         <td>{{$s['company_name'] ?? getFullNameAttribute([
                            'prefix'=> $s['prefix'],
                             'first_name'=>$s['first_name'],

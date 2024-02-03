@@ -46,6 +46,9 @@
     POS Sale List
     @elseif ($saleType == 'sales')
     Sale list
+
+    @elseif ($saleType == 'ecommerce')
+    Ecommerce
     @else
     All Sale
     @endif
@@ -59,6 +62,8 @@
         POS Sale List
         @elseif ($saleType == 'sales')
         Sale list
+        @elseif ($saleType == 'ecommerce')
+        Ecommerce
         @else
         All Sale
         @endif
@@ -71,9 +76,8 @@
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <div class="container-xxl" id="kt_content_container">
 
+
         <livewire:sale.AllSaleTable :saleType='$saleType' />
-
-
         <div id="fake-div">
 
         </div>
@@ -102,11 +106,6 @@
 <script src="{{ asset('customJs/print/print.js') }}"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
-
-
-
-
-
 
 
 
@@ -187,7 +186,8 @@
 
         $(document).on('click', '.view_detail', function() {
             $url = $(this).data('href');
-
+            $parent=$(this).closest('.sale-row').find('.noti').remove();
+            console.log($(this).closest('.sale-row').find('.noti'));
             loadingOn();
             $('.purchaseDetail').load($url, function() {
                 $(this).modal('show');

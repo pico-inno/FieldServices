@@ -55,6 +55,7 @@ use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Repositories\interfaces\LocationRepositoryInterface;
+use Modules\Ecommerce\Entities\EcommerceOrder;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -127,7 +128,10 @@ class saleController extends Controller
             $saleItems = $saleItems->whereNotNull('pos_register_id');
         }
         if ($request->saleType == 'sales') {
-            $saleItems = $saleItems->whereNull('pos_register_id');
+            $saleItems = $saleItems->whereNull('pos_register_id')->channel_type('sale');
+        }
+        if ($request->saleType == 'ecommerce') {
+            $saleItems = $saleItems->where('channel_type','ecommerce');
         }
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $saleItems = $saleItems->whereDate('sales.created_at', '>=', $request->from_date)->whereDate('sales.created_at', '<=', $request->to_date);
@@ -286,15 +290,26 @@ class saleController extends Controller
             },
             'product', 'uom', 'currency', 'packagingTx'
         ])
-            ->where('sales_id', $id)->where('is_delete', 0);
-
+        ->where('sales_id', $id)->where('is_delete', 0);
+        $ecommerceOrder=[];
+        if(hasModule('Ecommerce') && isEnableModule('Ecommerce')){
+            $ecommerceOrder= EcommerceOrder::where('sale_id',$sale['id'])->first();
+            if($sale['channel_type']=='ecommerce'){
+            if($ecommerceOrder['viewed_at'] === null){
+                $ecommerceOrder->update([
+                    'viewed_at'=>now()
+                ]);
+            }
+            }
+        }
         $sale_details = $sale_details_query->get();
         return view('App.sell.sale.details.saleDetail', compact(
             'sale',
             'location',
             'sale_details',
             'setting',
-            'address'
+            'address',
+            'ecommerceOrder'
         ));
     }
     // sale create page
@@ -828,7 +843,11 @@ class saleController extends Controller
                 ], 200);
             } else {
                 // return redirect()->back()->with(['success' => 'successfully updated']);
-                return redirect()->route('all_sales', 'allSales')->with(['success' => 'successfully updated']);
+                if(request('sale_type') =='ecommerce'){
+                    return redirect()->route('all_sales', 'ecommerce')->with(['success' => 'successfully updated']);
+                }else{
+                    return redirect()->route('all_sales', 'allSales')->with(['success' => 'successfully updated']);
+                }
             }
         } catch (Exception $e) {
             Db::rollBack();
@@ -2259,5 +2278,8 @@ class saleController extends Controller
     }
     public function addChunkData($saleId, Request $request)
     {
+    }
+    public function statusChange($sale){
+        dd($sale);
     }
 }

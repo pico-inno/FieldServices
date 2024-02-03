@@ -82,6 +82,7 @@
                                     <th class="min-w-175px">Sell Qty</th>
                                     <th class="min-w-175px">Selling price</th>
                                     <th class="min-w-175px">Subtotal</th>
+                                    <th class="min-w-175px">Total Cogs</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -179,6 +180,10 @@
                 {
                     data: 'sale_subtotal',
                     name: 'sale_subtotal'
+                },
+                {
+                    data:'total_cogs',
+                    name:'total_cogs',
                 }
 
             ];
@@ -204,7 +209,7 @@
         var handleSearchDatatable = () => {
             const filterSearch = document.querySelector('[data-filter="input"]');
             filterSearch.addEventListener('keyup', function (e) {
-                let result=datatable.column(0).search(e.target.value).draw();
+                let result=datatable.search(e.target.value).draw();
             });
         }
 

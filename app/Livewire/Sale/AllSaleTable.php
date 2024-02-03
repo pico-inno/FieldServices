@@ -48,11 +48,25 @@ class AllSaleTable extends Component
         $hasHospital= hasModule('HospitalManagement') && isEnableModule('HospitalManagement');
         $locations= businessLocation::select('name', 'id', 'parent_location_id')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
+        $pedningCount=0;
+        $orderCount=0;
+        if($saleType=='ecommerce'){
+            $pedningCount=sales::where('status','pending')
+                        ->where('channel_type','ecommerce')
+                        ->where('is_delete',0)
+                        ->count();
+
+            $orderCount=sales::where('status','order')
+                        ->where('channel_type','ecommerce')
+                        ->where('is_delete',0)
+                        ->count();
+        }
         $saleData= sales::query()
                     ->select(
                         'sales.id',
                         'sales.sold_at',
                         'sales.contact_id',
+                        'sales.channel_type',
                         'sales.status',
                         'sales.table_id',
                         'sales.sale_amount',
@@ -70,7 +84,8 @@ class AllSaleTable extends Component
                         'contacts.company_name',
                         'business_locations.id as business_locations_id',
                         'business_locations.name as location_name',
-                        'business_locations.invoice_layout'
+                        'business_locations.invoice_layout',
+
                     )
                     ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
                     ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
@@ -106,13 +121,18 @@ class AllSaleTable extends Component
                         $query->whereIn('business_location_id', $accessUserLocation);
                     })
                     ->when($saleType == 'sales', function ($query){
-                            $query->whereNull('pos_register_id');
+                            $query->whereNull('pos_register_id')->channel_type('sale');
                     })
-                    ->when($saleType == 'posSales', function ($query) {
-                            $query->whereNotNull('pos_register_id');
+                    ->when($saleType == 'sales', function ($query){
+                            $query->whereNull('pos_register_id')->channel_type('sale');
+                    })
+                    ->when($saleType == 'ecommerce', function ($query) {
+                            $query->where('channel_type','ecommerce')
+                                    ->selectRaw('ecommerce_orders.viewed_at as isRead')
+                                    ->join('ecommerce_orders','sales.id','=','ecommerce_orders.sale_id');
                     })
                     ->with('currency:id,symbol')
                     ->paginate($this->perPage);
-        return view('livewire.sale.all-sale-table',compact('saleData','locations', 'hasHospital', 'customers', 'hasView', 'hasUpdate', 'hasPrint','hasDelete'));
+        return view('livewire.sale.all-sale-table',compact('saleData','locations', 'hasHospital', 'customers', 'hasView', 'hasUpdate', 'hasPrint','hasDelete','saleType','pedningCount','orderCount'));
     }
 }

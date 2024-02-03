@@ -183,7 +183,7 @@
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
                                     data-bs-placement="right" data-bs-dismiss="click" title="Sell">
                                     <!--begin::Nav link-->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('sell_icon')"
+                                    <a class="position-relative nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('sell_icon') "
                                         data-bs-toggle="tab" href="#kt_aside_nav_tab_stocks_sell">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen032.svg-->
                                         <span class="svg-icon svg-icon-gray-500 svg-icon-3"><svg width="24" height="24"
@@ -208,6 +208,11 @@
                                                     fill="currentColor" />
                                             </svg>
                                         </span>
+                                        @if ( hasModule('Ecommerce') && isEnableModule('Ecommerce'))
+                                            {{-- <span class="position-absolute top-0 start-100 translate-middle  badge badge-circle badge-danger"> --}}
+                                                    <livewire:NewEcommerceOrderCount />
+                                            {{-- </span> --}}
+                                        @endif
                                         <!--end::Svg Icon-->
                                     </a>
                                     <!--end::Nav link-->
@@ -1448,6 +1453,24 @@
                                                             <span class="menu-title">All Sale</span>
                                                         </a>
                                                     </div>
+                                                    @if ( hasModule('Ecommerce') && isEnableModule('Ecommerce'))
+                                                    <div class="menu-item">
+                                                        <a class="menu-link @yield('ecommerce_active_show') px-0 fs-6"
+                                                            href="{{route('all_sales','ecommerce')}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-list-ul"></i>
+                                                            </span>
+                                                            <span class="menu-title ">Ecommerce Sale List
+
+                                                                {{-- <span class="ms-3 badge badge-circle badge-danger"> --}}
+                                                                    <div class="position-relative ms-5">
+                                                                        <livewire:NewEcommerceOrderCount />
+                                                                    </div>
+                                                                {{-- </span> --}}
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                    @endif
                                                     <div class="menu-item">
                                                         <a class="menu-link @yield('sales_active_show') px-0 fs-6"
                                                             href="{{route('all_sales','sales')}}">

@@ -28,6 +28,7 @@ use Modules\ComboKit\Services\RoMService;
 use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
 use App\Actions\currentStockBalance\currentStockBalanceActions;
 use App\Services\Report\reportServices;
+use Modules\Ecommerce\Entities\EcommerceOrder;
 
 function hasModule($moduleName)
 {
@@ -66,8 +67,12 @@ function getReferenceUomId($currentUomId)
 function formatPrice($price, $currency)
 {
     $formattedPrice = number_format($price,2, '.', ',');
+    if(!$currency){
+       $currencyId= getSettingValue('currency_id');
+       $currency=Currencies::where('id',$currencyId)->first();
+    }
     $symobl= $currency['symbol'] ?? '';
-    return $formattedPrice .' '. $symobl;
+    return $formattedPrice .' '. $symobl ;
 }
 function price($price, $currencyId = 'default')
 {
@@ -890,6 +895,16 @@ function getTotalCurrentBalance($variation_id)
     return intval($totalCurrentStock);
 }
 
+function newOrderCount()
+{
+    $totalCurrentStock = EcommerceOrder::select('viewed_at')->whereNull('viewed_at')->count();
+    return intval($totalCurrentStock);
+}
+function isRead()
+{
+    $totalCurrentStock = EcommerceOrder::select('viewed_at')->whereNull('viewed_at')->count();
+    return intval($totalCurrentStock);
+}
 function productSummary($campaignId,$userId,$dateFilter){
     return sale_details::query()
     ->select(
