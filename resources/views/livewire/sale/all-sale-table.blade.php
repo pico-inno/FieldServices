@@ -391,9 +391,27 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade saleDetail" tabindex="-1"></div>
     <script wire:ignore>
 
     $(document).ready(function() {
+        $(document).on('click', '.view_detail', function() {
+            $url = $(this).data('href');
+            $parent=$(this).closest('.sale-row').find('.noti').remove();
+            console.log($(this).closest('.sale-row').find('.noti'));
+            loadingOn();
+            $('.saleDetail').load($url, function() {
+                $(this).modal('show');
+                loadingOff();
+            });
+        });
+        // document.getElementByClassName
+        let sdmodal=document.getElementsByClassName('saleDetail')[0];
+        sdmodal.addEventListener('hidden.bs.modal', event => {
+            @this.set('businesslocationFilterId', $('#select2').select2("val"));
+        })
+
         let table = document.querySelector('#kt_saleItem_table');
         initToggleToolbar(table);
         handleDeleteRows();

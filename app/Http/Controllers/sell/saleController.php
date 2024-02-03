@@ -2279,7 +2279,14 @@ class saleController extends Controller
     public function addChunkData($saleId, Request $request)
     {
     }
-    public function statusChange($sale){
-        dd($sale);
+    public function statusChange(Sales $sale,Request $request){
+        if($sale['status']!='delivered'){
+            $sale->update([
+                'status'=>$request['status']
+            ]);
+        }
+        return response()->json([
+            'success'=>'Successfully Updated',
+        ], 200);
     }
 }

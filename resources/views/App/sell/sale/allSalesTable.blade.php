@@ -87,7 +87,6 @@
     <!--end::Container-->
 </div>
 
-<div class="modal fade purchaseDetail" tabindex="-1"></div>
 <div class="modal fade" tabindex="-1" id="folioPosting"></div>
 <div class="modal modal-lg fade" tabindex="-1" data-bs-focus="false" id="reservationFolioPosting"></div>
 <div class="modal modal-lg fade " tabindex="-1" data-bs-focus="false" id="modal"></div>
@@ -184,16 +183,8 @@
         });
 
 
-        $(document).on('click', '.view_detail', function() {
-            $url = $(this).data('href');
-            $parent=$(this).closest('.sale-row').find('.noti').remove();
-            console.log($(this).closest('.sale-row').find('.noti'));
-            loadingOn();
-            $('.purchaseDetail').load($url, function() {
-                $(this).modal('show');
-                loadingOff();
-            });
-        });
+        
+
 
         $(document).on('click', '.print-invoice', function(e) {
             e.preventDefault();

@@ -247,48 +247,51 @@
                                         <!--end::Label-->
                                     </div>
                                     <!--end::Item-->
-                                    <div class="d-flex flex-stack mt-10">
-                                         <!--begin::Code-->
-                                         <div class="fw-semibold pe-10 text-gray-600 fs-7">Payment Screenshot:</div>
-                                         <!--end::Code-->
-                                         <!--begin::Label-->
-                                         <div class="text-end fw-bold fs-6 text-gray-800">
-                                            <!--end::Label-->
-                                            @php
-                                            // dd($ecommerceOrder);
-                                                $src = asset('/storage/payment-screenshot/'.$ecommerceOrder->screenshot);
-                                            @endphp
-                                            <div class="w-auto min-h-65px d-flex justify-content-start">
-                                                <a class="d-block overlay w-50px h-65px" data-fslightbox="lightbox-basic-'{{$ecommerceOrder->id}} " href="{{$src}}">
-                                                    <div data-src="{{$src}}"
-                                                        class="overlay-wrapper bgi-no-repeat bg-gray-300 bgi-position-center bg-secondary bgi-size-cover card-rounded  w-50px h-65px lazy-bg"
-                                                        style="background-image:url('{{$src}}'); background-color:gray;">
+                                    @if ( hasModule('Ecommerce') && isEnableModule('Ecommerce'))
+                                        <div class="d-flex flex-stack mt-10">
+                                            <!--begin::Code-->
+                                            <div class="fw-semibold pe-10 text-gray-600 fs-7">Payment Screenshot:</div>
+                                            <!--end::Code-->
+                                            <!--begin::Label-->
+                                            <div class="text-end fw-bold fs-6 text-gray-800">
+                                                @if (isset($ecommerceOrder['screenshot']))
+                                                    <!--end::Label-->
+                                                    @php
+                                                    // dd($ecommerceOrder);
+                                                        $src = asset('/storage/payment-screenshot/'.$ecommerceOrder['screenshot']);
+                                                    @endphp
+                                                    <div class="w-auto min-h-65px d-flex justify-content-start">
+                                                        <a class="d-block overlay w-50px h-65px" data-fslightbox="lightbox-basic-'{{$ecommerceOrder['id']}} " href="{{$src}}">
+                                                            <div data-src="{{$src}}"
+                                                                class="overlay-wrapper bgi-no-repeat bg-gray-300 bgi-position-center bg-secondary bgi-size-cover card-rounded  w-50px h-65px lazy-bg"
+                                                                style="background-image:url('{{$src}}'); background-color:gray;">
+                                                            </div>
+                                                            <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow ">
+                                                                <i class="bi bi-eye-fill text-white fs-5"></i>
+                                                            </div>
+                                                        </a>
                                                     </div>
-                                                    <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow ">
-                                                        <i class="bi bi-eye-fill text-white fs-5"></i>
-                                                    </div>
-                                                </a>
+                                                @endif
                                             </div>
-                                         </div>
-                                    </div>
+                                        </div>
+                                    @endif
                                 </div>
                                 <!--end::Section-->
                             </div>
                             <!--end::Container-->
 
 
-                        <div class="row g-5 mb-11 mt-10">
-                            <div class="col-4 text-start m-auto d-flex justify-content-center">
-                                <div class="w-auto">
-                                    <button class="btn btn-sm btn-primary" id="confirmOrder">
-                                        Confirm Order
-                                    </button>
-                                    {{-- <button class="btn  btn-sm btn-success">
-                                        Deliverd
-                                    </button> --}}
+                            @if ($sale['status'] !='order' && $sale['status']!='delivered' && $sale['status']!='partial')
+                                <div class="row g-5 mb-11 mt-10">
+                                    <div class="col-4 text-start m-auto d-flex justify-content-center">
+                                        <div class="w-auto">
+                                            <button class="btn btn-sm btn-primary" id="confirmOrder">
+                                                Confirm Order
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            @endif
                             <div class="separator border-2 my-10"></div>
                             <!--begin::Table wrapper-->
                             <div class="table-responsive mt-2">
@@ -321,7 +324,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
                     {{-- <button type="button" class="btn btn-primary" id="print">Print</button> --}}
                 </div>
             </div>
@@ -338,34 +341,12 @@
 
     "use strict";
 
-    let sale_id = {{$sale['id']}};
-    let statusChangeUri="{{route('sale.statusChange',$sale['id'])}}";
 
-    $(document).ready(()=>{
-        $(document).off('click').on('click','#confirmOrder',()=>{
-            $.ajax({
-                method: 'POST',
-                url:statusChangeUri,
-                dataType: 'json',
-                data:{
-                    status:''
-                }
-                success: function(result) {
-                   success('Successfully Updated')
-                },
-                error: function(result) {
-                    toastr.error(result.responseJSON.errors,
-                        'Something went wrong');
-                }
-            });
-            $('.purchaseDetail').modal('hide');
-
-        })
-    })
 
     var KTCustomersList = function () {
         var datatable;
-        var table
+        var table;
+        let sale_id = {{$sale['id']}};
         console.log(sale_id, 'ssssssssssss')
         var initLogsList = function () {
 
@@ -439,6 +420,56 @@
 
     KTUtil.onDOMContentLoaded(function () {
         KTCustomersList.init();
+        let statusChangeUri="{{route('sale.statusChange',$sale['id'])}}";
+
+        $('#confirmOrder').off('click').on('click',()=>{
+            Swal.fire({
+                title:'Are You Sure To Confirm Order',
+                icon:"question",
+                input: "checkbox",
+                inputValue: 1,
+                customClass: {
+                    confirmButton: "btn btn-primary",
+                },
+                inputPlaceholder: `
+                    Do You Also Want To Confirm Payment?
+                `,
+                inputAttributes: {
+                    class: 'form-check-input custom-checkbox-class' // Add Bootstrap classes and your custom class here
+                },
+            }).then((result) => {
+                let isConfirmPayment=false;
+                if (result.value) {
+                    isConfirmPayment=true;
+                } else {
+                    isConfirmPayment=false;
+
+                }
+                    $.ajax({
+                        method: 'POST',
+                        url:statusChangeUri,
+                        dataType: 'json',
+
+                        headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                        data:{
+                            status:'order'
+                        },
+                        success: function(result) {
+                        success('Successfully Updated')
+                        },
+                        error: function(result) {
+                            toastr.error(result.responseJSON.errors,
+                                'Something went wrong');
+                        }
+                    });
+                    $('.saleDetail').modal('hide');
+            });
+
+
+
+        })
     });
 </script>
 
