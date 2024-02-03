@@ -208,16 +208,32 @@ class ProductsImport implements
                     $variation_value_array = array_map(fn ($value) => trim($value), explode("|", $raw_variation_value));
 
                     $raw_variation_sku = $row['variation_skus_seperated_values_blank_if_product_type_if_single'];
-                    $variation_sku_array = array_map(fn ($value) => trim($value), explode("|", $raw_variation_sku));
+                    $variation_sku_array = [];
+                    if ($raw_variation_sku){
+                        $variation_sku_array = array_map(fn ($value) => trim($value), explode("|", $raw_variation_sku));
+                    }
+
+                    $raw_purchase_price = $row['purchase_price'];
+                    $raw_selling_price = $row['selling_price'];
+                    $purchase_price_array = [];
+                    $selling_price_array = [];
+                    if ($raw_purchase_price){
+                        $purchase_price_array = array_map(fn ($value) => trim($value), explode("|", $raw_purchase_price));
+                    }
+                    if ($raw_selling_price){
+                        $selling_price_array = array_map(fn ($value) => trim($value), explode("|", $raw_selling_price));
+                    }
 
 
-                     $this->createProductVariation($product_id, $variation_id, $variation_value_array, $variation_sku_array, $row, $sku);
+                     $this->createProductVariation($key, $product_id, $variation_id, $variation_value_array, $variation_sku_array, $row, $sku, $purchase_price_array, $selling_price_array);
 
                 }
 
                 if (strtolower(trim($hasVariation)) === "single") {
 
                     $preparedProductVariation = $this->prepareProductVariation($row);
+                    $preparedProductVariation['default_purchase_price'] = $row['purchase_price'];
+                    $preparedProductVariation['default_selling_price'] = $row['selling_price'];
                     $preparedProductVariation['product_id'] = $product_id;
                     $preparedProductVariation['variation_sku'] = $createdProduct->sku;
 
@@ -232,7 +248,7 @@ class ProductsImport implements
         }
     }
 
-    private function createProductVariation($product_id, $variation_id, $variation_values, $variation_sku, $row, $product_sku)
+    private function createProductVariation($row_key, $product_id, $variation_id, $variation_values, $variation_sku, $row, $product_sku, $purchase_price, $selling_price)
     {
 
         $variations = [];
@@ -261,18 +277,44 @@ class ProductsImport implements
                 }
             }
 
-            if (trim($variation_sku[$key]) == '') {
-                $vari_sku = $product_sku . '-' . $key + 1;
-            } else {
-                $vari_sku = $variation_sku[$key];
-            };
+            if (empty($variation_sku)){
+                $vari_sku = $product_sku . '-0' . $key;
+            }else{
+//                if (trim($variation_sku[$key]) == '') {
+//                    $vari_sku = $product_sku . '-' . $key + 1;
+//                } else {
+                    $vari_sku = $variation_sku[$key];
+//                };
+            }
+
+
+            if (count($selling_price) != count($variation_values) || count($purchase_price) != count($variation_values)) {
+                throw new Exception("Variable value and price are not match in your excel at row ". $row_key + 2);
+            }
+
+            if (isset($purchase_price)){
+                $purchase_price_variable = $purchase_price[$key];
+            }
+
+            if (isset($selling_price)){
+                $selling_price_variable = $selling_price[$key];
+            }
+
+
+
+
+
             $preparedProductVariation = $this->prepareProductVariation($row);
+            $preparedProductVariation['default_purchase_price'] = $purchase_price_variable ?? null;
+            $preparedProductVariation['default_selling_price'] = $selling_price_variable ?? null;
             $preparedProductVariation['product_id'] = $product_id;
             $preparedProductVariation['variation_sku'] = $vari_sku;
             $preparedProductVariation['variation_template_value_id'] = $variation_template_value_id;
             $variations[] = $preparedProductVariation;
         };
         $this->productRepository->insertVariation($variations);
+
+
 
     }
 
@@ -321,9 +363,9 @@ class ProductsImport implements
     private function prepareProductVariation($row)
     {
         return  [
-            'default_purchase_price' => $row['purchase_price'],
-            'profit_percent' => $row['profit_margin'],
-            'default_selling_price' => $row['selling_price'],
+//            'default_purchase_price' => $row['purchase_price'],
+            'profit_percent' => $row['profit_margin'] ?? null,
+//            'default_selling_price' => $row['selling_price'],
             'created_by' => auth()->id()
         ];
     }
@@ -345,7 +387,6 @@ class ProductsImport implements
             '*.sku_leave_blank_to_auto_generate_sku' => [
                 'nullable',
                 Rule::unique('products', 'sku'),
-//                ->whereNull('deleted_by')
             ],
 
             '*.uom' => [
