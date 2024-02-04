@@ -370,7 +370,7 @@
     @endsection
 
     @push('scripts')
-        <script src="customJs/reports/purchase/purchaseSummaryExport.js"></script>
-        <script src="customJs/reports/purchase/purchaseSummaryFilter.js"></script>
-        <script src="customJs/toaster.js"></script>
+        <script src="{{ asset('customJs/reports/purchase/purchaseSummaryExport.js') }}"></script>
+        <script src="{{ asset('customJs/reports/purchase/purchaseSummaryFilter.js') }}"></script>
+        <script src="{{ asset('customJs/toaster.js') }}"></script>
     @endpush
