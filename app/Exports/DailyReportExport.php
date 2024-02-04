@@ -32,10 +32,10 @@ class DailyReportExport implements FromView,ShouldAutoSize
         $leaderId=$campaign['campaign_leader'];
         $PBIds=array_unique($PBIds);
         if (!in_array($leaderId, $PBIds)) {
-            $PBIds[] = $leaderId;
+            $PBIds = [...$PBIds,$leaderId];
         }
 
         // dd($PBIds,$campaignId,$fromDate,$toDate);
-        return view('App.openingStock.export.exportWithData',compact('PBIds','campaignId','dateFilter'));
+        return view('App.fieldService.Export.dailyExportReport',compact('PBIds','campaignId','dateFilter'));
     }
 }

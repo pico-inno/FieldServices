@@ -911,8 +911,10 @@ function productSummary($campaignId,$userId,$dateFilter){
     'products.name',
     'uom.short_name as uom',
     'categories.name as category_name',
+    'categories.id as category_id',
         DB::raw("SUM(stock_histories.decrease_qty) as totalQty"),
-        DB::raw("SUM(total_sale_amount) as totalPrice")
+        DB::raw("SUM(total_sale_amount) as totalPrice"),
+        DB::raw("SUM('total_sale_amount') as ttp")
     )
     ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
     ->where('sales.channel_type', '=', 'campaign')
@@ -930,7 +932,7 @@ function productSummary($campaignId,$userId,$dateFilter){
     ->where('fscampaign.id','=',$campaignId)
     ->where('sales.created_by','=',$userId)
     ->orderBy('categories.name','ASC')
-    ->whereDate('sales.sold_at','=',$dateFilter)
-    ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name')
-    ->get();
+    ->whereDate('sales.sold_at',$dateFilter)
+    ->groupBy('sale_details.variation_id','products.name', 'categories.name','categories.id', 'uom.short_name')
+    ->get()->groupBy('category_name');
 }

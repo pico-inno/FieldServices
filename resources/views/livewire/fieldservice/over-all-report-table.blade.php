@@ -208,7 +208,7 @@
                             <th class="text-start pe-3 min-w-150px">Outlet</th>
                             <th class="text-start pe-3 min-w-150px">PG</th>
                             <th class="text-start pe-3 min-w-150px">Campaign</th>
-                            <th class="text-start pe-3 min-w-100px cursor-pointer" wire:click="sortBy('sales.created_at')"> Date <x-datatable.sort-icon field="sales.created_at" :sortField="$sortField" :sortAsc="$sortAsc" /></th>
+                            <th class="text-start pe-3 min-w-100px cursor-pointer" wire:click="sortBy('sales.sold_at')"> Date <x-datatable.sort-icon field="sales.sold_at" :sortField="$sortField" :sortAsc="$sortAsc" /></th>
                         </tr>
                         <!--end::Table row-->
                     </thead>

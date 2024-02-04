@@ -93,7 +93,7 @@ class OverAllReportTable extends Component
                 'product_packaging_transactions.product_packaging_id',
                 'product_packaging_transactions.quantity as pkgQty',
                 'product_packagings.packaging_name as pkg',
-                'sales.created_at',
+                'sales.sold_at',
                 'sale_details.quantity as quantity',
                 'outlet.name as outlet',
                 'categories.name as category_name',
