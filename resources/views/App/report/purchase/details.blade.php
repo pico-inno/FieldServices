@@ -430,7 +430,7 @@
 @endsection
 
 @push('scripts')
-    <script src="customJs/reports/purchase/purchaseDetailsExport.js"></script>
-    <script src="customJs/reports/purchase/purchaseDetailsFilter.js"></script>
-    <script src="customJs/toaster.js"></script>
+    <script src="{{ asset('customJs/reports/purchase/purchaseDetailsExport.js') }}"></script>
+    <script src="{{ asset('customJs/reports/purchase/purchaseDetailsFilter.js') }}"></script>
+    <script src="{{ asset('customJs/toaster.js') }}"></script>
 @endpush

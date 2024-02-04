@@ -279,7 +279,7 @@ Route::get('/stock/get-current-qty', [StockTransferController::class, 'getCurren
 
 //============================ Being: Reports ===========================================
 Route::controller(ReportController::class)->group(function () {
-    Route::prefix('reports')->group(function () {
+    Route::prefix('/reports')->group(function () {
         //=================================Being: Inventory Reports ========================
         //Stock in/out summary
         //        Route::get('/stock-report','stock_index')->name('report.stock.index');

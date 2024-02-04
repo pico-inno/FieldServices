@@ -232,8 +232,8 @@ class ProductsImport implements
                 if (strtolower(trim($hasVariation)) === "single") {
 
                     $preparedProductVariation = $this->prepareProductVariation($row);
-                    $preparedProductVariation['default_purchase_price'] = $row['purchase_price'];
-                    $preparedProductVariation['default_selling_price'] = $row['selling_price'];
+                    $preparedProductVariation['default_purchase_price'] = floatval(str_replace(',', '',$row['purchase_price']));
+                    $preparedProductVariation['default_selling_price'] = floatval(str_replace(',','', $row['selling_price']));
                     $preparedProductVariation['product_id'] = $product_id;
                     $preparedProductVariation['variation_sku'] = $createdProduct->sku;
 
@@ -305,8 +305,8 @@ class ProductsImport implements
 
 
             $preparedProductVariation = $this->prepareProductVariation($row);
-            $preparedProductVariation['default_purchase_price'] = $purchase_price_variable ?? null;
-            $preparedProductVariation['default_selling_price'] = $selling_price_variable ?? null;
+            $preparedProductVariation['default_purchase_price'] = floatval(str_replace(',', '', $purchase_price_variable)) ?? null;
+            $preparedProductVariation['default_selling_price'] = floatval(str_replace(',', '',$selling_price_variable)) ?? null;
             $preparedProductVariation['product_id'] = $product_id;
             $preparedProductVariation['variation_sku'] = $vari_sku;
             $preparedProductVariation['variation_template_value_id'] = $variation_template_value_id;
@@ -364,7 +364,7 @@ class ProductsImport implements
     {
         return  [
 //            'default_purchase_price' => $row['purchase_price'],
-            'profit_percent' => $row['profit_margin'] ?? null,
+            'profit_percent' => floatval(str_replace(',', '', $row['profit_margin']) ) ?? null,
 //            'default_selling_price' => $row['selling_price'],
             'created_by' => auth()->id()
         ];

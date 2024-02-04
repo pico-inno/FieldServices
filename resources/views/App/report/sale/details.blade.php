@@ -430,7 +430,13 @@
 @endsection
 
 @push('scripts')
+<<<<<<< Updated upstream
     <script src="{{asset('customJs/reports/sale/salesDetailsExport.js')}}"></script>
     <script src="{{asset('customJs/reports/sale/salesDetailsFilter.js')}}"></script>
     <script src="{{asset('customJs/toaster.js')}}"></script>
+=======
+    <script src="{{ asset('customJs/reports/sale/salesDetailsExport.js') }}"></script>
+    <script src="{{ asset('customJs/reports/sale/salesDetailsFilter.js') }}"></script>
+    <script src="{{ asset('customJs/toaster.js') }}"></script>
+>>>>>>> Stashed changes
 @endpush
