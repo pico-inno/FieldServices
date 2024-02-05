@@ -43,6 +43,7 @@ class campaingInfo extends Component
             }
         }
         $totalExpense=sales::where('channel_id',$id)->where('channel_type','campaign')->sum('total_sale_amount');
-        return view('components.campainginfo',compact('attendanceCount','campaign','campaignUsernames','totalExpense'));
+        dd('here');
+        return view('Components.campaing-info',compact('attendanceCount','campaign','campaignUsernames','totalExpense'));
     }
 }
