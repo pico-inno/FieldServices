@@ -63,6 +63,10 @@ class ProductVariation extends Model
     {
         return $this->hasMany(CurrentStockBalance::class, 'variation_id', 'id');
     }
+    public function stock()
+    {
+        return $this->hasMany(CurrentStockBalance::class, 'variation_id', 'id');
+    }
 
 
 }

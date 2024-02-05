@@ -1642,6 +1642,7 @@ class saleController extends Controller
         $business_location_id = $request->data['business_location_id'];
         $q = $request->data['query'];
         $variation_id = $request->data['variation_id'] ?? null;
+        $locationIds = childLocationIDs($business_location_id);
         $relations = [
             'product_packaging' => function ($query) use ($q) {
                 $query->where('package_barcode', $q);
@@ -1652,11 +1653,11 @@ class saleController extends Controller
             'product_variations.additionalProduct.productVariation.product',
             'product_variations.additionalProduct.uom',
             'product_variations.additionalProduct.productVariation.variationTemplateValue',
-            'stock' => function ($query) use ($business_location_id) {
-                $locationIds = childLocationIDs($business_location_id);
+            'stock' => function ($query) use ($locationIds,$variation_id) {
                 $query->where('current_quantity', '>', 0)
+                ->where('variation_id',$variation_id)
                     ->whereIn('business_location_id', $locationIds);
-            }
+            },
         ];
         if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
             $relations = [
@@ -1691,9 +1692,10 @@ class saleController extends Controller
                 $query->where('product_variations.id', $variation_id);
             })
             ->with($relations)
-            ->withSum(['stock' => function ($query) use ($business_location_id) {
-                $locationIds = childLocationIDs($business_location_id);
-                $query->whereIn('business_location_id', $locationIds);
+            ->withSum(['stock' => function ($query) use ($locationIds,$variation_id) {
+                $query->whereIn('business_location_id', $locationIds)
+                ->where('variation_id',$variation_id)
+                ;
             }], 'current_quantity')
             ->get()->toArray();
         return response()->json($products, 200);

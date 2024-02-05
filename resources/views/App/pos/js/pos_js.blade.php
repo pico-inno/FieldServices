@@ -525,6 +525,7 @@
         }
 
         let checkAndStoreSelectedProduct = (newSelectedProduct) => {
+            console.log(newSelectedProduct,'====sdf');
             let newProductData={
                 'product_id':newSelectedProduct.id,
                 'product_type':newSelectedProduct.product_type,
