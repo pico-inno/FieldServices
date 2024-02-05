@@ -100,8 +100,8 @@ class ProductController extends Controller
                     ->pluck('location.name')
                     ->toArray();
                 $result = implode(', ', $data);
-
-                return $result;
+                $strEnd=strlen('result')>80?'.....':'';
+                return substr($result,0,80).$strEnd;
             })
             ->addColumn('purchase_price', function ($product) {
                 $purchase_price = null;

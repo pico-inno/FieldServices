@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'download_template_file' => 'နမူနာဖိုင် ဒေါင်းလုပ်ရန်',
+    'download_template_file' => 'နမူနာဖိုင်ကို ဒေါင်းလုဒ်လုပ်ပါ',
 
     'file_to_import' => 'တင်သွင်းရန်ဖိုင်',
 
-    'import_product' => 'သွင်းကုန် ထုတ်ကုန်',
+    'import_product' => 'တင်သွင်းကုန်',
     'instructions' => 'ညွှန်ကြားချက်များ',
 
-    'submit' => 'တင်သွင်းပါ',
+    'submit' => 'တင်ပြမည်',
 
 ];

@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'dashboard' => 'ဒိုင်ခွက်',
+    'dashboard' => 'ဒတ်ရှ်ဘုတ်',
     // Other translation keys and values
 ];

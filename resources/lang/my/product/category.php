@@ -1,17 +1,17 @@
 <?php 
 
 return [
-    'add_category' => 'အမျိုးအစား ဖြည့်သွင်းပါ',
-    'add_sub_category' => 'အမျိုးအစားခွဲ ဖြည့်သွင်းပါ',
+    'add_category' => 'အမျိုးအစားထည့်ရန်',
+    'add_sub_category' => 'အမျိုးအစားခွဲထည့်ရန်',
 
     'category' => 'အမျိုးအစား',
-    'category_code' => 'အမျိုးအစား ကုဒ်',
-    'category_list' => 'အမျိုးအစား စာရင်း',
-    'category_name' => 'အမျိုးအစား အမည်',
+    'category_code' => 'အမျိုးအစားကုဒ်',
+    'category_list' => 'အမျိုးအစားစာရင်း',
+    'category_name' => 'အမျိုးအစားအမည်',
 
     'description' => 'ဖော်ပြချက်',
 
-    'edit_category' => 'အမျိုးအစား ပြင်ဆင်ပါ',
-    
-    'select_parent_category' => 'မူရင်း အမျိုးအစား ရွေးချယ်ပါ',
+    'edit_category' => 'အမျိုးအစားပြင်ဆင်ရန်',
+
+    'select_parent_category' => 'ပင်မအမျိုးအစားကိုရွေးချယ်ရန်',
 ];
