@@ -118,7 +118,7 @@
                                         <a href="{{route('campaign.checkInForm',$AllCampaign->id)}}"  class="btn btn-sm btn-outline btn-outline-primary fs-8 py-2">
                                             {{__('fieldservice::actions.check_in')}}
                                         </a>
-                                        @if ($AllCampaign->status=='start')
+                                        @if ($AllCampaign->status=='start' &&  $AllCampaign->campaign_leader==Auth::user()->id)
                                             <button type="button" class="btn btn-sm  btn-outline btn-danger fs-8 py-2 close_campaign" data-id="{{$AllCampaign->id}}">
                                                 Close
                                             </button>

@@ -176,6 +176,9 @@
 
 
     @if ($campaign->location->gps_location)
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0&callback=initMap&v=weekly">
+    </script>
         <script>
             let glocation=@json($campaign->location->gps_location);
             if(glocation){
@@ -223,8 +226,6 @@
             }
 
 
-        </script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6y-549HrO6No2H4yELrxw-phFYRHo5I0&callback=initMap&v=weekly">
         </script>
     @endif
 
