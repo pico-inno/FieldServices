@@ -300,10 +300,6 @@ class ProductsImport implements
                 $selling_price_variable = $selling_price[$key];
             }
 
-
-
-
-
             $preparedProductVariation = $this->prepareProductVariation($row);
             $preparedProductVariation['default_purchase_price'] = floatval(str_replace(',', '', $purchase_price_variable)) ?? null;
             $preparedProductVariation['default_selling_price'] = floatval(str_replace(',', '',$selling_price_variable)) ?? null;

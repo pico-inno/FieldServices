@@ -12,7 +12,7 @@
 
 
         var mainLocation = null;
-        var mainLocation = {{ $stockTransfer?->from_location ?? 0 }};
+        var mainLocation = {{ isset($stockTransfer) ? $stockTransfer->from_location : 0 }};
 
         unique_name_id+=products_length;
 
@@ -653,7 +653,6 @@
                     const currentQuantity = parseFloat(csb.current_quantity) || 0;
 
                     if (currentQuantity > 0 && lotLocation == mainLocation) {
-                        // const currentUomQty = changeQtyOnUom(item.uom_data.uom_by_category, currentQuantity, csb.ref_uom_id, item.uom.id);
                         if (!uniqueLots[lotNo]) {
                             uniqueLots[lotNo] = { quantity: currentQuantity, expiredDate: csb.expired_date };
                         } else {
@@ -664,7 +663,7 @@
 
                 for (const lotNo in uniqueLots) {
                     lotOption += `
-                <option value="${lotNo}" data-expire-date=${uniqueLots[lotNo]?.expiredDate} data-lotqty="${uniqueLots[lotNo].quantity}">
+                <option value="${lotNo}" data-expire-date=${uniqueLots[lotNo]?.expiredDate} data-lotqty="${uniqueLots[lotNo].quantity}" ${uniqueLots[lotNo].selected ? 'disabled' : ''}>
                     ${lotNo} (${uniqueLots[lotNo].quantity} ${item?.uom?.short_name})
                 </option>
             `;
@@ -673,6 +672,7 @@
 
             return lotOption;
         }
+
 
         function initializeSelect2(unique_name_id, uomsData) {
             $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity });
