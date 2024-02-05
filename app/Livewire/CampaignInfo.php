@@ -1,33 +1,19 @@
 <?php
 
-namespace App\View\Components;
+namespace App\Livewire;
 
-use Closure;
+use Livewire\Component;
 use App\Models\sale\sales;
 use App\Models\BusinessUser;
-use Illuminate\View\Component;
-use Illuminate\Contracts\View\View;
 use Modules\FieldService\Entities\FsCampaign;
 use Modules\FieldService\Entities\attendanceRecords;
 
-class campaingInfo extends Component
+class CampaignInfo extends Component
 {
-    /**
-     * Create a new component instance.
-     */
     public $id;
-    public function __construct($id)
-    {
-        $this->id=$id;
-    }
-
-    /**
-     * Get the view / contents that represent the component.
-     */
-    public function render(): View|Closure|string
+    public function render()
     {
         $id=$this->id;
-
         $attendanceCount=attendanceRecords::where('campaign_id',$id)->count();
         $campaign= FsCampaign::where('id',$id)->with('leader','location')->first();
         $campaignMemberId = json_decode($campaign->campaign_member);
@@ -43,7 +29,7 @@ class campaingInfo extends Component
             }
         }
         $totalExpense=sales::where('channel_id',$id)->where('channel_type','campaign')->sum('total_sale_amount');
-        return view('components.campaing-info',[
+        return view('livewire.campaign-info',[
             'attendanceCount'=>$attendanceCount,
             'campaign'=>$campaign,
             'campaignUsernames'=>$campaignUsernames,
