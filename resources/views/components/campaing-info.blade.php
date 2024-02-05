@@ -1,9 +1,12 @@
 <div>
+    @php
+        dd($campaign);
+    @endphp
     <a href="{{ route('campaign.index') }}"  class="btn btn-secondary btn-sm d-md-none py-2 px-3">
         <i class="fa-solid fa-angle-left fs-5 pe-1"></i> Back
     </a>
     <div class="col-12 mb-3">
-        <div id="map" class="{{$campaign->location->gps_location ?'': 'd-none';}}" style="width: 100%; height: 250px;"></div>
+        <div id="map" class="{{$campaign->location->gps_location  ?'': 'd-none';}}" style="width: 100%; height: 250px;"></div>
     </div>
     <div class="row mb-5 d-none">
         <div class="col-12 col-sm-4 col-md-3 col-lg-4 mb-3">
