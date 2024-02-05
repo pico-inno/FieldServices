@@ -407,10 +407,7 @@
             });
         });
         // document.getElementByClassName
-        let sdmodal=document.getElementsByClassName('saleDetail')[0];
-        // sdmodal.addEventListener('hidden.bs.modal', event => {
-        //     @this.set('businesslocationFilterId', $('#select2').select2("val"));
-        // })
+       
 
         let table = document.querySelector('#kt_saleItem_table');
         initToggleToolbar(table);

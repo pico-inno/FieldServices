@@ -464,6 +464,7 @@
                                 'Something went wrong');
                         }
                     });
+                    let sdmodal=document.getElementsByClassName('saleDetail')[0];
                     $('.saleDetail').modal('hide');
             });
 
