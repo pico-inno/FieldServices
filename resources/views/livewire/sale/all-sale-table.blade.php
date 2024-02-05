@@ -271,15 +271,15 @@
                             </div>
                         </td>
                         <td class="actionRow">
-                            <div class="dropdown text-center">
-                                <button class="btn btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle "
+                            <div class="dropdown text-center actionRow">
+                                <button class="btn btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle actionRow"
                                     type="button" id="saleItemDropDown" data-bs-toggle="dropdown" aria-expanded="false">
                                     Actions
                                 </button>
-                                <div class="z-3">
-                                    <ul class="dropdown-menu z-10 p-5 " aria-labelledby="saleItemDropDown" role="menu">
+                                <div class="z-3 actionRow">
+                                    <ul class="dropdown-menu z-10 p-5 actionRow" aria-labelledby="saleItemDropDown" role="menu">
                                         @if ($hasView)
-                                            <a class="dropdown-item p-2   " type="button" data-href="{{route('saleDetail', $s->id)}}">
+                                            <a class="dropdown-item p-2 " type="button" data-href="{{route('saleDetail', $s->id)}}">
                                                 View
                                             </a>
                                         @endif
@@ -287,22 +287,22 @@
                                             <a href="{{route('saleEdit', [
                                                 'id'=>$s->id,
                                                 'sale_type'=>$saleType
-                                            ])}}" class="dropdown-item p-2   edit-unit ">Edit</a>
+                                            ])}}" class="dropdown-item p-2   edit-unit actionRow">Edit</a>
                                         @endif
                                         @if ($hasPrint)
-                                            <a class="dropdown-item p-2  cursor-pointer  print-invoice"
+                                            <a class="dropdown-item p-2  cursor-pointer  print-invoice actionRow"
                                                 data-href="{{route('print_sale', $s->id)}}"
                                                 data-layoutId="{{$s->invoice_layout}}">Print</a>
-                                            <a class="dropdown-item p-2  cursor-pointer download-image" data-name="' . $s->sales_voucher_no . '"
+                                            <a class="dropdown-item p-2  cursor-pointer download-image actionRow" data-name="' . $s->sales_voucher_no . '"
                                                 data-layoutId="{{$s->invoice_layout}}" data-href="{{route('print_sale', $s->id)}}">Download Image</a>
                                         @endif
                                         @if ($s->balance_amount > 0)
-                                        <a class="dropdown-item p-2 cursor-pointer " id="paymentCreate"
+                                        <a class="dropdown-item p-2 cursor-pointer actionRow" id="paymentCreate"
                                             data-href="{{route('paymentTransaction.createForSale', ['id' => $s->id, 'currency_id' => $s->currency_id])}}">Add
                                             Payment</a>
                                         @endif
 
-                                        <a class="dropdown-item p-2 cursor-pointer " id="viewPayment"
+                                        <a class="dropdown-item p-2 cursor-pointer actionRow" id="viewPayment"
                                             data-href="{{route('paymentTransaction.viewForSell', $s->id)}}">View
                                             Payment</a>
                                             @if ($hasHospital)
@@ -311,7 +311,7 @@
                                                     Reservation</a>
                                             @endif
                                         @if ($hasDelete)
-                                                <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger" data-id="{{$s->id}}"
+                                                <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger actionRow" data-id="{{$s->id}}"
                                                     data-kt-saleItem-table="delete_row">Delete</a>
                                         @endif
                                     </ul>
@@ -397,8 +397,7 @@
 
     $(document).ready(function() {
         $(document).on('click', '.view_detail', function() {
-            console.log(event.target);
-            if (!event.target.closest('.actionRow')) {
+            if (!event.target.classList.contains('actionRow')) {
                 $url = $(this).data('href');
                 $parent=$(this).closest('.sale-row').find('.noti').remove();
                 console.log($(this).closest('.sale-row').find('.noti'));
