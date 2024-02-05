@@ -16,7 +16,6 @@ class campaingInfo extends Component
      * Create a new component instance.
      */
     public $id;
-    public $campaign;
     public function __construct($id)
     {
         $this->id=$id;
@@ -31,7 +30,6 @@ class campaingInfo extends Component
 
         $attendanceCount=attendanceRecords::where('campaign_id',$id)->count();
         $campaign= FsCampaign::where('id',$id)->with('leader','location')->first();
-        $this->campaign=$campaign;
         $campaignMemberId = json_decode($campaign->campaign_member);
         $campaignUsernames = '';
         $campaignUsers=[];
@@ -45,6 +43,11 @@ class campaingInfo extends Component
             }
         }
         $totalExpense=sales::where('channel_id',$id)->where('channel_type','campaign')->sum('total_sale_amount');
-        return view('Components.campaing-info',compact('attendanceCount','campaign','campaignUsernames','totalExpense'));
+        return view('Components.campaing-info',[
+            'attendanceCount'=>$attendanceCount,
+            'campaign'=>$campaign,
+            'campaignUsernames'=>$campaignUsernames,
+            'totalExpense'=>$totalExpense,
+        ]);
     }
 }
