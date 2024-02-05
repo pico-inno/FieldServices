@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 use Modules\FieldService\Entities\FsCampaign;
 use Modules\FieldService\Entities\attendanceRecords;
 
-class campainginfo extends Component
+class campaingInfo extends Component
 {
     /**
      * Create a new component instance.
@@ -43,7 +43,6 @@ class campainginfo extends Component
             }
         }
         $totalExpense=sales::where('channel_id',$id)->where('channel_type','campaign')->sum('total_sale_amount');
-        dd($campaign);
-        // return view('components.campainginfo',compact('attendanceCount','campaign','campaignUsernames','totalExpense'));
+        return view('components.campainginfo',compact('attendanceCount','campaign','campaignUsernames','totalExpense'));
     }
 }

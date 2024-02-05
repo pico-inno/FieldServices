@@ -24,7 +24,7 @@
                 @foreach ($p->productVariations as $v)
                 <tr>
                     <td>{{$p->name}}</td>
-                    <td>{{$v->variationTemplateValue->name}}</td>
+                    <td>{{isset($v['variationTemplateValue']) ? $v['variationTemplateValue']['name']:''}}</td>
                     <td>{{$v->variation_sku}}</td>
                     <td></td>
                     <td>{{$p->purchaseUOM ? $p->purchaseUOM->name :''}}</td>
@@ -38,7 +38,7 @@
             <tr>
                 <td>{{$p->name}}</td>
                 <td></td>
-                <td>{{$p->productVariations[0]->variation_sku}}</td>
+                <td>{{isset($p->productVariations[0]) ? $p->productVariations[0]->variation_sku:''}}</td>
                 <td></td>
                 <td>{{$p->purchaseUOM ? $p->purchaseUOM->name :''}}</td>
                 <td>0</td>

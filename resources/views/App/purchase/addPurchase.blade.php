@@ -247,9 +247,9 @@
                                             {{-- with Expense & Disc --}}
                                         </th>
                                         <th class="min-w-125px">{{__('table/label.subtotal')}}</th>
-                                        @if ( $setting->lot_control=='on')
+                                        {{-- @if ( $setting->lot_control=='on')
                                             <th class="min-w-150px">Lot/Serial No</th>
-                                        @endif
+                                        @endif --}}
                                         <th class="text-center" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
                                     </tr>
                                     <!--end::Table row-->
