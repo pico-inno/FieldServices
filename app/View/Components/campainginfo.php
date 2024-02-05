@@ -43,8 +43,7 @@ class campainginfo extends Component
             }
         }
         $totalExpense=sales::where('channel_id',$id)->where('channel_type','campaign')->sum('total_sale_amount');
-        // dd(json_decode($galleries->images));
-        // return view('fieldservice::campaign.reportViews.viewWithReport',compact('attendanceCount','campaign','campaignUsernames','totalExpense'));
+        dd($campaign);
         return view('components.campainginfo',compact('attendanceCount','campaign','campaignUsernames','totalExpense'));
     }
 }

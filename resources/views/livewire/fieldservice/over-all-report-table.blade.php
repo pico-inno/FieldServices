@@ -30,7 +30,7 @@
                                         data-kt-table-filter="dateRange" id="kt_daterangepicker_4" data-dropdown-parent="#filter" />
                                 </div>
 
-                                @if ($deraultCampaignId ==null)
+                                @if ($defaultCampaignId ==null)
                                 <div class="col-12 col-md-4 col-lg-3 mb-5">
                                     <label class="form-label  fs-6 fw-semibold">
                                         Filter By Campaign:</label>
@@ -48,7 +48,7 @@
 
                         <div class="row">
 
-                            @if ($deraultCampaignId ==null)
+                            @if ($defaultCampaignId ==null)
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
                                 <label class="form-label  fs-6 fw-semibold">
                                     <i class="fa-solid fa-circle fs-9 text-primary me-1"></i>

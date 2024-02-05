@@ -135,6 +135,13 @@
                                     <input type="checkbox" name="allow_sale_order" id="allow_sale_order" value="1" class="form-check-input" >
                                 </div>
                             </div>
+                             <!--end::Input group-->
+                             <div class="col-md-4 col-sm-6 col-12 d-flex align-items-end justify-content-md-start mb-12">
+                                <div class="form-check">
+                                    <label class="form-check-label text-gray-700 fs-7" for='allow_pickup_order'>Allow Pick Up Order</label>
+                                    <input type="checkbox" name="allow_pickup_order" id="allow_pickup_order" value="1" class="form-check-input" >
+                                </div>
+                            </div>
                        </div>
 
                        <div class="row">

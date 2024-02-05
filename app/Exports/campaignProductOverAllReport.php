@@ -12,7 +12,7 @@ class campaignProductOverAllReport implements FromView,ShouldAutoSize
 
     public $filterData;
     public $withFilter;
-    public $deraultCampaignId;
+    public $defaultCampaignId;
     public function __construct($filterData,$withFilter)
     {
         $this->filterData=$filterData;
@@ -21,7 +21,7 @@ class campaignProductOverAllReport implements FromView,ShouldAutoSize
     public function query(){
         $sortField=$this->filterData['sortField'] ?? 'sale_details.created_at';
         $sortAsc = $this->filterData['sortAsc'] ?? 'desc';
-        $deraultCampaignId=$this->deraultCampaignId;
+        $defaultCampaignId=$this->defaultCampaignId;
         return sale_details::query()
             ->select(
                 'sale_details.variation_id',
@@ -65,8 +65,8 @@ class campaignProductOverAllReport implements FromView,ShouldAutoSize
             ->leftJoin('business_locations  as outlet', 'fscampaign.business_location_id', '=', 'outlet.id')
             ->leftJoin('business_users  as pg', 'sales.created_by', '=', 'pg.id')
             ->leftJoin('personal_infos  as pf', 'pg.personal_info_id', '=', 'pf.id')
-            ->when($deraultCampaignId,function($query)use($deraultCampaignId){
-                $query->where('fscampaign.id', $deraultCampaignId);
+            ->when($defaultCampaignId,function($query)use($defaultCampaignId){
+                $query->where('fscampaign.id', $defaultCampaignId);
             });
     }
     public function view(): View

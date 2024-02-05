@@ -263,14 +263,14 @@
                 <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                     @foreach ($saleData as $s)
-                    <tr class="text-end sale-row  cursor-pointer">
-                        <td>
+                    <tr class="text-end sale-row  cursor-pointer view_detail" data-href="{{route('saleDetail', $s->id)}}">
+                        <td class="actionRow">
                             <div class="form-check form-check-sm form-check-custom ">
                                 <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
                                     value='{{$s->id}}' />
                             </div>
                         </td>
-                        <td>
+                        <td class="actionRow">
                             <div class="dropdown text-center">
                                 <button class="btn btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle "
                                     type="button" id="saleItemDropDown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -279,7 +279,7 @@
                                 <div class="z-3">
                                     <ul class="dropdown-menu z-10 p-5 " aria-labelledby="saleItemDropDown" role="menu">
                                         @if ($hasView)
-                                            <a class="dropdown-item p-2   view_detail" type="button" data-href="{{route('saleDetail', $s->id)}}">
+                                            <a class="dropdown-item p-2   " type="button" data-href="{{route('saleDetail', $s->id)}}">
                                                 View
                                             </a>
                                         @endif
@@ -318,7 +318,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="text-start view_detail"  data-href="{{route('saleDetail', $s->id)}}">
+                        <td class="text-start "  >
                             <div class="d-flex justify-content-start align-items-start">
                                 {{$s['sales_voucher_no']}}
                                 @if (isset($s['isRead'])&&$s['isRead'] == null && $s['channel_type']=='ecommerce')
@@ -397,17 +397,21 @@
 
     $(document).ready(function() {
         $(document).on('click', '.view_detail', function() {
-            $url = $(this).data('href');
-            $parent=$(this).closest('.sale-row').find('.noti').remove();
-            console.log($(this).closest('.sale-row').find('.noti'));
-            loadingOn();
-            $('.saleDetail').load($url, function() {
-                $(this).modal('show');
-                loadingOff();
-            });
+            console.log(event.target);
+            if (!event.target.closest('.actionRow')) {
+                $url = $(this).data('href');
+                $parent=$(this).closest('.sale-row').find('.noti').remove();
+                console.log($(this).closest('.sale-row').find('.noti'));
+                loadingOn();
+                $('.saleDetail').load($url, function() {
+                    $(this).modal('show');
+                    loadingOff();
+                });
+            }
+
         });
         // document.getElementByClassName
-       
+
 
         let table = document.querySelector('#kt_saleItem_table');
         initToggleToolbar(table);

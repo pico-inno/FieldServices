@@ -19,7 +19,7 @@ class OverAllReportTable extends Component
     use WithPagination, datatable;
 
     public $businesslocationFilterId = 'all';
-    public $deraultCampaignId=null;
+    public $defaultCampaignId=null;
     public $pgFilterId = 'all';
     public $categotryFilterIdOA = 'all';
     public $campaignFilterId='all';
@@ -65,7 +65,7 @@ class OverAllReportTable extends Component
             'campaignFilterId' => $this->campaignFilterId,
             'sordField'=> $this->sortField,
             'sortAsc'=>$this->sortAsc,
-            'deraultCampaignId'=>$this->deraultCampaignId,
+            'defaultCampaignId'=>$this->defaultCampaignId,
         ], $withFilter), $fileName.'.xlsx');
     }
     public function render()
@@ -79,7 +79,7 @@ class OverAllReportTable extends Component
         $campaignFilterId = $this->campaignFilterId;
         $this->dataLoading = true;
         $campaignId=$this->campaignId ?? null;
-        $deraultCampaignId=$this->deraultCampaignId ?? null;
+        $defaultCampaignId=$this->defaultCampaignId ?? null;
         $datas= sale_details::query()
             ->select(
                 'sale_details.variation_id',
@@ -143,8 +143,8 @@ class OverAllReportTable extends Component
             ->when($categotryFilterId != 'all', function ($query) use ($categotryFilterId) {
                 $query->where('categories.id', '=', $categotryFilterId);
             })
-            ->when($deraultCampaignId,function($query)use($deraultCampaignId){
-                $query->where('fscampaign.id', $deraultCampaignId);
+            ->when($defaultCampaignId,function($query)use($defaultCampaignId){
+                $query->where('fscampaign.id', $defaultCampaignId);
             })
             ->when(isset($filterDate), function ($query) use ($filterDate) {
                 $query->whereDate('sales.sold_at', '>=', $filterDate[0])

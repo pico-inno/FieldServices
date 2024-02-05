@@ -26,7 +26,7 @@
         <div class="tab-content " id="myTabContent"  >
             @if (hasView('campaign report'))
                 <div class="tab-pane fade show active " id="campaign_report" role="tabpanel">
-                <livewire:fieldservice.over-all-report-table   :deraultCampaignId="$campaign_id"  />
+                <livewire:fieldservice.over-all-report-table   :defaultCampaignId="$campaign_id"  />
                 </div>
             @endif
             @if (hasView('attendance'))
