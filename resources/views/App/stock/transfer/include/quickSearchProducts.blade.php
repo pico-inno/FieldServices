@@ -12,7 +12,7 @@
 
 
         var mainLocation = null;
-        var mainLocation = {{ $stockTransfer?->from_location ?? 0 }};
+        var mainLocation = {{ isset($stockTransfer) ? $stockTransfer->from_location : 0 }};
 
         unique_name_id+=products_length;
 
@@ -255,11 +255,45 @@
             $('#searchInput').val('');
 
 
+
             checkAndStoreSelectedProduct(selected_product);
 
             initializeSelect2(unique_name_id, uomsData);
 
             $(`[name="transfer_details[${unique_name_id}][uom_id]"]`).val(selected_product.uom_id).trigger('change');
+
+
+            const optionFormat = (item) => {
+
+
+                if (!item.id) {
+                    return item.text;
+                }
+
+                var span = document.createElement('span');
+                var template = '';
+
+                template += '<div class="d-flex align-items-center">';
+                template += '<div class="d-flex flex-column">'
+                template += '<span class="fw-bold lh-1 mb-2">' + item.text + '</span>';
+                const expireDate = item.element.getAttribute('data-expire-date');
+                if (expireDate) {
+                    template += '<span class="expire-date">' + expireDate + '</span>';
+                }
+                template += '</div>';
+                template += '</div>';
+
+                span.innerHTML = template;
+
+                return $(span);
+            }
+
+            $('.lot_selection').select2({
+                placeholder: "Select a lot",
+                minimumResultsForSearch: Infinity,
+                templateSelection: optionFormat,
+                templateResult: optionFormat
+            });
 
             enableDeleteRowButton();
         }
@@ -394,7 +428,7 @@
                                             data-placeholder="Select Batch" >
                                             <option value="">Select Lot</option>
 
-                                          ${generateLotOption(item)}
+                                           ${generateLotOption(item)}
                                         </select>
                                         <input type="hidden" class="item_data" id="itemData" value='${JSON.stringify(item)}'>
                                     </td>
@@ -429,6 +463,8 @@
 
         }
 
+
+
         $(document).on('click', '.btn-add-row', function() {
             const modalContainer = $(this).closest('.batchLotModal');
 
@@ -440,14 +476,13 @@
 
             const itemData = JSON.parse(itemObject);
 
-            console.log(itemData, 'itemdata')
 
             const newRow = ` <tr class="lot_serial_row">
                                     <td>
                                         <select class="form-select form-select-sm lot_selection"
                                             name="lot_serial_no[]"
                                             data-kt-repeater="select2" data-hide-search="true"
-                                            data-placeholder="Select Batch" >
+                                          >
                                             <option value="">Select Lot</option>
                                                ${generateLotOption(itemData)}
                                         </select>
@@ -468,7 +503,39 @@
                                 </tr>`;
 
             $(this).closest('.lot_serial_body').append(newRow);
-            $('.lot_selection').select2();
+
+
+            const optionFormat = (item) => {
+
+
+                if (!item.id) {
+                    return item.text;
+                }
+
+                var span = document.createElement('span');
+                var template = '';
+
+                template += '<div class="d-flex align-items-center">';
+                template += '<div class="d-flex flex-column">'
+                template += '<span class="fw-bold lh-1 mb-2">' + item.text + '</span>';
+                const expireDate = item.element.getAttribute('data-expire-date');
+                if (expireDate) {
+                    template += '<span class="expire-date">' + expireDate + '</span>';
+                }
+                template += '</div>';
+                template += '</div>';
+
+                span.innerHTML = template;
+
+                return $(span);
+            }
+
+            $('.lot_selection').select2({
+                placeholder: "Select a lot",
+                minimumResultsForSearch: Infinity,
+                templateSelection: optionFormat,
+                templateResult: optionFormat
+            });
             eachModalcalculateTotalQuantity(modalId);
         });
 
@@ -577,8 +644,6 @@
         function generateLotOption(item) {
             let lotOption = '';
 
-
-            console.log()
             if (item.current_stock) {
                 const uniqueLots = {};
 
@@ -588,19 +653,18 @@
                     const currentQuantity = parseFloat(csb.current_quantity) || 0;
 
                     if (currentQuantity > 0 && lotLocation == mainLocation) {
-                        // const currentUomQty = changeQtyOnUom(item.uom_data.uom_by_category, currentQuantity, csb.ref_uom_id, item.uom.id);
                         if (!uniqueLots[lotNo]) {
-                            uniqueLots[lotNo] = currentQuantity;
+                            uniqueLots[lotNo] = { quantity: currentQuantity, expiredDate: csb.expired_date };
                         } else {
-                            uniqueLots[lotNo] += currentQuantity;
+                            uniqueLots[lotNo].quantity += currentQuantity;
                         }
                     }
                 });
 
                 for (const lotNo in uniqueLots) {
                     lotOption += `
-                <option value="${lotNo}" data-lotqty="${uniqueLots[lotNo]}">
-                    ${lotNo} - Qty: ${uniqueLots[lotNo]} ${item.uom?.name ?? item.product?.uom?.name ?? ''}
+                <option value="${lotNo}" data-expire-date=${uniqueLots[lotNo]?.expiredDate} data-lotqty="${uniqueLots[lotNo].quantity}" ${uniqueLots[lotNo].selected ? 'disabled' : ''}>
+                    ${lotNo} (${uniqueLots[lotNo].quantity} ${item?.uom?.short_name})
                 </option>
             `;
                 }
@@ -608,6 +672,7 @@
 
             return lotOption;
         }
+
 
         function initializeSelect2(unique_name_id, uomsData) {
             $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity });

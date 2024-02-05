@@ -79,8 +79,10 @@ class StockTransferController extends Controller
 
         $setting=businessSettings::first();
         $currency=$this->currency;
+        $stockTransfer = null;
 
         return view('App.stock.transfer.add', [
+            'stockTransfer' => $stockTransfer,
             'transfer_persons' => $transfer_persons,
             'locations' => $locations,
             'products' => $products,

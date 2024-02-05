@@ -381,7 +381,7 @@
 @endsection
 
 @push('scripts')
-    <script src="customJs/reports/inventory/adjustment/adjustmentDetailsExport.js"></script>
-    <script src="customJs/reports/inventory/adjustment/adjustmentDetailsFilter.js"></script>
-    <script src="customJs/toaster.js"></script>
+    <script src="{{ asset('customJs/reports/inventory/adjustment/adjustmentDetailsExport.js') }}"></script>
+    <script src="{{ asset('customJs/reports/inventory/adjustment/adjustmentDetailsFilter.js') }}"></script>
+    <script src="{{ asset('customJs/toaster.js') }}"></script>
 @endpush
