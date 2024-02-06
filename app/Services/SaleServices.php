@@ -68,6 +68,7 @@ class SaleServices
     }
     public function update($id,$data){
         $sales = sales::where('id', $id)->first();
+        $balanceAmount= $data['total_sale_amount'] -$sales['paid_amount'];
         $saleData = [
             'contact_id' => $data['contact_id'],
             'status' => $data['status'],
@@ -76,6 +77,7 @@ class SaleServices
             'extra_discount_type' => $data['extra_discount_type'],
             'extra_discount_amount' => $data['extra_discount_amount'],
             'total_sale_amount' => $data['total_sale_amount'],
+            'balance_amount' => $balanceAmount,
             'currency_id' => $data['currency_id'],
             'updated_by' => Auth::user()->id ?? $id,
             'sold_at' => $data['sold_at'],
