@@ -323,6 +323,8 @@ class ProductsImport implements
             $packaging = [];
             foreach ($packages as $package) {
 
+
+
                 if (!preg_match('/^([^=]+)=(\d+)-([^=]+)$/', $package, $matches)) {
 
                     throw new \Exception('Invalid package format: ' . $package .' in your excel.');
