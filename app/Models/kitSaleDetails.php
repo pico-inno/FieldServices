@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Product\Product;
+use App\Models\Product\ProductVariation;
 use App\Models\Product\UOM;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,11 @@ class kitSaleDetails extends Model
     ];
     public function product():HasOne {
         return $this->hasOne(Product::class,'id','product_id');
+    }
+
+    public function productVariation(): HasOne
+    {
+        return $this->hasOne(ProductVariation::class,'id','variation_id');
     }
 
     public function uom(): HasOne

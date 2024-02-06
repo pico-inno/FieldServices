@@ -300,7 +300,7 @@
                                                     @if (isset($sale_detail['kitSaleDetails']))
                                                         @foreach ($kitSaleDetails as $ksd)
                                                             <span class="badge badge-secondary">
-                                                                {{$ksd['product']['name']}} x {{$ksd['quantity']}}{{$ksd['uom']['short_name']}}
+                                                                {{$ksd['productVariation']['product']['name']}} x {{$ksd['quantity']}}{{$ksd['uom']['short_name']}}
                                                             </span>
                                                             <div class='rdMainDiv'>
                                                                 <input type="hidden" class="currentRomConsuQty" data-currentromconsuqty={{$sale_detail->variation_id}}

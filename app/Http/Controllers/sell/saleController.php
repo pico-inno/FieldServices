@@ -359,7 +359,9 @@ class saleController extends Controller
             $ckRelations = [];
             if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
                 $ckRelations = [
-                    'kitSaleDetails.product',
+                    'kitSaleDetails.productVariation' => function ($query) {
+                        $query->with('product');
+                    },
                     'kitSaleDetails.uom',
                 ];
             }
@@ -400,6 +402,9 @@ class saleController extends Controller
             $sale_details = $sale_details_query->get();
             $currencies = Currencies::get();
             $defaultCurrency = $this->currency;
+
+
+//            return $sale_details;
             return view('App.sell.sale.edit', compact('products', 'defaultPriceListId', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
         } catch (\Throwable $th) {
             return back()->with('error',$th->getMessage());

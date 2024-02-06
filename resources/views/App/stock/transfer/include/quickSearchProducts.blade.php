@@ -73,8 +73,12 @@
 
         //Begin: quick search
         $('.quick-search-form input').on('input', function() {
-            var query = $(this).val().trim(); //input search query
             let business_location_id = $('#business_location_id').val();
+            if(business_location_id == '' || business_location_id == null){
+                toastr.error("Need to choose from location?");
+                return;
+            }
+            var query = $(this).val().trim(); //input search query
             let psku_kw=$('#psku_kw').is(':checked');
             let vsku_kw=$('#vsku_kw').is(':checked');
             let pgbc_kw=$('#pgbc_kw').is(':checked');
@@ -106,78 +110,56 @@
                             console.log(' Something Went Wrong! Error Status: '+ e.status )
                         },
                         success: function(results){
+                            // results=e;
                             products=results;
                             var html = '';
-                            if (results.length > 0) {
+                            // products=results;
+                            console.log(results.length);
+                            if (results.length > 0 && Array.isArray(results)) {
                                 let sku;
                                 let addedSku=[];
 
                                 results.forEach(function(result,key) {
-
-                                    let checkSku = addedSku.find((s) => s === result.sku);
-
+                                    let checkSku=addedSku.find((s)=>s==result.sku);
                                     if(sku && result.sku==sku && !checkSku){
-                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' style="z-index:100;">`;
-                                        html += `<h4 class="fs-6 ps-10 pt-3">${result.name}-(selectAll)</h4>`;
+                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                        style="z-index:100;">`;
+                                        html += `<h4 class="fs-6 ps-10 pt-3">
+                                            ${result.name}-(selectAll)`;
+                                        html+='</h4>'
+                                        // html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
+
                                         html += '</div>';
                                         addedSku=[...addedSku,result.sku];
-                                        quickSearchResults.html(html);
+                                        $('.quick-search-results').html(html);
                                     }else{
                                         sku=result.sku;
                                     }
 
-                                    if (result.has_variation === 'variable' && results.length === 2) {
-                                        return;
-                                    }
-
-                                    let total_current_stock_qty = Number(result.stock_sum_current_quantity);
-                                    let css_class = isNullOrNan(result.stock_sum_current_quantity) <=0 && result.product_type === "storable" ? "order-3" : '';
-
-                                    html += `<div class="quick-search-result result ps-10  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
-                                    html += `<h4 class="fs-6  pt-3 ${css_class} "> ${result.name}`;
-
-                                    if (result.has_variation === 'variable') {
-                                        html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">( ${result.variation_name??''})</span>`;
-                                    }
-
+                                    html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
+                                    html += `<h4 class="fs-6 ps-10 pt-3">
+                                    ${result.name}-${result.variation_name ? '('+result.variation_name+')': ''}`;
                                     html+='</h4>'
-                                    html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8"> ${result.has_variation === 'variable' ? 'SKU : '+result.variation_sku : 'SKU : '+result.sku} </span>`
+                                    html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
 
-                                    if (result.product_type === "storable") {
-                                        if (result.stock_sum_current_quantity > 0) {
-                                            html += `<p>${total_current_stock_qty.toFixed(2)} ${result.uom.name}(s/es)</p>`;
-                                        }else{
-                                            html += '<p class="text-danger">Out of Stocks</p>';
-                                        }
-                                    }
                                     html += '</div>';
                                 });
-
-                                if (results.length === 1 || (results[0].has_variation === 'variable' && results.length === 2)) {
-                                    quickSearchResults.show();
-                                    if(results[0].stock_sum_current_quantity > 0 || results[0].product_type !== "storable"){
-                                        setTimeout(() => {
-                                            $(`.result[data-name|='${results[0].name}']`).click();
-                                            quickSearchResults.hide();
-                                        }, 100);
-                                    }
+                                if (results.length == 1) {
+                                    $('.quick-search-results').show();
+                                    setTimeout(() => {
+                                        $(`.result[data-name|='${results[0].name}']`).click();
+                                        $('.quick-search-results').hide();
+                                    }, 100);
                                 } else {
-                                    quickSearchResults.show();
+                                    $('.quick-search-results').show();
                                 }
-                            } else{
-                                html = '<p>No results found.</p>';
-                                quickSearchResults.show();
+
+                            } else {
+                                $('.quick-search-results').show();
+                                html = '<p class="ps-10 pt-5 pb-2 fs-6 m-0 fw-semibold text-gray-800">No results found.</p>';
                             }
-
-                            quickSearchResults.removeClass('d-none')
-                            quickSearchResults.html(html);
-
-                            $(document).click(function(event) {
-                                if (!$(event.target).closest('.quick-search-results').length) {
-                                    quickSearchResults.addClass('d-none')
-                                }
-                            });
-
+                            $('.quick-search-results').removeClass('d-none')
+                            $('.quick-search-results').html(html);
 
                         },
                     });
@@ -615,7 +597,7 @@
         });
 
 
-            $('.modal-btn-save-changes').first().trigger('click');
+        $('.modal-btn-save-changes').first().trigger('click');
 
 
         function eachModalcalculateTotalQuantity(modalId) {
