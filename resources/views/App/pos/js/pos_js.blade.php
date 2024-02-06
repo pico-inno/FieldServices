@@ -161,8 +161,8 @@
             checkAndStoreSelectedProduct(product);
             let variation_value_and_name;
             // Get Variation Value and Variation Template Value Name
-            if(product.variation_id){
-                let pv_id = product.variation_id;
+            if(product.id){
+                let pv_id = product.id;
                 $(product_with_variations).each(function(index, element) {
                     if(element.product_variation_id && element.product_variation_id == pv_id){
                         variation_value_and_name = element.vari_tem_name + '- ' + element.vari_tem_val_name;
@@ -170,18 +170,18 @@
                 })
             }
 
-            let uomByCategory=product['uom']['unit_category']['uom_by_category'];
+            let uomByCategory=product['product']['uom']['unit_category']['uom_by_category'];
             let uomsData=[];
             uomByCategory.forEach(function(e){
                 uomsData= [...uomsData,{'id':e.id,'text':e.name}]
             })
-            let additionalProduct=product.product_variations.additional_product;
+            let additionalProduct=product.additional_product;
             showSuggestion(additionalProduct,uniqueNameId);
             // console.log(product)
             // getProducts(1, );
             let packaging_id,packagingUom,packaging_quantity,packageQtyForCal,pkgname;
-            if(product.product_packaging){
-                let packaging=product.product_packaging;
+            if(product.product.product_packaging){
+                let packaging=product.product.product_packaging;
                 packaging_id=packaging.id,
                 packagingUom=packaging.uom_id,
                 packaging_quantity=1,
@@ -205,7 +205,7 @@
             let additionProductLink=additionalProduct.length >0 ?
              `
                 <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none"
-                    data-varid="${product.product_variations.id}" data-uniqueNameId="${uniqueNameId}" data-parentUniqueNameId=${parentUniqueNameId}>
+                    data-varid="${product.id}" data-uniqueNameId="${uniqueNameId}" data-parentUniqueNameId=${parentUniqueNameId}>
                     Additional Product
                 </div>
                 <input type="hidden" value="${uniqueNameId ?? null}" name="isParent" />
@@ -214,14 +214,14 @@
             <input type="hidden" value="${parentSaleDetailId ?? null}" name="parentSaleDetailId" />
             `;
             let stockBalanceText=product.product_type =="storable" ?
-            `<span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.product_variations.id}">
-                ${product.stock_sum_current_quantity * 1}</span> - <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.product_variations.id}">
-                    ${product.uom.name}</span>` : ''
+            `<span class="fs-7 fw-semibold text-gray-600 stock_quantity_unit stock_quantity_unit_${product.id}">
+                ${product.stock_sum_current_quantity * 1}</span> - <span class="fs-7 fw-semibold text-gray-600 stock_quantity_name stock_quantity_${product.variation_id}">
+                    ${product.product.uom.name}</span>` : ''
             return `
-                <tr class="p-5 fs-9  invoiceRow invoice_row_${product.product_variations.id} cursor-pointer invoice_sidebar_row_${uniqueNameId} " >
-                    <input type="hidden" name="product_id" value="${product.id}" />
+                <tr class="p-5 fs-9  invoiceRow invoice_row_${product.id} cursor-pointer invoice_sidebar_row_${uniqueNameId} " >
+                    <input type="hidden" name="product_id" value="${product.product_id}" />
                     <input type="hidden" name="lot_no" value="0" />
-                    <input type="hidden" name="variation_id" value="${product.product_variations.id}" />
+                    <input type="hidden" name="variation_id" value="${product.id}" />
                     <input type="hidden" name="each_selling_price" value="" />
                     <input type="hidden" name="lot_serial_val" value='${accounting_method}'/>
                     <input type="hidden" name="discount_type" value="" />
@@ -234,7 +234,7 @@
                     <input type="hidden" name="packageQtyForCal" class="form-control packageQtyForCal" value="${packageQtyForCal ?? ''}">
                     <input type="hidden" name="pkgname" class="form-control pkgname" value=${pkgname ?? ''}>
                     <input type="hidden" name="cost_price" value="${product.stock[0] ?product.stock[0].ref_uom_price : 0}" />
-                    <input type="hidden" name="_default_sell_price" value="${product.product_variations.default_selling_price * 1}" />
+                    <input type="hidden" name="_default_sell_price" value="${product.default_selling_price * 1}" />
 
                     <td class=" text-break text-start fw-bold fs-6 text-gray-700 ">
                         <span class="product-name">
@@ -251,7 +251,7 @@
                         </div>
                     </td>
                     <td class="min-w-50px ps-0 pe-0 exclude-modal">
-                        <input type="text" name="selling_price[]" class="form-control form-control-sm" value="${product.product_variations.default_selling_price * 1}">
+                        <input type="text" name="selling_price[]" class="form-control form-control-sm" value="${product.default_selling_price * 1}">
                     </td>
                     <td class="exclude-modal">
                         <div class="d-flex flex-column">
@@ -268,14 +268,14 @@
                                 </button>
 
                             </div>
-                            <span class="text-danger-emphasis stock_alert stock_alert_${product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
+                            <span class="text-danger-emphasis stock_alert stock_alert_${product.id} d-none fs-7 p-2">* Out of Stock</span>
                             <select class=" form-select form-select-sm invoice_unit_select" data-control="select2">
-                                ${uomsData.map(unit => `<option value="${unit.id}" ${unit.id === (packagingUom ?? product.uom.id) ? 'selected' : ''}>${unit.text}</option>`).join('')}
+                                ${uomsData.map(unit => `<option value="${unit.id}" ${unit.id === (packagingUom ?? product.product.uom.id) ? 'selected' : ''}>${unit.text}</option>`).join('')}
                             </select>
 
                         </div>
                     </td>
-                    <td class="fs-6 fw-bold subtotal_price_${product.product_variations.id} "><span class="subtotal_price">${product.product_variations.default_selling_price * 1}</span> ${symbol}</td>
+                    <td class="fs-6 fw-bold subtotal_price_${product.id} "><span class="subtotal_price">${product.default_selling_price * 1}</span> ${symbol}</td>
                     <td class="exclude-modal text-end" id="delete-item">
                             <div>
                             <i class="fas fa-trash me-3 text-danger cursor-pointer" ></i>
@@ -470,7 +470,7 @@
             let parent = $(`#${tableBodyId}`).find(e).closest(`.invoiceRow`);
             let productId = parent.find('input[name="product_id"]').val();
             let variationId = parent.find('input[name="variation_id"]').val();
-
+            console.log(variationId,'sdf-kkfsri-skdfj' , productsOnSelectData);
             let product = productsOnSelectData.find( product => product.variation_id == variationId );
             let quantity = isNullOrNan(product.stock_sum_current_quantity);
 
@@ -482,7 +482,6 @@
                     quantity=stock.ref_uom_quantity;
                 }
             }
-
             const uoms = product.uom.unit_category.uom_by_category;
 
             const newUomInfo = uoms.filter(uom => uom.id == newUomId)[0];
@@ -527,25 +526,25 @@
         let checkAndStoreSelectedProduct = (newSelectedProduct) => {
             console.log(newSelectedProduct,'====sdf');
             let newProductData={
-                'product_id':newSelectedProduct.id,
+                'product_id':newSelectedProduct.product_id,
                 'product_type':newSelectedProduct.product_type,
                 'cateogry_id':newSelectedProduct.cateogry_id,
                 'product_name':newSelectedProduct.name,
                 'variation_name':newSelectedProduct.variation_name,
-                'variation_id':newSelectedProduct.product_variations.id,
-                'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
-                'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
+                'variation_id':newSelectedProduct.id,
+                'defaultSellingPrices':newSelectedProduct.default_selling_price,
+                'sellingPrices':newSelectedProduct.uom_selling_price,
                 'stock_sum_current_quantity':newSelectedProduct.stock_sum_current_quantity,
                 'aviable_qty':newSelectedProduct.stock_sum_current_quantity,
                 'validate':true,
-                'uom':newSelectedProduct.uom,
-                'uom_id':newSelectedProduct.uom_id,
+                'uom':newSelectedProduct.product.uom,
+                'uom_id':newSelectedProduct.product.uom_id,
                 'stock':newSelectedProduct.stock,
-                'additional_product':newSelectedProduct.product_variations.additional_product,
-                'packaging':newSelectedProduct.product_variations.packaging,
+                'additional_product':newSelectedProduct.product.additional_product,
+                'packaging':newSelectedProduct.product.packaging,
             };
             if(productsOnSelectData.length>0){
-                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+                const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.product_id && p.variation_id === newSelectedProduct.id);
                 if(indexToReplace !== -1){
                     productsOnSelectData[indexToReplace] = newProductData;
                 }else{
@@ -563,7 +562,7 @@
 
             let variationId = tr_parent.find('input[name="variation_id"]').val();
             let index;
-            // console.log(productsOnSelectData,'--');
+            console.log(productsOnSelectData,'--');
             let product = productsOnSelectData.find(function(pd,i) {
                 index = i;
                 return  variationId == pd.variation_id;
@@ -1044,7 +1043,7 @@
                             let vari_name_or_selectAll = element.has_variation === 'variable' ? element.variation_name : 'select all';
                             let unit = element.uom.name;
 
-                            $('#search_container').append(searchNewRow(index, element.id, element.has_variation, element.variation_id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
+                            $('#search_container').append(searchNewRow(index, element.product_id, element.has_variation, element.id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
                             if(results.length==1){
                                 setTimeout(() => {
                                     $(`[data-index="${index}"]`).click();
@@ -1172,7 +1171,7 @@
                         uniqueNameId++;
                         suggestionProductEvent();
                         $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
-                        changeQtyOnUom(newInvoiceSidebar, product.uom.id);
+                        changeQtyOnUom(newInvoiceSidebar, product.product.uom.id);
                         totalSubtotalAmountCalculate();
                         totalDisPrice();
                         return;
@@ -1183,7 +1182,7 @@
                     $(`#${tableBodyId}`).prepend(newInvoiceSidebar);
                     suggestionProductEvent();
                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
-                    changeQtyOnUom(newInvoiceSidebar, product.uom.id);
+                    changeQtyOnUom(newInvoiceSidebar, product.product.uom.id);
                     totalSubtotalAmountCalculate();
                     totalDisPrice();
                 },

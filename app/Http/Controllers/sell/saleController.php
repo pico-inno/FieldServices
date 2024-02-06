@@ -1644,18 +1644,17 @@ class saleController extends Controller
         $variation_id = $request->data['variation_id'] ?? null;
         $locationIds = childLocationIDs($business_location_id);
         $relations = [
-            'product_packaging' => function ($query) use ($q) {
+            'product.product_packaging' => function ($query) use ($q) {
                 $query->where('package_barcode', $q);
             },
-            'uom',
-            'uom.unit_category.uomByCategory',
-            'product_variations.packaging.uom',
-            'product_variations.additionalProduct.productVariation.product',
-            'product_variations.additionalProduct.uom',
-            'product_variations.additionalProduct.productVariation.variationTemplateValue',
+            'product.uom',
+            'product.uom.unit_category.uomByCategory',
+            'packaging.uom',
+            'additionalProduct.productVariation.product',
+            'additionalProduct.uom',
+            'additionalProduct.productVariation.variationTemplateValue',
             'stock' => function ($query) use ($locationIds,$variation_id) {
                 $query->where('current_quantity', '>', 0)
-                ->where('variation_id',$variation_id)
                     ->whereIn('business_location_id', $locationIds);
             },
         ];
@@ -1667,16 +1666,16 @@ class saleController extends Controller
                 ...$relations
             ];
         }
-        $products = Product::select(
+        $products = ProductVariation::select(
             'products.*',
             'product_variations.*',
             'variation_template_values.*',
             'variation_template_values.name as variation_name',
             'products.name as name',
-            'products.id as id',
-            'product_variations.id as variation_id',
+            'products.id as product_id',
+            'product_variations.id as id',
             'variation_template_values.id as variation_template_values_id'
-        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+        )->leftJoin('products','product_variations.product_id' , '=','products.id' )
             ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where(function ($query) use ($q) {
                 $query->where('can_sale', 1)
@@ -1684,7 +1683,7 @@ class saleController extends Controller
                     ->orWhere('products.sku', 'like', '%' . $q . '%')
                     ->whereNull('products.deleted_at')
                     ->orWhere('variation_sku', 'like', '%' . $q . '%')
-                    ->orWhereHas('varPackaging', function ($query) use ($q) {
+                    ->orWhereHas('product.varPackaging', function ($query) use ($q) {
                         $query->where('package_barcode', $q);
                     });
             })
@@ -1693,9 +1692,7 @@ class saleController extends Controller
             })
             ->with($relations)
             ->withSum(['stock' => function ($query) use ($locationIds,$variation_id) {
-                $query->whereIn('business_location_id', $locationIds)
-                ->where('variation_id',$variation_id)
-                ;
+                $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()->toArray();
         return response()->json($products, 200);

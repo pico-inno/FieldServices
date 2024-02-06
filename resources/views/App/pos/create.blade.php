@@ -863,7 +863,7 @@
                     </div>
 
                     <div class="modal-body">
-                        @if($setting['lot_control'])
+                        @if($setting['lot_control']=='on')
                         <div class="row mb-5">
                             <div class="col-12">
                                 <label for="" class="fs-5 mb-1">Batch/Lot/Expire Date</label>
