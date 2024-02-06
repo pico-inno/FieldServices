@@ -81,7 +81,6 @@
                 'uom_id':saledetail.uom_id,
                 'stock':saledetail.stock,
             };
-            console.log(newProductData);
             const indexToReplace = productsOnSelectData.findIndex(p => p.product_id == newProductData.product_id && p.variation_id == newProductData.variation_id);
             if(indexToReplace !== -1){
                 let productToReplace=productsOnSelectData[indexToReplace];
@@ -186,7 +185,7 @@
             // throttleTimeout =
             setTimeout(function() {
                 $.ajax({
-                    url: `/sell/get/product/v3`,
+                    url: `/sell/get/product/v3Modify`,
                     type: 'GET',
                     delay: 150,
                     data: {
@@ -213,7 +212,7 @@
                                     results.forEach(function(result,key) {
                                         let checkSku=addedSku.find((s)=>s==result.sku);
                                         if(sku && result.sku==sku && !checkSku){
-                                            html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                            html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.product_id}' data-name="${result.name}"
                                                 style="z-index:100;">`;
                                                 html += `<h4 class="fs-6 ps-10 pt-3">
                                                     ${result.name}-(selectAll)`;
@@ -242,7 +241,7 @@
                                         html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${result.has_variation=='variable'?'SKU : '+result.variation_sku :'SKU : '+result.sku} </span>`
                                         if(result.product_type=="storable"){
                                             if(result.stock_sum_current_quantity>0){
-                                                html += `<p>${total_current_stock_qty.toFixed()} ${result.uom.name}(s/es)</p>`;
+                                                html += `<p>${total_current_stock_qty.toFixed()} ${result.product.uom.name}(s/es)</p>`;
                                             }else{
                                                 html += `<p class="${allowOverSelling ? 'text-warning' :'text-danger'}">* Out of Stocks</p>`;
                                             }
@@ -290,9 +289,9 @@
 
 
         // $('.dataTables_empty').addClass('d-none');
-        // if(selected_product.has_variation==='variable')
+        // if(selectedVar_product.has_variation==='variable')
         // {
-        //     let variation=selected_product.product_variations;
+        //     let variation=selectedVar_product.product_variations;
         //     variation.forEach(v => {
         //         let t=products.filter(p=>{
         //             return p.variation_id==v.id
@@ -303,7 +302,7 @@
         //     });
         //     return;
         // }
-        // append_row(selected_product,false);
+        // append_row(selectedVar_product,false);
         // unique_name_id+=1;
         // $('#searchInput').focus();
 
@@ -312,11 +311,12 @@
         $('.quick-search-results').addClass('d-none')
         let id = $(this).attr('data-id');
         let name = $(this).attr('data-name');
-        let selected_product;
+        let selectedVar_product;
+
         if(id!="selectAll"){
-            selected_product= products[id];
-            let isStorable=selected_product.product_type=="storable";
-            if((selected_product.stock_sum_current_quantity==0 || selected_product.stock_sum_current_quantity==null) && isStorable && allowOverSelling ==0){
+            selectedVar_product= products[id];
+            let isStorable=selectedVar_product.product_type=="storable";
+            if((selectedVar_product.stock_sum_current_quantity==0 || selectedVar_product.stock_sum_current_quantity==null) && isStorable && allowOverSelling ==0){
                 return;
             }
         }
@@ -324,7 +324,7 @@
         {
             let productid=$(this).data('productid');
             let pds=products.filter(p=>{
-                return p.id==productid
+                return p.product_id==productid
             });
             pds.forEach(p => {
                 append_row(p,unique_name_id);
@@ -332,14 +332,15 @@
             });
             return;
         }
-        append_row(selected_product,false);
+
+        append_row(selectedVar_product,false);
         unique_name_id+=1;
         $('#searchInput').focus();
 
 
     });
     function showSuggestion(additionalProduct,parentUniqueNameId,parentSaleDetailId=null) {
-        if(additionalProduct.length>0){
+        if(additionalProduct && additionalProduct.length>0){
             $('#suggestionProducts').html('');
             var modal = new bootstrap.Modal($('#suggestionModal'));
             additionalProduct.forEach(ap => {
@@ -450,7 +451,7 @@
 
 
     //append table row for product to sell
-    function append_row(selected_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false,parentSaleDetailId=null) {
+    function append_row(selectedVar_product,forceSplit=true,qty='1',suggestUom=null,parentUniqueNameId=false,parentSaleDetailId=null) {
         if(ItemLimitRowCount<20){
             Swal.fire({
                 title:"Sorry, Can't Add more row.",
@@ -465,27 +466,27 @@
             return;
         }
         ItemLimitRowCount-=20;
-        allSelectedProduct[selected_product.product_variations.id]=selected_product;
+        allSelectedProduct[selectedVar_product.id]=selectedVar_product;
         if(setting.enable_row == 0 && !forceSplit && allowOverSelling ==0){
-            let checkProduct= productsOnSelectData.find(p=>p.variation_id==selected_product.product_variations.id);
+            let checkProduct= productsOnSelectData.find(p=>p.variation_id==selectedVar_product.id);
             if(checkProduct){
-                let selectQtyInput=document.querySelectorAll(`.quantity-${selected_product.product_variations.id}`);
+                let selectQtyInput=document.querySelectorAll(`.quantity-${selectedVar_product.id}`);
                 let qtyInput=selectQtyInput[0];
                 let val=isNullOrNan(qtyInput.value);
                 qtyInput.value=val+1;
-                checkAndStoreSelectedProduct(selected_product);
+                checkAndStoreSelectedProduct(selectedVar_product);
                 $('.quick-search-results').addClass('d-none');
                 $('.quick-search-results').empty();
                 return;
             }
         }
         let default_purchase_price,variation_id;
-        let isStorable=selected_product.product_type=="storable";
+        let isStorable=selectedVar_product.product_type=="storable";
         //----------------------------- start::rom -----------------------------------------------
         let romTags='';
         let locationId=$('[name="business_location_id"]').val();
-        if(selected_product.rom){
-            let rom=selected_product.rom;
+        if(selectedVar_product.product.rom){
+            let rom=selectedVar_product.product.rom;
             if(rom){
                 rom.rom_details.forEach(rd=>{
                     if(rd.product_variation){
@@ -502,24 +503,24 @@
 
         //----------------------------- end::rom -----------------------------------------------
         let uomIds=[];
-        let additionalProduct=selected_product.product_variations.additional_product;
-
+        let additionalProduct=selectedVar_product.additional_product;
+        console.log(selectedVar_product,'sdfsddf');
         showSuggestion(additionalProduct,unique_name_id);
         // if the item is out of stock reutrn do nothing;
-        if(selected_product.total_current_stock_qty==0 && isStorable){
+        if(selectedVar_product.total_current_stock_qty==0 && isStorable){
             warning('Products are out of stock')
             return;
         }
-        let uomByCategory=selected_product['uom']['unit_category']['uom_by_category'];
+        let uomByCategory=selectedVar_product['product']['uom']['unit_category']['uom_by_category'];
         let uomsData=[];
         uomByCategory.forEach(function(e){
                 uomsData= [...uomsData,{'id':e.id,'text':e.name}]
         })
         var lotSelector;
         if(lotControl=="on"){
-            let stock=selected_product.stock[0];
+            let stock=selectedVar_product.stock[0];
             let lotOption='';
-            // selected_product.stock.forEach((s,key) => {
+            // selectedVar_product.stock.forEach((s,key) => {
             //     lotOption+=` <option value="${s.id}" >Lot-${s.lot_serial_no ?? '-'}</option>`
             // });
             // lotSelector=`
@@ -530,7 +531,7 @@
             //     </td>
             //     `
         }else{
-            // let value=selected_product.lot_serial_nos[0];
+            // let value=selectedVar_product.lot_serial_nos[0];
 
 
             // lotSelector=`
@@ -539,7 +540,7 @@
             // `
         }
         let packagingOption='';
-        variation=selected_product.product_variations;
+        variation=selectedVar_product;
         if(variation.packaging){
             variation.packaging.forEach((pk)=>{
                 packagingOption+=`
@@ -549,13 +550,13 @@
         }
         $currentQtyText=isStorable ?
                         `<span class="current_stock_qty_txt">
-                                ${parseFloat(selected_product.stock_sum_current_quantity).toFixed(2)}
+                                ${parseFloat(selectedVar_product.stock_sum_current_quantity).toFixed(2)}
                         </span>
-                        <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>(s/es)`
+                        <span class='smallest_unit_txt'>${selectedVar_product.smallest_unit}</span>(s/es)`
                             : '';
-        if(selected_product.rom){
+        if(selectedVar_product.product.rom){console.log(selectedVar_product.product.rom,'electedVar_product.rom');
             let rdInput='';
-            selected_product.rom.rom_details.forEach(rd=>{
+            selectedVar_product.product.rom.rom_details.forEach(rd=>{
                 if(rd.product_variation){
                     rdInput+=`
                     <div class='rdMainDiv'>
@@ -569,7 +570,7 @@
             })
             $currentQtyText=`
             <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">Calculating Qty....</span>
-            <span class='smallest_unit_txt smallest_rom_unit_txt'>${selected_product.rom.uom.short_name}</span>(s/es)
+            <span class='smallest_unit_txt smallest_rom_unit_txt'>${selectedVar_product.product.rom.uom.short_name}</span>(s/es)
                 <div>
                     ${rdInput}
                 </div>
@@ -577,7 +578,7 @@
         }
         let splitRow=setting.enable_row != 1 ?`<i class="fa-solid fa-arrows-split-up-and-left  text-success p-2 pe-5 fs-6 pe-5 splitNewRow splitNewRow_${unique_name_id}" type="button"></i>`: '';
         var newRow = `
-            <tr class="text-center sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selected_product.product_variations.id}">
+            <tr class="text-center sale_row mt-2 sale_row_${unique_name_id}" data-unid="${parentUniqueNameId !=false ?parentUniqueNameId: unique_name_id}" data-product="${selectedVar_product.product_id}">
                 <th class="text-start">
                     <div class="d-flex  ${!setting.enable_row ? 'justify-content-around align-items-center' :'align-items-center justify-content-end'}">
                         ${splitRow}
@@ -587,8 +588,8 @@
                 <td class="d-flex ps-2">
 
                     <div class="min-w-125px text-start fs-7">
-                        <span>${selected_product.name}</span>
-                        <span class="text-primary fw-semibold fs-5">${selected_product.variation_name?'-'+selected_product.variation_name:''}</span>
+                        <span>${selectedVar_product.name}</span>
+                        <span class="text-primary fw-semibold fs-5">${selectedVar_product.variation_name?'-'+selectedVar_product.variation_name:''}</span>
                         <br>
                         ${$currentQtyText}
                         <div>
@@ -596,7 +597,7 @@
                         </div>
                         ${additionalProduct.length >0 ?
                             `
-                            <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none" data-varid="${selected_product.product_variations.id}"
+                            <div class="cursor-pointer me-1 suggestProductBtn text-decoration-underline text-primary user-select-none" data-varid="${selectedVar_product.id}"
                                 data-uniqueNameId="${unique_name_id}">
                                 Additional Product
                             </div>
@@ -611,18 +612,18 @@
                 </td>
                 <td class="d-none">
                     <div>
-                        <input type='hidden' value="${selected_product.id}" class="product_id"  name="sale_details[${unique_name_id}][product_id]"  />
-                        <input type='hidden' value="${selected_product.product_variations.id}" class="variation_id" name="sale_details[${unique_name_id}][variation_id]"  />
+                        <input type='hidden' value="${selectedVar_product.product_id}" class="product_id"  name="sale_details[${unique_name_id}][product_id]"  />
+                        <input type='hidden' value="${selectedVar_product.id}" class="variation_id" name="sale_details[${unique_name_id}][variation_id]"  />
                     </div>
 
                 </td>
                 <td>
-                    <span class="text-danger-emphasis  stock_alert_${selected_product.product_variations.id} d-none fs-7 p-2">* Out of Stock</span>
+                    <span class="text-danger-emphasis  stock_alert_${selectedVar_product.id} d-none fs-7 p-2">* Out of Stock</span>
                     <div class="input-group sale_dialer_${unique_name_id} w-175px" >
                         <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
                             <i class="fa-solid fa-minus fs-2"></i>
                         </button>
-                        <input type="text" class="form-control form-control-sm quantity input_number form-control-sm quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="${qty}" data-kt-dialer-control="input"/>
+                        <input type="text" class="form-control form-control-sm quantity input_number form-control-sm quantity-${selectedVar_product.id}"   placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="${qty}" data-kt-dialer-control="input"/>
                         <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
                             <i class="fa-solid fa-plus fs-2"></i>
                         </button>
@@ -705,11 +706,11 @@
         }else{
             $(`.sale_row_${parentUniqueNameId}`).after(newRow);
         }
-        if(selected_product.rom){
-            let rom=selected_product.rom;
+        if(selectedVar_product.product.rom){
+            let rom=selectedVar_product.product.rom;
             sale_amount_cal() ;
             sale_amount_cal() ;
-            romAviableQtyCheck(locationId,selected_product.id,rom.uom,$(`.sale_row_${unique_name_id}`).find('.current_rom_stock_qty_txt'),$(`.sale_row_${unique_name_id}`).find('.smallest_rom_unit_txt'));
+            romAviableQtyCheck(locationId,selectedVar_product.product_id,rom.uom,$(`.sale_row_${unique_name_id}`).find('.current_rom_stock_qty_txt'),$(`.sale_row_${unique_name_id}`).find('.smallest_rom_unit_txt'));
         }
         suggestionProductEvent();
         $('.dataTables_empty').addClass('d-none');
@@ -724,7 +725,7 @@
                 unique_name_id+=1;
             });
         $('#searchInput').val('');
-        checkAndStoreSelectedProduct(selected_product);
+        checkAndStoreSelectedProduct(selectedVar_product);
         let rowCount = $('#sale_table tbody tr').length;
 
         $('.total_item').text(rowCount-1);
@@ -766,22 +767,22 @@
 
 
         })
-        // optionSelected(selected_product.lot_serial_nos[0],$(`[data-lot-select-${unique_name_id}="select2"]`));
-        // optionSelected(selected_product.uom_id,$(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`));
+        // optionSelected(selectedVar_product.lot_serial_nos[0],$(`[data-lot-select-${unique_name_id}="select2"]`));
+        // optionSelected(selectedVar_product.uom_id,$(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`));
         if(suggestUom){
             optionSelected(suggestUom,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
         }else{
-            optionSelected(selected_product.uom_id,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
+            optionSelected(selectedVar_product.uom_id,$(`[name="sale_details[${unique_name_id}][uom_id]"]`));
         }
 
-        if(selected_product.product_packaging){
+        if(selectedVar_product.product_packaging){
             // setTimeout(() => {
-                $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.product_packaging.uom_id).trigger('change');
-                $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selected_product.product_packaging.id).trigger('change');
+                $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selectedVar_product.product_packaging.uom_id).trigger('change');
+                $(`[data-kt-repeater=package_select_${unique_name_id}]`).val(selectedVar_product.product_packaging.id).trigger('change');
             // }, 100)
         };
-        if (selected_product.rom) {
-            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selected_product.rom.uom_id).trigger('change');
+        if (selectedVar_product.product.rom) {
+            $(`[data-kt-repeater="uom_select_${unique_name_id}"]`).val(selectedVar_product.product.rom.uom_id).trigger('change');
         }
 
 
@@ -792,13 +793,13 @@
             cal_balance_amount();
             getPrice($(`[name="sale_details[${unique_name_id}][uom_id]"]`));
             // if(lotControl=="off"){
-            //     $('.lot_no').val(selected_product.lot_serial_nos[0].id);
+            //     $('.lot_no').val(selectedVar_product.lot_serial_nos[0].id);
             // }
             // getSalePrice($(`[name="sale_details[${unique_name_id}][quantity]"]`));
         }, 100);
 
 
-            // changeQtyOnUom($(`[name="sale_details[${unique_name_id}][quantity]"]`),selected_product.uom_id);
+            // changeQtyOnUom($(`[name="sale_details[${unique_name_id}][quantity]"]`),selectedVar_product.uom_id);
 
             if ($('#sale_table tbody tr').length > 1) {
             $('.deleteRow').removeClass('disable');
@@ -905,22 +906,23 @@
         }
 
         function checkAndStoreSelectedProduct(newSelectedProduct) {
+            console.log(newSelectedProduct.product.uom,'newSelectedProduct.product.uom');
             let newProductData={
-                'product_id':newSelectedProduct.id,
+                'product_id':newSelectedProduct.product_id,
                 'product_type':newSelectedProduct.product_type,
-                'variation_id':newSelectedProduct.product_variations.id,
-                'category_id':newSelectedProduct.category_id,
-                'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
-                'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
+                'variation_id':newSelectedProduct.id,
+                'category_id':newSelectedProduct.product.category_id,
+                'defaultSellingPrices':newSelectedProduct.default_selling_price,
+                'sellingPrices':newSelectedProduct.uom_selling_price,
                 'total_current_stock_qty':newSelectedProduct.stock_sum_current_quantity,
                 'aviable_qty':newSelectedProduct.stock_sum_current_quantity,
                 'validate':true,
-                'uom':newSelectedProduct.uom,
-                'uom_id':newSelectedProduct.uom_id,
-                'additional_product':newSelectedProduct.product_variations.additional_product,
+                'uom':newSelectedProduct.product.uom,
+                'uom_id':newSelectedProduct.product.uom_id,
+                'additional_product':newSelectedProduct.additional_product,
                 'stock':newSelectedProduct.stock,
             };
-            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.product_variations.id);
+            const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.id && p.variation_id === newSelectedProduct.id);
             if(indexToReplace !== -1){
                 let productToReplace=productsOnSelectData[indexToReplace];
                 let existingQty=productToReplace.existing_qty;
@@ -1086,7 +1088,8 @@
         }
 
         function romAviableQtyCheck(locationId,productId,uom,DOM,uomTextDOM){
-                $.ajax({
+            console.log('i m in rom chekc');
+            $.ajax({
                 url: `/sell/rom/aviable/qty/check`,
                 data:{
                     locationId,productId
@@ -1098,6 +1101,8 @@
                         productsOnSelectData[indexToReplace].total_current_stock_qty=0;
                     }
                     status=e.status;
+
+                    console.log(e,'error fsfd');
                     if(status==405){
                         warning('Method Not Allow!');
                     }else if(status==419){
@@ -1107,6 +1112,7 @@
                     };
                 },
                 success: function(results){
+                    console.log(results,'sdferesult');
                     DOM.text(results);
                     uomTextDOM.text(uom.short_name);
                     let selectedProduct=productsOnSelectData.find((p)=>p.id=productId);
@@ -1114,7 +1120,7 @@
                     let cf=getCurrentAndRefUom(uom.unit_category.uom_by_category,uom.id);
                     productsOnSelectData[indexToReplace].total_current_stock_qty=getReferenceUomInfoByCurrentUomQty(results,cf.currentUom,cf.referenceUom).qtyByReferenceUom;
                 }
-            })
+            });
         }
 
 

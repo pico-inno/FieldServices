@@ -486,6 +486,7 @@ Route::prefix('sell')->group(function () {
 
         Route::get('get/product/v2', 'getProductV2');
         Route::get('get/product/v3', 'getProductV3');
+        Route::get('get/product/v3Modify', 'getProductV3Modify');
         Route::get('get/suggestion/product', 'getSuggestionProduct');
         Route::get('{id}/price/list', 'getpriceList');
 

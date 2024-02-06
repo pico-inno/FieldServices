@@ -99,7 +99,6 @@ class SaleServices
      */
     public function saleDetailCreation($request, Object $sale_data, array $sale_details, $resOrderData = null)
     {
-
         $packaging=new packagingServices();
 
         $parentSaleItems=[];
@@ -166,7 +165,6 @@ class SaleServices
     public function createRomTx($created_sale_details, $business_location_id){
         if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
             $romCheck = RoMService::isKit($created_sale_details['product_id']);
-            // dd($romCheck);
             if ($romCheck == 'kit') {
 
                 // $quantity= $created_sale_details['quantity'];
@@ -174,7 +172,7 @@ class SaleServices
                 //     $quantity= UomHelper::changeQtyOnUom($created_sale_details['uom_id'], $product['uom_id'], $quantity);
                 // };
 
-                RoMService::createRomTransactions(
+                $status=RoMService::createRomTransactions(
                     $created_sale_details['id'],
                     'kit_sale_detail',
                     $business_location_id,
@@ -183,6 +181,9 @@ class SaleServices
                     $created_sale_details['quantity'],
                     $created_sale_details['uom_id'],
                 );
+                if($status !='success'){
+                    throw new Exception("Out of Stock", 1);
+                }
             }
         }
     }

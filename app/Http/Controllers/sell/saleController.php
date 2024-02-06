@@ -540,7 +540,6 @@ class saleController extends Controller
                 }
             }
         } catch (Exception $e) {
-            logger($e);
             DB::rollBack();
             if ($request->type == 'pos') {
                 return response()->json([
@@ -1814,6 +1813,100 @@ class saleController extends Controller
             'variation_template_values.id as variation_template_values_id'
         )->whereNull('products.deleted_at')
             ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
+                $query
+                    ->where('can_sale', 1)
+                    ->where('products.name', 'like', '%' . $keyword . '%')
+                    ->when($psku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($vsku_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                    })
+                    ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
+                        $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
+                            $query->where('package_barcode', $keyword);
+                        });
+                    });
+            })
+            ->when($variation_id, function ($query) use ($variation_id) {
+                $query->where('product_variations.id', $variation_id);
+            })
+            ->with($relations)
+            ->withSum(['stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->whereIn('business_location_id', $locationIds);
+            }], 'current_quantity')
+            ->get()->toArray();
+            // dd($products);
+        return response()->json($products, 200);
+    }
+
+    public function getProductV3Modify(Request $request)
+    {
+
+        $data = $request->data;
+        $business_location_id = $data['business_location_id'];
+        $keyword = $data['query'];
+        $variation_id = $data['variation_id'] ?? null;
+        $psku_kw = $data['psku_kw'] ?? false;
+        $vsku_kw = $data['vsku_kw'] ?? false;
+        $pgbc_kw = $data['pgbc_kw'] ?? false;
+        $relations = [
+            'product.product_packaging' => function ($query) use ($keyword) {
+                $query->where('package_barcode', $keyword);
+            },
+            'product.uom:id,name,short_name,unit_category_id,unit_type,value,rounded_amount',
+            'product.uom.unit_category:id,name',
+            'product.uom.unit_category.uomByCategory:id,name,short_name,unit_type,unit_category_id,value,rounded_amount',
+            'packaging.uom',
+            'additionalProduct.productVariation.product',
+            'additionalProduct.uom',
+            'additionalProduct.productVariation.variationTemplateValue',
+            'stock' => function ($query) use ($business_location_id) {
+                $locationIds = childLocationIDs($business_location_id);
+                $query->select('current_quantity', 'business_location_id', 'product_id', 'id')
+                    ->where('current_quantity', '>', 0)
+                    ->whereIn('business_location_id', $locationIds);
+            }
+        ];
+        if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
+            $relations = [
+                'product.rom.uom.unit_category.uomByCategory',
+                'product.rom.rom_details.productVariation.product',
+                'product.rom.rom_details.uom',
+                ...$relations
+            ];
+        }
+        $products = ProductVariation::select(
+            'products.name as name',
+            'products.id as product_id',
+            'products.product_code',
+            'products.sku',
+            'products.product_type',
+            'products.has_variation',
+            'products.lot_count',
+            'products.uom_id',
+            'products.purchase_uom_id',
+            'products.can_sale',
+            'products.is_recurring',
+            'products.receipe_of_material_id',
+
+
+            'product_variations.id as id',
+            'product_variations.product_id',
+            'product_variations.variation_sku',
+            'product_variations.variation_template_value_id',
+            'product_variations.default_selling_price',
+            'product_variations.id as variation_id',
+
+            'variation_template_values.variation_template_id',
+            'variation_template_values.name as variation_name',
+            'variation_template_values.id as variation_template_values_id'
+        )->whereNull('products.deleted_at')
+        ->leftJoin('products','product_variations.product_id' , '=','products.id' )
+            // ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
             ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where(function ($query) use ($keyword, $psku_kw, $vsku_kw, $pgbc_kw) {
                 $query
