@@ -1041,7 +1041,7 @@
                             let product_countOrSku = element.has_variation === 'variable' ? element.variation_sku : element.sku;
                             // let stock_qty = element.stock_sum_current_quantity !== 0 ? element.stock_sum_current_quantity * 1 + ' ' + element.smallest_unit : 'Out of Stocks';
                             let vari_name_or_selectAll = element.has_variation === 'variable' ? element.variation_name : 'select all';
-                            let unit = element.uom.name;
+                            let unit = element.product.uom.name;
 
                             $('#search_container').append(searchNewRow(index, element.product_id, element.has_variation, element.id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
                             if(results.length==1){
@@ -1100,7 +1100,7 @@
             suggestionProductEvent();
             uniqueNameId++;
             $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
-            changeQtyOnUom(newInvoiceSidebar, selected_product.uom.id);
+            changeQtyOnUom(newInvoiceSidebar, selected_product.product.uom.id);
             totalSubtotalAmountCalculate();
             totalDisPrice();
             checkStock(newInvoiceSidebar);
