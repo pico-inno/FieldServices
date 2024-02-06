@@ -842,7 +842,7 @@ class saleController extends Controller
                 ], 200);
             } else {
                 // return redirect()->back()->with(['success' => 'successfully updated']);
-                if(request('sale_type') =='ecommerce'){
+                if(request('sale_type') =='ecommerce' &&  hasModule('Ecommerce') && isEnableModule('Ecommerce')){
                     return redirect()->route('all_sales', 'ecommerce')->with(['success' => 'successfully updated']);
                 }else{
                     return redirect()->route('all_sales', 'allSales')->with(['success' => 'successfully updated']);
