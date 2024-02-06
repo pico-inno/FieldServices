@@ -33,14 +33,16 @@ class paymentServices
             $voucherNo='';
             if($transactionType=='sale'){
                 $voucherNo=$transaction->sales_voucher_no;
+                $paymentDate=$transaction->sold_at;
                 $payment_type='debit';
             }elseif($transactionType == 'purchase') {
                 $voucherNo = $transaction->purchase_voucher_no;
+                $paymentDate=$transaction->purchased_at;
                 $payment_type='credit';
             }
             $data = [
                 'payment_voucher_no' => generatorHelpers::paymentVoucher('sale'),
-                'payment_date' => now(),
+                'payment_date' => $paymentDate ?? now(),
                 'transaction_type' => $transactionType,
                 'transaction_id' => $transaction->id,
                 'transaction_ref_no' => $voucherNo,
