@@ -189,8 +189,8 @@
                 pkgname=packaging.packaging_name
             }
             let romTags='';
-            if(product.rom){
-                let rom=product.rom;
+            if(product.product.rom){
+                let rom=product.product.rom;
                 if(rom){
                     rom.rom_details.forEach(rd=>{
                         romTags+=

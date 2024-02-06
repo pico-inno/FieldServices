@@ -1660,9 +1660,9 @@ class saleController extends Controller
         ];
         if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
             $relations = [
-                'rom.uom.unit_category.uomByCategory',
-                'rom.rom_details.productVariation.product',
-                'rom.rom_details.uom',
+                'product.rom.uom.unit_category.uomByCategory',
+                'product.rom.rom_details.productVariation.product',
+                'product.rom.rom_details.uom',
                 ...$relations
             ];
         }
