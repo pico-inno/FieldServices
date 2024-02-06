@@ -133,9 +133,24 @@
             </tr>
         </thead>
         <tbody >
+            <tr>
+                <th colspan="4"></th>
+            </tr>
            @if(count($txs)>0)
+                @php
+                    $totalSummaryPrice=0;
+                    $totalSummaryQuantity=0;
+                @endphp
                 @foreach ($txs as $datas)
-                    @foreach ($datas as $data)
+                    @php
+                        $totalPriceByCate=0;
+                    @endphp
+                    @foreach ($datas as $i=>$data)
+                        @php
+                            $totalPriceByCate+=$data['totalPrice'];
+                            $totalSummaryPrice+=$data['totalPrice'];
+                            $totalSummaryQuantity+=$data['totalQty'];
+                        @endphp
                         <tr class="">
                             <th>
                                 {{$data['name']}}
@@ -152,6 +167,9 @@
                             <th class="text-end">
                                 {{formatNumberv2($data['totalPrice'])}}
                             </th>
+                            @if(count($datas) == $i+1)
+                                <th>{{$totalPriceByCate}}</th>
+                            @endif
                         </tr>
                     @endforeach
                 @endforeach
@@ -165,11 +183,11 @@
                     Total :
                 </th>
                 <th class="text-start">
-                    {{$txs->sum('totalQty')}}
+                    {{$totalSummaryQuantity}}
                 </th>
                 <th></th>
                 <th class="text-end">
-                    {{$txs->sum('totalPrice')}}
+                    {{$totalSummaryPrice}}
                 </th>
             </tr>
         </tfoot>
