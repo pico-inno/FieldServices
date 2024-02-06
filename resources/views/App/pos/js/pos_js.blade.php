@@ -1074,9 +1074,9 @@
             let index = $(this).attr('data-index');
 
             let selected_product = products[index];
-
             if(selected_product.product_type =='storable'
-            && (selected_product.stock_sum_current_quantity === 0 || selected_product.stock_sum_current_quantity === null)){
+            && (selected_product.stock_sum_current_quantity == 0 || selected_product.stock_sum_current_quantity === null)){
+                error('Out Of Stock');
                 return;
             }
 
