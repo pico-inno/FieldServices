@@ -28,7 +28,7 @@
                         'variation_id':detail.variation_id,
                         'total_current_stock_qty':detail.stock_sum_current_quantity,
                         'validate':true,
-                        'uom':detail.product.uom,
+                        'uom':detail.uom,
                         'uom_id':detail.uom_id,
                         'stock':detail.stock,
                     };
@@ -63,6 +63,7 @@
 
         $('#business_location_id').on('change',function(){
             $('#adjustment_table').find('tbody').empty();
+            productsOnSelectData = [];
             $('#searchInput').prop('disabled', false);
         })
         if (editAdjustmentDetails.length < 0) {
@@ -253,8 +254,9 @@
 
         //append table row for product to sell
         function append_row(selected_product,unique_name_id) {
+
             console.log(selected_product,'append products');
-            // if the item is out of stock reutrn do nothing;
+
             if(selected_product.stock.length == 0){
                 return;
             }
@@ -292,19 +294,19 @@
                         </div>
                     </td>
                     <td>
-                         <span class="current_stock_qty_txt" id="current_stock_qty_text_${unique_name_id}">${parseFloat(selected_product.total_current_stock_qty).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>
-                          <input type="hidden" class="balance_qty" value="${selected_product.total_current_stock_qty}"  name="adjustment_details[${unique_name_id}][balance_quantity]"  />
+                         <span class="current_stock_qty_txt" id="current_stock_qty_text_${unique_name_id}">${parseFloat(selected_product.stock_sum_current_quantity).toFixed(2)}</span> <span class='smallest_unit_txt'>${selected_product.smallest_unit}</span>
+                          <input type="hidden" class="balance_qty" value="${selected_product.stock_sum_current_quantity}"  name="adjustment_details[${unique_name_id}][balance_quantity]"  />
                      </td>
                     <td class="d-none">
                         <div>
                                ${serialInput}
                             <input type='hidden' value="${selected_product.id}" class="product_id"  name="adjustment_details[${unique_name_id}][product_id]"  />
-                            <input type='hidden' value="${selected_product.product_variations.id}" class="variation_id" name="adjustment_details[${unique_name_id}][variation_id]"  />
+                            <input type='hidden' value="${selected_product.variation_id}" class="variation_id" name="adjustment_details[${unique_name_id}][variation_id]"  />
                             <input type='hidden' value="${selected_product.stock[0].id}" class="uom_set_id"  />
                         </div>
                     </td>
                     <td>
-                            <input type="text" value="${selected_product.total_current_stock_qty}" class="form-control form-control-sm gnd_quantity form-control-sm gnd_quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="adjustment_details[${unique_name_id}][gnd_quantity]" data-kt-dialer-control="input"/>
+                            <input type="text" value="${selected_product.stock_sum_current_quantity}" class="form-control form-control-sm gnd_quantity form-control-sm gnd_quantity-${selected_product.product_variations.id}"   placeholder="quantity" name="adjustment_details[${unique_name_id}][gnd_quantity]" data-kt-dialer-control="input"/>
                     </td>
                     <td>
 
@@ -422,9 +424,10 @@
 
 
         function checkAndStoreSelectedProduct(newSelectedProduct) {
+            console.log('checkSele')
             let newProductData={
                 'product_id':newSelectedProduct.id,
-                'variation_id':newSelectedProduct.product_variations.id,
+                'variation_id':newSelectedProduct.variation_id,
                 'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
                 'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
                 'total_current_stock_qty':newSelectedProduct.stock_sum_current_quantity,
@@ -436,19 +439,19 @@
             };
             if(productsOnSelectData.length>0){
                 let fileterProduct=productsOnSelectData.filter(function(p){
-                    console.log(p.product_id==newSelectedProduct.id && p.variation_id==newSelectedProduct.product_variations.id,'-----------');
-                    return p.product_id==newSelectedProduct.id && p.variation_id==newSelectedProduct.product_variations.id
+                    return p.product_id==newSelectedProduct.id && p.variation_id==newSelectedProduct.product_variations.id;
 
                 })[0];
                 if(fileterProduct){
-                    return
+                    // return
+                    productsOnSelectData=[...productsOnSelectData,newProductData];
                 }else{
                     productsOnSelectData=[...productsOnSelectData,newProductData];
                 }
             }else{
                 productsOnSelectData=[...productsOnSelectData,newProductData];
             }
-            console.log(productsOnSelectData);
+            console.log(productsOnSelectData,  'onsel');
         }
 
 
@@ -515,6 +518,7 @@
             }, 900);
         }
         const packaging=(e,operator)=>{
+
             let parent = $(e).closest('.adjustment_row');
             let unitQty=parent.find('.gnd_quantity').val();
             let selectedOption =parent.find('.package_id').find(':selected');

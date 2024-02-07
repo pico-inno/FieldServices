@@ -82,6 +82,7 @@ class StockAdjustmentController extends Controller
      */
     public function store(StoreStockAdjustmentRequest $request,StockAdjustmentServices $adjustmentServices)
     {
+//        return $request;
         try {
             DB::beginTransaction();
             $adjustmentServices->create($request);
@@ -433,9 +434,10 @@ class StockAdjustmentController extends Controller
                     $query->where('product_variations.id', $variation_id);
                 })
                 ->with($relations)
-                ->withSum(['stock' => function ($query) use ($business_location_id) {
+                ->withSum(['stock' => function ($query) use ($business_location_id, $variation_id) {
                     $locationIds = childLocationIDs($business_location_id);
                     $query->whereIn('business_location_id', $locationIds);
+                    $query->where('variation_id', '=', DB::raw('product_variations.id'));
                 }], 'current_quantity')
                 ->get()->toArray();
         }

@@ -313,7 +313,7 @@ class StockAdjustmentServices
 //                }
 //            }
 
-            $price = $adjustmentDetail['new_uom_price'];
+            $price = $adjustmentDetail['new_uom_price'] == null ? 0 : floatval($adjustmentDetail['new_uom_price']);
 
             $subtotal = $status ? $price * $adjustQty : 0;
 
@@ -436,7 +436,8 @@ class StockAdjustmentServices
 
 
 
-            $price = $adjustmentDetail['new_uom_price'];
+            $price = $adjustmentDetail['new_uom_price'] == null ? 0 : floatval($adjustmentDetail['new_uom_price']);
+
 
             $subtotal = $status ? $price * $adjustQty : 0;
 
