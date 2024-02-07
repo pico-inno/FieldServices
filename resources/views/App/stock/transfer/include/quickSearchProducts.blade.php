@@ -19,6 +19,7 @@
         var fromLocationSelect = $('select[name="from_location"]');
 
         fromLocationSelect.on('change', function() {
+            productsOnSelectData = [];
              mainLocation = $(this).val();
         });
 
@@ -328,8 +329,8 @@
                 <tr class="transfer_row" data-row-id="${unique_name_id}">
                      <td class="d-none">
                         <input type='hidden' value="${selected_product.id}" class="product_id"  name="transfer_details[${unique_name_id}][product_id]"  />
-                        <input type='hidden' value="${selected_product.product_variations.id}" class="variation_id" name="transfer_details[${unique_name_id}][variation_id]"  />
-                        <input type='hidden' value="${selected_product.product_variations.id}" name="transfer_details[${unique_name_id}][currency_id]"/>
+                        <input type='hidden' value="${selected_product.variation_id}" class="variation_id" name="transfer_details[${unique_name_id}][variation_id]"  />
+                        <input type='hidden' value="${selected_product.variation_id}" name="transfer_details[${unique_name_id}][currency_id]"/>
 
                         @if ($setting->lot_control=='on')
                             <input type='hidden' value="0" class="uom_set_id"  />
@@ -625,16 +626,17 @@
 
         function generateLotOption(item) {
             let lotOption = '';
-
+            console.log(item, 'genLot')
             if (item.current_stock) {
                 const uniqueLots = {};
 
                 item.current_stock.forEach((csb) => {
                     const lotNo = csb.lot_serial_no;
                     const lotLocation = csb.business_location_id;
+                    const variation_id = csb.variation_id;
                     const currentQuantity = parseFloat(csb.current_quantity) || 0;
 
-                    if (currentQuantity > 0 && lotLocation == mainLocation) {
+                    if (currentQuantity > 0 && lotLocation == mainLocation && variation_id == item.variation_id) {
                         if (!uniqueLots[lotNo]) {
                             uniqueLots[lotNo] = { quantity: currentQuantity, expiredDate: csb.expired_date };
                         } else {
@@ -743,7 +745,7 @@
         function checkAndStoreSelectedProduct(newSelectedProduct) {
             let newProductData={
                 'product_id':newSelectedProduct.id,
-                'variation_id':newSelectedProduct.product_variations.id,
+                'variation_id':newSelectedProduct.variation_id,
                 'defaultSellingPrices':newSelectedProduct.product_variations.default_selling_price,
                 'sellingPrices':newSelectedProduct.product_variations.uom_selling_price,
                 'total_current_stock_qty':newSelectedProduct.stock_sum_current_quantity,
@@ -760,7 +762,8 @@
 
                 })[0];
                 if(fileterProduct){
-                    return
+                    productsOnSelectData=[...productsOnSelectData,newProductData];
+                    // return
                 }else{
                     productsOnSelectData=[...productsOnSelectData,newProductData];
                 }

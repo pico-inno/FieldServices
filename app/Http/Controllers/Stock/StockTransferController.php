@@ -1635,9 +1635,9 @@ class StockTransferController extends Controller
             'product_variations.additionalProduct.productVariation.variationTemplateValue',
             'stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
-                $query->select('current_quantity', 'business_location_id', 'product_id', 'id')
-                    ->where('current_quantity', '>', 0)
+                $query->where('current_quantity', '>', 0)
                     ->whereIn('business_location_id', $locationIds);
+//                $query->where('variation_id', '=', DB::raw('product_variations.id'));
             },
         ];
         if (hasModule('ComboKit') && isEnableModule('ComboKit')) {
@@ -1697,11 +1697,12 @@ class StockTransferController extends Controller
             ->withSum(['stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
                 $query->whereIn('business_location_id', $locationIds);
+                $query->where('variation_id', '=', DB::raw('product_variations.id'));
             }], 'current_quantity')
             ->get()->toArray();
 
         foreach ($products as &$product) {
-            $product['current_stock'] = $product['product_variations']['current_stock'];
+            $product['current_stock'] = $product['stock'];
         }
         unset($product);
 
