@@ -4,7 +4,7 @@
 
 <head>
     <base href="../../../" />
-    <title>POS For Table</title>
+    <title>Configurations</title>
     <meta charset="utf-8" />
 
     <meta name="csrf-token" content="{{ csrf_token() }}">

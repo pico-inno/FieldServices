@@ -1,5 +1,6 @@
 <script>
     let defaultPriceListId=@json(getSystemData('defaultPriceListId'));
+    let defaultCustomerId=@json(getSystemData('defaultCustomer'));
     let locations=@json($locations);
     let setting=@json($setting);
     let symbol=@json($currencySymbol);
@@ -17,7 +18,8 @@
     var creditLimit=0;
     var receiveAbleAmount=0;
     var uniqueNameId=1;
-    var contactId=editSale.contact_id ?? 3 ;
+    var defaultCustomer=defaultCustomerId ?? 1;
+    var contactId=editSale.contact_id ?? defaultCustomerId ;
     let isGetContact =editSale ? false:true;
 
     var accounting_method=setting.accounting_method;

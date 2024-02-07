@@ -121,10 +121,7 @@ class AllSaleTable extends Component
                         $query->whereIn('business_location_id', $accessUserLocation);
                     })
                     ->when($saleType == 'sales', function ($query){
-                            $query->whereNull('pos_register_id')->channel_type('sale');
-                    })
-                    ->when($saleType == 'sales', function ($query){
-                            $query->whereNull('pos_register_id')->channel_type('sale');
+                            $query->whereNull('pos_register_id')->where('channel_type','sale');
                     })
                     ->when($saleType == 'ecommerce', function ($query) {
                             $query->where('channel_type','ecommerce')
