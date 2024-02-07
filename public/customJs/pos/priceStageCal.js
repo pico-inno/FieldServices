@@ -100,6 +100,7 @@
         let product=productsOnSelectData.filter(function(p){
             return p.product_id==productId && variationId == p.variation_id;
         })[0];
+
         if(priceStage.applied_type=='All'){
             if(!priceSettingToUi(priceStage,parentDom,product)){
                 return false
@@ -142,6 +143,7 @@
         }
         let quantity=isNullOrNan(parentDom.find('.quantity_input').val());
         let price = priceStage.cal_value;
+
         if (priceStage.cal_type == 'percentage') {
             let basePriceLists=priceList.basePriceList;
             let i = 0;
@@ -197,6 +199,7 @@
                 }
                 }
             }
+
             if(finalBasePrice !== null){
                 percentagePrice=finalBasePrice * (priceStage.cal_value/100);
                 price = isNullOrNan(finalBasePrice) + isNullOrNan(percentagePrice);
@@ -215,6 +218,7 @@
         const inputUom =uoms.filter(function ($u) {
                 return $u.id ==inputUomId;
         })[0];
+
         if (quantity >= qtyByPriceStage) {
 
             parentDom.find('.subtotal_price').text(pDecimal(resultAfterUomChange.resultPrice) );
