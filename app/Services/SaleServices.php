@@ -373,7 +373,7 @@ class SaleServices
         } else {
             $balanceQty=$cbs['current_quantity']-$requestQty;
             $data =[ [
-                'stockQty' => $sale_detail['quantity'],
+                'stockQty' => $requestQty,
                 'batch_no' => $cbs['batch_no'],
                 'lot_serial_no' => $cbs['lot_serial_no'],
                 'ref_uom_id' => $cbs['ref_uom_id'],
