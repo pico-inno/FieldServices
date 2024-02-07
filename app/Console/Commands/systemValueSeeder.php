@@ -34,8 +34,15 @@ class systemValueSeeder extends Command
                     'key' => 'defaultCustomer',
                     'value' => $id,
                 ]);
+
+                $this->info('Success fully Updated');
+            }else{
+                systemSetting::create([
+                    'key' => 'defaultCustomer',
+                    'value' => $id,
+                ]);
+                $this->info('Success fully Added');
             }
-            $this->info('Success fully Updated');
         } catch (\Throwable $th) {
             systemSetting::create([
                 'key' => 'defaultCustomer',
