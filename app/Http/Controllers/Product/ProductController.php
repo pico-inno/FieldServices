@@ -601,7 +601,7 @@ class ProductController extends Controller
             if (!$isCreating) {
                 foreach ($productVariations as $variation) {
                     ProductVariation::updateOrCreate(['id' => $variation['id']], $variation);
-                    $this->createOrUpdatePriceListDetail('Variation', $variation['id'], $variationData['default_selling_price']);
+                    $this->createOrUpdatePriceListDetail('Variation', $variation['id'], $variation['default_selling_price']);
                 }
             }
         }

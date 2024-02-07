@@ -849,7 +849,10 @@ function getOptionName($type,$id){
             ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->first();
     }
-    $text= $result['name'] . ' (' . $result['uniqCode'] . ')';
+    // logger(isset($result['uniqCode']));
+    $name=isset($result['name'] ) ?$result['name'] :'';
+    $uniqueCode=isset($result['uniqCode']) ? ' (' . $result['uniqCode']. ')' : '';
+    $text= $name. $uniqueCode ;
     return $text;
 }
 
