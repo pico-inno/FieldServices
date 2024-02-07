@@ -778,6 +778,7 @@
             let services=$('#services').val();
             let pos_register_id = posRegisterId;
             let sale_amount = $(`#${infoPriceId} .sb-total`).text();
+            let lot_serial_val=$('.lot_serial_val').val();
             let total_item_discount = $(`#${infoPriceId} .sb-discount`).text();
             let extra_discount_type = null;
             let extra_discount_amount = null;
@@ -823,6 +824,7 @@
                     'sessionId':sessionId,
                     'multiPayment':multiPayment,
                     'reservation_id':reservation_id,
+                    'lot_serial_val':lot_serial_val,
                 }
             if(onlySale==true){
                 return sales;

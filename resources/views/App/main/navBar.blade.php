@@ -33,7 +33,17 @@
         /* .aside-menu{
             width:300px !important;
         } */
+
+    .pagination{
+        justify-content: center !important;
+    }
+    @media(min-width:780px){
+        .pagination{
+            justify-content: end !important;
+        }
+    }
     </style>
+
 </head>
 <!--end::Head-->
 <!--begin::Body-->

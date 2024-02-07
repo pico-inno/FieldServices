@@ -22,7 +22,7 @@ class AllSaleTable extends Component
     public function __construct()
     {
         $this->queryString= [...$this->queryString,
-            'businesslocationFilterId', 'customerFilterId'
+            'businesslocationFilterId', 'customerFilterId','filterDate'
         ];
     }
 
