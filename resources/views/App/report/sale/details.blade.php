@@ -7,7 +7,7 @@
 
 
 @section('styles')
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
+    <link href="{{asset("assets/plugins/custom/datatables/datatables.bundle.css")}}" rel="stylesheet" type="text/css"/>
     <style>
         .billDiv tr td{
             padding: 8px 0 !important;
@@ -430,13 +430,7 @@
 @endsection
 
 @push('scripts')
-<<<<<<< Updated upstream
     <script src="{{asset('customJs/reports/sale/salesDetailsExport.js')}}"></script>
     <script src="{{asset('customJs/reports/sale/salesDetailsFilter.js')}}"></script>
     <script src="{{asset('customJs/toaster.js')}}"></script>
-=======
-    <script src="{{ asset('customJs/reports/sale/salesDetailsExport.js') }}"></script>
-    <script src="{{ asset('customJs/reports/sale/salesDetailsFilter.js') }}"></script>
-    <script src="{{ asset('customJs/toaster.js') }}"></script>
->>>>>>> Stashed changes
 @endpush
