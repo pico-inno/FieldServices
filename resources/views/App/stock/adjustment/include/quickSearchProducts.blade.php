@@ -1,4 +1,4 @@
-
+<script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
     var productsOnSelectData=[];
     $(document).ready(function () {
@@ -92,7 +92,8 @@
 
 
         // for quick search
-        $('.quick-search-form input').on('input', function() {
+        let throttleTimeout;
+        $('.quick-search-form input').on('input', debounce(function() {
 
             const query = $(this).val().trim();
             const search_type = searchType;
@@ -149,9 +150,12 @@
                                 results.forEach(function(result,key) {
 
                                     let checkSku = addedSku.includes(result.sku);
+                                    let has_stock= result.stock.length;
+
+                                    let selectAllCss =  has_stock == 0 ? '' : 'order:-1;'
 
                                     if(sku && result.sku==sku && !checkSku){
-                                        html += `<div class="quick-search-result rounded-3 result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}" style="z-index:100;">`;
+                                        html += `<div class="quick-search-result rounded-3 result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="${selectAllCss}" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}" style="z-index:100;">`;
                                         html += `<h4 class="fs-6 ps-10 pt-3">${result.name} (Select All)</h4>`;
                                         html += '</div>';
 
@@ -166,8 +170,8 @@
                                     }
 
 
-                                    let has_stock= result.stock.length;
-                                    let css_class= has_stock == 0 && result.product_type=="storable" ?" text-gray-600 order-3":'';
+
+                                    let css_class= has_stock == 0 && result.product_type=="storable" ?" text-gray-600 ":'';
 
                                     html += `<div class="quick-search-result rounded-3 result ps-10  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
                                     html += `<h4 class="fs-6  pt-3 ${css_class} ">${result.name} `;
@@ -220,7 +224,7 @@
                 $('.quick-search-results').addClass('d-none');
                 $('.quick-search-results').empty();
             }
-        });
+        }));
 
         $('#autocomplete').on('click', '.result', function() {
 

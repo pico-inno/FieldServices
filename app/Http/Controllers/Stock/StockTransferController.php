@@ -177,6 +177,7 @@ class StockTransferController extends Controller
                             $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
 
                             $csbService->removeQuantityFromCsb(
+                                'not_prepare',
                                 $transferDetail->id,
                                 'transfer',
                                 $request->from_location,
@@ -188,6 +189,7 @@ class StockTransferController extends Controller
                         }
                     }else{
                         $csbService->removeQuantityFromCsb(
+                            'not_prepare',
                             $transferDetail->id,
                             'transfer',
                             $request->from_location,
@@ -566,6 +568,7 @@ class StockTransferController extends Controller
 
 
                                    $csbService->removeQuantityFromCsb(
+                                       'not_prepare',
                                        $transferDetailId,
                                        'transfer',
                                        $request->from_location,
@@ -643,6 +646,7 @@ class StockTransferController extends Controller
 
 
                            $csbService->removeQuantityFromCsb(
+                               'not_prepare',
                                $transferDetailId,
                                'transfer',
                                $request->from_location,
@@ -798,6 +802,7 @@ class StockTransferController extends Controller
                                 $qtyToDecrease = $referenceUomInfo['qtyByReferenceUom'];
 
                                 $csbService->removeQuantityFromCsb(
+                                    'not_prepare',
                                     $transferDetail->id,
                                     'transfer',
                                     $request->from_location,
@@ -809,6 +814,7 @@ class StockTransferController extends Controller
                             }
                         }else{
                             $csbService->removeQuantityFromCsb(
+                                'not_prepare',
                                 $transferDetail->id,
                                 'transfer',
                                 $request->from_location,

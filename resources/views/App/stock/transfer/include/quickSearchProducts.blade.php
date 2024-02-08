@@ -1,3 +1,4 @@
+<script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
     $(document).ready(function () {
         var unique_name_id=1;
@@ -73,7 +74,7 @@
 
 
         //Begin: quick search
-        $('.quick-search-form input').on('input', function() {
+        $('.quick-search-form input').on('input', debounce(function() {
             let business_location_id = $('#business_location_id').val();
             if(business_location_id == '' || business_location_id == null){
                 toastr.error("Need to choose from location?");
@@ -170,7 +171,7 @@
                 quickSearchResults.addClass('d-none');
                 quickSearchResults.empty();
             }
-        });
+        }));
         //End: quick search
 
 

@@ -64,24 +64,28 @@
     }
 },
     success: function (results) {
-    console.log(results);
+
 
     dataTable.clear();
 
     results.forEach(function(item) {
+        let price = Number(item.default_selling_price.replace(/,/g, ''));
+        let qty = Number(item.stock_qty.replace(/,/g, '')); // Remove commas from the string
 
-    var rowData = [
+
+
+        var rowData = [
     item.variation_sku ? item.variation_sku : item.sku,
     item.name,
     item.variation_template_name+' -    '+item.variation_value_name,
     item.category_name ? item.category_name : '',
     item.brand_name ?? '',
     item.uom_name,
-    item.stock_qty+' '+item.uom_short_name ?? '',
+            qty+' '+item.uom_short_name ?? '',
     // item.samllest_stock_qty+' '+item.smallest_unit_name,
         // item.smallest_purchase_price,
-    item.default_purchase_price,
-    Number(item.default_purchase_price * item.stock_qty).toFixed(2),
+            price,
+    Number(price * qty).toFixed(2),
     ];
 
 
