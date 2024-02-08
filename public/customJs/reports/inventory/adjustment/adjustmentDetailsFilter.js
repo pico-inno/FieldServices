@@ -63,6 +63,7 @@ $(document).ready(function () {
                     results.forEach(function(item) {
                         var statusClass = getStatusClass(item.adjustment_type);
 
+                        console.log(item.variation_template_name,'111111')
                         var rowData = [
                             item.sku,
                             item.name,

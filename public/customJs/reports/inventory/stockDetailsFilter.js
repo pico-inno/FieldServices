@@ -69,8 +69,9 @@
     dataTable.clear();
 
     results.forEach(function(item) {
-        let price = Number(item.default_selling_price.replace(/,/g, ''));
-        let qty = Number(item.stock_qty.replace(/,/g, '')); // Remove commas from the string
+
+        let price = Number(item.default_selling_price);
+        let qty = Number(item.stock_qty);
 
 
 
@@ -81,10 +82,8 @@
     item.category_name ? item.category_name : '',
     item.brand_name ?? '',
     item.uom_name,
-            qty+' '+item.uom_short_name ?? '',
-    // item.samllest_stock_qty+' '+item.smallest_unit_name,
-        // item.smallest_purchase_price,
-            price,
+    qty+' '+item.uom_short_name ?? '',
+    price,
     Number(price * qty).toFixed(2),
     ];
 
