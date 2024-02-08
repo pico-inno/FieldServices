@@ -10,6 +10,7 @@ class CurrentStockBalanceServices
 {
 
     public function removeQuantityFromCsb(
+        $is_prepare,
         $transaction_id,
         $transaction_type,
         $location_id ,
@@ -42,7 +43,9 @@ class CurrentStockBalanceServices
             if ($remove_ref_quantity >= $balance_quantity) {
                 $remove_ref_quantity -= $balance_quantity;
 
-                $balance->decrement('current_quantity', $balance_quantity);
+                if ($is_prepare !== 'prepare'){
+                    $balance->decrement('current_quantity', $balance_quantity);
+                }
 
 
                 $uom_balance_quantity = UomHelper::changeQtyOnUom($balance['ref_uom_id'], $uom_id, $balance_quantity);
@@ -55,11 +58,13 @@ class CurrentStockBalanceServices
                     'uom_id' => $balance['ref_uom_id'],
                     'uom_quantity' => $uom_balance_quantity,
                     'ref_uom_quantity' => $balance_quantity,
+                    'is_prepare' => $is_prepare !== 'prepare' ? false : true,
                 ]);
             } else {
 
-                $balance->decrement('current_quantity', $remove_ref_quantity);
-
+                if ($is_prepare !== 'prepare') {
+                    $balance->decrement('current_quantity', $remove_ref_quantity);
+                }
                 $uom_balance_quantity = UomHelper::changeQtyOnUom($balance['ref_uom_id'], $uom_id, $remove_ref_quantity);
                 lotSerialDetails::create([
                     'transaction_detail_id' => $transaction_id,
@@ -70,6 +75,7 @@ class CurrentStockBalanceServices
                     'uom_id' => $balance['ref_uom_id'],
                     'uom_quantity' => $uom_balance_quantity,
                     'ref_uom_quantity' => $remove_ref_quantity,
+                    'is_prepare' => $is_prepare !== 'prepare' ? false : true,
                 ]);
 
                 $remove_ref_quantity = 0;
@@ -108,6 +114,7 @@ class CurrentStockBalanceServices
 
 
     public function updateStockOutTransaction(
+        $is_prepare,
         $transaction_id,
         $transaction_type,
         $location_id,
@@ -115,11 +122,12 @@ class CurrentStockBalanceServices
         $uom_id,
         $out_qty,
         $before_edit_qty,
-        $lot_serial_no)
+        $lot_serial_no
+    )
     {
 
 
-        if ($out_qty > $before_edit_qty){ // 40 - 20 = 20
+        if ($out_qty > $before_edit_qty){ //2 > 1
             $out_able_qty = $out_qty - $before_edit_qty;
             $referenceInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($out_able_qty, $uom_id);
             $out_able_ref_qty = $referenceInfo['qtyByReferenceUom'];
@@ -155,16 +163,24 @@ class CurrentStockBalanceServices
                 $lotSerialDetail = lotSerialDetails::where('current_stock_balance_id', $balance->id)
                     ->where('transaction_detail_id', $transaction_id)
                     ->where('transaction_type', $transaction_type)
+                    ->when($is_prepare === 'prepare', function ($query){
+                        return $query->where('is_prepare', 1);
+                    })
                     ->first();
 
 
-                if ($out_able_ref_qty >= $balance_quantity) { //20 > 80
+                if ($out_able_ref_qty >= $balance_quantity) {
                     $out_able_ref_qty -= $balance_quantity;
 
                     $uom_balance_quantity = UomHelper::changeQtyOnUom($balance['ref_uom_id'],$uom_id, $balance_quantity);
                     if ($lotSerialDetail) {
                         $lotSerialDetail->uom_quantity += $uom_balance_quantity;
                         $lotSerialDetail->ref_uom_quantity += $balance_quantity;
+
+                        if ($is_prepare !== 'prepare'){
+                            $lotSerialDetail->is_prepare = 0;
+                        }
+
                         $lotSerialDetail->save();
                     } else {
                         lotSerialDetails::create([
@@ -176,20 +192,30 @@ class CurrentStockBalanceServices
                             'uom_id' => $balance['ref_uom_id'],
                             'uom_quantity' => $uom_balance_quantity,
                             'ref_uom_quantity' => $balance_quantity,
+                            'is_prepare' => $is_prepare !== 'prepare' ? false : true,
                         ]);
                     }
 
-                    $balance->decrement('current_quantity', $balance_quantity);
+                    if ($is_prepare !== 'prepare'){
+                        $balance->decrement('current_quantity', $balance_quantity);
+                    }
 
                 } else {
 
-                    $balance->decrement('current_quantity', $out_able_ref_qty);
+                    if ($is_prepare !== 'prepare'){
+                        $balance->decrement('current_quantity', $out_able_ref_qty);
+                    }
 
                     $uom_balance_quantity = UomHelper::changeQtyOnUom($balance['ref_uom_id'], $uom_id, $out_able_ref_qty);
 
                     if ($lotSerialDetail) {
                         $lotSerialDetail->uom_quantity += $uom_balance_quantity;
                         $lotSerialDetail->ref_uom_quantity += $out_able_ref_qty;
+
+                        if ($is_prepare !== 'prepare'){
+                            $lotSerialDetail->is_prepare = 0;
+                        }
+
                         $lotSerialDetail->save();
                     } else {
                         lotSerialDetails::create([
@@ -201,6 +227,7 @@ class CurrentStockBalanceServices
                             'uom_id' => $balance['ref_uom_id'],
                             'uom_quantity' => $uom_balance_quantity,
                             'ref_uom_quantity' => $out_able_ref_qty,
+                            'is_prepare' => $is_prepare !== 'prepare' ? false : true,
                         ]);
                     }
 
@@ -213,6 +240,12 @@ class CurrentStockBalanceServices
         if ($before_edit_qty > $out_qty) {
             $lotSerialDetails = lotSerialDetails::where('transaction_detail_id', $transaction_id)
                 ->where('transaction_type', $transaction_type)
+                ->when($lot_serial_no != null, function ($query) use ($lot_serial_no) {
+                    $query->where('lot_serial_numbers', $lot_serial_no);
+                })
+                ->when($is_prepare === 'prepare', function ($query){
+                    return $query->where('is_prepare', 1);
+                })
                 ->when(getSettingsValue('accounting_method') == 'fifo', function ($query) {
                     return $query->orderByDesc('current_stock_balance_id');
                 }, function ($query) {
@@ -220,25 +253,30 @@ class CurrentStockBalanceServices
                 })
                 ->get();
 
-            foreach ($lotSerialDetails as $lotSerialDetail) { //
+            foreach ($lotSerialDetails as $lotSerialDetail) {
                 if ($out_able_ref_qty == 0) {
                     break;
                 }
 
                 $balance_quantity = $lotSerialDetail->ref_uom_quantity;
 
-                if ($out_able_ref_qty >= $balance_quantity) {//10 > 20 10 > 20
-                    $out_able_ref_qty -= $balance_quantity; //10
-                    $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
-                    $currentStockBalance->current_quantity += $balance_quantity;
-                    $currentStockBalance->save();
+                if ($out_able_ref_qty >= $balance_quantity) {
+                    $out_able_ref_qty -= $balance_quantity;
+
+                    if ($is_prepare !== 'prepare'){
+                        $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
+                        $currentStockBalance->current_quantity += $balance_quantity;
+                        $currentStockBalance->save();
+                    }
 
                     $lotSerialDetail->delete();
 
                 } else { //10 < 20
-                    $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
-                    $currentStockBalance->current_quantity += $out_able_ref_qty;
-                    $currentStockBalance->save();
+                    if ($is_prepare !== 'prepare'){
+                        $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
+                        $currentStockBalance->current_quantity += $out_able_ref_qty;
+                        $currentStockBalance->save();
+                    }
 
                     $uom_balance_quantity = UomHelper::changeQtyOnUom($lotSerialDetail->uom_id ,$uom_id, $out_able_ref_qty);
                     $lotSerialDetail->ref_uom_quantity -= $out_able_ref_qty;

@@ -1,3 +1,4 @@
+<script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
     $(document).ready(function () {
         var unique_name_id=1;
@@ -73,7 +74,7 @@
 
 
         //Begin: quick search
-        $('.quick-search-form input').on('input', function() {
+        $('.quick-search-form input').on('input', debounce(function() {
             let business_location_id = $('#business_location_id').val();
             if(business_location_id == '' || business_location_id == null){
                 toastr.error("Need to choose from location?");
@@ -122,10 +123,15 @@
 
                                 results.forEach(function(result,key) {
                                     let checkSku=addedSku.find((s)=>s==result.sku);
+                                    let has_stock= result.stock.length;
+
+                                    let selectAllCss =  has_stock == 0 ? '' : 'order:-1;'
+
+
                                     if(sku && result.sku==sku && !checkSku){
-                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                        html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="${selectAllCss}" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
                                         style="z-index:100;">`;
-                                        html += `<h4 class="fs-6 ps-10 pt-3">
+                                        html += `<h4 class="fs-6 text-primary ps-10 pt-3">
                                             ${result.name}-(selectAll)`;
                                         html+='</h4>'
                                         // html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
@@ -137,7 +143,11 @@
                                         sku=result.sku;
                                     }
 
-                                    html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
+
+                                    let css_class= has_stock == 0 && result.product_type=="storable" ?" text-gray-600 ":'';
+
+
+                                    html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2 ${css_class}" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
                                     html += `<h4 class="fs-6 ps-10 pt-3">
                                     ${result.name}-${result.variation_name ? '('+result.variation_name+')': ''}`;
                                     html+='</h4>'
@@ -170,7 +180,7 @@
                 quickSearchResults.addClass('d-none');
                 quickSearchResults.empty();
             }
-        });
+        }));
         //End: quick search
 
 
