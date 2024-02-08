@@ -263,6 +263,7 @@ class reportServices
         //
         $finalProduct = $finalProduct->get()->toArray();
 
+        logger($finalProduct);
         $result = [];
 
         foreach ($adjustmentDetails as $stockDetail) {
@@ -291,7 +292,7 @@ class reportServices
                                 'adj_quantity' => number_format($stockDetail['adj_quantity'], 2),
                                 'uom_price' => number_format($stockDetail['uom_price'], 2),
                                 'subtotal' => number_format($stockDetail['subtotal'], 2),
-                                'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
+                                'variation_template_name' => $variation['variation_template_value']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
                                 'currency_name' => settings('currency')->currency->symbol,
                             ];
