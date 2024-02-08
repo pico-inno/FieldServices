@@ -92,7 +92,7 @@
                 </tbody>
                 <tfoot>
                     <tr class="fw-bold fs-3">
-                        <td colspan="11">
+                        <td colspan="12">
                             <h3>Total</h3>
                         </td>
                         <td  class=" text-end">
@@ -108,7 +108,25 @@
                 </tfoot>
             </table>
         </div>
-        {{$datas->links()}}
+
+        <div class="row justify-content-center  justify-content-md-between">
+            <div class="col-md-6 col-12 mb-3 ">
+                <div class="w-auto">
+                    <select name="" id="" wire:model.change="perPage" class="form-select form-select-sm w-auto m-auto m-md-0">
+                        @foreach ($aviablePerPages as $page)
+                        <option value="{{$page}}">{{$page}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 col-12 mb-3">
+                {{$datas->links()}}
+            </div>
+        </div>
+        <div class="position-absolute w-fit  top-10 bg-white p-3 rounded-1 border border-1 border-gray-500 "
+        wire:loading style="top: 40px;left:50%;">
+            <h2 class="text-primary">Loading....</h2>
+        </div>
     </div>
 </div>
 

@@ -60,55 +60,7 @@
 
                 </div>
             </div>
-            <div class="card card-flush h-xl-100">
-                <!--begin::Card header-->
-                <div class="d-flex  flex-wrap flex-sm-nowrap col-12 pt-7 my-3 mx-5">
-                    <div class="col-sm-2 col-6 me-sm-5 mb-3 mb-sm-0 ms-3">
-                        <input type="text" class="form-control form-control-sm" placeholder="Search Product" data-filter="input">
-                    </div>
-                    <div class="col-sm-2 col-6 me-sm-5 mb-3">
-                        <select name="locationfilter" id="locationFilter" class="form-select form-select-sm" data-control="select2" data-placeholder="Filter Location" data-filter="from-location" placeholder="Filter Location" data-allow-clear="true">
-                            <option value="all" selected> All</option>
-                            @foreach ($locations as $l)
-                                <option value="{{$l->id}}">{{$l->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!--end::Card header-->
-                <!--begin::Card body-->
-                <div class="card-body">
-                    <!--begin::Table-->
-                    <table class="table align-middle table-row-dashed fs-6 gy-3" id="stockHistoryTable">
-                        <!--begin::Table head-->
-                        <thead>
-                        <!--begin::Table row-->
-                        <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
-                            <th></th>
-                            <th class="text-start min-w-100px">Date</th>
-                            <th class="text-start pe-3 min-w-100px">Reference</th>
-                            <th class="text-start pe-3 min-w-100px">Product</th>
-                            <th class="text-start pe-3 min-w-100px">From</th>
-                            <th class="text-start pe-3 min-w-100px">To</th>
-                            <th class="text-end pe-3 min-w-100px">Increase Qty</th>
-                            <th class="text-end pe-3 min-w-100px">Decrease Qty</th>
-                            <th class="text-end pe-3 min-w-100px">Balance Qty</th>
-                            <th class="text-center pe-3 min-w-100px">UOM</th>
-                            {{-- <th class="text-end pe-0 min-w-25px">Qty</th> --}}
-                        </tr>
-                        <!--end::Table row-->
-                        </thead>
-                        <!--end::Table head-->
-                        <!--begin::Table body-->
-                        <tbody class="fw-bold text-gray-600 text-start fs-7">
-                        </tbody>
-                        <!--end::Table body-->
-                    </table>
-                    <!--end::Table-->
-                </div>
-                <!--end::Card body-->
-            </div>
+            <livewire:stock.stockHistoryTable/>
         </div>
         <!--end::Container-->
     </div>
