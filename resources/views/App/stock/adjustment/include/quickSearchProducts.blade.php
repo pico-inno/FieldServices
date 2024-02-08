@@ -156,7 +156,7 @@
 
                                     if(sku && result.sku==sku && !checkSku){
                                         html += `<div class="quick-search-result rounded-3 result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="${selectAllCss}" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}" style="z-index:100;">`;
-                                        html += `<h4 class="fs-6 ps-10 pt-3">${result.name} (Select All)</h4>`;
+                                        html += `<h4 class="fs-6 text-primary ps-10 pt-3">${result.name} (Select All)</h4>`;
                                         html += '</div>';
 
                                         addedSku.push(result.sku);
