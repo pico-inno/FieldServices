@@ -207,6 +207,7 @@
                         <th class="min-w-100px text-end">{{__('table/label.total_purchase_amount')}}</th>
                         <th class="min-w-100px text-end">Paid Amount</th>
                         <th class="min-w-100px text-end">Balance Amount</th>
+                        <th class="min-w-100px">Payment Status</th>
                         <th class="min-w-100px">{{__('table/label.location')}}</th>
                         <th class="min-w-100px">{{__('table/label.status')}}</th>
                         <th class="min-w-100px">{{__('table/label.received_at')}}</th>
@@ -275,6 +276,7 @@
                         <td>{{formatPrice($p['total_purchase_amount'] ?? 0,$p->currency)}}</td>
                         <td>{{formatPrice($p['paid_amount'] ?? 0,$p->currency)}}</td>
                         <td>{{formatPrice($p['balance_amount'] ?? 0,$p->currency)}}</td>
+                        <td><x-payment-status :status="$p['payment_status']" /></td>
                         <td>{{$p['location_name']}}</td>
                         <td>
                             @php

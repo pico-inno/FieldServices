@@ -136,11 +136,12 @@
             <tr>
                 <th colspan="4"></th>
             </tr>
+
+            @php
+            $totalSummaryPrice=0;
+            $totalSummaryQuantity=0;
+        @endphp
            @if(count($txs)>0)
-                @php
-                    $totalSummaryPrice=0;
-                    $totalSummaryQuantity=0;
-                @endphp
                 @foreach ($txs as $datas)
                     @php
                         $totalPriceByCate=0;

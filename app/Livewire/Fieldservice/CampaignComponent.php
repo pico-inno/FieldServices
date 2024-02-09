@@ -39,7 +39,7 @@ class CampaignComponent extends Component
             ->where('fscampaign.name', 'like', '%' . $search . '%')
             ->orWhere('business_locations.name', 'like', '%' . $search . '%')
             ->when(!$checkIsAdmin,function($query)  {
-                $query->whereJsonContains('campaign_member', Auth::user()->id)
+                $query->whereJsonContains('campaign_member',[ Auth::user()->id,'all'])
                 ->orWhere('campaign_leader', Auth::user()->id);
             })
             ->paginate(30);
