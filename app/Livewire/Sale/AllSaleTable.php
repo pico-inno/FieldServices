@@ -22,7 +22,7 @@ class AllSaleTable extends Component
     public function __construct()
     {
         $this->queryString= [...$this->queryString,
-            'businesslocationFilterId', 'customerFilterId'
+            'businesslocationFilterId', 'customerFilterId','filterDate'
         ];
     }
 
@@ -71,6 +71,7 @@ class AllSaleTable extends Component
                         'sales.table_id',
                         'sales.sale_amount',
                         'sales.total_sale_amount',
+                        'sales.payment_status',
                         'sales.paid_amount',
                         'sales.balance_amount',
                         'sales.business_location_id',

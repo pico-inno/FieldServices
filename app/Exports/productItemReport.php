@@ -41,7 +41,7 @@ class productItemReport implements FromView,ShouldAutoSize
         ->where('sale_details.is_delete','=', 0)
         ->where('sales.is_delete','=',0)
         ->where('receipe_of_material_details.id',null)
-            
+
         ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name')
         ->when($defaultCampaignId !== null, function ($query) use ($defaultCampaignId) {
             $query->where('fscampaign.id','=',$defaultCampaignId);
@@ -52,16 +52,19 @@ class productItemReport implements FromView,ShouldAutoSize
         $categotryFilterId = $this->filterData['categotryFilterId'];
         $filterDate = $this->filterData['filterDate'];
         $campaignFilterId = $this->filterData['campaignFilterId'];
-        $datas= $this->query()->when(isset($filterDate), function ($query) use ($filterDate) {
-                $query->whereDate('sales.sold_at', '>=', $filterDate[0])
-                    ->whereDate('sales.sold_at', '<=', $filterDate[1]);
-            })
-            ->when($campaignFilterId != 'all', function ($query) use ($campaignFilterId) {
-                $query->where('fscampaign.id','=',$campaignFilterId);
-            })
-
-            ->when($categotryFilterId != 'all', function ($query) use ($categotryFilterId) {
-                $query->where('categories.id','=',$categotryFilterId);
+        $withFilter=$this->withFilter;
+        $datas= $this->query()
+            ->when($withFilter,function($q)use($filterDate,$campaignFilterId,$categotryFilterId){
+                $q->when(isset($filterDate), function ($query) use ($filterDate) {
+                    $query->whereDate('sales.sold_at', '>=', $filterDate[0])
+                        ->whereDate('sales.sold_at', '<=', $filterDate[1]);
+                })
+                ->when($campaignFilterId != 'all', function ($query) use ($campaignFilterId) {
+                    $query->where('fscampaign.id','=',$campaignFilterId);
+                })
+                ->when($categotryFilterId != 'all', function ($query) use ($categotryFilterId) {
+                    $query->where('categories.id','=',$categotryFilterId);
+                });
             })
             ->get();
         return view('App.fieldService.Export.productItemReport',compact('datas'));

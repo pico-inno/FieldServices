@@ -42,6 +42,9 @@
                         </table>
                    </div>
                    <div class="col-md-6 col-12">
+                    @php
+                        $currencyId=$data->currency?$data->currency->id:'';
+                    @endphp
                        <table class="table  table-layout-fixed  table-row-bordered">
                                <tbody class="">
                                    <tr>
@@ -49,7 +52,7 @@
                                          <span class="fw-semibold fs-7 text-gray-600">Total Sale Amout:</span>
                                        </th>
                                        <td  class="text-end">
-                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->total_sale_amount,$data->currency->id)}}</span>
+                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->total_sale_amount,$currencyId)}}</span>
                                        </td>
                                    </tr>
                                    <tr>
@@ -57,7 +60,7 @@
                                          <span class="fw-semibold fs-7 text-gray-600">Paid Amount:</span>
                                        </th>
                                        <td  class="text-end">
-                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->paid_amount,$data->currency->id)}} </span>
+                                         <span class="fw-bold fs-7 text-gray-800">{{price($data->paid_amount,$currencyId)}} </span>
                                        </td>
                                    </tr>
                                    <tr>
@@ -65,7 +68,7 @@
                                       <span class="fw-semibold fs-7 text-gray-600">Balance Amount:</span>
                                     </th>
                                     <td  class="text-end me-3">
-                                      <span class="fw-bold fs-7 text-gray-800">{{price($data->balance_amount,$data->currency->id)}} </span>
+                                      <span class="fw-bold fs-7 text-gray-800">{{price($data->balance_amount,$currencyId)}} </span>
                                     </td>
                                 </tr>
                                </tbody>

@@ -939,3 +939,22 @@ function productSummary($campaignId,$userId,$dateFilter){
     ->groupBy('sale_details.variation_id','products.name', 'categories.name','categories.id', 'uom.short_name')
     ->get()->groupBy('category_name');
 }
+
+
+function calBalanceQtyForDesc($increase_qty,$decrease_qty,$balanceQtyBeforePage){
+    if ($increase_qty >0){
+       return  $balanceQtyBeforePage-=  $increase_qty;
+    }elseif ($decrease_qty >0){
+       return $balanceQtyBeforePage+=  $decrease_qty;
+    }else{
+        return $balanceQtyBeforePage;
+    }
+}
+
+function calBalanceQtyForAsc($increase_qty,$decrease_qty,$balanceQtyBeforePage){
+    if ($increase_qty >0){
+       return  $balanceQtyBeforePage+=  $increase_qty;
+    }elseif ($decrease_qty >0){
+       return $balanceQtyBeforePage-=  $decrease_qty;
+    }
+}

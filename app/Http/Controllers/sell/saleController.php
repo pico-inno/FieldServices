@@ -295,11 +295,11 @@ class saleController extends Controller
         if(hasModule('Ecommerce') && isEnableModule('Ecommerce')){
             $ecommerceOrder= EcommerceOrder::where('sale_id',$sale['id'])->first();
             if($sale['channel_type']=='ecommerce'){
-            if($ecommerceOrder['viewed_at'] === null){
-                $ecommerceOrder->update([
-                    'viewed_at'=>now()
-                ]);
-            }
+                if($ecommerceOrder['viewed_at'] == null){
+                    $ecommerceOrder->update([
+                        'viewed_at'=>now()
+                    ]);
+                }
             }
         }
         $sale_details = $sale_details_query->get();
@@ -2376,11 +2376,19 @@ class saleController extends Controller
     public function addChunkData($saleId, Request $request)
     {
     }
-    public function statusChange(Sales $sale,Request $request){
-        if($sale['status']!='delivered'){
-            $sale->update([
+    public function statusChange(Sales $sale,Request $request,paymentServices $paymentServices){
+        if($sale['status']!='delivered' && isset($request['status'])){
+            $data=[
                 'status'=>$request['status']
-            ]);
+            ];
+            if($request['isConfirmPayment']){
+                $data['paid_amount']=$sale['total_sale_amount'];
+                $data['balance_amount']=0;
+            }
+            $sale->update($data);
+            if($request['isConfirmPayment']){
+                $paymentServices->makePayment($sale,1,'sale');
+            }
         }
         return response()->json([
             'success'=>'Successfully Updated',

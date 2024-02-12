@@ -124,8 +124,7 @@
                             <i class="fa-solid fa-upload"></i>
                             Export With Filter
                         </button>
-                        <button type="button" class="btn btn-sm btn-light-dark me-3 collapsed" type="button" wire:click="export(false)"
-                            >
+                        <button type="button" class="btn btn-sm btn-light-dark me-3 collapsed" type="button" wire:click="export(false)">
                             <i class="fa-solid fa-upload"></i>
                             Export All
                         </button>

@@ -12,7 +12,7 @@ trait datatable
     public $search= null;
     public $perPage = 15;
     public $aviablePerPages=[
-        '15','30','45','55'
+        '15','30','45','55','100','200'
     ];
 
 

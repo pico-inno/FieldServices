@@ -148,13 +148,14 @@
             `
         };
 
-        let searchNewRow = (index, productId, productType, variationId = null, name, countOrSku, variNameOrSelectAll, unit, css_class) => {
+        let searchNewRow = (index, productId, productType, variationId = null, name, countOrSku, variNameOrSelectAll, unit, css_class,stock) => {
             return `
                 <li data-productId="${productId}" data-index="${index}" data-productType="${productType}" data-variationId="${variationId}" id="searchItem" class="list-group-item bg-light cursor-pointer pos-product-search bg-hover-secondary p-3 ${css_class}" id="searchItem">
                     <h4 class="fs-6 ps-7 pt-3 me-4 ${css_class}">
                         ${name} - (${countOrSku}) ${variNameOrSelectAll}
                     </h4>
                     <p class="ps-7 pt-1 ${css_class}">${unit} </p>
+                    <span class="ps-7  ${stock== 0 || stock == null ? '' :'d-none'} text-danger">Out Of Stocks</span>
                 </li>
             `;
         }
@@ -778,6 +779,7 @@
             let services=$('#services').val();
             let pos_register_id = posRegisterId;
             let sale_amount = $(`#${infoPriceId} .sb-total`).text();
+            let lot_serial_val=$('.lot_serial_val').val();
             let total_item_discount = $(`#${infoPriceId} .sb-discount`).text();
             let extra_discount_type = null;
             let extra_discount_amount = null;
@@ -823,6 +825,7 @@
                     'sessionId':sessionId,
                     'multiPayment':multiPayment,
                     'reservation_id':reservation_id,
+                    'lot_serial_val':lot_serial_val,
                 }
             if(onlySale==true){
                 return sales;
@@ -1045,7 +1048,7 @@
                             let vari_name_or_selectAll = element.has_variation === 'variable' ? element.variation_name : 'select all';
                             let unit = element.product.uom.name;
 
-                            $('#search_container').append(searchNewRow(index, element.product_id, element.has_variation, element.id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class));
+                            $('#search_container').append(searchNewRow(index, element.product_id, element.has_variation, element.id, element.name, product_countOrSku, vari_name_or_selectAll, unit, css_class,element.stock_sum_current_quantity));
                             if(results.length==1){
                                 setTimeout(() => {
                                     $(`[data-index="${index}"]`).click();
@@ -1071,8 +1074,6 @@
         // when select search item / add new tr to tbody
         $('#search_container').on('click', '.pos-product-search', function(event) {
             if($(event.target).hasClass('not-use')) return;
-            $('input[name="pos_product_search"]').val('');
-            $(this).closest(`.pos-product-search`).remove();
             let index = $(this).attr('data-index');
 
             let selected_product = products[index];
@@ -1081,6 +1082,8 @@
                 error('Out Of Stock');
                 return;
             }
+            $('input[name="pos_product_search"]').val('');
+            $(this).closest(`.pos-product-search`).remove();
 
             // if(selected_product.has_variation === 'variable'){
             //     let variation = selected_product.product_variations;

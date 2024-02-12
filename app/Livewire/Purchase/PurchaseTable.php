@@ -73,6 +73,7 @@ class PurchaseTable extends Component
                 'purchases.balance_amount',
                 'purchases.business_location_id',
                 'purchases.purchase_voucher_no',
+                'purchases.payment_status',
                 'purchases.currency_id',
                 'contacts.company_name',
                 'contacts.prefix',

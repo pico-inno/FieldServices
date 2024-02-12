@@ -80,7 +80,7 @@ class SaleServices
             'balance_amount' => $balanceAmount,
             'currency_id' => $data['currency_id'],
             'updated_by' => Auth::user()->id ?? $id,
-            'sold_at' => $data['sold_at'],
+            'sold_at' => $data['sold_at'] ?? now(),
         ];
         if ($data['type'] == 'pos') {
             $saleData['paid_amount'] = $data['paid_amount'];
@@ -191,7 +191,6 @@ class SaleServices
     }
 
     public function txManager($request, $sale_data,$created_sale_details,$product,$requestSaleDetails){
-
         $stock = CurrentStockBalance::where('product_id', $created_sale_details['product_id'])
             ->where('business_location_id', $sale_data->business_location_id)
             ->with(['product' => function ($q) {
@@ -275,8 +274,6 @@ class SaleServices
                             ->where('current_quantity', '>', '0')
                             ->sum('current_quantity');
             if ($requestQty > $totalStocks) {
-                logger($requestQty);
-                logger($totalStocks);
                 return false;
             } else {
                 $stocks = CurrentStockBalance::where('product_id', $product_id)
@@ -376,7 +373,7 @@ class SaleServices
         } else {
             $balanceQty=$cbs['current_quantity']-$requestQty;
             $data =[ [
-                'stockQty' => $cbs['current_quantity'],
+                'stockQty' => $requestQty,
                 'batch_no' => $cbs['batch_no'],
                 'lot_serial_no' => $cbs['lot_serial_no'],
                 'ref_uom_id' => $cbs['ref_uom_id'],

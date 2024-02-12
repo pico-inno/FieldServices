@@ -220,11 +220,12 @@
             </div>
             <!--end::Card toolbar-->
         </div>
-        <div class="card-body pt-0 saleTableCard table-responsive position-relative" id="">
+        <div class="card-body pt-0 saleTableCard  position-relative" id="">
             <div class="position-absolute w-fit  top-10 bg-white p-3 rounded-1 border border-1 border-gray-500 "
                 wire:loading style="top: 40px;left:50%;">
                 <h2 class="text-primary">Loading....</h2>
             </div>
+            <div class="table-responsive">
             <table class="table table-hover  align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table"
                 data-sticky-header="true">
                 <thead>
@@ -252,6 +253,7 @@
                         <th class="min-w-100px text-end">Sale Amount</th>
                         <th class="min-w-100px text-end">Paid Amount</th>
                         <th class="min-w-100px text-end">Balance Amount</th>
+                        <th class="min-w-100px">Payment Status</th>
                         <th class="min-w-100px">location</th>
                         <th class="min-w-100px">status</th>
                         <th class="min-w-100px">Date</th>
@@ -296,7 +298,7 @@
                                             <a class="dropdown-item p-2  cursor-pointer download-image actionRow" data-name="' . $s->sales_voucher_no . '"
                                                 data-layoutId="{{$s->invoice_layout}}" data-href="{{route('print_sale', $s->id)}}">Download Image</a>
                                         @endif
-                                        @if ($s->balance_amount > 0)
+                                        @if ($s->balance_amount > 0 || $s->paid_amount < $s->sale_amount)
                                         <a class="dropdown-item p-2 cursor-pointer actionRow" id="paymentCreate"
                                             data-href="{{route('paymentTransaction.createForSale', ['id' => $s->id, 'currency_id' => $s->currency_id])}}">Add
                                             Payment</a>
@@ -306,9 +308,9 @@
                                             data-href="{{route('paymentTransaction.viewForSell', $s->id)}}">View
                                             Payment</a>
                                             @if ($hasHospital)
-                                                <a type="button" class="dropdown-item p-2  post-to-reservation"
-                                                    data-href="{{route('postToReservationFolio', $s->id)}}">Post to
-                                                    Reservation</a>
+                                                <a type="button" class="dropdown-item p-2  postToRegisterationFolio actionRow"
+                                                    data-href="{{route('postToRegistrationFolio', $s->id)}}">Post to
+                                                    Registeration</a>
                                             @endif
                                         @if ($hasDelete)
                                                 <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger actionRow" data-id="{{$s->id}}"
@@ -336,6 +338,7 @@
                         <td>{{formatPrice($s['total_sale_amount'] ?? 0,$s->currency)}}</td>
                         <td>{{formatPrice($s['paid_amount'] ?? 0,$s->currency)}}</td>
                         <td>{{formatPrice($s['balance_amount'] ?? 0,$s->currency)}}</td>
+                        <td><x-payment-status :status="$s['payment_status']" /></td>
                         <td>{{$s['location_name']}}</td>
                         <td>
                             @php
@@ -375,6 +378,7 @@
                     </tr>
                 </tfoot>
             </table>
+            </div>
             <div class="row justify-content-center  justify-content-md-between">
                 <div class="col-md-6 col-12 mb-3 ">
                     <div class="w-auto">

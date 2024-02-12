@@ -454,7 +454,8 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                         data:{
-                            status:'order'
+                            status:'order',
+                            isConfirmPayment,
                         },
                         success: function(result) {
                         success('Successfully Updated')

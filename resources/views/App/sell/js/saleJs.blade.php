@@ -64,7 +64,7 @@
             if(saledetail.kit_sale_details.length >0){
                 totalCurrentStockQty=$(`.aviaQty_${index}`).val();
             }else{
-                totalCurrentStockQty=editSale.status=='delivered' ? isNullOrNan(saledetail.stock_sum_current_quantity)+isNullOrNan(saleQty) :isNullOrNan(saledetail.stock_sum_current_quantity) ;
+                totalCurrentStockQty=isNullOrNan(saledetail.stock_sum_current_quantity)+isNullOrNan(saleQty)  ;
             }
             newProductData={
                 'product_id':saledetail.product.id,
@@ -80,15 +80,12 @@
                 'uom':saledetail.product.uom,
                 'uom_id':saledetail.uom_id,
                 'stock':saledetail.stock,
+                'sold_qty':editSale.status=='delivered' ? isNullOrNan(saleQty) :0,
             };
             const indexToReplace = productsOnSelectData.findIndex(p => p.product_id == newProductData.product_id && p.variation_id == newProductData.variation_id);
             if(indexToReplace !== -1){
-                let productToReplace=productsOnSelectData[indexToReplace];
-                let existingQty=productToReplace.existing_qty;
-                newProductData.total_current_stock_qty =newProductData.aviable_qty=
-                isNullOrNan(newProductData.total_current_stock_qty)+isNullOrNan(existingQty);
-                newProductData.existing_qty=existingQty;
-                console.log(newProductData,'new ');
+                let oldData=productsOnSelectData[indexToReplace];
+                newProductData.total_current_stock_qty=oldData.total_current_stock_qty+newProductData.sold_qty;
                 productsOnSelectData[indexToReplace] = newProductData;
             }else{
                 productsOnSelectData=[...productsOnSelectData,newProductData];
@@ -211,8 +208,8 @@
                                     let addedSku=[];
                                     results.forEach(function(result,key) {
                                         let checkSku=addedSku.find((s)=>s==result.sku);
-                                        if(sku && result.sku==sku && !checkSku){
-                                            html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.product_id}' data-name="${result.name}"
+                                        if(!sku && result.sku!=sku && !checkSku  && result.has_variation=="variable"){
+                                            html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id="selectAll" data-productid='${result.product_id}' data-name="${result.name}"
                                                 style="z-index:100;">`;
                                                 html += `<h4 class="fs-6 ps-10 pt-3">
                                                     ${result.name}-(selectAll)`;

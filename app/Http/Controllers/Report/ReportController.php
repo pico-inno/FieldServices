@@ -1550,6 +1550,7 @@ class ReportController extends Controller
             // 'products.id as id',
             'sales.sales_voucher_no',
             'transfers.transfer_voucher_no',
+            DB::raw("CONCAT(products.name, '-', variation_template_values.name) AS name"),
             'products.name as name',
             'products.sku as sku',
 
@@ -1559,7 +1560,7 @@ class ReportController extends Controller
             // 'sale_details.subtotal_with_tax as sale_subtotal',
 
             'supplier.company_name as supplier',
-            'customer.first_name as customer_name',
+            DB::raw("CONCAT(customer.first_name,' ',customer.middle_name,' ','customer.last_name') AS customer_name"),
             'openingPerson.username as openingPerson',
             'purchase_details.uom_price as purchase_price',
             'current_stock_balance.transaction_type as csbT',
@@ -1581,6 +1582,7 @@ class ReportController extends Controller
             DB::raw('lot_serial_details.ref_uom_quantity *  current_stock_balance.ref_uom_price as total_cogs')
         )
             ->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
             ->leftJoin('sales', 'sale_details.sales_id', '=', 'sales.id')
             ->leftJoin('contacts as customer', 'sales.contact_id', '=', 'customer.id')

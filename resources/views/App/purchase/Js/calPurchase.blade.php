@@ -115,8 +115,8 @@
 
                             results.forEach(function(result,key) {
                                 let checkSku=addedSku.find((s)=>s==result.sku);
-                                if(sku && result.sku==sku && !checkSku){
-                                    html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
+                                if(!sku && result.sku!=sku && !checkSku  && result.has_variation=="variable"){
+                                    html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2"  data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
                                         style="z-index:100;">`;
                                         html += `<h4 class="fs-6 ps-10 pt-3">
                                             ${result.name}-(selectAll)`;
