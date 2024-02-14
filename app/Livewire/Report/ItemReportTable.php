@@ -84,14 +84,12 @@ class ItemReportTable extends Component
 
             ->leftJoin('transfer_details', 'current_stock_balance.transaction_detail_id', '=', 'transfer_details.id')
             ->leftJoin('transfers', 'transfer_details.transfer_id', '=', 'transfers.id')
-
+            ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
             ->when($hasStockInOut,function($q){
-                $q
-                ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
-                ->leftJoin('stockin_details', 'current_stock_balance.transaction_detail_id', '=', 'stockin_details.id')
+                $q->leftJoin('stockin_details', 'current_stock_balance.transaction_detail_id', '=', 'stockin_details.id')
                 ->leftJoin('stockins', 'stockin_details.stockin_id', '=', 'stockins.id')
                 ->leftJoin('business_locations as stockLocation', 'stockins.business_location_id', '=', 'stockLocation.id')
-            ->leftJoin('business_users as stockinPerson', 'stockins.stockin_person', '=', 'stockinPerson.id');
+                ->leftJoin('business_users as stockinPerson', 'stockins.stockin_person', '=', 'stockinPerson.id');
             })
 
 
