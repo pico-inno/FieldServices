@@ -52,12 +52,13 @@ class ItemReportTable extends Component
             'transfered_at',
             'received_person',
             'transferLocaiton.name as transferLocaitonName',
-            'stockLocation.name as stockLocationName',
             'sales.sold_at',
             DB::raw('lot_serial_details.uom_quantity * sale_details.uom_price as sale_subtotal'),
             DB::raw('lot_serial_details.ref_uom_quantity *  current_stock_balance.ref_uom_price as total_cogs')];
         if($hasStockInOut){
             $columns=[...$columns,
+
+                'stockLocation.name as stockLocationName',
                 'stockin_voucher_no',
                 'stockin_date',
                 'stockinPerson.username as stockinPersonName'];
