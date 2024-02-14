@@ -124,6 +124,24 @@
                                 <!--end::Input-->
                             </div>
 
+                            @if(hasModule('fieldService') && isEnableModule('fieldService'))
+                                <div class="fv-row col-12 col-md-6 d-flex pe-lg-19 mb-10 mt-3 justify-content-between align-items-end">
+                                    <!--begin::Label-->
+                                    <div class="">
+                                        <label class="required fs-6 fw-semibold mb-2">Outlet Type</label>
+                                    </div>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <div class="col-6 ms-5">
+                                        <x-forms.nob-select placeholder="Outlet Type" name="outlet_type" attr="data-hide-search='true'">
+                                            <option value="on" @selected($bl->outlet_type=='on')>On</option>
+                                            <option value="off"  @selected($bl->outlet_type=='off')>Off</option>
+                                        </x-forms.nob-select>
+                                    </div>
+                                    <!--end::Input-->
+                                </div>
+                            @endif
+
                         </div>
                         <div class="row">
                             <!--end::Input group-->
@@ -146,6 +164,12 @@
                                     <label class="form-check-label text-gray-700 fs-7" for='allow_sale_order'>Allow Sale Order</label>
                                     <input type="checkbox" name="allow_sale_order" id="allow_sale_order" value="1" class="form-check-input"
                                         @checked($bl->allow_sale_order == 1) >
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6 col-12 d-flex align-items-end justify-content-md-start mb-12">
+                                <div class="form-check">
+                                    <label class="form-check-label text-gray-700 fs-7" for='allow_pickup_order'>Allow Pick Up Order</label>
+                                    <input type="checkbox" name="allow_pickup_order" @checked($bl->allow_pickup_order == 1) id="allow_pickup_order" value="1" class="form-check-input" >
                                 </div>
                             </div>
                         </div>

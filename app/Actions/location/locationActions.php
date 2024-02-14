@@ -23,6 +23,8 @@ class locationActions
                 'is_acitve' => $data['is_acitve'] ?? 0,
                 'allow_purchase_order' => $data['allow_purchase_order'] ?? 0,
                 'allow_sale_order' => $data['allow_sale_order'] ?? 0,
+                'allow_pickup_order'=>$data['allow_pickup_order'] ?? 0,
+                'outlet_type'=>$data['outlet_type'] ?? 'on',
                 'parent_location_id' => $data['parent_location_id'],
                 'location_type' => $data['location_type'],
                 'inventory_flow' => $data['inventory_flow'],

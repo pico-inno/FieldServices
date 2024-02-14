@@ -37,6 +37,8 @@
             text-align: center;
         }
     </style>
+
+@livewireStyles
 @endsection
 
 
@@ -70,6 +72,8 @@
 @endsection
 
 @push('scripts')
+
+@livewireScripts
 <script src="{{ asset('customJs/debounce.js') }}"></script>
     <script>
 

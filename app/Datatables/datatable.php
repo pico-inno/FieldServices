@@ -2,6 +2,8 @@
 
 namespace App\Datatables;
 
+use function Termwind\render;
+
 trait datatable
 {
     //from livewire
@@ -15,6 +17,10 @@ trait datatable
         '15','30','45','55','100','200'
     ];
 
+    public function updated()
+    {
+        $this->resetPage();
+    }
 
     public $sortField='id';
     public $sortAsc=false;

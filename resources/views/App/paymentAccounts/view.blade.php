@@ -43,9 +43,6 @@
 
     </div> */
 
-.wallet{
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1000' height='400' preserveAspectRatio='none' viewBox='0 0 1000 400'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1514%26quot%3b)' fill='none'%3e%3crect width='1000' height='400' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1515%26quot%3b)'%3e%3c/rect%3e%3cpath d='M1000 0L501.35 0L1000 55.01z' fill='rgba(255%2c 255%2c 255%2c .1)'%3e%3c/path%3e%3cpath d='M501.35 0L1000 55.01L1000 189.54L358.95000000000005 0z' fill='rgba(255%2c 255%2c 255%2c .075)'%3e%3c/path%3e%3cpath d='M358.95000000000005 0L1000 189.54L1000 282.14L159.37000000000003 0z' fill='rgba(255%2c 255%2c 255%2c .05)'%3e%3c/path%3e%3cpath d='M159.37 0L1000 282.14L1000 302.81L74.7 0z' fill='rgba(255%2c 255%2c 255%2c .025)'%3e%3c/path%3e%3cpath d='M0 400L64.11 400L0 256.78999999999996z' fill='rgba(0%2c 0%2c 0%2c .1)'%3e%3c/path%3e%3cpath d='M0 256.78999999999996L64.11 400L462.43 400L0 164.37999999999997z' fill='rgba(0%2c 0%2c 0%2c .075)'%3e%3c/path%3e%3cpath d='M0 164.38L462.43 400L769.84 400L0 158.04999999999998z' fill='rgba(0%2c 0%2c 0%2c .05)'%3e%3c/path%3e%3cpath d='M0 158.04999999999998L769.84 400L908.8100000000001 400L0 145.79z' fill='rgba(0%2c 0%2c 0%2c .025)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1514'%3e%3crect width='1000' height='400' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='85%25' y1='137.5%25' x2='15%25' y2='-37.5%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1515'%3e%3cstop stop-color='rgba(14%2c 42%2c 71%2c 1)' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(0%2c 158%2c 247%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
-}
     .loading{
         left: 50%;
         top: 40%;
@@ -233,7 +230,8 @@
                 </div>
             </div>
         </div>
-        <div class="card card-flush">
+        <livewire:PaymentTxTable :id="$account->id" />
+        <div class="card card-flush d-none">
             <!--begin::Card header-->
             <div class="d-flex justify-content-between align-items-start flex-wrap mx-10 mt-5">
                 <!--begin::User-->

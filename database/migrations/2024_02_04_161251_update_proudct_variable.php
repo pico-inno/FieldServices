@@ -13,16 +13,16 @@ return new class extends Migration
 
     public function up(): void
     {
-        DB::statement('UPDATE product_variations SET default_purchase_price = REPLACE(default_purchase_price, ",", "")');
-        DB::statement('UPDATE product_variations SET default_selling_price = REPLACE(default_selling_price, ",", "")');
+        // DB::statement('UPDATE product_variations SET default_purchase_price = REPLACE(default_purchase_price, ",", "")');
+        // DB::statement('UPDATE product_variations SET default_selling_price = REPLACE(default_selling_price, ",", "")');
 
 
 
-        Schema::table('product_variations', function (Blueprint $table) {
-            $table->decimal('default_purchase_price', 22,4)->nullable()->change();
-            $table->decimal('profit_percent', 22,4)->nullable()->change();
-            $table->decimal('default_selling_price', 22,4)->nullable()->change();
-        });
+        // Schema::table('product_variations', function (Blueprint $table) {
+        //     $table->decimal('default_purchase_price', 22,4)->nullable()->change();
+        //     $table->decimal('profit_percent', 22,4)->nullable()->change();
+        //     $table->decimal('default_selling_price', 22,4)->nullable()->change();
+        // });
     }
 
     /**

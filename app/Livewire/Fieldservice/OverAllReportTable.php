@@ -23,6 +23,7 @@ class OverAllReportTable extends Component
     public $pgFilterId = 'all';
     public $categotryFilterIdOA = 'all';
     public $campaignFilterId='all';
+    public $outletTypeFilter='all';
     public $campaignFilterIdUpdate=false;
     public $dataLoading=false;
     public $filterDate;
@@ -77,6 +78,7 @@ class OverAllReportTable extends Component
         $categotryFilterId = $this->categotryFilterIdOA;
         $filterDate = $this->filterDate;
         $campaignFilterId = $this->campaignFilterId;
+        $outletTypeFilter=$this->outletTypeFilter;
         $this->dataLoading = true;
         $campaignId=$this->campaignId ?? null;
         $defaultCampaignId=$this->defaultCampaignId ?? null;
@@ -131,8 +133,13 @@ class OverAllReportTable extends Component
             ->when($campaignId != null, function ($query) use ($campaignId) {
                 $query->where('fscampaign.id', '=', $campaignId);
             })
-            ->when($businesslocationFilterId != 'all', function ($query) use ($businesslocationFilterId) {
-                $query->where('outlet.id', '=', $businesslocationFilterId);
+            ->when($businesslocationFilterId != 'all', function ($query) use ($businesslocationFilterId,$outletTypeFilter) {
+                $lids=childLocationIDs($businesslocationFilterId);
+                // outletTypeFilter
+                $query->whereIn('outlet.id', $lids);
+            })
+            ->when($outletTypeFilter != 'all', function ($query) use ($outletTypeFilter) {
+                $query->where('outlet.outlet_type', '=', $outletTypeFilter);
             })
             ->when($pgFilterId != 'all', function ($query) use ($pgFilterId) {
                 $query->where('pg.id', '=', $pgFilterId);

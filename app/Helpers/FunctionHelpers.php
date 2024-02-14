@@ -433,7 +433,6 @@ function childLocationIDs($locationId)
 {
     $LocationsIds = businessLocation::where('parent_location_id', $locationId)->select('id')->pluck('id')->toArray();
     $LocationsIds[] = $locationId;
-    logger([$LocationsIds,$locationId]);
     return $LocationsIds;
 }
 function getUserAccesssLocation(){

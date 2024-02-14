@@ -1,21 +1,60 @@
 <div>
+    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5" wire:ignore>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <h2>Filters</h2>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-5 flex-wrap">
+
+                    <div class="col-sm-5 col-md-5 col-12 me-sm-5 mb-3">
+                        <label for="" class="form-label">Select Product :</label>
+                        <select id="kt_docs_select2_rich_content" class="form-select form-select-lg" name="..." data-placeholder="Select Product">
+                            @foreach ($products as $product)
+                                @php
+                                    $isImage=$product["image"] ? true:false;
+                                    $image=$isImage ?
+                                        asset("storage/product-image/".$product['image']) :
+                                        asset('assets/media/svg/files/blank-image.svg');
+                                @endphp
+                                <option value="{{$product['id']}}" selected data-sku="{{$product['sku']}}" data-isImage="{{$isImage}}" data-kt-rich-content-icon="{{$image}}">{{$product['name']}}</option>
+
+                            @endforeach
+
+                        </select>
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                            <label for="" class="form-label">Select Location :</label>
+                            <select wire:model.change="businesslocationFilterId"
+                             class="form-select form-select-lg fw-bold locationFilter"
+                                data-placeholder="Select option" id="select2"
+                                data-kt-saleItem-table-filter="businesslocation" data-hide-search="true">
+                                <option value="all">All</option>
+                                @foreach ($locations as $l)
+                                    <option value="{{ $l['id'] }}">{{$l['name']}}</option>
+                                @endforeach
+                            </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card card-flush h-xl-100">
         <!--begin::Card header-->
-        <div class="d-flex  flex-wrap flex-sm-nowrap col-12 pt-7 my-3 mx-5" wire:ignore>
-            <div class="col-sm-10 col-md-5 col-12 me-sm-5 mb-3">
-                <select id="kt_docs_select2_rich_content" class="form-select form-select-sm" name="..." data-placeholder="Select Product">
-                    @foreach ($products as $product)
-                        @php
-                            $isImage=$product["image"] ? true:false;
-                            $image=$isImage ?
-                                asset('storage/product-image/$product["image"]') :
-                                asset('assets/media/svg/files/blank-image.svg');
-                        @endphp
-                        <option value="{{$product['id']}}" selected data-sku="{{$product['sku']}}" data-isImage="{{$isImage}}" data-kt-rich-content-icon="{{$image}}">{{$product['name']}}</option>
+        <div class="row flex-sm-nowrap col-12 pt-7 my-3 mx-5" >
+            <div class="col-2">
+                @if ($sortAsc)
+                    <button  wire:loading.attr="disabled" wire:target="isAsc" class="btn btn-outline btn-outline-primary btn-sm" type="button" wire:click="isAsc">
+                        <i class="fa-solid fa-sort"></i> Ascending
+                    </button>
+                @else
+                    <button wire:loading.attr="disabled" wire:target="isAsc" class="btn btn-outline btn-outline-success btn-sm" type="button" wire:click="isAsc">
+                        <i class="fa-solid fa-sort"></i> Descending
+                    </button>
+                @endif
 
-                    @endforeach
-
-                </select>
             </div>
         </div>
 
@@ -81,7 +120,7 @@
                                     @elseif($data->transaction_type=='transfer')
                                         <span class='text-info'>{{$data->StockTransferDetail->stockTransfer->transfer_voucher_no  ?? ''}}</span><br>
                                     @elseif($data->transaction_type=='adjustment')
-                                        <span class='text-warning'>{{$data->adjustmentDetail->stockAdjustment->adjustment_voucher_no}}</span><br>]
+                                        <span class='text-warning'>{{$data->adjustmentDetail->stockAdjustment->adjustment_voucher_no}}</span><br>
                                     @endif
                                 </td>
                                 <td>
@@ -176,7 +215,12 @@
         </div>
         <!--end::Card body-->
     </div>
-    <script wire:ignore>
+    <script >
+        $('#select2').select2().on('select2:select', function (e) {
+            @this.set('businesslocationFilterId', $('#select2').select2("val"));
+        }).on('select2:unselect', function (e) {
+                @this.set('businesslocationFilterId','all');
+            });;
         // Format options
         const optionFormat = (item) => {
             if (!item.id) {
@@ -187,9 +231,9 @@
             var template = '';
 
             template += '<div class="d-flex align-items-center">';
-            template += '<img src="' + item.element.getAttribute('data-kt-rich-content-icon') + '" class="rounded-1 h-40px me-3" alt="' + item.text + '"/>';
+            template += '<img src="' + item.element.getAttribute('data-kt-rich-content-icon') + '" class="rounded-1 h-30px me-3" alt="' + item.text + '"/>';
             template += '<div class="d-flex flex-column">'
-            template += '<span class="fs-6 fw-bold lh-1">' + item.text + '</span>';
+            template += '<span class="fs-5 fw-bold lh-1">' + item.text + '</span>';
             template += '<span class="text-muted fs-9 mt-1">' + item.element.getAttribute('data-sku') + '</span>';
             template += '</div>';
             template += '</div>';

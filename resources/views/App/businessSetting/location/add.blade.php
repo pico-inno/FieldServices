@@ -103,13 +103,31 @@
                                 <!--begin::Input-->
                                 <div class="col-6 ms-5">
                                     <x-forms.nob-select placeholder="Inventory Flow" name="inventory_flow" attr="data-hide-search='true'">
-                                        <option value=""></option>
                                         <option value="fifo">FIFO</option>
                                         <option value="lifo">LIFO</option>
                                     </x-forms.nob-select>
                                 </div>
                                 <!--end::Input-->
                             </div>
+
+
+                            @if(hasModule('fieldService') && isEnableModule('fieldService'))
+                                <div class="fv-row col-12 col-md-6 d-flex pe-lg-19 mb-10 mt-3 justify-content-between align-items-end">
+                                    <!--begin::Label-->
+                                    <div class="">
+                                        <label class="required fs-6 fw-semibold mb-2">Outlet Type</label>
+                                    </div>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <div class="col-6 ms-5">
+                                        <x-forms.nob-select placeholder="Outlet Type" name="outlet_type" attr="data-hide-search='true'">
+                                            <option value="on">On</option>
+                                            <option value="off">Off</option>
+                                        </x-forms.nob-select>
+                                    </div>
+                                    <!--end::Input-->
+                                </div>
+                            @endif
 
                        </div>
                        <div class="row">

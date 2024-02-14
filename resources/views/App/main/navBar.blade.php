@@ -2360,15 +2360,25 @@
                                                         </a>
                                                     </div>
                                                 @endif
-                                                @if(hasUpdate('campaign setting'))
+
                                                 <div class="menu-item  ">
-                                                    <a class="menu-link @yield('campaign_setting_active')" href="{{route("fieldService.name")}}">
+                                                    <a class="menu-link @yield('campaign_import_active')" href="{{route("campaign.ImportUi")}}">
                                                         <span class="menu-icon">
-                                                            <i class="fa-solid fa-gear fs-6"></i>
+                                                            <i class="fa-solid fa-upload fs-6"></i>
                                                         </span>
-                                                        <span class="menu-title">Settings</span>
+                                                        <span class="menu-title">Campaign Import</span>
                                                     </a>
                                                 </div>
+
+                                                @if(hasUpdate('campaign setting'))
+                                                    <div class="menu-item  ">
+                                                        <a class="menu-link @yield('campaign_setting_active')" href="{{route("fieldService.name")}}">
+                                                            <span class="menu-icon">
+                                                                <i class="fa-solid fa-gear fs-6"></i>
+                                                            </span>
+                                                            <span class="menu-title">Settings</span>
+                                                        </a>
+                                                    </div>
                                                 @endif
                                             </div>
                                             <!--end::Wrapper-->
@@ -2774,7 +2784,7 @@
                                         </div>
                                         @endif
                                         @if (getSettingsValue('use_paymentAccount')==1)
-                                        <div class="menu-item menu-accordion ">
+                                        <div class="menu-item  ">
                                             <!--begin:Menu link-->
                                             <!--begin:Menu link-->
                                             <a class="menu-link @yield('payment_account_active')"
@@ -2783,6 +2793,17 @@
                                                     <i class="fa-solid fa-money-check-dollar"></i>
                                                 </span>
                                                 <span class="menu-title">Payment Accounts</span>
+                                            </a>
+                                        </div>
+                                        <div class="menu-item  ">
+                                            <!--begin:Menu link-->
+                                            <!--begin:Menu link-->
+                                            <a class="menu-link @yield('payment_account_active')"
+                                                href="{{route('paymentAcc.list')}}">
+                                                <span class=" menu-icon">
+                                                    <i class="fa-regular fa-credit-card"></i>
+                                                </span>
+                                                <span class="menu-title">Payment Method</span>
                                             </a>
                                         </div>
 

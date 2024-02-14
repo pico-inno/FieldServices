@@ -88,6 +88,7 @@ class locationImport implements
             'price_lists_id' => $this->getPricelistId($data['default_price_list']),
             'gps_location' => $data['gps_location'],
             'invoice_layout' => $this->getInvoiceTemplayeId($data['invoice_layout']),
+            'outlet_type'=>$data['outlet_type'] ?? 'on',
         ];
     }
     public function prepareLocationAddress($data)

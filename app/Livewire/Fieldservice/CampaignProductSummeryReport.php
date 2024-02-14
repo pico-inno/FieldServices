@@ -12,6 +12,7 @@ use App\Exports\productItemReport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\campaignProductOverAllReport;
+use App\Models\settings\businessLocation;
 use Modules\FieldService\Entities\FsCampaign;
 
 class CampaignProductSummeryReport extends Component
@@ -22,8 +23,10 @@ class CampaignProductSummeryReport extends Component
     public $campaignFilterId='all';
     public $newsearch;
     public $categotryFilterId='all';
+    public $outletFilterId='all';
     public $filterDate;
     public  $campaigns;
+    public $outlets;
     public function updated(){
         $this->resetPage();
     }
@@ -35,6 +38,9 @@ class CampaignProductSummeryReport extends Component
             'defaultCampaignId'=> $this->defaultCampaignId,
         ], $withFilter), 'ItemReport.xlsx');
     }
+    public function mount(){
+        $this->outlets = businessLocation::select('id', 'name')->get()->toArray();
+    }
     public function render()
     {
         $search=$this->search;
@@ -42,6 +48,7 @@ class CampaignProductSummeryReport extends Component
         $filterDate=$this->filterDate;
         $defaultCampaignId=$this->defaultCampaignId;
         $campaignFilterId=$this->campaignFilterId;
+        $outletFilterId=$this->outletFilterId;
         $currencyId= getSettingsValue('currency_id');
         $categories = Category::select('name', 'id')->get();
         $this->campaigns = FsCampaign::select('id', 'name')->get();
@@ -52,6 +59,7 @@ class CampaignProductSummeryReport extends Component
             'uom.short_name as uom',
             'categories.name as category_name',
             'fscampaign.name as campaign',
+            'outlet.name as outletName',
                 DB::raw("SUM(stock_histories.decrease_qty) as totalQty"),
                 DB::raw("SUM(total_sale_amount) as totalPrice")
             )
@@ -87,7 +95,13 @@ class CampaignProductSummeryReport extends Component
                 $query->where('categories.id','=',$categotryFilterId);
             })
 
-            ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name','fscampaign.name')
+            ->when($outletFilterId != 'all', function ($query) use ($outletFilterId) {
+                $lids=childLocationIDs($outletFilterId);
+                $query->whereIn('fscampaign.business_location_id',$lids);
+            })
+
+
+            ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name','fscampaign.name','outlet.name')
             ->paginate(15);
         return view('livewire.campaignProductSummeryReport',compact('datas','categories'));
     }

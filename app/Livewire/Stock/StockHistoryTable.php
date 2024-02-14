@@ -6,17 +6,19 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Datatables\datatable;
 use App\Models\Product\ProductVariation;
+use App\Models\settings\businessLocation;
 use App\Models\stock_history;
 use Illuminate\Support\Facades\DB;
 
 class StockHistoryTable extends Component
 {
     use WithPagination,datatable;
-    public $products,$variationId;
+    public $products,$variationId,$locations;
+    public $businesslocationFilterId='all';
     public function __construct()
     {
         $this->queryString= [...$this->queryString,
-            'variationId',
+            'variationId','sortAsc'
         ];
     }
     public function mount(){
@@ -26,13 +28,17 @@ class StockHistoryTable extends Component
                         ->leftJoin('products', 'product_variations.product_id', '=', 'products.id')
                         ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
                         ->get()->toArray();
+        $this->locations=businessLocation::get()->toArray();
 
+    }
+    public function isAsc(){
+        $this->sortAsc=!$this->sortAsc;
     }
     public function render()
     {
         $variationId=$this->variationId;
         $isAsc=$this->sortAsc;
-
+        $businesslocationFilterId=$this->businesslocationFilterId;
         $datas = stock_history::query()
         ->select('stock_histories.*','products.name as jjk',
         DB::raw("CONCAT(products.name, IFNULL(CONCAT(' (', variation_template_values.name, ') '), '')) AS name")
@@ -42,7 +48,9 @@ class StockHistoryTable extends Component
         ->leftJoin('products', 'product_variations.product_id', '=', 'products.id')
         ->where('variation_id',$variationId)
         ->orderBy('stock_histories.id',$isAsc ? 'ASC' : 'DESC')
-
+        ->when($businesslocationFilterId != 'all',function($q) use($businesslocationFilterId){
+            $q->where("business_location_id",$businesslocationFilterId);
+        })
         ->when(!hasModule('StockInOut') ,function($q){
             $q->whereNotIn('stock_histories.transaction_type', ['stock_in', 'stock_out']);
         })->paginate($this->perPage);

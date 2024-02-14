@@ -13,6 +13,16 @@
                                 notEmpty: { message: "* Location field is required" },
                             },
                         },
+                        location_type: {
+                            validators: {
+                                notEmpty: { message: "* Location Type is required" },
+                            },
+                        },
+                        inventory_flow: {
+                            validators: {
+                                notEmpty: { message: "* Inventroy Flow is required" },
+                            },
+                        },
                     };
             var validator = FormValidation.formValidation(
                 form,

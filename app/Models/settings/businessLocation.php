@@ -28,6 +28,8 @@ class businessLocation extends Model
         'inventory_flow',
         'invoice_layout',
         'gps_location',
+        'allow_pickup_order',
+        'outlet_type',
     ];
 
     // protected $casts = [

@@ -39,6 +39,17 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                <label class="form-label  fs-6 fw-semibold">
+                                    Filter By Outlet:</label>
+                                <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
+                                    data-placeholder="Select option" id="outletFilter" data-kt-select2="true" data-kt-table-filter="outlet">
+                                    <option value="all">All</option>
+                                    @foreach ($outlets as $outlet)
+                                    <option value="{{$outlet['id']}}">{{ $outlet['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             @endif
 
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
@@ -155,6 +166,9 @@
 
                             @if(!$defaultCampaignId)
                             <th class="text-start ">
+                                Outlet Name
+                            </th>
+                            <th class="text-start ">
                                 Campaign Name
                             </th>
                             @endif
@@ -181,6 +195,10 @@
                                     {{$data['category_name']}}
                                 </th>
                                 @if(!$defaultCampaignId)
+
+                                <th class="text-start">
+                                    {{$data['outletName']}}
+                                </th>
                                 <th class="text-start">
                                     {{$data['campaign']}}
                                 </th>
@@ -196,7 +214,7 @@
                     </tbody>
                     <tfoot>
                         <tr  class="fw-bold fs-3">
-                            <th colspan="2" class="fw-bold fs-3">
+                            <th colspan="{{$defaultCampaignId==null ? 3: '2'}}" class="fw-bold fs-3">
                                 Total
                             </th>
                             <th class="text-end">
@@ -241,6 +259,11 @@
                 @this.set('categotryFilterId','all');
             });
 
+            $('#outletFilter').select2().on('select2:select', function (e) {
+                @this.set('outletFilterId', $('#outletFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('outletFilterId','all');
+            });
             // cb(start, end);
             var start = moment().subtract(1, "M");
             var end = moment();

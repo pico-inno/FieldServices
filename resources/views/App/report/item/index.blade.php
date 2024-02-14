@@ -113,121 +113,121 @@
 <script>
         "use strict";
 
-        // Class definition
-        var datatable;
-        var KTCustomersList = function () {
-            // Define shared variables
-            var filterMonth;
-            var filterPayment;
-            var table
+    //     // Class definition
+    //     var datatable;
+    //     var KTCustomersList = function () {
+    //         // Define shared variables
+    //         var filterMonth;
+    //         var filterPayment;
+    //         var table
 
-            // Private functions
-            var initCustomerList = function () {
-                // Set date data order
-                const tableRows = table.querySelectorAll('tbody tr');
-                // Init datatable --- more info on datatables: https://datatables.net/manual/
-                let columns = [
-                    {
-                        data: 'name',
-                        name: 'name',
-                        // orderable: false,
-                        // searchable: false
-                    },
-                    {
-                        data: 'sku',
-                        name: 'sku',
-                        // searchable: false,
-                        // orderable: false,
-                    },
-                    {
-                        name: 'purchase_date',
-                        data: 'purchase_date',
-                    },
-                    {
-                        data: 'purchase_voucher_no',
-                        name: 'purchase_voucher_no'
-                    },{
-                        data: 'supplier',
-                        name: 'supplier'
-                    },
-                    {
-                        data: 'purchase_price',
-                        name: 'purchase_price'
-                    },
-                    {
-                        data: "customer_name",
-                        name: "customer_name"
-                    },
+    //         // Private functions
+    //         var initCustomerList = function () {
+    //             // Set date data order
+    //             const tableRows = table.querySelectorAll('tbody tr');
+    //             // Init datatable --- more info on datatables: https://datatables.net/manual/
+    //             let columns = [
+    //                 {
+    //                     data: 'name',
+    //                     name: 'name',
+    //                     // orderable: false,
+    //                     // searchable: false
+    //                 },
+    //                 {
+    //                     data: 'sku',
+    //                     name: 'sku',
+    //                     // searchable: false,
+    //                     // orderable: false,
+    //                 },
+    //                 {
+    //                     name: 'purchase_date',
+    //                     data: 'purchase_date',
+    //                 },
+    //                 {
+    //                     data: 'purchase_voucher_no',
+    //                     name: 'purchase_voucher_no'
+    //                 },{
+    //                     data: 'supplier',
+    //                     name: 'supplier'
+    //                 },
+    //                 {
+    //                     data: 'purchase_price',
+    //                     name: 'purchase_price'
+    //                 },
+    //                 {
+    //                     data: "customer_name",
+    //                     name: "customer_name"
+    //                 },
 
-                    {
-                        data: 'location',
-                        name: 'location'
-                    },
+    //                 {
+    //                     data: 'location',
+    //                     name: 'location'
+    //                 },
 
-                    {
-                        data:'sales_voucher_no',
-                        name:'sales_voucher_no',
-                    },
-                    {
-                        data: 'sell_qty',
-                        name: 'sell_qty'
-                    },
+    //                 {
+    //                     data:'sales_voucher_no',
+    //                     name:'sales_voucher_no',
+    //                 },
+    //                 {
+    //                     data: 'sell_qty',
+    //                     name: 'sell_qty'
+    //                 },
 
-                    {
-                        data: 'selling_price',
-                        name: 'selling_price'
-                    },
+    //                 {
+    //                     data: 'selling_price',
+    //                     name: 'selling_price'
+    //                 },
 
-                    {
-                        data: 'sale_subtotal',
-                        name: 'sale_subtotal'
-                    },
-                    {
-                        data:'total_cogs',
-                        name:'total_cogs',
-                    }
+    //                 {
+    //                     data: 'sale_subtotal',
+    //                     name: 'sale_subtotal'
+    //                 },
+    //                 {
+    //                     data:'total_cogs',
+    //                     name:'total_cogs',
+    //                 }
 
-                ];
+    //             ];
 
-                datatable = $(table).DataTable({
-                    pageLength: 30,
-                    lengthMenu: [10, 20, 30, 50,40,80],
-                    order: [[1, 'desc']],
-                    processing: true,
-                    serverSide: true,
-                    columns,
-                    ajax: {
-                        url: '/items/report/data'
-                    }
-                });
+    //             datatable = $(table).DataTable({
+    //                 pageLength: 30,
+    //                 lengthMenu: [10, 20, 30, 50,40,80],
+    //                 order: [[1, 'desc']],
+    //                 processing: true,
+    //                 serverSide: true,
+    //                 columns,
+    //                 ajax: {
+    //                     url: '/items/report/data'
+    //                 }
+    //             });
 
-                // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
-                datatable.on('draw', function () {
+    //             // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
+    //             datatable.on('draw', function () {
 
-                });
-            }
+    //             });
+    //         }
 
-            var handleSearchDatatable = () => {
-                const filterSearch = document.querySelector('[data-filter="input"]');
-                filterSearch.addEventListener('keyup', function (e) {
-                    let result=datatable.search(e.target.value).draw();
-                });
-            }
+    //         var handleSearchDatatable = () => {
+    //             const filterSearch = document.querySelector('[data-filter="input"]');
+    //             filterSearch.addEventListener('keyup', function (e) {
+    //                 let result=datatable.search(e.target.value).draw();
+    //             });
+    //         }
 
-        // Public methods
-        return {
-            init: function () {
-                table = document.querySelector('#itemReportTable');
+    //     // Public methods
+    //     return {
+    //         init: function () {
+    //             table = document.querySelector('#itemReportTable');
 
-                if (!table) {
-                    return;
-                }
+    //             if (!table) {
+    //                 return;
+    //             }
 
-                initCustomerList();
-                handleSearchDatatable();
-            }
-        }
-    }();
+    //             initCustomerList();
+    //             handleSearchDatatable();
+    //         }
+    //     }
+    // }();
 
     // On document ready
     KTUtil.onDOMContentLoaded(function () {

@@ -127,6 +127,7 @@ class businessLocationController extends Controller
             $request['is_active'] = $request['is_active'] ?? 0;
             $request['allow_purchase_order'] = $request['allow_purchase_order'] ?? 0;
             $request['allow_sale_order'] = $request['allow_sale_order'] ?? 0;
+            $request['allow_pickup_order']=$request['allow_pickup_order'] ?? 0;
             $data = request()->except('_token');
             $bl->update($data);
             $action->updateLocationAddress($request, $bl);
