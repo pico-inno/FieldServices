@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
 
-        Schema::table('contacts', function ($table) {
-            $table->index('id');
-            $table->index('first_name');
-            $table->index('last_name');
-            $table->index('middle_name');
-            $table->index('company_name');
-        });
+        // Schema::table('contacts', function ($table) {
+        //     $table->index('id');
+        //     $table->index('first_name');
+        //     $table->index('last_name');
+        //     $table->index('middle_name');
+        //     $table->index('company_name');
+        // });
 
 
         Schema::table('business_locations', function ($table) {
