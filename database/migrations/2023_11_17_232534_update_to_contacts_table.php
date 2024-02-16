@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::table('contacts', function (Blueprint $table) {
-        //     $table->string('age')->nullable();
-        //     $table->enum('gender',['male','female', 'Prefer not to say','others'])->nullable();
-        // });
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->string('age')->nullable();
+            $table->enum('gender',['male','female', 'Prefer not to say','others'])->nullable();
+        });
     }
 
     /**
