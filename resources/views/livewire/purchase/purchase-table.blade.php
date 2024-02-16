@@ -249,7 +249,7 @@
                                             data-href="{{route('print_purchase', $p->id)}}"
                                             data-layoutId="{{$p->invoice_layout}}">Print</a>
                                         @endif
-                                        @if ($p->balance_amount > 0 || $p->paid_amount < $p->purchase_amount)
+                                        @if ($p->balance_amount > 0)
                                         <a class="dropdown-item p-2 cursor-pointer " id="paymentCreate"
                                             data-href="{{route('paymentTransaction.createForPurchase', ['id' => $p->id, 'currency_id' => $p->currency_id])}}">Add
                                             Payment</a>
@@ -404,7 +404,7 @@
                     if (result.value) {
                         let id=d.getAttribute('data-id')
                             $.ajax({
-                                url: `/purchase/${id}/softDelete`,
+                                url: `purchase/${id}/softDelete`,
                                 type: 'DELETE',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -502,7 +502,7 @@
                         }
                     });
                     $.ajax({
-                        url: `/purchase/softDelete`,
+                        url: `purchase/softDelete`,
                         type: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
