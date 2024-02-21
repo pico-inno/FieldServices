@@ -5,7 +5,7 @@
 @section('location_here_show','here show')
 @section('location_list_nav','active')
 @section('styles')
-		<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="{{asset('assets/plugins/custom/datatables/datatables.bundle.css')}}" rel="stylesheet" type="text/css" />
 @endsection
 
 

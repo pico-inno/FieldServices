@@ -50,6 +50,17 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                <label class="form-label  fs-6 fw-semibold">
+                                    Filter By Outlet Type:</label>
+                                <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
+                                    data-placeholder="Select option" id="outletTypeFilter" data-kt-select2="true" data-kt-table-filter="outletType">
+                                    <option value="all">All</option>
+                                    <option value="on">On</option>
+                                    <option value="off">Off</option>
+                                </select>
+                            </div>
                             @endif
 
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
@@ -248,6 +259,8 @@
     <script wire:ignore>
         $(document).ready(function() {
 
+
+
             $('#campaignfilter').select2().on('select2:select', function (e) {
                 @this.set('campaignFilterId', $('#campaignfilter').select2("val"));
             }).on('select2:unselect', function (e) {
@@ -263,6 +276,12 @@
                 @this.set('outletFilterId', $('#outletFilter').select2("val"));
             }).on('select2:unselect', function (e) {
                 @this.set('outletFilterId','all');
+            });
+
+            $('#outletTypeFilter').select2().on('select2:select', function (e) {
+                @this.set('outletTypeFilter', $('#outletTypeFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('outletTypeFilter','all');
             });
             // cb(start, end);
             var start = moment().subtract(1, "M");

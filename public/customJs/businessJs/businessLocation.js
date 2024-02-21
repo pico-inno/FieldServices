@@ -129,7 +129,7 @@ var KTlocationsList = function () {
                     if (result.value) {
                         let id=d.getAttribute('data-id')
                             $.ajax({
-                                url: `location/${id}/delete`,
+                                url: `/location/${id}/delete`,
                                 type: 'DELETE',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -195,7 +195,7 @@ var KTlocationsList = function () {
                 // Get location name
                 const locationName = parent.querySelectorAll('td')[1].innerText;
                 $.ajax({
-                    url: `location/${id}/deactive`,
+                    url: `/location/${id}/deactive`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -224,7 +224,7 @@ var KTlocationsList = function () {
                 // Get location name
                 const locationName = parent.querySelectorAll('td')[1].innerText;
                 $.ajax({
-                    url: `location/${id}/active`,
+                    url: `/location/${id}/active`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -299,7 +299,7 @@ var KTlocationsList = function () {
                         }
                     });
                     $.ajax({
-                        url: `location/delete`,
+                        url: `/location/delete`,
                         type: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
