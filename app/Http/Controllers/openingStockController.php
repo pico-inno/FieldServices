@@ -502,13 +502,14 @@ class openingStockController extends Controller
             'ref_uom_id' => $refUomId,
             'created_at'=>$openingStock['opening_date'],
         ]);
+        $lotNumber=generatorHelpers::generateLotSerialNo();
         return [
             "business_location_id" => $openingStock->business_location_id,
             "product_id" => $opening_stock_detail->product_id,
             "variation_id" => $opening_stock_detail->variation_id,
             "transaction_type" => $type,
             "transaction_detail_id" => $opening_stock_detail->id,
-            // "lot_serial_numbers" => UomHelper::generateBatchNo('BSN',6),
+            "lot_serial_numbers" =>$lotNumber,
             "ref_uom_id" => $opening_stock_detail->ref_uom_id,
             "ref_uom_quantity" => $smallestQty,
             "ref_uom_price" => $opening_stock_detail->ref_uom_price,

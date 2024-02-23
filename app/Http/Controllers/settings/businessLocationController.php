@@ -158,6 +158,7 @@ class businessLocationController extends Controller
             ];
             return response()->json($data, 200);
         }catch (Exception $exception){
+            logger($exception->getMessage());
             $errorData = [
                 'error' => 'This location cannot be deleted since transactions are associated with it.'
             ];

@@ -257,6 +257,7 @@
                         <th class="min-w-100px">location</th>
                         <th class="min-w-100px">status</th>
                         <th class="min-w-100px">Date</th>
+                        <th class="min-w-100px">Sold By</th>
                     </tr>
                     <!--end::Table row-->
                 </thead>
@@ -360,6 +361,9 @@
                         </td>
                         <td class="text-end">
                             {{($s->sold_at)}}
+                        </td>
+                        <td>
+                            {{$s['soldBy']['username']}}
                         </td>
                     </tr>
                     @endforeach

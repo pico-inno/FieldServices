@@ -86,6 +86,9 @@ class sales extends Model
     {
         return $this->hasOne(BusinessUser::class, 'id', 'created_by');
     }
+    public function soldBy() : HasOne {
+        return $this->hasOne(BusinessUser::class, 'id', 'sold_by');
+    }
     public function updated_by(): HasOne
     {
         return $this->hasOne(BusinessUser::class, 'id', 'updated_by');

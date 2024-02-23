@@ -77,6 +77,7 @@ class AllSaleTable extends Component
                         'sales.business_location_id',
                         'sales.sales_voucher_no',
                         'sales.currency_id',
+                        'sales.sold_by',
                         'contacts.company_name',
                         'contacts.prefix',
                         'contacts.first_name',
@@ -129,7 +130,7 @@ class AllSaleTable extends Component
                                     ->selectRaw('ecommerce_orders.viewed_at as isRead')
                                     ->join('ecommerce_orders','sales.id','=','ecommerce_orders.sale_id');
                     })
-                    ->with('currency:id,symbol')
+                    ->with('currency:id,symbol','soldBy:id,username')
                     ->paginate($this->perPage);
         return view('livewire.sale.all-sale-table',compact('saleData','locations', 'hasHospital', 'customers', 'hasView', 'hasUpdate', 'hasPrint','hasDelete','saleType','pedningCount','orderCount'));
     }
