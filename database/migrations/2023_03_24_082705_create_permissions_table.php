@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        // Schema::create('permissions', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('name');
-        //     $table->integer('feature_id');
-        //     $table->timestamps();
-        // });
+        Schema::create('permissions', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->integer('feature_id');
+            $table->timestamps();
+        });
     }
 
     /**

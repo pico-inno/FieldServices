@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
     <!--begin::Vendor Stylesheets(used for this page only)-->
-    <link href={{asset("assets/plugins/custom/datatables/datatables.bundle.css")}} rel="stylesheet" type="text/css" />
+    {{-- <link href={{asset("assets/plugins/custom/datatables/datatables.bundlpe.css")}} rel="stylesheet" type="text/css" /> --}}
     <link href={{asset("assets/plugins/custom/vis-timeline/vis-timeline.bundle.css")}} rel="stylesheet"  type="text/css" />
     <!--end::Vendor Stylesheets-->
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
@@ -2338,6 +2338,15 @@
                                                         </a>
                                                     </div>
                                                 @endif
+
+                                                <div class="menu-item  ">
+                                                    <a class="menu-link @yield('photo_gallery_list_active')" href="{{route('gallery.index')}}">
+                                                        <span class="menu-icon">
+                                                            <i class="fa-solid fa-images fs-6"></i>
+                                                        </span>
+                                                        <span class="menu-title">Photo Gallery </span>
+                                                    </a>
+                                                </div>
 
                                                 @if(hasAll('questionnaire'))
                                                     <div class="menu-item  ">

@@ -28,17 +28,39 @@
                                     data-kt-table-filter="dateRange" id="attendanceDatePicker" data-dropdown-parent="#filter" />
                             </div>
                             @if($campaign_id===null)
-                            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                                <label class="form-label  fs-6 fw-semibold">
-                                    Filter By Campaign:</label>
-                                <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
-                                    data-placeholder="Select option" id="campaignfilter" data-kt-select2="true" data-kt-table-filter="outlet">
-                                    <option value="all">All</option>
-                                    @foreach ($campaigns as $campaign)
-                                    <option value="{{$campaign['id']}}">{{ $campaign['name'] }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                    <label class="form-label  fs-6 fw-semibold">
+                                        Filter By Campaign:</label>
+                                    <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
+                                        data-placeholder="Select option" id="campaignfilter" data-kt-select2="true" data-kt-table-filter="outlet">
+                                        <option value="all">All</option>
+                                        @foreach ($campaigns as $campaign)
+                                        <option value="{{$campaign['id']}}">{{ $campaign['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                    <label class="form-label  fs-6 fw-semibold">
+                                        <i class="fa-solid fa-circle fs-9 text-primary me-1"></i>
+                                        Filter By Outlet:</label>
+                                    <select class="form-select form-select-sm fw-bold locationFilter" data-allow-clear="true"
+                                        data-placeholder="Select option" id="outletFilterId" data-kt-select2="true" data-kt-table-filter="outlet">
+                                        <option value="all">All</option>
+                                        @foreach ($locations as $l)
+                                        <option value="{{$l['id']}}">{{ businessLocationName($l) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                    <label class="form-label  fs-6 fw-semibold">
+                                        Filter By Outlet Type:</label>
+                                    <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
+                                        data-placeholder="Select option" id="outletTypeFilter" data-kt-select2="true" data-kt-table-filter="outletType">
+                                        <option value="all">All</option>
+                                        <option value="on">On</option>
+                                        <option value="off">Off</option>
+                                    </select>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -254,6 +276,17 @@
                 @this.set('campaignFilterId','all');
             });
 
+            $('#outletFilterId').select2().on('select2:select', function (e) {
+                @this.set('outletFilterId', $('#outletFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('outletFilterId','all');
+            });
+
+            $('#outletTypeFilter').select2().on('select2:select', function (e) {
+                @this.set('outletTypeFilter', $('#outletTypeFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('outletTypeFilter','all');
+            });
             // cb(start, end);
             var start = moment().subtract(1, "M");
             var end = moment();

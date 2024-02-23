@@ -24,6 +24,7 @@ class CampaignProductSummeryReport extends Component
     public $newsearch;
     public $categotryFilterId='all';
     public $outletFilterId='all';
+    public $outletTypeFilter='all';
     public $filterDate;
     public  $campaigns;
     public $outlets;
@@ -49,6 +50,7 @@ class CampaignProductSummeryReport extends Component
         $defaultCampaignId=$this->defaultCampaignId;
         $campaignFilterId=$this->campaignFilterId;
         $outletFilterId=$this->outletFilterId;
+        $outletTypeFilter=$this->outletTypeFilter;
         $currencyId= getSettingsValue('currency_id');
         $categories = Category::select('name', 'id')->get();
         $this->campaigns = FsCampaign::select('id', 'name')->get();
@@ -98,6 +100,9 @@ class CampaignProductSummeryReport extends Component
             ->when($outletFilterId != 'all', function ($query) use ($outletFilterId) {
                 $lids=childLocationIDs($outletFilterId);
                 $query->whereIn('fscampaign.business_location_id',$lids);
+            })
+            ->when($outletTypeFilter != 'all', function ($query) use ($outletTypeFilter) {
+                $query->where('outlet.outlet_type',$outletTypeFilter);
             })
 
 
