@@ -36,24 +36,6 @@
 @endsection
 @section('content')
 
-{{-- <div class="container">
-    <!--begin::Container-->
-    <div class="accordion" id="kt_accordion_1">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="kt_accordion_1_header_1">
-
-            </h2>
-            <div id="kt_accordion_1_body_1" class="accordion-collapse collapse show"
-                aria-labelledby="kt_accordion_1_header_1" data-bs-parent="#kt_accordion_1">
-                <div class="accordion-body">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis nihil dolore quas assumenda eius
-                    repudiandae, error iste exercitationem. Hic natus doloribus molestiae porro incidunt dolor modi!
-                    Quas nostrum perspiciatis quia!
-                </div>
-            </div>
-        </div>
-    </div>
-</div> --}}
 
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <div class="container-xxl" id="kt_content_container">

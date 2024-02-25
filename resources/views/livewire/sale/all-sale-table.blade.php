@@ -226,162 +226,162 @@
                 <h2 class="text-primary">Loading....</h2>
             </div>
             <div class="table-responsive">
-            <table class="table table-hover  align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table"
-                data-sticky-header="true">
-                <thead>
-                    <tr class="text-end text-gray-600 fw-bold fs-7 text-uppercase gs-0">
-                        <th class="w-10px pe-2">
-                            <div class="form-check form-check-sm form-check-custom  me-3">
-                                <input class="form-check-input checkForDelete" data-checked="selectAll" id="selectAll" type="checkbox"
-                                    data-kt-check="true" data-kt-check-target="#kt_saleItem_table .form-check-input"
-                                    value="" />
-                            </div>
-                        </th>
-                        <th class="min-w-100px text-center">
-                            Actions
-                        </th>
-                        <th class="min-w-100px cursor-pointer text-start" wire:click="sortBy('sales_voucher_no')">
-                            Sale Voucher No
-                            <x-datatable.sort-icon field="sales_voucher_no" :sortField="$sortField" :sortAsc="$sortAsc" />
-                        </th>
-                        <th class="min-w-100px cursor-pointer" wire:click="sortBy('contacts.first_name')">
-                            <div class="">
-                                <span>Customer</span>
-                                <x-datatable.sort-icon field="contacts.first_name" :sortField="$sortField" :sortAsc="$sortAsc" />
-                            </div>
-                        </th>
-                        <th class="min-w-100px text-end">Sale Amount</th>
-                        <th class="min-w-100px text-end">Paid Amount</th>
-                        <th class="min-w-100px text-end">Balance Amount</th>
-                        <th class="min-w-100px">Payment Status</th>
-                        <th class="min-w-100px">location</th>
-                        <th class="min-w-100px">status</th>
-                        <th class="min-w-100px">Date</th>
-                        <th class="min-w-100px">Sold By</th>
-                    </tr>
-                    <!--end::Table row-->
-                </thead>
-                <!--end::Table head-->
-                <!--begin::Table body-->
-                <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
-
-                    @foreach ($saleData as $s)
-                    <tr class="text-end sale-row  cursor-pointer view_detail" data-href="{{route('saleDetail', $s->id)}}">
-                        <td class="actionRow">
-                            <div class="form-check form-check-sm form-check-custom ">
-                                <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
-                                    value='{{$s->id}}' />
-                            </div>
-                        </td>
-                        <td class="actionRow">
-                            <div class="dropdown text-center actionRow">
-                                <button class="btn btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle actionRow"
-                                    type="button" id="saleItemDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Actions
-                                </button>
-                                <div class="z-3 actionRow">
-                                    <ul class="dropdown-menu z-10 p-5 actionRow" aria-labelledby="saleItemDropDown" role="menu">
-                                        @if ($hasView)
-                                            <a class="dropdown-item p-2 " type="button" data-href="{{route('saleDetail', $s->id)}}">
-                                                View
-                                            </a>
-                                        @endif
-                                        @if ($hasUpdate)
-                                            <a href="{{route('saleEdit', [
-                                                'id'=>$s->id,
-                                                'sale_type'=>$saleType
-                                            ])}}" class="dropdown-item p-2   edit-unit actionRow">Edit</a>
-                                        @endif
-                                        @if ($hasPrint)
-                                            <a class="dropdown-item p-2  cursor-pointer  print-invoice actionRow"
-                                                data-href="{{route('print_sale', $s->id)}}"
-                                                data-layoutId="{{$s->invoice_layout}}">Print</a>
-                                            <a class="dropdown-item p-2  cursor-pointer download-image actionRow" data-name="' . $s->sales_voucher_no . '"
-                                                data-layoutId="{{$s->invoice_layout}}" data-href="{{route('print_sale', $s->id)}}">Download Image</a>
-                                        @endif
-                                        @if ($s->balance_amount > 0 || $s->paid_amount < $s->sale_amount)
-                                        <a class="dropdown-item p-2 cursor-pointer actionRow" id="paymentCreate"
-                                            data-href="{{route('paymentTransaction.createForSale', ['id' => $s->id, 'currency_id' => $s->currency_id])}}">Add
-                                            Payment</a>
-                                        @endif
-
-                                        <a class="dropdown-item p-2 cursor-pointer actionRow" id="viewPayment"
-                                            data-href="{{route('paymentTransaction.viewForSell', $s->id)}}">View
-                                            Payment</a>
-                                            @if ($hasHospital)
-                                                <a type="button" class="dropdown-item p-2  postToRegisterationFolio actionRow"
-                                                    data-href="{{route('postToRegistrationFolio', $s->id)}}">Post to
-                                                    Registeration</a>
-                                            @endif
-                                        @if ($hasDelete)
-                                                <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger actionRow" data-id="{{$s->id}}"
-                                                    data-kt-saleItem-table="delete_row">Delete</a>
-                                        @endif
-                                    </ul>
+                <table class="table table-hover  align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table"
+                    data-sticky-header="true">
+                    <thead>
+                        <tr class="text-end text-gray-600 fw-bold fs-7 text-uppercase gs-0">
+                            <th class="w-10px pe-2">
+                                <div class="form-check form-check-sm form-check-custom  me-3">
+                                    <input class="form-check-input checkForDelete" data-checked="selectAll" id="selectAll" type="checkbox"
+                                        data-kt-check="true" data-kt-check-target="#kt_saleItem_table .form-check-input"
+                                        value="" />
                                 </div>
-                            </div>
-                        </td>
-                        <td class="text-start "  >
-                            <div class="d-flex justify-content-start align-items-start">
-                                {{$s['sales_voucher_no']}}
-                                @if (isset($s['isRead'])&&$s['isRead'] == null && $s['channel_type']=='ecommerce')
+                            </th>
+                            <th class="min-w-100px text-center">
+                                Actions
+                            </th>
+                            <th class="min-w-100px cursor-pointer text-start" wire:click="sortBy('sales_voucher_no')">
+                                Sale Voucher No
+                                <x-datatable.sort-icon field="sales_voucher_no" :sortField="$sortField" :sortAsc="$sortAsc" />
+                            </th>
+                            <th class="min-w-100px cursor-pointer" wire:click="sortBy('contacts.first_name')">
+                                <div class="">
+                                    <span>Customer</span>
+                                    <x-datatable.sort-icon field="contacts.first_name" :sortField="$sortField" :sortAsc="$sortAsc" />
+                                </div>
+                            </th>
+                            <th class="min-w-100px text-end">Sale Amount</th>
+                            <th class="min-w-100px text-end">Paid Amount</th>
+                            <th class="min-w-100px text-end">Balance Amount</th>
+                            <th class="min-w-100px">Payment Status</th>
+                            <th class="min-w-100px">location</th>
+                            <th class="min-w-100px">status</th>
+                            <th class="min-w-100px">Date</th>
+                            <th class="min-w-100px">Sold By</th>
+                        </tr>
+                        <!--end::Table row-->
+                    </thead>
+                    <!--end::Table head-->
+                    <!--begin::Table body-->
+                    <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
-                                    <i class="fa-solid fa-circle text-danger fs-10 ms-3 noti"></i>
+                        @foreach ($saleData as $s)
+                        <tr class="text-end sale-row  cursor-pointer view_detail" data-href="{{route('saleDetail', $s->id)}}">
+                            <td class="actionRow">
+                                <div class="form-check form-check-sm form-check-custom ">
+                                    <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
+                                        value='{{$s->id}}' />
+                                </div>
+                            </td>
+                            <td class="actionRow">
+                                <div class="dropdown text-center actionRow">
+                                    <button class="btn btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle actionRow"
+                                        type="button" id="saleItemDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <div class="z-3 actionRow">
+                                        <ul class="dropdown-menu z-10 p-5 actionRow" aria-labelledby="saleItemDropDown" role="menu">
+                                            @if ($hasView)
+                                                <a class="dropdown-item p-2 " type="button" data-href="{{route('saleDetail', $s->id)}}">
+                                                    View
+                                                </a>
+                                            @endif
+                                            @if ($hasUpdate)
+                                                <a href="{{route('saleEdit', [
+                                                    'id'=>$s->id,
+                                                    'sale_type'=>$saleType
+                                                ])}}" class="dropdown-item p-2   edit-unit actionRow">Edit</a>
+                                            @endif
+                                            @if ($hasPrint)
+                                                <a class="dropdown-item p-2  cursor-pointer  print-invoice actionRow"
+                                                    data-href="{{route('print_sale', $s->id)}}"
+                                                    data-layoutId="{{$s->invoice_layout}}">Print</a>
+                                                <a class="dropdown-item p-2  cursor-pointer download-image actionRow" data-name="' . $s->sales_voucher_no . '"
+                                                    data-layoutId="{{$s->invoice_layout}}" data-href="{{route('print_sale', $s->id)}}">Download Image</a>
+                                            @endif
+                                            @if ($s->balance_amount > 0 || $s->paid_amount < $s->sale_amount)
+                                            <a class="dropdown-item p-2 cursor-pointer actionRow" id="paymentCreate"
+                                                data-href="{{route('paymentTransaction.createForSale', ['id' => $s->id, 'currency_id' => $s->currency_id])}}">Add
+                                                Payment</a>
+                                            @endif
+
+                                            <a class="dropdown-item p-2 cursor-pointer actionRow" id="viewPayment"
+                                                data-href="{{route('paymentTransaction.viewForSell', $s->id)}}">View
+                                                Payment</a>
+                                                @if ($hasHospital)
+                                                    <a type="button" class="dropdown-item p-2  postToRegisterationFolio actionRow"
+                                                        data-href="{{route('postToRegistrationFolio', $s->id)}}">Post to
+                                                        Registeration</a>
+                                                @endif
+                                            @if ($hasDelete)
+                                                    <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger actionRow" data-id="{{$s->id}}"
+                                                        data-kt-saleItem-table="delete_row">Delete</a>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-start "  >
+                                <div class="d-flex justify-content-start align-items-start">
+                                    {{$s['sales_voucher_no']}}
+                                    @if (isset($s['isRead'])&&$s['isRead'] == null && $s['channel_type']=='ecommerce')
+
+                                        <i class="fa-solid fa-circle text-danger fs-10 ms-3 noti"></i>
+                                    @endif
+                                </div>
+                            </td>
+                            <td>{{$s['company_name'] ?? getFullNameAttribute([
+                            'prefix'=> $s['prefix'],
+                                'first_name'=>$s['first_name'],
+                                'last_name'=>$s['last_name'],
+                                'middle_name'=>$s['middle_name'],
+                            ])}}</td>
+                            <td>{{formatPrice($s['total_sale_amount'] ?? 0,$s->currency)}}</td>
+                            <td>{{formatPrice($s['paid_amount'] ?? 0,$s->currency)}}</td>
+                            <td>{{formatPrice($s['balance_amount'] ?? 0,$s->currency)}}</td>
+                            <td><x-payment-status :status="$s['payment_status']" /></td>
+                            <td>{{$s['location_name']}}</td>
+                            <td>
+                                @php
+                                $status=$s->status;
+                                @endphp
+                                @if($status == 'delivered')
+                                <span class='badge badge-success'> {{$status}} </span>
+                                @elseif ($status == 'draft')
+                                <span class='badge badge-dark'>{{$status}}</span>
+                                @elseif ($status == 'pending')
+                                <span class='badge badge-warning'>{{$status}}</span>
+                                @elseif ($status == 'order')
+                                <span class='badge badge-primary'>{{$status}}</span>
+                                @elseif ($status == 'partial')
+                                <span class='badge badge-info'>{{$status}}</span>
+                                @elseif ($status == 'quotation')
+                                <span class='badge badge-secondary'>{{$status}}</span>
                                 @endif
-                            </div>
-                        </td>
-                        <td>{{$s['company_name'] ?? getFullNameAttribute([
-                           'prefix'=> $s['prefix'],
-                            'first_name'=>$s['first_name'],
-                            'last_name'=>$s['last_name'],
-                            'middle_name'=>$s['middle_name'],
-                        ])}}</td>
-                        <td>{{formatPrice($s['total_sale_amount'] ?? 0,$s->currency)}}</td>
-                        <td>{{formatPrice($s['paid_amount'] ?? 0,$s->currency)}}</td>
-                        <td>{{formatPrice($s['balance_amount'] ?? 0,$s->currency)}}</td>
-                        <td><x-payment-status :status="$s['payment_status']" /></td>
-                        <td>{{$s['location_name']}}</td>
-                        <td>
-                            @php
-                            $status=$s->status;
-                            @endphp
-                            @if($status == 'delivered')
-                            <span class='badge badge-success'> {{$status}} </span>
-                            @elseif ($status == 'draft')
-                            <span class='badge badge-dark'>{{$status}}</span>
-                            @elseif ($status == 'pending')
-                            <span class='badge badge-warning'>{{$status}}</span>
-                            @elseif ($status == 'order')
-                            <span class='badge badge-primary'>{{$status}}</span>
-                            @elseif ($status == 'partial')
-                            <span class='badge badge-info'>{{$status}}</span>
-                            @elseif ($status == 'quotation')
-                            <span class='badge badge-secondary'>{{$status}}</span>
-                            @endif
-                        </td>
-                        <td class="text-end">
-                            {{($s->sold_at)}}
-                        </td>
-                        <td>
-                            {{$s['soldBy']['username']}}
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr class="fw-bold fs-6 border-top-1">
-                        <th colspan="3" class="text-nowrap text-start fs-2">Total:</th>
-                        <th colspan="2" class="min-w-125px text-dark text-end  pe-3">
-                            {{formatPrice($saleData->sum('total_sale_amount'),$saleData[0]->currency ?? [])}}</th>
-                        <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
-                            {{formatPrice($saleData->sum('paid_amount'),$saleData[0]->currency ?? [])}}
-                        </th>
-                        <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
-                            {{formatPrice($saleData->sum('balance_amount'),$saleData[0]->currency ?? [])}}
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
+                            </td>
+                            <td class="text-end">
+                                {{($s->sold_at)}}
+                            </td>
+                            <td>
+                                {{$s['soldBy']['username']}}
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold fs-6 border-top-1">
+                            <th colspan="3" class="text-nowrap text-start fs-2">Total:</th>
+                            <th colspan="2" class="min-w-125px text-dark text-end  pe-3">
+                                {{formatPrice($saleData->sum('total_sale_amount'),$saleData[0]->currency ?? [])}}</th>
+                            <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
+                                {{formatPrice($saleData->sum('paid_amount'),$saleData[0]->currency ?? [])}}
+                            </th>
+                            <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
+                                {{formatPrice($saleData->sum('balance_amount'),$saleData[0]->currency ?? [])}}
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
             <div class="row justify-content-center  justify-content-md-between">
                 <div class="col-md-6 col-12 mb-3 ">

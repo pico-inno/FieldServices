@@ -103,6 +103,7 @@ use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
+use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
@@ -393,6 +394,7 @@ Route::controller(locationImportController::class)->prefix('/import')->group(fun
 Route::controller(businessLocationController::class)->group(function () {
     Route::prefix('location')->group(function () {
         Route::get('/view', 'index')->name('business_location');
+        Route::get('/tree/structure', 'treeStructure')->name('location.treeStructure');
 
         // ajax list
         Route::get('/data', 'listData');
@@ -615,6 +617,11 @@ Route::prefix('payment-account')->group(function () {
 
         Route::get('/get/list/', 'list');
         Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
+    });
+});
+Route::prefix('payment-methods')->group(function(){
+    Route::controller(PaymentMethodsController::class)->group(function(){
+        Route::get('/','index')->name('paymentMethods.index');
     });
 });
 Route::prefix('currency')->group(function () {

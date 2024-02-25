@@ -226,4 +226,9 @@ class businessLocationController extends Controller
 
         return response()->json($locations, 200);
     }
+
+    public function treeStructure() {
+        $locations=businessLocation::select('id','name')->whereNull('parent_location_id')->get();
+        return view('App.businessSetting.location.structure',compact('locations'));
+    }
 }

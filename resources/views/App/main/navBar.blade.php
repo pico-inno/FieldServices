@@ -2623,6 +2623,17 @@
                                                         @if(hasView('business location'))
                                                         <div class="menu-item">
                                                             <!--begin:Menu link-->
+                                                            <a class="menu-link @yield('location_structure')"
+                                                                href="{{route('location.treeStructure')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title">Location Structure</span>
+                                                            </a>
+                                                            <!--end:Menu link-->
+                                                        </div>
+                                                        <div class="menu-item">
+                                                            <!--begin:Menu link-->
                                                             <a class="menu-link @yield('location_list_nav')"
                                                                 href="{{route('business_location')}}">
                                                                 <span class="menu-bullet">
@@ -2808,9 +2819,9 @@
                                             <!--begin:Menu link-->
                                             <!--begin:Menu link-->
                                             <a class="menu-link @yield('payment_account_active')"
-                                                href="{{route('paymentAcc.list')}}">
+                                                href="{{route('paymentMethods.index')}}">
                                                 <span class=" menu-icon">
-                                                    <i class="fa-regular fa-credit-card"></i>
+                                                    <i class="fa-solid fa-arrows-split-up-and-left"></i>
                                                 </span>
                                                 <span class="menu-title">Payment Method</span>
                                             </a>
