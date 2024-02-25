@@ -692,7 +692,13 @@
                 'columnDefs': [
                 // Disable ordering on column 0 (checkbox)
                     { orderable: false, targets: 0 },
-                    { orderable: false, targets: 1 }
+                    { orderable: false, targets: 1 },
+                    // {
+                    //     targets: 16,
+                    //     visible: false,
+                    //     searchable: true,
+                    // },
+
                 ],
                 ajax: {
                     url: '/product-datas',
@@ -836,7 +842,11 @@
                     {
                         data: 'product_custom_field4',
                         name: 'product_custom_field4'
-                    }
+                    },
+                    // {
+                    //     data: 'product.name',
+                    //     name: 'product.name'
+                    // }
 
                 ]
             });
@@ -847,8 +857,10 @@
             initDatatable();
             // Search
             $('#search').on('keyup', function() {
-                table.search(this.value).draw();
+                var searchValue = this.value;
+                table.search(searchValue).draw();
             });
+
 
             $('#location_filter').on('change', function() {
                 let value = this.value;

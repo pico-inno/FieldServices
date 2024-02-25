@@ -608,8 +608,10 @@
         });
 
 
-        $('.modal-btn-save-changes').first().trigger('click');
-
+        // $('.modal-btn-save-changes').first().trigger('click');
+        $(document).ready(function() {
+                $(this).find('.modal-btn-save-changes').trigger('click');
+        });
 
         function eachModalcalculateTotalQuantity(modalId) {
             let totalQuantity = 0;
