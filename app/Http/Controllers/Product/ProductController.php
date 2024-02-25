@@ -193,12 +193,13 @@ class ProductController extends Controller
         LocationRepositoryInterface $locationRepository,
     )
     {
+//        return Product::with('productVariations', 'category', 'brand')->paginate();
 //        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
         $categories = $this->categoryRepository->query()->select('name')->distinct()->pluck('name');
         $brands = $this->brandRepository->query()->select('name')->distinct()->pluck('name');
         $generics = $this->genericRepository->query()->select('name')->distinct()->pluck('name');
         $manufactures = $this->manufacturerRepository->query()->select('name')->distinct()->pluck('name');
-         $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type');
+         $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
         $locations=$locationRepository->locationWithAccessControlQuery()->select('id','name')->get();
         return view('App.product.product.productList',compact(
             'locations',

@@ -481,10 +481,6 @@ class StockTransferController extends Controller
      */
     public function update(UpdateStockTransferRequest $request, StockTransfer $stockTransfer)
     {
-
-
-//return $request;
-
         $transfered_at = date('Y-m-d', strtotime($request->transfered_at));
 
         try {
