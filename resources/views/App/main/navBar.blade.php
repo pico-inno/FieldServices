@@ -229,30 +229,43 @@
                                 </li>
                                 <!--end::Nav item-->
                                 @endif
+
+                                @if(hasModule('Ecommerce') && isEnableModule('Ecommerce'))
+                                    <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                        data-bs-placement="right" data-bs-dismiss="click" title="Ecommerce">
+                                        <!--begin::Nav link-->
+                                        <a class="position-relative nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('ecommerce_icon') "
+                                           data-bs-toggle="tab" href="#nav_tab_ecommerce">
+                                            <!--begin::Svg Icon | path: icons/duotune/general/gen032.svg-->
+                                            <span class="svg-icon svg-icon-gray-500 svg-icon-3"><svg width="24" height="24"
+                                                                                                     viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path opacity="0.3"
+                                                      d="M18 10V20C18 20.6 18.4 21 19 21C19.6 21 20 20.6 20 20V10H18Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3"
+                                                      d="M11 10V17H6V10H4V20C4 20.6 4.4 21 5 21H12C12.6 21 13 20.6 13 20V10H11Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3"
+                                                      d="M10 10C10 11.1 9.1 12 8 12C6.9 12 6 11.1 6 10H10Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3"
+                                                      d="M18 10C18 11.1 17.1 12 16 12C14.9 12 14 11.1 14 10H18Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3" d="M14 4H10V10H14V4Z" fill="currentColor" />
+                                                <path opacity="0.3" d="M17 4H20L22 10H18L17 4Z" fill="currentColor" />
+                                                <path opacity="0.3" d="M7 4H4L2 10H6L7 4Z" fill="currentColor" />
+                                                <path
+                                                    d="M6 10C6 11.1 5.1 12 4 12C2.9 12 2 11.1 2 10H6ZM10 10C10 11.1 10.9 12 12 12C13.1 12 14 11.1 14 10H10ZM18 10C18 11.1 18.9 12 20 12C21.1 12 22 11.1 22 10H18ZM19 2H5C4.4 2 4 2.4 4 3V4H20V3C20 2.4 19.6 2 19 2ZM12 17C12 16.4 11.6 16 11 16H6C5.4 16 5 16.4 5 17C5 17.6 5.4 18 6 18H11C11.6 18 12 17.6 12 17Z"
+                                                    fill="currentColor" />
+                                            </svg>
+                                        </span>
+                                            <!--end::Svg Icon-->
+                                        </a>
+                                        <!--end::Nav link-->
+                                    </li>
+                                    <!--end::Nav item-->
+                                @endif
                                 <!--begin::Nav item-->
-                                {{-- <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
-                                    data-bs-placement="right" data-bs-dismiss="click" title="POS">
-                                    <!-- begin::Nav link -->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('pos_icon')"
-                                        href="{{ route('pos.selectPos')}}">
-                                        <!-- begin::Fontawesome Icon -->
-                                        <i class="fa-solid fa-cash-register fs-6"></i>
-                                        <!-- end::Fontawesome Icon -->
-                                    </a>
-                                    <!-- end::Nav link -->
-                                </li> --}}
-                                <!--end::Nav item-->
-                                {{-- <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
-                                    data-bs-placement="right" data-bs-dismiss="click" title="Inventory">
-                                    <!-- begin::Nav link -->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('inventory_icon')"
-                                        data-bs-toggle="tab" href="#kt_aside_nav_tab_inventory">
-                                        <!-- begin::Fontawesome Icon -->
-                                        <i class="fa-solid fa-warehouse fs-7"></i>
-                                        <!-- end::Fontawesome Icon -->
-                                    </a>
-                                    <!-- end::Nav link -->
-                                </li> --}}
                                 @if(hasAll('pos'))
                                 <!--begin::Nav item-->
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -1560,7 +1573,35 @@
                                         </div>
                                         <!--end::Wrapper-->
                                     </div>
-                                    <!--end::Tab pane-->
+                                        <!--end::Tab pane-->
+                                    @endif
+                                    @if(hasModule('Ecommerce') && isEnableModule('Ecommerce'))
+                                        <!--begin::Tab pane-->
+                                        <div class="tab-pane fade @yield('ecommerce_show')" id="nav_tab_ecommerce" role="tabpanel">
+                                            <!--begin::Wrapper-->
+                                            <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0" id="kt_aside_menu" data-kt-menu="true">
+                                                <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                                    <div class="menu-item pt-2 ">
+                                                        <!--begin:Menu content-->
+                                                        <div class="menu-content">
+                                                            <span class="menu-heading fw-bold text-uppercase fs-7">Ecommerce</span>
+                                                        </div>
+                                                        <!--end:Menu content-->
+                                                    </div>
+                                                    <!--begin:Menu item-->
+                                                    <div data-kt-menu-trigger="click" class="menu-item  ">
+                                                        <div class="menu-item">
+                                                            <a class="menu-link @yield('configuration_active_show') px-0" href="{{ route('ecommerce.configuration') }}">
+                                                                <span class="menu-title">Configuration</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <!--end:Menu item-->
+                                                </div>
+                                            </div>
+                                            <!--end::Wrapper-->
+                                        </div>
+                                        <!--end::Tab pane-->
                                     @endif
 
                                     <div class="tab-pane fade  @yield('pos_bar_show')" id="kt_aside_nav_tab_pos"
