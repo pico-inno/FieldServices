@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 use App\Models\Contact\Contact;
 use App\Models\locationAddress;
 use App\Models\Product\Product;
+use App\Helpers\generatorHelpers;
 use Illuminate\Support\Facades\DB;
 use App\Models\CurrentStockBalance;
 use App\Models\openingStockDetails;
