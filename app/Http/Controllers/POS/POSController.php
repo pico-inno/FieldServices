@@ -517,7 +517,6 @@ class POSController extends Controller
         $posSession = posRegisterSessions::where('id', $sessionId)->first();
         $saleTransactions = posRegisterTransactions::where('register_session_id', $sessionId)
             ->where('transaction_type', 'sale')
-            ->where('transaction_type', 'sale')
             ->with('sale')
             ->get();
         $paymentTransactions = posRegisterTransactions::where('register_session_id', $sessionId)

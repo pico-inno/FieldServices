@@ -16,6 +16,7 @@ class AllSaleTable extends Component
     public $businesslocationFilterId = 'all';
     public $customerFilterId = 'all';
     public $statusFilter='all';
+    public $paymentStatusFilter='all';
     public $filterDate;
     public $saleType;
 
@@ -38,6 +39,7 @@ class AllSaleTable extends Component
         $customerFilterId=$this->customerFilterId;
         $statusFilter=$this->statusFilter;
         $filterDate=$this->filterDate;
+        $paymentStatusFilter=$this->paymentStatusFilter;
         $accessUserLocation = getUserAccesssLocation();
 
         // permissions
@@ -115,6 +117,9 @@ class AllSaleTable extends Component
                                 ->whereDate('sales.sold_at', '<=', $filterDate[1]);
                     })
 
+                    ->when($paymentStatusFilter != 'all', function ($query) use ($paymentStatusFilter) {
+                        $query->where('sales.payment_status', '=', $paymentStatusFilter);
+                    })
                     ->when($statusFilter != 'all', function ($query) use ($statusFilter) {
                         $query->where('sales.status', '=', $statusFilter);
                     })

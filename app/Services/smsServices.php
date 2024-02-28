@@ -80,7 +80,6 @@ class smsServices
 
 
     public function sendWithTwillio($data){
-        // Your Account SID and Auth Token from console.twilio.com
         $sid =env('TWILIO_SID');
         $token =env('TWILIO_AUTH_TOKEN');
         $client = new Client($sid, $token);

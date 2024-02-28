@@ -142,6 +142,9 @@
                                         <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-150px">Purchase Price</th>
                                         <th class="min-w-150px">Subtotal</th>
+                                        @if ($lotControl=='on')
+                                        <th class="min-w-150px">Lot Number</th>
+                                        @endif
                                         <th class="min-w-200px">EXP Date</th>
                                         <th class="min-w-250px">Remark</th>
                                         <th class="text-center">
@@ -211,7 +214,7 @@
         });
     });
 
-
+    var lotControl="{{$lotControl ?? 'off'}}";
 
     </script>
     @include('App.openingStock.JS.openingStockJs')

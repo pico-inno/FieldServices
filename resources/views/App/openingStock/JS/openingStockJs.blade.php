@@ -210,6 +210,11 @@ $(document).ready(function() {
                 `;
             })
         }
+        let lotSerialInput=lotControl == 'on' ?
+            `<td>
+                <input type="text" class="form-control   form-control-sm " name="opening_stock_details[${unique_name_id}][lot_serial_no]" id="numberonly"  value="" placeholder="lot number">
+            </td>`
+            :'';
         let newRow = `<tr class='cal-gp'>
             <td class="d-none">
                 <a href='' class='text-gray-800 text-hover-primary mb-1'>${unique_name_id}</a>
@@ -250,6 +255,7 @@ $(document).ready(function() {
             <td>
                 <input type="text" class="form-control sum subtotal  form-control-sm input_number text-dark" name="opening_stock_details[${unique_name_id}][subtotal]" id="numberonly"  value="${default_purchase_price ?? 0}" >
             </td>
+            ${lotSerialInput}
             <td>
                 <div class="input-group">
                     <span class="input-group-text" data-td-target="#kt_datepicker_1"  data-kt-repeater="datepicker">

@@ -102,6 +102,18 @@
                                 <option value="delivered">delivered</option>
                             </select>
                         </div>
+
+                        <div class="mb-5 col-4 col-sm12 col-md-3 ">
+                            <label class="form-label fs-7 fw-semibold">Payment Status Filter:</label>
+                            <select wire:model.change='paymentStatusFilter' id="paymentStatusFilter" class="form-select form-select-sm   fw-bold"
+                                data-placeholder="Select option"  data-filter="paymentStatusFilter"
+                                data-hide-search="true">
+                                <option value="all" selected>All</option>
+                                <option value="due" selected>Due</option>
+                                <option value="partial">Partial</option>
+                                <option value="paid">Paid</option>
+                            </select>
+                        </div>
                         <!--end::Input group-->
                         <!--begin::Input group-->
                         <div class="mb-10 col-4 col-sm12 col-md-3 ">
@@ -432,6 +444,10 @@
 
          $('#statusFilter').select2().on('select2:select', function (e) {
             @this.set('statusFilter', $('#statusFilter').select2("val"));
+        });
+
+        $('#paymentStatusFilter').select2().on('select2:select', function (e) {
+            @this.set('paymentStatusFilter', $('#paymentStatusFilter').select2("val"));
         });
 
         // cb(start, end);

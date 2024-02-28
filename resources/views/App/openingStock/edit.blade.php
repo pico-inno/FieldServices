@@ -136,6 +136,9 @@
                                         <th class="min-w-125px">{{__('product/product.package')}}</th>
                                         <th class="min-w-150px">Purchase Price</th>
                                         <th class="min-w-150px">Subtotal</th>
+                                        @if ($lotControl=='on')
+                                        <th class="min-w-150px">Lot Number</th>
+                                        @endif
                                         <th class="min-w-200px">EXP Date</th>
                                         <th class="min-w-250px">Remark</th>
                                         <th class="text-center">
@@ -225,11 +228,14 @@
                                                             <input type="text" class="form-control sum subtotal  form-control-sm input_number text-dark" name="opening_stock_details[{{$key}}][subtotal]" id="numberonly"  value="{{round($osd->subtotal,2)}}" >
                                                         </td>
                                                         <td>
+                                                            <input type="text" class="form-control   form-control-sm " name="opening_stock_details[{{$key}}][lot_serial_no]" id="numberonly"  value="{{$osd->lot_serial_no}}" placeholder="lot number">
+                                                        </td>
+                                                        <td>
                                                             <div class="input-group">
                                                                 <span class="input-group-text" data-td-target="#kt_datepicker_1"  data-kt-repeater="datepicker">
                                                                     <i class="fas fa-calendar"></i>
                                                                 </span>
-                                                                <input class="form-control form-control-sm" name="opening_stock_details[{{$key}}][expired_date]" class="exp_date" placeholder="Pick a date"  data-allow-clear="true" data-kt-repeater="datepicker" value="" />
+                                                                <input class="form-control form-control-sm" name="opening_stock_details[{{$key}}][expired_date]" class="exp_date" placeholder="Pick a date"  data-allow-clear="true" data-kt-repeater="datepicker" value="{{$osd->expired_date}}" />
                                                             </div>
                                                         </td>
                                                         <td>

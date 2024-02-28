@@ -37,6 +37,9 @@ class openingStockDetails extends Model
         'is_delete',
         'deleted_at',
         'deleted_by',
+
+        'expired_date',
+        'lot_serial_no',
     ];
     public function product(): HasOne
     {

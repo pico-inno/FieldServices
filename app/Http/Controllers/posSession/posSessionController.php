@@ -54,11 +54,12 @@ class posSessionController extends Controller
 
     public function sessionStore($posRegisteredId,Request $request){
         $statusCheck=posRegisterSessions::where('pos_register_id',$posRegisteredId)->where('status','open')->exists();
+
         try {
             DB::beginTransaction();
             if($statusCheck==false){
 
-                if(getSettingsValue('use_paymentAccount')){
+                if(getSettingsValue('use_paymentAccount') && $request->tx_account && $request->rx_account){
                     // transfer_account
                     $tx=paymentAccounts::where('id',$request->tx_account);
                     $tx_acc=$tx->first();

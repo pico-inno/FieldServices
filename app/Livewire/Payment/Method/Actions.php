@@ -57,6 +57,6 @@ class Actions extends Component
     }
     public function render()
     {
-        return view('livewire.payment.method.actions');
+        return view('livewire.payment.method.Actions');
     }
 }

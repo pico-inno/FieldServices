@@ -75,7 +75,6 @@ $(document).ready(function () {
                             });
                     }
                     else {
-
                         $('#credit_limit_message').addClass('d-none');
                         if (validator) {
                             validator.validate().then(function (status) {
@@ -119,6 +118,18 @@ $(document).ready(function () {
         saleValidator.init();
     });
 
+    $('#sale_form').submit(function() {
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true); // Disables the button
 
+        $('[data-kt-sale-action="submit"]').prop('disabled', true);
+
+        // You can also add a visual indicator that the form is being submitted,
+        // for example, changing the button text to "Submitting...".
+        submitButton.html('Submitting...');
+
+        // Ensure form submission continues after button disabling
+        return true;
+    });
 
 })

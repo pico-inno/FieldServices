@@ -933,7 +933,7 @@
                                                         <span class="required" >{{__('business_settings.default_credit_limit')}}</span>
                                                     </label>
                                                     <!--end::Label-->
-                                                      <input type="text" class="form-control form-control-sm" id="default_credit_limit" placeholder="Default credit limit">
+                                                      <input type="text" class="form-control form-control-sm" id="default_credit_limit" name="default_credit_limit" placeholder="Default credit limit">
                                                 </div>
                                                 <div class="col-md-12 mb-7 col-lg-4">
                                                     <!--begin::Label-->

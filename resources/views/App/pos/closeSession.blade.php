@@ -1,3 +1,4 @@
+
 <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
             <div class="modal-header">
@@ -5,8 +6,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <div class="modal-body">
-                    <div class="col-12">
+            <div class="modal-body" id="contentForPrint">
+                    <div class="col-12" id="content">
                         <table class="table  table-layout-fixed  table-row-bordered">
                                 <tbody class="">
                                         @php
@@ -18,7 +19,9 @@
                                             $totalSaleAmount=0;
                                         @endphp
                                         @foreach ($saleTransactions as $transaction)
+
                                             @php
+                                            // dd($transaction->sale->balance_amount);
                                                 if(in_array($transaction->sale->id,$transactionIds)){
                                                     continue;
                                                 }
@@ -209,8 +212,49 @@
                     <input type="hidden" name="posRegisterId" value="{{$posRegister->id}}">
                     <input type="hidden" name="closeAmount" value="{{$finalAmount}}">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancle</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Close Session</button>
+                    <button type="button" id="print" class="btn btn-primary btn-sm">Print</button>
+                    <button type="button" class="btn btn-danger btn-sm" id="closeSession">Close Session</button>
             </div>
         </form>
     </div>
 </div>
+<script>
+    (()=>{
+        $(document).on('click','#closeSession',function(){
+            Swal.fire({
+                title:'are you sure to close',
+            })
+        })
+        $('#print').on('click',function(){
+            loadingOn();
+            var iframe = $('<iframe>', {
+                'height': '0px',
+                'width': '0px',
+                'frameborder': '0',
+                'css': {
+                    'display': 'none'
+                }
+            }).appendTo('body')[0];
+            // Write the invoice HTML and styles to the iframe document
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            let htmlForPrint=`
+                    <style>
+                        #contentForPrint{
+                            margin:100px;
+                        }
+                    </style>
+                    <link href={{asset("assets/css/style.bundle.css")}} rel="stylesheet" type="text/css" />`;
+            iframeDoc.write(htmlForPrint+document.getElementById('contentForPrint').innerHTML);
+            iframeDoc.close();
+
+            // Trigger the print dialog
+            iframe.contentWindow.focus();
+            loadingOff();
+            setTimeout(() => {
+                iframe.contentWindow.print();
+            }, 500);
+        })
+
+    })();
+</script>

@@ -99,16 +99,15 @@ class openingStockController extends Controller
 
         $locations = LocationRepository::getTransactionLocation();
 
-
+        $lotControl=getSettingValue('lot_control');
         return view('App.openingStock.add', [
             'stockin_persons' => $stockin_persons,
             'locations' => $locations,
+            'lotControl'=>$lotControl,
         ]);
     }
     public function store(Request $request)
     {
-
-
         try {
             DB::beginTransaction();
             $opening_stock_details=$request->opening_stock_details;
@@ -174,6 +173,7 @@ class openingStockController extends Controller
         try {
             $locations = LocationRepository::getTransactionLocation();
             $openingStock = openingStocks::where('id', $id)->first();
+            $lotControl=getSettingValue('lot_control');
             $voucherLocation = $openingStock->business_location_id;
             checkLocationAccessForTx($voucherLocation);
             $openingStockDetailsChunks = openingStockDetails::with([
@@ -188,7 +188,7 @@ class openingStockController extends Controller
                     );
                 }, 'product', 'packagingTx'
             ])->where('opening_stock_id', $id)->where('is_delete', 0)->get()->chunk(200);
-            return view('App.openingStock.edit', compact('openingStock', 'locations',  'openingStockDetailsChunks'));
+            return view('App.openingStock.edit', compact('openingStock', 'locations', 'lotControl', 'openingStockDetailsChunks'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -219,6 +219,7 @@ class openingStockController extends Controller
                 $old_opening_stock_details_ids = array_column($old_opening_stock_details, 'opening_stock_detail_id');
                 // update purchase detail's data and related current stock
                 foreach ($old_opening_stock_details as $osd) {
+                    // dd($osd);
                     $opening_stock_detail_id = $osd['opening_stock_detail_id'];
 
                     $updateOpeningStockData=$this->dataForOpeningStockDetails($osd);
@@ -248,6 +249,9 @@ class openingStockController extends Controller
                         "created_at" => $request['opening_date'],
                     ]);
                     $currentStock->update([
+
+                        'lot_serial_no'=>$updateOpeningStockData['lot_serial_no'] ?? generatorHelpers::generateLotSerialNo(),
+                        'expired_date'=>$updateOpeningStockData['expired_date'] ?? null,
                         "ref_uom_id" => $refUnitId,
                         "business_location_id" => $request->business_location_id,
                         "ref_uom_quantity" => $requestQty,
@@ -346,6 +350,8 @@ class openingStockController extends Controller
             'subtotal' => $detail['subtotal'],
             'ref_uom_id' =>  $referencteUom['referenceUomId'],
             'ref_uom_price' => $per_ref_uom_price,
+            'lot_serial_no'=>$detail['lot_serial_no'] ?? generatorHelpers::generateLotSerialNo(),
+            'expired_date'=>$detail['expired_date'] ?? null,
             'remark' => $detail['remark']
         ];
     }
@@ -503,14 +509,14 @@ class openingStockController extends Controller
             'ref_uom_id' => $refUomId,
             'created_at'=>$openingStock['opening_date'],
         ]);
-        $lotNumber=generatorHelpers::generateLotSerialNo();
         return [
             "business_location_id" => $openingStock->business_location_id,
             "product_id" => $opening_stock_detail->product_id,
             "variation_id" => $opening_stock_detail->variation_id,
             "transaction_type" => $type,
             "transaction_detail_id" => $opening_stock_detail->id,
-            "lot_serial_numbers" =>$lotNumber,
+            "lot_serial_no" =>$opening_stock_detail->lot_serial_no,
+            "expired_date" =>$opening_stock_detail->expired_date,
             "ref_uom_id" => $opening_stock_detail->ref_uom_id,
             "ref_uom_quantity" => $smallestQty,
             "ref_uom_price" => $opening_stock_detail->ref_uom_price,

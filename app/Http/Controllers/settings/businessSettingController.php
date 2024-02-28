@@ -36,6 +36,7 @@ class businessSettingController extends Controller
         $data = [
             'name' => $request->name,
             'lot_control' => $request->lot_control ? 1 : 0,
+            'default_credit_limit'=>$request->default_credit_limit ?? 0,
             'currency_id' => $request->currency_id,
             'currency_decimal_places' => $request->currency_decimal_places,
             'quantity_decimal_places' => $request->quantity_decimal_places,

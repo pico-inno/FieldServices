@@ -15,6 +15,7 @@ class openingStocks extends Model
     protected $fillable = [
         'business_location_id',
         'opening_stock_voucher_no',
+        'expired_date',
         'opening_date',
         'opening_person',
         'status',
