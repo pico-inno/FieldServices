@@ -1,5 +1,5 @@
 
-@if (count($locations ?? []) > 0)
+@if (is_array($locations))
 
     @foreach ($locations as $location)
 
