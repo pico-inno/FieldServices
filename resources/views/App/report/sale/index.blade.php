@@ -186,6 +186,7 @@
                                 <th class="min-w-100px">{{__('report.voucher_no')}}</th>
                                 <th class="min-w-100px">{{__('report.customer')}}</th>
                                 <th class="min-w-100px">{{__('report.sale_amount')}}</th>
+                                <th class="min-w-100px">Paid Amount</th>
                                 <th class="min-w-100px">{{__('report.locations')}}</th>
                                 <th class="min-w-100px">{{__('report.status')}}</th>
                             </tr>

@@ -69,6 +69,7 @@
                     results.forEach(function(item) {
 
                         var rowData = [
+                            item.purchase_data.purchased_at ?? '',
                             item.name ?? '',
                             item.sku ?? '',
                             item.location_name ?? '-',
