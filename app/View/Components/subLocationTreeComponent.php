@@ -14,7 +14,7 @@ class subLocationTreeComponent extends Component
      */
     public $locationId;
     public $level;
-    public $Locations;
+    public $locations;
     public $color=[
         'primary',
         'dark',
