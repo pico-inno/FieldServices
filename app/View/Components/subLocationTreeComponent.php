@@ -11,7 +11,6 @@ class SubLocationTreeComponent extends Component
     public $level;
     public $locations;
     public $mainColor;
-
     public function __construct($location, $level = 1)
     {
         $this->locationId = $location['id'];
