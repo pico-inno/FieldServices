@@ -442,7 +442,7 @@
             @this.set('customerFilterId', $('#customerFilter').select2("val"));
         });
 
-         $('#statusFilter').select2().on('select2:select', function (e) {
+        $('#statusFilter').select2().on('select2:select', function (e) {
             @this.set('statusFilter', $('#statusFilter').select2("val"));
         });
 

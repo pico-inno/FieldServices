@@ -3,9 +3,10 @@
 namespace App\Livewire\Payment\Method;
 
 use Livewire\Component;
+use Livewire\Attributes\On;
+use App\Models\paymentMethods;
 use App\Models\paymentAccounts;
 use App\Actions\paymentMethods\paymentMethodActions;
-use App\Models\paymentMethods;
 
 class Actions extends Component
 {
@@ -58,5 +59,29 @@ class Actions extends Component
     public function render()
     {
         return view('livewire.payment.method.Actions');
+    }
+
+    public function confirmDelete($itemId)
+    {
+        // Show the SweetAlert confirmation modal
+        $this->dispatch('swal-confirm', [
+            'type' => 'warning',
+            'title' => 'Are you sure?',
+            'text' => 'You won\'t be able to revert this!',
+            'itemId' => $itemId, // Pass any data you need to handle the deletion
+        ]);
+    }
+
+    #[On('delete')]
+    public function delete($id){
+        try {
+            if(paymentMethods::where('id',$id)->exists()){
+                paymentMethods::where('id',$id)->first()->delete();
+                $this->dispatch('pm-updated-success');
+            }
+        } catch (\Throwable $th) {
+
+            $this->dispatch('pm-updated-fail',message:'Something Wrong');
+        }
     }
 }

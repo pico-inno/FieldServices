@@ -11,7 +11,11 @@
                 <button class="dropdown-item p-2 " type="button"  data-bs-toggle="modal" data-bs-target="#kt_edit_modal_{{$id}}">
                     Edit
                 </button>
-                <button class="dropdown-item p-2 " type="button"  data-bs-toggle="modal" data-bs-target="#delete_confirm_modal_{{$id}}">
+                <button class="dropdown-item p-2 " type="button" wire:key="pmad-{{ $id }}"
+                id="delete_confirm_modal_{{$id}}" data-id="{{$id}}"
+                {{-- wire:click="delete({{ $id }})" --}}
+                {{-- wire:click="confirmDelete({{ $id }})" --}}
+                >
                     Delete
                 </button>
             </ul>
@@ -99,6 +103,50 @@
 
 @script
 <script>
+
+$wire.on('swal-confirm', function (data) {
+        Swal.fire({
+            title:'Are You Sure To Delete',
+            icon: "question",
+            buttonsStyling: false,
+            showCancelButton: true,
+            confirmButtonText: "Sure,Delete",
+            cancelButtonText: 'Nope, cancel it',
+            customClass: {
+                confirmButton: "btn btn-primary",
+                cancelButton: 'btn btn-danger'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $wire.dispatch('delete',{'id': data[0].itemId});
+            }
+        });
+    });
+
+    $('#delete_confirm_modal_{{$id}}').on('click',function(){
+        Swal.fire({
+            title:'Are You Sure To Delete',
+            icon: "question",
+            buttonsStyling: false,
+            showCancelButton: true,
+            confirmButtonText: "Sure,Delete",
+            cancelButtonText: 'Nope, cancel it',
+            customClass: {
+                confirmButton: "btn btn-primary",
+                cancelButton: 'btn btn-danger'
+            }
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                // alert($(this).data('id'));
+                $wire.dispatch('delete',{'id':$(this).data('id')});
+                // Swal.fire("Saved!", "", "success");
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+    })
+
     let element = document.getElementById(`kt_edit_modal_{{$id}}`);
     let modal = new bootstrap.Modal(element);
 
