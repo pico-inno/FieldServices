@@ -1019,6 +1019,8 @@ Route::controller(POSController::class)->group(function () {
 
     Route::get('/pos/{id}/recent/sale/', 'recentSale')->name('pos.recentSale');
     Route::get('/pos/{posRegisterId}/close/', 'closeSession')->name('pos.closeSession');
+    Route::get('/pos/{posRegisterId}/print/', 'printCloseSession')->name('pos.printCloseSession');
+
     // product
     Route::get('/pos/product-variations', 'productVariationsGet')->name('pos.product-variations');
 

@@ -532,6 +532,29 @@ class POSController extends Controller
         // dd($sumAmountOnPaymentAcc->toArray());
         return view('App.pos.closeSession', compact('posRegister', 'posSession', 'saleTransactions', 'paymentTransactions', 'sumAmountOnPaymentAcc'));
     }
+    public function printCloseSession($posRegisterId){
+        $posRegister = posRegisters::where('id', $posRegisterId)->first();
+        $sessionId = request('sessionId');
+        $posSession = posRegisterSessions::where('id', $sessionId)->first();
+        $saleTransactions = posRegisterTransactions::where('register_session_id', $sessionId)
+            ->where('transaction_type', 'sale')
+            ->with('sale')
+            ->get();
+        $paymentTransactions = posRegisterTransactions::where('register_session_id', $sessionId)
+            ->whereNotNull('payment_transaction_id')
+            ->with('paymentTransaction')
+            ->get();
+
+        $sumAmountOnPaymentAcc = posRegisterTransactions::select('payment_account_id', DB::raw('SUM(transaction_amount) as total_amount'))
+            ->where('register_session_id', $sessionId)
+            ->with('paymentAccount')
+            ->groupBy('payment_account_id', 'currency_id')
+            ->get();
+        // dd($sumAmountOnPaymentAcc->toArray());
+            $html = view('App.pos.PrintCloseSession', compact('posRegister', 'posSession', 'saleTransactions', 'paymentTransactions', 'sumAmountOnPaymentAcc'))->render();
+
+            return response()->json(['html' => mb_convert_encoding($html, 'UTF-8', 'UTF-8')]);
+    }
 
 
 

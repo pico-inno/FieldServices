@@ -212,7 +212,10 @@
                     <input type="hidden" name="posRegisterId" value="{{$posRegister->id}}">
                     <input type="hidden" name="closeAmount" value="{{$finalAmount}}">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancle</button>
-                    <button type="button" id="print" class="btn btn-primary btn-sm">Print</button>
+                    <button type="button" id="print-session-invoice" class="btn btn-primary btn-sm" data-href="{{route('pos.printCloseSession',[
+                        'posRegisterId'=>$posRegister->id,
+                        'sessionId'=>request('sessionId')
+                        ])}}">Print</button>
                     <button type="button" class="btn btn-danger btn-sm" id="closeSession">Close Session</button>
             </div>
         </form>
@@ -220,6 +223,13 @@
 </div>
 <script>
     (()=>{
+
+        $(document).on('click', '#print-session-invoice', function(e) {
+            e.preventDefault();
+            loadingOn();
+            let url = $(this).data('href');
+            ajaxPrint(url, 3);
+        });
         $(document).on('click','#closeSession',function(){
             Swal.fire({
                 title:'are you sure to close',
