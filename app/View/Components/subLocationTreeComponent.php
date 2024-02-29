@@ -35,7 +35,7 @@ class subLocationTreeComponent extends Component
     {
 
         $locations=businessLocation::select('id','name')
-                            ->where('parent_location_id',$this->locationId)->get();
+                            ->where('parent_location_id',$this->locationId)->get()->toArray();
         $this->locations=$locations;
         $mainColor=$this->color[$this->level] ?? 'success';
          $level=$this->level;
