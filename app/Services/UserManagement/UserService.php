@@ -12,7 +12,10 @@ class UserService
 {
     public static function getUsers($id = null)
     {
-        $businessUserRepository = new BusinessUserRepository;
+        $businessUser = new BusinessUser;
+        $personalInfo = new PersonalInfo;
+
+        $businessUserRepository = new BusinessUserRepository($businessUser, $personalInfo);
 
         $query = $businessUserRepository->query()->with('personal_info', 'role');
 

@@ -48,5 +48,7 @@ class RoleService
 
             dispatch(new RolePermissionJob($role_id, $permissions));
 
+            return $role;
+
     }
 }

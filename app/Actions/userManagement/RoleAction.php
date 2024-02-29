@@ -15,7 +15,7 @@ class RoleAction
 
     public function update($role_id, $role_name, $permissions)
     {
-        dispatch(new RolePermissionUpdateJob($role_id, $role_name, $permissions));
+       return dispatch(new RolePermissionUpdateJob($role_id, $role_name, $permissions));
     }
 
     public function delete($role_id)
