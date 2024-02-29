@@ -26,6 +26,9 @@ class subLocationTreeComponent extends Component
     {
         $this->locationId=$location['id'];
         $this->level=$level<4 ? $level :1;
+        $this->locations=businessLocation::select('id','name')
+                            ->where('parent_location_id',$this->locationId)->get()->toArray();
+
     }
 
     /**
@@ -33,10 +36,7 @@ class subLocationTreeComponent extends Component
      */
     public function render(): View|Closure|string
     {
-
-        $locations=businessLocation::select('id','name')
-                            ->where('parent_location_id',$this->locationId)->get()->toArray();
-        $this->locations=$locations;
+        $locations=$this->locations;
         $mainColor=$this->color[$this->level] ?? 'success';
          $level=$this->level;
         return view('components.subLocationTreeComponent',compact('locations','mainColor','level'));

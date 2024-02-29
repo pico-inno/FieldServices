@@ -1,5 +1,5 @@
 
-{{-- @if (count($locations ?? []) > 0) --}}
+@if (count($locations ?? []) > 0)
 
     @foreach ($locations as $location)
 
@@ -12,4 +12,4 @@
 
 
     @endforeach
-{{-- @endif --}}
+@endif
