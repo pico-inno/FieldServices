@@ -63,12 +63,14 @@
                     dataTable.clear();
 
                     results.forEach(function(item) {
+                        console.log(item)
                         var statusClass = getStatusClass(item.status);
                         var rowData = [
                             item.sold_at ?? '',
                             item.sales_voucher_no ?? '',
                             item.customer.first_name ?? '',
                             item.sale_amount ?? '',
+                            item.paid_amount ?? '',
                             item.business_location_id.name ?? '',
                             '<span class="badge badge-light-' + statusClass + '">' + item.status + '</span>',
 

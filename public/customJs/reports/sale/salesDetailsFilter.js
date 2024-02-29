@@ -67,8 +67,9 @@
                     dataTable.clear();
 
                     results.forEach(function(item) {
-
+                        console.log(item);
                         var rowData = [
+                            item.sale_data.sold_at ?? '',
                             item.name ?? '',
                             item.sku ?? '',
                             item.sale_data.business_location_id.name ?? '-',

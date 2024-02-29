@@ -106,6 +106,7 @@
                             Number(item.purchase_qty).toFixed(2)+' '+short_name,
                             `<span class="fw-bold text-dark">${Number(item.current_qty).toFixed(2)+' '+short_name}</span>`,
                             long_name,
+                            item.expire_date,
                         ];
                         // if (filterViewVal == 3) {
                         //     rowData.splice(3, 0, item.lot_no);

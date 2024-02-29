@@ -213,7 +213,7 @@
 
 
                 <!--begin::Card body-->
-                <div class="card-body pt-0">
+                <div class="card-body pt-0 table-responsive">
                     <!--begin::Table-->
                     <table class="table align-middle table-row-dashed fs-6 gy-3" id="current_stock_balance_reports_table">
                         <!--begin::Table head-->
@@ -237,7 +237,7 @@
                                   {{__('report.current_qty')}}
                             </th>
                             <th class="view-type min-w-100px">{{__('product/unit-and-uom.uom')}}</th>
-
+                            <th class="min-w-100px">Expire Date</th>
                         </tr>
                         <!--end::Table row-->
                         </thead>

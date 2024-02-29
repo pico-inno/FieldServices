@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\ApiHelper;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,10 @@ class DeletePermission
         if (hasDelete($feature)){
             return $next($request);
         }else{
-            return abort(401);
+            if (ApiHelper::isApiRequest($request)) {
+                return ApiHelper::permissionDenied('You do not have permission to access this resource.');
+            }
+            return abort(403);
         }
     }
 }
