@@ -202,7 +202,7 @@
 
             </div>
 
-        <form action="{{route('pos.sessionDestory',$posSession->id)}}" method="POST">
+        <form action="{{route('pos.sessionDestory',$posSession->id)}}" method="POST" id="sessionCloseForm">
             <div class="col-12 p-5">
                 <label for="" class="text-gray-700 mb-2  form-label">Closing Note</label>
                 <textarea name="closing_note" id="" cols="30" rows="2" class="form-control form-control-sm"></textarea>
@@ -232,8 +232,33 @@
         });
         $(document).on('click','#closeSession',function(){
             Swal.fire({
-                title:'are you sure to close',
-            })
+                    text: "Are you sure you want to close session?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    buttonsStyling: false,
+                    confirmButtonText: "Yes, Close!",
+                    cancelButtonText: "No, cancel",
+                    customClass: {
+                        confirmButton: "btn fw-bold btn-danger",
+                        cancelButton: "btn fw-bold btn-active-light-primary"
+                    }
+                }).then(function (result) {
+                    if (result.value) {
+                        $('#sessionCloseForm').submit();
+                    } else if (result.dismiss === 'cancel') {
+                        Swal.fire({
+                            text: "Session do not close.",
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn fw-bold btn-primary",
+                            }
+                        });
+
+                    }
+
+                });
         })
         $('#print').on('click',function(){
             loadingOn();

@@ -1,5 +1,5 @@
 
-@if (is_array($locations) && isset($locations))
+@if (isset($locations) && is_array($locations))
     @foreach ($locations as $location)
 
         <ul>
