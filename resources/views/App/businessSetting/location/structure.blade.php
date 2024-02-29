@@ -34,7 +34,7 @@
                     <ul>
                         <li data-jstree='{ "icon" : "ki-solid ki-geolocation text-primary fs-4","opened" : true }'>
                             {{$location->name}}
-                            <x-sub-location-tree-component :location="$location" level='1' />
+                            <x-subLocationTreeComponent :location="$location" level='1' />
                             {{-- <ul>
                                 <li data-jstree='{ "icon" : "ki-outline ki-geolocation text-success fs-4" }' class="mt-3">
                                     Location 3

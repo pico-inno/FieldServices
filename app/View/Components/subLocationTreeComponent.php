@@ -39,6 +39,6 @@ class subLocationTreeComponent extends Component
         $this->locations=$locations;
         $mainColor=$this->color[$this->level] ?? 'success';
          $level=$this->level;
-        return view('components.sub-location-tree-component',compact('locations','mainColor','level'));
+        return view('components.subLocationTreeComponent',compact('locations','mainColor','level'));
     }
 }
