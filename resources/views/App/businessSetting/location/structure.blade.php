@@ -34,7 +34,18 @@
                     <ul>
                         <li data-jstree='{ "icon" : "ki-solid ki-geolocation text-primary fs-4","opened" : true }'>
                             {{$location->name}}
-                            <x-sub-location-tree-component :location="$location" level='1' />
+                            @php
+                                $subLocations = App\Models\settings\businessLocation::select('id', 'name')
+                                    ->where('parent_location_id', $location['id'])
+                                    ->get()
+                                    ->toArray();
+                            @endphp
+                            @if ($subLocations)
+                                @foreach ($subLocations as $index=>$subLocation)
+                                    <livewire:location.sub-location-component :location="$subLocation" :level='$index' />
+                                @endforeach
+
+                            @endif
                             {{-- <ul>
                                 <li data-jstree='{ "icon" : "ki-outline ki-geolocation text-success fs-4" }' class="mt-3">
                                     Location 3
