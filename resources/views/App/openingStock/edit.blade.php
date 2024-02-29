@@ -227,9 +227,12 @@
                                                         <td>
                                                             <input type="text" class="form-control sum subtotal  form-control-sm input_number text-dark" name="opening_stock_details[{{$key}}][subtotal]" id="numberonly"  value="{{round($osd->subtotal,2)}}" >
                                                         </td>
+
+                                                        @if ($lotControl=='on')
                                                         <td>
                                                             <input type="text" class="form-control   form-control-sm " name="opening_stock_details[{{$key}}][lot_serial_no]" id="numberonly"  value="{{$osd->lot_serial_no}}" placeholder="lot number">
                                                         </td>
+                                                        @endif
                                                         <td>
                                                             <div class="input-group">
                                                                 <span class="input-group-text" data-td-target="#kt_datepicker_1"  data-kt-repeater="datepicker">

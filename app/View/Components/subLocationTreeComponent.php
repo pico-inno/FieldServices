@@ -14,6 +14,7 @@ class subLocationTreeComponent extends Component
      */
     public $locationId;
     public $level;
+    public $Locations;
     public $color=[
         'primary',
         'dark',
@@ -35,8 +36,9 @@ class subLocationTreeComponent extends Component
 
         $locations=businessLocation::select('id','name')
                             ->where('parent_location_id',$this->locationId)->get();
+        $this->locations=$locations;
         $mainColor=$this->color[$this->level] ?? 'success';
-    $level=$this->level;
+         $level=$this->level;
         return view('components.sub-location-tree-component',compact('locations','mainColor','level'));
     }
 }
