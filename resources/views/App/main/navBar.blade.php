@@ -229,30 +229,43 @@
                                 </li>
                                 <!--end::Nav item-->
                                 @endif
+
+                                @if(hasModule('Ecommerce') && isEnableModule('Ecommerce'))
+                                    <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                        data-bs-placement="right" data-bs-dismiss="click" title="Ecommerce">
+                                        <!--begin::Nav link-->
+                                        <a class="position-relative nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('ecommerce_icon') "
+                                           data-bs-toggle="tab" href="#nav_tab_ecommerce">
+                                            <!--begin::Svg Icon | path: icons/duotune/general/gen032.svg-->
+                                            <span class="svg-icon svg-icon-gray-500 svg-icon-3"><svg width="24" height="24"
+                                                                                                     viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path opacity="0.3"
+                                                      d="M18 10V20C18 20.6 18.4 21 19 21C19.6 21 20 20.6 20 20V10H18Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3"
+                                                      d="M11 10V17H6V10H4V20C4 20.6 4.4 21 5 21H12C12.6 21 13 20.6 13 20V10H11Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3"
+                                                      d="M10 10C10 11.1 9.1 12 8 12C6.9 12 6 11.1 6 10H10Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3"
+                                                      d="M18 10C18 11.1 17.1 12 16 12C14.9 12 14 11.1 14 10H18Z"
+                                                      fill="currentColor" />
+                                                <path opacity="0.3" d="M14 4H10V10H14V4Z" fill="currentColor" />
+                                                <path opacity="0.3" d="M17 4H20L22 10H18L17 4Z" fill="currentColor" />
+                                                <path opacity="0.3" d="M7 4H4L2 10H6L7 4Z" fill="currentColor" />
+                                                <path
+                                                    d="M6 10C6 11.1 5.1 12 4 12C2.9 12 2 11.1 2 10H6ZM10 10C10 11.1 10.9 12 12 12C13.1 12 14 11.1 14 10H10ZM18 10C18 11.1 18.9 12 20 12C21.1 12 22 11.1 22 10H18ZM19 2H5C4.4 2 4 2.4 4 3V4H20V3C20 2.4 19.6 2 19 2ZM12 17C12 16.4 11.6 16 11 16H6C5.4 16 5 16.4 5 17C5 17.6 5.4 18 6 18H11C11.6 18 12 17.6 12 17Z"
+                                                    fill="currentColor" />
+                                            </svg>
+                                        </span>
+                                            <!--end::Svg Icon-->
+                                        </a>
+                                        <!--end::Nav link-->
+                                    </li>
+                                    <!--end::Nav item-->
+                                @endif
                                 <!--begin::Nav item-->
-                                {{-- <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
-                                    data-bs-placement="right" data-bs-dismiss="click" title="POS">
-                                    <!-- begin::Nav link -->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('pos_icon')"
-                                        href="{{ route('pos.selectPos')}}">
-                                        <!-- begin::Fontawesome Icon -->
-                                        <i class="fa-solid fa-cash-register fs-6"></i>
-                                        <!-- end::Fontawesome Icon -->
-                                    </a>
-                                    <!-- end::Nav link -->
-                                </li> --}}
-                                <!--end::Nav item-->
-                                {{-- <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
-                                    data-bs-placement="right" data-bs-dismiss="click" title="Inventory">
-                                    <!-- begin::Nav link -->
-                                    <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-500 btn-active-light @yield('inventory_icon')"
-                                        data-bs-toggle="tab" href="#kt_aside_nav_tab_inventory">
-                                        <!-- begin::Fontawesome Icon -->
-                                        <i class="fa-solid fa-warehouse fs-7"></i>
-                                        <!-- end::Fontawesome Icon -->
-                                    </a>
-                                    <!-- end::Nav link -->
-                                </li> --}}
                                 @if(hasAll('pos'))
                                 <!--begin::Nav item-->
                                 <li class="nav-item mb-2" data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -1560,7 +1573,35 @@
                                         </div>
                                         <!--end::Wrapper-->
                                     </div>
-                                    <!--end::Tab pane-->
+                                        <!--end::Tab pane-->
+                                    @endif
+                                    @if(hasModule('Ecommerce') && isEnableModule('Ecommerce'))
+                                        <!--begin::Tab pane-->
+                                        <div class="tab-pane fade @yield('ecommerce_show')" id="nav_tab_ecommerce" role="tabpanel">
+                                            <!--begin::Wrapper-->
+                                            <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-semibold fs-5 ps-6 pe-8 my-2 my-lg-0" id="kt_aside_menu" data-kt-menu="true">
+                                                <div id="kt_aside_menu_wrapper" class="menu-fit">
+                                                    <div class="menu-item pt-2 ">
+                                                        <!--begin:Menu content-->
+                                                        <div class="menu-content">
+                                                            <span class="menu-heading fw-bold text-uppercase fs-7">Ecommerce</span>
+                                                        </div>
+                                                        <!--end:Menu content-->
+                                                    </div>
+                                                    <!--begin:Menu item-->
+                                                    <div data-kt-menu-trigger="click" class="menu-item  ">
+                                                        <div class="menu-item">
+                                                            <a class="menu-link @yield('configuration_active_show') px-0" href="{{ route('ecommerce.configuration') }}">
+                                                                <span class="menu-title">Configuration</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <!--end:Menu item-->
+                                                </div>
+                                            </div>
+                                            <!--end::Wrapper-->
+                                        </div>
+                                        <!--end::Tab pane-->
                                     @endif
 
                                     <div class="tab-pane fade  @yield('pos_bar_show')" id="kt_aside_nav_tab_pos"
@@ -2719,16 +2760,36 @@
                                             <a class="menu-link @yield('activity_logs_list_active')"
                                                href="{{route('index.logs')}}">
                                                 <span class="menu-icon">
-<!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/keenthemes/metronic/docs/core/html/src/media/icons/duotune/general/gen062.svg-->
-<span class="svg-icon svg-icon-muted svg-icon-2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M1.34375 3.9463V15.2178C1.34375 16.119 2.08105 16.8563 2.98219 16.8563H8.65093V19.4594H6.15702C5.38853 19.4594 4.75981 19.9617 4.75981 20.5757V21.6921H19.2403V20.5757C19.2403 19.9617 18.6116 19.4594 17.8431 19.4594H15.3492V16.8563H21.0179C21.919 16.8563 22.6562 16.119 22.6562 15.2178V3.9463C22.6562 3.04516 21.9189 2.30786 21.0179 2.30786H2.98219C2.08105 2.30786 1.34375 3.04516 1.34375 3.9463ZM12.9034 9.9016C13.241 9.98792 13.5597 10.1216 13.852 10.2949L15.0393 9.4353L15.9893 10.3853L15.1297 11.5727C15.303 11.865 15.4366 12.1837 15.523 12.5212L16.97 12.7528V13.4089H13.9851C13.9766 12.3198 13.0912 11.4394 12 11.4394C10.9089 11.4394 10.0235 12.3198 10.015 13.4089H7.03006V12.7528L8.47712 12.5211C8.56345 12.1836 8.69703 11.8649 8.87037 11.5727L8.0107 10.3853L8.96078 9.4353L10.148 10.2949C10.4404 10.1215 10.759 9.98788 11.0966 9.9016L11.3282 8.45467H12.6718L12.9034 9.9016ZM16.1353 7.93758C15.6779 7.93758 15.3071 7.56681 15.3071 7.1094C15.3071 6.652 15.6779 6.28122 16.1353 6.28122C16.5926 6.28122 16.9634 6.652 16.9634 7.1094C16.9634 7.56681 16.5926 7.93758 16.1353 7.93758ZM2.71385 14.0964V3.90518C2.71385 3.78023 2.81612 3.67796 2.94107 3.67796H21.0589C21.1839 3.67796 21.2861 3.78023 21.2861 3.90518V14.0964C15.0954 14.0964 8.90462 14.0964 2.71385 14.0964Z" fill="currentColor"/>
-</svg>
-</span>
+                                                    <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/keenthemes/metronic/docs/core/html/src/media/icons/duotune/general/gen062.svg-->
+                                                    <span class="svg-icon svg-icon-muted svg-icon-2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M1.34375 3.9463V15.2178C1.34375 16.119 2.08105 16.8563 2.98219 16.8563H8.65093V19.4594H6.15702C5.38853 19.4594 4.75981 19.9617 4.75981 20.5757V21.6921H19.2403V20.5757C19.2403 19.9617 18.6116 19.4594 17.8431 19.4594H15.3492V16.8563H21.0179C21.919 16.8563 22.6562 16.119 22.6562 15.2178V3.9463C22.6562 3.04516 21.9189 2.30786 21.0179 2.30786H2.98219C2.08105 2.30786 1.34375 3.04516 1.34375 3.9463ZM12.9034 9.9016C13.241 9.98792 13.5597 10.1216 13.852 10.2949L15.0393 9.4353L15.9893 10.3853L15.1297 11.5727C15.303 11.865 15.4366 12.1837 15.523 12.5212L16.97 12.7528V13.4089H13.9851C13.9766 12.3198 13.0912 11.4394 12 11.4394C10.9089 11.4394 10.0235 12.3198 10.015 13.4089H7.03006V12.7528L8.47712 12.5211C8.56345 12.1836 8.69703 11.8649 8.87037 11.5727L8.0107 10.3853L8.96078 9.4353L10.148 10.2949C10.4404 10.1215 10.759 9.98788 11.0966 9.9016L11.3282 8.45467H12.6718L12.9034 9.9016ZM16.1353 7.93758C15.6779 7.93758 15.3071 7.56681 15.3071 7.1094C15.3071 6.652 15.6779 6.28122 16.1353 6.28122C16.5926 6.28122 16.9634 6.652 16.9634 7.1094C16.9634 7.56681 16.5926 7.93758 16.1353 7.93758ZM2.71385 14.0964V3.90518C2.71385 3.78023 2.81612 3.67796 2.94107 3.67796H21.0589C21.1839 3.67796 21.2861 3.78023 21.2861 3.90518V14.0964C15.0954 14.0964 8.90462 14.0964 2.71385 14.0964Z" fill="currentColor"/>
+                                                    </svg>
+                                                    </span>
                                                     <!--end::Svg Icon-->
                                                 </span>
                                                 <span class="menu-title">Activity Logs</span>
                                             </a>
                                         </div>
+
+                                        @if(hasModule('ApiManagement') && isEnableModule('ApiManagement'))
+                                            <div class="menu-item menu-accordion ">
+                                                <!--begin:Menu link-->
+                                                <!--begin:Menu link-->
+                                                <a class="menu-link @yield('apimanagement_list_active')"
+                                                   href="{{ route('apimanagement.index') }}">
+                                                <span class="menu-icon">
+                                                    <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/keenthemes/metronic/docs/core/html/src/media/icons/duotune/general/gen062.svg-->
+                                             <span class="svg-icon svg-icon-muted svg-icon-2"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path opacity="0.3" d="M18.4 5.59998C18.7766 5.9772 18.9881 6.48846 18.9881 7.02148C18.9881 7.55451 18.7766 8.06577 18.4 8.44299L14.843 12C14.466 12.377 13.9547 12.5887 13.4215 12.5887C12.8883 12.5887 12.377 12.377 12 12C11.623 11.623 11.4112 11.1117 11.4112 10.5785C11.4112 10.0453 11.623 9.53399 12 9.15698L15.553 5.604C15.9302 5.22741 16.4415 5.01587 16.9745 5.01587C17.5075 5.01587 18.0188 5.22741 18.396 5.604L18.4 5.59998ZM20.528 3.47205C20.0614 3.00535 19.5074 2.63503 18.8977 2.38245C18.288 2.12987 17.6344 1.99988 16.9745 1.99988C16.3145 1.99988 15.661 2.12987 15.0513 2.38245C14.4416 2.63503 13.8876 3.00535 13.421 3.47205L9.86801 7.02502C9.40136 7.49168 9.03118 8.04568 8.77863 8.6554C8.52608 9.26511 8.39609 9.91855 8.39609 10.5785C8.39609 11.2384 8.52608 11.8919 8.77863 12.5016C9.03118 13.1113 9.40136 13.6653 9.86801 14.132C10.3347 14.5986 10.8886 14.9688 11.4984 15.2213C12.1081 15.4739 12.7616 15.6039 13.4215 15.6039C14.0815 15.6039 14.7349 15.4739 15.3446 15.2213C15.9543 14.9688 16.5084 14.5986 16.975 14.132L20.528 10.579C20.9947 10.1124 21.3649 9.55844 21.6175 8.94873C21.8701 8.33902 22.0001 7.68547 22.0001 7.02551C22.0001 6.36555 21.8701 5.71201 21.6175 5.10229C21.3649 4.49258 20.9947 3.93867 20.528 3.47205Z" fill="currentColor"/>
+                                                    <path d="M14.132 9.86804C13.6421 9.37931 13.0561 8.99749 12.411 8.74695L12 9.15698C11.6234 9.53421 11.4119 10.0455 11.4119 10.5785C11.4119 11.1115 11.6234 11.6228 12 12C12.3766 12.3772 12.5881 12.8885 12.5881 13.4215C12.5881 13.9545 12.3766 14.4658 12 14.843L8.44699 18.396C8.06999 18.773 7.55868 18.9849 7.02551 18.9849C6.49235 18.9849 5.98101 18.773 5.604 18.396C5.227 18.019 5.0152 17.5077 5.0152 16.9745C5.0152 16.4413 5.227 15.93 5.604 15.553L8.74701 12.411C8.28705 11.233 8.28705 9.92498 8.74701 8.74695C8.10159 8.99737 7.5152 9.37919 7.02499 9.86804L3.47198 13.421C2.52954 14.3635 2.00009 15.6417 2.00009 16.9745C2.00009 18.3073 2.52957 19.5855 3.47202 20.528C4.41446 21.4704 5.69269 21.9999 7.02551 21.9999C8.35833 21.9999 9.63656 21.4704 10.579 20.528L14.132 16.975C14.5987 16.5084 14.9689 15.9544 15.2215 15.3447C15.4741 14.735 15.6041 14.0815 15.6041 13.4215C15.6041 12.7615 15.4741 12.108 15.2215 11.4983C14.9689 10.8886 14.5987 10.3347 14.132 9.86804Z" fill="currentColor"/>
+                                                    </svg>
+                                                    </span>
+                                                    <!--end::Svg Icon-->
+                                                </span>
+                                                    <span class="menu-title">API Management</span>
+                                                </a>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <!--end::Wrapper-->

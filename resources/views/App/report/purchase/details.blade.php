@@ -210,6 +210,7 @@
                             <thead>
                             <!--begin::Table row-->
                             <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                                <th class="min-w-100px">{{__('report.date')}}</th>
                                 <th class="min-w-100px">{{__('report.product')}}</th>
                                 <th class="min-w-100px">{{__('report.sku')}}</th>
                                 <th class="min-w-100px">{{__('report.business_locations')}}</th>

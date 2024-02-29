@@ -371,7 +371,7 @@ class ReportController extends Controller
 
                             $variationProduct = [
                                 'id' => $product['id'],
-                                //                                'purchase_data' => $purchase,
+                                'purchase_data' => $purchase,
                                 'location_name' => $purchase['businessLocation']['name'],
                                 'supplier_name' => $purchase['supplier']['company_name'] ??  $purchase['supplier']['company_name']['first_name'] ?? '',
                                 'name' => $product['name'],
@@ -1429,6 +1429,7 @@ class ReportController extends Controller
                                 'package_name' =>  $packageName,
                                 'package_qty' => $currentStock['quantity'],
                                 'packaging_uom_short_name' => $currentStock['packaging_uom']['short_name'] ?? '',
+                                'expire_date' => $currentStock['expired_date'] ?? '',
                             ];
                             $result[] = $variationProduct;
                         }

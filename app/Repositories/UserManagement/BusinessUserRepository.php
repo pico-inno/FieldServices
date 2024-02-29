@@ -7,18 +7,63 @@ use App\Models\PersonalInfo;
 
 class BusinessUserRepository
 {
+    protected $model;
+    protected $personalInfoModel;
+
+    public function __construct(BusinessUser $model, PersonalInfo $personalInfoModel)
+    {
+        $this->model = $model;
+        $this->personalInfoModel = $personalInfoModel;
+    }
+
+    public function all()
+    {
+        return $this->model->all();
+    }
+
+    public function find($id)
+    {
+        return $this->model->find($id);
+    }
+
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
+
+    public function update($id, array $data)
+    {
+        $record = $this->model->find($id);
+        if ($record) {
+            $record->update($data);
+            return $record;
+        }
+        return false;
+    }
+
+    public function delete($id)
+    {
+        $record = $this->model->find($id);
+        if ($record) {
+            $record->delete();
+            return true;
+        }
+        return false;
+    }
+
     public function query()
     {
-        return BusinessUser::query();
+        return $this->model->query();
     }
+
     public function getAll()
     {
-        return BusinessUser::all();
+        return $this->model->all();
     }
 
     public function getById($id)
     {
-        return BusinessUser::find($id);
+        return $this->model->find($id);
     }
 
     public function getPersonalInfoById($id)
@@ -26,18 +71,9 @@ class BusinessUserRepository
         return PersonalInfo::where('id', $id)->first();
     }
 
-    public function create(array $data)
-    {
-        return BusinessUser::create($data);
-    }
     public function createPersonalInfo(array $data)
     {
-        return PersonalInfo::create($data);
-    }
-
-    public function update($id, array $data)
-    {
-        return BusinessUser::where('id', $id)->update($data);
+        return $this->personalInfoModel->create($data);
     }
 
     public function updatePersonalInfo($id, array $data)
@@ -45,10 +81,6 @@ class BusinessUserRepository
         return PersonalInfo::where('id', $id)->update($data);
     }
 
-    public function delete($id)
-    {
-        return BusinessUser::destroy($id);
-    }
 
     public function deletePersonalInfo($id)
     {
@@ -56,9 +88,7 @@ class BusinessUserRepository
     }
 
     public function getAllWithRelationships($relations = []){
-        return BusinessUser::with($relations)->get();
+        return $this->model->with($relations)->get();
     }
-
-
 
 }
