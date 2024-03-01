@@ -70,6 +70,7 @@
                         console.log(item);
                         var rowData = [
                             item.sale_data.sold_at ?? '',
+                            item.sale_data.sales_voucher_no ?? '',
                             item.name ?? '',
                             item.sku ?? '',
                             item.sale_data.business_location_id.name ?? '-',
@@ -137,14 +138,14 @@
 
           // Total over this page
           pageTotal = api
-              .column( 8, { page: 'current'} )
+              .column( 10, { page: 'current'} )
               .data()
               .reduce( function (a, b) {
                   return intVal(a) + intVal(b);
               }, 0 );
 
           // Update footer
-          $( api.column( 7 ).footer() ).html(
+          $( api.column( 10 ).footer() ).html(
               'Ks '+pageTotal
           );
 

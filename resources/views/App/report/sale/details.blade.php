@@ -211,6 +211,7 @@
                             <!--begin::Table row-->
                             <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
                                 <th class="min-w-100px">{{__('report.date')}}</th>
+                                <th class="min-w-100px">Voucher No</th>
                                 <th class="min-w-100px">{{__('report.product')}}</th>
                                 <th class="min-w-100px">{{__('report.sku')}}</th>
                                 <th class="min-w-100px">{{__('report.business_locations')}}</th>
@@ -238,7 +239,9 @@
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th colspan="2" style="text-align:right"></th>
+                                <th></th>
+                                <th></th>
+                                <th style="text-align:left"></th>
 
 
                             </tr>
