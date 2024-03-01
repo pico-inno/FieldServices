@@ -213,7 +213,7 @@
                 if (confirmed.value) {
                     $("#delete-form-" + customerId).submit();
                     }
-                });
+            });
         });
 
         // Hook export buttons

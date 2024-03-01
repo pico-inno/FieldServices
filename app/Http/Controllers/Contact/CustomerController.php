@@ -65,7 +65,7 @@ class CustomerController extends Controller
 
                         if (hasDelete('customer')){
                             $html .= '<li>
-                                <form id="delete-form-' . $row->id . '" action="contacts/customers/' . $row->id . '" method="POST">
+                                <form id="delete-form-' . $row->id . '" action="/contacts/customers/' . $row->id . '" method="POST">
                                     ' . csrf_field() . '
                                     ' . method_field('DELETE') . '
                                 </form>
