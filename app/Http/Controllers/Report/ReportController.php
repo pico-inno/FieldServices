@@ -311,8 +311,8 @@ class ReportController extends Controller
                 },
                 'supplier',
                 'businessLocation'
-            ]);
-//            ->whereBetween('purchased_at', [$startDate, $endDate]);
+            ])
+            ->whereBetween('purchased_at', [$startDate, $endDate]);
 
         if ($request->data['filter_locations'] != 0) {
             $locationId = childLocationIDs($request->data['filter_locations']);
