@@ -42,7 +42,7 @@
                             @endphp
                             @if ($subLocations)
                                 @foreach ($subLocations as $index=>$subLocation)
-                                    <livewire:location.sub-location-component :location="$subLocation" :level='$index' />
+                                    <livewire:location.sub-location-component :location="$subLocation" :level='1' />
                                 @endforeach
 
                             @endif
