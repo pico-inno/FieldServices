@@ -477,6 +477,18 @@ class saleController extends Controller
                     $payemntTransaction = $paymentServices->makePayment($sale_data, $request->payment_account, 'sale');
                 }
             } else {
+                if ($request->type == 'pos') {
+                    posRegisterTransactions::create([
+                        'register_session_id' => $request->sessionId,
+                        'payment_account_id' =>  null,
+                        'transaction_type' => 'sale',
+                        'transaction_id' => $sale_data->id,
+                        'transaction_amount' => 0,
+                        'currency_id' => $request->currency_id,
+                        'payment_transaction_id' =>  null,
+                    ]);
+                }
+
                 $suppliers = Contact::where('id', $request->contact_id)->first();
                 $suppliers_receivable = $suppliers->receivable_amount;
                 $suppliers->update([
