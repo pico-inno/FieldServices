@@ -62,14 +62,14 @@
                     tableLoadingMessage.addClass('d-none');
                 },
                 success: function (results) {
-                    console.log(results);
 
                     dataTable.clear();
 
                     results.forEach(function(item) {
-
+                        console.log(item)
                         var rowData = [
                             item.purchase_data.purchased_at ?? '',
+                            item.purchase_data.purchase_voucher_no ?? '',
                             item.name ?? '',
                             item.sku ?? '',
                             item.location_name ?? '-',
@@ -114,10 +114,15 @@
 
           // Remove the formatting to get integer data for summation
           var intVal = function(i) {
-              return typeof i === "string" ?
-                  i.replace(/[\$,]/g, "") * 1 :
-                  typeof i === "number" ?
-                      i : 0;
+              if (typeof i === "string") {
+                  const cleanedNumber = parseFloat(i.replace(/[\$,]/g, ""));
+
+                  return isNaN(cleanedNumber) ? 0 : cleanedNumber;
+              } else if (typeof i === "number") {
+                  return i;
+              } else {
+                  return 0;
+              }
           };
 
           // Total over all pages
@@ -130,14 +135,14 @@
 
           // Total over this page
           pageTotal = api
-              .column( 8, { page: 'current'} )
+              .column( 9, { page: 'current'} )
               .data()
               .reduce( function (a, b) {
                   return intVal(a) + intVal(b);
               }, 0 );
 
           // Update footer
-          $( api.column( 7 ).footer() ).html(
+          $( api.column( 10 ).footer() ).html(
               'Ks '+pageTotal
           );
 
