@@ -71,7 +71,7 @@
                         id="kt_aside_logo">
                         <a href="/">
                             @php
-                                $logo=getSettingsValue('logo');
+                                $logo=rtrim(getSettingsValue('logo'));
                             @endphp
                             @if ($logo)
                             <img alt="Logo" src="{{asset('storage/logo/'.$logo)}}" class="h-24px w-35px" />

@@ -69,6 +69,7 @@ class locationActions
     public function  updateLocationAddress($data,$location) {
         try {
             DB::beginTransaction();
+            $isCreated=locationAddress::where('location_id',$location->id)->exists();
             $address = [
                 'mobile' => $data['mobile'],
                 'alternate_number' => $data['alternate_number'],
@@ -79,7 +80,14 @@ class locationActions
                 'city' => $data['city'],
                 'zip_postal_code' => $data['zip_postal_code'],
             ];
-            locationAddress::where('location_id',$location->id)->update($address);
+            if($isCreated){
+                locationAddress::where('location_id',$location->id)->update($address);
+            }else{
+                locationAddress::create([
+                    'location_id'=>$location->id,
+                    ...$address
+                ]);
+            }
             DB::commit();
         } catch (\Throwable $th) {
             dd($th);
