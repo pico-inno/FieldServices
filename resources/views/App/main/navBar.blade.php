@@ -265,6 +265,10 @@
                                     </li>
                                     <!--end::Nav item-->
                                 @endif
+
+                                @if(hasModule('Delivery') && isEnableModule('Delivery'))
+                                    @include('delivery::layouts.master', ['navType' => 'nav-item'])
+                                @endif
                                 <!--begin::Nav item-->
                                 @if(hasAll('pos'))
                                 <!--begin::Nav item-->
@@ -1602,6 +1606,10 @@
                                             <!--end::Wrapper-->
                                         </div>
                                         <!--end::Tab pane-->
+                                    @endif
+
+                                    @if(hasModule('Delivery') && isEnableModule('Delivery'))
+                                        @include('delivery::layouts.master', ['navType' => 'tab-pane'])
                                     @endif
 
                                     <div class="tab-pane fade  @yield('pos_bar_show')" id="kt_aside_nav_tab_pos"
