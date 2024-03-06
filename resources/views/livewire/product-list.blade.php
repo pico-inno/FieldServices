@@ -184,6 +184,10 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
+
+                                            {{-- <div class="position-absolute w-fit  top-10 bg-white p-3 rounded-1 border border-1 border-gray-500 " wire:loading='products' style="top: 40px;left:50%;">
+                                                <h2 class="text-primary">Loading....</h2>
+                                            </div> --}}
                                             {{-- <img src="{{ asset('/storage/product-image/1680624705_anime-girl.jpg') }}" alt="image" />	 --}}
                                             <div class="table-responsive">
                                                 <table class="table border-1 Datatable-tb align-middle  rounded table-row-dashed fs-6 g-5" id="kt_datatable_example" >
@@ -325,6 +329,21 @@
                                                     </tbody>
                                                     <!--end::Table body-->
                                                 </table>
+
+                                                <div class="row justify-content-center  justify-content-md-between">
+                                                    <div class="col-md-6 col-12 mb-3 ">
+                                                        <div class="w-auto">
+                                                            <select name="" id="" wire:model.change="perPage" class="form-select form-select-sm w-auto m-auto m-md-0">
+                                                                @foreach ($aviablePerPages as $page)
+                                                                <option value="{{$page}}">{{$page}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-12 mb-3">
+                                                        {{$products->links()}}
+                                                    </div>
+                                                </div>
                                             </div>
 
 
