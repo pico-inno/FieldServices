@@ -20,9 +20,19 @@
 @endsection
 
 @section('styles')
+.pagination{
+    justify-content: center !important;
+}
+@media(min-width:780px){
+    .pagination{
+        justify-content: end !important;
+    }
+}
+
 @livewireStyles
 <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
 @endsection
+
 
 @section('content')
     <!--begin::Content-->

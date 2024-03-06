@@ -330,22 +330,22 @@
                                                     <!--end::Table body-->
                                                 </table>
 
-                                                <div class="row justify-content-center  justify-content-md-between">
-                                                    <div class="col-md-6 col-12 mb-3 ">
-                                                        <div class="w-auto">
-                                                            <select name="" id="" wire:model.change="perPage" class="form-select form-select-sm w-auto m-auto m-md-0">
-                                                                @foreach ($aviablePerPages as $page)
-                                                                <option value="{{$page}}">{{$page}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-12 mb-3">
-                                                        {{$products->links()}}
-                                                    </div>
-                                                </div>
                                             </div>
 
+                                            <div class="row justify-content-center mt-3  justify-content-md-between">
+                                                <div class="col-md-6 col-12 mb-3 ">
+                                                    <div class="w-auto">
+                                                        <select name="" id="" wire:model.change="perPage" class="form-select form-select-sm w-auto m-auto m-md-0">
+                                                            @foreach ($aviablePerPages as $page)
+                                                            <option value="{{$page}}">{{$page}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-12 mb-3">
+                                                    {{$products->links()}}
+                                                </div>
+                                            </div>
 
                                             <div class="d-flex gap-4 mt-5">
                                                 <button class="btn btn-primary btn-sm" id="assignBtn">Assign Selected Products To location</button>
