@@ -48,6 +48,7 @@ class AllSaleTable extends Component
         $hasPrint = hasPrint('sell');
         $hasDelete = hasDelete('sell');
         $hasHospital= hasModule('HospitalManagement') && isEnableModule('HospitalManagement');
+        $hasReservation= hasModule('Reservation') && isEnableModule('Reservation');
         $locations= businessLocation::select('name', 'id', 'parent_location_id')->get();
         $customers = Contact::where('type', 'Customer')->orWhere('type', 'Both')->get();
         $pedningCount=0;
@@ -137,6 +138,6 @@ class AllSaleTable extends Component
                     })
                     ->with('currency:id,symbol','soldBy:id,username')
                     ->paginate($this->perPage);
-        return view('livewire.sale.all-sale-table',compact('saleData','locations', 'hasHospital', 'customers', 'hasView', 'hasUpdate', 'hasPrint','hasDelete','saleType','pedningCount','orderCount'));
+        return view('livewire.sale.all-sale-table',compact('saleData','locations', 'hasHospital', 'customers', 'hasView', 'hasUpdate', 'hasPrint','hasDelete','saleType','pedningCount','orderCount','hasReservation'));
     }
 }
