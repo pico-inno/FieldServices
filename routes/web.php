@@ -1000,7 +1000,7 @@ Route::get('/contact/get/{contactId}', [CustomerController::class, 'getContactDa
 Route::resource('customer-group', CustomerGroupController::class);
 
 // Post to reservation folio
-Route::get('/reservation/post/{id}/Folio', [saleController::class, 'postToReservationFolio'])->name('postToReservationFolio');
+Route::get('/reservation/post/{id}/Folio', [saleController::class, 'postToReservationFolio'])->name('salePostToReservationFolio');
 Route::post('/registration/post/Folio', [saleController::class, 'addToReservationFolio'])->name('addToReservationFolio');
 
 //============================ Begin: POS ==============================================
