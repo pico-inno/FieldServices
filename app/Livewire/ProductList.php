@@ -63,6 +63,10 @@ class ProductList extends Component
         $manufactureId=$this->manufactureId;
 
 
+        $updatePermission=hasUpdate('product');
+        $deletePermission=hasDelete('product');
+
+
         $products=Product::query()
                 ->select(
                     'products.*',
@@ -102,6 +106,6 @@ class ProductList extends Component
 
                 ->paginate($this->perPage);
         // dd($products->toArray());
-        return view('livewire.product-list',compact('products'));
+        return view('livewire.product-list',compact('products','updatePermission','deletePermission'));
     }
 }

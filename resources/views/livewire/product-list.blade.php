@@ -242,19 +242,32 @@
                                                             </td>
                                                             <td>
                                                                 <div class="dropdown">
-                                                                    <button class="btn btn-sm btn-light btn-active-light-primary fw-semibold fs-7  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                        Actions
+                                                                    @if ($updatePermission || $deletePermission)
+                                                                        <button class="btn btn-sm btn-light btn-active-light-primary fw-semibold fs-7  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                            Actions
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                            @if ($updatePermission)
+                                                                                <li>
+                                                                                    <a href="/product/edit/{{$product['id']}}" class="dropdown-item p-2 edit-brand px-3" >
+                                                                                        <i class="fas fa-pen-to-square me-3"></i>{{ __('product/product.edit') }}
+                                                                                    </a>
+                                                                                </li>
+                                                                        @endif
+                                                                        @if ($deletePermission)
+                                                                            <li>
+                                                                                <div class="dropdown-item p-2 product-delete-confirm cursor-pointer px-3" data-id="{{$product['id']}}" >
+                                                                                    <i class="fas fa-trash me-3"></i>{{ __('product/product.delete') }}
+                                                                                </div>
+                                                                            </li>
+                                                                        @endif
+                                                                    </ul>
+                                                                    @else
+                                                                    <button class="btn btn-sm btn-dark btn-active-light-primary fw-semibold fs-9" type="button">
+                                                                        No Permissions
                                                                     </button>
-                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li><a href="/product/edit/{{$product['id']}}" class="dropdown-item p-2 edit-brand px-3" >
-                                                                           <i class="fas fa-pen-to-square me-3"></i>{{ __('product/product.edit') }}</a>
-                                                                       </li>
-                                                                        <li>
-                                                                            <div class="dropdown-item p-2 product-delete-confirm cursor-pointer px-3" data-id="{{$product['id']}}" >
-                                                                                <i class="fas fa-trash me-3"></i>{{ __('product/product.delete') }}
-                                                                            </div>
-                                                                        </li>
-                                                                   </ul>
+
+                                                                   @endif
                                                                 </div>
                                                             </td>
                                                             <td>{{$product['name']}}</td>
