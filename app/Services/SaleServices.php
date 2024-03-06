@@ -205,7 +205,7 @@ class SaleServices
         $businessLocation = businessLocation::where('id', $request->business_location_id)->first();
 
         if ($product) {
-            if ($product->product_type != 'storable') {
+            if ($product->product_type != 'storable' && $request->status == 'delivered') {
                 $stock_history_data = [
                     'business_location_id' => $sale_data->business_location_id,
                     'product_id' => $created_sale_details['product_id'],

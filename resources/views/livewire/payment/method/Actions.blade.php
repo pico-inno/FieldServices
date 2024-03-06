@@ -105,23 +105,23 @@
 <script>
 
 $wire.on('swal-confirm', function (data) {
-        Swal.fire({
-            title:'Are You Sure To Delete',
-            icon: "question",
-            buttonsStyling: false,
-            showCancelButton: true,
-            confirmButtonText: "Sure,Delete",
-            cancelButtonText: 'Nope, cancel it',
-            customClass: {
-                confirmButton: "btn btn-primary",
-                cancelButton: 'btn btn-danger'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $wire.dispatch('delete',{'id': data[0].itemId});
-            }
-        });
+    Swal.fire({
+        title:'Are You Sure To Delete',
+        icon: "question",
+        buttonsStyling: false,
+        showCancelButton: true,
+        confirmButtonText: "Sure,Delete",
+        cancelButtonText: 'Nope, cancel it',
+        customClass: {
+            confirmButton: "btn btn-primary",
+            cancelButton: 'btn btn-danger'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $wire.dispatch('delete',{'id': data[0].itemId});
+        }
     });
+});
 
     $('#delete_confirm_modal_{{$id}}').on('click',function(){
         Swal.fire({
