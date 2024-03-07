@@ -41,7 +41,7 @@ class StockHistoryTable extends Component
         $businesslocationFilterId=$this->businesslocationFilterId;
         $datas = stock_history::query()
         ->select('stock_histories.*','products.name as jjk',
-        DB::raw("CONCAT(products.name, IFNULL(CONCAT(' (', variation_template_values.name, ') '), '')) AS name")
+            DB::raw("CONCAT(products.name, IFNULL(CONCAT(' (', variation_template_values.name, ') '), '')) AS name")
         )
         ->leftJoin('product_variations', 'stock_histories.variation_id', '=', 'product_variations.id')
         ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')

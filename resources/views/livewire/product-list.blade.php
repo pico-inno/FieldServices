@@ -43,11 +43,11 @@
                                 <label class="h5" for="">Generic:</label>
                                 <select id="genericId" class="form-select form-select-sm" data-control="select2" data-allow-clear="true" data-hide-search="false" data-placeholder="Select an option">
                                     <option value="all">All</option>
-                                    @if($generics->count() > 0)
+                                    {{-- @if($generics->count() > 0) --}}
                                         @foreach($generics as $generic)
                                             <option value="{{$generic['id']}}">{{$generic['name']}}</option>
                                         @endforeach
-                                    @endif
+                                    {{-- @endif --}}
                                 </select>
                             </div>
                         </div>
@@ -55,23 +55,23 @@
                             <div class="col-md-3 mb-5">
                                 <label class="h5" for="">Manufacture:</label>
                                 <select id="manufactureId" class="form-select form-select-sm" data-control="select2" data-allow-clear="true" data-hide-search="false" data-placeholder="Select an option">
-                                    @if($manufactures->count() > 0)
+                                    {{-- @if($manufactures->count() > 0) --}}
                                         <option value="all">All</option>
                                         @foreach($manufactures as $manufacture)
                                             <option value="{{$manufacture['id']}}">{{$manufacture['name']}}</option>
                                         @endforeach
-                                    @endif
+                                    {{-- @endif --}}
                                 </select>
                             </div>
                             <div class="col-md-3 mb-5">
                                 <label class="h5" for="">Location:</label>
                                 <select id="location_filter" class="form-select form-select-sm" data-control="select2" data-allow-clear="true" data-hide-search="false" data-placeholder="Select an option">
-                                    @if($locations->count() > 0)
+                                    {{-- @if($locations->count() > 0) --}}
                                         <option value="all">All</option>
                                         @foreach($locations as $location)
                                             <option value="{{$location->name}}">{{$location->name}}</option>
                                         @endforeach
-                                    @endif
+                                    {{-- @endif --}}
                                 </select>
                             </div>
 
@@ -184,6 +184,10 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
+                                            <div class="position-absolute w-fit  top-10 bg-white p-3 rounded-1 border border-1 border-gray-500 "
+                                                wire:loading style="top: 40px;left:50%;">
+                                                <h2 class="text-primary">Loading....</h2>
+                                            </div>
                                             {{-- <img src="{{ asset('/storage/product-image/1680624705_anime-girl.jpg') }}" alt="image" />	 --}}
                                             <div class="table-responsive">
                                                 <table class="table border-1 Datatable-tb align-middle  rounded table-row-dashed fs-6 g-5" id="kt_datatable_example" >

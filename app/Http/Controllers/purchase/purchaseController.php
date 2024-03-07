@@ -519,6 +519,7 @@ class purchaseController extends Controller
         )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where('products.name', 'like', '%' . $q . '%')
             ->orWhere('sku', 'like', '%' . $q . '%')
+            ->where('products.product_type','=','storable')
             ->orWhere('variation_sku', 'like', '%' . $q . '%')
             ->orWhereHas('varPackaging', function ($query) use ($q) {
                 $query->where('package_barcode', $q);
@@ -553,6 +554,7 @@ class purchaseController extends Controller
             'product_variations.id as variation_id'
         )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where('products.name', 'like', '%' . $keyword . '%')
+            ->where('products.product_type','=','storable')
             ->when($psku_kw == 'true', function ($q) use ($keyword) {
                 $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
             })

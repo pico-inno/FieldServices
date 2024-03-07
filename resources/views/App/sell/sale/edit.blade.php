@@ -270,7 +270,7 @@
                                             $product=$sale_detail->product;
                                             // dd($sale_detail->toArray());
                                             $product_variation =$sale_detail->toArray()['product_variation'];
-                                            $additionalProduct=$sale_detail->productVariation->additionalProduct;
+                                            $additionalProduct=$sale_detail->productVariation->additionalProduct ?? [];
                                             $parentkey=$sale_detail->parent_id ?array_search($sale_detail->parent_id,array_column($sale_details->toArray(),'id')) +1:$key;
                                             $kitSaleDetails=$sale_detail['kitSaleDetails'];
                                             $avilQty=0;
@@ -335,13 +335,13 @@
                                             </td> --}}
                                             <td class="w-175px">
                                                 <span class="text-danger-emphasis  stock_alert_{{$sale_detail->variation_id}} d-none fs-7 p-2">* Out of Stock</span>
-                                                <div class="dialer_obj input-group-sm sale_dialer_{{$key}} input-group mb-2 flex-nowrap">
-                                                    <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
+                                                <div class="dialer_obj sale_qty_dialer input-group-sm sale_dialer_{{$key}} input-group mb-2 flex-nowrap">
+                                                    <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" id="decrease_btn_{{$key}}" data-kt-dialer-control="decrease">
                                                         <i class="fa-solid fa-minus fs-2"></i>
                                                     </button>
-                                                    <input type="text" class="form-control form-control-sm quantity  quantity-{{$sale_detail->variation_id}}"  placeholder="quantity" name="sale_details[{{$key}}][quantity]" value="{{round($sale_detail->quantity,2)}}" data-kt-dialer-control="input"/>
+                                                    <input type="text" class="form-control form-control-sm quantity  quantity-{{$sale_detail->variation_id}}"  id="quantity_{{$key}}"  placeholder="quantity" name="sale_details[{{$key}}][quantity]" value="{{round($sale_detail->quantity,2)}}" data-kt-dialer-control="input"/>
 
-                                                    <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
+                                                    <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" id="increase_btn_{{$key}}" data-kt-dialer-control="increase">
                                                         <i class="fa-solid fa-plus fs-2"></i>
                                                     </button>
                                                 </div>

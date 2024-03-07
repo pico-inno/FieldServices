@@ -49,6 +49,7 @@
     let editSale=@json($sale ?? []);
     if (editSaleDetails.length>0) {
         editSaleDetails.forEach(async function(saledetail,index){
+            index=index+1;
             let secIndex;
             product= productsOnSelectData.find(function(pd,i) {
                 secIndex=i;
@@ -102,6 +103,43 @@
                 cal_total_sale_amount();
                 extraDiscCal();
             }, 1000);
+
+            console.log(`decrease_btn_${index}`,'decrease_btn_${index}');
+            $(document).on('click',`#decrease_btn_${index}`,function(){
+
+                let dialer=$(this).closest(`.sale_qty_dialer`);
+                let QtyInput=dialer.find('input');
+                let currentQty= QtyInput.val();
+                if(currentQty >= 1){
+                    QtyInput.val(currentQty-1);
+                }
+                qtyEvents($(this));
+
+            })
+            $(document).on('input',`#quantity_${index}`,function(e){
+                qtyEvents($(this));
+            })
+
+            $(document).on('click',`#increase_btn_${index}`,function(){
+                let dialer=$(this).closest(`.sale_qty_dialer`);
+                let QtyInput=dialer.find('input');
+                let currentQty= isNullOrNan(QtyInput.val());
+                QtyInput.val(currentQty+1);
+                qtyEvents($(this));
+
+            })
+
+            function qtyEvents(e){
+                checkStock(e);
+                packaging(e,'/');
+                sale_amount_cal() ;
+                cal_total_sale_amount();
+                subtotalCalculation(e)
+                checkStock(e);
+                cal_balance_amount();
+                getPrice(e);
+                changeRdQty(e);
+            }
         })
         let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
         getPriceList(CurrentPriceListId);
@@ -109,24 +147,25 @@
         $('.price_list_input').val(CurrentPriceListId).trigger('change');
 
         let dia=document.querySelectorAll('.dialer_obj')
-        dia.forEach(e => {
-            let diaO = new KTDialer(e, {
-                min: 0,
-                step: 1,
-            });
+        // dia.forEach(e => {
+        //     let diaO = new KTDialer(e, {
+        //         min: 0,
+        //         step: 1,
+        //     });
 
-            diaO.on('kt.dialer.change',function(ev) {
-                let unit=$('.unit_input').val();
-                // checkStockSaleQty($(ev.inputElement));
-                subtotalCalculation($(ev.inputElement));
-                sale_amount_cal();
-                cal_total_sale_amount();
-                checkStock($(ev.inputElement));
-                cal_balance_amount();
-                getPrice($(ev.inputElement));
-                packaging($(ev.inputElement),'/');
-            })
-        });
+        //     diaO.on('kt.dialer.change',function(ev) {
+        //         let unit=$('.unit_input').val();
+        //         // checkStockSaleQty($(ev.inputElement));
+        //         subtotalCalculation($(ev.inputElement));
+        //         sale_amount_cal();
+        //         cal_total_sale_amount();
+        //         checkStock($(ev.inputElement));
+        //         cal_balance_amount();
+        //         getPrice($(ev.inputElement));
+        //         packaging($(ev.inputElement),'/');
+        //     })
+        // });
+
         $('.sale_row').hover(
             function() {
                 let unid=$(this).data('unid');
@@ -616,12 +655,13 @@
                 </td>
                 <td>
                     <span class="text-danger-emphasis  stock_alert_${selectedVar_product.id} d-none fs-7 p-2">* Out of Stock</span>
-                    <div class="input-group sale_dialer_${unique_name_id} w-175px" >
-                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger" type="button" data-kt-dialer-control="decrease">
+                    <div class="input-group sale_qty_dialer sale_dialer_${unique_name_id} w-175px" >
+                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-danger decreaseBtn" id="decrease_btn_${unique_name_id}" type="button" data-kt-dialer-control="decrease">
                             <i class="fa-solid fa-minus fs-2"></i>
                         </button>
-                        <input type="text" class="form-control form-control-sm quantity input_number form-control-sm quantity-${selectedVar_product.id}"   placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="${qty}" data-kt-dialer-control="input"/>
-                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary" type="button" data-kt-dialer-control="increase">
+                        <input type="text" class="form-control form-control-sm quantity input_number form-control-sm quantity-${selectedVar_product.id}"  id="quantity_${unique_name_id}"
+                        placeholder="quantity" name="sale_details[${unique_name_id}][quantity]" value="${qty}" />
+                        <button class="btn btn-sm btn-icon btn-outline btn-active-color-primary increaseBtn"  id="increase_btn_${unique_name_id}" type="button" data-kt-dialer-control="increase">
                             <i class="fa-solid fa-plus fs-2"></i>
                         </button>
                     </div>
@@ -746,24 +786,74 @@
         let dialerElement = document.querySelector(name);
 
         // Create dialer object and initialize a new instance
-        let dialerObject = new KTDialer(dialerElement, {
-            min: 0,
-            step: 1,
-            // decimals: 2
-        });
-        dialerObject.on('kt.dialer.change',function(e) {
-            // checkStock($(`[name="sale_details[${unique_name_id}][quantity]"]`));
-            packaging($(e.inputElement),'/');
-            sale_amount_cal() ;
-            cal_total_sale_amount();
-            subtotalCalculation($(e.inputElement))
-            checkStock($(e.inputElement));
-            cal_balance_amount();
-            getPrice($(e.inputElement));
-            changeRdQty($(e.inputElement));
 
+        // let dialerObject = new KTDialer(dialerElement, {
+        //     min: 0,
+        //     step: 1,
+        //     // decimals: 2
+        // });
+        // dialerObject.on('kt.dialer.change',function(e) {
+        //     // checkStock($(`[name="sale_details[${unique_name_id}][quantity]"]`));
+        //     packaging($(e.inputElement),'/');
+        //     sale_amount_cal() ;
+        //     cal_total_sale_amount();
+        //     subtotalCalculation($(e.inputElement))
+        //     checkStock($(e.inputElement));
+        //     cal_balance_amount();
+        //     getPrice($(e.inputElement));
+        //     changeRdQty($(e.inputElement));
+
+
+        // })
+
+
+        $(document).on('click',`#decrease_btn_${unique_name_id}`,function(){
+            let dialer=$(this).closest(`.sale_qty_dialer`);
+            let QtyInput=dialer.find('input');
+            let currentQty= QtyInput.val();
+            if(currentQty >= 1){
+                QtyInput.val(currentQty-1);
+            }
+            qtyEvents($(this));
 
         })
+        $(document).on('input',`#quantity_${unique_name_id}`,function(e){
+            qtyEvents($(this));
+        })
+        function qtyEvents(e){
+            checkStock(e);
+            packaging(e,'/');
+            sale_amount_cal() ;
+            cal_total_sale_amount();
+            subtotalCalculation(e)
+            checkStock(e);
+            cal_balance_amount();
+            getPrice(e);
+            changeRdQty(e);
+        }
+
+        $(document).on('click',`#increase_btn_${unique_name_id}`,function(){
+            let dialer=$(this).closest(`.sale_qty_dialer`);
+            let QtyInput=dialer.find('input');
+            let currentQty= isNullOrNan(QtyInput.val());
+            QtyInput.val(currentQty+1);
+            qtyEvents($(this));
+
+        })
+
+        // $(`#decrease_btn_${unique_name_id}`).click(()=>{
+        //     let dialer=$(this).closest(`.sale_dialer_${unique_name_id}`);
+        //     // console.log(unique_name_id);
+        //     console.log(dialer.find(`#quantity_${unique_name_id}`));
+        //     let qtyString=`#quantity_${unique_name_id}`;
+        //    let quantity= $(qtyString).val();
+        //    console.log(quantity,'hello');
+        //    $(`${qtyString}`).val(30);
+        // })
+        // $(`#increase_btn_${unique_name_id}`).click(()=>{
+        //     // alert(unique_name_id);
+        // })
+
         // optionSelected(selectedVar_product.lot_serial_nos[0],$(`[data-lot-select-${unique_name_id}="select2"]`));
         // optionSelected(selectedVar_product.uom_id,$(`[name="purchase_details[${unique_name_id}][purchase_uom_id]"]`));
         if(suggestUom){

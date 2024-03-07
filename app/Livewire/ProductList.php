@@ -22,12 +22,12 @@ use App\Repositories\interfaces\LocationRepositoryInterface;
 class ProductList extends Component
 {
     use WithPagination,datatable;
-    public $categories;
-    public $brands;
-    public $generics;
-    public $manufactures;
-    public $product_types;
-    public $locations;
+    public $categories=[];
+    public $brands=[];
+    public $generics=[];
+    public $manufactures=[];
+    public $product_types=[];
+    public $locations=[];
 
     // Keywords
     public $productTypeFilter='all';

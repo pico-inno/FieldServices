@@ -20,13 +20,13 @@
 @endsection
 
 @section('styles')
+
 @livewireStyles
-<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
 @endsection
 
 @section('content')
     <!--begin::Content-->
-    <livewire:product-list/>
+    <livewire:product-list />
     <!--end::Content-->
     <div class="modal fade" tabindex="-1" id="locationSelect">
         <div class="modal-dialog w-md-600px modal-dialog-centered">
@@ -95,9 +95,10 @@
             </div>
         </div>
     </div>
+
+    {{-- @livewireScripts --}}
 @endsection
 @push('scripts')
-@livewireScripts
 
 
 @endpush
