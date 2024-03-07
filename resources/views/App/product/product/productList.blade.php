@@ -90,7 +90,7 @@
                                         @endif
                                     </select>
                                 </div>
-                                <div class="col-md-3 mb-5">
+                                {{-- <div class="col-md-3 mb-5">
                                     <label class="h5" for="">Location:</label>
                                     <select id="location_filter" class="form-select form-select-sm" data-control="select2" data-hide-search="false" data-placeholder="Select an option">
                                         @if($locations->count() > 0)
@@ -100,7 +100,7 @@
                                             @endforeach
                                         @endif
                                     </select>
-                                </div>
+                                </div> --}}
 
                             </div>
 

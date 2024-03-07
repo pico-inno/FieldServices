@@ -201,7 +201,7 @@ class ProductController extends Controller
         $manufactures = $this->manufacturerRepository->query()->select('name')->distinct()->pluck('name');
          $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
         $locations=$locationRepository->locationWithAccessControlQuery()->select('id','name')->get();
-        return view('App.product.product.productList',compact(
+        return view('App.product.product.productListV2',compact(
             'locations',
             'product_types',
             'categories',

@@ -266,11 +266,6 @@
             }).on('select2:unselect', function (e) {
                 @this.set('campaignFilterId','all');
             });
-            $('#categoryFilter').select2().on('select2:select', function (e) {
-                @this.set('categotryFilterId', $('#categoryFilter').select2("val"));
-            }).on('select2:unselect', function (e) {
-                @this.set('categotryFilterId','all');
-            });
 
             $('#outletFilter').select2().on('select2:select', function (e) {
                 @this.set('outletFilterId', $('#outletFilter').select2("val"));
@@ -282,6 +277,11 @@
                 @this.set('outletTypeFilter', $('#outletTypeFilter').select2("val"));
             }).on('select2:unselect', function (e) {
                 @this.set('outletTypeFilter','all');
+            });
+            $('#categoryFilter').select2().on('select2:select', function (e) {
+                @this.set('categotryFilterId', $('#categoryFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('categotryFilterId','all');
             });
             // cb(start, end);
             var start = moment().subtract(1, "M");

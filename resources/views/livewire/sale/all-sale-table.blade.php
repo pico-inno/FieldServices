@@ -325,6 +325,13 @@
                                                         data-href="{{route('postToRegistrationFolio', $s->id)}}">Post to
                                                         Registeration</a>
                                                 @endif
+                                                @if ($hasReservation)
+                                                    <a type="button" class="dropdown-item p-2  post-to-reservation actionRow"
+                                                        data-href="{{route('salePostToReservationFolio', $s->id)}}">Post to
+                                                        Reservation</a>
+                                                @endif
+
+
                                             @if ($hasDelete)
                                                     <a class="dropdown-item p-2  cursor-pointer bg-active-danger text-danger actionRow" data-id="{{$s->id}}"
                                                         data-kt-saleItem-table="delete_row">Delete</a>
