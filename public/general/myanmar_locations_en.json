@@ -1,0 +1,2030 @@
+[
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Za Bu Thi Ri Township"
+  },
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Pyinmana Township"
+  },
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Tatkon Township"
+  },
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Lewe Township"
+  },
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Zay Yar Thi Ri Township"
+  },
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Det Khi Na Thi Ri Township"
+  },
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Poke Ba Thi Ri Township"
+  },
+  {
+    "Region": "Naypyitaw Union Territory",
+    "Town_Township": "Oke Ta Ra Thi Ri Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Aungmyaythazan Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Chanayethazan Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Mahaaungmyay Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Chanmyathazi Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Pyigyitagon Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Amarapura Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Patheingyi Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Pyinoolwin Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Mogoke Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Thabeikkyin Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Singu Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Madaya Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Tada-U Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Sintgaing Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Kyaukse Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Myittha Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Wundwin Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Meiktila Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Thazi Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Mahlaing Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Pyawbwe Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Yamethin Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Nyaung-U Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Kyaukpadaung Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Myingyan Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Natogyi Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Taungtha Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Ngazun Township"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Myitnge Town"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Takaung Town"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Ku Me Town"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Bagan Town"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Ngathayauk Town"
+  },
+  {
+    "Region": "Mandalay Region",
+    "Town_Township": "Si Mee Khon Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Sittwe Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Maungdaw Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Buthidaung Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Rathedaung Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Ponnagyun Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Kyauktaw Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Gwa Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Pauktaw Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Minbya Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Mrauk-U Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Myebon Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Kyaukpyu Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Ramree Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Munaung Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Ann Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Toungup Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Thandwe Township"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Taungpyoletwea Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Kha Maung Seik Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Myin Hlut Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Kanhtauntkyi Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Sa Ne Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Lay Taung Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Tat Taung Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Ma-Ei Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Tan Hlwe Ywar Ma Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Ngapali Town"
+  },
+  {
+    "Region": "Rakhine State",
+    "Town_Township": "Kyeintali Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Taunggyi Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Kalaw Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Pindaya Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Ywangan Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Pinlaung Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Pekon Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Lawksawk Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Nyaungshwe Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Hopong Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Hsihseng Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Loilen Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Laihka Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Mongkaing Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Monghsu Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Kyethi Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Nansang Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Mongnai Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Mawkmai Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Langkho Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Mongpan Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Kunhing Township"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Shwenyaung Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Ayetharyar Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Kyauktalonegyi Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Aungpan Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "He Hoe Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Naungtayar Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Pawng Lawng Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Intaw Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Pinlon Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "-"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Mongsan (Hmonesan) Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Mongnawng Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Kho Lam Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Kengtawng Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Homein Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Kar Li Town"
+  },
+  {
+    "Region": "Shan State (South)",
+    "Town_Township": "Nang Pang Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Dawei Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Yebyu Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Thayetchaung Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Launglon Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Myeik Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Palaw Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Tanintharyi Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Bokpyin Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Kawthoung Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Kyunsu Township"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Myitta Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Kaleinaung Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Palauk Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Pala Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Maw Taung Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Pyigyimandaing Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Karathuri Town"
+  },
+  {
+    "Region": "Tanintharyi Region",
+    "Town_Township": "Khamaukgyi Town"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Insein Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Mingaladon Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "North Okkalapa Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Kamayut Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Hlaing Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Mayangone Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Thingangyun Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Yankin Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "South Okkalapa Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Kyeemyindaing Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Sanchaung Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Ahlone Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Lanmadaw Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Pabedan Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Latha Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Botahtaung Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Pazundaung Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Kyauktada Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Dagon Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Bahan Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Tamwe Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Mingalartaungnyunt Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Thaketa Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Dawbon Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Shwepyithar Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Dala Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Seikgyikanaungto Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Cocokyun Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Thanlyin Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Kyauktan Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Thongwa Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Kayan Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Twantay Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Kungyangon Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Kawhmu Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Hmawbi Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Hlegu Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Taikkyi Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Htantabin Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Hlaingtharya(East) Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Hlaingtharya (West) Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Dagon Myothit (North) Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Dagon Myothit (South) Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Dagon Myothit (Seikkan) Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Dagon Myothit (East) Township"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Htaukkyant Town"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Tadar Town"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Okekan Town"
+  },
+  {
+    "Region": "Yangon Region",
+    "Town_Township": "Ahpyauk Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Hakha Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Thantlang Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Falam Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Tedim Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Tonzang Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Matupi Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Mindat Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Kanpetlet Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Paletwa Township"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Surkhua Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Hnaring Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Rihkhawdar Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Webula Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Khaikam Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Cikha Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Rezua Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Lalengpi Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "M'kuiimnu Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Kyin Dway Town"
+  },
+  {
+    "Region": "Chin State",
+    "Town_Township": "Samee Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Bago Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Kyauktaga Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Nyaunglebin Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Kyaukkyi Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Shwegyin Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Daik-U Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Waw Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Thanatpin Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Kawa Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Taungoo Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Yedashe Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Oktwin Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Htantabin Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Phyu Township"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Hpayargyi Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Inntakaw Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Penwegon Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Hpa Do Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Madauk Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Pyuntasa Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Peinzalok Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Thetkala Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Kaytumati Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Hswar Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Yae Ni Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Myo Hla Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Kywe Pwe Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Kanyutkwin Town"
+  },
+  {
+    "Region": "Bago Region (East)",
+    "Town_Township": "Zayyawadi Town"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Loikaw Township"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Demoso Township"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Hpruso Township"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Bawlake Township"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Hpasawng Township"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Mese Township"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Shadaw Township"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Loilen Lay Town"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Nan Mei Khon Town"
+  },
+  {
+    "Region": "Kayah state",
+    "Town_Township": "Ywarthit Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Hpa-An Township"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Thandaunggyi Township"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Hpapun Township"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Hlaingbwe Township"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Myawaddy Township"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Kawkareik Township"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Kyainseikgyi Township"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Thandaung Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Leik Tho Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Baw Ga Li Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Kamarmaung Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Paingkyon Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Shan Ywar Thit Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Su Ka Li Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Waw Lay Myaing (Waw Lay) Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Kyondoe Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Hpayarthonesu Town"
+  },
+  {
+    "Region": "Kayin State",
+    "Town_Township": "Kyaikdon Town"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Kengtung Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongkhet Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongyang Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongla Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Monghsat Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongping Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongton Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Tachileik Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Monghpyak Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongyawng Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Ho Tawng (Ho Tao) Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mong Pawk Township"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongkhoke Town"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Tontar Town"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Ponparkyin Town"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Hmone Hta Town"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Kenglat Town"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Tarlay Town"
+  },
+  {
+    "Region": "Shan State (East)",
+    "Town_Township": "Mongyu Town"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Mawlamyine Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Kyaikto Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Bilin Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Thaton Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Paung Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Chaungzon Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Kyaikmaraw Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Mudon Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Thanbyuzayat Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Ye Township"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Thein Za Yat Town"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Thuwunnawady Town"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Zinkyaik Town"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Kamarwet Town"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Kyaikkhami Town"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Lamaing Town"
+  },
+  {
+    "Region": "Mon State",
+    "Town_Township": "Khawzar Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Pathein Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Kangyidaunt Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Kyangin Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Myanaung Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ingapu Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Hinthada Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Lemyethna Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Yegyi Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Kyonpyaw Town Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Kyaunggon Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Thabaung Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Labutta Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ngapudaw Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Zalun Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Danubyu Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Nyaungdon Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Pantanaw Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Maubin Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Einme Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Wakema Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Myaungmya Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Mawlamyinegyun Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Bogale Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Kyaiklat Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Pyapon Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Dedaye Township"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Shwethaungyan Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ngwesaung Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Chaung Thar Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Batye Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Kanaung Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "In Pin Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Htoogyi Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Me Za Li Kone Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ta Loke Htaw Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Du Yar Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ngathaingchaung Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ahthoke Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ahtaung Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Pyinsalu Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Labutta (3) Mile Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ngayokekaung Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Hainggyikyun Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Kyonmangae Town"
+  },
+  {
+    "Region": "Ayeyarwady Region",
+    "Town_Township": "Ahmar Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Pyay Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Paukkhaung Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Padaung Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Paungde Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Thegon Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Shwedaung Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Thayarwady Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Letpadan Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Minhla Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Okpho Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Zigon Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Nattalin Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Monyo Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Gyobingauk Township"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Paungdale Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Oakshitpin Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Puteekone Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Inn Ma Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Sin Mee Swea Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Thonse Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Sit Kwin Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Oe Thei Kone Town"
+  },
+  {
+    "Region": "Bago Region (West)",
+    "Town_Township": "Tar Pun Town"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Magway Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Minbu Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Pwintbyu Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Salin Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Sidoktaya Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Ngape Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Minhla Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Sinbaungwe Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Thayet Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Mindon Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Kamma Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Natmauk Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Myothit Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Taungdwingyi Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Aunglan Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Yenangyaung Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Chauk Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Yesagyo Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Myaing Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Pakokku Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Gangaw Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Tilin Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Pauk Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Saw Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Seikphyu Township"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Saku Town"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Sinphyukyun Town"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Sa Lay Town"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Kamma (PKU) Town"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Myit Chay Town"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Kyaw Town"
+  },
+  {
+    "Region": "Magway Region",
+    "Town_Township": "Kyaukhtu Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Myitkyina Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Injangyang Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Nawngmun Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Machanbaw Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Puta-O Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Sumprabum Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Chipwi Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Waingmaw Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Tanai Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Mogaung Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Mohnyin Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Shwegu Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Bhamo Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Mansi Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Momauk Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Hpakant Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Tsawlaw Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Khaunglanhpu Township"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Sinbo Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Pannandin Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Pang War Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Sadung Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Kan Paik Ti Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Shin Bway Yang Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Nammatee Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Hopin Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Inn Taw Gyi Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Nam Mun Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Nam Mar Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Myo Hla Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Lwegel Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Dawthponeyan Town"
+  },
+  {
+    "Region": "Kachin State",
+    "Town_Township": "Kamaing Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Nanyun Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Lahe Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Hkamti Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Lay Shi Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Homalin Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Paungbyin Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Tamu Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Mawlaik Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Kale Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Kalewa Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Mingin Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Kani Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Banmauk Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Indaw Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Katha Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Pinlebu Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Wuntho Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Kawlin Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Tigyaing Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Kyunhla Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Kanbalu Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Taze Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Khin-U Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Ye-U Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Tabayin Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Shwebo Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Budalin Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Wetlet Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Ayadaw Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Monywa Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Yinmarbin Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Salingyi Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Chaung-U Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Myinmu Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Pale Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Myaung Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Sagaing Township"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Pansaung Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Don Hee Town Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Htan Par Kway Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Mo Paing Lut Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Sum Ma Rar Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Shwe Pyi Aye Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Myothit Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Khampat Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Maw Lu Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Zee Kone Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Saing Pyin Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Kyauk Myaung Town"
+  },
+  {
+    "Region": "Sagaing Region",
+    "Town_Township": "Sar Taung Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Lashio Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Hseni Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Mongyai Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Tangyan Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Pangsang (Panghkam) Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Narphan Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Pangwaun Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Mongmao Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Muse Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Namhkan Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Kutkai Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Kyaukme Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Nawnghkio Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Hsipaw Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Namtu Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Namhsan Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Mongmit Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Mabein Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Manton Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Kunlong Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Hopang Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Laukkaing Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Konkyan Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Matman Township"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Man Kan Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Monekoe Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Manhlyoe (Manhero) Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Pang Hseng (Kyu Koke) Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Tarmoenye Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Mongngawt Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Monglon Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Nam Tit Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Pan Lon Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Chinshwehaw Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Maw Hteik Town"
+  },
+  {
+    "Region": "Shan State (North)",
+    "Town_Township": "Wein Kawn Town"
+  }
+]

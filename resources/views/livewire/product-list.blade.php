@@ -242,19 +242,32 @@
                                                             </td>
                                                             <td>
                                                                 <div class="dropdown">
-                                                                    <button class="btn btn-sm btn-light btn-active-light-primary fw-semibold fs-7  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                        Actions
+                                                                    @if ($updatePermission || $deletePermission)
+                                                                        <button class="btn btn-sm btn-light btn-active-light-primary fw-semibold fs-7  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                            Actions
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                            @if ($updatePermission)
+                                                                                <li>
+                                                                                    <a href="/product/edit/{{$product['id']}}" class="dropdown-item p-2 edit-brand px-3" >
+                                                                                        <i class="fas fa-pen-to-square me-3"></i>{{ __('product/product.edit') }}
+                                                                                    </a>
+                                                                                </li>
+                                                                        @endif
+                                                                        @if ($deletePermission)
+                                                                            <li>
+                                                                                <div class="dropdown-item p-2 product-delete-confirm cursor-pointer px-3" data-id="{{$product['id']}}" >
+                                                                                    <i class="fas fa-trash me-3"></i>{{ __('product/product.delete') }}
+                                                                                </div>
+                                                                            </li>
+                                                                        @endif
+                                                                    </ul>
+                                                                    @else
+                                                                    <button class="btn btn-sm btn-dark btn-active-light-primary fw-semibold fs-9" type="button">
+                                                                        No Permissions
                                                                     </button>
-                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li><a href="/product/edit/{{$product['id']}}" class="dropdown-item p-2 edit-brand px-3" >
-                                                                           <i class="fas fa-pen-to-square me-3"></i>{{ __('product/product.edit') }}</a>
-                                                                       </li>
-                                                                        <li>
-                                                                            <div class="dropdown-item p-2 product-delete-confirm cursor-pointer px-3" data-id="{{$product['id']}}" >
-                                                                                <i class="fas fa-trash me-3"></i>{{ __('product/product.delete') }}
-                                                                            </div>
-                                                                        </li>
-                                                                   </ul>
+
+                                                                   @endif
                                                                 </div>
                                                             </td>
                                                             <td>{{$product['name']}}</td>
@@ -329,8 +342,23 @@
                                                     </tbody>
                                                     <!--end::Table body-->
                                                 </table>
+
                                             </div>
 
+                                            <div class="row justify-content-center mt-3  justify-content-md-between">
+                                                <div class="col-md-6 col-12 mb-3 ">
+                                                    <div class="w-auto">
+                                                        <select name="" id="" wire:model.change="perPage" class="form-select form-select-sm w-auto m-auto m-md-0">
+                                                            @foreach ($aviablePerPages as $page)
+                                                            <option value="{{$page}}">{{$page}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-12 mb-3">
+                                                    {{$products->onEachSide(2)->links()}}
+                                                </div>
+                                            </div>
 
                                             <div class="d-flex gap-4 mt-5">
                                                 <button class="btn btn-primary btn-sm" id="assignBtn">Assign Selected Products To location</button>

@@ -382,7 +382,7 @@
                                 {{($s->sold_at)}}
                             </td>
                             <td>
-                                {{$s['soldBy']['username']}}
+                                {{$s['soldBy']['username'] ?? ''}}
                             </td>
                         </tr>
                         @endforeach
