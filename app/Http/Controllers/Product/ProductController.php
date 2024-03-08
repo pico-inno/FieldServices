@@ -664,13 +664,27 @@ class ProductController extends Controller
         $q = $request->q;
         $porducts = Product::where(function ($query) use ($q) {
             if($q!=''){
-                $query->where('name', 'like', '%' . $q . '%');
+                $query->where('name', 'like', '%' . $q . '%')->orWhere('sku', '=',$q);
             }{
                 return $query;
             }
         })
             ->paginate(10);
         return response()->json($porducts, 200);
+    }
+    public function getVariations(Request $request){
+        $keyword = $request->q;
+        $variations=ProductVariation::query()
+                        ->select('product_variations.id','products.image','product_variations.variation_sku as sku', DB::raw("CONCAT(products.name, IFNULL(CONCAT(' (', variation_template_values.name, ') '), '')) AS name"))
+                        ->when($keyword && rtrim($keyword!=''),function($q) use($keyword){
+                            $q->where('products.name', 'like', '%' . $keyword . '%')
+                            ->orWhere('sku', '=',$keyword)
+                            ->orWhere('product_variations.variation_sku', '=',$keyword);
+                        })
+                        ->leftJoin('products', 'product_variations.product_id', '=', 'products.id')
+                        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+                        ->paginate(10);
+        return response()->json($variations, 200);
     }
 
     public function getProductVariation(Request $request){

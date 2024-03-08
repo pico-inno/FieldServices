@@ -8,10 +8,12 @@
             </div>
             <div class="card-body">
                 <div class="row mb-5 flex-wrap">
-
                     <div class="col-sm-5 col-md-5 col-12 me-sm-5 mb-3">
                         <label for="" class="form-label">Select Product :</label>
-                        <select id="kt_docs_select2_rich_content" class="form-select form-select-lg" name="..." data-placeholder="Select Product">
+
+                        <x-product-select-component  id="kt_docs_select2_rich_content" class="form-select form-select-lg"  data-placeholder="Select Product" placeholder="Select Product" />
+
+                        {{-- <select id="kt_docs_select2_rich_content" class="form-select form-select-lg"  data-placeholder="Select Product">
                             @foreach ($products as $product)
                                 @php
                                     $isImage=$product["image"] ? true:false;
@@ -23,7 +25,7 @@
 
                             @endforeach
 
-                        </select>
+                        </select> --}}
                     </div>
                     <div class="col-sm-5 col-md-5">
                             <label for="" class="form-label">Select Location :</label>
@@ -185,6 +187,12 @@
                                 </td>
                             </tr>
                         @endforeach
+                    @elseif($variationId == null)
+                    <tr>
+                        <td colspan="9">
+                            Please Select A product
+                        </td>
+                    </tr>
                     @else
                         <tr>
                             <td colspan="9">
@@ -219,55 +227,70 @@
         $('#select2').select2().on('select2:select', function (e) {
             @this.set('businesslocationFilterId', $('#select2').select2("val"));
         }).on('select2:unselect', function (e) {
-                @this.set('businesslocationFilterId','all');
-            });;
-        // Format options
-        const optionFormat = (item) => {
-            if (!item.id) {
-                return item.text;
-            }
+            @this.set('businesslocationFilterId','all');
+        });
+        $('#kt_docs_select2_rich_content').select2().on('select2:select', function (e) {
+            @this.set('variationId', $('#kt_docs_select2_rich_content').select2("val"));
+        }).on('select2:unselect', function (e) {
+            @this.set('variationId', null);
+        });
 
-            var span = document.createElement('span');
-            var template = '';
+        // $('#kt_docs_select2_rich_content').select2().on('select2:select', function (e) {
 
-            template += '<div class="d-flex align-items-center">';
-            template += '<img src="' + item.element.getAttribute('data-kt-rich-content-icon') + '" class="rounded-1 h-30px me-3" alt="' + item.text + '"/>';
-            template += '<div class="d-flex flex-column">'
-            template += '<span class="fs-5 fw-bold lh-1">' + item.text + '</span>';
-            template += '<span class="text-muted fs-9 mt-1">' + item.element.getAttribute('data-sku') + '</span>';
-            template += '</div>';
-            template += '</div>';
+        //     @this.set('variationId', $('#kt_docs_select2_rich_content').select2("val"));
+        //     // @this.set('businesslocationFilterId', $('#select2').select2("val"));
+        // }).on('select2:unselect', function (e) {
+        //     // @this.set('businesslocationFilterId','all');
 
-            span.innerHTML = template;
+        //     @this.set('variationId', null);
+        // });
+        // // Format options
+        // const optionFormat = (item) => {
+        //     if (!item.id) {
+        //         return item.text;
+        //     }
 
-            return $(span);
-        }
+        //     var span = document.createElement('span');
+        //     var template = '';
+
+        //     template += '<div class="d-flex align-items-center">';
+        //     template += '<img src="' + item.element.getAttribute('data-kt-rich-content-icon') + '" class="rounded-1 h-30px me-3" alt="' + item.text + '"/>';
+        //     template += '<div class="d-flex flex-column">'
+        //     template += '<span class="fs-5 fw-bold lh-1">' + item.text + '</span>';
+        //     template += '<span class="text-muted fs-9 mt-1">' + item.element.getAttribute('data-sku') + '</span>';
+        //     template += '</div>';
+        //     template += '</div>';
+
+        //     span.innerHTML = template;
+
+        //     return $(span);
+        // }
 
         // Init Select2 --- more info: https://select2.org/
-        $('#kt_docs_select2_rich_content').select2({
-            placeholder: "Select an option",
-            // minimumResultsForSearch: Infinity,
-            templateSelection: optionFormat,
-            templateResult: optionFormat,
-            matcher: function(params, data) {
-                // If there are no search terms, return all options
-                if ($.trim(params.term) === '') {
-                    return data;
-                }
+        // $('#kt_docs_select2_rich_content').select2({
+        //     placeholder: "Select an option",
+        //     // minimumResultsForSearch: Infinity,
+        //     templateSelection: optionFormat,
+        //     templateResult: optionFormat,
+        //     matcher: function(params, data) {
+        //         // If there are no search terms, return all options
+        //         if ($.trim(params.term) === '') {
+        //             return data;
+        //         }
 
-                // Do a custom search by name or SKU
+        //         // Do a custom search by name or SKU
 
-                var term = params.term.toLowerCase();
-                var name = data.text.toLowerCase();
-                var sku = data.element.getAttribute('data-sku');
-                if (name.indexOf(term) > -1 || sku.indexOf(term) > -1) {
-                    return data;
-                }
+        //         var term = params.term.toLowerCase();
+        //         var name = data.text.toLowerCase();
+        //         var sku = data.element.getAttribute('data-sku');
+        //         if (name.indexOf(term) > -1 || sku.indexOf(term) > -1) {
+        //             return data;
+        //         }
 
-                return null; // Return null if there is no match
-            }
-        }).on('select2:select', function (e) {
-                @this.set('variationId', $('#kt_docs_select2_rich_content').select2("val"));
-            });
+        //         return null; // Return null if there is no match
+        //     }
+        // }).on('select2:select', function (e) {
+        //         @this.set('variationId', $('#kt_docs_select2_rich_content').select2("val"));
+        //     });
     </script>
 </div>

@@ -889,6 +889,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::put('/product/update/{product}', 'update')->name('product.update');
     Route::delete('/product/delete/{product}', 'delete')->name('product.delete');
     Route::get('products/get', 'getProducts');
+    Route::get('/variations/get', 'getVariations');
     Route::get('products/get/variations', 'getProductVariation');
     // product variation delete
     Route::delete('/product-variation/delete/{id}', 'deleteProductVariation')->name('product-variation.delete');
