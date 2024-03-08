@@ -18,5 +18,6 @@ class Address extends Model
         'postal_zip_code',
         'country',
         'phone',
+        'is_default',
     ];
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('postal_zip_code');
             $table->string('country');
             $table->string('phone');
+            $table->boolean('is_default');
             $table->timestamps();
         });
     }
