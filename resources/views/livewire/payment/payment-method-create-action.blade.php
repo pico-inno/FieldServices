@@ -21,7 +21,7 @@
                         <div class="form mb-5">
                             <label for="" class="form-label required">Name</label>
                             <input type="text" placeholder="Name" wire:model.live="name" class="form-control">
-                            <div class="text-success" wire:target="name" wire:loading>Validating...</div>
+                            {{-- <div class="text-success" wire:target="name" wire:loading>Validating...</div> --}}
                             <div class="">
                                 <div class="text-danger">
                                     @error('name')
