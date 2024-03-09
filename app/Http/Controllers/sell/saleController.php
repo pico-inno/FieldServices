@@ -1661,7 +1661,9 @@ class saleController extends Controller
         $locationIds = childLocationIDs($business_location_id);
         $relations = [
             'product.product_packaging' => function ($query) use ($q) {
-                $query->where('package_barcode', $q);
+                $query->when($q,function($query) use($q){
+                    $query->orWhere('package_barcode', $q);
+                });
             },
             'product.uom',
             'product.uom.unit_category.uomByCategory',

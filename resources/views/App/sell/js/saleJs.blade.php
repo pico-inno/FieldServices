@@ -35,6 +35,44 @@
         check();
     })
 
+
+    const packaging=(e,operator)=>{
+            let parent = $(e).closest('.sale_row');
+            let unitQty=parent.find('.quantity').val();
+            let selectedOption =parent.find('.package_id').find(':selected');
+            let packageInputQty=parent.find('.package_qty').val();
+            let packagingUom=selectedOption.data('uomid');
+            let packageQtyForCal = selectedOption.data('qty');
+
+            let currentUomId=parent.find('.uom_select').val();
+            let variation_id=parent.find('.variation_id').val();
+            let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
+            let uoms=product.uom.unit_category.uom_by_category;
+            if(packageQtyForCal && packagingUom){
+                if(operator=='/'){
+                    // function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='')
+                    let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
+                    parent.find('.package_qty').val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
+                }else{
+                    // function changeQtyOnUom(uoms,currentQty,currentUomId,newUomId) {
+                    let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
+                    let qtyByCurrentUnit= changeQtyOnUom2(packagingUom,currentUomId,result,uoms).resultQty;
+                    parent.find('.quantity').val(qDecimal(qtyByCurrentUnit));
+                }
+            }
+    }
+
+    const changeRdQty=(e)=>{
+        let parent=e.closest('.sale_row');
+        let rdMainDiv=parent.find('.rdMainDiv');
+        if(rdMainDiv){
+        // let resu =rdMainDiv.find('.currentRomConsuQty').val();
+        let romQty =rdMainDiv.find('.romQty').val();
+        let quantity =parent.find('.quantity').val();
+        rdMainDiv.find('.currentRomConsuQty').val(isNullOrNan(romQty) * isNullOrNan(quantity));
+        // alert(romQty*$(this).val());
+        }
+    }
     let priceLists=@json($priceLists);
     let exchangeRates=@json($exchangeRates ?? []);
     let currentPriceList;
@@ -904,17 +942,6 @@
 
 
 
-    const changeRdQty=(e)=>{
-        let parent=e.closest('.sale_row');
-        let rdMainDiv=parent.find('.rdMainDiv');
-        if(rdMainDiv){
-        // let resu =rdMainDiv.find('.currentRomConsuQty').val();
-        let romQty =rdMainDiv.find('.romQty').val();
-        let quantity =parent.find('.quantity').val();
-        rdMainDiv.find('.currentRomConsuQty').val(isNullOrNan(romQty) * isNullOrNan(quantity));
-        // alert(romQty*$(this).val());
-        }
-    }
         function suggestionProductEvent() {
                 $('.suggestProductBtn').off('click').on('click',function(){
                     let variationId=$(this).data('varid');
@@ -950,32 +977,8 @@
         })
         $(document).on('input','.package_qty',function(){
             packaging($(this),'*');
+            qtyEvents($(this));
         })
-        const packaging=(e,operator)=>{
-            let parent = $(e).closest('.sale_row');
-            let unitQty=parent.find('.quantity').val();
-            let selectedOption =parent.find('.package_id').find(':selected');
-            let packageInputQty=parent.find('.package_qty').val();
-            let packagingUom=selectedOption.data('uomid');
-            let packageQtyForCal = selectedOption.data('qty');
-
-            let currentUomId=parent.find('.uom_select').val();
-            let variation_id=parent.find('.variation_id').val();
-            let product=productsOnSelectData.find((pod)=>pod.variation_id==variation_id);
-            let uoms=product.uom.unit_category.uom_by_category;
-            if(packageQtyForCal && packagingUom){
-                if(operator=='/'){
-                    // function changeQtyOnUom2(currentUomId, newUomId, currentQty,uoms,currentUomPrice='')
-                    let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
-                    parent.find('.package_qty').val(qDecimal(isNullOrNan(unitQtyValByUom) / isNullOrNan(packageQtyForCal)));
-                }else{
-                    // function changeQtyOnUom(uoms,currentQty,currentUomId,newUomId) {
-                    let result=isNullOrNan(packageQtyForCal) * isNullOrNan(packageInputQty);
-                    let qtyByCurrentUnit= changeQtyOnUom2(packagingUom,currentUomId,result,uoms).resultQty;
-                    parent.find('.quantity').val(qDecimal(qtyByCurrentUnit));
-                }
-            }
-        }
 
         function optionSelected(value,select){
             // Set the value to be selected

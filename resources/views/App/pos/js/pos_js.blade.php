@@ -544,7 +544,7 @@
                 'uom_id':newSelectedProduct.product.uom_id,
                 'stock':newSelectedProduct.stock,
                 'additional_product':newSelectedProduct.product.additional_product,
-                'packaging':newSelectedProduct.product.packaging,
+                'packaging':newSelectedProduct.packaging,
             };
             if(productsOnSelectData.length>0){
                 const indexToReplace = productsOnSelectData.findIndex(p => p.product_id === newSelectedProduct.product_id && p.variation_id === newSelectedProduct.id);
@@ -1472,6 +1472,7 @@
 
 
             let packagingOption='';
+            console.log(product,'product.packaging product.packaging  product.packaging');
             if(product.packaging){
                 product.packaging.forEach((pk)=>{
                     packagingOption+=`
