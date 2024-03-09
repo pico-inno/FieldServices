@@ -858,6 +858,11 @@
         $(document).on('input',`#quantity_${unique_name_id}`,function(e){
             qtyEvents($(this));
         })
+
+        $(document).on('input','.package_qty',function(){
+            packaging($(this),'*');
+            qtyEvents($(this));
+        })
         function qtyEvents(e){
             checkStock(e);
             packaging(e,'/');
@@ -974,10 +979,6 @@
         })
         $(document).on('change','.uom_select',function(){
             packaging($(this),'/');
-        })
-        $(document).on('input','.package_qty',function(){
-            packaging($(this),'*');
-            qtyEvents($(this));
         })
 
         function optionSelected(value,select){
