@@ -4,6 +4,7 @@ namespace App\Livewire\FieldService;
 
 use Livewire\Component;
 use App\Models\Currencies;
+use App\Models\BusinessUser;
 use Livewire\WithPagination;
 use App\Datatables\datatable;
 use App\Models\Product\Category;
@@ -11,8 +12,8 @@ use App\Models\sale\sale_details;
 use App\Exports\productItemReport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\campaignProductOverAllReport;
 use App\Models\settings\businessLocation;
+use App\Exports\campaignProductOverAllReport;
 use Modules\FieldService\Entities\FsCampaign;
 
 class CampaignProductSummeryReport extends Component
@@ -25,9 +26,11 @@ class CampaignProductSummeryReport extends Component
     public $categotryFilterId='all';
     public $outletFilterId='all';
     public $outletTypeFilter='all';
+    public $pgFilterId='all';
     public $filterDate;
     public  $campaigns;
     public $outlets;
+    public $employee;
     public function updated(){
         $this->resetPage();
     }
@@ -37,10 +40,16 @@ class CampaignProductSummeryReport extends Component
             'filterDate' => $this->filterDate,
             'campaignFilterId' => $this->campaignFilterId,
             'defaultCampaignId'=> $this->defaultCampaignId,
+            'outletFilterId'=>$this->outletFilterId,
+            'outletTypeFilter'=>$this->outletTypeFilter,
+            'pgFilterId'=>$this->pgFilterId,
         ], $withFilter), 'ItemReport.xlsx');
     }
     public function mount(){
         $this->outlets = businessLocation::select('id', 'name')->get()->toArray();
+
+        $this->employee = BusinessUser::select('username', 'id', 'personal_info_id')
+            ->with('personal_info:first_name,last_name,id')->get();
     }
     public function render()
     {
@@ -50,6 +59,7 @@ class CampaignProductSummeryReport extends Component
         $defaultCampaignId=$this->defaultCampaignId;
         $campaignFilterId=$this->campaignFilterId;
         $outletFilterId=$this->outletFilterId;
+        $pgFilterId=$this->pgFilterId;
         $outletTypeFilter=$this->outletTypeFilter;
         $currencyId= getSettingsValue('currency_id');
         $categories = Category::select('name', 'id')->get();
@@ -103,6 +113,10 @@ class CampaignProductSummeryReport extends Component
             })
             ->when($outletTypeFilter != 'all', function ($query) use ($outletTypeFilter) {
                 $query->where('outlet.outlet_type',$outletTypeFilter);
+            })
+
+            ->when($pgFilterId != 'all', function ($query) use ($pgFilterId) {
+                $query->where('sales.sold_by',$pgFilterId);
             })
 
 
