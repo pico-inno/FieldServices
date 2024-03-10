@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\settings;
 
-use App\Actions\location\locationActions;
 use Exception;
 use App\Models\locationType;
 use Illuminate\Http\Request;
+use App\Models\InvoiceTemplate;
+use App\Models\locationAddress;
 use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\InvoiceTemplate;
-use App\Models\locationAddress;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
+use App\Actions\location\locationActions;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 
@@ -122,6 +123,8 @@ class businessLocationController extends Controller
     {
 
         $bl = businessLocation::where('id', $id)->first();
+
+        Cache::forget("bl_$id");
         $parentLocation = businessLocation::where('id', $request->parent_location_id)->first();
         if ($request->parent_location_id != $id && arr($parentLocation, 'parent_location_id') != $id) {
             $request['is_active'] = $request['is_active'] ?? 0;

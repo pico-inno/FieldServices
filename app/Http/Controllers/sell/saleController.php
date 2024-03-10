@@ -447,7 +447,7 @@ class saleController extends Controller
 
             // checkLocationAccessForTx($request->business_location_id);
             // get payment status
-            if ($request->paid_amount == 0) {
+            if ($request->paid_amount == 0 && $request->total_sale_amount != 0) {
                 $payment_status = 'due';
             } elseif ($request->paid_amount >= $request->total_sale_amount) {
                 $payment_status = 'paid';

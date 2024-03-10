@@ -75,6 +75,19 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                <label class="form-label  fs-6 fw-semibold">
+                                    <i class="fa-solid fa-circle fs-9 text-success me-1"></i>
+                                    Filter By PG:</label>
+                                <select class="form-select form-select-sm fw-bold pgFilter" data-allow-clear="true" data-placeholder="Select option"
+                                    id="pgFilter" data-kt-select2="true" data-kt-table-filter="employee">
+                                    <option value="all">All</option>
+                                    @foreach ($employee as $e)
+                                    <option value="{{ $e['id'] }}">{{ $e['personal_info']['first_name'] }}{{ $e['personal_info']['last_name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -225,7 +238,7 @@
                     </tbody>
                     <tfoot>
                         <tr  class="fw-bold fs-3">
-                            <th colspan="{{$defaultCampaignId==null ? 3: '2'}}" class="fw-bold fs-3">
+                            <th colspan="{{$defaultCampaignId==null ? 4: '2'}}" class="fw-bold fs-3">
                                 Total
                             </th>
                             <th class="text-end">
@@ -283,6 +296,15 @@
             }).on('select2:unselect', function (e) {
                 @this.set('categotryFilterId','all');
             });
+
+            $('#pgFilter').select2().on('select2:select', function (e) {
+                @this.set('pgFilterId', $('#pgFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('pgFilterId','all');
+            });
+
+
+
             // cb(start, end);
             var start = moment().subtract(1, "M");
             var end = moment();

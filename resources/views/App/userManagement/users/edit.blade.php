@@ -231,7 +231,7 @@
                                     <label class="required fs-6 fw-semibold mb-2">{{__('user.default_location')}}</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    <select name="default_location_id" aria-label="Select a Roles" data-control="select2" data-placeholder="Select a default locaiton" class="form-select" data-hide-search="true" data-dropdown-parent="#kt_modal_add_user">
+                                    <select name="default_location_id" aria-label="Select a Roles" data-control="select2" data-placeholder="Select a default locaiton" class="form-select"  data-dropdown-parent="#kt_modal_add_user">
                                         <option></option>
                                         @foreach($locations as $location)
                                             <option {{old('default_location_id')==$location->id || $user->default_location_id == $location->id ? 'selected' : ''}} value="{{$location->id}}">{{$location->name}}</option>

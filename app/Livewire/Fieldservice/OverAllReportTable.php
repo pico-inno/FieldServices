@@ -41,7 +41,7 @@ class OverAllReportTable extends Component
         $this->sortField = 'products.id';
     }
     public function mount(){
-        $this->locations = businessLocation::select('name', 'id', 'parent_location_id')->get();
+        $this->locations = businessLocation::select('name', 'id', 'parent_location_id')->with('parentLocation')->get();
         $this->employee = BusinessUser::select('username', 'id', 'personal_info_id')
             ->with('personal_info:first_name,last_name,id')->get()->toArray();
         $this->categories = Category::select('name', 'id')->get()->toArray();
@@ -92,6 +92,7 @@ class OverAllReportTable extends Component
                 'products.name',
                 'product_variations.variation_sku',
                 'sales.created_by',
+                'sales.sold_by',
                 'product_packaging_transactions.product_packaging_id',
                 'product_packaging_transactions.quantity as pkgQty',
                 'product_packagings.packaging_name as pkg',
@@ -125,7 +126,7 @@ class OverAllReportTable extends Component
             )
             ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id', '=', 'product_packagings.id')
             ->leftJoin('business_locations  as outlet', 'fscampaign.business_location_id', '=', 'outlet.id')
-            ->leftJoin('business_users  as pg', 'sales.created_by', '=', 'pg.id')
+            ->leftJoin('business_users  as pg', 'sales.sold_by', '=', 'pg.id')
             ->leftJoin('personal_infos  as pf', 'pg.personal_info_id', '=', 'pf.id')
             ->when(rtrim($search), function ($query) use ($search) {
                 $query->where("products.name", 'like', '%' . $search . '%');

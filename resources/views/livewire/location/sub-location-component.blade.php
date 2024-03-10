@@ -1,6 +1,6 @@
 
 <ul>
-    <li data-jstree='{ "icon" : "ki-solid ki-geolocation text-{{$mainColor}} fs-4","opened" : true  }' class="mt-3">
+    <li data-jstree='{ "icon" : "ki-solid ki-geolocation text-{{$mainColor}} fs-4","opened" : false  }' class="mt-3">
         {{$location['name']}}
         @php
             $subLocations = App\Models\settings\businessLocation::select('id', 'name')

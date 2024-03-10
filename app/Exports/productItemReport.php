@@ -52,9 +52,12 @@ class productItemReport implements FromView,ShouldAutoSize
         $categotryFilterId = $this->filterData['categotryFilterId'];
         $filterDate = $this->filterData['filterDate'];
         $campaignFilterId = $this->filterData['campaignFilterId'];
+        $pgFilterId=$this->filterData['pgFilterId'];
+        $outletFilterId=$this->filterData['outletFilterId'];
+        $outletTypeFilter=$this->filterData['outletTypeFilter'];
         $withFilter=$this->withFilter;
         $datas= $this->query()
-            ->when($withFilter,function($q)use($filterDate,$campaignFilterId,$categotryFilterId){
+            ->when($withFilter,function($q)use($filterDate,$campaignFilterId,$categotryFilterId,$pgFilterId,$outletFilterId,$outletTypeFilter){
                 $q->when(isset($filterDate), function ($query) use ($filterDate) {
                     $query->whereDate('sales.sold_at', '>=', $filterDate[0])
                         ->whereDate('sales.sold_at', '<=', $filterDate[1]);
@@ -62,8 +65,17 @@ class productItemReport implements FromView,ShouldAutoSize
                 ->when($campaignFilterId != 'all', function ($query) use ($campaignFilterId) {
                     $query->where('fscampaign.id','=',$campaignFilterId);
                 })
+                ->when($outletFilterId != 'all', function ($query) use ($outletFilterId) {
+                    $lids=childLocationIDs($outletFilterId);
+                    $query->whereIn('fscampaign.business_location_id',$lids);
+                })
+                ->when($outletTypeFilter != 'all', function ($query) use ($outletTypeFilter) {
+                    $query->where('outlet.outlet_type',$outletTypeFilter);
+                })
                 ->when($categotryFilterId != 'all', function ($query) use ($categotryFilterId) {
                     $query->where('categories.id','=',$categotryFilterId);
+                })->when($pgFilterId != 'all', function ($query) use ($pgFilterId) {
+                    $query->where('sales.sold_by',$pgFilterId);
                 });
             })
             ->get();

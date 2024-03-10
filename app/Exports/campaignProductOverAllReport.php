@@ -32,6 +32,7 @@ class campaignProductOverAllReport implements FromView,ShouldAutoSize
                 'products.name',
                 'product_variations.variation_sku',
                 'sales.created_by',
+                'sales.sold_by',
                 'sale_details.quantity as quantity',
                 'product_packaging_transactions.product_packaging_id',
                 'product_packaging_transactions.quantity as pkgQty',
@@ -63,7 +64,7 @@ class campaignProductOverAllReport implements FromView,ShouldAutoSize
             )
             ->leftJoin('product_packagings', 'product_packaging_transactions.product_packaging_id', '=', 'product_packagings.id')
             ->leftJoin('business_locations  as outlet', 'fscampaign.business_location_id', '=', 'outlet.id')
-            ->leftJoin('business_users  as pg', 'sales.created_by', '=', 'pg.id')
+            ->leftJoin('business_users  as pg', 'sales.sold_by', '=', 'pg.id')
             ->leftJoin('personal_infos  as pf', 'pg.personal_info_id', '=', 'pf.id')
             ->when($defaultCampaignId,function($query)use($defaultCampaignId){
                 $query->where('fscampaign.id', $defaultCampaignId);

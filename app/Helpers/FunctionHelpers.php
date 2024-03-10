@@ -6,7 +6,6 @@ use App\Models\Currencies;
 use App\Models\sale\sales;
 use App\Models\Product\UOM;
 use App\Models\openingStocks;
-use App\Models\Stock\StockAdjustment;
 use App\Models\stock_history;
 use App\Models\systemSetting;
 use App\Helpers\SettingHelpers;
@@ -21,14 +20,16 @@ use App\Models\purchases\purchases;
 use App\Models\Stock\StockTransfer;
 use Nwidart\Modules\Facades\Module;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Stock\StockAdjustment;
+use Illuminate\Support\Facades\Cache;
+use App\Services\Report\reportServices;
 use App\Models\Product\ProductVariation;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
 use Modules\ComboKit\Services\RoMService;
+use Modules\Ecommerce\Entities\EcommerceOrder;
 use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
 use App\Actions\currentStockBalance\currentStockBalanceActions;
-use App\Services\Report\reportServices;
-use Modules\Ecommerce\Entities\EcommerceOrder;
 
 function hasModule($moduleName)
 {
@@ -425,9 +426,13 @@ function arr($array, $key, $seperator = '', $noneVal = '')
 }
 function businessLocationName($bl)
 {
-    $parentName = getParentName($bl['parentLocation']);
-    $parent = $parentName ? substr($parentName, 2) . ' / ' : '';
-    return $parent . $bl['name'];
+    $id=$bl['id'];
+    return Cache::remember("bl_$id", 20000, function () use($bl) {
+        $parentName = getParentName($bl['parentLocation']);
+        $parent = $parentName ? substr($parentName, 2) . ' / ' : '';
+        logger($parent . $bl['name']);
+        return $parent . $bl['name'];
+    });
 }
 function childLocationIDs($locationId)
 {
@@ -932,7 +937,7 @@ function productSummary($campaignId,$userId,$dateFilter){
     ->where('sales.is_delete','=',0)
     ->where('receipe_of_material_details.id',null)
     ->where('fscampaign.id','=',$campaignId)
-    ->where('sales.created_by','=',$userId)
+    ->where('sales.sold_by','=',$userId)
     ->orderBy('categories.name','ASC')
     ->whereDate('sales.sold_at',$dateFilter)
     ->groupBy('sale_details.variation_id','products.name', 'categories.name','categories.id', 'uom.short_name')
