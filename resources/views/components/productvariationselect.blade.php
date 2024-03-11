@@ -1,4 +1,4 @@
-<select class="form-select productsSelect {{isset($className) ? $className : ''}}" name="{{isset($name) ? $name : ''}}"
+<select class="form-select productsSelect {{isset($className) ? $className : ''}}" name="{{isset($name) ? $name : ''}}" data-dropdown-parent="{{$parentModalId ?? ''}}"
         data-hide-search="false" data-placeholder="{{isset($placeholder) ? $placeholder : ''}}" data-allow-clear="true"
         id='{{isset($id) ? $id : ''}}'>
     {{ $defaultOption ?? '' }}

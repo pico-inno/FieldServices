@@ -15,8 +15,10 @@ class productVariationSelect extends Component
     public $name='';
     public $className='';
     public $id = '';
-    public function __construct($placeholder='', $name='', $className="",$id="")
+    public $parentModalId='';
+    public function __construct($placeholder='', $name='', $className="",$id="",$parentModalId="")
     {
+        $this->parentModalId=$parentModalId;
         $this->placeholder= $placeholder;
         $this->className= $className;
         $this->name=$name;
