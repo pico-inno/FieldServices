@@ -278,7 +278,7 @@
                     <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                         @foreach ($saleData as $s)
-                        <tr class="text-end sale-row  cursor-pointer view_detail" data-href="{{route('saleDetail', $s->id)}}">
+                        <tr class="text-end sale-row  cursor-pointer view_detail" data-href="{{route('saleDetail', $s->id)}}"  wire:key="{{ $s['id'] }}">
                             <td class="actionRow">
                                 <div class="form-check form-check-sm form-check-custom ">
                                     <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
@@ -288,11 +288,11 @@
                             <td class="actionRow">
                                 <div class="dropdown text-center actionRow">
                                     <button class="btn btn-sm btn-light btn-primary fw-semibold fs-7  dropdown-toggle actionRow"
-                                        type="button" id="saleItemDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        type="button" id="saleItemDropDown_{{$s}}" data-bs-toggle="dropdown" aria-expanded="false">
                                         Actions
                                     </button>
                                     <div class="z-3 actionRow">
-                                        <ul class="dropdown-menu z-10 p-5 actionRow" aria-labelledby="saleItemDropDown" role="menu">
+                                        <ul class="dropdown-menu z-10 p-5 actionRow" aria-labelledby="saleItemDropDown_{{$s}}" role="menu">
                                             @if ($hasView)
                                                 <a class="dropdown-item p-2 " type="button" data-href="{{route('saleDetail', $s->id)}}">
                                                     View

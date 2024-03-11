@@ -42,6 +42,7 @@ class ItemReportTable extends Component
             DB::raw("CONCAT(customer.first_name,' ',IFNULL(customer.middle_name,''),' ',IFNULL(customer.last_name,''),'') AS customer_name"),
             'openingPerson.username as openingPerson',
             'purchase_details.uom_price as purchase_price',
+            'opening_stock_details.uom_price as openingPrice',
             'current_stock_balance.transaction_type as csbT',
             'purchase_voucher_no',
             'purchases.created_at as purchase_date',
@@ -110,7 +111,7 @@ class ItemReportTable extends Component
             ->where('sale_details.is_delete', 0)
             ->paginate($this->perPage);
             // ->get()->toArray();
-            // dd($datas);
+            // dd($datas->toArray());
         return view('livewire.item-report-table',[
             'datas'=>$datas
                 // ->paginate($this->perPage)

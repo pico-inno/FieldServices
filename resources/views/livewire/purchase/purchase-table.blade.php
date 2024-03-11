@@ -219,7 +219,7 @@
                 <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                     @foreach ($purchases as $p)
-                    <tr class="text-end">
+                    <tr class="text-end" wire:key="{{ $p['id'] }}">
                         <td>
                             <div class="form-check form-check-sm form-check-custom ">
                                 <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
