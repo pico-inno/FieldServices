@@ -176,10 +176,13 @@
                                     @foreach ($paymentTransactions as $pt)
                                         @php
                                             $pyt=$pt->paymentTransaction;
+
                                         @endphp
+                                        @if(isset($pyt))
+
                                         <tr class="fw-semibold text-end">
                                             <td class="text-start">{{$pyt->payment_voucher_no}}</td>
-                                            <td>{{$pyt->transaction_type}}</td>
+                                            <td>{{$pyt->transaction_type }}</td>
                                             <td>{{$pyt->transaction_ref_no}}</td>
 
                                             @if (isUsePaymnetAcc())
@@ -191,6 +194,7 @@
                                                 {{price($pyt->payment_amount,$pyt->currency_id)}}
                                             </td>
                                         </tr>
+                                        @endif
                                     @endforeach
 
                                 </tbody>
