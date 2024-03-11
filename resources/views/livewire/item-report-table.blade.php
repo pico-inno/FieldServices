@@ -75,7 +75,12 @@
                             @endif
                         </td>
                         <td class="text-end">
-                            {{formatNumberv2($data->purchase_price)}}
+                            @if ($data->csbT == 'purchase')
+                                {{formatNumberv2($data->purchase_price)}}
+                            @elseif ($data->csbT == 'opening_stock')
+                                {{formatNumberv2($data->openingPrice)}}
+                            @endif
+
                         </td>
                         <td>{{$data->customer_name}}</td>
                         <td>{{$data->location}}</td>
@@ -96,13 +101,13 @@
                             <h3>Total</h3>
                         </td>
                         <td  class=" text-end">
-                            {{$datas->sum('sale_subtotal')}}
+                            {{formatNumberv2($datas->sum('sale_subtotal'))}}
                         </td>
                         <td  class=" text-end">
-                            {{$datas->sum('total_cogs')}}
+                            {{formatNumberv2($datas->sum('total_cogs'))}}
                         </td>
                         <td  class=" text-end">
-                            {{$datas->sum('sale_subtotal')-$datas->sum('total_cogs')}}
+                            {{formatNumberv2($datas->sum('sale_subtotal')-$datas->sum('total_cogs'))}}
                         </td>
                     </tr>
                 </tfoot>
