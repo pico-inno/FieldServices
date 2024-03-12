@@ -494,6 +494,7 @@ $(document).ready(function(){
 
 
 <script>
+
     $(document).on('click', '.productQuickAdd', function(){
         $url=$(this).data('href');
 

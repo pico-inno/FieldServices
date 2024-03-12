@@ -126,7 +126,7 @@ $(document).ready(function () {
 
         // You can also add a visual indicator that the form is being submitted,
         // for example, changing the button text to "Submitting...".
-        submitButton.html('Submitting...');
+        submitButton.html('Saving...');
 
         // Ensure form submission continues after button disabling
         return true;

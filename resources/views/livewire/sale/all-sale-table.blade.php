@@ -278,7 +278,7 @@
                     <tbody class="fw-semibold text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
                         @foreach ($saleData as $s)
-                        <tr class="text-end sale-row  cursor-pointer view_detail" data-href="{{route('saleDetail', $s->id)}}"  wire:key="{{ $s['id'] }}">
+                        <tr class="text-end sale-row   "   wire:key="{{ $s['id'] }}">
                             <td class="actionRow">
                                 <div class="form-check form-check-sm form-check-custom ">
                                     <input class="form-check-input checkForDelete" type="checkbox" data-checked="delete"
@@ -294,7 +294,7 @@
                                     <div class="z-3 actionRow">
                                         <ul class="dropdown-menu z-10 p-5 actionRow" aria-labelledby="saleItemDropDown_{{$s}}" role="menu">
                                             @if ($hasView)
-                                                <a class="dropdown-item p-2 " type="button" data-href="{{route('saleDetail', $s->id)}}">
+                                                <a class="dropdown-item p-2 view_detail" type="button" data-href="{{route('saleDetail', $s->id)}}">
                                                     View
                                                 </a>
                                             @endif
@@ -341,7 +341,7 @@
                                 </div>
                             </td>
                             <td class="text-start "  >
-                                <div class="d-flex justify-content-start align-items-start">
+                                <div class="d-flex justify-content-start align-items-start view_detail cursor-pointer text-decoration-underline" data-href="{{route('saleDetail', $s->id)}}">
                                     {{$s['sales_voucher_no']}}
                                     @if (isset($s['isRead'])&&$s['isRead'] == null && $s['channel_type']=='ecommerce')
 
