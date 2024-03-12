@@ -1,6 +1,7 @@
 <script src="{{ asset('customJs/debounce.js') }}"></script>
 <script>
 $(document).ready(function() {
+
     let prodcuts;
     let productsOnSelectData=@json($productsOnSelectData?? []);
     let osdCount={{$osdCount ?? 0}};
@@ -602,5 +603,19 @@ $(document).ready(function() {
             referenceUomId: referenceUomId
         };
     }
+
+    $('#openingStock_form').submit(function() {
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true); // Disables the button
+
+        $('[data-kt-sale-action="submit"]').prop('disabled', true);
+
+        // You can also add a visual indicator that the form is being submitted,
+        // for example, changing the button text to "Submitting...".
+        submitButton.html('Saving...');
+
+        // Ensure form submission continues after button disabling
+        return true;
+    });
 });
 </script>
