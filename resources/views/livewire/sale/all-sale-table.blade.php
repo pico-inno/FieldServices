@@ -313,7 +313,7 @@
                                             @endif
                                             @if ($s->balance_amount > 0 || $s->paid_amount < $s->sale_amount)
                                             <a class="dropdown-item p-2 cursor-pointer actionRow" id="paymentCreate"
-                                                data-href="{{route('paymentTransaction.createForSale', ['id' => $s->id, 'currency_id' => $s->currency_id])}}">Add
+                                                data-href="{{route('paymentTransaction.createForSale', ['id' => $s->id, 'currency_id' => $s->currency_id ?? 1])}}">Add
                                                 Payment</a>
                                             @endif
 

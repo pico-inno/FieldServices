@@ -254,6 +254,8 @@ class paymentsTransactionsController extends Controller
     public function createForSale($id){
         $data=sales::where('id',$id)->first();
         $paymentAccounts=paymentAccounts::where('currency_id',request()->currency_id)->with('currency')->get();
+        logger('sth');
+        // dd($data,request()->currency_id,$paymentAccounts->toArray());
         return view('App.paymentTransactions.sell.create',compact('data','paymentAccounts'));
     }
 
