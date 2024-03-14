@@ -1459,6 +1459,7 @@ class saleController extends Controller
     {
         try {
             DB::beginTransaction();
+            logger("$id".$id);
             $this->softDeletion($id);
             $data = [
                 'success' => 'Successfully Deleted'
@@ -1486,7 +1487,6 @@ class saleController extends Controller
     public function softSelectedDelete()
     {
         $ids = request('data');
-        logger($ids);
         DB::beginTransaction();
         try {
             foreach ($ids as $id) {
@@ -1540,12 +1540,12 @@ class saleController extends Controller
             }
             stock_history::where('transaction_details_id', $sd->id)->where('transaction_type', 'sale')->delete();
         }
-        $saleDetailQuery->update([
+        $saleDetailQuery->first()->update([
             'is_delete' => 1,
             'deleted_at' => now(),
             'deleted_by' => Auth::user()->id,
         ]);
-        sales::where('id', $id)->update([
+        sales::where('id', $id)->first()->update([
             'is_delete' => 1,
             'deleted_by' => Auth::user()->id,
             'deleted_at' => now()
