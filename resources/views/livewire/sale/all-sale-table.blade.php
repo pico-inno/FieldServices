@@ -441,7 +441,7 @@
 
         let table = document.querySelector('#kt_saleItem_table');
         initToggleToolbar(table);
-        handleDeleteRows();
+        // handleDeleteRows();
         $('#select2').select2().on('select2:select', function (e) {
             @this.set('businesslocationFilterId', $('#select2').select2("val"));
         });
@@ -482,15 +482,8 @@
         }, cb);
     });
 
-
-        // Delete location
-    var handleDeleteRows = () => {
-        // Select all delete buttons
-        const deleteButtons = document.querySelectorAll('[data-kt-saleItem-table="delete_row"]');
-        deleteButtons.forEach(d => {
-            // Delete button on click
-            d.addEventListener('click', function (e) {
-                e.preventDefault();
+    $(document).on('click','[data-kt-saleItem-table="delete_row"]',function(e){
+        e.preventDefault();
                 console.log('hello');
                 // Select parent row
                 const parent = e.target.closest('tr');
@@ -510,10 +503,11 @@
                         confirmButton: "btn fw-bold btn-danger",
                         cancelButton: "btn fw-bold btn-active-light-primary"
                     }
-                }).then(function (result) {
+                }).then( (result)=> {
                     if (result.value) {
-                            let id=d.getAttribute('data-id')
+                            let id=$(this).data('id');
                             let url = `/sell/${id}/delete?restore=true`;
+                            console.log(url,'url');
                             $.ajax({
                                 url,
                                 type: 'DELETE',
@@ -534,6 +528,9 @@
                                     }).then(function () {
                                         success(s.success);
                                     });
+                                },
+                                error:(e)=>{
+                                    console.log('error',e);
                                 }
                             })
                     }else if (result.dismiss === 'cancel') {
@@ -549,38 +546,13 @@
                     }
 
                 });
-            })
-        });
-    }
+    })
 
-            // Init toggle toolbar
-    var initToggleToolbar = (table) => {
-        // Toggle selected action toolbar
-        // Select all checkboxes
+    // const deleteSelected = document.querySelector('[data-kt-saleItem-table-select="delete_selected"]');
+      // Deleted selected rows
+      $(document).on('click','[data-kt-saleItem-table-select="delete_selected"]',function () {
+        let table = document.querySelector('#kt_saleItem_table');
         const checkboxes = table.querySelectorAll('[data-checked="delete"]');
-        const selectAll = table.querySelector('#selectAll');
-        // Select elements
-        const deleteSelected = document.querySelector('[data-kt-saleItem-table-select="delete_selected"]');
-
-        // Toggle delete selected toolbar
-        checkboxes.forEach(c => {
-            // Checkbox on click event
-            c.addEventListener('click', function () {
-                console.log('click');
-                setTimeout(function () {
-                    toggleToolbars(table);
-                }, 50);
-            });
-        });
-        selectAll.addEventListener('click',function () {
-                setTimeout(function () {
-                    toggleToolbars(table);
-                }, 50);
-        })
-
-        // Deleted selected rows
-        deleteSelected.addEventListener('click', function () {
-            // SweetAlert2 pop up --- official docs reference: https://sweetalert2.github.io/
             Swal.fire({
                 text: "Are you sure you want to delete selected locations?",
                 icon: "warning",
@@ -608,6 +580,7 @@
                                     data = [...data,c.value];
                                 }
                             });
+                            console.log(data,'datas=');
                             $.ajax({
                                 url,
                                 type: 'DELETE',
@@ -653,6 +626,34 @@
                 }
             });
         });
+        // Delete location
+
+            // Init toggle toolbar
+    var initToggleToolbar = (table) => {
+
+        // Toggle selected action toolbar
+        // Select all checkboxes
+        const checkboxes = table.querySelectorAll('[data-checked="delete"]');
+        const selectAll = table.querySelector('#selectAll');
+        // Select elements
+
+        // Toggle delete selected toolbar
+        checkboxes.forEach(c => {
+            // Checkbox on click event
+            c.addEventListener('click', function () {
+                console.log('click');
+                setTimeout(function () {
+                    toggleToolbars(table);
+                }, 50);
+            });
+        });
+        selectAll.addEventListener('click',function () {
+                setTimeout(function () {
+                    toggleToolbars(table);
+                }, 50);
+        })
+
+
     }
     const toggleToolbars = (table) => {
             // Define variables
