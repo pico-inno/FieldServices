@@ -196,7 +196,7 @@ class openingStockController extends Controller
     public function update($id,Request $request)
     {
         $request_opening_stock_details = $request->opening_stock_details;
-        $opening_stock_data=$this->dataForOpeningStock($request);
+        $opening_stock_data=$this->dataForOpeningStockUpdate($request);
         $opening_stock_data['updated_by'] = Auth::user()->id;
         $opening_stock_data['updated_at'] = Carbon::now();
 
@@ -328,12 +328,20 @@ class openingStockController extends Controller
     }
 
     public function dataForOpeningStock($request){
-        $opening_stock_count=openingStocks::count();
+        $opening_stock_count=openingStocks::orderBy('id','DESC')->first()->id ?? 0;
+        return [
+            'opening_person'=>Auth::user()->id,
+            'opening_stock_voucher_no'=>sprintf('OS-'.'%06d', ($opening_stock_count + 1)),
+            'business_location_id'=>$request->business_location_id,
+            'opening_date' => $request->opening_date,
+            'total_opening_amount'=>$request->total_opening_amount,
+            'note' => $request->note,
+        ];
+    }
+    public function dataForOpeningStockUpdate($request){
         return [
             'business_location_id'=>$request->business_location_id,
-            'opening_stock_voucher_no'=>sprintf('OS-'.'%06d', ($opening_stock_count + 1)),
             'opening_date' => $request->opening_date,
-            'opening_person'=>Auth::user()->id,
             'total_opening_amount'=>$request->total_opening_amount,
             'note' => $request->note,
         ];
