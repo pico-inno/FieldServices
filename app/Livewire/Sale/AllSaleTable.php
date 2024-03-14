@@ -92,6 +92,7 @@ class AllSaleTable extends Component
                         'business_locations.invoice_layout',
 
                     )
+                    ->where('sales.is_delete', 0)
                     ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
                     ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
                     ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
@@ -124,7 +125,6 @@ class AllSaleTable extends Component
                     ->when($statusFilter != 'all', function ($query) use ($statusFilter) {
                         $query->where('sales.status', '=', $statusFilter);
                     })
-                    ->where('sales.is_delete', 0)
                     ->when($accessUserLocation[0] != 0, function ($query) use ($accessUserLocation) {
                         $query->whereIn('business_location_id', $accessUserLocation);
                     })

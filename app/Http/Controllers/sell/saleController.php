@@ -1472,6 +1472,7 @@ class saleController extends Controller
 
             return response()->json($data, 200);
         }catch (Exception $exception){
+            logger($exception);
             DB::rollBack();
             activity('sale-transaction')
                 ->log('Sale single deletion has been fail')
@@ -1485,6 +1486,7 @@ class saleController extends Controller
     public function softSelectedDelete()
     {
         $ids = request('data');
+        logger($ids);
         DB::beginTransaction();
         try {
             foreach ($ids as $id) {
@@ -1502,6 +1504,7 @@ class saleController extends Controller
                 ->save();
             return response()->json($data, 200);
         } catch (Exception $e) {
+            logger($e);
             DB::rollBack();
             activity('sale-transaction')
                 ->log('Sale multi-select deletion has been fail')
