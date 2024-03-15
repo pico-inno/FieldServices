@@ -32,9 +32,61 @@
 @endsection
 
 @section('content')
+    <!--begin::container-->
+    @if(session('failures'))
+    <script>
+         $(document).ready(function() {
+            $('#error_modal').modal('show');
+        });
+    </script>
+    {{-- @dd(session('failures')) --}}
+    <div class="modal fade" data-bs-backdrop="static"  data-bs-keyboard="false"  aria-hidden="true" tabindex="-1" id="error_modal">
+        <div class="modal-dialog modal-dialog-scrollable mw-850px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Error Found in excel</h5>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-danger ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-2x"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <div class="table-responsive table-striped">
+                        <div class="table-body">
+                            <table class="table table-row-dashed table-row-gray-300">
+                                <thead>
+                                <tr class="fw-bold fs-5 text-danger border-bottom border-gray-200">
+                                    <th>Row No</th>
+                                    <th>Reason</th>
+                                    <th>Values</th>
+                                </tr>
+                                </thead>
+                                <tbody style="max-height: 300px; overflow-y: auto;">
+                                @foreach (session('failures') as $failure)
+                                    <tr>
+                                        <td class="text-danger">{{ $failure->row() }}</td>
+                                        <td class="text-danger">{{ implode(', ', $failure->errors()) }}</td>
+                                        <td class="">
+                                            Product Name : <span class="text-gray-900 fw-bold">{{ $failure->values()['product'] }}</span><br>
+                                            Category     : <span class="text-gray-900 fw-bold">{{ $failure->values()['category'] }}</span> <br>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @endif
 <!--begin::Content-->
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-    <!--begin::container-->
     <div class="container-xxl" id="kt_content_container">
         <form action="{{route('priceListImport')}}" method="POST" enctype="multipart/form-data" id="priceList_form">
             @csrf
