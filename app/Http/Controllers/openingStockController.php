@@ -457,9 +457,9 @@ class openingStockController extends Controller
                     'deleted_by' => Auth::user()->id,
                     'deleted_at' =>now(),
                 ]);
-                $openingStockDetail = openingStockDetails::where('opening_stock_id', $id);
+                $openingStockDetail = openingStockDetails::where('opening_stock_id', $id)->get();
                 CurrentStockBalance::where('transaction_type', 'opening_stock')->first();
-                foreach ($openingStockDetail->get() as $osd) {
+                foreach ($openingStockDetail as $osd) {
                     CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->delete();
                     stock_history::where('transaction_type', 'opening_stock')->where('transaction_details_id', $osd->id)->delete();
                 }
