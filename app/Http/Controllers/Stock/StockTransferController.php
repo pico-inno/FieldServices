@@ -331,7 +331,7 @@ class StockTransferController extends Controller
                 'is_delete' => $detail->is_delete,
                 'deleted_at' => $detail->deleted_at,
                 'deleted_by' => $detail->deleted_by,
-                'product_name' => $variation->product->name,
+                'product_name' => $variation->product->name ?? 'unknown-product',
                 'variation_name' => $variation->variationTemplateValue->name ?? '',
                 'uom_name' => $detail->uom->name,
                 'uom_short_name' => $detail->uom->short_name,
@@ -1076,6 +1076,7 @@ class StockTransferController extends Controller
                 ->save();
             return redirect(route('stock-transfer.index'))->with(['success' => 'Stockout deleted successfully']);
         }catch (\Exception $exception){
+            logger($exception);
             DB::rollBack();
             activity('stock-transfer')
                 ->log('Stock Transfer deletion has been fail')
@@ -1093,7 +1094,7 @@ class StockTransferController extends Controller
 
             $transfer = StockTransfer::findOrFail($id);
             $transferDetailIds = StockTransferDetail::where('transfer_id', $id)->pluck('id');
-
+            logger($transfer);
             if ($transfer->status == 'in_transit' || $transfer->status == 'completed') {
                 $lotSerialDetails = lotSerialDetails::whereIn('transaction_detail_id', $transferDetailIds)
                     ->orderByDesc('current_stock_balance_id')
@@ -1102,8 +1103,10 @@ class StockTransferController extends Controller
 
                 foreach ($lotSerialDetails as $lotSerialDetail) {
                     $currentStockBalance = CurrentStockBalance::where('id', $lotSerialDetail->current_stock_balance_id)->first();
-                    $currentStockBalance->current_quantity += $lotSerialDetail->uom_quantity;
-                    $currentStockBalance->save();
+                    if($currentStockBalance){
+                        $currentStockBalance->current_quantity += $lotSerialDetail->uom_quantity;
+                        $currentStockBalance->save();
+                    }
                 }
                 lotSerialDetails::whereIn('transaction_detail_id', $transferDetailIds)->delete();
                 $data = [
