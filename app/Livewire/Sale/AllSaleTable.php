@@ -96,16 +96,14 @@ class AllSaleTable extends Component
                     ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
                     ->leftJoin('business_locations', 'sales.business_location_id', '=', 'business_locations.id')
                     ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                    ->when(rtrim($search), function ($query) use ($search) {
-                        $query->where("sales.sales_voucher_no", 'like', '%' . $search . '%')
-                            ->orWhere(function ($subQuery) use ($search) {
-                                $subQuery->where("contacts.first_name", 'like', '%' . $search . '%')
-                                    ->orWhere("contacts.last_name", 'like', '%' . $search . '%')
-                                    ->orWhere("contacts.middle_name", 'like', '%' . $search . '%')
-                                    ->orWhere("contacts.company_name", 'like', '%' . $search . '%');
-                            })
-                            ->orWhere(function ($subQuery) use ($search) {
-                                $subQuery->where("business_locations.name", 'like', '%' . $search . '%');
+                    ->when(rtrim($search) !='', function ($query) use ($search) {
+                        $query->where(function ($subQuery) use ($search) {
+                                $subQuery->orWhere("sales.sales_voucher_no", 'like', '%' . $search . '%')
+                                ->orWhere("business_locations.name", 'like', '%' . $search . '%')
+                                ->orWhere("contacts.first_name", 'like', '%' . $search . '%')
+                                ->orWhere("contacts.last_name", 'like', '%' . $search . '%')
+                                ->orWhere("contacts.middle_name", 'like', '%' . $search . '%')
+                                ->orWhere("contacts.company_name", 'like', '%' . $search . '%');
                             });
                     })
                     ->when($businesslocationFilterId != 'all', function ($query) use ($businesslocationFilterId) {
