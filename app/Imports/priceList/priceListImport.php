@@ -45,25 +45,37 @@ class priceListImport implements ToCollection, WithHeadingRow
                         || $row['variation']
                         ) {
                         $appliedType = "Variation";
-                        $product = Product::where('name', $row['product'])->firstOrFail();
-                        $productVariationTemplate = VariationTemplateValues::where('name', $row['variation'])->firstOrFail();
-                        $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')
-                                                    ->where('product_id',$product->id)
-                                                    ->where('variation_template_value_id', $productVariationTemplate->id)
-                                                    ->select('id', 'product_id', 'variation_template_value_id')
-                                                    ->firstOrFail();
+                        try {
+                            $product = Product::where('name', $row['product'])->firstOrFail();
+                            $productVariationTemplate = VariationTemplateValues::where('name', $row['variation'])->firstOrFail();
+                            $product_with_variations = ProductVariation::whereNotNull('variation_template_value_id')
+                                                        ->where('product_id',$product->id)
+                                                        ->where('variation_template_value_id', $productVariationTemplate->id)
+                                                        ->select('id', 'product_id', 'variation_template_value_id')
+                                                        ->firstOrFail();
+                        } catch (\Throwable $th) {
+                           return throw new \Exception($row['product']." Product Not Found ");
+                        }
                         // dd($product_with_variations);
                         $appliedValue = $product_with_variations->id;
                         // $appliedType = "Product";
                     } elseif (($row['category'] && $row['product'])||$row['product'])
                     {
-                        $appliedType = "Product";
-                        $product = Product::where('name', $row['product'])->firstOrFail();
-                        $appliedValue = $product->id;
+                        try {
+                            $appliedType = "Product";
+                            $product = Product::where('name', $row['product'])->firstOrFail();
+                            $appliedValue = $product->id;
+                        } catch (\Throwable $th) {
+                           return throw new \Exception($row['product']." Product Not Found ");
+                        }
                     } elseif ($row['category']) {
-                        $appliedType = "Category";
-                        $category = Category::where('name', $row['category'])->firstOrFail();
-                        $appliedValue = $category->id;
+                        try {
+                            $appliedType = "Category";
+                            $category = Category::where('name', $row['category'])->firstOrFail();
+                            $appliedValue = $category->id;
+                        } catch (\Throwable $th) {
+                            return throw new \Exception($row['category']." Category Not Found ");
+                        }
                     }
 
                     $pricelistData = [
