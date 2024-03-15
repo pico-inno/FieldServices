@@ -3,6 +3,7 @@
 namespace App\Imports\priceList;
 
 use App\Models\Product\Product;
+use Illuminate\Validation\Rule;
 use App\Models\Product\Category;
 use App\Models\Product\PriceLists;
 use Illuminate\Support\Collection;
@@ -11,10 +12,10 @@ use App\Models\Product\PriceListDetails;
 use App\Models\Product\ProductVariation;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use App\Models\Product\VariationTemplateValues;
 
-
-class priceListImport implements ToCollection, WithHeadingRow
+class priceListImport implements ToCollection, WithHeadingRow,WithValidation
 {
     // protected $priceList;
     protected $pricelistDetails;
@@ -102,4 +103,27 @@ class priceListImport implements ToCollection, WithHeadingRow
         return $this->pricelistDetails;
     }
 
+    public function rules(): array
+    {
+        return [
+            '*.product' => [
+                'nullable',
+                Rule::exists('products', 'name'),
+            ],
+
+            '*.category' => [
+                'nullable',
+                Rule::exists('categories','name'),
+            ],
+
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            '*.product' => 'Product Not Fount.',
+            '*.category' => 'Category not found!',
+        ];
+    }
 }

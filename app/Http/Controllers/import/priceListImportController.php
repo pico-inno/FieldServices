@@ -37,7 +37,19 @@ class priceListImportController extends Controller
             }
             //  return back()->with(['success'=>'Successfully Imported']);
         } catch (\Throwable $th) {
-             return back()->with(['error'=>$th->getMessage()]);
+            DB::rollBack();
+
+            $failures = null;
+            if($th instanceof \Illuminate\Validation\ValidationException){
+                $failures = $th->failures();
+            }
+            $error = ['error-swal' => $th->getMessage(), 'failures' => $failures];
+            activity('PriceList-transaction')
+                ->log('Price List import has been fail')
+                ->event('import')
+                ->status('fail')
+                ->save();
+            return back()->with($error);
         }
    }
    public function priceListData($request){
