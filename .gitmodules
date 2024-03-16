@@ -1,0 +1,6 @@
+[submodule "Modules/Games"]
+	path = Modules/Games
+	url = https://github.com/pico-inno/Games.git
+[submodule "Modules/Field-Services"]
+	path = Modules/Field-Services
+	url = https://github.com/pico-inno/Field-Services.git
