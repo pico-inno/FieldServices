@@ -1058,6 +1058,4 @@ Route::get('/pos/edit', function () {
 
 Route::get('/test', function () {
 
-    $modules= array_keys(require('../infra/github/register.php'));
-    dd($modules);
 });
