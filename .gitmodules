@@ -1,0 +1,3 @@
+[submodule "Modules/Games"]
+	path = Modules/Games
+	url = https://github.com/pico-inno/Games.git
