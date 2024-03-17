@@ -41,7 +41,7 @@ class PriceListDetailController extends Controller
 
     public function priceListDetailDatas()
     {
-        $priceLists = PriceLists::with('priceListDetails', 'businessSetting', 'currency')->get();
+        $priceLists = PriceLists::with('priceListDetails', 'businessSetting', 'currency');
 
         return DataTables::of($priceLists)
         ->addColumn('business', function($priceList) {
@@ -121,8 +121,8 @@ class PriceListDetailController extends Controller
         $businessSetting = getSettings();
         // $price_lists = PriceLists::where('currency_id', $priceList->currency_id)->where('id', '!=', $priceList->id)->get();
         $price_lists = PriceLists::where('id', '!=', $priceList->id)->get();
-        $price_list_details = $priceList->priceListDetails;
-
+        $price_list_details = PriceListDetails::where('pricelist_id',$priceList['id'])->paginate('5');
+        // dd($price_list_details);
         return view('App.product.PriceListDetail.edit', compact('priceList', 'currencies', 'price_lists', 'price_list_details','businessSetting'));
     }
 
