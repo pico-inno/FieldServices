@@ -49,8 +49,8 @@
             <tr>
                 <td>{{ $parentCategory }}</td>
                 <td>{{$p->name}}</td>
-                <td></td>
-                <td>{{$p->productVariations[0]->sku}}</td>
+                <td>{{$p->sku}}</td>
+                <td>{{$p->productVariations[0]->variation_sku}}</td>
                 <td>0</td>
                 <td></td>
                 <td></td>

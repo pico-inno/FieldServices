@@ -1,5 +1,7 @@
 @extends('App.main.navBar')
 @section('styles')
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
     /* .custom-select2 {
         width: 135px;
@@ -99,7 +101,7 @@
                             <input type="text" class="form-control form-control-sm " name="name" placeholder="Name"
                                 value="">
                             @error('name')
-                            <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger fs-8 my-2">{{ $message }}</span>
                             @enderror
 
                             {{-- being: hidden price list type --}}
@@ -117,7 +119,7 @@
                                 @endforeach
                             </select>
                             @error('base_price')
-                            <div class="text-danger my-2">{{ $message }}</div>
+                            <div class="text-danger fs-8 my-2">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-4 col-sm-12 mb-8 ">
@@ -131,7 +133,7 @@
                                 @endforeach
                             </select>
                             @error('currency_id')
-                            <div class="text-danger my-2">{{ $message }}</div>
+                            <div class="text-danger fs-8 my-2">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
@@ -158,8 +160,8 @@
 
                                 <input class="form-control form-control-sm" id="formFileSm" type="file"
                                     name="importPriceList" />
-                                @error('import-products')
-
+                                @error('importPriceList')
+                                    <div class="text-danger fs-8 my-2">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="d-flex gap-5 col-8">
@@ -222,19 +224,67 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="import_process_modal" data-bs-backdrop="static"  data-bs-keyboard="false"  aria-hidden="true"  tabindex="-1" aria-modal="true" role="dialog">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog mw-700px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header pb-0 border-0 d-flex justify-content-end">
+
+            </div>
+            <!--end::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-10 pt-0 pb-15">
+                <!--begin::Heading-->
+                <div class="text-center mb-13">
+                    <!--begin::Title-->
+                    <h1 class="d-flex justify-content-center align-items-center mb-3">Importing Price List<span class="loading-dots"></span></h1>
+                    <!--end::Title-->
+                    <!--begin::Description-->
+                    <div class="text-muted fw-semibold fs-5">Please wait until the import process is complete.</div>
+                    <!--end::Description-->
+                </div>
+                <!--end::Heading-->
+                <!--begin::Users-->
+                <div class="mh-475px scroll-y me-n7 pe-7">
+
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                </div>
+                <!--end::Users-->
+            </div>
+            <!--end::Modal Body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
 @endsection
 
 @push('scripts')
 <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
 
 @if ($errors->any())
-@foreach ($errors->all() as $error)
-<script>
-    error( @json($error) )
-</script>
-@endforeach
+    @foreach ($errors->all() as $error)
+    <script>
+        error( @json($error) )
+    </script>
+    @endforeach
 @endif
 
 {{-- @include('App.product.PriceListDetail.js.price_list_detail_js'); --}}
+<script>
+        $(document).ready(function () {
+            $('#priceList_form').submit(function (event) {
 
+                $('#submit').prop('disabled', true);;
+                $('#import_process_modal').modal('show');
+                // startLoadingDots();
+            });
+
+        });
+</script>
 @endpush

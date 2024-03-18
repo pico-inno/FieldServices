@@ -19,13 +19,16 @@ class priceListImport implements ToCollection, WithHeadingRow,WithValidation
 {
     // protected $priceList;
     protected $pricelistDetails;
-    public function __construct()
+    protected $priceListId;
+    public function __construct($id)
     {
+        $this->priceListId=$id;
         // $this->priceList = $priceList;
     }
     public function collection(Collection $rows)
     {
         $pricelistDetails=[];
+        $priceListId=$this->priceListId;
         foreach ($rows as $row) {
             $pricelistData=[];
             try {
@@ -80,15 +83,16 @@ class priceListImport implements ToCollection, WithHeadingRow,WithValidation
                     }
 
                     $pricelistData = [
-                        'detail_id' => isset($row['idplease_dont_touch']) ? $row['idplease_dont_touch']:'',
+                        'pricelist_id'=>$priceListId,
+                        // 'detail_id' => isset($row['idplease_dont_touch']) ? $row['idplease_dont_touch']:'',
                         'min_qty' => $row['min_quantity'],
                         'applied_type' => $appliedType,
                         'applied_value' => $appliedValue,
                         'min_qty' => $row['min_quantity'],
-                        'cal_type' => $row['fix_or_percentage'],
+                        'cal_type' => $row['fix_or_percentage'] =='fix' ? 'fixed' :'percentage',
                         'cal_value' => $row['value'],
-                        'start_date' => $row['start_date'],
-                        'end_date' => $row['end_date'],
+                        'from_date' => $row['start_date'],
+                        'to_date' => $row['end_date'],
                     ];
                     $pricelistDetails=[...$pricelistDetails,$pricelistData];
                 }

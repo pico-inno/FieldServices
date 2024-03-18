@@ -1757,6 +1757,7 @@
                 return $u.id ==inputUomId;
         })[0];
         let resultPrice=resultAfterUomChange.resultPrice;
+        console.log(quantity >= qtyByPriceStage);
         if(quantity >= qtyByPriceStage){
             if(currentPriceList.currency_id != currentCurrency.id){
                 let fromCurrency=exchangeRates.find(xr=>xr.currency_id==currentPriceList.currency_id);

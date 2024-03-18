@@ -932,6 +932,7 @@ Route::controller(PriceListDetailController::class)->group(function () {
     Route::get('/price-list-detail/add', 'add')->name('price-list-detail.add');
     Route::post('/price-list-detail/create', 'create')->name('price-list-detail.create');
     Route::get('/price-list-detail/edit/{priceList}', 'edit')->name('price-list-detail.edit');
+    Route::put('/price-list/update/{priceList}', 'updatePriceList')->name('price-list.update');
     Route::put('/price-list-detail/update/{priceList}', 'update')->name('price-list-detail.update');
     Route::delete('/price-list-detail/delete/{priceList}', 'delete')->name('price-list-detail.delete');
 
@@ -1058,6 +1059,4 @@ Route::get('/pos/edit', function () {
 
 Route::get('/test', function () {
 
-    $modules= array_keys(require('../infra/github/register.php'));
-    dd($modules);
 });
