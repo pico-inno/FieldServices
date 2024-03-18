@@ -16,12 +16,19 @@ class PriceListEditTable extends Component
 
     public function render()
     {
-        $priceListDetails = PriceListDetails::where('pricelist_id',$this->id)
-                            // ->leftJoin('products','applied_value','products.id')
-                            ->orderBy('id','DESC')
+        $id=$this->id;
+        $search=$this->search;
+        $priceListDetails = PriceListDetails::query()
+                            // ->select('price_list_details.*','products.name')
+                            ->where('pricelist_id',$id)
+                            // ->when($search,function($q) use($search) {
+                            //     $q->where('products.name','like','%'.$search.'%');
+                            // })
+                            // ->leftJoin('products','price_list_details.applied_value','products.id')
+                            ->orderBy('price_list_details.id','DESC')
                             ->paginate($this->perPage);
         // dd($priceListDetails);
-        return view('livewire.price-list.price-list-edit-table',compact('priceListDetails'));
+        return view('livewire.price-list.price-list-edit-table',compact('priceListDetails','id'));
     }
     public function minQtyChange($value,$id){
         try {

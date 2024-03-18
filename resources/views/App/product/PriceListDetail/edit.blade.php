@@ -195,22 +195,9 @@
                     <!--end::Card-->
                 </form>
             </div>
-            <div class="card card-p-4 ">
-                <div class="card-body card-flush">
-                    <div class="text-end mb-5">
-                        <a href="{{route('export-priceList',$priceList->id)}}" class="btn btn-light-primary btn-sm">
-                          <span class="fa-solid fa-upload me-3"></span>  Export Price List Data
-                        </a>
-                        <button type="button"  class="btn btn-light-success btn-sm" data-bs-toggle="modal" data-bs-target="#priceListModal">
-                            <span class="fa-solid fa-download me-3"></span> Update Price List With Excel
-                        </button>
 
-                    </div>
-                    <div class="separator mb-5"></div>
-                        <livewire:PriceList.price-list-edit-table :id="$priceList['id']" />
-                    <br>
-                </div>
-            </div>
+            <livewire:PriceList.price-list-edit-table :id="$priceList['id']" />
+
     </div>
     <!--end::container-->
 </div>
