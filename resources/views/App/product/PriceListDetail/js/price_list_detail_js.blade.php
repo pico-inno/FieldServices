@@ -5,7 +5,7 @@
 <script>
     $(document).ready(function() {
         $(".select_date").flatpickr({
-            altInput: true,
+            // altInput: true,
             altFormat: "F j, Y",
             dateFormat: "Y-m-d"
         });

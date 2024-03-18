@@ -22,13 +22,9 @@ class PriceListUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required', 
+            'name' => 'required',
             'base_price' => 'required',
             'currency_id' => 'required',
-            'apply_type.*' => 'required',
-            'apply_value.*' => 'required', 
-            'min_qty.*' => 'required|numeric',
-            'cal_val.*' => 'required|numeric',
         ];
     }
 
@@ -38,12 +34,6 @@ class PriceListUpdateRequest extends FormRequest
             'name.required' => 'Name is required',
             'base_price.required' => 'Base Price is required',
             'currency_id.required' => 'Currency is required',
-            'apply_type.*.required' => 'Select apply type',
-            'apply_value.*.required' => 'Select apply value',
-            'min_qty.*.required' => 'Min quantity is required',
-            'min_qty.*.numeric' => 'Minimum quantity must be number',
-            'cal_val.*.required' => 'Calculate value is required',
-            'cal_val.*.numeric' => 'Calculate value must be number',
         ];
     }
 }

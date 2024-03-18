@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Product;
 
-use App\Repositories\CurrencyRepository;
-use App\Repositories\Product\PriceRepository;
 use Exception;
 use App\Models\Currencies;
 use Hamcrest\Arrays\IsArray;
@@ -14,15 +12,18 @@ use App\Models\Product\PriceLists;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Product\PriceListDetails;
 use App\Models\Product\ProductVariation;
+use App\Repositories\CurrencyRepository;
 
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 use App\Models\settings\businessSettings;
+use App\Repositories\Product\PriceRepository;
 use App\Http\Requests\Product\PriceList\PriceListCreateRequest;
 use App\Http\Requests\Product\PriceList\PriceListUpdateRequest;
-use App\Models\Product\PriceListDetails;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Product\PriceList\PriceListDetailUpdateRequest;
 
 class PriceListDetailController extends Controller
 {
@@ -115,6 +116,7 @@ class PriceListDetailController extends Controller
 
     }
 
+
     public function edit(PriceLists $priceList)
     {
         $currencies = Currencies::all();
@@ -126,16 +128,36 @@ class PriceListDetailController extends Controller
         return view('App.product.PriceListDetail.edit', compact('priceList', 'currencies', 'price_lists', 'price_list_details','businessSetting'));
     }
 
-    public function update(PriceListUpdateRequest $request, PriceLists $priceList)
+    public function updatePriceList(PriceListUpdateRequest $request, PriceLists $priceList)
     {
-        DB::beginTransaction();
-        try{
+
+        try {
+            DB::beginTransaction();
+
             $business_id = businessSettings::first()->id;
             $priceList->business_id = $business_id;
             $priceList->currency_id = $request->currency_id;
             $priceList->name = $request->name;
             $priceList->description = $request->description;
             $priceList->update();
+            DB::commit();
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+
+        }
+    }
+
+    public function update(PriceListDetailUpdateRequest $request, PriceLists $priceList)
+    {
+        DB::beginTransaction();
+        try{
+            // $business_id = businessSettings::first()->id;
+            // $priceList->business_id = $business_id;
+            // $priceList->currency_id = $request->currency_id;
+            // $priceList->name = $request->name;
+            // $priceList->description = $request->description;
+            // $priceList->update();
 
             $hasCreation = $this->hasCreatePricelistDetail($request);
             if($hasCreation){
@@ -143,7 +165,7 @@ class PriceListDetailController extends Controller
             }else{
                 $dbPricelistDetailIds = PriceListDetails::where('pricelist_id', $priceList->id)->get()->pluck('id')->toArray();
                 if(!empty($dbPricelistDetailIds)){
-                    PriceListDetails::destroy($dbPricelistDetailIds);
+                    // PriceListDetails::destroy($dbPricelistDetailIds);
                 }
             }
 
@@ -270,9 +292,9 @@ class PriceListDetailController extends Controller
             $dbPricelistDetailIds = PriceListDetails::where('pricelist_id', $pricelistId)->pluck('id');
 
             // Find pricelist-detail IDs to delete
-            $pricelistDetailsToDelete = array_diff($dbPricelistDetailIds->toArray(), $request->price_list_detail_id);
+            $pricelistDetailsToDelete = array_diff($dbPricelistDetailIds->toArray(), $request->price_list_detail_id ?? []);
             if(!empty($pricelistDetailsToDelete)){
-                PriceListDetails::destroy($pricelistDetailsToDelete);
+                // PriceListDetails::destroy($pricelistDetailsToDelete);
             }
         }
 
