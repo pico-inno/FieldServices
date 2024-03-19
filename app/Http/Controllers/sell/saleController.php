@@ -1841,10 +1841,10 @@ class saleController extends Controller
                     ->where('can_sale', 1)
                     ->where('products.name', 'like', '%' . $keyword . '%')
                     ->when($psku_kw == 'true', function ($q) use ($keyword) {
-                        $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                        $q->orWhere('products.sku', 'like',  $keyword . '%');
                     })
                     ->when($vsku_kw == 'true', function ($q) use ($keyword) {
-                        $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                        $q->orWhere('variation_sku', 'like',  $keyword . '%');
                     })
                     ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
                         $q->orWhereHas('varPackaging', function ($query) use ($keyword) {

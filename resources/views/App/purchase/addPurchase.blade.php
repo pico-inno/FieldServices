@@ -153,7 +153,7 @@
                                     <div class="input-group-text">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="{{__('transfer.search_products')}}...">
+                                    <input type="text" onkeypress="preventEnterSubmit(event)" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="{{__('transfer.search_products')}}...">
                                     <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
@@ -441,7 +441,13 @@
 <script>
 
 
+function preventEnterSubmit(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+      }
+    }
 $(document).ready(function(){
+
     $('[data-td-toggle="datetimepicker"]').flatpickr({
              enableTime: true,
             dateFormat: "Y-m-d H:i",
