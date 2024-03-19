@@ -404,7 +404,7 @@
                     if (result.value) {
                         let id=d.getAttribute('data-id')
                             $.ajax({
-                                url: `purchase/${id}/softDelete`,
+                                url: `/purchase/${id}/softDelete`,
                                 type: 'DELETE',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -502,7 +502,7 @@
                         }
                     });
                     $.ajax({
-                        url: `purchase/softDelete`,
+                        url: `/purchase/softDelete`,
                         type: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
