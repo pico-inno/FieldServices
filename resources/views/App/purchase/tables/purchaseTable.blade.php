@@ -68,7 +68,7 @@
             })
 
             if(printId){
-                let url=`purchase/print/${printId}/Invoice`;
+                let url=`/purchase/print/${printId}/Invoice`;
                 loadingOn();
                 ajaxPrint(url);
             }

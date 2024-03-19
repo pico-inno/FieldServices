@@ -261,22 +261,24 @@ class purchaseController extends Controller
                 'deleted_at' => now()
             ]);
             $purchaseDetails = purchase_details::where('purchases_id', $id);
-            foreach ($purchaseDetails->get() as $pd) {
-                $csQuery=CurrentStockBalance::where('transaction_type', 'purchase')->where('transaction_detail_id', $pd->id)->first();
+            $getPd=$purchaseDetails->get();
+            foreach ($getPd as $pd) {
+                $csQuery=CurrentStockBalance::where('transaction_type', 'purchase')
+                                ->where('transaction_detail_id', $pd['id'])->first();
+                if ($csQuery) {
+                    if($csQuery->current_quantity < $csQuery->ref_uom_quantity){
+                        throw new Exception("Can't Delete this Purchase Transactions. Because stocks are already out from this transactions.");
+                    }else{
+                        $csQuery->delete();
+                        stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
 
-                if($csQuery->current_quantity < $csQuery->ref_uom_quantity){
-                    throw new Exception("Can't Delete this Purchase Transactions. Because stocks are already out from this transactions.");
-                }else{
-                    $csQuery->delete();
-                    stock_history::where('transaction_type', 'purchase')->where('transaction_details_id', $pd->id)->delete();
-
-                    $purchaseDetails->update([
-                        'is_delete' => 1,
-                        'deleted_by' => Auth::user()->id,
-                        'deleted_at' => now()
-                    ]);
+                        $purchaseDetails->update([
+                            'is_delete' => 1,
+                            'deleted_by' => Auth::user()->id,
+                            'deleted_at' => now()
+                        ]);
+                    }
                 }
-
             }
             DB::commit();
             activity('purchase-transaction')
