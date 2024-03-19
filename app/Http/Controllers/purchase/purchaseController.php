@@ -560,10 +560,10 @@ class purchaseController extends Controller
             ->where('products.name', 'like', '%' . $keyword . '%')
             ->where('products.product_type','=','storable')
             ->when($psku_kw == 'true', function ($q) use ($keyword) {
-                $q->orWhere('products.sku', 'like', '%' . $keyword . '%');
+                $q->orWhere('products.sku',$keyword);
             })
             ->when($vsku_kw == 'true', function ($q) use ($keyword) {
-                $q->orWhere('variation_sku', 'like', '%' . $keyword . '%');
+                $q->orWhere('variation_sku',$keyword);
             })
             ->when($pgbc_kw == 'true', function ($q) use ($keyword) {
                 $q->orWhereHas('varPackaging', function ($query) use ($keyword) {
