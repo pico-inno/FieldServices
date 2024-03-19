@@ -4,7 +4,8 @@
     }
 </style>
 <div class="modal-dialog  modal-dialog-scrollable">
-    <form action="{{ route('product.create') }}" class="modal-content" method="POST" enctype="multipart/form-data" id="quick_add_product_form">
+    <form action="{{ route('product.create') }}" class="modal-content" method="POST" enctype="multipart/form-data"
+        id="quick_add_product_form">
         <div class="modal-header">
             <h3 class="modal-title">Add Product</h3>
 
@@ -29,8 +30,8 @@
                                 <div class="mb-10 fv-row">
                                     <div class="row">
                                         <div class="col-md-4 mb-5">
-                                            <label class="form-label d-block">{{ __('product/product.product_image')
-                                                }}</label>
+                                            <label
+                                                class="form-label d-block">{{ __('product/product.product_image') }}</label>
 
                                             <style>
                                                 .image-input-placeholder {
@@ -85,30 +86,32 @@
                                                 <label class="" for="can_sale">
                                                     <input class="form-check-input" name="can_sale" type="checkbox"
                                                         value="1" id="can_sale" checked />
-                                                    <strong class="ms-4 h5">{{ __('product/product.can_sale')
-                                                        }}</strong>
+                                                    <strong
+                                                        class="ms-4 h5">{{ __('product/product.can_sale') }}</strong>
                                                 </label>
                                             </div>
                                             <div class="form-check form-check-custom form-check-solid mt-8">
                                                 <label class="" for="can_purchase">
                                                     <input class="form-check-input" name="can_purchase" type="checkbox"
                                                         value="1" id="can_purchase" checked />
-                                                    <strong class="ms-4 h5">{{ __('product/product.can_purchase')
-                                                        }}</strong>
+                                                    <strong
+                                                        class="ms-4 h5">{{ __('product/product.can_purchase') }}</strong>
                                                 </label>
                                             </div>
                                             <div class="form-check form-check-custom form-check-solid mt-8">
                                                 <label class="" for="can_expense">
                                                     <input class="form-check-input" name="can_expense" type="checkbox"
                                                         value="1" id="can_expense" />
-                                                    <strong class="ms-4 h5">{{ __('product/product.can_expense')
-                                                        }}</strong>
+                                                    <strong
+                                                        class="ms-4 h5">{{ __('product/product.can_expense') }}</strong>
                                                 </label>
                                             </div>
                                             <div class="form-check form-check-custom form-check-solid mt-8">
                                                 <label class="" for="is_recurring">
-                                                    <input class="form-check-input" name="is_recurring" type="checkbox" value="1" id="is_recurring"/>
-                                                    <strong class="ms-4 h5">{{ __('product/product.is_recurring') }}</strong>
+                                                    <input class="form-check-input" name="is_recurring" type="checkbox"
+                                                        value="1" id="is_recurring" />
+                                                    <strong
+                                                        class="ms-4 h5">{{ __('product/product.is_recurring') }}</strong>
                                                 </label>
                                             </div>
                                         </div>
@@ -123,9 +126,14 @@
                                                 </label>
                                                 <div class="input-group flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <div class="btn btn-sm btn-light-info w-200px" id="advance_toggle">
-                                                            <span class="show_advance"><i class="fa-solid fa-eye-slash me-5"></i>Show Advance</span>
-                                                            <span class="hide_advance d-none"><i class="fa-solid fa-eye me-5"></i>Hide Advance</span>
+                                                        <div class="btn btn-sm btn-light-info w-200px"
+                                                            id="advance_toggle">
+                                                            <span class="show_advance"><i
+                                                                    class="fa-solid fa-eye-slash me-5"></i>Show
+                                                                Advance</span>
+                                                            <span class="hide_advance d-none"><i
+                                                                    class="fa-solid fa-eye me-5"></i>Hide
+                                                                Advance</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -138,7 +146,10 @@
                                                 </label>
                                                 <div class="input-group flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select name="product_type" class="form-select form-select-sm" data-control="select2" id="product_type" data-placeholder="Select Product Type" data-parent='#quick_add_product_form'>
+                                                        <select name="product_type" class="form-select form-select-sm"
+                                                            data-control="select2" id="product_type"
+                                                            data-placeholder="Select Product Type"
+                                                            data-parent='#quick_add_product_form'>
                                                             <option></option>
                                                             <option value="consumeable">Consumeable</option>
                                                             <option selected value="storable">Storable</option>
@@ -148,19 +159,19 @@
                                                 </div>
                                             </div>
                                             @error('product_type')
-                                            <div class="text-danger my-2">{{ $message }}</div>
+                                                <div class="text-danger my-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4 mb-5">
-                                            <label class="required form-label">{{ __('product/product.product_name')
-                                                }}</label>
+                                            <label
+                                                class="required form-label">{{ __('product/product.product_name') }}</label>
                                             <input type="text" name="product_name"
                                                 class="form-control form-control-sm mb-2" placeholder="Product name"
                                                 value="" />
                                             @error('product_name')
-                                            <div class="text-danger my-2">{{ $message }}</div>
+                                                <div class="text-danger my-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-5">
@@ -169,8 +180,8 @@
                                                     {{ __('product/product.product_code') }}
                                                 </label>
                                                 <input type="text" name="product_code"
-                                                    class="form-control form-control-sm mb-2" placeholder="Product code"
-                                                    value="" />
+                                                    class="form-control form-control-sm mb-2"
+                                                    placeholder="Product code" value="" />
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-5 advance-toggle-class d-none">
@@ -180,19 +191,21 @@
                                                     data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
                                                     title="Unique product id or Stock Keeping Unit <br/><br/> Keep it blank to automatically generate sku.<br/><span class='text-muted'>You can modify sku prefix in Business settings.</span>"></i>
                                             </label>
-                                            <input type="text" name="sku" class="form-control mb-2 form-control-sm"
-                                                placeholder="SKU Number" value="" />
+                                            <input type="text" name="sku"
+                                                class="form-control mb-2 form-control-sm" placeholder="SKU Number"
+                                                value="" />
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4 mb-5">
-                                            <label for="" class="form-label">{{ __('product/product.brand') }}</label>
-                                           <select name="brand" class="form-select form-select-sm" data-control="select2"
-                                           data-parent='#quick_add_product_form'
+                                            <label for=""
+                                                class="form-label">{{ __('product/product.brand') }}</label>
+                                            <select name="brand" class="form-select form-select-sm"
+                                                data-control="select2" data-parent='#quick_add_product_form'
                                                 data-placeholder="Select brand">
                                                 <option></option>
                                                 @foreach ($brands as $brand)
-                                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -206,7 +219,8 @@
                                                 data-parent='#quick_add_product_form'>
                                                 <option></option>
                                                 @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                    <option value="{{ $category->id }}">{{ $category->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -214,8 +228,9 @@
                                             <label for="" class="form-label">
                                                 {{ __('product/product.sub_category') }}
                                             </label>
-                                            <select class="form-select form-select-sm" name="sub_category" data-parent='#quick_add_product_form'
-                                                id="subCategorySelect" data-control="select2" data-hide-search="true"
+                                            <select class="form-select form-select-sm" name="sub_category"
+                                                data-parent='#quick_add_product_form' id="subCategorySelect"
+                                                data-control="select2" data-hide-search="true"
                                                 data-placeholder="Select sub category">
 
                                             </select>
@@ -224,24 +239,25 @@
                                     <div class="row advance-toggle-class d-none">
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">Manufacturer</label>
-                                           <select name="manufacturer" class="form-select form-select-sm" data-control="select2"
-                                                data-placeholder="Select manufacturer"
+                                            <select name="manufacturer" class="form-select form-select-sm"
+                                                data-control="select2" data-placeholder="Select manufacturer"
                                                 data-parent='#quick_add_product_form'>
                                                 <option></option>
                                                 @foreach ($manufacturers as $manufacturer)
-                                                <option value="{{ $manufacturer->id }}">{{ $manufacturer->name
-                                                    }}</option>
+                                                    <option value="{{ $manufacturer->id }}">{{ $manufacturer->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
 
                                         </div>
                                         <div class="col-md-4 mb-5">
                                             <label for="" class="form-label">Generic</label>
-                                            <select name="generic" class="form-select form-select-sm" data-control="select2"
-                                                data-placeholder="Select generic" data-parent='#quick_add_product_form'>
+                                            <select name="generic" class="form-select form-select-sm"
+                                                data-control="select2" data-placeholder="Select generic"
+                                                data-parent='#quick_add_product_form'>
                                                 <option></option>
                                                 @foreach ($generics as $generic)
-                                                <option value="{{ $generic->id }}">{{ $generic->name }}</option>
+                                                    <option value="{{ $generic->id }}">{{ $generic->name }}</option>
                                                 @endforeach
                                             </select>
 
@@ -269,17 +285,22 @@
                                                 </label>
                                                 <div class="input-group mb-5 flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select name="unit_categories" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Unit Categories" data-parent='#quick_add_product_form'>
+                                                        <select name="unit_categories"
+                                                            class="form-select form-select-sm" data-control="select2"
+                                                            data-placeholder="Select Unit Categories"
+                                                            data-parent='#quick_add_product_form'>
                                                             <option></option>
                                                             @foreach ($unitCategories as $unitCategorie)
-                                                                <option value="{{ $unitCategorie->id }}" @selected(old('uom_id') == $unitCategorie->id)>{{ $unitCategorie->name }}</option>
+                                                                <option value="{{ $unitCategorie->id }}"
+                                                                    @selected(old('uom_id') == $unitCategorie->id)>
+                                                                    {{ $unitCategorie->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                             @error('uom_id')
-                                            <div class="text-danger my-2">{{ $message }}</div>
+                                                <div class="text-danger my-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-5">
@@ -291,18 +312,20 @@
                                                 <!--end::Label-->
                                                 <div class="input-group mb-5 flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
-                                                        <select name="uom_id" class="form-select form-select-sm uomDatas"
-                                                            data-control="select2" data-placeholder="Select UoM" data-parent='#quick_add_product_form'>
+                                                        <select name="uom_id"
+                                                            class="form-select form-select-sm uomDatas"
+                                                            data-control="select2" data-placeholder="Select UoM"
+                                                            data-parent='#quick_add_product_form'>
                                                             <option></option>
-{{--                                                            @foreach ($uoms as $uom)--}}
-{{--                                                            <option value="{{ $uom->id }}">{{ $uom->name }}</option>--}}
-{{--                                                            @endforeach--}}
+                                                            {{--                                                            @foreach ($uoms as $uom) --}}
+                                                            {{--                                                            <option value="{{ $uom->id }}">{{ $uom->name }}</option> --}}
+                                                            {{--                                                            @endforeach --}}
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                             @error('uom_id')
-                                            <div class="text-danger my-2">{{ $message }}</div>
+                                                <div class="text-danger my-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="col-md-4 mb-5">
@@ -315,16 +338,17 @@
                                                 <div class="input-group mb-5 flex-nowrap">
                                                     <div class="overflow-hidden flex-grow-1">
                                                         <select class="form-select form-select-sm unitOfUom"
-                                                            name="purchase_uom_id" id="unitOfUom" data-control="select2"
-                                                            data-hide-search="true"
-                                                            data-placeholder="Select purchase UoM" data-parent='#quick_add_product_form'>
+                                                            name="purchase_uom_id" id="unitOfUom"
+                                                            data-control="select2" data-hide-search="true"
+                                                            data-placeholder="Select purchase UoM"
+                                                            data-parent='#quick_add_product_form'>
 
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                             @error('purchase_uom_id')
-                                            <div class="text-danger my-2">{{ $message }}</div>
+                                                <div class="text-danger my-2">{{ $message }}</div>
                                             @enderror
                                         </div>
 
@@ -332,12 +356,14 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-5">
 
-                                            <div id="single_alert_qty_ui"  class="fv-row">
+                                            <div id="single_alert_qty_ui" class="fv-row">
                                                 <label class="form-label">
                                                     {{ __('product/product.alert_quantity') }}
                                                 </label>
 
-                                                <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+                                                <input type="text" name="single_alert_quantity"
+                                                    class="form-control form-control-sm mb-2"
+                                                    placeholder="Alert Quantity" value="" />
 
                                             </div>
 
@@ -345,19 +371,22 @@
                                     </div>
                                     <div class="row advance-toggle-class">
                                         <div class="col-md-4 mb-5">
-                                            <label class="form-label">{{ __('product/product.purchase_price') }}   <span class="uom-label"></span></label>
+                                            <label class="form-label">{{ __('product/product.purchase_price') }} <span
+                                                    class="uom-label"></span></label>
                                             <input type="text" name="purchase_price_for_single"
                                                 class="form-control form-control-sm mb-2" placeholder="Purchase price"
                                                 value="" />
                                         </div>
                                         <div class="col-md-4 mb-5">
-                                            <label class="form-label">{{ __('product/product.profit_margin') }}</label>
+                                            <label
+                                                class="form-label">{{ __('product/product.profit_margin') }}</label>
                                             <input type="text" name="profit_margin_for_single"
                                                 class="form-control form-control-sm mb-2"
                                                 placeholder="Profit mergin (%)" value="" />
                                         </div>
                                         <div class="col-md-4 mb-5">
-                                            <label class="form-label">{{ __('product/product.sell_price') }}   <span class="uom-label"></span></label>
+                                            <label class="form-label">{{ __('product/product.sell_price') }} <span
+                                                    class="uom-label"></span></label>
                                             <input type="text" name="sell_price_for_single"
                                                 class="form-control form-control-sm mb-2" placeholder="Sell price"
                                                 value="" />
@@ -372,12 +401,15 @@
                                         <label for="" class="form-label required">
                                             Has Variation
                                         </label>
-                                        <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                           title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
+                                        <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help"
+                                            data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
+                                            title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
                                                             <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
                                         <div class="mb-3">
-                                            <select class="form-select form-select-sm" name="has_variation" data-control="select2" id="has_variation" data-hide-search="true" data-parent='#quick_add_product_form'>
+                                            <select class="form-select form-select-sm" name="has_variation"
+                                                data-control="select2" id="has_variation" data-hide-search="true"
+                                                data-parent='#quick_add_product_form'>
                                                 <option value="single" selected>Single</option>
                                                 <option value="variable">Variable</option>
                                             </select>
@@ -408,7 +440,8 @@
                                                     <td>
                                                         <div class="d-flex justify-content-between">
                                                             <div class="me-4">
-                                                                <label for="" class="form-label">Exc. tax</label>
+                                                                <label for="" class="form-label">Exc.
+                                                                    tax</label>
                                                                 <input type="text" name="single_exc"
                                                                     class="form-control rounded-0 form-control-sm"
                                                                     placeholder="Exc. tax">
@@ -425,7 +458,8 @@
                                                     <td>
                                                         <label for="" class=" form-label">Margin</label>
                                                         <input type="text" name="single_profit"
-                                                            class="form-control rounded-0 form-control-sm" value="">
+                                                            class="form-control rounded-0 form-control-sm"
+                                                            value="">
                                                     </td>
                                                     <td>
                                                         <label for="" class="form-label">Exc. Tax</label>
@@ -462,11 +496,13 @@
                                                     <td class="min-w-200px">
                                                         <select name="variation_name" id="variationSelect"
                                                             class="form-select rounded-0" data-control="select2"
-                                                            data-hide-search="true" data-placeholder="Please select" data-parent='#quick_add_product_form'>
+                                                            data-hide-search="true" data-placeholder="Please select"
+                                                            data-parent='#quick_add_product_form'>
                                                             <option></option>
                                                             @foreach ($variations as $variation)
-                                                            <option value="{{ $variation->id }}">{{ $variation->name }}
-                                                            </option>
+                                                                <option value="{{ $variation->id }}">
+                                                                    {{ $variation->name }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </td>
@@ -480,7 +516,8 @@
                                                                             SKU <i
                                                                                 class="fas fa-exclamation-circle ms-1 fs-7 text-primary cursor-help"
                                                                                 data-bs-toggle="tooltip"
-                                                                                data-bs-html="true" style="cursor:help"
+                                                                                data-bs-html="true"
+                                                                                style="cursor:help"
                                                                                 title="SKU is optional. <br/> <br/>
                                                                                             Keep it blank to automatically generate sku."></i>
                                                                         </th>
@@ -581,7 +618,8 @@
                                         value="{{ old('quill_data', $quillData ?? '') }}">
                                     <!--end::Editor-->
                                     <!--begin::Description-->
-                                    <div class="text-muted fs-7">Set a description to the product for better visibility.
+                                    <div class="text-muted fs-7">Set a description to the product for better
+                                        visibility.
                                     </div>
                                     <!--end::Description-->
                                 </div>
@@ -592,8 +630,8 @@
                                     <div class="col-md-3 mb-8">
                                         <div class="form-check form-check-custom form-check-solid mt-8">
                                             <label class="" for="tab2_check1">
-                                                <input class="form-check-input" name="product_inactive" type="checkbox"
-                                                    value="1" id="tab2_check1" />
+                                                <input class="form-check-input" name="product_inactive"
+                                                    type="checkbox" value="1" id="tab2_check1" />
                                                 <strong class="ms-4 h5">{{ __('product/product.disable') }}</strong>
                                             </label>
                                         </div>
@@ -858,7 +896,9 @@
 <script>
     $(document).ready(function() {
         $('[data-control="select2"]').each(function() {
-            $(this).select2({ dropdownParent: $(this).parent()});
+            $(this).select2({
+                dropdownParent: $(this).parent()
+            });
         })
         $(document).on('click', '#advance_toggle', function() {
             $('.show_advance, .hide_advance').toggleClass('d-none');
@@ -866,168 +906,170 @@
         })
     })
     // ============= > Begin:: For Product Description < =====================
-        var quill = new Quill('#kt_docs_quill_basic', {
-            modules: {
-                toolbar: [
-                    [{
-                        header: [1, 2, false]
-                    }],
-                    ['bold', 'italic', 'underline'],
-                    ['image', 'code-block']
-                ]
-            },
-            placeholder: 'Type your text here...',
-            theme: 'snow' // or 'bubble'
-        });
-        quill.on('text-change', function() {
-            var quillData = quill.root.innerHTML;
-            document.querySelector('input[name="quill_data"]').value = quillData;
-        });
+    var quill = new Quill('#kt_docs_quill_basic', {
+        modules: {
+            toolbar: [
+                [{
+                    header: [1, 2, false]
+                }],
+                ['bold', 'italic', 'underline'],
+                ['image', 'code-block']
+            ]
+        },
+        placeholder: 'Type your text here...',
+        theme: 'snow' // or 'bubble'
+    });
+    quill.on('text-change', function() {
+        var quillData = quill.root.innerHTML;
+        document.querySelector('input[name="quill_data"]').value = quillData;
+    });
     // ============= > End:: For Product Description < =======================
-        $('#quick_add_product_modal').on('shown.bs.modal', function() {
+    $('#quick_add_product_modal').on('shown.bs.modal', function() {
 
-            // ============= > Begin:: For Product Type      < =======================
+        // ============= > Begin:: For Product Type      < =======================
 
-                const selectBox = document.getElementById("product_type");
-                const singleBox = document.getElementById("single_box");
-                const variableBox = document.getElementById("variable_box");
+        const selectBox = document.getElementById("product_type");
+        const singleBox = document.getElementById("single_box");
+        const variableBox = document.getElementById("variable_box");
 
+        singleBox.style.display = "block";
+
+        selectBox.addEventListener("change", () => {
+            const selectedValue = selectBox.value;
+            $('#single_alert_qty_ui').toggleClass('d-none');
+            // Hide all contact boxes
+            singleBox.style.display = "none";
+            variableBox.style.display = "none";
+
+            // Show the contact box associated with the selected option
+            if (selectedValue === "single") {
                 singleBox.style.display = "block";
+            } else if (selectedValue === "variable") {
+                variableBox.style.display = "block";
+            }
+        });
+        // ============= > End:: For Product Type      < =========================
 
-                selectBox.addEventListener("change", () => {
-                    const selectedValue = selectBox.value;
-                    $('#single_alert_qty_ui').toggleClass('d-none');
-                    // Hide all contact boxes
-                    singleBox.style.display = "none";
-                    variableBox.style.display = "none";
+        // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
+        let profitPercentage = (sell, purchase) => Math.ceil(((parseInt(sell) - parseInt(purchase)) * 100) /
+            parseInt(purchase));
 
-                    // Show the contact box associated with the selected option
-                    if (selectedValue === "single") {
-                        singleBox.style.display = "block";
-                    } else if (selectedValue === "variable") {
-                        variableBox.style.display = "block";
-                    }
-                });
-            // ============= > End:: For Product Type      < =========================
+        let sellingPrice = (profit, purchase) => Math.ceil(((100 + parseInt(profit)) * parseInt(purchase)) /
+            100);
+        // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
 
-            // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
-                let profitPercentage = (sell, purchase) => Math.ceil( ( (parseInt(sell) - parseInt(purchase)) * 100)/parseInt(purchase) );
+        // ============= > Begin:: For Single Product Type Calculate < ===========
 
-                let sellingPrice = (profit, purchase) => Math.ceil( ( (100 + parseInt(profit)) * parseInt(purchase))/100 );
-            // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
+        let singleExc = $('[name="single_exc"]');
+        let singleInc = $('[name="single_inc"]');
+        let singleProfit = $('[name="single_profit"]');
+        let singleSelling = $('[name="single_selling"]');
 
-            // ============= > Begin:: For Single Product Type Calculate < ===========
+        let anotherPurchase = $('input[name="purchase_price_for_single"]');
+        let anotherProfit = $('input[name="profit_margin_for_single"]');
+        let anotherSell = $('input[name="sell_price_for_single"]');
 
-            let singleExc = $('[name="single_exc"]');
-            let singleInc = $('[name="single_inc"]');
-            let singleProfit = $('[name="single_profit"]');
-            let singleSelling = $('[name="single_selling"]');
+        singleExc.on('keyup', (e) => {
+            let excVal = e.target.value;
+            singleInc.val(excVal);
+            anotherPurchase.val(excVal);
 
-            let anotherPurchase = $('input[name="purchase_price_for_single"]');
-            let anotherProfit = $('input[name="profit_margin_for_single"]');
-            let anotherSell = $('input[name="sell_price_for_single"]');
-
-            singleExc.on('keyup', (e) => {
-                let excVal = e.target.value;
-                singleInc.val(excVal);
-                anotherPurchase.val(excVal);
-
-                if(singleSelling.val()){
-                    let profitValue = profitPercentage(singleSelling.val(), excVal);
-                    singleProfit.val(profitValue);
-                    anotherProfit.val(profitValue)
-                    if(isNaN(profitValue)){
-                        singleProfit.val('')
-                        anotherProfit.val('')
-                    }
-                }
-            })
-            singleInc.on('keyup', (e) => {
-                let incVal = e.target.value;
-                singleExc.val(incVal);
-                anotherPurchase.val(incVal);
-
-                if(singleSelling.val()){
-                    let profitValue = profitPercentage(singleSelling.val(), incVal);
-                    singleProfit.val(profitValue);
-                    anotherProfit.val(profitValue)
-                    if(isNaN(profitValue)){
-                        singleProfit.val('')
-                        anotherProfit.val('')
-                    }
-                }
-            })
-            singleProfit.on('keyup', (e) => {
-                let profitValue = e.target.value;
+            if (singleSelling.val()) {
+                let profitValue = profitPercentage(singleSelling.val(), excVal);
+                singleProfit.val(profitValue);
                 anotherProfit.val(profitValue)
-
-                if(singleExc.val() || singleInc.val()){
-                    let resultSelling = sellingPrice(profitValue, singleExc.val());
-                    singleSelling.val(resultSelling);
-                    anotherSell.val(resultSelling)
-                    if(isNaN(resultSelling)){
-                        singleSelling.val('');
-                        anotherSell.val('')
-                    }
+                if (isNaN(profitValue)) {
+                    singleProfit.val('')
+                    anotherProfit.val('')
                 }
-            })
-            singleSelling.on('keyup', (e) => {
-                let sellingValue = e.target.value;
-                anotherSell.val(sellingValue)
+            }
+        })
+        singleInc.on('keyup', (e) => {
+            let incVal = e.target.value;
+            singleExc.val(incVal);
+            anotherPurchase.val(incVal);
 
-                if(singleExc.val() || singleInc.val()){
-                    let resultProfit = profitPercentage(sellingValue, singleExc.val());
-                    singleProfit.val(resultProfit);
-                    anotherProfit.val(resultProfit)
-                    if(isNaN(resultProfit)){
-                        singleProfit.val('');
-                        anotherProfit.val('')
-                    }
+            if (singleSelling.val()) {
+                let profitValue = profitPercentage(singleSelling.val(), incVal);
+                singleProfit.val(profitValue);
+                anotherProfit.val(profitValue)
+                if (isNaN(profitValue)) {
+                    singleProfit.val('')
+                    anotherProfit.val('')
                 }
-            })
+            }
+        })
+        singleProfit.on('keyup', (e) => {
+            let profitValue = e.target.value;
+            anotherProfit.val(profitValue)
 
-            // ============= > End:: For Single Product Type Calculate   < ===========
-
-
-            // ============= > Begin:: For Purchase, Profit, Selling price  < ==================
-            $(document).on('input', 'input[name="purchase_price_for_single"]', function() {
-                let value = $(this).val();
-                let profit = $(document).find('input[name="profit_margin_for_single"]').val();
-
-                let sellPrice;
-                if(profit !== ''){
-                    sellPrice = (profit, value);
-
-                    $(document).find('input[name="sell_price_for_single"]').val(sellPrice);
-                    $(document).find('input[name="single_selling"]').val(sellPrice);
+            if (singleExc.val() || singleInc.val()) {
+                let resultSelling = sellingPrice(profitValue, singleExc.val());
+                singleSelling.val(resultSelling);
+                anotherSell.val(resultSelling)
+                if (isNaN(resultSelling)) {
+                    singleSelling.val('');
+                    anotherSell.val('')
                 }
-                $(document).find('input[name="single_exc"]').val(value)
-                $(document).find('input[name="single_inc"]').val(value)
-            })
+            }
+        })
+        singleSelling.on('keyup', (e) => {
+            let sellingValue = e.target.value;
+            anotherSell.val(sellingValue)
 
-            $(document).on('input', 'input[name="profit_margin_for_single"]', function() {
-                let value = $(this).val();
-                let purchase = $(document).find('input[name="purchase_price_for_single"]').val();
-                let sellPrice = sellingPrice(value, purchase);
+            if (singleExc.val() || singleInc.val()) {
+                let resultProfit = profitPercentage(sellingValue, singleExc.val());
+                singleProfit.val(resultProfit);
+                anotherProfit.val(resultProfit)
+                if (isNaN(resultProfit)) {
+                    singleProfit.val('');
+                    anotherProfit.val('')
+                }
+            }
+        })
 
-                $(document).find('input[name="sell_price_for_single"]').val(sellPrice)
-                $(document).find('input[name="single_profit"]').val(value)
-                $(document).find('input[name="single_selling"]').val(sellPrice)
-            })
+        // ============= > End:: For Single Product Type Calculate   < ===========
 
-            $(document).on('input', 'input[name="sell_price_for_single"]', function() {
-                let value = $(this).val();
-                let purchase = $(document).find('input[name="purchase_price_for_single"]').val();
-                let profit = profitPercentage(value, purchase);
 
-                $(document).find('input[name="profit_margin_for_single"]').val(profit)
-                $(document).find('input[name="single_profit"]').val(profit)
-                $(document).find('input[name="single_selling"]').val(value)
-            })
-            // ============= > End:: For Purchase, Profit, Selling price  < ==================
+        // ============= > Begin:: For Purchase, Profit, Selling price  < ==================
+        $(document).on('input', 'input[name="purchase_price_for_single"]', function() {
+            let value = $(this).val();
+            let profit = $(document).find('input[name="profit_margin_for_single"]').val();
 
-            // ============= > Begin:: For Variation table repeater  < ===============
-                let newVariation = `
+            let sellPrice;
+            if (profit !== '') {
+                sellPrice = (profit, value);
+
+                $(document).find('input[name="sell_price_for_single"]').val(sellPrice);
+                $(document).find('input[name="single_selling"]').val(sellPrice);
+            }
+            $(document).find('input[name="single_exc"]').val(value)
+            $(document).find('input[name="single_inc"]').val(value)
+        })
+
+        $(document).on('input', 'input[name="profit_margin_for_single"]', function() {
+            let value = $(this).val();
+            let purchase = $(document).find('input[name="purchase_price_for_single"]').val();
+            let sellPrice = sellingPrice(value, purchase);
+
+            $(document).find('input[name="sell_price_for_single"]').val(sellPrice)
+            $(document).find('input[name="single_profit"]').val(value)
+            $(document).find('input[name="single_selling"]').val(sellPrice)
+        })
+
+        $(document).on('input', 'input[name="sell_price_for_single"]', function() {
+            let value = $(this).val();
+            let purchase = $(document).find('input[name="purchase_price_for_single"]').val();
+            let profit = profitPercentage(value, purchase);
+
+            $(document).find('input[name="profit_margin_for_single"]').val(profit)
+            $(document).find('input[name="single_profit"]').val(profit)
+            $(document).find('input[name="single_selling"]').val(value)
+        })
+        // ============= > End:: For Purchase, Profit, Selling price  < ==================
+
+        // ============= > Begin:: For Variation table repeater  < ===============
+        let newVariation = `
                     <tr data-repeater-item class="variation-add-delete">
                         <input type="hidden" name="variation_id[]">
                         <td>
@@ -1079,275 +1121,284 @@
                     </tr>
                 `;
 
-                let calculateVariation = () => {
-                    let exc = $('[name="exc_purchase[]"]');
-                    let inc = $('[name="inc_purchase[]"]');
-                    let profit = $('[name="profit_percentage[]"]');
-                    let selling = $('[name="selling_price[]"]');
-                    // begin:: exc and inc input to the same
-                    exc.on('keyup', (e) => {
-                        let excVal = e.target.value;
-                        let input = $(e.currentTarget).closest('tr').find(inc);
-                        input.val(e.target.value)
+        let calculateVariation = () => {
+            let exc = $('[name="exc_purchase[]"]');
+            let inc = $('[name="inc_purchase[]"]');
+            let profit = $('[name="profit_percentage[]"]');
+            let selling = $('[name="selling_price[]"]');
+            // begin:: exc and inc input to the same
+            exc.on('keyup', (e) => {
+                let excVal = e.target.value;
+                let input = $(e.currentTarget).closest('tr').find(inc);
+                input.val(e.target.value)
 
-                        let currentSelling = $(e.currentTarget).closest('tr').find(selling);
-                        let currentProfit = $(e.currentTarget).closest('tr').find(profit);
+                let currentSelling = $(e.currentTarget).closest('tr').find(selling);
+                let currentProfit = $(e.currentTarget).closest('tr').find(profit);
 
-                        if(currentSelling.val()){
-                            let profitValue = profitPercentage(currentSelling.val(), excVal);
-                            currentProfit.val(profitValue);
-                            if(isNaN(profitValue)){
-                                currentProfit.val('')
-                            }
-                        }
-                    })
-                    inc.on('keyup', (e) => {
-                        let incVal = e.target.value;
-                        let input = $(e.currentTarget).closest('tr').find(exc);
-                        input.val(e.target.value)
-                        let currentSelling = $(e.currentTarget).closest('tr').find(selling);
-                        let currentProfit = $(e.currentTarget).closest('tr').find(profit);
-
-                        if(currentSelling.val()){
-                            let profitValue = profitPercentage(currentSelling.val(), incVal);
-                            currentProfit.val(profitValue);
-                            if(isNaN(profitValue)){
-                                currentProfit.val('');
-                            }
-                        }
-                    })
-                    // end:: exc and inc input to the same
-                    // if typing profit percentage input
-                    profit.on('keyup', (e) => {
-                        let currentProfitValue = e.target.value;
-
-                        let currentExc = $(e.currentTarget).closest('tr').find(exc);
-                        let currentInc = $(e.currentTarget).closest('tr').find(inc);
-                        let sellingInput = $(e.currentTarget).closest('tr').find(selling);
-
-                        if(currentExc.val() || currentInc.val()){
-                            let resultSelling = sellingPrice(currentProfitValue, currentExc.val());
-                            sellingInput.val(resultSelling);
-                            if(isNaN(resultSelling)){
-                                sellingInput.val('');
-                            }
-                        }
-                    })
-                    // if typing selling price input
-                    selling.on('keyup', (e) => {
-                        let currentSellingValue = e.target.value;
-                        let currentExc = $(e.currentTarget).closest('tr').find(exc);
-                        let currentInc = $(e.currentTarget).closest('tr').find(inc);
-                        let currentProfit = $(e.currentTarget).closest('tr').find(profit);
-                        if(currentExc.val() || currentInc.val()){
-                            let resultProfit = profitPercentage(currentSellingValue, currentExc.val());
-                            currentProfit.val(resultProfit);
-                        }
-                    })
-                    // for aplly all data
-                    $('[name="double-mark1"]').on('click', () => {
-                        console.log('click 1')
-                    })
-                    $('[name="double-mark2"]').on('click', () => {
-                        console.log('click 2')
-                    })
+                if (currentSelling.val()) {
+                    let profitValue = profitPercentage(currentSelling.val(), excVal);
+                    currentProfit.val(profitValue);
+                    if (isNaN(profitValue)) {
+                        currentProfit.val('')
+                    }
                 }
-
-                $(document).on('click', '#child-repeater', function() {
-                    $('#variation-row').append(newVariation);
-                    calculateVariation();
-                })
-                $(document).on('click', '#delete-variation', function() {
-                    $(this).closest('.variation-add-delete').remove();
-                })
-                $(document).on('change', '#variationSelect', function() {
-                    let id = $('#variationSelect').val();
-                    $.ajax({
-                        url: '/variation-values/'+id,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('.variation-add-delete').remove();
-                            $.each(data, function(index, item) {
-                                let cloneRow = $(newVariation).clone();
-                                cloneRow.find('input[name="variation_value[]"]').val(item.name)
-                                cloneRow.find('input[name="variation_id[]"]').val(item.id)
-                                cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
-                                $('#variation-row').append(cloneRow);
-                            });
-                            calculateVariation();
-                        },
-                        error: function(xhr, status, error) {
-
-                        }
-                    })
-                })
-            // ============= > Begin:: For Variation table repeater < ================
-
-            // ============= > Begin:: For Sub Category Select Box  < ================
-                const cateSelect = $('#categorySelect');
-
-                cateSelect.on('change', function() {
-                    let id = cateSelect.val()
-                    $.ajax({
-                        url: '/category/sub-category/'+id,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            const subCategorySelect = $('#subCategorySelect')[0];
-                            subCategorySelect.innerHTML = '';
-
-                            const defaultOption = document.createElement('option'); // Create default option
-                            defaultOption.value = '';
-                            defaultOption.text = 'Select an option';
-                            $(subCategorySelect).append(defaultOption);
-
-                            for (let item of data) {
-                                let option = document.createElement('option');
-                                option.value = item.id;
-                                option.text = item.name;
-                                subCategorySelect.append(option);
-                            }
-
-                            $('#subCategorySelect').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
-
-                        },
-                        error: function(xhr, status, error) {
-                            console.log(error);
-                            // handle the error
-                        }
-                    });
-                })
-            // ============= > End:: For Sub Category Select Box  < ==================
-
-
-            $(document).on('change', 'select[name="unit_categories"]', function (){
-                let unit_category_id = $(this).val();
-                $('.unitOfUom').empty();
-
-                $.ajax({
-                    url: `/uom/category/get/${unit_category_id}`,
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(results){
-                        console.log(results);
-                        $('.uomDatas').empty();
-                        let data=[];
-                        for (let item of results) {
-
-                            data=[...data,
-                                {
-                                    'id':item.id,
-                                    'text':item.name,
-                                    'data-uom-name': item.name
-                                }]
-                        }
-                        currentUoMData=data;
-
-                        let selectElement = $('.uomDatas');
-                        selectElement.empty(); // Clear existing options
-                        for (let item of data) {
-                            let option = $('<option></option>').val(item.id).text(item.text).attr('data-uom-name', item.text);
-                            selectElement.append(option);
-                        }
-
-
-                        $('.uomDatas').select2({
-                            minimumResultsForSearch: Infinity,
-                        });
-
-
-                        setTimeout(function (){
-                            let selectedOption = $('select[name="uom_id"]').find('option:selected');
-                            let uomName = selectedOption.attr('data-uom-name');
-
-
-                            $('.uom-label').text('('+uomName+')');
-
-                        }, 150);
-                        $('[name="uom_id"]').val(data[0].id).trigger('change');
-                    },
-                    error: function(e){
-                        console.log(e.responseJSON.error);
-                    }
-                });
-            });
-
-            $(document).on('change', 'select[name="uom_id"]', function() {
-                let uom_id = $(this).val();
-
-                let selectedOption = $(this).find('option:selected');
-                let uomName = selectedOption.attr('data-uom-name');
-
-                $('.uom-label').text('('+uomName+')');
-
-                $.ajax({
-                    url: `/uom/get/${uom_id}`,
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(results){
-                        $('.unitOfUom').empty();
-                        // const purchaseUoM = $('.unitOfUom');
-                        // purchaseUoM.innerHTML = '';
-
-                        // const defaultOption = document.createElement('option'); // Create default option
-                        // defaultOption.value = '';
-                        // defaultOption.text = 'Select an option';
-                        // $(purchaseUoM).append(defaultOption);
-                        let data=[];
-                        for (let item of results) {
-                            // let option = document.createElement('option');
-                            data=[...data,
-                                {
-                                    'id':item.id,
-                                    'text':item.name
-                                }]
-                        }
-                        currentUoMData=data;
-                        $('.unitOfUom').select2({
-                            data,
-                            minimumResultsForSearch: Infinity
-                        }); // Initialize select2 plugin
-                    },
-                    error: function(e){
-                        console.log(e.responseJSON.error);
-                    }
-                });
             })
-            // ============= > Begin:: For Show advance  < ==================
+            inc.on('keyup', (e) => {
+                let incVal = e.target.value;
+                let input = $(e.currentTarget).closest('tr').find(exc);
+                input.val(e.target.value)
+                let currentSelling = $(e.currentTarget).closest('tr').find(selling);
+                let currentProfit = $(e.currentTarget).closest('tr').find(profit);
 
-            // ============= > End:: For Show advance  < ==================
+                if (currentSelling.val()) {
+                    let profitValue = profitPercentage(currentSelling.val(), incVal);
+                    currentProfit.val(profitValue);
+                    if (isNaN(profitValue)) {
+                        currentProfit.val('');
+                    }
+                }
+            })
+            // end:: exc and inc input to the same
+            // if typing profit percentage input
+            profit.on('keyup', (e) => {
+                let currentProfitValue = e.target.value;
+
+                let currentExc = $(e.currentTarget).closest('tr').find(exc);
+                let currentInc = $(e.currentTarget).closest('tr').find(inc);
+                let sellingInput = $(e.currentTarget).closest('tr').find(selling);
+
+                if (currentExc.val() || currentInc.val()) {
+                    let resultSelling = sellingPrice(currentProfitValue, currentExc.val());
+                    sellingInput.val(resultSelling);
+                    if (isNaN(resultSelling)) {
+                        sellingInput.val('');
+                    }
+                }
+            })
+            // if typing selling price input
+            selling.on('keyup', (e) => {
+                let currentSellingValue = e.target.value;
+                let currentExc = $(e.currentTarget).closest('tr').find(exc);
+                let currentInc = $(e.currentTarget).closest('tr').find(inc);
+                let currentProfit = $(e.currentTarget).closest('tr').find(profit);
+                if (currentExc.val() || currentInc.val()) {
+                    let resultProfit = profitPercentage(currentSellingValue, currentExc.val());
+                    currentProfit.val(resultProfit);
+                }
+            })
+            // for aplly all data
+            $('[name="double-mark1"]').on('click', () => {
+                console.log('click 1')
+            })
+            $('[name="double-mark2"]').on('click', () => {
+                console.log('click 2')
+            })
+        }
+
+        $(document).on('click', '#child-repeater', function() {
+            $('#variation-row').append(newVariation);
+            calculateVariation();
         })
+        $(document).on('click', '#delete-variation', function() {
+            $(this).closest('.variation-add-delete').remove();
+        })
+        $(document).on('change', '#variationSelect', function() {
+            let id = $('#variationSelect').val();
+            $.ajax({
+                url: '/variation-values/' + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('.variation-add-delete').remove();
+                    $.each(data, function(index, item) {
+                        let cloneRow = $(newVariation).clone();
+                        cloneRow.find('input[name="variation_value[]"]').val(item
+                            .name)
+                        cloneRow.find('input[name="variation_id[]"]').val(item.id)
+                        cloneRow.find('input[name="variation_value[]"]').attr(
+                            'readonly', true);
+                        $('#variation-row').append(cloneRow);
+                    });
+                    calculateVariation();
+                },
+                error: function(xhr, status, error) {
 
-            // Begin:: quick add product
-        $('form#quick_add_product_form').off("submit").submit(function(e) {
-            event.preventDefault();
+                }
+            })
+        })
+        // ============= > Begin:: For Variation table repeater < ================
 
-            var formData = new FormData(this);
+        // ============= > Begin:: For Sub Category Select Box  < ================
+        const cateSelect = $('#categorySelect');
+
+        cateSelect.on('change', function() {
+            let id = cateSelect.val()
+            $.ajax({
+                url: '/category/sub-category/' + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    const subCategorySelect = $('#subCategorySelect')[0];
+                    subCategorySelect.innerHTML = '';
+
+                    const defaultOption = document.createElement(
+                    'option'); // Create default option
+                    defaultOption.value = '';
+                    defaultOption.text = 'Select an option';
+                    $(subCategorySelect).append(defaultOption);
+
+                    for (let item of data) {
+                        let option = document.createElement('option');
+                        option.value = item.id;
+                        option.text = item.name;
+                        subCategorySelect.append(option);
+                    }
+
+                    $('#subCategorySelect').select2({
+                        minimumResultsForSearch: Infinity
+                    }); // Initialize select2 plugin
+
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                    // handle the error
+                }
+            });
+        })
+        // ============= > End:: For Sub Category Select Box  < ==================
+
+
+        $(document).on('change', 'select[name="unit_categories"]', function() {
+            let unit_category_id = $(this).val();
+            $('.unitOfUom').empty();
 
             $.ajax({
-                url: $(this).attr('action'),
-                type: $(this).attr('method'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response){
-                    if (response.success == true) {
-                        $('#quick_add_product_modal').modal('hide');
-                        success(response.message);
-
-                        // Clear the input fields in the modal form
-                        $('#quick_add_product_form')[0].reset();
-                    }
+                url: `/uom/category/get/${unit_category_id}`,
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                error: function(result) {
-                    //
+                success: function(results) {
+                    console.log(results);
+                    $('.uomDatas').empty();
+                    let data = [];
+                    for (let item of results) {
+
+                        data = [...data,
+                            {
+                                'id': item.id,
+                                'text': item.name,
+                                'data-uom-name': item.name
+                            }
+                        ]
+                    }
+                    currentUoMData = data;
+
+                    let selectElement = $('.uomDatas');
+                    selectElement.empty(); // Clear existing options
+                    for (let item of data) {
+                        let option = $('<option></option>').val(item.id).text(item.text)
+                            .attr('data-uom-name', item.text);
+                        selectElement.append(option);
+                    }
+
+
+                    $('.uomDatas').select2({
+                        minimumResultsForSearch: Infinity,
+                    });
+
+
+                    setTimeout(function() {
+                        let selectedOption = $('select[name="uom_id"]').find(
+                            'option:selected');
+                        let uomName = selectedOption.attr('data-uom-name');
+
+
+                        $('.uom-label').text('(' + uomName + ')');
+
+                    }, 150);
+                    $('[name="uom_id"]').val(data[0].id).trigger('change');
+                },
+                error: function(e) {
+                    console.log(e.responseJSON.error);
                 }
-            })
+            });
+        });
+
+        $(document).on('change', 'select[name="uom_id"]', function() {
+            let uom_id = $(this).val();
+
+            let selectedOption = $(this).find('option:selected');
+            let uomName = selectedOption.attr('data-uom-name');
+
+            $('.uom-label').text('(' + uomName + ')');
+
+            $.ajax({
+                url: `/uom/get/${uom_id}`,
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(results) {
+                    $('.unitOfUom').empty();
+                    // const purchaseUoM = $('.unitOfUom');
+                    // purchaseUoM.innerHTML = '';
+
+                    // const defaultOption = document.createElement('option'); // Create default option
+                    // defaultOption.value = '';
+                    // defaultOption.text = 'Select an option';
+                    // $(purchaseUoM).append(defaultOption);
+                    let data = [];
+                    for (let item of results) {
+                        // let option = document.createElement('option');
+                        data = [...data,
+                            {
+                                'id': item.id,
+                                'text': item.name
+                            }
+                        ]
+                    }
+                    currentUoMData = data;
+                    $('.unitOfUom').select2({
+                        data,
+                        minimumResultsForSearch: Infinity
+                    }); // Initialize select2 plugin
+                },
+                error: function(e) {
+                    console.log(e.responseJSON.error);
+                }
+            });
         })
-        // End
+        // ============= > Begin:: For Show advance  < ==================
+
+        // ============= > End:: For Show advance  < ==================
+    })
+
+    // Begin:: quick add product
+    $('form#quick_add_product_form').off("submit").submit(function(e) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success == true) {
+                    $('#quick_add_product_modal').modal('hide');
+                    success(response.message);
+
+                    // Clear the input fields in the modal form
+                    $('#quick_add_product_form')[0].reset();
+                }
+            },
+            error: function(result) {
+                //
+            }
+        })
+    })
+    // End
 </script>
