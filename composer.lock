@@ -8,27 +8,27 @@
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
-            "version": "v2.0.1",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-dompdf.git",
-                "reference": "9843d2be423670fb434f4c978b3c0f4dd92c87a6"
+                "reference": "cb37868365f9b937039d316727a1fced1e87b31c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/9843d2be423670fb434f4c978b3c0f4dd92c87a6",
-                "reference": "9843d2be423670fb434f4c978b3c0f4dd92c87a6",
+                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/cb37868365f9b937039d316727a1fced1e87b31c",
+                "reference": "cb37868365f9b937039d316727a1fced1e87b31c",
                 "shasum": ""
             },
             "require": {
-                "dompdf/dompdf": "^2.0.1",
-                "illuminate/support": "^6|^7|^8|^9|^10",
+                "dompdf/dompdf": "^2.0.3",
+                "illuminate/support": "^6|^7|^8|^9|^10|^11",
                 "php": "^7.2 || ^8.0"
             },
             "require-dev": {
-                "nunomaduro/larastan": "^1|^2",
-                "orchestra/testbench": "^4|^5|^6|^7|^8",
-                "phpro/grumphp": "^1",
+                "larastan/larastan": "^1.0|^2.7.0",
+                "orchestra/testbench": "^4|^5|^6|^7|^8|^9",
+                "phpro/grumphp": "^1 || ^2.5",
                 "squizlabs/php_codesniffer": "^3.5"
             },
             "type": "library",
@@ -69,7 +69,7 @@
             ],
             "support": {
                 "issues": "https://github.com/barryvdh/laravel-dompdf/issues",
-                "source": "https://github.com/barryvdh/laravel-dompdf/tree/v2.0.1"
+                "source": "https://github.com/barryvdh/laravel-dompdf/tree/v2.1.1"
             },
             "funding": [
                 {
@@ -81,7 +81,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-12T15:12:49+00:00"
+            "time": "2024-03-15T12:48:39+00:00"
         },
         {
             "name": "biscolab/laravel-recaptcha",
@@ -3833,16 +3833,16 @@
         },
         {
             "name": "phenx/php-font-lib",
-            "version": "0.5.5",
+            "version": "0.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/php-font-lib.git",
-                "reference": "671df0f3516252011aa94f9e8e3b3b66199339f8"
+                "reference": "a1681e9793040740a405ac5b189275059e2a9863"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/php-font-lib/zipball/671df0f3516252011aa94f9e8e3b3b66199339f8",
-                "reference": "671df0f3516252011aa94f9e8e3b3b66199339f8",
+                "url": "https://api.github.com/repos/dompdf/php-font-lib/zipball/a1681e9793040740a405ac5b189275059e2a9863",
+                "reference": "a1681e9793040740a405ac5b189275059e2a9863",
                 "shasum": ""
             },
             "require": {
@@ -3871,22 +3871,22 @@
             "homepage": "https://github.com/PhenX/php-font-lib",
             "support": {
                 "issues": "https://github.com/dompdf/php-font-lib/issues",
-                "source": "https://github.com/dompdf/php-font-lib/tree/0.5.5"
+                "source": "https://github.com/dompdf/php-font-lib/tree/0.5.6"
             },
-            "time": "2024-01-07T18:13:29+00:00"
+            "time": "2024-01-29T14:45:26+00:00"
         },
         {
             "name": "phenx/php-svg-lib",
-            "version": "0.5.1",
+            "version": "0.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/php-svg-lib.git",
-                "reference": "8a8a1ebcf6aea861ef30197999f096f7bd4b4456"
+                "reference": "0e46722c154726a5f9ac218197ccc28adba16fcf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/php-svg-lib/zipball/8a8a1ebcf6aea861ef30197999f096f7bd4b4456",
-                "reference": "8a8a1ebcf6aea861ef30197999f096f7bd4b4456",
+                "url": "https://api.github.com/repos/dompdf/php-svg-lib/zipball/0e46722c154726a5f9ac218197ccc28adba16fcf",
+                "reference": "0e46722c154726a5f9ac218197ccc28adba16fcf",
                 "shasum": ""
             },
             "require": {
@@ -3905,7 +3905,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-3.0"
+                "LGPL-3.0-or-later"
             ],
             "authors": [
                 {
@@ -3917,9 +3917,9 @@
             "homepage": "https://github.com/PhenX/php-svg-lib",
             "support": {
                 "issues": "https://github.com/dompdf/php-svg-lib/issues",
-                "source": "https://github.com/dompdf/php-svg-lib/tree/0.5.1"
+                "source": "https://github.com/dompdf/php-svg-lib/tree/0.5.3"
             },
-            "time": "2023-12-11T20:56:08+00:00"
+            "time": "2024-02-23T20:39:24+00:00"
         },
         {
             "name": "phpoffice/phpspreadsheet",
@@ -4819,16 +4819,16 @@
         },
         {
             "name": "sabberworm/php-css-parser",
-            "version": "8.4.0",
+            "version": "v8.5.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sabberworm/PHP-CSS-Parser.git",
-                "reference": "e41d2140031d533348b2192a83f02d8dd8a71d30"
+                "url": "https://github.com/MyIntervals/PHP-CSS-Parser.git",
+                "reference": "4a3d572b0f8b28bb6fd016ae8bbfc445facef152"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sabberworm/PHP-CSS-Parser/zipball/e41d2140031d533348b2192a83f02d8dd8a71d30",
-                "reference": "e41d2140031d533348b2192a83f02d8dd8a71d30",
+                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/4a3d572b0f8b28bb6fd016ae8bbfc445facef152",
+                "reference": "4a3d572b0f8b28bb6fd016ae8bbfc445facef152",
                 "shasum": ""
             },
             "require": {
@@ -4836,13 +4836,17 @@
                 "php": ">=5.6.20"
             },
             "require-dev": {
-                "codacy/coverage": "^1.4",
-                "phpunit/phpunit": "^4.8.36"
+                "phpunit/phpunit": "^5.7.27"
             },
             "suggest": {
                 "ext-mbstring": "for parsing UTF-8 CSS"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "9.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Sabberworm\\CSS\\": "src/"
@@ -4855,6 +4859,14 @@
             "authors": [
                 {
                     "name": "Raphael Schweikert"
+                },
+                {
+                    "name": "Oliver Klee",
+                    "email": "github@oliverklee.de"
+                },
+                {
+                    "name": "Jake Hotson",
+                    "email": "jake.github@qzdesign.co.uk"
                 }
             ],
             "description": "Parser for CSS Files written in PHP",
@@ -4865,10 +4877,10 @@
                 "stylesheet"
             ],
             "support": {
-                "issues": "https://github.com/sabberworm/PHP-CSS-Parser/issues",
-                "source": "https://github.com/sabberworm/PHP-CSS-Parser/tree/8.4.0"
+                "issues": "https://github.com/MyIntervals/PHP-CSS-Parser/issues",
+                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.5.1"
             },
-            "time": "2021-12-11T13:40:54+00:00"
+            "time": "2024-02-15T16:41:13+00:00"
         },
         {
             "name": "symfony/console",
