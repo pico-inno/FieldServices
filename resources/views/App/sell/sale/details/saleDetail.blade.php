@@ -438,7 +438,10 @@
                     class: 'form-check-input custom-checkbox-class' // Add Bootstrap classes and your custom class here
                 },
             }).then((result) => {
-                let isConfirmPayment=false;
+                console.log(result);
+                if(result.isConfirmed){
+
+                    let isConfirmPayment=false;
                 if (result.value) {
                     isConfirmPayment=true;
                 } else {
@@ -467,6 +470,8 @@
                     });
                     let sdmodal=document.getElementsByClassName('saleDetail')[0];
                     $('.saleDetail').modal('hide');
+                }
+
             });
 
 
