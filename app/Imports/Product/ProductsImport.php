@@ -2,28 +2,30 @@
 
 namespace App\Imports\Product;
 
-use App\Repositories\Product\BrandRepository;
-use App\Repositories\Product\CategoryRepository;
-use App\Repositories\Product\GenericRepository;
-use App\Repositories\Product\ManufacturerRepository;
-use App\Repositories\Product\ProductRepository;
-use App\Repositories\Product\UnitCategoryRepository;
-use App\Repositories\Product\UOMRepository;
-use App\Repositories\Product\VariationRepository;
 use Exception;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Product\UOM;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Models\Product\PriceListDetails;
+use App\Models\Product\ProductVariation;
 use Maatwebsite\Excel\Concerns\Importable;
+use App\Repositories\Product\UOMRepository;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use App\Repositories\Product\BrandRepository;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use App\Repositories\Product\GenericRepository;
+use App\Repositories\Product\ProductRepository;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use App\Repositories\Product\CategoryRepository;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-use App\Models\Product\UOM;
+use App\Repositories\Product\VariationRepository;
+use App\Repositories\Product\ManufacturerRepository;
+use App\Repositories\Product\UnitCategoryRepository;
 use PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing;
 
 
@@ -238,6 +240,7 @@ class ProductsImport implements
                     $preparedProductVariation['variation_sku'] = $createdProduct->sku;
 
                     $this->productRepository->createVariation($preparedProductVariation);
+                    $this->createOrUpdatePriceListDetail('Product', $product_id, $preparedProductVariation['default_selling_price']);
                 }
             }
 
@@ -307,8 +310,16 @@ class ProductsImport implements
             $preparedProductVariation['variation_sku'] = $vari_sku;
             $preparedProductVariation['variation_template_value_id'] = $variation_template_value_id;
             $variations[] = $preparedProductVariation;
+
+
         };
+
+        // this is to set default price need to change code struucture.This is bad practice
         $this->productRepository->insertVariation($variations);
+        $variations=ProductVariation::where('product_id',$product_id)->find();
+        foreach ($variations as $key => $variation) {
+            $this->createOrUpdatePriceListDetail('Variation', $variation->id, $variation['default_selling_price']);
+        }
 
 
 
@@ -368,6 +379,30 @@ class ProductsImport implements
         ];
     }
 
+    public function createOrUpdatePriceListDetail($type, $value, $defaultSellingPrice)
+    {
+        $priceListId = getSystemData('defaultPriceListId');
+
+        $pricelistDetailQuery = PriceListDetails::where('pricelist_id', $priceListId)
+            ->where('applied_type', $type)
+            ->where('applied_value', $value);
+        $pricelistDetailCheck = $pricelistDetailQuery->exists();
+
+        if ($pricelistDetailCheck) {
+            $pricelistDetailQuery->update([
+                'cal_value' => $defaultSellingPrice,
+            ]);
+        } else {
+            PriceListDetails::create([
+                'pricelist_id' => $priceListId,
+                'applied_type' => $type,
+                'applied_value' => $value,
+                'min_qty' => '1',
+                'cal_type' => 'fixed',
+                'cal_value' => $defaultSellingPrice,
+            ]);
+        }
+    }
 
     public function chunkSize(): int
     {

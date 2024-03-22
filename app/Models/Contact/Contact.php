@@ -62,6 +62,8 @@ class Contact extends Model
         'updated_by',
         'is_delete',
         'deleted_at',
+        'opening_receivable_amount',
+        'opening_payable_amount'
     ];
 
     public function getFullNameAttribute()

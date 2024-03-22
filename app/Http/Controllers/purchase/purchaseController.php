@@ -443,7 +443,7 @@ class purchaseController extends Controller
         $products = Product::select('id', 'name', 'product_code', 'sku', 'has_variation', 'uom_id', 'purchase_uom_id')
             ->where('can_purchase', 1)
             ->where('name', 'like', '%' . $q . '%')
-            ->orWhere('sku', 'like', '%' . $q . '%')
+            ->orWhere('sku', 'like', $q . '%')
             ->with(
                 [
                     'productVariations' => function ($query) {

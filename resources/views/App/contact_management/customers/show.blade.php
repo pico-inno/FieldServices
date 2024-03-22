@@ -111,7 +111,7 @@
                                                 </svg>
                                             </span>
                                             <!--end::Svg Icon-->
-                                            <div class="fs-3 fw-bold" data-kt-countup="true" data-kt-countup-value="{{$contact->receivable_amount}}">0</div>
+                                            <div class="fs-3 fw-bold" data-kt-countup="true" data-kt-countup-value="{{$contact->receivable_amount + $contact->opening_receivable_amount}}">0</div>
                                         </div>
                                         <!--end::Number-->
                                         <!--begin::Label-->
@@ -131,7 +131,7 @@
                                                 </svg>
                                             </span>
                                             <!--end::Svg Icon-->
-                                            <div class="fs-3 fw-bold" data-kt-countup="true" data-kt-countup-value="{{$contact->payable_amount}}">0</div>
+                                            <div class="fs-3 fw-bold" data-kt-countup="true" data-kt-countup-value="{{$contact->payable_amount + $contact->opening_payable_amount}}">0</div>
                                         </div>
                                         <!--end::Number-->
                                         <!--begin::Label-->
@@ -650,7 +650,7 @@
                                     $totalSaleAmount += $s->total_sale_amount;
                                     $paidAmount += $s->paid_amount;
                                     }
-                                    $balanceDue = ($contact->receivable_amount + $totalSaleAmount) - $paidAmount;
+                                    $balanceDue = ($contact->opening_receivable_amount + $totalSaleAmount) - $paidAmount;
 
                                     }
                                     @endphp
@@ -663,11 +663,11 @@
                                                 </tr> --}}
                                                 <tr>
                                                     <td>Payable Amount</td>
-                                                    <td>{{ $contact->payable_amount }}</td>
+                                                    <td>{{ $contact->opening_payable_amount }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Receivable Amount</td>
-                                                    <td>{{ $contact->receivable_amount }}</td>
+                                                    <td>{{ $contact->opening_receivable_amount }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total Invoice</td>
@@ -781,9 +781,9 @@
                                         <td>Opening Balance</td>
                                         <td></td>
                                         <td></td>
-                                        <td>{{ $contact->receivable_amount ?? 0}}</td>
+                                        <td>{{ $contact->opening_receivable_amount ?? 0}}</td>
                                         <td></td>
-                                        <td>{{ $contact->receivable_amount ?? 0}}</td>
+                                        <td>{{ $contact->opening_receivable_amount ?? 0}}</td>
                                         <td></td>
                                         <td></td>
                                     </tr>

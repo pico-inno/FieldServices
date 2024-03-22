@@ -19,6 +19,9 @@
 
 </head>
 <style>
+*{
+    font-weight: 200;
+}
 .invoice{
     height: auto;
     padding-left: 5px;
@@ -108,7 +111,7 @@
                     @if ($data_text->date)
                     <li class="text-muted">
                         <span class="fw-bold">Date:
-                        </span>{{ $sale->created_at->format('j/F/Y') }}
+                        </span>{{ $sale->created_at->format('j/F/Y ( h:m A)') }}
                     </li>
                     @endif
                     @if ($data_text->purchase_status)
@@ -120,7 +123,7 @@
                 </ul>
             </div>
         </div>
-        <table class="table">
+        <table class="table mt-8">
             <thead class="text-end">
                 <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-400 text-end">
                     @if ($table_text->number->is_show)
@@ -192,8 +195,8 @@
             <tbody>
                 @if ($data_text->net_sale_amount->is_show)
                 <tr class="fs-6 fw-semibold mb-0">
-                    <td colspan="4" class="text-end p-0">{{ price($sale->sale_amount - $sale->total_item_discount) }}</td>
-                    <td class=" text-end min-w-column p-0">{{ fprice($sale->sale_amount) }}</td>
+                    <td colspan="4" class="text-end p-0">{{$data_text->net_sale_amount->label}}</td>
+                    <td class=" text-end min-w-column p-0">{{ price($sale->sale_amount - $sale->total_item_discount) }}</td>
                 </tr>
                 @endif
 

@@ -461,14 +461,24 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-md-3 col-sm-12 mb-8">
+                                <label for="opening_receivable_amount" class="form-label">Opening Receivable Amount</label>
+                                <input type="number" name="opening_receivable_amount" id="opening_receivable_amount" class="form-control form-control-sm fs-7" placeholder="Opening Receivable Amount">
+                            </div>
+                            <div class="col-md-3 col-sm-12 mb-8">
+                                <label for="opening_payable_amount" class="form-label">Opening Payable Amount</label>
+                                <input type="number" name="opening_payable_amount" id="opening_payable_amount" class="form-control form-control-sm fs-7" placeholder="Opening Payable Amount">
+                            </div>
+
+                            {{-- <div class="col-md-3 col-sm-12 mb-8">
                                 <label for="receivable_amount" class="form-label">Receivable Amount</label>
                                 <input type="number" name="receivable_amount" id="receivable_amount" class="form-control form-control-sm fs-7" placeholder="Receivable Amount">
                             </div>
                             <div class="col-md-3 col-sm-12 mb-8">
                                 <label for="payable_amount" class="form-label">Payable Amount</label>
                                 <input type="number" name="payable_amount" id="payable_amount" class="form-control form-control-sm fs-7" placeholder="Payable Amount">
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row">
                             <div class="col-md-3 col-sm-12 mb-8 credit-limit">

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\sale\sales;
+use App\Models\Contact\Contact;
 use Illuminate\Console\Command;
 use App\Models\purchases\purchases;
 
@@ -27,14 +28,23 @@ class payableReceivableCal extends Command
      */
     public function handle()
     {
+        $contacts=Contact::get();
 
-        $purcases=purchases::get();
-        $sales=sales::get();
 
-        $result=$this->calPayableReceiveableByCus($purcases,$sales);
+        foreach ($contacts as $contact) {
+            $purcases=purchases::where('contact_id',$contact['id'])->get();
+            $sales=sales::where('contact_id',$contact['id'])->get();
 
-        $this->info("Payable :". $result['payable']);
-        $this->info("Receiveable :". $result['receiveable']);
+            $result=$this->calPayableReceiveableByCus($purcases,$sales);
+            Contact::where('id',$contact['id'])->update([
+                "payable_amount"=>$result['payable'],
+                "receivable_amount"=>$result['receiveable'],
+            ]);
+            $this->Info($contact['first_name']);
+            $this->info("Payable :". $result['payable']);
+            $this->info("Receiveable :". $result['receiveable']);
+            $this->Info("\n==========================\n");
+        }
     }
     public function calPayableReceiveableByCus($purcases,$sales){
         $payable=0;

@@ -68,6 +68,9 @@ class openingStockController extends Controller
             ->editColumn('location',function($stock){
                 return businessLocationName($stock->businessLocation);
             })
+            ->editColumn('opening_date',function($data){
+                return fdate($data->opening_date);
+            })
             ->addColumn('action', function ($stock) {
                 $route=route('view_opening_stock',$stock->id);
                 $invoiceRoute=route('printInvoice', $stock->id);

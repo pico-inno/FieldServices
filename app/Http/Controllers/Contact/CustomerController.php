@@ -111,7 +111,7 @@ class CustomerController extends Controller
                 'pay_term_type', 'receivable_amount', 'payable_amount', 'credit_limit', 'is_default',
                 'shipping_address', 'customer_group_id', 'custom_field_1', 'custom_field_2', 'custom_field_3',
                 'custom_field_4', 'custom_field_5', 'custom_field_6', 'custom_field_7', 'custom_field_8',
-                'custom_field_9', 'custom_field_10', 'age', 'gender'
+                'custom_field_9', 'custom_field_10', 'age', 'gender','opening_receivable_amount','opening_payable_amount'
             ]);
             // $contactId=$this->contactId();
             $latestContact = Contact::latest()->first();
@@ -142,6 +142,7 @@ class CustomerController extends Controller
                 ->save();
             return redirect('/contacts/customers')->with('success','Contact Created Successfully');
         } catch(\Exception $e){
+            // dd($e);
             DB::rollBack();
             activity('contact')
                 ->log('New customer creation has been fail')

@@ -56,7 +56,7 @@
                     @if ($data_text->date)
                         <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i>
                             <span class="fw-bold">Date:
-                            </span>{{ $sale->created_at->format('j/F/Y') }}
+                            </span>{{ $sale->created_at->format('j/F/Y ( h:m A)') }}
                         </li>
                     @endif
                     @if ($data_text->purchase_status)

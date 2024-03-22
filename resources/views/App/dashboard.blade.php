@@ -342,8 +342,8 @@
 @endsection
 
 @push('scripts')
-    <script src="customJs/reports/dashboard/currentBalanceFilter.js"></script>
-    <script src="customJs/reports/dashboard/widgetFilter.js"></script>
+    <script src="{{asset("customJs/reports/dashboard/currentBalanceFilter.js")}}"></script>
+    <script src="{{asset("customJs/reports/dashboard/widgetFilter.js")}}"></script>
 
 
     <script>

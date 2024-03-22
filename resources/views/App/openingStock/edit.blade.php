@@ -69,7 +69,7 @@
                                         <i class="fas fa-calendar"></i>
                                     </span>
                                         <input class="form-control form-control-sm" name="opening_date" placeholder="Pick a date"
-                                               data-td-toggle="datetimepicker" id="kt_datepicker_1"
+                                               data-td-toggle="datetimepicker"
                                                value="{{$openingStock->opening_date}}"/>
                                     </div>
                                 </div>
@@ -289,6 +289,12 @@
     <script src="{{asset('customJs/openingStock/validation.js')}}"></script>
 
     <script>
+        $('[data-td-toggle="datetimepicker"]').flatpickr({
+            dateFormat: "Y-m-d H:i",
+            // defaultDate: "today",
+            enableTime: true,
+        });
+
         $("#kt_datepicker_1").flatpickr({
             dateFormat: "Y-m-d",
         });

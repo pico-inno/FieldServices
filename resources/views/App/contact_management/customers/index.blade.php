@@ -188,8 +188,12 @@
                     { data: 'mobile'},
                     { data: 'email'},
                     { data: 'address_line_1'},
-                    { data: 'payable_amount'},
-                    { data: 'receivable_amount'},
+                    { data: 'payable_amount',render:(payable_amount,display,data)=>{
+                        return isNullOrNan(data.payable_amount) + isNullOrNan(data.opening_payable_amount);
+                    }},
+                    { data: 'receivable_amount',render:(payable_amount,display,data)=>{
+                        return isNullOrNan(data.receivable_amount) + isNullOrNan(data.opening_receivable_amount);
+                    }},
                     { data: 'credit_limit'},
                     { data: 'custom_field_1'},
                     { data: 'custom_field_2'},

@@ -71,7 +71,7 @@
                                             </span>
                                             <input class="form-control form-control-sm" name="opening_date" placeholder="Pick a date"
                                                 data-td-toggle="datetimepicker" id="kt_datepicker_1"
-                                                value="{{old('opening_date',date('Y-m-d'))}}"/>
+                                                value="{{old('opening_date',date('Y-m-d H:i'))}}"/>
                                     </div>
 
                                     @error('opening_date')
@@ -201,7 +201,9 @@
     <script>
 
         $('[data-td-toggle="datetimepicker"]').flatpickr({
-            dateFormat: "Y-m-d",
+            dateFormat: "Y-m-d H:i",
+            // defaultDate: "today",
+            enableTime: true,
         });
 
     $(document).on('click', '.productQuickAdd', function(){

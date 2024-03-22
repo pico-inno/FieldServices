@@ -38,7 +38,7 @@
                                     Reference No : <span class="text-gray-600"> {{$sock['reference_no']}}3</span>
                                 </h3> --}}
                                 <h3 class="text-primary-emphasis fw-semibold fs-5">
-                                    Date : <span class="text-gray-600">{{$openingStock['opening_date']}}</span>
+                                    Date : <span class="text-gray-600">{{fdate($openingStock['opening_date'])}}</span>
                                 </h3>
                                 <h3 class="text-primary-emphasis fw-semibold fs-5">
                                     {{-- sock Status : <span class="text-gray-600">{{$openingStock['status']}}</span> --}}
