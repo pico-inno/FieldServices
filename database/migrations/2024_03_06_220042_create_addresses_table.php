@@ -16,12 +16,12 @@ return new class extends Migration
             $table->unsignedBigInteger('contact_id');
             $table->longText('address_line_1');
             $table->longText('address_line_2')->nullable();
-            $table->string('city');
-            $table->string('state_province_region');
+            $table->string('township_id');
+            $table->string('region_id');
             $table->string('postal_zip_code');
             $table->string('country');
             $table->string('phone');
-            $table->boolean('is_default');
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
     }

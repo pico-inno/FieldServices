@@ -957,3 +957,14 @@ function calBalanceQtyForAsc($increase_qty,$decrease_qty,$balanceQtyBeforePage){
        return $balanceQtyBeforePage-=  $decrease_qty;
     }
 }
+
+
+function formatAddress($address)
+{
+    $postalZipCode = optional($address)->postal_zip_code == 0 ? '' : $address->postal_zip_code;
+    $addressLine1 = optional($address)->address_line_1;
+    $addressLine2 = optional($address)->address_line_2 == null ? '' : $address->address_line_2;
+    $townshipName = optional($address)->township_en_name;
+
+    return implode(', ', array_filter([$postalZipCode, $addressLine1, $addressLine2, $townshipName]));
+}

@@ -13,11 +13,21 @@ class Address extends Model
         'contact_id',
         'address_line_1',
         'address_line_2',
-        'city',
-        'state_province_region',
+        'township_id',
+        'region_id',
         'postal_zip_code',
         'country',
         'phone',
         'is_default',
     ];
+
+    public function township()
+    {
+        return $this->belongsTo(Township::class);
+    }
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
 }
