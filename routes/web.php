@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use Livewire\Livewire;
 use App\Models\sale\sales;
 use App\Models\ActivityLog;
@@ -1060,3 +1061,10 @@ Route::get('/pos/edit', function () {
 Route::get('/test', function () {
 
 });
+
+
+///Address
+
+Route::get('/townships/{region_id}', [AddressController::class, 'getTownships']);
+Route::get('/addresses', [AddressController::class, 'getAddress']);
+Route::post('/address/store', [AddressController::class, 'storeAddressAndReturnAll']);

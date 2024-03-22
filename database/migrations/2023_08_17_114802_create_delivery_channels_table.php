@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('delivery_channels', function (Blueprint $table) {
-            $table->id();
-            $table->text('name')->nullable();
-            $table->text('phone')->nullable();
-            $table->timestamps();
-        });
+//        Schema::create('delivery_channels', function (Blueprint $table) {
+//            $table->id();
+//            $table->text('name')->nullable();
+//            $table->text('phone')->nullable();
+//            $table->timestamps();
+//        });
     }
 
     /**
