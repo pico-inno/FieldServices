@@ -4,3 +4,12 @@
 [submodule "Modules/FieldService"]
 	path = Modules/FieldService
 	url = https://github.com/pico-inno/Field-Services.git
+[submodule "Modules/StockInOut"]
+	path = Modules/StockInOut
+	url = https://github.com/pico-inno/StockInOut.git
+[submodule "Modules/Ecommerce"]
+	path = Modules/Ecommerce
+	url = https://github.com/pico-inno/Ecommerce.git
+[submodule "Modules/Delivery"]
+	path = Modules/Delivery
+	url = https://github.com/pico-inno/Delivery.git
