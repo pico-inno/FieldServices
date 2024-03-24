@@ -13,3 +13,6 @@
 [submodule "Modules/Delivery"]
 	path = Modules/Delivery
 	url = https://github.com/pico-inno/Delivery.git
+[submodule "Modules/Reservation"]
+	path = Modules/Reservation
+	url = https://github.com/pico-inno/Reservation.git

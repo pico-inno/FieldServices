@@ -1,42 +1,33 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\drB;
 
+use sale;
 use Exception;
 use App\Helpers\UomHelper;
 use App\Models\sale\sales;
-use App\Models\openingStocks;
-use App\Models\stock_history;
 use App\Services\SaleServices;
 use App\Models\Product\Product;
 use Illuminate\Console\Command;
 use App\Models\lotSerialDetails;
 use App\Models\sale\sale_details;
 use Illuminate\Support\Facades\DB;
-use App\Models\CurrentStockBalance;
-use App\Models\openingStockDetails;
-use App\Models\purchases\purchases;
-use App\Models\Stock\StockTransfer;
-use function Laravel\Prompts\error;
 
-use App\Models\purchases\purchase_details;
-use App\Actions\purchase\purchaseDetailActions;
-
-class osfix extends Command
+class saleStatusChange extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'osfix';
+    protected $signature = 'drb3';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'to change sale status and decrease current stock';
 
     /**
      * Execute the console command.
@@ -48,43 +39,7 @@ class osfix extends Command
         try {
             DB::beginTransaction();
 
-            // openingStocks::truncate();
 
-            // openingStockDetails::truncate();
-            // CurrentStockBalance::truncate();
-            // lotSerialDetails::truncate();
-            // stock_history::truncate();
-
-            // purchases::where("status",'Received')->update([
-            //     "status"=>"order",
-            // ]);
-
-            // sales::where("status",'delivered')->update([
-            //     "status"=>"order",
-            // ]);
-
-            // StockTransfer::where("status",'completed')->update([
-            //     "status"=>"pending",
-            // ]);
-
-
-
-            // $Purchases=purchases::where('is_delete',0)->get();
-            // foreach ($Purchases as $purchase) {
-
-            //    $purchase->where('id',$purchase['id'])->update([
-            //     'status'=>'received'
-            //    ]);
-            //    $purchase['status']='received';
-
-            //    $this->info($purchase['status']);
-            //    $purchaseDetails=purchase_details::where('purchases_id',$purchase['id'])->where('is_delete','!=','1')->get();
-            //    foreach ($purchaseDetails as  $purchaseDetail) {
-            //     // $this->info($purchase);
-            //         $csb=new purchaseDetailActions();
-            //         $csb->currentStockBalanceAndStockHistoryCreation($purchaseDetail, $purchase, 'purchase');
-            //    }
-            // }
 
             //sale tx change status
             $saleService=new SaleServices();
@@ -117,7 +72,7 @@ class osfix extends Command
                             $voucherNo= $sale['sales_voucher_no'];
                             // $this->error("product Out of Stock ".$productName." ".$voucherNo);
                             $IsError=1;
-                            $outOFStock[]=[
+                            $outOFStock[$product['sku']]=[
                                 $productName,
                                 $product['sku'],
                                 $voucherNo
@@ -159,6 +114,7 @@ class osfix extends Command
                 $sortedArray = collect($outOFStock)->sortBy(function($value) {
                     return $value;
                 })->values()->all();
+
 
                 $this->table(
                     ['product name', 'sku','voucher'],
