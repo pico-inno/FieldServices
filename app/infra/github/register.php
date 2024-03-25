@@ -21,4 +21,8 @@ return [
         "name"=>"Delivery",
         "resource"=>"https://github.com/pico-inno/Delivery.git"
     ],
+    "Reservation"=>[
+        "name"=>"Reservation",
+        "resource"=>"https://github.com/pico-inno/Reservation.git"
+    ]
 ];
