@@ -46,14 +46,18 @@ class purchaseStatusChange extends Command
                $purchaseDetails=purchase_details::where('purchases_id',$purchase['id'])->where('is_delete','!=','1')->get();
                foreach ($purchaseDetails as  $purchaseDetail) {
                 // $this->info($purchase);
-                    $csb=new purchaseDetailActions();
-                    $csb->currentStockBalanceAndStockHistoryCreation($purchaseDetail, $purchase, 'purchase');
+                    if($purchaseDetail){
+
+                        $csb=new purchaseDetailActions();
+                        $csb->currentStockBalanceAndStockHistoryCreation($purchaseDetail, $purchase, 'purchase');
+                    }
                }
             }
             $bar->finish();
             $this->info('\n Successfully changed');
             DB::commit();
         } catch (\Throwable $th) {
+            logger($th->getMessage());
             DB::rollback();
             $this->error($th->getMessage());
         }

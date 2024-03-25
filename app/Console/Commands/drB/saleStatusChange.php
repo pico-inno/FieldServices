@@ -115,7 +115,7 @@ class saleStatusChange extends Command
                     return $value;
                 })->values()->all();
 
-
+                $this->info('\n');
                 $this->table(
                     ['product name', 'sku','voucher'],
                     $sortedArray

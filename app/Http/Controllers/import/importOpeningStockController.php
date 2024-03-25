@@ -24,7 +24,6 @@ class importOpeningStockController extends Controller
     {
 
         try {
-
         ini_set('max_execution_time', '0');
             ini_set("memory_limit", "-1");
             DB::beginTransaction();
@@ -42,7 +41,7 @@ class importOpeningStockController extends Controller
             $opening_stock_data = [
                 'business_location_id' => $request->business_location_id,
                 'opening_stock_voucher_no' => sprintf('OS-' . '%06d', ($opening_stock_count + 1)),
-                'opening_date' => now(),
+                'opening_date' => $request->opening_date ?? now(),
                 'opening_person' => Auth::user()->id,
                 'total_opening_amount' => $request->total_opening_amount,
                 'note' => $request->note,
