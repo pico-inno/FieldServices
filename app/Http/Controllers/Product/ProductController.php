@@ -50,8 +50,7 @@ class ProductController extends Controller
         UnitCategoryRepository $unitCategoryRepository,
         VariationRepository $variationRepository,
         ProductRepository $productRepository,
-    )
-    {
+    ) {
         $this->middleware(['auth', 'isActive']);
         $this->middleware('canView:product')->only(['index', 'productDatas']);
         $this->middleware('canCreate:product')->only(['add', 'create']);
@@ -78,7 +77,7 @@ class ProductController extends Controller
         $products = Product::with('productVariations', 'category', 'brand')->get();
 
         return DataTables::of($products)
-            ->addColumn('check_box',function($product){
+            ->addColumn('check_box', function ($product) {
                 return $product->id;
             })
             ->addColumn('product', function ($product) {
@@ -93,15 +92,15 @@ class ProductController extends Controller
                 return ['image' => $product->image, 'name' => $product->name, 'deleted_variation' => $deleted_variation];
                 // return ['image' => $product->image, 'name' => $product->name];
             })
-            ->addColumn('assign_location', function ($product){
-                $data = locationProduct::where('product_id',$product->id)
+            ->addColumn('assign_location', function ($product) {
+                $data = locationProduct::where('product_id', $product->id)
                     ->with(['location:id,name'])
                     ->get()
                     ->pluck('location.name')
                     ->toArray();
                 $result = implode(', ', $data);
-                $strEnd=strlen('result')>80?'.....':'';
-                return substr($result,0,80).$strEnd;
+                $strEnd = strlen('result') > 80 ? '.....' : '';
+                return substr($result, 0, 80) . $strEnd;
             })
             ->addColumn('purchase_price', function ($product) {
                 $purchase_price = null;
@@ -158,7 +157,7 @@ class ProductController extends Controller
                     return $subCategory;
                 }
                 return '';
-//                return ['parentCategory' => $parentCategory, 'subCategory' => $subCategory];
+                //                return ['parentCategory' => $parentCategory, 'subCategory' => $subCategory];
             })
             ->addColumn('brand', function ($product) {
                 $brand = null;
@@ -191,17 +190,19 @@ class ProductController extends Controller
 
     public function index(
         LocationRepositoryInterface $locationRepository,
-    )
-    {
-//        return Product::with('productVariations', 'category', 'brand')->paginate();
-//        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
+    ) {
+//                return Product::with('productVariations', 'category', 'brand')->paginate();
+        //        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
         $categories = $this->categoryRepository->query()->select('name')->distinct()->pluck('name');
         $brands = $this->brandRepository->query()->select('name')->distinct()->pluck('name');
         $generics = $this->genericRepository->query()->select('name')->distinct()->pluck('name');
         $manufactures = $this->manufacturerRepository->query()->select('name')->distinct()->pluck('name');
-         $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
-        $locations=$locationRepository->locationWithAccessControlQuery()->select('id','name')->get();
-        return view('App.product.product.productListV2',compact(
+        $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
+        $locations = $locationRepository->locationWithAccessControlQuery()->select('id', 'name')->get();
+
+//        return Product::with('productVariations.variation_values.variation_template_value')->get();
+
+        return view('App.product.product.productListV2', compact(
             'locations',
             'product_types',
             'categories',
@@ -224,12 +225,11 @@ class ProductController extends Controller
             'unitCategories' => $this->unitCategoryRepository->getAll(),
             'uoms' => $this->uomRepository->getAll(),
         ]);
-
     }
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
-        return $request->toArray();
+//        return $request;
         try {
             DB::beginTransaction();
             $productAction->create($request);
@@ -259,8 +259,9 @@ class ProductController extends Controller
                     'lotControl'=>$lotControl
                 ]);
             }
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             DB::rollBack();
+            dd($exception);
             $message = $exception->getMessage();
             activity('product-transaction')
                 ->log('Product creation has been fail')
@@ -271,50 +272,56 @@ class ProductController extends Controller
         }
     }
 
-    public function edit(Product $product, productServices $productServices)
+    public function edit(Product $product, productServices $productServices, ProductRepository $productRepository)
     {
-
-
         $product_variation_template_value_ids = $this->productRepository->query()
             ->leftJoin('product_variations', 'product_variations.product_id', '=', 'products.id')
-             ->select('products.*', 'product_variations.variation_template_value_id as variation_template_value_id')
-             ->where('products.id', $product->id)
-             ->pluck('variation_template_value_id');
+            ->select('products.*', 'product_variations.variation_template_value_id as variation_template_value_id')
+            ->where('products.id', $product->id)
+            ->pluck('variation_template_value_id');
 
-       $variation_template_value_ids = $this->productRepository->queryVariationsTemplates()
-           ->leftJoin('variation_template_values', 'variation_template_values.variation_template_id', '=', 'product_variations_tmplates.variation_template_id')
-           ->where('product_variations_tmplates.product_id', $product->id)
-           ->select('variation_template_values.*')
-           ->pluck('id', 'name');
+        $variation_template_value_ids = $this->productRepository->queryVariationsTemplates()
+            ->leftJoin('variation_template_values', 'variation_template_values.variation_template_id', '=', 'product_variations_tmplates.variation_template_id')
+            ->where('product_variations_tmplates.product_id', $product->id)
+            ->select('variation_template_values.*')
+            ->pluck('id', 'name');
 
         $remain_variation_ids = array_diff($variation_template_value_ids->toArray(), $product_variation_template_value_ids->toArray());
 
+        $product = $productRepository->query()
+            ->where('id', $product->id)
+            ->with([
+                'product_variation_templates:id,product_id,variation_template_id',
+            ])
+            ->first();
+        $productVariation = $this->productRepository->getVariationByProductIdWithRelationships($product->id, ['product', 'variationTemplateValue', 'variation_values.variation_template_value:id,name,variation_template_id']);
 
-//        if (empty($difference1) && empty($difference2)) {
-//            echo "Arrays have the same values.";
-//        } else {
-//            echo "Arrays have different values.\n";
-//            echo "Values in the first array but not in the second: " . implode(', ', $difference1) . "\n";
-//            echo "Values in the second array but not in the first: " . implode(', ', $difference2) . "\n";
-//        }
+        //        if (empty($difference1) && empty($difference2)) {
+        //            echo "Arrays have the same values.";
+        //        } else {
+        //            echo "Arrays have different values.\n";
+        //            echo "Values in the first array but not in the second: " . implode(', ', $difference1) . "\n";
+        //            echo "Values in the second array but not in the first: " . implode(', ', $difference2) . "\n";
+        //        }
+
 
 
 
         return view('App.product.product.productEdit', [
-                'product' => $product,
-                'remain_variation_ids' =>$remain_variation_ids,
-                'brands' => $this->brandRepository->getAll(),
-                'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
-                'manufacturers' => $this->manufacturerRepository->getAll(),
-                'generics' => $this->genericRepository->getAll(),
-                'variations' => $this->variationRepository->getAllTemplate(),
-                'unitCategories' => $this->unitCategoryRepository->getAll(),
-                'uoms' => $this->uomRepository->getAll(),
-                'productVariation' => $this->productRepository->getVariationByProductIdWithRelationships($product->id, ['product', 'variationTemplateValue']),
-                'additional_products' => $productServices->additionalProductsRetrive($product->id),
-                'packagings' => $this->productRepository->getPackagingByProductIdWithRelationships($product->id, ['uom']),
-                'unit_category_id' => $this->uomRepository->getUomByUomId($product->uom_id)->first()->unit_category_id,
-            ]);
+            'product' => $product,
+            'remain_variation_ids' => $remain_variation_ids,
+            'brands' => $this->brandRepository->getAll(),
+            'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
+            'manufacturers' => $this->manufacturerRepository->getAll(),
+            'generics' => $this->genericRepository->getAll(),
+            'variations' => $this->variationRepository->getAllTemplate(),
+            'unitCategories' => $this->unitCategoryRepository->getAll(),
+            'uoms' => $this->uomRepository->getAll(),
+            'productVariation' => $productVariation,
+            'additional_products' => $productServices->additionalProductsRetrive($product->id),
+            'packagings' => $this->productRepository->getPackagingByProductIdWithRelationships($product->id, ['uom']),
+            'unit_category_id' => $this->uomRepository->getUomByUomId($product->uom_id)->first()->unit_category_id,
+        ]);
     }
 
     public function update(ProductUpdateRequest $request, Product $product)
@@ -330,7 +337,7 @@ class ProductController extends Controller
             $this->insertProductVariations($request, $product, false);
 
             $productService = new productServices();
-            $productService->createAdditionalProducts($request->additional_product_details, $product,false);
+            $productService->createAdditionalProducts($request->additional_product_details, $product, false);
 
             // for packaging
             if ($request->packaging_repeater) {
@@ -369,7 +376,7 @@ class ProductController extends Controller
     public function delete(Product $product)
     {
 
-        if ($product->receipe_of_material_id !== null && $product->product_type === 'consumeable'){
+        if ($product->receipe_of_material_id !== null && $product->product_type === 'consumeable') {
             activity('product-transaction')
                 ->log('Product deletion has been warn due to associated with one or more combo/kit template')
                 ->event('delete')
@@ -379,7 +386,7 @@ class ProductController extends Controller
             return response()->json(['error' => 'This product is associated with one or more combo/kit template. Delete the combo/kit template or associate them with a different product.']);
         }
 
-        if ($product->receipe_of_material_id !== null && $product->product_type === 'service'){
+        if ($product->receipe_of_material_id !== null && $product->product_type === 'service') {
             activity('product-transaction')
                 ->log('Product deletion has been warn due to associated with one or more service template')
                 ->event('delete')
@@ -664,34 +671,37 @@ class ProductController extends Controller
     }
 
 
-    public function getProducts(Request $request){
+    public function getProducts(Request $request)
+    {
         $q = $request->q;
         $porducts = Product::where(function ($query) use ($q) {
-            if($q!=''){
-                $query->where('name', 'like', '%' . $q . '%')->orWhere('sku', '=',$q);
-            }{
+            if ($q != '') {
+                $query->where('name', 'like', '%' . $q . '%')->orWhere('sku', '=', $q);
+            } {
                 return $query;
             }
         })
             ->paginate(10);
         return response()->json($porducts, 200);
     }
-    public function getVariations(Request $request){
+    public function getVariations(Request $request)
+    {
         $keyword = $request->q;
-        $variations=ProductVariation::query()
-                        ->select('product_variations.id','products.image','product_variations.variation_sku as sku', DB::raw("CONCAT(products.name, IFNULL(CONCAT(' (', variation_template_values.name, ') '), '')) AS name"))
-                        ->when($keyword && rtrim($keyword!=''),function($q) use($keyword){
-                            $q->where('products.name', 'like', '%' . $keyword . '%')
-                            ->orWhere('sku', '=',$keyword)
-                            ->orWhere('product_variations.variation_sku', '=',$keyword);
-                        })
-                        ->leftJoin('products', 'product_variations.product_id', '=', 'products.id')
-                        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
-                        ->paginate(10);
+        $variations = ProductVariation::query()
+            ->select('product_variations.id', 'products.image', 'product_variations.variation_sku as sku', DB::raw("CONCAT(products.name, IFNULL(CONCAT(' (', variation_template_values.name, ') '), '')) AS name"))
+            ->when($keyword && rtrim($keyword != ''), function ($q) use ($keyword) {
+                $q->where('products.name', 'like', '%' . $keyword . '%')
+                    ->orWhere('sku', '=', $keyword)
+                    ->orWhere('product_variations.variation_sku', '=', $keyword);
+            })
+            ->leftJoin('products', 'product_variations.product_id', '=', 'products.id')
+            ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+            ->paginate(10);
         return response()->json($variations, 200);
     }
 
-    public function getProductVariation(Request $request){
+    public function getProductVariation(Request $request)
+    {
         $q = $request->q;
         $products = Product::select(
             'products.*',
@@ -703,9 +713,9 @@ class ProductController extends Controller
             'product_variations.id as variation_id'
         )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where(function ($query) use ($q) {
-                if($q!=''){
+                if ($q != '') {
                     $query->where('products.name', 'like', '%' . $q . '%');
-                }{
+                } {
                     return $query;
                 }
             })
@@ -720,6 +730,5 @@ class ProductController extends Controller
             ])
             ->paginate(10);
         return response()->json($products, 200);
-
     }
 }

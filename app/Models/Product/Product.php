@@ -135,4 +135,9 @@ class Product extends Model
         return $this->hasOne(ProductVariation::class, 'product_id', 'id');
     }
 
+    public function product_variation_templates() : HasMany
+    {
+        return $this->hasMany(ProductVariationsTemplates::class);
+    }
+
 }
