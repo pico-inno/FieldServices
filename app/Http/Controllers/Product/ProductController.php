@@ -191,7 +191,7 @@ class ProductController extends Controller
     public function index(
         LocationRepositoryInterface $locationRepository,
     ) {
-        //        return Product::with('productVariations', 'category', 'brand')->paginate();
+//                return Product::with('productVariations', 'category', 'brand')->paginate();
         //        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
         $categories = $this->categoryRepository->query()->select('name')->distinct()->pluck('name');
         $brands = $this->brandRepository->query()->select('name')->distinct()->pluck('name');
@@ -199,6 +199,9 @@ class ProductController extends Controller
         $manufactures = $this->manufacturerRepository->query()->select('name')->distinct()->pluck('name');
         $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
         $locations = $locationRepository->locationWithAccessControlQuery()->select('id', 'name')->get();
+
+//        return Product::with('productVariations.variation_values.variation_template_value')->get();
+
         return view('App.product.product.productListV2', compact(
             'locations',
             'product_types',
@@ -226,6 +229,7 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
+//        return $request;
         try {
             DB::beginTransaction();
             $productAction->create($request);
@@ -254,6 +258,7 @@ class ProductController extends Controller
             }
         } catch (Exception $exception) {
             DB::rollBack();
+            dd($exception);
             $message = $exception->getMessage();
             activity('product-transaction')
                 ->log('Product creation has been fail')
@@ -264,10 +269,8 @@ class ProductController extends Controller
         }
     }
 
-    public function edit(Product $product, productServices $productServices)
+    public function edit(Product $product, productServices $productServices, ProductRepository $productRepository)
     {
-
-
         $product_variation_template_value_ids = $this->productRepository->query()
             ->leftJoin('product_variations', 'product_variations.product_id', '=', 'products.id')
             ->select('products.*', 'product_variations.variation_template_value_id as variation_template_value_id')
@@ -282,6 +285,13 @@ class ProductController extends Controller
 
         $remain_variation_ids = array_diff($variation_template_value_ids->toArray(), $product_variation_template_value_ids->toArray());
 
+        $product = $productRepository->query()
+            ->where('id', $product->id)
+            ->with([
+                'product_variation_templates:id,product_id,variation_template_id',
+            ])
+            ->first();
+        $productVariation = $this->productRepository->getVariationByProductIdWithRelationships($product->id, ['product', 'variationTemplateValue', 'variation_values.variation_template_value:id,name,variation_template_id']);
 
         //        if (empty($difference1) && empty($difference2)) {
         //            echo "Arrays have the same values.";
@@ -290,6 +300,7 @@ class ProductController extends Controller
         //            echo "Values in the first array but not in the second: " . implode(', ', $difference1) . "\n";
         //            echo "Values in the second array but not in the first: " . implode(', ', $difference2) . "\n";
         //        }
+
 
 
 
@@ -303,7 +314,7 @@ class ProductController extends Controller
             'variations' => $this->variationRepository->getAllTemplate(),
             'unitCategories' => $this->unitCategoryRepository->getAll(),
             'uoms' => $this->uomRepository->getAll(),
-            'productVariation' => $this->productRepository->getVariationByProductIdWithRelationships($product->id, ['product', 'variationTemplateValue']),
+            'productVariation' => $productVariation,
             'additional_products' => $productServices->additionalProductsRetrive($product->id),
             'packagings' => $this->productRepository->getPackagingByProductIdWithRelationships($product->id, ['uom']),
             'unit_category_id' => $this->uomRepository->getUomByUomId($product->uom_id)->first()->unit_category_id,

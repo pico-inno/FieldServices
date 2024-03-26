@@ -6,6 +6,7 @@ use App\Models\Product\Product;
 use App\Repositories\Product\PriceRepository;
 use App\Repositories\Product\ProductRepository;
 use App\Repositories\Product\VariationRepository;
+use App\Repositories\Product\VariationValueRepository;
 use App\Services\packaging\packagingServices;
 use App\Services\product\productServices;
 use Illuminate\Support\Facades\DB;
@@ -17,14 +18,17 @@ class ProductAction
     protected $productRepository;
     protected $variationRepository;
     protected $priceRepository;
+    protected $variationValueRepository;
     public function __construct(
         ProductRepository $productRepository,
         VariationRepository $variationRepository,
         PriceRepository $priceRepository,
+        VariationValueRepository $variationValueRepository,
     ){
         $this->productRepository = $productRepository;
         $this->variationRepository = $variationRepository;
         $this->priceRepository = $priceRepository;
+        $this->variationValueRepository = $variationValueRepository;
     }
 
     public function create($data){
@@ -41,17 +45,44 @@ class ProductAction
 
             foreach ($data->variation_id as $index => $id) {
 
+
                 $variationData = [
                     'product_id' => $createdProduct->id,
                     'variation_sku' => $createdProduct->sku . '-0' . $index,
-                    'variation_template_value_id' => $id,
                     'default_purchase_price' => $data->exc_purchase[$index],
                     'profit_percent' => $data->profit_percentage[$index],
                     'default_selling_price' => $data->selling_price[$index],
                     'alert_quantity' => $data->alert_quantity[$index],
                     'created_by' => \auth()->id(),
                 ];
-                $createdProductVariation = $this->productRepository->createVariation($variationData);
+
+
+                if (strpos($id, '-') !== false) { //Multi Variation
+
+                    $createdProductVariation = $this->productRepository->createVariation($variationData);
+
+                    $individual_ids = explode('-', $id);
+
+                    foreach ($individual_ids as $individual_id) {
+                        $this->variationValueRepository->create([
+                            'product_variation_id' => $createdProductVariation->id,
+                            'variation_template_value_id' => $individual_id,
+                        ]);
+                    }
+
+                }else{ //One Variation
+
+                    $variationData['variation_template_value_id'] = $id;
+
+                    $createdProductVariation = $this->productRepository->createVariation($variationData);
+
+                    $this->variationValueRepository->create([
+                        'product_variation_id' => $createdProductVariation->id,
+                        'variation_template_value_id' => $id,
+                    ]);
+
+                }
+
 
                 $this->createOrUpdatePriceListDetail('Variation', $createdProductVariation->id, $data->selling_price[$index]);
 
@@ -74,13 +105,19 @@ class ProductAction
         }
 
 
-        $productVariationsTemplateData = [
-            'product_id' => $createdProduct->id,
-            'variation_template_id' => $data->variation_name,
-            'created_by' => \auth()->id(),
-        ];
 
-        $this->productRepository->createVariationTemplate($productVariationsTemplateData);
+        //Creation of Product Variation Template
+        foreach ($data->variation_name as $variation_template_id){
+            $productVariationsTemplateData = [
+                'product_id' => $createdProduct->id,
+                'variation_template_id' => $variation_template_id,
+                'created_by' => \auth()->id(),
+            ];
+
+            $this->productRepository->createVariationTemplate($productVariationsTemplateData);
+        }
+
+
 
 
         if ($data->additional_product_details) {

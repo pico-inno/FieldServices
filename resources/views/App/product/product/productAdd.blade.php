@@ -497,6 +497,24 @@
                                                     </select>
                                                 </div>
                                             </div>
+
+                                            <div id="variation_selection" class="col-md-4 mb-3 col-md-offset-4 box advance-toggle-class d-none">
+                                                <label for="" class="form-label required">
+                                                    Variation
+                                                </label>
+                                                <div class="mb-3">
+                                                    <select name="variation_name[]" id="variationSelect"
+                                                            class="form-select form-select-sm" data-control="select2"
+                                                            data-hide-search="true"
+                                                            data-placeholder="Please select" multiple>
+                                                        <option></option>
+                                                        @foreach ($variations as $variation)
+                                                            <option value="{{ $variation->id }}">
+                                                                {{ $variation->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div id="single_box" class="box advance-toggle-class d-none">
@@ -570,35 +588,25 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr class="fw-bold fs-3 text-gray-800 text-start bg-gray-300">
-                                                            <th class="text-center">Variation</th>
+{{--                                                            <th class="text-center">Variation</th>--}}
                                                             <th>Variation Values</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody class="repeater">
                                                         <tr>
-                                                            <td class="min-w-200px">
-                                                                {{-- <select name="variation_name" id="variationSelect"
-                                                                    class="form-select rounded-0" data-control="select2"
-                                                                    data-hide-search="true"
-                                                                    data-placeholder="Please select">
-                                                                    <option></option>
-                                                                    @foreach ($variations as $variation)
-                                                                        <option value="{{ $variation->id }}">
-                                                                            {{ $variation->name }}</option>
-                                                                    @endforeach
-                                                                </select> --}}
-                                                                <select name="variation_name[]" id="variationSelect"
-                                                                    class="form-select rounded-0" data-control="select2"
-                                                                    data-hide-search="true"
-                                                                    data-placeholder="Please select" multiple>
-                                                                    <option></option>
-                                                                    @foreach ($variations as $variation)
-                                                                        <option value="{{ $variation->id }}">
-                                                                            {{ $variation->name }}</option>
-                                                                    @endforeach
-                                                                </select>
+{{--                                                            <td class="min-w-200px">--}}
+{{--                                                                <select name="variation_name[]" id="variationSelect"--}}
+{{--                                                                    class="form-select rounded-0" data-control="select2"--}}
+{{--                                                                    data-hide-search="true"--}}
+{{--                                                                    data-placeholder="Please select" multiple>--}}
+{{--                                                                    <option></option>--}}
+{{--                                                                    @foreach ($variations as $variation)--}}
+{{--                                                                        <option value="{{ $variation->id }}">--}}
+{{--                                                                            {{ $variation->name }}</option>--}}
+{{--                                                                    @endforeach--}}
+{{--                                                                </select>--}}
 
-                                                            </td>
+{{--                                                            </td>--}}
                                                             <td>
                                                                 <div class="table-responsive">
                                                                     <table class="table  table-bordered"
@@ -1014,6 +1022,7 @@
         const selectBox = $("#has_variation");
         const singleBox = $("#single_box");
         const variableBox = $("#variable_box");
+        const variableSelection = $('#variation_selection');
 
         singleBox.show();
 
@@ -1023,12 +1032,14 @@
             // Hide all contact boxes
             singleBox.hide();
             variableBox.hide();
+            variableSelection.hide();
 
             // Show the contact box associated with the selected option
             if (selectedValue === "single") {
                 singleBox.show();
             } else if (selectedValue === "variable") {
                 variableBox.show();
+                variableSelection.show();
             }
         });
         // ============= > End:: For Product Type      < =========================
@@ -1374,10 +1385,13 @@
                     let cloneRow = $(newVariation).clone();
                     let values = combination.map(variation => variation.name).join(
                         '-'); // Concatenate variation names
+                    let ids = combination.map(variation => variation.id).join(
+                        '-');
                     cloneRow.find('input[name="variation_value[]"]').val(values);
-                    cloneRow.find('input[name="variation_id[]"]').each(function(index) {
-                        $(this).val(combination[index].id);
-                    });
+                    // cloneRow.find('input[name="variation_id[]"]').each(function(index) {
+                    //     $(this).val(combination[index].id);
+                    // });
+                    cloneRow.find('input[name="variation_id[]"]').val(ids);
                     cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
                     $('#variation-row').append(cloneRow);
                 });

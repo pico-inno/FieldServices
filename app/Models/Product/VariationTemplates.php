@@ -22,5 +22,5 @@ class VariationTemplates extends Model
         'name',
         'business_id',
         'created_by'
-    ];    
+    ];
 }
