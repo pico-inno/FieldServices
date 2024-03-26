@@ -65,6 +65,7 @@ class ProductAction
 
                     foreach ($individual_ids as $individual_id) {
                         $this->variationValueRepository->create([
+                            'product_id' => $createdProduct->id,
                             'product_variation_id' => $createdProductVariation->id,
                             'variation_template_value_id' => $individual_id,
                         ]);
@@ -77,6 +78,7 @@ class ProductAction
                     $createdProductVariation = $this->productRepository->createVariation($variationData);
 
                     $this->variationValueRepository->create([
+                        'product_id' => $createdProduct->id,
                         'product_variation_id' => $createdProductVariation->id,
                         'variation_template_value_id' => $id,
                     ]);

@@ -81,6 +81,7 @@ $(document).ready(function() {
                         };
                     },success:function(e){
                            results=e;
+                           console.log(results,'result')
                         products=e;
                         var html = '';
                         // products=results;
