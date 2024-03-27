@@ -77,8 +77,8 @@ class ItemReportTable extends Component
             })
             ->leftJoin('current_stock_balance', 'lot_serial_details.current_stock_balance_id', '=', 'current_stock_balance.id')
 
-            ->join('purchase_details', 'current_stock_balance.transaction_detail_id', '=', 'purchase_details.id')
-            ->join('purchases', 'purchase_details.purchases_id', '=', 'purchases.id')
+            ->leftJoin('purchase_details', 'current_stock_balance.transaction_detail_id', '=', 'purchase_details.id')
+            ->leftJoin('purchases', 'purchase_details.purchases_id', '=', 'purchases.id')
 
             ->leftJoin('opening_stock_details', 'current_stock_balance.transaction_detail_id', '=', 'opening_stock_details.id')
             ->leftJoin('opening_stocks', 'opening_stock_details.opening_stock_id', '=', 'opening_stocks.id')

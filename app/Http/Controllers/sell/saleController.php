@@ -295,6 +295,7 @@ class saleController extends Controller
         if(hasModule('Ecommerce') && isEnableModule('Ecommerce')){
             $ecommerceOrder= EcommerceOrder::where('sale_id',$sale['id'])->first();
             if($sale['channel_type']=='ecommerce'){
+                $paymentAccount=paymentAccounts::where('id',$ecommerceOrder['payment_account_id'])->first();
                 if($ecommerceOrder['viewed_at'] == null){
                     $ecommerceOrder->update([
                         'viewed_at'=>now()
@@ -2394,19 +2395,37 @@ class saleController extends Controller
     {
     }
     public function statusChange(Sales $sale,Request $request,paymentServices $paymentServices){
-        if($sale['status']!='delivered' && isset($request['status'])){
-            $data=[
-                'status'=>$request['status']
-            ];
-            if($request['isConfirmPayment']){
-                $data['paid_amount']=$sale['total_sale_amount'];
-                $data['balance_amount']=0;
+        try {
+            DB::beginTransaction();
+            $ecommerceOrder=null;
+            if($sale['status']!='delivered' && isset($request['status'])){
+                $data=[
+                    'status'=>$request['status'],
+                ];
+                if($request['isConfirmPayment']){
+                    $data['paid_amount']=$sale['total_sale_amount'];
+                    $data['payment_status']="paid";
+                    $data['balance_amount']=0;
+                }
+                $sale->update($data);
+                if($request['isConfirmPayment']){
+                    if($sale['channel_type']=='ecommerce'){
+                        $ecommerceOrder= EcommerceOrder::where('sale_id',$sale['id'])->first();
+                        if(isset($ecommerceOrder)){
+                            $paymentServices->makePayment($sale,$ecommerceOrder['payment_account_id'],'sale');
+                        }
+                    }
+                }
             }
-            $sale->update($data);
-            if($request['isConfirmPayment']){
-                $paymentServices->makePayment($sale,1,'sale');
-            }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            logger($th->getMessage());
+            return response()->json([
+                'error'=>$th->getMessage(),
+            ], 500);
         }
+
         return response()->json([
             'success'=>'Successfully Updated',
         ], 200);

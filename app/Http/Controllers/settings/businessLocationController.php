@@ -123,8 +123,9 @@ class businessLocationController extends Controller
     {
 
         $bl = businessLocation::where('id', $id)->first();
-
-        Cache::forget("bl_$id");
+        $appTitle=env('APP_TITLE',"erppos");
+        $name=$id."_".$appTitle;
+        Cache::forget("bl_$name");
         $parentLocation = businessLocation::where('id', $request->parent_location_id)->first();
         if ($request->parent_location_id != $id && arr($parentLocation, 'parent_location_id') != $id) {
             $request['is_active'] = $request['is_active'] ?? 0;

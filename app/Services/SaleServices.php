@@ -265,99 +265,102 @@ class SaleServices
         $locationIds= childLocationIDs($business_location_id);
         // check lot control from setting
         $product = Product::where('id', $product_id)->select('product_type')->first();
-        if ($product->product_type == 'storable') {
-            $variation_id = $sale_detail['variation_id'];
-            $totalStocks = CurrentStockBalance::select('id')
-                            ->where('product_id', $product_id)
-                            ->where('variation_id', $variation_id)
-                            ->whereIn('business_location_id', $locationIds)
-                            ->where('current_quantity', '>', '0')
-                            ->sum('current_quantity');
-            if ($requestQty > $totalStocks) {
-                return false;
-            } else {
-                $stocks = CurrentStockBalance::where('product_id', $product_id)
-                    ->where('variation_id', $variation_id)
-                    ->whereIn('business_location_id', $locationIds)
-                    ->where('current_quantity', '>', '0');
-                if ($this->accounting_method == 'lifo') {
-                    $stocks = $stocks->orderBy('id', 'DESC')->get();
+        if($product){
+            if ($product->product_type == 'storable') {
+                $variation_id = $sale_detail['variation_id'];
+                $totalStocks = CurrentStockBalance::select('id')
+                                ->where('product_id', $product_id)
+                                ->where('variation_id', $variation_id)
+                                ->whereIn('business_location_id', $locationIds)
+                                ->where('current_quantity', '>', '0')
+                                ->sum('current_quantity');
+                if ($requestQty > $totalStocks) {
+                    return false;
                 } else {
-                    $stocks = $stocks->get();
-                }
-                $qtyToRemove = $requestQty;
-                $this->createStockHistory($business_location_id,$sale_detail,$requestQty, $refUoMId,$sales);
-                // dd($requestQty);
-                $data = [];
-                foreach ($stocks as  $stock) {
-                    $stockQty = $stock->current_quantity;
-                    // prepare data for stock history
-                    //remove qty from current stock
-                    if ($qtyToRemove > $stockQty) {
-                        $data[] = [
-                            'stockQty' => $stockQty,
-                            'batch_no' => $stock['batch_no'],
-                            'lot_serial_no' => $stock['lot_serial_no'],
-                            'ref_uom_id' => $stock->ref_uom_id,
-                            'stock_id' => $stock->id
-                        ];
-                        $qtyToRemove -= $stockQty;
-                        CurrentStockBalance::where('id', $stock->id)->first()->update([
-                            'current_quantity' => 0,
-                        ]);
+                    $stocks = CurrentStockBalance::where('product_id', $product_id)
+                        ->where('variation_id', $variation_id)
+                        ->whereIn('business_location_id', $locationIds)
+                        ->where('current_quantity', '>', '0');
+                    if ($this->accounting_method == 'lifo') {
+                        $stocks = $stocks->orderBy('id', 'DESC')->get();
                     } else {
-                        $leftStockQty = $stockQty - $qtyToRemove;
-                        $data[] = [
-                            'stockQty' => $qtyToRemove,
-                            'batch_no' => $stock['batch_no'],
-                            'lot_serial_no' => $stock['lot_serial_no'],
-                            'ref_uom_id' => $stock->ref_uom_id,
-                            'stock_id' => $stock->id
-                        ];
-                        $qtyToRemove = 0;
-                        CurrentStockBalance::where('id', $stock->id)->first()->update([
-                            'current_quantity' => $leftStockQty,
-                        ]);
-                        break;
+                        $stocks = $stocks->get();
                     }
-                };
-                // dd($data);
-                return $data;
-            }
-        } else {
-            dd('here');
-            $current_stock_id = $current_stock['id'];
-            $product_id = $current_stock['product_id'];
-            $variation_id = $current_stock['variation_id'];
-            $currentStock = CurrentStockBalance::whereIn('business_location_id', $business_location_id)
-                ->where('product_id', $product_id)
-                ->where('variation_id', $variation_id)
-                ->where('id', $current_stock_id);
-            $current_stock_qty =  $currentStock->first()->current_quantity;
-            return abort(404, '');
-            if ($requestQty > $current_stock_qty) {
-                return false;
+                    $qtyToRemove = $requestQty;
+                    $this->createStockHistory($business_location_id,$sale_detail,$requestQty, $refUoMId,$sales);
+                    // dd($requestQty);
+                    $data = [];
+                    foreach ($stocks as  $stock) {
+                        $stockQty = $stock->current_quantity;
+                        // prepare data for stock history
+                        //remove qty from current stock
+                        if ($qtyToRemove > $stockQty) {
+                            $data[] = [
+                                'stockQty' => $stockQty,
+                                'batch_no' => $stock['batch_no'],
+                                'lot_serial_no' => $stock['lot_serial_no'],
+                                'ref_uom_id' => $stock->ref_uom_id,
+                                'stock_id' => $stock->id
+                            ];
+                            $qtyToRemove -= $stockQty;
+                            CurrentStockBalance::where('id', $stock->id)->first()->update([
+                                'current_quantity' => 0,
+                            ]);
+                        } else {
+                            $leftStockQty = $stockQty - $qtyToRemove;
+                            $data[] = [
+                                'stockQty' => $qtyToRemove,
+                                'batch_no' => $stock['batch_no'],
+                                'lot_serial_no' => $stock['lot_serial_no'],
+                                'ref_uom_id' => $stock->ref_uom_id,
+                                'stock_id' => $stock->id
+                            ];
+                            $qtyToRemove = 0;
+                            CurrentStockBalance::where('id', $stock->id)->first()->update([
+                                'current_quantity' => $leftStockQty,
+                            ]);
+                            break;
+                        }
+                    };
+                    // dd($data);
+                    return $data;
+                }
             } else {
-                $left_qty = $current_stock_qty - $requestQty;
-                $currentStock->update([
-                    'current_quantity' => $left_qty
-                ]);
-                $currentStockData = $currentStock->get()->first()->toArray();
-                stock_history::create([
-                    'business_location_id' => $currentStockData['business_location_id'],
-                    'product_id' => $currentStockData['product_id'],
-                    'variation_id' => $currentStockData['variation_id'],
-                    'batch_no' => $currentStockData['batch_no'],
-                    'expired_date' => $currentStockData['expired_date'],
-                    'transaction_type' => 'sale',
-                    'transaction_details_id' => $sale_detail_id,
-                    'increase_qty' => 0,
-                    'decrease_qty' => $requestQty,
-                    'ref_uom_id' => $currentStockData['ref_uom_id'],
-                ]);
-                return true;
+                dd('here');
+                $current_stock_id = $current_stock['id'];
+                $product_id = $current_stock['product_id'];
+                $variation_id = $current_stock['variation_id'];
+                $currentStock = CurrentStockBalance::whereIn('business_location_id', $business_location_id)
+                    ->where('product_id', $product_id)
+                    ->where('variation_id', $variation_id)
+                    ->where('id', $current_stock_id);
+                $current_stock_qty =  $currentStock->first()->current_quantity;
+                return abort(404, '');
+                if ($requestQty > $current_stock_qty) {
+                    return false;
+                } else {
+                    $left_qty = $current_stock_qty - $requestQty;
+                    $currentStock->update([
+                        'current_quantity' => $left_qty
+                    ]);
+                    $currentStockData = $currentStock->get()->first()->toArray();
+                    stock_history::create([
+                        'business_location_id' => $currentStockData['business_location_id'],
+                        'product_id' => $currentStockData['product_id'],
+                        'variation_id' => $currentStockData['variation_id'],
+                        'batch_no' => $currentStockData['batch_no'],
+                        'expired_date' => $currentStockData['expired_date'],
+                        'transaction_type' => 'sale',
+                        'transaction_details_id' => $sale_detail_id,
+                        'increase_qty' => 0,
+                        'decrease_qty' => $requestQty,
+                        'ref_uom_id' => $currentStockData['ref_uom_id'],
+                    ]);
+                    return true;
+                }
             }
         }
+
         // }else{
         //     return false;
         // }

@@ -229,6 +229,7 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
+//        return $request->toArray();
         try {
             DB::beginTransaction();
             $productAction->create($request);
@@ -250,9 +251,12 @@ class ProductController extends Controller
                 return response()->json(['success' => true, 'message' => 'Product created successfully']);
             }
             if ($request->save === "app_opening_stock") {
+
+             $lotControl=getSettingValue('lot_control');
                 return view('App.openingStock.add', [
                     'stockin_persons' => $this->businessUserRepository->getAllWithRelationships(['personal_info']),
                     'locations' => businessLocation::all(),
+                    'lotControl'=>$lotControl
                 ]);
             }
         }catch (Exception $exception){

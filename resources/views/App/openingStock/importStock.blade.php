@@ -118,7 +118,7 @@
                                             </span>
                                             <input class="form-control form-control-sm" name="opening_date" placeholder="Pick a date"
                                                     data-td-toggle="datetimepicker" id="kt_datepicker_1"
-                                                    value="{{old('opening_date',date('Y-m-d'))}}"/>
+                                                    value="{{old('opening_date',date('Y-m-d H:i'))}}"/>
                                         </div>
                                         @error('opening_date')
                                             <div class="p-2 text-danger">* {{$message}}</div>
@@ -294,7 +294,9 @@
 @push('scripts')
 <script>
     $("#kt_datepicker_1").flatpickr({
-            dateFormat: "Y-m-d",
+        dateFormat: "Y-m-d H:i",
+            // defaultDate: "today",
+            enableTime: true,
     });
 </script>
 @error('ImportedFile')
