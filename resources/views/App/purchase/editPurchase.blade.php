@@ -356,6 +356,17 @@
                                         $product=$pd->product;
                                         $product_variation=$pd->toArray()['product_variation'];
 
+                                        $varationName=$product_variation['variation_template_value']['name'] ?? '';
+                                        $variationValueCount=count($product_variation['variation_values']);
+                                        if($variationValueCount > 0){
+                                            $varationName="";
+                                            foreach ($product_variation['variation_values'] as $index=>$vv) {
+                                                $separator= $index == 0 || $index ==$variationValueCount ? '': ',';
+                                                $varationName.= $separator.' '.$vv['variation_template_value']['name'];
+                                            }
+                                        };
+
+
                                         $per_item_discount=$pd->per_item_discount;
                                         $per_item_discount_text=number_format($pd->per_item_discount,$pDecimal);
 
@@ -387,9 +398,9 @@
                                                 <a href="#" class="text-gray-600 text-hover-primary ">
                                                     {{$product['name']}}
                                                 </a>
-                                                 @if(isset($product_variation['variation_template_value']))
+                                                 @if($varationName)
                                                         <span class="my-2 d-block">
-                                                            ({{$product_variation['variation_template_value']['name']}})
+                                                            ({{$varationName}})
                                                         </span>
                                                  @endif
                                             </td>

@@ -70,7 +70,7 @@ class Product extends Model
     }
     public function product_variations():HasOne
     {
-        return $this->hasOne(ProductVariation::class);
+        return $this->hasOne(ProductVariation::class,'product_id','id');
     }
 
     public function category() : BelongsTo
@@ -114,6 +114,10 @@ class Product extends Model
     public function varPackaging(): HasOne
     {
         return $this->hasOne(productPackaging::class, 'product_variation_id', 'product_variations.id');
+    }
+    public function variation_values() : HasMany
+    {
+        return $this->hasMany(VariationValue::class,'product_variation_id','variation_id');
     }
     public function product_packaging(): HasOne
     {

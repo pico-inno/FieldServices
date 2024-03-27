@@ -130,9 +130,22 @@
                                     sku=result.sku;
                                 }
 
+
+                                let productVariation=result.product_variations;
+                                let variation_values=result.variation_values ?? [];
+                                let variationName=result.variation_name;
+                                let valueLength=variation_values.length;
+                                if(productVariation.variation_template_value_id == null && variation_values.length >0){
+                                    variationName = '';
+                                    variation_values.forEach((variation_value,i) => {
+                                        separator=(i != 0 || i+1==valueLength) ? ', ' : ' ';
+                                        variationName += separator + variation_value.variation_template_value.name
+                                    });
+                                }
+                                
                                 html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
                                 html += `<h4 class="fs-6 ps-10 pt-3">
-                                    ${result.name}-${result.variation_name ? '('+result.variation_name+')': ''}`;
+                                    ${result.name}-${variationName ? '('+variationName+')': ''}`;
                                 html+='</h4>'
                                 html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
 
