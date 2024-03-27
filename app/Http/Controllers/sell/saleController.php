@@ -1796,7 +1796,6 @@ class saleController extends Controller
             'product_variations.additionalProduct.productVariation.product',
             'product_variations.additionalProduct.uom',
             'product_variations.additionalProduct.productVariation.variationTemplateValue',
-            'variation_values.variation_template_value',
             'stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
                 $query->select('current_quantity', 'business_location_id', 'product_id', 'id')
@@ -1888,6 +1887,7 @@ class saleController extends Controller
             'additionalProduct.productVariation.product',
             'additionalProduct.uom',
             'additionalProduct.productVariation.variationTemplateValue',
+            'variation_values.variation_template_value',
             'stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
                 $query->select('current_quantity', 'business_location_id', 'product_id', 'id')
@@ -1957,7 +1957,6 @@ class saleController extends Controller
                 $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()->toArray();
-            // dd($products);
         return response()->json($products, 200);
     }
     public function getSuggestionProduct(Request $request)
