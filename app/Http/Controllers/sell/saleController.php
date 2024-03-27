@@ -373,6 +373,8 @@ class saleController extends Controller
                 'productVariation' => function ($q) {
                     $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                     ->with([
+
+                        'variation_values.variation_template_value',
                         'packaging.uom',
                         'product' => function ($q) {
                             $q->select('id', 'name', 'has_variation');
