@@ -229,7 +229,7 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
-        return $request->toArray();
+//        return $request->toArray();
         try {
             DB::beginTransaction();
             $productAction->create($request);
