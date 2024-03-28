@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\CurrentStockBalance;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
@@ -38,6 +39,8 @@ class ProductList extends Component
     public $locationId = 'all';
     public $showSubTable = false;
     public $selectedProductId;
+    public $total_current_quantity_with_uom;
+
 
     public function toggleSubTable($productId)
     {
@@ -46,6 +49,26 @@ class ProductList extends Component
         } else {
             $this->selectedProductId = $productId;
             $this->showSubTable = true;
+        }
+    }
+
+    public function getCurrentQty($productId, ProductRepository $productRepository)
+    {
+        if ($this->selectedProductId == $productId) {
+            $this->selectedProductId = null;
+        } else {
+            $this->selectedProductId = $productId;
+            $variaiton_id = $productRepository->queryVariation()->where('product_id', $productId)->first()->id;
+
+            $total_qty = CurrentStockBalance::where('product_id', $productId)
+                ->where('variation_id',$variaiton_id)
+                ->sum('current_quantity');
+
+            $ref_uom_name = CurrentStockBalance::where('product_id', $productId)
+                ->with('uom')
+                ->where('variation_id',$variaiton_id)->first()->uom->name;
+
+            $this->total_current_quantity_with_uom = number_format($total_qty, 2) . ' ' . $ref_uom_name;
         }
     }
 

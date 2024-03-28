@@ -279,7 +279,12 @@
                                                                    @endif
                                                                 </div>
                                                             </td>
-                                                            <td>{{$product['name']}}</td>
+                                                            <td    @if ($product->has_variation === "single") wire:click="getCurrentQty('{{ $product->id }}')" style="cursor: pointer;" @endif>
+                                                                {{$product['name']}}
+                                                                @if ($selectedProductId == $product->id)
+                                                                {{$total_current_quantity_with_uom}}
+                                                                @endif
+                                                            </td>
                                                             <td>{{$product['sku']}}</td>
                                                             <td>
                                                             @php
