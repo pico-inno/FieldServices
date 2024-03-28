@@ -36,6 +36,18 @@ class ProductList extends Component
     public $genericId = 'all';
     public $manufactureId = 'all';
     public $locationId = 'all';
+    public $showSubTable = false;
+    public $selectedProductId;
+
+    public function toggleSubTable($productId)
+    {
+        if ($this->selectedProductId === $productId) {
+            $this->showSubTable = !$this->showSubTable;
+        } else {
+            $this->selectedProductId = $productId;
+            $this->showSubTable = true;
+        }
+    }
 
     public function mount(
         LocationRepositoryInterface $locationRepository,
@@ -81,7 +93,7 @@ class ProductList extends Component
                 ->leftJoin('manufacturers','manufacturer_id','=','manufacturers.id')
                 ->leftJoin('categories','category_id','=','categories.id')
                 ->leftJoin('categories as subCategory','sub_category_id','=','subCategory.id')
-                ->with('productVariations')
+                ->with(['productVariations', 'locations_product.location'])
                 ->when(
                     $keyword !='' || $productTypeFilter !='all' || $categoryFilterId !='all' || $brandId!='all' || $genericId!='all' || $manufactureId !='all',
                     function($q) use($keyword,$productTypeFilter,$categoryFilterId,$brandId,$genericId,$manufactureId)
@@ -105,7 +117,9 @@ class ProductList extends Component
                 )
 
                 ->paginate($this->perPage);
-        // dd($products->toArray());
+
         return view('livewire.product-list',compact('products','updatePermission','deletePermission'));
     }
+
+
 }

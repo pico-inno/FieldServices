@@ -90,6 +90,17 @@ class ProductAction
 
             }
 
+            //Creation of Product Variation Template
+            foreach ($data->variation_name as $variation_template_id){
+                $productVariationsTemplateData = [
+                    'product_id' => $createdProduct->id,
+                    'variation_template_id' => $variation_template_id,
+                    'created_by' => \auth()->id(),
+                ];
+
+                $this->productRepository->createVariationTemplate($productVariationsTemplateData);
+            }
+
         }else{ //for single
             $preparedProductVariationData = [
                 'product_id' => $createdProduct->id,
@@ -104,20 +115,18 @@ class ProductAction
 
             $this->productRepository->createVariation($preparedProductVariationData);
 
-        }
-
-
-
-        //Creation of Product Variation Template
-        foreach ($data->variation_name as $variation_template_id){
             $productVariationsTemplateData = [
                 'product_id' => $createdProduct->id,
-                'variation_template_id' => $variation_template_id,
+                'variation_template_id' => $data->variation_name,
                 'created_by' => \auth()->id(),
             ];
 
             $this->productRepository->createVariationTemplate($productVariationsTemplateData);
         }
+
+
+
+
 
 
 

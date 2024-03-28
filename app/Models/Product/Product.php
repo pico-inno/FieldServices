@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Models\locationProduct;
 use App\Models\Product\UOM;
 use App\Models\productPackaging;
 use App\Models\CurrentStockBalance;
@@ -142,6 +143,11 @@ class Product extends Model
     public function product_variation_templates() : HasMany
     {
         return $this->hasMany(ProductVariationsTemplates::class);
+    }
+
+    public function locations_product() : HasMany
+    {
+        return $this->hasMany(locationProduct::class);
     }
 
 }
