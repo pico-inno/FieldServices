@@ -111,7 +111,7 @@
                     @if ($data_text->date)
                     <li class="text-muted">
                         <span class="fw-bold">Date:
-                        </span>{{ $sale->created_at->format('j/F/Y ( h:m A)') }}
+                        </span>{{ $sale->created_at->format('j/F/Y ( h:i A)') }}
                     </li>
                     @endif
                     @if ($data_text->purchase_status)
@@ -201,6 +201,10 @@
                 @endif
 
                 @if ($data_text->extra_discount_amount->is_show)
+                    <tr class="fs-6 fw-semibold">
+                        <td colspan="4" class="text-end p-0">Total Item Discount</td>
+                        <td class=" text-end min-w-column p-0">{{ fprice($sale->total_item_discount) }}</td>
+                    </tr>
                     <tr class="fs-6 fw-semibold">
                         <td colspan="4" class="text-end p-0">{{$data_text->extra_discount_amount->label}}</td>
                         <td class=" text-end min-w-column p-0">{{ fprice($sale->extra_discount_amount) }}</td>

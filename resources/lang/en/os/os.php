@@ -3,8 +3,10 @@
 
 return [
     // create
+    'opening_stock'=>"Opening Stock",
     'business_location'=>'Business Location',
     'opening_stock_date'=>'Opening Stock Date',
+    'opening_date'=>'Opening Date',
     'note'=>'Note',
     'search'=>'Search',
 
