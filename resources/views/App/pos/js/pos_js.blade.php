@@ -536,6 +536,7 @@
                 'variation_name':newSelectedProduct.variation_name,
                 'variation_id':newSelectedProduct.id,
                 'defaultSellingPrices':newSelectedProduct.default_selling_price,
+                'defaultPurchasePrice':newSelectedProduct.default_purchase_price,
                 'sellingPrices':newSelectedProduct.uom_selling_price,
                 'stock_sum_current_quantity':newSelectedProduct.stock_sum_current_quantity,
                 'aviable_qty':newSelectedProduct.stock_sum_current_quantity,
@@ -1585,7 +1586,7 @@
 
             // let unitQtyValByUom=changeQtyOnUom2(currentUomId,packagingUom,unitQty,uoms).resultQty;
             // console.log(currentUomId,lotUom,lotQtyForCal,uoms);
-            if(lot_serial_modal_input_val != 'fifo' && lot_serial_modal_input_val !='lifo'){
+            if(lot_serial_modal_input_val != 'fifo' && lot_serial_modal_input_val !='lifo' && lotControl == 'on'){
                 let qtyByCurrentUnit= changeQtyOnUom2(lotUom,currentUomId,lotQtyForCal,uoms).resultQty;
                 current_tr.find('.stock_quantity_unit').text(qtyByCurrentUnit);
             }else{
@@ -2382,6 +2383,7 @@
                             'variation_id':saleDetail.product_variation.id,
                             'category_id':saleDetail.product.category_id,
                             'defaultSellingPrices':saleDetail.product_variation.default_selling_price,
+                            'defaultPurchasePrice':saleDetail.product_variation.default_purchase_price,
                             'variation_name':saleDetail.product_variation.variation_template_value ? saleDetail.product_variation.variation_template_value.name:'',
                             'sellingPrices':saleDetail.product_variation.uom_selling_price,
                             'stock_sum_current_quantity':saleDetail.stock_sum_current_quantity,

@@ -43,6 +43,10 @@ class openingStocks extends Model
     {
         return $this->hasOne(BusinessUser::class, 'id', 'opening_person');
     }
+    public function openingPerson(): HasOne
+    {
+        return $this->hasOne(BusinessUser::class, 'id', 'opening_person');
+    }
     public function confirm_by(): HasOne
     {
         return $this->hasOne(BusinessUser::class, 'id', 'confirm_by');
