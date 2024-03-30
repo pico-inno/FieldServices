@@ -13,7 +13,7 @@ class moduelInstaller extends Command
      *
      * @var string
      */
-    protected $signature = 'app:moduel-installer';
+    protected $signature = 'app:module-installer';
 
     /**
      * The console command description.

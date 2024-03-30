@@ -427,7 +427,9 @@ function arr($array, $key, $seperator = '', $noneVal = '')
 function businessLocationName($bl)
 {
     $id=$bl['id'];
-    return Cache::remember("bl_$id", 20000, function () use($bl) {
+    $appTitle=env('APP_TITLE',"erppos");
+    $name=$id."_".$appTitle;
+    return Cache::remember("bl_$name", 20000, function () use($bl) {
         $parentName = getParentName($bl['parentLocation']);
         $parent = $parentName ? substr($parentName, 2) . ' / ' : '';
         logger($parent . $bl['name']);

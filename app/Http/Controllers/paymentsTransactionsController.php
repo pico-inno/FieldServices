@@ -295,12 +295,13 @@ class paymentsTransactionsController extends Controller
             $purchase=purchases::where('id',$id)->first();
             $paid_amount=$purchase->paid_amount + $request->payment_amount;
             $balance_amount=($purchase->total_purchase_amount - $paid_amount);
-            if($purchase->total_purchase_amount==  $paid_amount){
-                $payment_status='paid';
-            }elseif($purchase->total_purchase_amount ==  0){
+
+            if($paid_amount < $purchase->total_purchase_amount ){
+                $payment_status='partial';
+            }elseif($paid_amount == 0 && $paid_amount != $purchase->total_purchase_amount ){
                 $payment_status='due';
             }else{
-                $payment_status='partial';
+                $payment_status='paid';
             }
 
             $suppliers=Contact::where('id',$purchase->contact_id)->first();
@@ -331,12 +332,13 @@ class paymentsTransactionsController extends Controller
             $sale=sales::where('id',$id)->first();
             $paid_amount=$sale->paid_amount + $request->payment_amount;
             $balance_amount=($sale->total_sale_amount - $paid_amount);
-            if($sale->total_sale_amount ==  $paid_amount){
-                $payment_status='paid';
-            }elseif($sale->total_sale_amount ==  0){
+
+            if($paid_amount < $sale->total_sale_amount ){
+                $payment_status='partial';
+            }elseif($paid_amount == 0 && $paid_amount != $sale->total_sale_amount ){
                 $payment_status='due';
             }else{
-                $payment_status='partial';
+                $payment_status='paid';
             }
 
             $suppliers=Contact::where('id',$sale->contact_id)->first();

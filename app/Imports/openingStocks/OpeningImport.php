@@ -69,8 +69,8 @@ class OpeningImport implements ToCollection,WithHeadingRow,WithValidation
                 $row = $row->toArray();
                 Validator::make($row, [
                     'product_variation_sku' => 'required|exists:product_variations,variation_sku',
-                    'quantity' => 'required|numeric',
-                    'price' => 'required|numeric',
+                    'quantity' => 'nullable|numeric',
+                    'price' => 'nullable|numeric',
                     'unit_uom_name' => 'required|exists:uom,name',
                     'variation_value' => 'nullable|exists:variation_template_values,name',
                 ], [
@@ -143,8 +143,8 @@ class OpeningImport implements ToCollection,WithHeadingRow,WithValidation
 
 
                     $expired_date = $row['expired_date'];
-                    $quantity = $row['quantity'];
-                    $price = $row['price'];
+                    $quantity = $row['quantity'] ?? 0;
+                    $price = $row['price'] ?? 0;
                     $remark = $row['remark'];
                     $refUomInfo = UomHelper::getReferenceUomInfoByCurrentUnitQty($quantity, $uom_id);
                     $smallestQty = $refUomInfo['qtyByReferenceUom'];
@@ -197,11 +197,17 @@ class OpeningImport implements ToCollection,WithHeadingRow,WithValidation
         //     'unit_uom_name.exists' => "Imported UOM [:value] is not exists in uom set list",
         //     'variation_value.exists' => 'Imported variation value is not exists in variation value list'
         // ])->validate();
+
+        // 'product_variation_sku' => 'required|exists:product_variations,variation_sku',
+        // 'quantity' => 'nullable|numeric',
+        // 'price' => 'nullable|numeric',
+        // 'unit_uom_name' => 'required|exists:uom,name',
+        // 'variation_value' => 'nullable|exists:variation_template_values,name',
         return [
             '*.product_variation_sku' => [
-                'nullable',
+                'required',
                 Rule::exists('product_variations', 'variation_sku')
-            ],
+            ]
         ];
     }
 

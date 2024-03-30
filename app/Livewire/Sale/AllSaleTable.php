@@ -129,6 +129,9 @@ class AllSaleTable extends Component
                     ->when($saleType == 'sales', function ($query){
                             $query->whereNull('pos_register_id')->where('channel_type','sale');
                     })
+                    ->when($saleType == 'posSales', function ($query){
+                            $query->whereNotNull('pos_register_id')->where('channel_type','pos');
+                    })
                     ->when($saleType == 'ecommerce', function ($query) {
                             $query->where('channel_type','ecommerce')
                                     ->selectRaw('ecommerce_orders.viewed_at as isRead')

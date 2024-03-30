@@ -143,7 +143,6 @@
         }
         let quantity=isNullOrNan(parentDom.find('.quantity_input').val());
         let price = priceStage.cal_value;
-
         if (priceStage.cal_type == 'percentage') {
             let basePriceLists=priceList.basePriceList;
             let i = 0;
@@ -206,9 +205,10 @@
 
             }else{
                 let lastIndexOfStock=product.stock.length-1;
-                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
+                let getLastStockPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: isNullOrNan(product.defaultPurchasePrice);
+                refPrice=isNullOrNan(product.defaultPurchasePrice ?? getLastStockPrice);
                 percentagePrice=refPrice * (priceStage.cal_value/100);
-                price = isNullOrNan(refPrice) + isNullOrNan(percentagePrice);
+                price = isNullOrNan(refPrice) + isNullOrNan(percentagePrice)
             }
         }
         let resultAfterUomChange=getPriceByUOM(parentDom,product,priceStage.min_qty,price);
@@ -218,15 +218,15 @@
         const inputUom =uoms.filter(function ($u) {
                 return $u.id ==inputUomId;
         })[0];
-
         if (quantity >= qtyByPriceStage) {
-
             parentDom.find('.subtotal_price').text(pDecimal(resultAfterUomChange.resultPrice) );
+            console.log(resultAfterUomChange,'resultAfterUomChange',price);
+            parentDom.find('.price_list_id').val(priceStage.id);
             parentDom.find('input[name="selling_price[]"]').val(pDecimal(resultAfterUomChange.resultPrice));
             parentDom.find('input[name="each_selling_price"]').val(priceStage.pricelist_id);
-            parentDom.find('.price_list_id').val(priceStage.id);
             return true;
         }else{
+
             let lastIndexOfStock=product.stock.length-1;
             let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
             let result=pDecimal(refPrice * isNullOrNan( inputUom.value));
@@ -245,7 +245,6 @@
         const refUOM =uoms.filter(function ($u) {
                 return $u.unit_type =="reference";
         })[0];
-
         return changeQtyOnUom2(uomIdForSale,inputUomId,priceStageQty,uoms,priceStageCalVal);
     }
 

@@ -22,7 +22,8 @@ class PriceListEditTable extends Component
                             // ->select('price_list_details.*','products.name')
                             ->where('pricelist_id',$id)
                             // ->when($search,function($q) use($search) {
-                            //     $q->where('products.name','like','%'.$search.'%');
+                            //     $q->where('products.name','like','%'.$search.'%')
+                            //     ->where('products.sku','like','%'.$search.'%');
                             // })
                             // ->leftJoin('products','price_list_details.applied_value','products.id')
                             ->orderBy('price_list_details.id','DESC')
@@ -51,7 +52,7 @@ class PriceListEditTable extends Component
                 'cal_value'=>$value
             ]);
             $this->dispatch('successfully-saved');
-            DB::rollBack();
+            DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
             $this->dispatch('error', message:$th->getMessage());
