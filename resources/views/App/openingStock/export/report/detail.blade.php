@@ -2,6 +2,7 @@
     <thead>
         <tr >
             <th>Opening Date</th>
+            <th>Location Name</th>
             <th>Voucher No</th>
             <th>SKU</th>
             <th>Product Name</th>
@@ -24,6 +25,7 @@
         @foreach ($datas as $data)
             <tr class="">
                 <td >{{fdate($data['opening_date'])}}</td>
+                <th>{{$data->locationName}}</th>
                 <td >{{$data->opening_stock_voucher_no}}</td>
                 <td>{{$data['variation_sku']}}</td>
                 <td >{{$data['productName']}} {{$data['variation_name'] ? '('.$data['variation_name'].')' : ''}}</td>
