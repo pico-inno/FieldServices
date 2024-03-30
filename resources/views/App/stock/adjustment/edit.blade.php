@@ -92,8 +92,9 @@
                                                 data-kt-select2="true"
                                                 data-hide-search="true" data-placeholder="Condition">
                                             <option></option>
-                                            <option value="normal" @selected(old('condition') == 'normal') selected>Normal</option>
-                                            <option value="abnormal" @selected(old('condition') == 'abnormal')>Abnormal</option>
+                                            <option value="normal" @selected($stockAdjustment->condition == 'normal') selected>Normal</option>
+                                            <option value="abnormal" @selected($stockAdjustment->condition == 'abnormal')>Abnormal</option>
+                                            <option value="expire" @selected($stockAdjustment->condition == 'expire')>Expire</option>
                                         </select>
                                     </div>
                                 </div>
@@ -110,7 +111,6 @@
                                             <option></option>
                                             <option value="prepared" @selected($stockAdjustment->status == 'prepared') {{ $stockAdjustment->status == 'completed' ? 'disabled' : '' }} >Prepared</option>
                                             <option value="completed" @selected($stockAdjustment->status == 'completed')>Completed</option>
-                                            <option value="expire" @selected($stockAdjustment->status == 'expire')>Expire</option>
                                         </select>
                                         <input type="hidden" value="{{$stockAdjustment->status}}" name="old_status">
                                     </div>
@@ -301,12 +301,18 @@
                                                 <select  name="adjustment_details[{{$key}}][packaging_id]" class="form-select form-select-sm package_id"
                                                          data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
                                                          data-placeholder="Select Package" placeholder="select Package">
-                                                    <option value="">Select Package</option>
-                                                    @foreach ($product_variation['packaging'] as $package)
-                                                        <option @selected($package['id']==$detail['packagingTx']['product_packaging_id'])
-                                                                data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
-                                                            {{$package['packaging_name']}} ({{ number_format($package['quantity'], 2, '.', '') }} {{$package['uom']['short_name']}})</option>
-                                                    @endforeach
+
+
+                                                    @if($product_variation['packaging'] && count($product_variation['packaging']) > 1)
+                                                        <option value="">Select Package</option>
+                                                        @foreach ($product_variation['packaging'] as $package)
+                                                            <option @selected($package['id']==$detail['packagingTx']['product_packaging_id'])
+                                                                    data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
+                                                                {{$package['packaging_name']}} ({{ number_format($package['quantity'], 2, '.', '') }} {{$package['uom']['short_name']}})</option>
+                                                        @endforeach
+                                                    @else
+                                                        <option value="">Package Not Found</option>
+                                                    @endif
                                                 </select>
                                             </td>
                                             <td class="fv-row">
