@@ -130,80 +130,84 @@
                 wire:loading style="top: 40px;left:50%;">
                 <h2 class="text-primary">Loading....</h2>
             </div>
-            <table class="table align-start table-hover   table-row-dashed fs-7 gy-3 table-max-high mt-5" id="kt_Item_table"
-                data-sticky-header="true">
-                <thead>
-                    <tr class="text-start text-gray-600 fw-bold fs-7 text-uppercase gs-0">
-                        <th class="min-w-100px min-w-175px">Opening Date</th>
-                        <th class="min-w-100px cursor-pointer" wire:click="sortBy('opening_stock_voucher_no')">
-                            {{__('table/label.voucher_no')}}
-                            <x-datatable.sort-icon field="voucher_no" :sortField="$sortField"
-                                :sortAsc="$sortAsc" />
-                        </th>
-                        <th class="min-w-100px ">Product Name</th>
-                        <th class="min-w-100px text-end">UOM Price</th>
-                        <th class="min-w-100px text-end">Qty</th>
-                        <th class="min-w-100px text-end">Subtotal</th>
-                        <th class="min-w-100px ">
-                            Expired Date
-                        </th>
-                        <th>Opening Person</th>
-                    </tr>
-                    <!--end::Table row-->
-                </thead>
-                <!--end::Table head-->
-                <!--begin::Table body-->
-                <tbody class=" text-gray-600 fs-6 fw-semibold" id="allSaleTable">
+            <div class="table-responsive">
+                <table class="table align-start table-hover   table-row-dashed fs-7 gy-3 table-max-high mt-5" id="kt_Item_table"
+                    data-sticky-header="true">
+                    <thead>
+                        <tr class="text-start text-gray-600 fw-bold fs-7 text-uppercase gs-0">
+                            <th class="min-w-100px min-w-175px">Opening Date</th>
+                            <th class="min-w-100px min-w-175px">Location Name</th>
+                            <th class="min-w-100px cursor-pointer" wire:click="sortBy('opening_stock_voucher_no')">
+                                {{__('table/label.voucher_no')}}
+                                <x-datatable.sort-icon field="voucher_no" :sortField="$sortField"
+                                    :sortAsc="$sortAsc" />
+                            </th>
+                            <th class="min-w-100px ">Product Name</th>
+                            <th class="min-w-100px text-end">UOM Price</th>
+                            <th class="min-w-100px text-end">Qty</th>
+                            <th class="min-w-100px text-end">Subtotal</th>
+                            <th class="min-w-100px ">
+                                Expired Date
+                            </th>
+                            <th>Opening Person</th>
+                        </tr>
+                        <!--end::Table row-->
+                    </thead>
+                    <!--end::Table head-->
+                    <!--begin::Table body-->
+                    <tbody class=" text-gray-600 fs-6 fw-semibold" id="allSaleTable">
 
-                    @foreach ($openingStockDetails as $osd)
-                    <tr class="text-start" wire:key="{{ $osd['id'] }}">
-                        <td class="fw-semibold ">{{fdate($osd['opening_date'])}}</td>
-                        <td class="fw-semibold ">{{$osd->opening_stock_voucher_no}}</td>
-                        <td class="fw-semibold ">{{$osd['productName']}} {{$osd['variation_name'] ? '('.$osd['variation_name'].')' : ''}} <br>
-                            <span class="fs-7 text-gray-600 fw-bold">SKU : {{$osd['variation_sku']}}</span>
+                        @foreach ($openingStockDetails as $osd)
+                        <tr class="text-start" wire:key="{{ $osd['id'] }}">
+                            <td class="fw-semibold ">{{fdate($osd['opening_date'])}}</td>
+                            <td class="fw-semibold">{{$osd['locationName']}}</td>
+                            <td class="fw-semibold ">{{$osd->opening_stock_voucher_no}}</td>
+                            <td class="fw-semibold ">{{$osd['productName']}} {{$osd['variation_name'] ? '('.$osd['variation_name'].')' : ''}} <br>
+                                <span class="fs-7 text-gray-600 fw-bold">SKU : {{$osd['variation_sku']}}</span>
 
-                        </td>
-                        <td class="fw-semibold text-end">{{price($osd->uom_price ?? 0)}}</td>
-                        <td class="fw-semibold text-end">{{formatNumberV2($osd['quantity'])}} {{$osd['uomShortName'] ?? ''}}</td>
-                        <td class="fw-semibold  text-end">{{price($osd->subtotal)}}</td>
-                        <td class="fw-semibold  text-end">{{fdate($osd->expired_date,false,false)}}</td>
-                        <td class="fw-semiobold text-end">
-                            {{$osd->username}}
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr class="fw-bold fs-6 border-top-1">
-                        <th colspan="3" class="text-nowrap text-start fs-2">Total Opening Amount:</th>
-                        <th colspan="3" class="min-w-125px text-dark text-end  pe-3">
-                            {{price($openingStockDetails->sum('subtotal'))}}</th>
-                        {{-- <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
-                            {{formatPrice($purchases->sum('paid_amount'),$saleData[0]->currency ?? [])}}
-                        </th>
-                        <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
-                            {{formatPrice($purchases->sum('balance_amount'),$saleData[0]->currency ?? [])}}
-                        </th> --}}
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-
-        <div class="row justify-content-center mt-5  justify-content-md-between">
-            <div class="col-md-6 col-12 mb-3 ">
-                <div class="w-auto">
-                    <select name="" id="" wire:model.change="perPage"
-                        class="form-select form-select-sm w-auto m-auto m-md-0">
-                        @foreach ($aviablePerPages as $page)
-                        <option value="{{$page}}">{{$page}}</option>
+                            </td>
+                            <td class="fw-semibold text-end">{{price($osd->uom_price ?? 0)}}</td>
+                            <td class="fw-semibold text-end">{{formatNumberV2($osd['quantity'])}} {{$osd['uomShortName'] ?? ''}}</td>
+                            <td class="fw-semibold  text-end">{{price($osd->subtotal)}}</td>
+                            <td class="fw-semibold  text-end">{{fdate($osd->expired_date,false,false)}}</td>
+                            <td class="fw-semiobold text-end">
+                                {{$osd->username}}
+                            </td>
+                        </tr>
                         @endforeach
-                    </select>
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold fs-6 border-top-1">
+                            <th colspan="3" class="text-nowrap text-start fs-2">Total Opening Amount:</th>
+                            <th colspan="3" class="min-w-125px text-dark text-end  pe-3">
+                                {{price($openingStockDetails->sum('subtotal'))}}</th>
+                            {{-- <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
+                                {{formatPrice($purchases->sum('paid_amount'),$saleData[0]->currency ?? [])}}
+                            </th>
+                            <th colspan="1" class="min-w-125px text-dark text-end  pe-3">
+                                {{formatPrice($purchases->sum('balance_amount'),$saleData[0]->currency ?? [])}}
+                            </th> --}}
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="row justify-content-center mt-5  justify-content-md-between">
+                <div class="col-md-6 col-12 mb-3 ">
+                    <div class="w-auto">
+                        <select name="" id="" wire:model.change="perPage"
+                            class="form-select form-select-sm w-auto m-auto m-md-0">
+                            @foreach ($aviablePerPages as $page)
+                            <option value="{{$page}}">{{$page}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    {{$openingStockDetails->onEachSide(3)->links()}}
                 </div>
             </div>
-            <div class="col-md-6 col-12 mb-3">
-                {{$openingStockDetails->onEachSide(3)->links()}}
-            </div>
         </div>
+
     </div>
     <script wire:ignore>
         $(document).ready(function() {

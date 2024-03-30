@@ -172,6 +172,18 @@ var KTCustomersList = function () {
                                     }).then(function () {
                                         success(s.success);
                                     });
+                                },error: function (response, error) {
+                                    let message = response.responseJSON
+                                    Swal.fire({
+                                        text: message,
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "Ok, got it!",
+                                        customClass: {
+                                            confirmButton: "btn fw-bold btn-primary",
+                                        }
+                                    })
+
                                 }
                             })
                     } else if (result.dismiss === 'cancel') {
@@ -250,13 +262,14 @@ var KTCustomersList = function () {
                                data,
                             },
                             success: function(s) {
+                                console.log(s,'s');
                                 datatable.ajax.reload();
                                 setTimeout(function () {
                                     toggleToolbars();
                                     $('#selectAll').prop('checked', false);
                                 }, 50);
                                 Swal.fire({
-                                    text: "You have deleted selected locations!.",
+                                    text: "You have deleted selected Vouchers!.",
                                     icon: "success",
                                     buttonsStyling: false,
                                     confirmButtonText: "Ok, got it!",
@@ -267,24 +280,37 @@ var KTCustomersList = function () {
 
                                     success(s.success);
                                 });
+                            },
+                            error: function (response, error) {
+                                let message = response.responseJSON
+                                Swal.fire({
+                                    text: message,
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn fw-bold btn-primary",
+                                    }
+                                })
+
                             }
                         })
-                        Swal.fire({
-                            text: "You have deleted all selected locations!.",
-                            icon: "success",
-                            buttonsStyling: false,
-                            confirmButtonText: "Ok, got it!",
-                            customClass: {
-                                confirmButton: "btn fw-bold btn-primary",
-                            }
-                        }).then(function () {
-                            // Remove all selected locations
+                        // Swal.fire({
+                        //     text: "You have deleted all selected vouchers!.",
+                        //     icon: "success",
+                        //     buttonsStyling: false,
+                        //     confirmButtonText: "Ok, got it!",
+                        //     customClass: {
+                        //         confirmButton: "btn fw-bold btn-primary",
+                        //     }
+                        // }).then(function () {
+                        //     // Remove all selected locations
 
 
-                            // Remove header checked box
-                            const headerCheckbox = table.querySelectorAll('[type="checkbox"]')[0];
-                            headerCheckbox.checked = false;
-                        });
+                        //     // Remove header checked box
+                        //     const headerCheckbox = table.querySelectorAll('[type="checkbox"]')[0];
+                        //     headerCheckbox.checked = false;
+                        // });
                     } else if (result.dismiss === 'cancel') {
                         Swal.fire({
                             text: "Selected locations was not deleted.",
