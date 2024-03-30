@@ -1160,6 +1160,17 @@
                                                             <!--end:Menu link-->
                                                         </div>
                                                         @endif
+                                                        <div class="menu-item">
+                                                            <!--begin:Menu link-->
+                                                            <a class="menu-link @yield('product_current_stock_reports_active_show')"
+                                                               href="{{route('report.currentstockbalance.index', 'product')}}">
+                                                    <span class=" menu-icon">
+                                                        <i class="fa-solid fa-arrow-trend-up fs-6"></i>
+                                                    </span>
+                                                                <span class="menu-title ">Current Stocks</span>
+                                                            </a>
+                                                            <!--end:Menu link-->
+                                                        </div>
                                                         @if(hasPrint('product'))
 {{--                                                        <div class="menu-item">--}}
 {{--                                                            <!--begin:Menu link-->--}}

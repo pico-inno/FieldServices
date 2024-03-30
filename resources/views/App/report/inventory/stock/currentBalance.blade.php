@@ -13,6 +13,11 @@
     @section('inventory_reports_here_show', 'here show')
     @section('current_stock_balance_active_show', 'active show')
 @endif
+@if($nav_type === "product")
+    @section('products_icon', 'active')
+    @section('products_show', 'active show')
+    @section('product_current_stock_reports_active_show', 'active show')
+@endif
 
 
 @section('styles')
