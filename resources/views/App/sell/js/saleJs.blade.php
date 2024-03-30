@@ -1564,6 +1564,7 @@
             getPriceList(priceList);
         }
     })
+
     function getPriceList(priceListId){
         $.ajax({
             url: `/sell/${priceListId}/price/list`,
@@ -1593,8 +1594,7 @@
                 if (mainPriceStatus == true) {
                     priceSetting(mainPriceList, parent,false);
                 }else{
-
-                mainPriceStatus = priceSetting(mainPriceList, parent,true);
+                    mainPriceStatus = priceSetting(mainPriceList, parent,true);
                 }
             })
 

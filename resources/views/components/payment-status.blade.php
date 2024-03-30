@@ -11,6 +11,10 @@
     <span class='badge badge-warning'>
         <i class="fa-solid fa-hourglass-start text-white me-2"></i>   {{$status}}
     </span>
+    @elseif($status="resolve")
+    <span class='badge badge-outline badge-warning'>
+        <i class="fa-solid fa-warning text-warning me-2"></i> exceed
+      </span>
     @else
     {{$status}}
     @endif

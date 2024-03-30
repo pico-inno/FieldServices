@@ -357,8 +357,9 @@
                             ])}}</td>
                             <td>{{formatPrice($s['total_sale_amount'] ?? 0,$s->currency)}}</td>
                             <td>{{formatPrice($s['paid_amount'] ?? 0,$s->currency)}}</td>
-                            <td>{{formatPrice($s['balance_amount'] ?? 0,$s->currency)}}</td>
-                            <td><x-payment-status :status="$s['payment_status']" /></td>
+                            <td class="{{$s['balance_amount'] != 0 && $s['balance_amount'] <0 ? "text-info":''}}"
+                            >{{formatPrice($s['balance_amount'] ?? 0,$s->currency)}}</td>
+                            <td><x-payment-status :status="$s['balance_amount'] != 0 && $s['balance_amount'] <0 ? 'resolve': $s['payment_status']" /></td>
                             <td>{{$s['location_name']}}</td>
                             <td>
                                 @php

@@ -490,11 +490,7 @@ class saleController extends Controller
                     ]);
                 }
 
-                $suppliers = Contact::where('id', $request->contact_id)->first();
-                $suppliers_receivable = $suppliers->receivable_amount;
-                $suppliers->update([
-                    'receivable_amount' => $suppliers_receivable + $request->balance_amount
-                ]);
+                 $receivable_amount=calcreceiveable($request->contact_id);
             }
             $resOrderData = null;
             // for pos
