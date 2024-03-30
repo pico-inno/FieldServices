@@ -303,18 +303,13 @@ class paymentsTransactionsController extends Controller
             }else{
                 $payment_status='paid';
             }
-
-            $suppliers=Contact::where('id',$purchase->contact_id)->first();
-            $suppliers_payable=$suppliers->payable_amount;
-            $suppliers->update([
-                'payable_amount'=>$suppliers_payable-$request->payment_amount
-            ]);
             $purchase->update([
                 'paid_amount'=>$paid_amount,
                 'balance_amount'=>$balance_amount,
                 'payment_status'=> $payment_status,
                 'note'=>$request->note,
             ]);
+            calcPayable($purchase->contact_id);
             $this->makePayment($purchase,$request,'purchase');
 
 
@@ -341,11 +336,7 @@ class paymentsTransactionsController extends Controller
                 $payment_status='paid';
             }
 
-            $suppliers=Contact::where('id',$sale->contact_id)->first();
-            $suppliers_receivable=$suppliers->receivable_amount;
-            $suppliers->update([
-                'receivable_amount'=>$suppliers_receivable-$request->payment_amount
-            ]);
+            $receivable_amount=calcreceiveable($sale->contact_id);
 
             $sale->update([
                 'paid_amount'=>$paid_amount,
@@ -410,22 +401,27 @@ class paymentsTransactionsController extends Controller
        try {
             DB::beginTransaction();
             $data=paymentsTransactions::where('id',$paymentTransaciton_id)->first();
+            $cost=0;
             if($transaction_type=='expense'){
                 $transaction=expenseTransactions::where('id',$data->transaction_id)->first();
+                $cost=$transaction->expense_amount;
             }elseif($transaction_type == 'sale'){
                 $transaction=sales::where('id',$data->transaction_id)->first();
+                $cost=$transaction->total_sale_amount;
             }elseif($transaction_type == 'purchase'){
                 $transaction=purchases::where('id',$data->transaction_id)->first();
+                $cost=$transaction->total_purchase_amount;
             }
             // the paymentAmount after reduce currenct transaction value  that befroe updated
             $oriPaymentAmount=($transaction->paid_amount - $data->payment_amount)+$request->payment_amount;
-            if($oriPaymentAmount == $request->paid_amount){
-                $payment_status='paid';
-            }elseif($request->paid_amount ==  0){
-                $payment_status='due';
-            }else{
-                $payment_status='partial';
-            }
+            $payment_status=defStatus($request->payment_amount,$cost);
+            // if($oriPaymentAmount == $request->paid_amount){
+            //     $payment_status='paid';
+            // }elseif($request->paid_amount ==  0){
+            //     $payment_status='due';
+            // }else{
+            //     $payment_status='partial';
+            // }
             if($transaction_type=='expense'){
                 $transaction->update([
                     'payment_status'=>$payment_status,
@@ -434,11 +430,7 @@ class paymentsTransactionsController extends Controller
                     'note'=>$request->note,
                 ]);
             }elseif($transaction_type == 'sale'){
-                $suppliers=Contact::where('id',$transaction->contact_id)->first();
-                $suppliers_receivable=$suppliers->receivable_amount;
-                $suppliers->update([
-                    'receivable_amount'=>$suppliers_receivable-($request->payment_amount-$transaction->paid_amount),
-                ]);
+                $receivable_amount=calcreceiveable($transaction->contact_id);
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
@@ -446,17 +438,15 @@ class paymentsTransactionsController extends Controller
                     'note'=>$request->note,
                 ]);
             }elseif($transaction_type == 'purchase'){
-                $suppliers=Contact::where('id',$transaction->contact_id)->first();
-                $suppliers_payable=$suppliers->payable_amount;
-                $suppliers->update([
-                    'payable_amount'=>$suppliers_payable-($request->payment_amount-$transaction->paid_amount),
-                ]);
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
                     'balance_amount' => $transaction->total_purchase_amount - $oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
+                // dd($oriPaymentAmount);
+
+                calcPayable($transaction->contact_id);
             }
             // dd($transaction_type);
             $paymentAccounts=paymentAccounts::where('id',$data->payment_account_id)->first();

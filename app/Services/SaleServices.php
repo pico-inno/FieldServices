@@ -78,6 +78,7 @@ class SaleServices
             'extra_discount_amount' => $data['extra_discount_amount'],
             'total_sale_amount' => $data['total_sale_amount'],
             'balance_amount' => $balanceAmount,
+            'payment_status' =>defStatus($sales['paid_amount'],$data['total_sale_amount']),
             'currency_id' => $data['currency_id'],
             'updated_by' => Auth::user()->id ?? $id,
             'sold_at' => $data['sold_at'] ?? now(),
@@ -87,6 +88,7 @@ class SaleServices
             $saleData['balance_amount'] = $data['balance_amount'];
         }
         $sales->update($saleData);
+        $receivable_amount=calcreceiveable($data['contact_id']);
         return $sales;
     }
 

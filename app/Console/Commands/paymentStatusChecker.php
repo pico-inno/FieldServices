@@ -30,7 +30,7 @@ class paymentStatusChecker extends Command
             $sales=sales::all();
 
             $bar = $this->output->createProgressBar(count($sales));
-            foreach ($sales as $key => $sale) {
+            foreach ($sales as $sale) {
                 $bar->advance();
                 if ($sale->paid_amount == 0 && $sale->total_sale_amount != 0) {
                     $payment_status = 'due';
@@ -40,12 +40,13 @@ class paymentStatusChecker extends Command
                     $payment_status = 'partial';
                 }
                 sales::where('id',$sale->id)->first()->update(['payment_status'=>$payment_status]);
+                calcreceiveable($sale->contact_id);
             }
             $bar->finish();
 
            $this->info('success');
         } catch (\Throwable $th) {
-           $this->error('something wrong');
+           $this->error($th->getMessage());
         }
 
     }
