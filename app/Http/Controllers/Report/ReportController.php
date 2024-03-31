@@ -1159,7 +1159,7 @@ class ReportController extends Controller
         $results = $query->get();
 
 
-        //        return $results;
+//                return $results;
 
         return view('App.report.inventory.stock.currentBalance', [
             'nav_type' => $nav_type,
@@ -1228,10 +1228,10 @@ class ReportController extends Controller
         //        return response()->json($currentStocks, 200);
         $productIds = $filterType == 2 ? $currentStocks->pluck('csb_product_id')->unique()->toArray() : $currentStocks->pluck('product_id')->unique()->toArray();
 
-        $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
+        $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id', 'has_variation')
             ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
                 $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
-                    ->with(['packaging', 'variationTemplateValue' => function ($query) {
+                    ->with(['variation_values.variation_template_value','packaging', 'variationTemplateValue' => function ($query) {
                         $query->select('id', 'name', 'variation_template_id')
                             ->with(['variationTemplate:id,name']);
                     }]);
@@ -1405,14 +1405,24 @@ class ReportController extends Controller
                     foreach ($variations as $variation) {
                         if ($variation['id'] == $variationId) {
 
+
+                                $value_names = '';
+                                foreach ($variation['variation_values'] as $value) {
+                                    $value_names .= $value['variation_template_value']['name'] . '-';
+                                }
+                                $value_names = rtrim($value_names, '-');
+
+
+
                             $variationProduct = [
                                 'id' => $product['id'],
                                 'product_packaging_id' => $currentStock['product_packaging_id'] ?? 0,
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
+                                'variation_full_name' => $value_names,
                                 'variation_id' => $variation['id'],
                                 'product_type' => $product['product_type'],
-                                'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
+                                'variation_sku' => $product['has_variation'] == 'variable' ? $variation['variation_sku'] : "",
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
                                 'batch_no' => $filterView == 3 ? $currentStock['batch_no'] : $currentStock['batch_number'],

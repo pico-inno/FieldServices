@@ -249,7 +249,7 @@
                         <!--end::Table head-->
                         <!--begin::Table body-->
                         <tbody class="fw-semibold text-gray-600" id="reports-data">
-{{--                        <tbody class="fw-bold text-gray-600 text-end" id="reports-data">--}}
+
                         </tbody>
                         <!--end::Table body-->
                     </table>

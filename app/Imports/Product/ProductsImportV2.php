@@ -246,8 +246,7 @@ class ProductsImportV2 implements
                         $variations_value_array = array_map('trim', explode("-", $variations_value));
 
                         if (count($variations_name_array) !== count($variations_value_array)) {
-                            return throw new Exception("Mismatch in the number of variation names and values");
-
+                            return throw new Exception("Variation names and values do not match in your excel at row ".$key+2);
                         }
 
                         $count = count($variations_name_array);
@@ -373,8 +372,7 @@ class ProductsImportV2 implements
                     $variations_value_array = array_map('trim', explode("-", $variations_value));
 
                     if (count($variations_name_array) !== count($variations_value_array)) {
-                        return throw new Exception("Mismatch in the number of variation names and values");
-
+                        return throw new Exception("In row ". $key+2 . ", the data in the variable name column and the variable value do not match in your Excel sheet.");
                     }
 
                     $count = count($variations_name_array);

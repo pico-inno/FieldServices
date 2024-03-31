@@ -97,7 +97,7 @@
                         }
                         var rowData = [
                             item.variation_sku ? item.variation_sku : item.sku,
-                            item.name+'<br><span class="fs-7 text-muted">'+item.variation_template_name+' -    '+item.variation_value_name+'</span>',
+                            item.name+'<br><span class="fs-7 text-muted"> ('+item.variation_full_name+')</span>',
                             item.batch_no,
                             item.lot_no,
                             item.location_name,
