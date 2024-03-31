@@ -336,7 +336,6 @@ class paymentsTransactionsController extends Controller
                 $payment_status='paid';
             }
 
-            $receivable_amount=calcreceiveable($sale->contact_id);
 
             $sale->update([
                 'paid_amount'=>$paid_amount,
@@ -345,6 +344,7 @@ class paymentsTransactionsController extends Controller
                 'note'=>$request->note,
             ]);
 
+            $receivable_amount=calcreceiveable($sale->contact_id);
             $this->makePayment($sale,$request,'sale');
 
             DB::commit();
@@ -414,7 +414,8 @@ class paymentsTransactionsController extends Controller
             }
             // the paymentAmount after reduce currenct transaction value  that befroe updated
             $oriPaymentAmount=($transaction->paid_amount - $data->payment_amount)+$request->payment_amount;
-            $payment_status=defStatus($request->payment_amount,$cost);
+            // dd($oriPaymentAmount,$cost);
+            $payment_status=defStatus($oriPaymentAmount,$cost);
             // if($oriPaymentAmount == $request->paid_amount){
             //     $payment_status='paid';
             // }elseif($request->paid_amount ==  0){
@@ -430,13 +431,13 @@ class paymentsTransactionsController extends Controller
                     'note'=>$request->note,
                 ]);
             }elseif($transaction_type == 'sale'){
-                $receivable_amount=calcreceiveable($transaction->contact_id);
                 $transaction->update([
                     'payment_status'=>$payment_status,
                     'paid_amount'=> $oriPaymentAmount,
                     'balance_amount'=>$transaction->total_sale_amount-$oriPaymentAmount,
                     'note'=>$request->note,
                 ]);
+                $receivable_amount=calcreceiveable($transaction->contact_id);
             }elseif($transaction_type == 'purchase'){
                 $transaction->update([
                     'payment_status'=>$payment_status,
