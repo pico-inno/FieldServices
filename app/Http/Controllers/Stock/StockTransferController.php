@@ -1769,6 +1769,7 @@ class StockTransferController extends Controller
             'product_variations.additionalProduct.productVariation.product',
             'product_variations.additionalProduct.uom',
             'product_variations.additionalProduct.productVariation.variationTemplateValue',
+            'product_variations.variation_values.variation_template_value',
             'stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
                 $query->where('current_quantity', '>', 0)
@@ -1839,6 +1840,17 @@ class StockTransferController extends Controller
 
         foreach ($products as &$product) {
             $product['current_stock'] = $product['stock'];
+
+
+            $value_names = '';
+            foreach ($product['product_variations']['variation_values'] as $value) {
+                $value_names .= $value['variation_template_value']['name'] . '-';
+            }
+            $value_names = rtrim($value_names, '-');
+
+            $product['variation_name'] = $value_names;
+
+
         }
         unset($product);
 
