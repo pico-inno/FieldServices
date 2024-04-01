@@ -498,15 +498,15 @@
                                                 </div>
                                             </div>
 
-                                            <div id="variation_selection" class="col-md-4 mb-3 col-md-offset-4 box advance-toggle-class d-none">
+                                            <div id="variation_selection"
+                                                class="col-md-4 mb-3 col-md-offset-4 box advance-toggle-class d-none">
                                                 <label for="" class="form-label required">
                                                     Variation
                                                 </label>
                                                 <div class="mb-3">
                                                     <select name="variation_name[]" id="variationSelect"
-                                                            class="form-select form-select-sm" data-control="select2"
-                                                            data-hide-search="true"
-                                                            data-placeholder="Please select" multiple>
+                                                        class="form-select form-select-sm" data-control="select2"
+                                                        data-hide-search="true" data-placeholder="Please select" multiple>
                                                         <option></option>
                                                         @foreach ($variations as $variation)
                                                             <option value="{{ $variation->id }}">
@@ -588,25 +588,25 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr class="fw-bold fs-3 text-gray-800 text-start bg-gray-300">
-{{--                                                            <th class="text-center">Variation</th>--}}
+                                                            {{--                                                            <th class="text-center">Variation</th> --}}
                                                             <th>Variation Values</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody class="repeater">
                                                         <tr>
-{{--                                                            <td class="min-w-200px">--}}
-{{--                                                                <select name="variation_name[]" id="variationSelect"--}}
-{{--                                                                    class="form-select rounded-0" data-control="select2"--}}
-{{--                                                                    data-hide-search="true"--}}
-{{--                                                                    data-placeholder="Please select" multiple>--}}
-{{--                                                                    <option></option>--}}
-{{--                                                                    @foreach ($variations as $variation)--}}
-{{--                                                                        <option value="{{ $variation->id }}">--}}
-{{--                                                                            {{ $variation->name }}</option>--}}
-{{--                                                                    @endforeach--}}
-{{--                                                                </select>--}}
+                                                            {{--                                                            <td class="min-w-200px"> --}}
+                                                            {{--                                                                <select name="variation_name[]" id="variationSelect" --}}
+                                                            {{--                                                                    class="form-select rounded-0" data-control="select2" --}}
+                                                            {{--                                                                    data-hide-search="true" --}}
+                                                            {{--                                                                    data-placeholder="Please select" multiple> --}}
+                                                            {{--                                                                    <option></option> --}}
+                                                            {{--                                                                    @foreach ($variations as $variation) --}}
+                                                            {{--                                                                        <option value="{{ $variation->id }}"> --}}
+                                                            {{--                                                                            {{ $variation->name }}</option> --}}
+                                                            {{--                                                                    @endforeach --}}
+                                                            {{--                                                                </select> --}}
 
-{{--                                                            </td>--}}
+                                                            {{--                                                            </td> --}}
                                                             <td>
                                                                 <div class="table-responsive">
                                                                     <table class="table  table-bordered"

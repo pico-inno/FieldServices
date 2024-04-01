@@ -32,6 +32,8 @@ use App\Repositories\Product\ManufacturerRepository;
 use App\Repositories\Product\UnitCategoryRepository;
 use App\Http\Requests\Product\Product\ProductCreateRequest;
 use App\Http\Requests\Product\Product\ProductUpdateRequest;
+use App\Models\Product\VariationTemplates;
+use App\Models\Product\VariationValue;
 use App\Repositories\UserManagement\BusinessUserRepository;
 use App\Repositories\interfaces\LocationRepositoryInterface;
 
@@ -191,7 +193,7 @@ class ProductController extends Controller
     public function index(
         LocationRepositoryInterface $locationRepository,
     ) {
-//                return Product::with('productVariations', 'category', 'brand')->paginate();
+        //                return Product::with('productVariations', 'category', 'brand')->paginate();
         //        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
         $categories = $this->categoryRepository->query()->select('name')->distinct()->pluck('name');
         $brands = $this->brandRepository->query()->select('name')->distinct()->pluck('name');
@@ -200,7 +202,7 @@ class ProductController extends Controller
         $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
         $locations = $locationRepository->locationWithAccessControlQuery()->select('id', 'name')->get();
 
-//        return Product::with('productVariations.variation_values.variation_template_value')->get();
+        //        return Product::with('productVariations.variation_values.variation_template_value')->get();
 
         return view('App.product.product.productListV2', compact(
             'locations',
@@ -229,7 +231,7 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
-//        return $request;
+        //        return $request;
         try {
             DB::beginTransaction();
             $productAction->create($request);
@@ -252,11 +254,11 @@ class ProductController extends Controller
             }
             if ($request->save === "app_opening_stock") {
 
-             $lotControl=getSettingValue('lot_control');
+                $lotControl = getSettingValue('lot_control');
                 return view('App.openingStock.add', [
                     'stockin_persons' => $this->businessUserRepository->getAllWithRelationships(['personal_info']),
                     'locations' => businessLocation::all(),
-                    'lotControl'=>$lotControl
+                    'lotControl' => $lotControl
                 ]);
             }
         } catch (Exception $exception) {
@@ -274,93 +276,170 @@ class ProductController extends Controller
 
     public function edit(Product $product, productServices $productServices, ProductRepository $productRepository)
     {
-        $product_variation_template_value_ids = $this->productRepository->query()
-            ->leftJoin('product_variations', 'product_variations.product_id', '=', 'products.id')
-            ->select('products.*', 'product_variations.variation_template_value_id as variation_template_value_id')
-            ->where('products.id', $product->id)
-            ->pluck('variation_template_value_id');
 
-        $variation_template_value_ids = $this->productRepository->queryVariationsTemplates()
-            ->leftJoin('variation_template_values', 'variation_template_values.variation_template_id', '=', 'product_variations_tmplates.variation_template_id')
-            ->where('product_variations_tmplates.product_id', $product->id)
-            ->select('variation_template_values.*')
-            ->pluck('id', 'name');
+        $variationTemplateValuesId = $this->productRepository->getVariationTemplateValueId($product->id);
+        $variationTemplatesId = $this->productRepository->getVariationTemplateId($variationTemplateValuesId);
+        $variationTemplates = VariationTemplates::whereIn('id', $variationTemplatesId)->get();
+        //Check only one variation or multiple variation
+        if ($variationTemplates->count() > 1) {
+            //Start Variation Data Preparation
+            $variations = ProductVariation::where('product_id', $product->id)->get();
+            $variationData = [];
+            foreach ($variations as $variation) {
 
-        $remain_variation_ids = array_diff($variation_template_value_ids->toArray(), $product_variation_template_value_ids->toArray());
+                $variationValues = VariationValue::where('product_variation_id', $variation->id)->get();
 
-        $product = $productRepository->query()
-            ->where('id', $product->id)
-            ->with([
-                'product_variation_templates:id,product_id,variation_template_id',
-            ])
-            ->first();
-        $productVariation = $this->productRepository->getVariationByProductIdWithRelationships($product->id, ['product', 'variationTemplateValue', 'variation_values.variation_template_value:id,name,variation_template_id']);
+                $variationInfo = [];
 
-        //        if (empty($difference1) && empty($difference2)) {
-        //            echo "Arrays have the same values.";
-        //        } else {
-        //            echo "Arrays have different values.\n";
-        //            echo "Values in the first array but not in the second: " . implode(', ', $difference1) . "\n";
-        //            echo "Values in the second array but not in the first: " . implode(', ', $difference2) . "\n";
-        //        }
+                foreach ($variationValues as $value) {
+
+                    $variationTemplateName = $value->variation_template_value->name;
+                    $variationTemplateId = $value->variation_template_value->id;
+
+                    $variationInfo['names'][] = $variationTemplateName;
+                    $variationInfo['ids'][] = $variationTemplateId;
+                }
+
+                $productVariation = ProductVariation::where('product_id', $product->id)
+                    ->where('id', $variation->id)
+                    ->first();
+
+                $variationData[] = [
+                    'names' => implode('-', $variationInfo['names']),
+                    'ids' => implode('-', $variationInfo['ids']),
+                    'product_variation_id' => $productVariation->id,
+                    'variation_sku' => $productVariation->variation_sku,
+                    'default_purchase_price' => $productVariation->default_purchase_price,
+                    'profit_percent' => $productVariation->profit_percent,
+                    'default_selling_price' => $productVariation->default_selling_price,
+                    'alert_quantity' => $productVariation->alert_quantity,
+                ];
+            }
+            //End Variation Data Preparation
+            return view('App.product.product.productEdit', [
+                'product' => $product,
+                'variation_templates' => $variationTemplates, //This is variations of this product
+                'variations' => $this->variationRepository->getAllTemplate(), //This is all variations
+                'brands' => $this->brandRepository->getAll(),
+                'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
+                'manufacturers' => $this->manufacturerRepository->getAll(),
+                'generics' => $this->genericRepository->getAll(),
+                'unitCategories' => $this->unitCategoryRepository->getAll(),
+                'uoms' => $this->uomRepository->getAll(),
+                'additional_products' => $productServices->additionalProductsRetrive($product->id),
+                'packagings' => $this->productRepository->getPackagingByProductIdWithRelationships($product->id, ['uom']),
+                'unit_category_id' => $this->uomRepository->getUomByUomId($product->uom_id)->first()->unit_category_id,
+                'remain_variation_ids' => [1, 2, 3, 4],
+                'productVariation' => $variationData,
+            ]);
+        } else {
+            //for only one variation
+            $product_variation_template_value_ids = $this->productRepository->query()
+                ->leftJoin('product_variations', 'product_variations.product_id', '=', 'products.id')
+                ->select('products.*', 'product_variations.variation_template_value_id as variation_template_value_id')
+                ->where('products.id', $product->id)
+                ->pluck('variation_template_value_id');
+
+            $variation_template_value_ids = $this->productRepository->queryVariationsTemplates()
+                ->leftJoin('variation_template_values', 'variation_template_values.variation_template_id', '=', 'product_variations_tmplates.variation_template_id')
+                ->where('product_variations_tmplates.product_id', $product->id)
+                ->select('variation_template_values.*')
+                ->pluck('id', 'name');
+            $remain_variation_ids = array_diff($variation_template_value_ids->toArray(), $product_variation_template_value_ids->toArray());
+
+            $product = $productRepository->query()
+                ->where('id', $product->id)
+                ->with([
+                    'product_variation_templates:id,product_id,variation_template_id',
+                ])
+                ->first();
+            $productVariation = $this->productRepository->getVariationByProductIdWithRelationships($product->id, ['product', 'variationTemplateValue', 'variation_values.variation_template_value:id,name,variation_template_id']);
+
+
+            //        if (empty($difference1) && empty($difference2)) {
+            //            echo "Arrays have the same values.";
+            //        } else {
+            //            echo "Arrays have different values.\n";
+            //            echo "Values in the first array but not in the second: " . implode(', ', $difference1) . "\n";
+            //            echo "Values in the second array but not in the first: " . implode(', ', $difference2) . "\n";
+            //        }
 
 
 
+            return view('App.product.product.productEdit', [
+                'product' => $product,
+                'brands' => $this->brandRepository->getAll(),
+                'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
+                'manufacturers' => $this->manufacturerRepository->getAll(),
+                'generics' => $this->genericRepository->getAll(),
+                'unitCategories' => $this->unitCategoryRepository->getAll(),
+                'uoms' => $this->uomRepository->getAll(),
+                'additional_products' => $productServices->additionalProductsRetrive($product->id),
+                'packagings' => $this->productRepository->getPackagingByProductIdWithRelationships($product->id, ['uom']),
+                'unit_category_id' => $this->uomRepository->getUomByUomId($product->uom_id)->first()->unit_category_id,
 
-        return view('App.product.product.productEdit', [
-            'product' => $product,
-            'remain_variation_ids' => $remain_variation_ids,
-            'brands' => $this->brandRepository->getAll(),
-            'categories' => $this->categoryRepository->getWithRelationships(['parentCategory', 'childCategory']),
-            'manufacturers' => $this->manufacturerRepository->getAll(),
-            'generics' => $this->genericRepository->getAll(),
-            'variations' => $this->variationRepository->getAllTemplate(),
-            'unitCategories' => $this->unitCategoryRepository->getAll(),
-            'uoms' => $this->uomRepository->getAll(),
-            'productVariation' => $productVariation,
-            'additional_products' => $productServices->additionalProductsRetrive($product->id),
-            'packagings' => $this->productRepository->getPackagingByProductIdWithRelationships($product->id, ['uom']),
-            'unit_category_id' => $this->uomRepository->getUomByUomId($product->uom_id)->first()->unit_category_id,
-        ]);
+                'variation_templates' => $variationTemplates, //This is variations of this product
+                'variations' => $this->variationRepository->getAllTemplate(), //This is all variations
+                'remain_variation_ids' => $remain_variation_ids,
+                'productVariation' => $productVariation,
+            ]);
+        }
     }
 
-    public function update(ProductUpdateRequest $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product, ProductAction $productAction)
     {
         try {
-            DB::beginTransaction();
-            // Update Product
-            $img_name = $this->saveProductImage($request, $product->image);
-            $productData = $this->prepareProductData($request, $img_name, false);
-            DB::table('products')->where('id', $product->id)->update($productData);
+            //Check Single or Variation
+            if ($request->has_variation_hidden === 'single') {
+                DB::beginTransaction();
+                // Update Product
+                $img_name = $this->saveProductImage($request, $product->image);
+                $productData = $this->prepareProductData($request, $img_name, false);
+                DB::table('products')->where('id', $product->id)->update($productData);
 
-            // Update Product Variationn
-            $this->insertProductVariations($request, $product, false);
+                // Update Product Variationn
+                $this->insertProductVariations($request, $product, false);
 
-            $productService = new productServices();
-            $productService->createAdditionalProducts($request->additional_product_details, $product, false);
+                $productService = new productServices();
+                $productService->createAdditionalProducts($request->additional_product_details, $product, false);
 
-            // for packaging
-            if ($request->packaging_repeater) {
-                $packagingServices = new packagingServices();
-                $packagingServices->update($request->packaging_repeater, $product);
-            }
+                // for packaging
+                if ($request->packaging_repeater) {
+                    $packagingServices = new packagingServices();
+                    $packagingServices->update($request->packaging_repeater, $product);
+                }
 
-            // Update Product Variation Template
-            ProductVariationsTemplates::where('product_id', $product->id)->update([
-                'product_id' => $product->id,
-                'variation_template_id' => $request->variation_template_id_hidden,
-                'updated_by' => Auth::user()->id
-            ]);
+                // Update Product Variation Template
+                ProductVariationsTemplates::where('product_id', $product->id)->update([
+                    'product_id' => $product->id,
+                    'variation_template_id' => $request->variation_template_id_hidden,
+                    'updated_by' => Auth::user()->id
+                ]);
 
-            DB::commit();
-            activity('product-transaction')
-                ->log('Product update has been success')
-                ->event('update')
-                ->properties(['product_name' => $request->product_name])
-                ->status('success')
-                ->save();
-            if ($request->has('save')) {
-                return redirect('/product');
+                DB::commit();
+                activity('product-transaction')
+                    ->log('Product update has been success')
+                    ->event('update')
+                    ->properties(['product_name' => $request->product_name])
+                    ->status('success')
+                    ->save();
+                if ($request->has('save')) {
+                    return redirect('/product');
+                }
+            } else {
+                //For variation, we go with seperate method $productAction->edit()
+                DB::beginTransaction();
+                $productAction->edit($request, $product->id);
+                DB::commit();
+                activity('product-transaction')
+                    ->log('Product update has been success')
+                    ->event('update')
+                    ->properties(['product_name' => $request->product_name])
+                    ->status('success')
+                    ->save();
+                if ($request->has('save')) {
+                    return redirect('/product');
+                }
             }
         } catch (Exception $e) {
             DB::rollBack();
@@ -554,10 +633,12 @@ class ProductController extends Controller
                     ProductVariation::destroy($variationsToDelete);
                 }
             }
+
             $variationTemplateValuesQuery = $this->variation_template_values
                 ->where('variation_template_id', $variation_template_id)
                 ->select('id', 'name')
                 ->get();
+
 
             $lowercaseVariationNames = $variationTemplateValuesQuery->pluck('name')->map(fn ($v) => strtolower($v))->toArray();
 
@@ -570,7 +651,6 @@ class ProductController extends Controller
 
             foreach ($request->variation_value as $index => $value) {
                 $variationName = strtolower($value);
-
                 if (in_array($variationName, $lowercaseVariationNames)) {
                     $variationTemplateValueId = $variationNameAndIdMap[$variationName];
                 } else {
