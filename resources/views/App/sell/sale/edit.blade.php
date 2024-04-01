@@ -493,7 +493,10 @@
                     </div>
                 </div>
 
-                {{-- <div class="card">
+                @if (hasModule('Delivery')  && isEnableModule('Delivery'))
+                <livewire:delivery.delivery-inputs-form :saleId="$sale->id" />
+                @endif
+                {{-- <div class="card"> /
                     <div class="card-body">
                         <div class="row justify-content-end mb-3">
                             <div class="fs-7 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center mb-5 mb-md-0">

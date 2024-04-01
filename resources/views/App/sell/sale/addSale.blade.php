@@ -106,6 +106,7 @@
 
                                 </div>
                                 <div class="text-gray-600 ms-2 fw-semibold mt-3">Credit Limit : <span class="credit_limit_txt">0</span></div>
+                                <div class="text-gray-600 ms-2 fw-semibold mt-3">Receiveable Amount : <span id="receiveable_txt">0</span></div>
                                 <input type="hidden" name="" id="credit_limit" value="0">
                                 @error('contact_id')
                                     <div class="p-2 text-danger">* {{$message}}</div>
@@ -412,10 +413,16 @@
                                         Reached credit limit.
                                     </div>
                                 </div>
+                            </div>
                         </div>
 
                     </div>
                 </div>
+                @if (hasModule('Delivery')  && isEnableModule('Delivery'))
+                    <livewire:delivery.delivery-inputs-form />
+                @endif
+
+
 
             </div>
             <div class="col-12 text-center">
@@ -476,6 +483,8 @@
     function getCreditLimit(id){
         $('.credit_limit_txt').text('loading....');
         $('#credit_limit').val(0);
+        // $('#receiveable_txt').val(0);
+        $('#receiveable_txt').text('loading....');
         $.ajax({
             url: `/contact/get/${id}`,
             type: 'GET',
@@ -496,10 +505,11 @@
             success: function(results){
                 credit_limit=parseFloat(results.credit_limit ? results.credit_limit: 0) ;
                 receivable_amount=parseFloat(results.receivable_amount ? results.receivable_amount: 0) ;
-                let result= credit_limit-receivable_amount;
-                console.log(result);
-                $('.credit_limit_txt').text(result ? result.toFixed(2) : 0);
-                $('#credit_limit').val(result ?? 0);
+                // let result= credit_limit-receivable_amount;
+                // console.log(result);
+                $('.credit_limit_txt').text(credit_limit ? credit_limit.toFixed(2) : 0);
+                $('#credit_limit').val(credit_limit ?? 0);
+                $('#receiveable_txt').text(receivable_amount);
             },
         })
     }

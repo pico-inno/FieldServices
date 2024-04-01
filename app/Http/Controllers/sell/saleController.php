@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\sell;
 
+use App\Console\Commands\gitOps\moduelInstaller;
 use Error;
 use DateTime;
 use stdClass;
@@ -55,6 +56,8 @@ use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Repositories\interfaces\LocationRepositoryInterface;
+use Modules\Delivery\Entities\DeliveryOrder;
+use Modules\Delivery\Services\DeliveryServices;
 use Modules\Ecommerce\Entities\EcommerceOrder;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
@@ -351,6 +354,7 @@ class saleController extends Controller
             $setting = businessSettings::first();
             $currency = $this->currency;
 
+            // dd($deliveryData);
             $exchangeRates = [];
             if (class_exists('exchangeRates') && hasModule('ExchangeRate') && isEnableModule('ExchangeRate')) {
                 $exchangeRates = exchangeRates::get();
@@ -408,11 +412,12 @@ class saleController extends Controller
 //            return $sale_details;
             return view('App.sell.sale.edit', compact('products', 'defaultPriceListId', 'customers', 'priceLists', 'sale', 'sale_details', 'setting', 'currency', 'currencies', 'defaultCurrency', 'locations', 'exchangeRates'));
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             return back()->with('error',$th->getMessage());
         }
     }
     // sale store
-    public function store(Request $request, SaleServices $saleService, paymentServices $paymentServices)
+    public function store(Request $request, SaleServices $saleService, paymentServices $paymentServices,DeliveryServices $deliveryService)
     {
         $location = businessLocation::find($request->business_location_id);
         $layoutId = InvoiceTemplate::find($location->invoice_layout);
@@ -457,6 +462,21 @@ class saleController extends Controller
             }
             $request['payment_status'] = $payment_status;
             $sale_data = $saleService->create($request);
+
+            // delivery
+            if(hasModule('Delivery')  && isEnableModule('Delivery')){
+                $deliveryData=$request['delivery'];
+                $deliveryData['order_date']=$request['sold_at'];
+                $deliveryData['transaction_id']=$sale_data['id'];
+                $deliveryData['transaction_type']="sale";
+                $address=Contact::where('id',$request['contact_id'])->first()->getAddressAttribute();
+                $deliveryData['address']=$address;
+                $deliveryService=$deliveryService->createDeliveryOrder($deliveryData);
+            }
+
+
+
+
             // dd($sale_data->toArray());
             if ($request->reservation_id) {
                 $request['sale_id'] = $sale_data->id;
@@ -555,6 +575,7 @@ class saleController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e->getMessage());
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '422',
