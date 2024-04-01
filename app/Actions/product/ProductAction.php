@@ -24,28 +24,27 @@ class ProductAction
         VariationRepository $variationRepository,
         PriceRepository $priceRepository,
         VariationValueRepository $variationValueRepository,
-    ){
+    ) {
         $this->productRepository = $productRepository;
         $this->variationRepository = $variationRepository;
         $this->priceRepository = $priceRepository;
         $this->variationValueRepository = $variationValueRepository;
     }
 
-    public function create($data){
+    public function create($data)
+    {
+        $savedImageName = $this->saveProductImage($data);
+        $preparedProductData = $this->prepareProductData($data);
+        $preparedProductData['image'] = $savedImageName;
+        $preparedProductData['created_by'] = \auth()->id();
 
-       $savedImageName = $this->saveProductImage($data);
-       $preparedProductData = $this->prepareProductData($data);
-       $preparedProductData['image'] = $savedImageName;
-       $preparedProductData['created_by'] = \auth()->id();
 
-       $createdProduct = $this->productRepository->create($preparedProductData);
+        $createdProduct = $this->productRepository->create($preparedProductData);
 
-       //variation
+
+        //variation
         if ($data->has_variation === "variable") { //for variation
-
             foreach ($data->variation_id as $index => $id) {
-
-
                 $variationData = [
                     'product_id' => $createdProduct->id,
                     'variation_sku' => $createdProduct->sku . '-0' . $index,
@@ -63,15 +62,16 @@ class ProductAction
 
                     $individual_ids = explode('-', $id);
 
+
                     foreach ($individual_ids as $individual_id) {
+
                         $this->variationValueRepository->create([
                             'product_id' => $createdProduct->id,
                             'product_variation_id' => $createdProductVariation->id,
                             'variation_template_value_id' => $individual_id,
                         ]);
                     }
-
-                }else{ //One Variation
+                } else { //One Variation
 
                     $variationData['variation_template_value_id'] = $id;
 
@@ -82,12 +82,10 @@ class ProductAction
                         'product_variation_id' => $createdProductVariation->id,
                         'variation_template_value_id' => $id,
                     ]);
-
                 }
 
 
                 $this->createOrUpdatePriceListDetail('Variation', $createdProductVariation->id, $data->selling_price[$index]);
-
             }
 
             //Creation of Product Variation Template
@@ -120,9 +118,23 @@ class ProductAction
                 'variation_template_id' => $data->variation_name,
                 'created_by' => \auth()->id(),
             ];
-
-            $this->productRepository->createVariationTemplate($productVariationsTemplateData);
         }
+
+
+
+        //Creation of Product Variation Template
+        if ($data->variation_name) {
+            foreach ($data->variation_name as $variation_template_id) {
+                $productVariationsTemplateData = [
+                    'product_id' => $createdProduct->id,
+                    'variation_template_id' => $variation_template_id,
+                    'created_by' => \auth()->id(),
+                ];
+
+                $this->productRepository->createVariationTemplate($productVariationsTemplateData);
+            }
+        }
+
 
 
 
@@ -133,18 +145,127 @@ class ProductAction
 
         if ($data->additional_product_details) {
             $productService = new productServices();
-            $productService->createAdditionalProducts($data->additional_product_details, $createdProduct,true);
+            $productService->createAdditionalProducts($data->additional_product_details, $createdProduct, true);
         }
 
-        if($data->packaging_repeater){
-            $packagingServices= new packagingServices();
+        if ($data->packaging_repeater) {
+            $packagingServices = new packagingServices();
             $packagingServices->createWithBulk($data->packaging_repeater, $createdProduct);
         }
+    }
+    //Start
+    public function edit($data, $productId)
+    {
 
+        $updatedProductData = $this->prepareProductData($data);
+
+        // Update product image if provided
+        if ($data->hasFile('image')) {
+            $savedImageName = $this->saveProductImage($data);
+            $updatedProductData['image'] = $savedImageName;
+        }
+
+        // Update the product
+        $updatedProductData['updated_by'] = auth()->id();
+        DB::table('products')
+            ->where('id', $productId)
+            ->update($updatedProductData);
+
+        // Variation
+        if ($data->has_variation_hidden === "variable") {
+            foreach ($data->variation_id as $index => $variationId) {
+                $variationData = [
+                    'product_id' => $productId,
+                    'variation_sku' => $updatedProductData['sku'] . '-0' . $index,
+                    'default_purchase_price' => $data->exc_purchase[$index],
+                    'profit_percent' => $data->profit_percentage[$index],
+                    'default_selling_price' => $data->selling_price[$index],
+                    'alert_quantity' => $data->alert_quantity[$index],
+                    'updated_by' => auth()->id(),
+                ];
+
+                if (strpos($variationId, '-') !== false) {
+                    // Update existing variations and their template values
+                    $individualIds = explode('-', $variationId);
+                    $productVariationId = $data->product_variation_id[$index];
+
+                    // Update the product variation
+                    DB::table('product_variations')
+                        ->where('id', $productVariationId)
+                        ->update($variationData);
+
+                    // Update variation template values
+                    DB::table('variation_values')
+                        ->where('product_variation_id', $productVariationId)
+                        ->delete();
+
+                    foreach ($individualIds as $templateValueId) {
+                        DB::table('variation_values')->insert([
+                            'product_id' => $productId,
+                            'product_variation_id' => $productVariationId,
+                            'variation_template_value_id' => $templateValueId,
+                        ]);
+                    }
+                } else {
+                    // Single variation template value
+                    $variationData['variation_template_value_id'] = $variationId;
+                    $productVariationId = $data->product_variation_id[$index];
+
+                    // Update the product variation
+                    DB::table('product_variations')
+                        ->where('id', $productVariationId)
+                        ->update($variationData);
+
+                    // Update variation template value
+                    DB::table('variation_values')
+                        ->where('product_variation_id', $productVariationId)
+                        ->update(['variation_template_value_id' => $variationId]);
+                }
+
+                $this->createOrUpdatePriceListDetail('Variation', $productVariationId, $data->selling_price[$index]);
+            }
+        }
+
+        // Update Product Variation Templates
+        $this->updateProductVariationTemplates($data, $productId);
+
+        // Update additional product details if provided
+        // if ($data->additional_product_details) {
+        //     $productService = new ProductService();
+        //     $productService->updateAdditionalProducts($data->additional_product_details, $productId);
+        // }
+
+        // Update packaging details if provided
+        // if ($data->packaging_repeater) {
+        //     $packagingServices = new PackagingServices();
+        //     $packagingServices->updateWithBulk($data->packaging_repeater, $productId);
+        // }
     }
 
-    public function update($product, $data){
-        return DB::transaction(function () use ($product, $data){
+    private function updateProductVariationTemplates($data, $productId)
+    {
+
+        // Delete existing product variation templates
+        DB::table('product_variations_tmplates')
+            ->where('product_id', $productId)
+            ->delete();
+
+        // Create updated product variation templates if provided
+        if ($data->variation_name) {
+            foreach ($data->variation_name as $variationTemplateId) {
+                DB::table('product_variations_tmplates')->insert([
+                    'product_id' => $productId,
+                    'variation_template_id' => $variationTemplateId,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+        }
+    }
+
+
+    public function update($product, $data)
+    {
+        return DB::transaction(function () use ($product, $data) {
             $savedImageName = $this->saveProductImage($data, $product->image);
             $preparedProductData = $this->prepareProductData($data);
             $preparedProductData['image'] = $savedImageName;
@@ -154,8 +275,8 @@ class ProductAction
         });
     }
 
-    public function createPackaging(){
-
+    public function createPackaging()
+    {
     }
     private function saveProductImage($request, $existingImagePath = null)
     {
@@ -231,7 +352,7 @@ class ProductAction
             'product_custom_field4' => $data->custom_field4,
             'product_description' => $data->quill_data,
             'sku' => $data->sku ?? sprintf('%07d', Product::count() + 1),
-//            'image' => $img_name ?? null,
+            //            'image' => $img_name ?? null,
             'can_sale' => $data->can_sale ? 1 : 0,
             'can_purchase' => $data->can_purchase ? 1 : 0,
             'can_expense' => $data->can_expense ? 1 : 0,
@@ -240,20 +361,18 @@ class ProductAction
             'has_variation' => $data->has_variation ?? $data->has_variation_hidden,
             'product_type' => $data->product_type,
         ];
-
     }
 
-    private function prepareProductVariationData($data){
+    private function prepareProductVariationData($data)
+    {
         return [
-//            'product_id',
-//            'variation_sku',
-//            'variation_template_value_id',
+            //            'product_id',
+            //            'variation_sku',
+            //            'variation_template_value_id',
             'default_purchase_price' => $data->exc_purchase,
             'profit_percent' => $data->profit_percentage,
             'default_selling_price' => $data->selling_price,
             'alert_quantity' => $data->alert_quantity,
         ];
     }
-
-
 }
