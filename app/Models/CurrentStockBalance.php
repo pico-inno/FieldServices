@@ -78,4 +78,9 @@ class CurrentStockBalance extends Model
     {
         return $this->belongsTo(UOM::class, 'uom_id', 'id');
     }
+
+    public function lot_serial_details()
+    {
+        return $this->hasMany(lotSerialDetails::class, 'current_stock_balance_id', 'id');
+    }
 }

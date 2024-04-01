@@ -148,6 +148,18 @@
                                 </select>
                             </div>
                             <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-5 col-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold">Stock Status</label>
+                                <select class="form-select form-select-sm  fw-bold filter_stock_status" data-kt-select2="true"
+                                        data-placeholder="Select View Option" data-allow-clear="true" data-hide-search="true">
+                                    <option></option>
+                                    <option value="1" selected>Normal</option>
+{{--                                    <option value="2">Reserve</option>--}}
+                                    <option value="2">Normal + Reserve</option>
+                                </select>
+                            </div>
+                            <!--end::Input group-->
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\sell;
 
+use App\Services\StockReserveServices;
 use Error;
 use DateTime;
 use stdClass;
@@ -2404,6 +2405,23 @@ class saleController extends Controller
                 $data=[
                     'status'=>$request['status'],
                 ];
+
+                $sale_details = sale_details::where('sales_id', $sale['id'])
+                    ->get();
+
+                foreach ($sale_details as $detail){
+                    StockReserveServices::make()->reserve(
+                        2,
+                        $detail->product_id,
+                        $detail->variation_id,
+                        $detail->uom_id,
+                        $detail->quantity,
+                        'sale',
+                        $detail->id,
+                    );
+                }
+
+
                 if($request['isConfirmPayment']){
                     $data['paid_amount']=$sale['total_sale_amount'];
                     $data['payment_status']="paid";

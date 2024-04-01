@@ -265,10 +265,6 @@ class ProductsImportV2 implements
 
                             $this->productRepository->createVariationTemplate($prepareVariationsTemplatesData);
 
-                            if (!$variation_template) {
-                                echo "Error: Variation template not found for name: $variation_name\n";
-                                continue;
-                            }
 
                             $variationTemplateValue = $this->variationRepository->queryTemplateValues()
                                 ->where('name', trim($variation_value))->first();
@@ -283,15 +279,13 @@ class ProductsImportV2 implements
                                 ]);
                             }
 
-                            if (!$template_value) {
-                                echo "Error: Failed to create template value for variation name: $variation_name\n";
-                            }
 
-                            $this->variationValueRepository->create([
+                            $variationValue = $this->variationValueRepository->create([
                                 'product_id' => $product_id,
                                 'product_variation_id' => $product_variation->id,
                                 'variation_template_value_id' => $template_value->id,
                             ]);
+
                         }
 
 
