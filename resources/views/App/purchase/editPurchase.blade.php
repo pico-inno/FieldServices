@@ -243,7 +243,7 @@
                                     <div class="input-group-text">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
+                                    <input  onkeypress="preventEnterSubmit(event)"  type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card z-3 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>

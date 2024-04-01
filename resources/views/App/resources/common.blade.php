@@ -5,10 +5,12 @@
 
 @php
     // php code
+    $insp=env('APP_INSP',false);
 @endphp
 <script>
 
     let settings=@json(getSettings());
+    let insp="{{$insp}}";
     function isNullOrNan(val){
         let v=parseFloat(val);
 
@@ -63,5 +65,36 @@
         };
         return number.toLocaleString(undefined, options);
     }
+    function preventEnterSubmit(event) {
+      if (event.key === "Enter" && !insp) {
+        event.preventDefault();
+      }
+    }
+    document.addEventListener('contextmenu',function(event){
+        if( insp==false){
+            event.preventDefault();
+            showPreventMessage();
+        }
+    });
 
+
+    document.onkeydown = (e) => {
+        if (e.key == 'F12' && !insp) {
+            // alert('you are f12');
+            e.preventDefault();
+        }
+    };
+
+    function showPreventMessage(){
+           // Show notification message at the click position
+        const notiMessage = document.getElementById('notiMessage');
+        notiMessage.style.left = `${event.clientX}px`;
+        notiMessage.style.top = `${event.clientY}px`;
+        notiMessage.style.display = 'block';
+
+        // Hide the notification message after a certain duration (e.g., 2 seconds)
+        setTimeout(function() {
+            notiMessage.style.display = 'none';
+        }, 2000); // Adjust the duration as needed
+    }
 </script>

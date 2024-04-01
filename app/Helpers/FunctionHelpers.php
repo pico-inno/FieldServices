@@ -9,6 +9,7 @@ use App\Models\openingStocks;
 use App\Models\stock_history;
 use App\Models\systemSetting;
 use App\Helpers\SettingHelpers;
+use App\Models\Contact\Contact;
 use App\Models\Product\Product;
 use App\Models\Product\Category;
 use App\Helpers\generatorHelpers;
@@ -974,4 +975,39 @@ function formatAddress($address)
     $townshipName = optional($address)->township_en_name;
 
     return implode(', ', array_filter([$postalZipCode, $addressLine1, $addressLine2, $townshipName]));
+}
+
+function defStatus($paid_amount,$cost){
+    if ($paid_amount == 0 && $cost!= 0) {
+        $payment_status = 'due';
+    } elseif ($paid_amount >= $cost) {
+        $payment_status = 'paid';
+    } else {
+        $payment_status = 'partial';
+    }
+    return $payment_status;
+}
+function calcreceiveable($contact_id){
+    $receivable_amount= sales::where('contact_id',$contact_id)
+                ->where('is_delete',0)
+                ->where('balance_amount','>',0)
+                ->sum('balance_amount');
+    $suppliers=Contact::where('id',$contact_id)->first();
+    if($suppliers){
+        $suppliers->update([
+            'receivable_amount'=>$receivable_amount
+        ]);
+    }
+    return $receivable_amount;
+}
+function calcPayable($contact_id){
+    $payable_amount= purchases::where('contact_id',$contact_id)
+                ->where('is_delete',0)
+                ->where('balance_amount','>',0)
+                ->sum('balance_amount');
+    $suppliers=Contact::where('id',$contact_id)->first();
+    $suppliers->update([
+        'payable_amount'=>$payable_amount
+    ]);
+    return $payable_amount;
 }

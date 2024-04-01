@@ -197,7 +197,7 @@ class StockAdjustmentController extends Controller
                 $q->where('business_location_id', $business_location_id);
             }], 'current_quantity');
         $adjustment_details = $stock_adjustment_details->get();
-//return $adjustment_details;
+//return $stockAdjustment;
         return view('App.stock.adjustment.edit', [
             'stockAdjustment' => $stockAdjustment,
             'adjustment_details' => $adjustment_details,

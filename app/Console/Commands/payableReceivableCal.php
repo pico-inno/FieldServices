@@ -32,8 +32,9 @@ class payableReceivableCal extends Command
 
 
         foreach ($contacts as $contact) {
-            $purcases=purchases::where('contact_id',$contact['id'])->get();
-            $sales=sales::where('contact_id',$contact['id'])->get();
+            $purcases=purchases::where('contact_id',$contact['id'])
+                ->where('is_delete',0)->get();
+            $sales=sales::where('contact_id',$contact['id'])->where('is_delete',0)->get();
 
             $result=$this->calPayableReceiveableByCus($purcases,$sales);
             Contact::where('id',$contact['id'])->update([

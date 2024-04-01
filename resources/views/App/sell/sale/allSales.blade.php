@@ -6,7 +6,6 @@
 
 
 @section('styles')
-    <link href={{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }} rel="stylesheet" type="text/css" />
     <style>
         .billDiv tr td {
             padding: 8px 0 !important;

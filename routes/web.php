@@ -104,6 +104,7 @@ use App\Http\Controllers\import\priceListImportController;
 use App\Http\Controllers\Product\PriceListDetailController;
 use App\Http\Controllers\settings\businessSettingController;
 use App\Http\Controllers\import\importOpeningStockController;
+use App\Http\Controllers\openingStockReportController;
 use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\settings\businessLocationController;
 use App\Http\Controllers\settings\bussinessSettingController;
@@ -142,6 +143,9 @@ Route::prefix(env('ADMIN_ROUTE_PREFIX', 'admin'))->group(function () {
 
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
 });
+
+
+
 Route::get('/create/business', [businessActivationController::class, 'activationForm'])->name('activationForm')->middleware('businessActivate');
 Route::post('/store/business', [businessActivationController::class, 'store'])->name('businessActivation.store')->middleware('businessActivate');
 Route::get('/install', [configurationController::class, 'envConfigure'])->name('envConfigure')->middleware('install');
@@ -163,7 +167,7 @@ Route::post('/data/seed/', [configurationController::class, 'dataSeed'])->name('
 //============================ Being: User Management ==========================================
 
 Route::get('/', function () {
-    if (hasModule('fieldService') && isEnableModule('fieldService')) {
+    if (hasModule('fieldService') && isEnableModule('fieldService') ) {
         return redirect()->route('campaign.index');
     } else {
         return redirect()->route('home');
@@ -551,6 +555,11 @@ Route::controller(openingStockController::class)->group(function () {
     Route::delete('/all/delete/opening/stock', 'softSelectedDelete');
 });
 
+Route::controller(openingStockReportController::class)->group(function () {
+    Route::get('/opening-stock/report/summary', 'summary')->name('osr.summary');
+    Route::get('/opening-stock/report/detail', 'detail')->name('osr.detail');
+
+});
 Route::controller(importOpeningStockController::class)->group(function () {
     Route::post('/opening/import', 'import')->name('importOpeningStock');
     Route::get('/download/demo/excel', 'dowloadDemoExcel')->name('download-excel');
@@ -1028,6 +1037,9 @@ Route::controller(POSController::class)->group(function () {
 
     // get sale product
     Route::get('/pos/sold/{posId}', 'getSoldProduct');
+
+    // get sale product
+    Route::get('/pos/screen/', 'extendScreen')->name('pos.extendScreen');
 });
 
 Route::prefix('pos')->group(function () {

@@ -143,6 +143,11 @@
                     </div>
                     <a class="navbar-brand fw-bold fs-3 text-white" href="#"></a>
                     <div class="">
+                        {{-- <button class="btn btn-sm  text-dark fw-bold  rounded-0" id="extendScreen" >
+                            <i class="fa-solid fa-display text-white">
+
+                            </i>
+                        </button> --}}
                         <button class="btn btn-sm  text-dark fw-bold  rounded-0"  data-href="{{route('pos.recentSale',$posRegister->id)}}" id="pos_sale_recent_btn"><i class="fa-solid fa-clock-rotate-left fs-3 text-white"></i></button>
                         <button class="btn btn-sm  btn-danger fw-bold  rounded-0"  data-href="{{route(
                         'pos.closeSession',
@@ -1075,6 +1080,10 @@
     <!--end::Body-->
 </html>
 <script>
+    $('#extendScreen').click(()=>{
+        let route=`{{route('pos.extendScreen')}}`;
+        let wd=window.open(route, '_blank', 'width=600, height=400');
+    })
 
     let options=`
         <option value="">
