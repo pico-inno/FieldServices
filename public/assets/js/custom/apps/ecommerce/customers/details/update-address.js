@@ -20,7 +20,7 @@ var KTModalUpdateAddress = function () {
                     'name': {
                         validators: {
                             notEmpty: {
-                                message: 'Address name is required'
+                                message: 'LocalAddress name is required'
                             }
                         }
                     },
@@ -34,7 +34,7 @@ var KTModalUpdateAddress = function () {
                     'address1': {
                         validators: {
                             notEmpty: {
-                                message: 'Address 1 is required'
+                                message: 'LocalAddress 1 is required'
                             }
                         }
                     },
@@ -95,7 +95,7 @@ var KTModalUpdateAddress = function () {
 
 						setTimeout(function() {
 							submitButton.removeAttribute('data-kt-indicator');
-							
+
 							Swal.fire({
 								text: "Form has been successfully submitted!",
 								icon: "success",
@@ -112,8 +112,8 @@ var KTModalUpdateAddress = function () {
 									// Enable submit button after loading
 									submitButton.disabled = false;
 								}
-							});							
-						}, 2000);   						
+							});
+						}, 2000);
 					} else {
 						Swal.fire({
 							text: "Sorry, looks like there are some errors detected, please try again.",
@@ -145,8 +145,8 @@ var KTModalUpdateAddress = function () {
                 }
             }).then(function (result) {
                 if (result.value) {
-                    form.reset(); // Reset form	
-                    modal.hide(); // Hide modal				
+                    form.reset(); // Reset form
+                    modal.hide(); // Hide modal
                 } else if (result.dismiss === 'cancel') {
                     Swal.fire({
                         text: "Your form has not been cancelled!.",
@@ -177,8 +177,8 @@ var KTModalUpdateAddress = function () {
                 }
             }).then(function (result) {
                 if (result.value) {
-                    form.reset(); // Reset form	
-                    modal.hide(); // Hide modal				
+                    form.reset(); // Reset form
+                    modal.hide(); // Hide modal
                 } else if (result.dismiss === 'cancel') {
                     Swal.fire({
                         text: "Your form has not been cancelled!.",

@@ -306,9 +306,9 @@
                                 <!--end::Badges-->
                             </td>
                             <!--end::Status=-->
-                            <!--begin::IP Address=-->
+                            <!--begin::IP LocalAddress=-->
                             <td>Default</td>
-                            <!--end::IP Address=-->
+                            <!--end::IP LocalAddress=-->
                             <!--begin::Date=-->
                             <td>10 Mar 2023, 11:05 am</td>
                             <!--end::Date=--> --}}

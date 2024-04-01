@@ -1,10 +1,10 @@
 <?php
 
         return [
-    
+
                 'business_settings' => 'Mga Setting ng Negosyo',
                 'settings' => 'Mga Setting',
-            
+
                 //Business
                 'business_name' => 'Pangalan ng Negosyo',
                 'start_date' => 'Petsa ng Simula',
@@ -20,14 +20,14 @@
                 'time_format' => 'Formato ng Oras',
                 'currency_position' => 'Posisyon ng Pera',
                 'quantity_precision' => 'Precision ng Damihan',
-            
+
                 //Tax
                 'tax_1_name' => 'Pangalan ng Buwis 1',
                 'tax_1_no' => 'Numero ng Buwis 1',
                 'tax_2_name' => 'Pangalan ng Buwis 2',
                 'tax_2_no' => 'Numero ng Buwis 2',
                 'enable_inline_tax_in_purchase_and_sell' => 'Paganahin ang inline na buwis sa pagbili at pagbebenta',
-            
+
                 //Product
                 'sku_prefix' => 'Prefix ng SKU',
                 'enable_product_expiry' => 'Paganahin ang Pag-expire ng Produkto',
@@ -39,10 +39,10 @@
                 'enable_position' => 'Paganahin ang Posisyon',
                 'enable_warranty' => 'Paganahin ang Garantiya',
                 'enable_secondary_unit' => 'Paganahin ang Pangalawang Yunit',
-            
+
                 //Contact
                 'default_credit_limit' => 'Default na Kreditong Limit',
-            
+
                 //Sale
                 'enable_line_discount_for_sale' => 'Paganahin ang Line Discount para sa Pagbebenta',
                 'default_sale_discount' => 'Default na Discount sa Pagbebenta',
@@ -61,7 +61,7 @@
                 'razorpay_key_secret' => 'Razorpay Key Secret',
                 'stripe_public_key' => 'Stripe Public Key',
                 'stripe_secret_key' => 'Stripe Secret Key',
-            
+
                 //Pos
                 'express_checkout' => 'Express Checkout',
                 'pay_and_checkout' => 'Magbayad at Mag-checkout',
@@ -100,22 +100,22 @@
                 'enable_purchase_status' => 'Paganahin ang Katayuan ng Pagbili',
                 'enable_lot_number' => 'Paganahin ang Numero ng Lot',
                 'enable_purchase_order' => 'Paganahin ang Order ng Pagbili',
-            
-    
-        
+
+
+
                 // Payment Tab
                 'enable_cash_denomination_on' => 'Paganahin ang denominasyon ng cash sa',
                 'enable_cash_denomination_for_payment_methods' => 'Paganahin ang denominasyon ng cash para sa mga paraan ng pagbabayad',
                 'strict_check' => 'Striktong Pag-check',
-            
+
                 // Dashboard
                 'view_stock_expiry_alert_for' => 'Tingnan ang Alerto sa Pag-expire ng Stock Para sa',
-            
+
                 // System
                 'theme_color' => 'Kulay ng Tema',
                 'default_datatable_page_entries' => 'Default na bilang ng pahina sa datatable',
                 'show_help_text' => 'Ipakita ang teksto ng tulong',
-            
+
                 // Prefix
                 'purchase_return' => 'Pagbalik ng Pagbili',
                 'purchase_order' => 'Order ng Pagbili',
@@ -132,7 +132,7 @@
                 'subscription_no' => 'Numero ng Subscription',
                 'prefix_draft' => 'Prefix ng Draft',
                 'sales_order' => 'Order sa Pagbebenta',
-            
+
                 // Email Settings
                 'mail_driver' => 'Driver ng Email',
                 'mail_host' => 'Host ng Email',
@@ -142,7 +142,7 @@
                 'mail_encryption' => 'Pag-encrypt ng Email',
                 'mail_address_from' => 'Email address (Mula sa)',
                 'mail_name_from' => 'Pangalan sa Email (Mula sa)',
-            
+
                 // SMS
                 'sms_service' => 'Serbisyo ng SMS',
                 'sms_url' => 'URL ng SMS',
@@ -181,7 +181,7 @@
                 'twilio_key' => 'Twilio Key',
                 'twilio_secret' => 'Twilio Secret',
                 'from_twilio' => 'Mula sa (Twilio)',
-            
+
                 // Reward Point
                 'enable_reward_point' => 'Paganahin ang Reward Point',
                 'reward_point_display_name' => 'Display Name ng Reward Point',
@@ -206,7 +206,7 @@
                 'order_for_restaurants' => 'Order (Para sa mga Restawran)',
                 'enable_subscription' => 'Paganahin ang Subscription',
                 'types_of_service' => 'Mga Uri ng Serbisyo',
-            
+
                 // Custom Label
                 'custom_payment_1' => 'Pasadyang Bayad 1',
                 'custom_payment_2' => 'Pasadyang Bayad 2',
@@ -253,12 +253,12 @@
                 'service_custom_payment_4' => 'Pasadyang Bayad sa Serbisyo 4',
                 'service_custom_payment_5' => 'Pasadyang Bayad sa Serbisyo 5',
                 'service_custom_payment_6' => 'Pasadyang Bayad sa Serbisyo 6',
-            
-            
 
 
 
-            
+
+
+
                 'business' => 'Negosyo',
                 'tax' => 'Buwis',
                 'product' => 'Produkto',
@@ -268,7 +268,7 @@
                 'system' => 'Sistema',
                 'prefix' => 'Prefix',
                 'sms_setting' => 'Pengaturan SMS',
-            
+
                 'reward_point_setting' => 'Pengaturan Poin Hadiah',
                 'modules' => 'Modul',
                 'customs_label' => 'Customs Label',
@@ -277,11 +277,11 @@
                 'use_payment_account' => 'Gamitin ang Account ng Bayad',
                 'upload_logo' => 'Mag-upload ng Logo',
                 'browses' => 'Mag-browse',
-            
+
                 'fifo' => 'FIFO (Unang Pumasok, Unang Lumabas)',
                 'lifo' => 'LIFO (Huli Pumasok, Unang Lumabas)',
                 'number_of_days_from_transaction_date' => 'Bilang ng araw mula sa petsa ng transaksyon kung kailan maaaring i-edit ang isang transaksyon',
-            
+
                 'currency_decimal_places' => 'Pook ng Desimal ng Pera',
                 'quantity_decimal_places' => 'Pook ng Desimal ng Damihan',
                 'add_item_expiry' => 'Magdagdag ng Pag-expire ng Item',
@@ -337,7 +337,7 @@
                 'comma_separated_values_example' => 'Halimbawa ng mga hiwalayang kuwitsilyado na halaga',
                 'cash_denominations' => 'Mga Halaga ng Cash',
                 'earning_points_settings' => 'Pengaturan ng Pagkakaroon ng Puntos',
-            
+
                 'express' => 'Express',
                 'custom_field_1' => 'Pasadyang Buksan 1',
                 'custom_field_2' => 'Pasadyang Buksan 2',
@@ -361,7 +361,7 @@
                 'password' => 'Password',
                 'encryption' => 'Encryption',
                 'from_name' => 'Mula sa Pangalan',
-                'from_address' => 'Mula sa Address',
+                'from_address' => 'Mula sa LocalAddress',
                 'request_method' => 'Pamamaraan ng Request',
                 'get' => 'Kumuha',
                 'post' => 'Mag-post',
@@ -381,10 +381,10 @@
                 'is_required' => 'Kinakailangan',
                 'is_default_for_contact' => 'Default ba para sa Kontakto?',
                 'labels_for_types_of_service_custom_fields' => 'Mga Label para sa mga Pasadyang Buksan ng Uri ng Serbisyo',
-            
+
                 'save' => 'I-save',
-            
-            
+
+
 
 
         ];

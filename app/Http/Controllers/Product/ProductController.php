@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Models\LocalAddress;
+use App\Models\LocalRegion;
 use App\Models\locationProduct;
+use App\Models\sale\sale_details;
+use App\Services\StockReserveServices;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -193,6 +197,20 @@ class ProductController extends Controller
     public function index(
         LocationRepositoryInterface $locationRepository,
     ) {
+        $sale_details = sale_details::where('sales_id', 1)
+            ->get();
+
+        foreach ($sale_details as $detail){
+            StockReserveServices::make()->reserve(
+                2,
+                $detail->product_id,
+                $detail->variation_id,
+                $detail->uom_id,
+                $detail->quantity,
+                'sale',
+                $detail->id,
+            );
+        }
         //                return Product::with('productVariations', 'category', 'brand')->paginate();
         //        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
         $categories = $this->categoryRepository->query()->select('name')->distinct()->pluck('name');

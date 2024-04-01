@@ -54643,7 +54643,7 @@ tinymce.IconManager.add('default', {
       },
       {
         shortcuts: ['Access + 9'],
-        action: 'Address'
+        action: 'LocalAddress'
       },
       {
         shortcuts: ['Alt + 0'],

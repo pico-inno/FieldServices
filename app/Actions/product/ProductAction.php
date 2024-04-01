@@ -73,7 +73,7 @@ class ProductAction
                     }
                 } else { //One Variation
 
-                    $variationData['variation_template_value_id'] = $id;
+//                    $variationData['variation_template_value_id'] = $id;
 
                     $createdProductVariation = $this->productRepository->createVariation($variationData);
 

@@ -1064,7 +1064,7 @@ Route::get('/test', function () {
 });
 
 
-///Address
+///LocalAddress
 
 Route::get('/townships/{region_id}', [AddressController::class, 'getTownships']);
 Route::get('/addresses', [AddressController::class, 'getAddress']);

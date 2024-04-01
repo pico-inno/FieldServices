@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('townships', function (Blueprint $table) {
+        Schema::create('local_regions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('region_id');
             $table->string('mm_name');
             $table->string('en_name');
             $table->timestamps();
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('townships');
+        Schema::dropIfExists('regions');
     }
 };

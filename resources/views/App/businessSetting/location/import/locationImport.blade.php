@@ -133,7 +133,7 @@
                         </div>
 
                         <div class="mt-5">
-                            <a href="{{route('download.importLocationExcel')}}" 
+                            <a href="{{route('download.importLocationExcel')}}"
                                 class="btn btn-light-primary btn-sm">
                                 <i class="fas fa-download"></i>{{ __('product/import-product.download_template_file') }}
                             </a>
@@ -216,7 +216,7 @@
                                 [
                                     'name'=>'address',
                                     'is_req' => false,
-                                    'instruction' => 'Location Address ',
+                                    'instruction' => 'Location LocalAddress ',
                                 ],
                                 [
                                     'name'=>'Zip Code',
