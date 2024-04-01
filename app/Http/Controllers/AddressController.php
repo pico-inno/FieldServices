@@ -48,6 +48,7 @@ class AddressController extends Controller
             ]);
 
             $addresses = $addressRepository->query()
+                ->where('contact_id',Auth::guard('customer')->user()->id)
                 ->leftJoin('local_regions', 'local_regions.id', '=', 'local_addresses.region_id')
                 ->leftJoin('local_townships', 'local_townships.id', '=', 'local_addresses.township_id')
                 ->select(
