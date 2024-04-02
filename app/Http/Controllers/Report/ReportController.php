@@ -140,7 +140,9 @@ class ReportController extends Controller
         $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
 
         $query = sales::where('is_delete', 0)
-            ->with('saleDetails', 'customer', 'business_location_id')
+            ->with(['saleDetails' => function ($query) {
+                $query->where('is_delete', 0);
+            }, 'customer', 'business_location_id'])
             ->whereBetween('sold_at', [$startDate, $endDate]);
 
         //        if ($request->data['filter_locations'] != 0) {
@@ -216,6 +218,9 @@ class ReportController extends Controller
                                 'brand_id' => $product['brand']['id'] ?? '',
                                 'quantity' => $detail['quantity'],
                                 'uom_price' => $detail['uom_price'],
+                                'subtotal' => $detail['subtotal'],
+                                'per_item_discount' => $detail['per_item_discount'] ?? 0,
+                                'subtotal_with_discount' => $detail['subtotal_with_discount'],
                                 'uom_name' => $detail['uom']['name'],
                                 'uom_short_name' => $detail['uom']['short_name'],
                             ];
