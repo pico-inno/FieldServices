@@ -494,7 +494,7 @@
                 </div>
 
                 @if (hasModule('Delivery')  && isEnableModule('Delivery'))
-                <livewire:delivery.delivery-inputs-form :saleId="$sale->id" />
+                <livewire:delivery.delivery-inputs-form :saleId="$sale->id"  :saleType="$sale['channel_type']" />
                 @endif
                 {{-- <div class="card"> /
                     <div class="card-body">

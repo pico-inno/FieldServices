@@ -31,8 +31,11 @@
             checkStock($(sr));
         })
     }
-    $('#saleStatus').change(()=>{
+    $('#saleStatus').change(function(){
         check();
+        if($(this).val() =='delivered'){
+            $('#deliveryInputsForm').removeClass('d-none');
+        }
     })
 
 
