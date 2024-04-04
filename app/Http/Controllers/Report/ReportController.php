@@ -1047,9 +1047,11 @@ class ReportController extends Controller
             $variationId = $stockDetail['variation_id'];
             $lotNo = $stockDetail['lot_no'];
             $transferDate = null;
+            $voucherNo = null;
             foreach ($stockTransfer as $transfer){
                  if ($transfer['id'] == $stockDetail['transfer_id']){
                     $transferDate =  $transfer['transfered_at'];
+                    $voucherNo = $transfer['transfer_voucher_no'];
                  }
             }
 
@@ -1066,6 +1068,7 @@ class ReportController extends Controller
                             // $smallest_price = UomHelper::smallestPrice($stockDetail['uomset_id'],$stockDetail['unit_id'],$stockDetail['quantity'],$stockDetail['purchase_price']);
                             $variationProduct = [
                                 'id' => $product['id'],
+                                'voucher_no' => $voucherNo,
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
                                 'variation_id' => $variation['id'],
