@@ -7,6 +7,7 @@ use App\Models\Product\UOM;
 use App\Models\Product\Unit;
 use App\Models\Product\UOMSet;
 use App\Models\Product\Product;
+use App\Models\Product\VariationValue;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductVariation;
 use App\Models\Product\VariationTemplateValues;
@@ -80,6 +81,11 @@ class purchase_details extends Model
     public function product_packaging(): HasOne
     {
         return $this->hasOne(productPackaging::class, 'product_id', 'id');
+    }
+
+    public function variation_values() : HasMany
+    {
+        return $this->hasMany(VariationValue::class, 'product_variation_id', 'variation_id');
     }
 
 }

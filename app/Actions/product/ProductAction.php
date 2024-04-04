@@ -73,7 +73,7 @@ class ProductAction
                     }
                 } else { //One Variation
 
-                    $variationData['variation_template_value_id'] = $id;
+//                    $variationData['variation_template_value_id'] = $id;
 
                     $createdProductVariation = $this->productRepository->createVariation($variationData);
 
@@ -87,7 +87,19 @@ class ProductAction
 
                 $this->createOrUpdatePriceListDetail('Variation', $createdProductVariation->id, $data->selling_price[$index]);
             }
-        } else { //for single
+
+            //Creation of Product Variation Template
+//            foreach ($data->variation_name as $variation_template_id){
+//                $productVariationsTemplateData = [
+//                    'product_id' => $createdProduct->id,
+//                    'variation_template_id' => $variation_template_id,
+//                    'created_by' => \auth()->id(),
+//                ];
+//
+//                $this->productRepository->createVariationTemplate($productVariationsTemplateData);
+//            }
+
+        }else{ //for single
             $preparedProductVariationData = [
                 'product_id' => $createdProduct->id,
                 'variation_sku' => $createdProduct->sku,
@@ -100,6 +112,12 @@ class ProductAction
             $this->createOrUpdatePriceListDetail('Product', $createdProduct->id, $data->single_selling);
 
             $this->productRepository->createVariation($preparedProductVariationData);
+
+            $productVariationsTemplateData = [
+                'product_id' => $createdProduct->id,
+                'variation_template_id' => $data->variation_name,
+                'created_by' => \auth()->id(),
+            ];
         }
 
 
@@ -116,6 +134,10 @@ class ProductAction
                 $this->productRepository->createVariationTemplate($productVariationsTemplateData);
             }
         }
+
+
+
+
 
 
 

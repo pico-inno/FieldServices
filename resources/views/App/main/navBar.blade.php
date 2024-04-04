@@ -42,11 +42,24 @@
             justify-content: end !important;
         }
     }
+    .noti-message {
+        position: fixed;
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        z-index: 9999;
+        display: none; /* Initially hidden */
+    }
     </style>
 
 </head>
 <!--end::Head-->
 <!--begin::Body-->
+<!-- Notification message container -->
+<div class="noti-message" id="notiMessage">Right-clicking is not allowed on this webpage.</div>
 
 <body id="kt_body" style="background-image:"   class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-enabled" data-kt-aside-minimize="on">
     <!--begin::Theme mode setup on page load-->
@@ -1160,6 +1173,17 @@
                                                             <!--end:Menu link-->
                                                         </div>
                                                         @endif
+                                                        <div class="menu-item">
+                                                            <!--begin:Menu link-->
+                                                            <a class="menu-link @yield('product_current_stock_reports_active_show')"
+                                                               href="{{route('report.currentstockbalance.index', 'product')}}">
+                                                    <span class=" menu-icon">
+                                                        <i class="fa-solid fa-arrow-trend-up fs-6"></i>
+                                                    </span>
+                                                                <span class="menu-title ">Current Stocks</span>
+                                                            </a>
+                                                            <!--end:Menu link-->
+                                                        </div>
                                                         @if(hasPrint('product'))
 {{--                                                        <div class="menu-item">--}}
 {{--                                                            <!--begin:Menu link-->--}}
@@ -1968,6 +1992,53 @@
                                                             <span class="menu-title ">Item Report</span>
                                                         </a>
                                                     </div>
+                                                @endif
+
+                                                @if(hasAll('sell'))
+                                                <!--begin:Menu item-->
+                                                <div data-kt-menu-trigger="click"
+                                                    class="menu-item menu-accordion @yield('os_reports_here_show')">
+                                                    <!--begin:Menu link-->
+                                                    <span class="menu-link">
+                                                        <span class="menu-title">Opening Stock Report</span>
+                                                        <span class="menu-arrow"></span>
+                                                    </span>
+                                                    <!--end:Menu link-->
+                                                    <!--begin:Menu sub-->
+                                                    <!--begin:Menu sub-->
+                                                    <div class="menu-sub menu-sub-accordion">
+                                                        <!--begin:Menu item-->
+                                                        <!--begin:Menu item-->
+                                                        <div class="menu-item">
+                                                            <!--begin:Menu link-->
+                                                            <a class="menu-link @yield('os_summary_active_show')"
+                                                                href="{{route('osr.summary')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title">Opening Stock Summary</span>
+                                                            </a>
+                                                            <!--end:Menu link-->
+                                                        </div>
+                                                        <!--end:Menu item-->
+                                                        <!--begin:Menu item-->
+                                                        <div class="menu-item">
+                                                            <!--begin:Menu link-->
+                                                            <a class="menu-link  @yield('os_detail_active_show')"
+                                                                href="{{route('osr.detail')}}">
+                                                                <span class="menu-bullet">
+                                                                    <span class="bullet bullet-dot"></span>
+                                                                </span>
+                                                                <span class="menu-title">Opening Stock Detail</span>
+                                                            </a>
+                                                            <!--end:Menu link-->
+                                                        </div>
+
+                                                    </div>
+                                                    <!--end:Menu sub-->
+                                                    <!--end:Menu sub-->
+                                                </div>
+                                                <!--end:Menu item-->
                                                 @endif
                                                 @if(hasAll('sell'))
                                                 <!--begin:Menu item-->

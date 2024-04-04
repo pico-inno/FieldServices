@@ -3,26 +3,32 @@
 return [
     "Games"=>[
         "name"=>"Games",
+        "productionBranch"=>"main",
         "resource"=>"https://github.com/pico-inno/Games.git"
     ],
     "FieldService"=>[
         "name"=>"FieldService",
+        "productionBranch"=>"main",
         "resource"=>"https://github.com/pico-inno/Field-Services.git"
     ],
     "StockInOut"=>[
         "name"=>"StockInOut",
+        "productionBranch"=>"main",
         "resource"=>"https://github.com/pico-inno/StockInOut.git"
     ],
     "Ecommerce"=>[
         "name"=>"Ecommerce",
+        "productionBranch"=>"main",
         "resource"=>"https://github.com/pico-inno/Ecommerce.git"
     ],
     "Delivery"=>[
         "name"=>"Delivery",
+        "productionBranch"=>"main",
         "resource"=>"https://github.com/pico-inno/Delivery.git"
     ],
     "Reservation"=>[
         "name"=>"Reservation",
+        "productionBranch"=>"main",
         "resource"=>"https://github.com/pico-inno/Reservation.git"
     ]
 ];

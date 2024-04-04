@@ -48,6 +48,12 @@ return [
     'purchase_price'=>'Purchase Price',
     'sell_qty'=>'Sell Quantity',
     'selling_price'=>'Selling Price',
-    
+
+
+    //opening stocks
+    'opening_stock_report'=>'Opening Stock Report',
+    'opening_stock_summary'=>'Opening Stock Summary',
+    'opening_stock_details'=>'Opening Stock Details',
+
 
 ];

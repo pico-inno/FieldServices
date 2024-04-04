@@ -111,6 +111,7 @@
                 'variation_id':saledetail.product_variation.id,
                 'category_id':saledetail.product.category_id,
                 'defaultSellingPrices':saledetail.product_variation.default_selling_price,
+                'defaultPurchasePrices':saledetail.product_variation.default_purchase_price,
                 'sellingPrices':saledetail.product_variation.uom_selling_price,
                 'total_current_stock_qty':totalCurrentStockQty,
                 'existing_qty': editSale.status=='delivered' ? isNullOrNan(saleQty):0,
@@ -1017,13 +1018,13 @@
         }
 
         function checkAndStoreSelectedProduct(newSelectedProduct) {
-            console.log(newSelectedProduct.product.uom,'newSelectedProduct.product.uom');
             let newProductData={
                 'product_id':newSelectedProduct.product_id,
                 'product_type':newSelectedProduct.product_type,
                 'variation_id':newSelectedProduct.id,
                 'category_id':newSelectedProduct.product.category_id,
                 'defaultSellingPrices':newSelectedProduct.default_selling_price,
+                'defaultPurchasePrices':newSelectedProduct.default_purchase_price,
                 'sellingPrices':newSelectedProduct.uom_selling_price,
                 'total_current_stock_qty':newSelectedProduct.stock_sum_current_quantity,
                 'aviable_qty':newSelectedProduct.stock_sum_current_quantity,
@@ -1583,6 +1584,7 @@
             getPriceList(priceList);
         }
     })
+
     function getPriceList(priceListId){
         $.ajax({
             url: `/sell/${priceListId}/price/list`,
@@ -1612,8 +1614,7 @@
                 if (mainPriceStatus == true) {
                     priceSetting(mainPriceList, parent,false);
                 }else{
-
-                mainPriceStatus = priceSetting(mainPriceList, parent,true);
+                    mainPriceStatus = priceSetting(mainPriceList, parent,true);
                 }
             })
 
@@ -1703,11 +1704,13 @@
         }
         let quantity=isNullOrNan(parentDom.find('.quantity').val());
         let price=priceStage.cal_value;
-        if (priceStage.cal_type == 'percentage') {
+
+        if (priceStage.cal_type == "percentage") {
             let basePriceLists=priceList.basePriceList;
             let i = 0;
             let finalBasePrice=null;//final base price means when current price is  percentage on base price, the loop reach the base price that is fix price;
             let calPers=[];
+
             while (i < basePriceLists.length) {
                 let bps = basePriceLists[i];//base prices
                 i++;
@@ -1761,11 +1764,11 @@
             if(finalBasePrice !== null){
                 percentagePrice=finalBasePrice * (priceStage.cal_value/100);
                 price = isNullOrNan(finalBasePrice) + isNullOrNan(percentagePrice);
-
             }else{
                 let lastIndexOfStock=product.stock.length-1;
-                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
-                percentagePrice=refPrice * (priceStage.cal_value/100);
+                // console.log(product,lastIndexOfStock,'product');
+                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: product.defaultPurchasePrices;
+                percentagePrice=isNullOrNan(refPrice) * (priceStage.cal_value/100);
                 price = isNullOrNan(refPrice) + isNullOrNan(percentagePrice);
             }
         }
@@ -1777,7 +1780,6 @@
                 return $u.id ==inputUomId;
         })[0];
         let resultPrice=resultAfterUomChange.resultPrice;
-        console.log(quantity >= qtyByPriceStage);
         if(quantity >= qtyByPriceStage){
             if(currentPriceList.currency_id != currentCurrency.id){
                 let fromCurrency=exchangeRates.find(xr=>xr.currency_id==currentPriceList.currency_id);
@@ -1795,9 +1797,11 @@
         }else{
             if(dfs){
                 let lastIndexOfStock=product.stock.length-1;
-                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: '';
+                let refPrice=product.stock[lastIndexOfStock]? product.stock[lastIndexOfStock].ref_uom_price: isNullOrNan(product.defaultPurchasePrices);
                 let result=refPrice * isNullOrNan( inputUom.value);
+                console.log(result,refPrice,inputUom.value,product,'======================================00');
                 parentDom.find('.uom_price').val(result);
+                return true;
             }
         }
         return false;

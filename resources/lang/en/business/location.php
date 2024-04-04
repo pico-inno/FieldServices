@@ -13,7 +13,7 @@ return [
     'allow_sale_order'=>'Allow Sale Order',
     'location_code'=>'Location Code',
     'modbile'=>'Mobile',
-    'address'=>'Address',
+    'address'=>'LocalAddress',
     'city'=>'City',
     'state'=>'State',
     'country'=>'Country',

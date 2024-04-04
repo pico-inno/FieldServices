@@ -370,7 +370,7 @@ return [
     'password' => 'Password',
     'encryption' => 'Encryption',
     'from_name' => 'From Name',
-    'from_address' => 'From Address',
+    'from_address' => 'From LocalAddress',
     'request_method' => 'Request Method',
     'get' => 'GET',
     'post' => 'POST',
@@ -396,7 +396,7 @@ return [
 
     'alt_contact_no'=>'Alternate Contact No',
     'business_contact_no'=>'Business Contact No',
-    'address'=>'Address',
+    'address'=>'LocalAddress',
     'zip_postal_code'=>'Zip Postal Code',
     'city'=>'City',
     'state'=>'State',

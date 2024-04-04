@@ -49,6 +49,9 @@ class POSController extends Controller
     {
         $this->middleware(['auth', 'isActive']);
     }
+    public function extendScreen(){
+        return view('App.pos.dualScreen.fontScreen');
+    }
     public function create()
     {
         if (request('pos_register_id') && request('sessionId')) {

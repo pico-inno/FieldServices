@@ -13,6 +13,11 @@
     @section('inventory_reports_here_show', 'here show')
     @section('current_stock_balance_active_show', 'active show')
 @endif
+@if($nav_type === "product")
+    @section('products_icon', 'active')
+    @section('products_show', 'active show')
+    @section('product_current_stock_reports_active_show', 'active show')
+@endif
 
 
 @section('styles')
@@ -143,6 +148,18 @@
                                 </select>
                             </div>
                             <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="mb-5 col-6 col-md-3">
+                                <label class="form-label fs-6 fw-semibold">Stock Status</label>
+                                <select class="form-select form-select-sm  fw-bold filter_stock_status" data-kt-select2="true"
+                                        data-placeholder="Select View Option" data-allow-clear="true" data-hide-search="true">
+                                    <option></option>
+                                    <option value="1" selected>Normal</option>
+{{--                                    <option value="2">Reserve</option>--}}
+                                    <option value="2">Normal + Reserve</option>
+                                </select>
+                            </div>
+                            <!--end::Input group-->
                         </div>
                     </div>
                 </div>
@@ -244,7 +261,7 @@
                         <!--end::Table head-->
                         <!--begin::Table body-->
                         <tbody class="fw-semibold text-gray-600" id="reports-data">
-{{--                        <tbody class="fw-bold text-gray-600 text-end" id="reports-data">--}}
+
                         </tbody>
                         <!--end::Table body-->
                     </table>

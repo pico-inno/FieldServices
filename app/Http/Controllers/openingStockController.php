@@ -423,30 +423,42 @@ class openingStockController extends Controller
 
     public function softOneItemDelete($id)
     {
-        openingStocks::where('id', $id)->update([
-            'is_delete' => 1,
-            'deleted_by' => Auth::user()->id,
-            'deleted_at' => now()
-        ]);
-        $openingStockDetail = openingStockDetails::where('opening_stock_id', $id);
-        openingStockDetails::where('opening_stock_id', $id)->update([
-            'is_delete' => 1,
-            'deleted_by' => Auth::user()->id,
-            'deleted_at' => now()
-        ]);
-        foreach ($openingStockDetail->get() as $osd) {
-            CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->delete();
-            stock_history::where('transaction_type', 'opening_stock')->where('transaction_details_id', $osd->id)->delete();
+        try {
+            DB::beginTransaction();
+            openingStocks::where('id', $id)->update([
+                'is_delete' => 1,
+                'deleted_by' => Auth::user()->id,
+                'deleted_at' => now()
+            ]);
+            $openingStockDetail = openingStockDetails::where('opening_stock_id', $id);
+            openingStockDetails::where('opening_stock_id', $id)->update([
+                'is_delete' => 1,
+                'deleted_by' => Auth::user()->id,
+                'deleted_at' => now()
+            ]);
+            foreach ($openingStockDetail->get() as $osd) {
+                $csb=CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->first();
+                if($csb && $csb->current_quantity != $csb->ref_uom_quantity){
+                    throw new Exception("Can't Delete this Opening Stock Transactions because stocks are already out from this transactions.");
+                }else{
+                    $csb->delete();
+                }
+                stock_history::where('transaction_type', 'opening_stock')->where('transaction_details_id', $osd->id)->delete();
+            }
+            $data = [
+                'success' => 'Successfully Deleted'
+            ];
+            activity('opening-stock')
+                ->log('Opening Stock single deletion has been success')
+                ->event('delete')
+                ->status('success')
+                ->save();
+            DB::commit();
+            return response()->json($data, 200);
+        } catch (\Throwable $th) {
+           DB::rollBack();
+           return response()->json($th->getMessage(), 400);
         }
-        $data = [
-            'success' => 'Successfully Deleted'
-        ];
-        activity('opening-stock')
-            ->log('Opening Stock single deletion has been success')
-            ->event('delete')
-            ->status('success')
-            ->save();
-        return response()->json($data, 200);
     }
 
     public function softSelectedDelete()
@@ -463,7 +475,12 @@ class openingStockController extends Controller
                 $openingStockDetail = openingStockDetails::where('opening_stock_id', $id)->get();
                 CurrentStockBalance::where('transaction_type', 'opening_stock')->first();
                 foreach ($openingStockDetail as $osd) {
-                    CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->delete();
+                    $csb=CurrentStockBalance::where('transaction_type', 'opening_stock')->where('transaction_detail_id', $osd->id)->first();
+                    if($csb && $csb->current_quantity != $csb->ref_uom_quantity){
+                        throw new Exception("Can't Delete this Opening Stock Transactions because stocks are already out from this transactions.");
+                    }else{
+                        $csb->delete();
+                    }
                     stock_history::where('transaction_type', 'opening_stock')->where('transaction_details_id', $osd->id)->delete();
                 }
                 openingStockDetails::where('opening_stock_id', $id)->update([
@@ -490,8 +507,7 @@ class openingStockController extends Controller
                 ->event('delete')
                 ->status('fail')
                 ->save();
-            throw $e;
-            return response()->json($e, 200);
+            return response()->json($e->getMessage(), 400);
         }
     }
 

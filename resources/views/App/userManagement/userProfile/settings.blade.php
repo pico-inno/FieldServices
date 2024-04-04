@@ -462,7 +462,7 @@
         <div id="kt_account_settings_signin_method" class="collapse show">
             <!--begin::Card body-->
             <div class="card-body border-top p-9">
-                <!--begin::Email Address-->
+                <!--begin::Email LocalAddress-->
                 <div class="d-flex flex-wrap align-items-center">
                     <!--begin::Label-->
                     <div id="kt_signin_email">
@@ -504,7 +504,7 @@
                     </div>
                     <!--end::Action-->
                 </div>
-                <!--end::Email Address-->
+                <!--end::Email LocalAddress-->
                 <!--begin::Separator-->
                 <div class="separator separator-dashed my-6"></div>
                 <!--end::Separator-->

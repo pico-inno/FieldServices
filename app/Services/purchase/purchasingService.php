@@ -51,14 +51,8 @@ class purchasingService
             if ($request->paid_amount > 0) {
                 //store the payment transactions
                 $payment->makePayment($purchase, $request->payment_account, 'purchase');
-            } else {
-                // update customer's payableAmount
-                $suppliers = Contact::where('id', $request->contact_id)->first();
-                $suppliers_payable = $suppliers->payable_amount;
-                $suppliers->update([
-                    'payable_amount' => $suppliers_payable + $request['balance_amount']
-                ]);
             }
+            calcPayable($request->contact_id);
             DB::commit();
             return $purchase;
         } catch (\Throwable $th) {
@@ -76,10 +70,11 @@ class purchasingService
 
         // update purchase data
         $purchasesData = $this->purchaseData($request);
+        $purchasesData['balance_amount']=$request->total_purchase_amount - $request->paid_amount;
         $purchase=$action->update($id, $purchasesData);
         //update purchase detail data
         $detailServices->update($id,$purchase, $request);
-
+        calcPayable($request->contact_id);
 
     }
 
@@ -100,13 +95,7 @@ class purchasingService
      */
     public function purchaseData($request)
     {
-        if ($request->paid_amount == 0) {
-            $payment_status = 'due';
-        } elseif ($request->paid_amount >= $request->total_purchase_amount) {
-            $payment_status = 'paid';
-        } else {
-            $payment_status = 'partial';
-        }
+        $payment_status=defStatus($request->paid_amount,$request->total_purchase_amount);
         return [
             'business_location_id' => $request->business_location_id,
             'contact_id' => $request->contact_id,
@@ -121,7 +110,6 @@ class purchasingService
             'currency_id' => $request->currency_id,
             'paid_amount' => $request->paid_amount,
             'purchased_at' => $request->purchased_at,
-            'total_purchase_amount' => $request->total_purchase_amount,
             'balance_amount' => $request->balance_amount,
             'payment_status' => $payment_status,
             'received_at'=> $request->received_at ?? null,

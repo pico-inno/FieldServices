@@ -142,7 +142,7 @@
                                         variationName += separator + variation_value.variation_template_value.name
                                     });
                                 }
-                                
+
                                 html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
                                 html += `<h4 class="fs-6 ps-10 pt-3">
                                     ${result.name}-${variationName ? '('+variationName+')': ''}`;
@@ -211,6 +211,19 @@
     });
 
     function append_row(selected_product,unique_name_id) {
+
+        let productVariation=selected_product.product_variations;
+        let variation_values=selected_product.variation_values ?? [];
+        let variationName=selected_product.variation_name;
+        let valueLength=variation_values.length;
+        if(productVariation.variation_template_value_id == null && variation_values.length >0){
+            variationName = '';
+            variation_values.forEach((variation_value,i) => {
+                separator=(i != 0 || i+1==valueLength) ? ', ' : ' ';
+                variationName += separator + variation_value.variation_template_value.name
+            });
+        }
+
         if(ItemLimitRowCount<20){
             Swal.fire({
                 title:"Sorry, Can't Add more row.",
@@ -274,7 +287,7 @@
             </td>
             <td>
                 <span  class="text-gray-600 text-hover-primary mb-1 ">${selected_product.name}</span><br>
-                <span class="text-gray-500 fw-semibold fs-5">${selected_product.variation_name??''}</span>
+                <span class="text-gray-500 fw-semibold fs-5">${variationName??''}</span>
             </td>
             <td class="fv-row">
                 <input type="text" class="form-control form-control-sm mb-1 purchase_quantity input_number" placeholder="Quantity" name="purchase_details[${unique_name_id}][quantity]" value="1.00">

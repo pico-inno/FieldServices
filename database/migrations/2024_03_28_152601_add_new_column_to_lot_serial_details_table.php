@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
-            $table->id();
-            $table->string('mm_name');
-            $table->string('en_name');
-            $table->timestamps();
+        Schema::table('lot_serial_details', function (Blueprint $table) {
+            $table->enum('stock_status', ['normal', 'prepare', 'reserve'])->default('normal');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::table('lot_serial_details', function (Blueprint $table) {
+            //
+        });
     }
 };

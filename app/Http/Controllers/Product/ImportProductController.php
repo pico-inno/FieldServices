@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Imports\Product\ProductsImportV2;
 use Illuminate\Http\Request;
 use App\Models\Product\Brand;
 use App\Models\Product\Product;
@@ -34,7 +35,7 @@ class ImportProductController extends Controller
             DB::beginTransaction();
             $file = $request->file('import-products');
             // $status = Excel::import(new ProductsImport(), $file);
-            $import = new ProductsImport;
+            $import = new ProductsImportV2();
             $importMessage=$import->import($file);
             DB::commit();
             activity('product-transaction')

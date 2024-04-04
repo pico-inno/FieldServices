@@ -82,7 +82,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Global "From" Address
+    | Global "From" LocalAddress
     |--------------------------------------------------------------------------
     |
     | You may wish for all e-mails sent by your application to be sent from

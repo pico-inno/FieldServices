@@ -164,7 +164,7 @@
                                     <div class="input-group-text">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
+                                    <input type="text"  onkeypress="preventEnterSubmit(event)" class="form-control form-control-sm rounded-start-0" id="searchInput" placeholder="Search...">
                                     <div class="quick-search-results overflow-scroll  p-3 position-absolute d-none card w-100 mt-18  card autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
                                 </div>
                             </div>
@@ -503,7 +503,10 @@
                     </div>
                 </div>
 
-                {{-- <div class="card">
+                @if (hasModule('Delivery')  && isEnableModule('Delivery'))
+                    <livewire:delivery.delivery-inputs-form :saleId="$sale->id" />
+                @endif
+                {{-- <div class="card"> /
                     <div class="card-body">
                         <div class="row justify-content-end mb-3">
                             <div class="fs-7 fw-semibold col-12 col-md-3 d-flex justify-content-between align-items-center mb-5 mb-md-0">
