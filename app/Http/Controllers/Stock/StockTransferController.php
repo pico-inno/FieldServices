@@ -1309,7 +1309,7 @@ class StockTransferController extends Controller
             ->get();
 
 
-        $invoiceHtml = view('App.stock.transfer.invoice',compact('transfer','transfer_details'))->render();
+        $invoiceHtml = view('App.stock.transfer.print',compact('transfer','transfer_details'))->render();
         return response()->json(['html' => $invoiceHtml]);
     }
 
