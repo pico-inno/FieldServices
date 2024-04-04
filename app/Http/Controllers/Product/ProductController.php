@@ -231,7 +231,6 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
-        //        return $request;
         try {
             DB::beginTransaction();
             $productAction->create($request);
