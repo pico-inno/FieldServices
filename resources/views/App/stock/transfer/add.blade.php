@@ -119,8 +119,9 @@
                                 <div class="col-md-3 mb-4">
                                     <label for="transfered_at" class="form-label required">{{__('transfer.date')}}</label>
                                     <div class="fv-row">
-                                        <input name="transfered_at" class="form-control form-control-sm"
-                                               id="kt_datepicker_2"/>
+{{--                                        <input name="transfered_at" class="form-control form-control-sm"--}}
+{{--                                               id="kt_datepicker_2"/>--}}
+                                        <input class="form-control" name="transfered_at" placeholder="Pick a date" data-td-toggle="transfered_at"  id="transfered_at" value="{{old('transfered_at',now()->format('Y-m-d H:i'))}}" />
                                     </div>
                                 </div>
                                 <div class="col-md-3 mb-4">
@@ -305,10 +306,9 @@
     <script src="{{asset('customJs/stock/validation/transfer_add.js')}}"></script>
     <script>
         //Begin:  initialize transfer date
-        $("#kt_datepicker_2").flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: new Date(),
-            conjunction: ""
+        $('[data-td-toggle="transfered_at"]').flatpickr({
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
         });
         //End:  initialize transfer date
 

@@ -947,19 +947,9 @@ class ReportController extends Controller
             $query->where('from_location', $request->data['filter_locations_from']);
         }
 
-        //        if ($request->data['filter_locations_from'] != 0) {
-        //            $locationId = childLocationIDs($request->data['filter_locations_from']);
-        //            $query->whereIn('from_location', $locationId);
-        //        }
-
         if ($request->data['filter_locations_to'] != 0) {
             $query->where('to_location', $request->data['filter_locations_to']);
         }
-
-        //        if ($request->data['filter_locations_to'] != 0) {
-        //            $locationId = childLocationIDs($request->data['filter_locations_to']);
-        //            $query->whereIn('to_location', $locationId);
-        //        }
 
         if ($request->data['filter_stocktransferperson'] != 0) {
             $query->where('transfered_person', $request->data['filter_stocktransferperson']);
@@ -1014,7 +1004,7 @@ class ReportController extends Controller
             $query->where('to_location', $request->data['filter_locations_to']);
         }
 
-
+        $stockTransfer = $query->get();
         $stockDetails = $query->get()->pluck('stockTransferDetails')->flatten();
         $productIds = $stockDetails->pluck('product_id')->unique()->toArray();
 
@@ -1050,14 +1040,21 @@ class ReportController extends Controller
 
         $finalProduct = $finalProduct->get()->toArray();
 
-        // Additional optimization steps can be applied here, such as caching or pagination
-
         $result = [];
 
         foreach ($stockDetails as $stockDetail) {
             $productId = $stockDetail['product_id'];
             $variationId = $stockDetail['variation_id'];
             $lotNo = $stockDetail['lot_no'];
+            $transferDate = null;
+            $voucherNo = null;
+            foreach ($stockTransfer as $transfer){
+                 if ($transfer['id'] == $stockDetail['transfer_id']){
+                    $transferDate =  $transfer['transfered_at'];
+                    $voucherNo = $transfer['transfer_voucher_no'];
+                 }
+            }
+
 
             foreach ($finalProduct as $product) {
                 if ($product['id'] == $productId) {
@@ -1071,6 +1068,7 @@ class ReportController extends Controller
                             // $smallest_price = UomHelper::smallestPrice($stockDetail['uomset_id'],$stockDetail['unit_id'],$stockDetail['quantity'],$stockDetail['purchase_price']);
                             $variationProduct = [
                                 'id' => $product['id'],
+                                'voucher_no' => $voucherNo,
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
                                 'variation_id' => $variation['id'],
@@ -1080,6 +1078,7 @@ class ReportController extends Controller
                                 'category_name' => $product['category']['name'] ?? '',
                                 'brand_name' => $product['brand']['name'] ?? '',
                                 'brand_id' => $product['brand']['id'] ?? '',
+                                'transfered_at' => $transferDate,
                                 // 'unit_name' => $stockDetail['unit']['name'],
                                 // 'uom_name' => $stockDetail['uomset']['uomset_name'],
                                 'uom_short_name' => $stockDetail['uom']['short_name'],
@@ -1089,6 +1088,7 @@ class ReportController extends Controller
                                 'transfer_quantity' => number_format($stockDetail['quantity'], 2),
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
+                                'remark' => $stockDetail['remark'] ?? '-',
                                 // 'samllest_stock_qty' => number_format($smallest_qty, 2),
                                 // 'smallest_unit_name' =>  $smallest_unit_name,
                             ];

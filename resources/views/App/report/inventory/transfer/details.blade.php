@@ -203,14 +203,16 @@
                         <thead>
                         <!--begin::Table row-->
                         <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                            <th class="min-w-125px">{{__('common.date')}}</th>
+                            <th class="min-w-125px">Voucher No</th>
                             <th class="min-w-125px">{{__('product/product.sku')}}</th>
                             <th class="min-w-125px">{{__('product/product.product')}}</th>
                             <th class="min-w-125px">{{__('product/product.variation')}}</th>
                             <th class="min-w-125px">{{__('product/product.category')}}</th>
                             <th class="min-w-125px">{{__('product/product.brand')}}</th>
-                            <th class="min-w-125px">{{__('product/product.uom')}}</th>
                             <th class="min-w-125px">{{__('transfer.transfer_qty')}}</th>
-
+                            <th class="min-w-125px">{{__('product/product.uom')}}</th>
+                            <th class="min-w-125px">Remark</th>
                         </tr>
                         <!--end::Table row-->
                         </thead>
@@ -306,20 +308,34 @@
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox" checked="checked"
                                                    id="chkColumn0"/>
-                                            <span class="form-check-label text-gray-600 fw-semibold">SKU</span>
+                                            <span class="form-che   ck-label text-gray-600 fw-semibold">{{__('common.date')}}</span>
                                         </label>
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox" checked="checked"
                                                    id="chkColumn1"/>
-                                            <span class="form-check-label text-gray-600 fw-semibold">Product</span>
+                                            <span class="form-che   ck-label text-gray-600 fw-semibold">Voucher No</span>
                                         </label>
                                         <!--end::Radio button-->
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox" checked="checked"
                                                    id="chkColumn2"/>
+                                            <span class="form-check-label text-gray-600 fw-semibold">SKU</span>
+                                        </label>
+                                        <!--end::Radio button-->
+                                        <!--begin::Radio button-->
+                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
+                                            <input class="form-check-input" type="checkbox" checked="checked"
+                                                   id="chkColumn3"/>
+                                            <span class="form-check-label text-gray-600 fw-semibold">Product</span>
+                                        </label>
+                                        <!--end::Radio button-->
+                                        <!--begin::Radio button-->
+                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
+                                            <input class="form-check-input" type="checkbox" checked="checked"
+                                                   id="chkColumn4"/>
                                             <span
                                                 class="form-check-label text-gray-600 fw-semibold">Variation</span>
                                         </label>
@@ -327,7 +343,7 @@
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn3"/>
+                                                   id="chkColumn5"/>
                                             <span
                                                 class="form-check-label text-gray-600 fw-semibold">Category</span>
                                         </label>
@@ -335,7 +351,7 @@
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn4"/>
+                                                   id="chkColumn6"/>
                                             <span
                                                 class="form-check-label text-gray-600 fw-semibold">Brand</span>
                                         </label>
@@ -343,7 +359,15 @@
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn5"/>
+                                                   id="chkColumn7"/>
+                                            <span
+                                                class="form-check-label text-gray-600 fw-semibold">Transfer Qty</span>
+                                        </label>
+                                        <!--end::Radio button-->
+                                        <!--begin::Radio button-->
+                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
+                                            <input class="form-check-input" type="checkbox"  checked="checked"
+                                                   id="chkColumn8"/>
                                             <span
                                                 class="form-check-label text-gray-600 fw-semibold">UOM</span>
                                         </label>
@@ -351,9 +375,9 @@
                                         <!--begin::Radio button-->
                                         <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
                                             <input class="form-check-input" type="checkbox"  checked="checked"
-                                                   id="chkColumn6"/>
+                                                   id="chkColumn9"/>
                                             <span
-                                                class="form-check-label text-gray-600 fw-semibold">Transfer Qty</span>
+                                                class="form-check-label text-gray-600 fw-semibold">Remark</span>
                                         </label>
                                         <!--end::Radio button-->
                                     </div>
