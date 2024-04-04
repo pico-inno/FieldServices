@@ -32,6 +32,9 @@ use Modules\Ecommerce\Entities\EcommerceOrder;
 use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
 use App\Actions\currentStockBalance\currentStockBalanceActions;
 
+function hasModuleInstalled($moduleName){
+    return hasModule($moduleName) && isEnableModule($moduleName);
+}
 function hasModule($moduleName)
 {
     $moduleName = ucfirst($moduleName);

@@ -420,7 +420,7 @@
         </div>
     </div>
 
-    <div class="modal fade saleDetail" tabindex="-1"></div>
+    <div class="modal fade saleDetail" id="saleDetailModal" tabindex="-1"></div>
     <script wire:ignore>
 
     $(document).ready(function() {

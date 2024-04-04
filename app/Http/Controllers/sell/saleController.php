@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers\sell;
 
-use App\Console\Commands\gitOps\moduelInstaller;
-use Error;
-use DateTime;
-use stdClass;
 use Exception;
 use App\Models\resOrders;
 use App\Helpers\UomHelper;
@@ -36,6 +32,7 @@ use App\Models\purchases\purchases;
 use App\Http\Controllers\Controller;
 use App\Models\paymentsTransactions;
 use Illuminate\Support\Facades\Auth;
+use App\Services\StockReserveServices;
 use App\Models\hospitalRoomSaleDetails;
 use App\Models\posRegisterTransactions;
 use App\Models\Product\PriceListDetails;
@@ -47,18 +44,19 @@ use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
 use Modules\ComboKit\Services\RoMService;
 use App\Models\purchases\purchase_details;
+use Modules\Delivery\Entities\DeliveryOrder;
 use App\Services\packaging\packagingServices;
 use Modules\Reservation\Entities\Reservation;
 use App\Models\posSession\posRegisterSessions;
+use Modules\Ecommerce\Entities\EcommerceOrder;
 use Modules\Reservation\Entities\FolioInvoice;
 use App\Http\Requests\location\locationRequest;
+use Modules\Delivery\Services\DeliveryServices;
+use App\Console\Commands\gitOps\moduelInstaller;
 use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Repositories\interfaces\LocationRepositoryInterface;
-use Modules\Delivery\Entities\DeliveryOrder;
-use Modules\Delivery\Services\DeliveryServices;
-use Modules\Ecommerce\Entities\EcommerceOrder;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -295,6 +293,7 @@ class saleController extends Controller
         ])
         ->where('sales_id', $id)->where('is_delete', 0);
         $ecommerceOrder=[];
+        $paymentAccount=null;
         if(hasModule('Ecommerce') && isEnableModule('Ecommerce')){
             $ecommerceOrder= EcommerceOrder::where('sale_id',$sale['id'])->first();
             if($sale['channel_type']=='ecommerce'){
@@ -313,7 +312,8 @@ class saleController extends Controller
             'sale_details',
             'setting',
             'address',
-            'ecommerceOrder'
+            'ecommerceOrder',
+            'paymentAccount'
         ));
     }
     // sale create page
@@ -2413,6 +2413,7 @@ class saleController extends Controller
     {
     }
     public function statusChange(Sales $sale,Request $request,paymentServices $paymentServices){
+        $data=$request->data ?? [];
         try {
             DB::beginTransaction();
             $ecommerceOrder=null;
@@ -2420,7 +2421,24 @@ class saleController extends Controller
                 $data=[
                     'status'=>$request['status'],
                 ];
-                if($request['isConfirmPayment']){
+
+                $sale_details = sale_details::where('sales_id', $sale['id'])
+                    ->get();
+                if(isset($data['IsReserve']) && $data['IsReserve'] && $data['location_id']){
+                    foreach ($sale_details as $detail){
+                        StockReserveServices::make()->reserve(
+                            $data['location_id'],
+                            $detail->product_id,
+                            $detail->variation_id,
+                            $detail->uom_id,
+                            $detail->quantity,
+                            'sale',
+                            $detail->id,
+                        );
+                    }
+                }
+
+                if(isset($data['confirm_payment']) && $data['confirm_payment']){
                     $data['paid_amount']=$sale['total_sale_amount'];
                     $data['payment_status']="paid";
                     $data['balance_amount']=0;
