@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UoMSeeder::class);
         $this->call(defaultPriceListSeeder::class);
         $this->call(NewFeatureSeeder::class);
+        $this->call(LocalAddressSeeder::class);
         // $this->call(Test::class);
         // $this->call(Test::class);
         // $this->call(UoMSeeder::class);

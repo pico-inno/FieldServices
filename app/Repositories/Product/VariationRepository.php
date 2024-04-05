@@ -90,6 +90,20 @@ class VariationRepository
         return null;
     }
 
+    public function getOrCreateVariationValueId($variationValue)
+    {
+
+        if ($variationValue){
+            $variation =  VariationTemplateValues::where('name', $variationValue)->first();
+            if (!$variation){
+                $variation = $this->createTemplate(['name' => $variationValue, 'created_by' => Auth::id()]);
+            }
+            return $variation->id;
+        }
+
+        return null;
+    }
+
 
 
 }

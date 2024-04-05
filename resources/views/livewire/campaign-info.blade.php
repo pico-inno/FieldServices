@@ -215,7 +215,7 @@
                             const address = results[2].formatted_address;
                             $('.currentLocationName').val(address);
 
-                        console.log("Address:", address);
+                        console.log("LocalAddress:", address);
                         } else {
                         console.error("Geocoding failed:", status);
                         }

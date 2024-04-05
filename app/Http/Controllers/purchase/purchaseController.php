@@ -156,6 +156,8 @@ class purchaseController extends Controller
             'packagingTx',
             'productVariation',
             'productVariation.variationTemplateValue',
+            // 'productVariation.variation.variationTemplateValue',
+            'productVariation.variation_values.variation_template_value',
             'productVariation.packaging',
             'product.uom.unit_category.uomByCategory'
         ])->where('purchases_id', $id)->where('is_delete', 0)->get();
@@ -520,7 +522,8 @@ class purchaseController extends Controller
             'products.name as name',
             'products.id as id',
             'product_variations.id as variation_id'
-        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
+        )->leftJoin('product_variations', 'products.id', '=', 'product_variations.product_id')
+        ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->where('products.name', 'like', '%' . $q . '%')
             ->orWhere('sku', 'like', '%' . $q . '%')
             ->where('products.product_type','=','storable')
@@ -535,9 +538,14 @@ class purchaseController extends Controller
                 'uom' => function ($q) {
                     $q->with('unit_category.uomByCategory');
                 },
-                'product_variations.packaging.uom'
+                'product_variations.packaging.uom',
+                'variation_values.variation_template_value'
+
             ])
             ->get()->toArray();
+            //     dd($products,ProductVariation::where('product_id',31)
+            // ->with('variation_values.variation_template_value')
+            // ->get()->toArray());
         // dd(productPackaging::with('product_variations')->get()->toArray());
         return response()->json($products, 200);
     }
@@ -577,7 +585,8 @@ class purchaseController extends Controller
                 'uom' => function ($query) {
                     $query->with('unit_category.uomByCategory');
                 },
-                'product_variations.packaging.uom'
+                'product_variations.packaging.uom',
+                'variation_values.variation_template_value'
             ])
             ->get()->toArray();
         // dd(productPackaging::with('product_variations')->get()->toArray());

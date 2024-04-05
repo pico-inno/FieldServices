@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\CurrentStockBalance;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
@@ -36,6 +37,40 @@ class ProductList extends Component
     public $genericId = 'all';
     public $manufactureId = 'all';
     public $locationId = 'all';
+    public $showSubTable = false;
+    public $selectedProductId;
+    public $total_current_quantity_with_uom;
+
+
+    public function toggleSubTable($productId)
+    {
+        if ($this->selectedProductId === $productId) {
+            $this->showSubTable = !$this->showSubTable;
+        } else {
+            $this->selectedProductId = $productId;
+            $this->showSubTable = true;
+        }
+    }
+
+    public function getCurrentQty($productId, ProductRepository $productRepository)
+    {
+        if ($this->selectedProductId == $productId) {
+            $this->selectedProductId = null;
+        } else {
+            $this->selectedProductId = $productId;
+            $variaiton_id = $productRepository->queryVariation()->where('product_id', $productId)->first()->id;
+
+            $total_qty = CurrentStockBalance::where('product_id', $productId)
+                ->where('variation_id',$variaiton_id)
+                ->sum('current_quantity');
+
+            $ref_uom_name = CurrentStockBalance::where('product_id', $productId)
+                ->with('uom')
+                ->where('variation_id',$variaiton_id)->first()->uom->name;
+
+            $this->total_current_quantity_with_uom = number_format($total_qty, 2) . ' ' . $ref_uom_name;
+        }
+    }
 
     public function mount(
         LocationRepositoryInterface $locationRepository,
@@ -81,7 +116,7 @@ class ProductList extends Component
                 ->leftJoin('manufacturers','manufacturer_id','=','manufacturers.id')
                 ->leftJoin('categories','category_id','=','categories.id')
                 ->leftJoin('categories as subCategory','sub_category_id','=','subCategory.id')
-                ->with('productVariations')
+                ->with(['productVariations', 'locations_product.location'])
                 ->when(
                     $keyword !='' || $productTypeFilter !='all' || $categoryFilterId !='all' || $brandId!='all' || $genericId!='all' || $manufactureId !='all',
                     function($q) use($keyword,$productTypeFilter,$categoryFilterId,$brandId,$genericId,$manufactureId)
@@ -105,7 +140,9 @@ class ProductList extends Component
                 )
 
                 ->paginate($this->perPage);
-        // dd($products->toArray());
+
         return view('livewire.product-list',compact('products','updatePermission','deletePermission'));
     }
+
+
 }

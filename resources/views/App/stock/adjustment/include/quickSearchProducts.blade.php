@@ -165,6 +165,7 @@
                                         sku=result.sku;
                                     }
 
+
                                     if(result.has_variation =='variable' && results.length== 1){
                                         return;
                                     }

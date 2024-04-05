@@ -19,7 +19,8 @@ class lotSerialDetails extends Model
         'uom_id',
         'uom_quantity',
         'ref_uom_quantity',
-        'is_prepare'
+        'is_prepare',
+        'stock_status'
     ];
 
 

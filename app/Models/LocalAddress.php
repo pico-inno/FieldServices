@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Address extends Model
+class LocalAddress extends Model
 {
     use HasFactory;
 
@@ -23,11 +23,11 @@ class Address extends Model
 
     public function township()
     {
-        return $this->belongsTo(Township::class);
+        return $this->belongsTo(LocalTownship::class);
     }
 
     public function region()
     {
-        return $this->belongsTo(Region::class);
+        return $this->belongsTo(LocalRegion::class);
     }
 }
