@@ -555,6 +555,7 @@ class saleController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
+            logger($e->getMessage());
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '422',
