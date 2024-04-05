@@ -197,7 +197,7 @@ class StockAdjustmentController extends Controller
                 $q->where('business_location_id', $business_location_id);
             }], 'current_quantity');
         $adjustment_details = $stock_adjustment_details->get();
-//return $adjustment_details;
+//return $stockAdjustment;
         return view('App.stock.adjustment.edit', [
             'stockAdjustment' => $stockAdjustment,
             'adjustment_details' => $adjustment_details,
@@ -374,6 +374,7 @@ class StockAdjustmentController extends Controller
                 'product_variations.additionalProduct.productVariation.product',
                 'product_variations.additionalProduct.uom',
                 'product_variations.additionalProduct.productVariation.variationTemplateValue',
+                'product_variations.variation_values.variation_template_value',
                 'stock' => function ($query) use ($business_location_id, $keyword) {
                     $locationIds = childLocationIDs($business_location_id);
                     $query->select('current_quantity', 'business_location_id', 'product_id','id', 'lot_serial_type', 'lot_serial_no', 'ref_uom_price', 'ref_uom_id')
@@ -439,7 +440,20 @@ class StockAdjustmentController extends Controller
                     $query->whereIn('business_location_id', $locationIds);
                     $query->where('variation_id', '=', DB::raw('product_variations.id'));
                 }], 'current_quantity')
-                ->get()->toArray();
+                ->get();
+
+            foreach ($results as $result){
+                $value_names = '';
+                foreach ($result['product_variations']['variation_values'] as $value) {
+                    $value_names .= $value['variation_template_value']['name'] . '-';
+                }
+                $value_names = rtrim($value_names, '-');
+
+                $result['variation_name'] = $value_names;
+
+                $result['aa'] = $result['product_variations']['variation_values'];
+
+            }
         }
 
         if ($search_type == "Serial"){
@@ -487,7 +501,7 @@ class StockAdjustmentController extends Controller
                 $result['id'] = $result['product_id'];
                 $result['serial_data'] = true;
                 $result['name'] = $result['product']['name'];
-                $result['variation_name'] = optional($result['variation']['variationTemplateValue'])['name'];
+//                $result['variation_name'] = optional($result['variation']['variationTemplateValue'])['name'];
                 $result['uom_id'] = $result['ref_uom_id'];
                 $result['product_variations'] = $product_variations;
                 $result['stock'] = [$stock];

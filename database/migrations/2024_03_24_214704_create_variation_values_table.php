@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
+        Schema::create('variation_values', function (Blueprint $table) {
             $table->id();
-            $table->string('mm_name');
-            $table->string('en_name');
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_variation_id');
+            $table->unsignedBigInteger('variation_template_value_id');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('variation_values');
     }
 };

@@ -3,6 +3,7 @@
 $(document).ready(function() {
 
     let prodcuts;
+    $('.package_id').select2();
     let productsOnSelectData=@json($productsOnSelectData?? []);
     let osdCount={{$osdCount ?? 0}};
     let ItemLimitRowCount=@json(ini_get('max_input_vars'))-(osdCount*20);
@@ -81,6 +82,7 @@ $(document).ready(function() {
                         };
                     },success:function(e){
                            results=e;
+                           console.log(results,'result')
                         products=e;
                         var html = '';
                         // products=results;
@@ -90,6 +92,17 @@ $(document).ready(function() {
                             let addedSku=[];
 
                             results.forEach(function(result,key) {
+                                let productVariation=result.product_variations;
+                                let variation_values=result.variation_values ?? [];
+                                let variationName=result.variation_name;
+                                let valueLength=variation_values.length;
+                                if(productVariation.variation_template_value_id == null && variation_values.length >0){
+                                    variationName = '';
+                                    variation_values.forEach((variation_value,i) => {
+                                        separator=(i != 0 || i+1==valueLength) ? ', ' : ' ';
+                                        variationName += separator + variation_value.variation_template_value.name
+                                    });
+                                }
                                 let checkSku=addedSku.find((s)=>s==result.sku);
                                 if(sku && result.sku==sku && !checkSku){
                                     html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" style="order:-1;" data-id="selectAll" data-productid='${result.id}' data-name="${result.name}"
@@ -108,7 +121,7 @@ $(document).ready(function() {
 
                                 html += `<div class="quick-search-result result cursor-pointer mt-1 mb-1 bg-hover-light p-2" data-id=${key} data-name="${result.name}" style="z-index:100;">`;
                                 html += `<h4 class="fs-6 ps-10 pt-3">
-                                    ${result.name}-${result.variation_name ? '('+result.variation_name+')': ''}`;
+                                    ${result.name}-${variationName ? '('+variationName+')': ''}`;
                                 html+='</h4>'
                                 html+=`<span class="ps-10 pt-3 text-gray-700">${result.sku?'SKU : '+result.sku :''} </span>`
 
@@ -211,6 +224,17 @@ $(document).ready(function() {
                 `;
             })
         }
+        let productVariation=selected_product.product_variations;
+        let variation_values=selected_product.variation_values ?? [];
+        let variationName=selected_product.variation_name;
+        let valueLength=variation_values.length;
+        if(productVariation.variation_template_value_id == null && variation_values.length >0){
+            variationName = '';
+            variation_values.forEach((variation_value,i) => {
+                separator=(i != 0 || i+1==valueLength) ? ', ' : ' ';
+                variationName += separator + variation_value.variation_template_value.name
+            });
+        }
         let lotSerialInput=lotControl == 'on' ?
             `<td>
                 <input type="text" class="form-control   form-control-sm " name="opening_stock_details[${unique_name_id}][lot_serial_no]" id="numberonly"  value="" placeholder="lot number">
@@ -226,7 +250,7 @@ $(document).ready(function() {
             </td>
             <td>
                 <a href="#" class="text-gray-600 text-hover-primary mb-1 ">${selected_product.name}</a><br>
-                <span class="text-gray-500 fw-semibold fs-5">${selected_product.variation_name??''}</span>
+                <span class="text-gray-500 fw-semibold fs-5">${variationName? '( '+variationName+' )' :''}</span>
             </td>
             <td class="fv-row">
                 <input type="text" class="form-control form-control-sm  quantity input_number" placeholder="Quantity" name="opening_stock_details[${unique_name_id}][quantity]" value="1.00">

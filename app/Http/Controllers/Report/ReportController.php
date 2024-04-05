@@ -29,6 +29,7 @@ use App\Models\Stock\StockAdjustment;
 use App\Services\Report\reportServices;
 use Modules\StockInOut\Entities\Stockin;
 use mysql_xdevapi\Exception;
+use mysql_xdevapi\Expression;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\settings\businessLocation;
 
@@ -140,7 +141,9 @@ class ReportController extends Controller
         $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', $dates[1])->endOfDay();
 
         $query = sales::where('is_delete', 0)
-            ->with('saleDetails', 'customer', 'business_location_id')
+            ->with(['saleDetails' => function ($query) {
+                $query->where('is_delete', 0);
+            }, 'customer', 'business_location_id'])
             ->whereBetween('sold_at', [$startDate, $endDate]);
 
         //        if ($request->data['filter_locations'] != 0) {
@@ -216,6 +219,9 @@ class ReportController extends Controller
                                 'brand_id' => $product['brand']['id'] ?? '',
                                 'quantity' => $detail['quantity'],
                                 'uom_price' => $detail['uom_price'],
+                                'subtotal' => $detail['subtotal'],
+                                'per_item_discount' => $detail['per_item_discount'] ?? 0,
+                                'subtotal_with_discount' => $detail['subtotal_with_discount'],
                                 'uom_name' => $detail['uom']['name'],
                                 'uom_short_name' => $detail['uom']['short_name'],
                             ];
@@ -942,19 +948,9 @@ class ReportController extends Controller
             $query->where('from_location', $request->data['filter_locations_from']);
         }
 
-        //        if ($request->data['filter_locations_from'] != 0) {
-        //            $locationId = childLocationIDs($request->data['filter_locations_from']);
-        //            $query->whereIn('from_location', $locationId);
-        //        }
-
         if ($request->data['filter_locations_to'] != 0) {
             $query->where('to_location', $request->data['filter_locations_to']);
         }
-
-        //        if ($request->data['filter_locations_to'] != 0) {
-        //            $locationId = childLocationIDs($request->data['filter_locations_to']);
-        //            $query->whereIn('to_location', $locationId);
-        //        }
 
         if ($request->data['filter_stocktransferperson'] != 0) {
             $query->where('transfered_person', $request->data['filter_stocktransferperson']);
@@ -1009,7 +1005,7 @@ class ReportController extends Controller
             $query->where('to_location', $request->data['filter_locations_to']);
         }
 
-
+        $stockTransfer = $query->get();
         $stockDetails = $query->get()->pluck('stockTransferDetails')->flatten();
         $productIds = $stockDetails->pluck('product_id')->unique()->toArray();
 
@@ -1045,14 +1041,21 @@ class ReportController extends Controller
 
         $finalProduct = $finalProduct->get()->toArray();
 
-        // Additional optimization steps can be applied here, such as caching or pagination
-
         $result = [];
 
         foreach ($stockDetails as $stockDetail) {
             $productId = $stockDetail['product_id'];
             $variationId = $stockDetail['variation_id'];
             $lotNo = $stockDetail['lot_no'];
+            $transferDate = null;
+            $voucherNo = null;
+            foreach ($stockTransfer as $transfer){
+                 if ($transfer['id'] == $stockDetail['transfer_id']){
+                    $transferDate =  $transfer['transfered_at'];
+                    $voucherNo = $transfer['transfer_voucher_no'];
+                 }
+            }
+
 
             foreach ($finalProduct as $product) {
                 if ($product['id'] == $productId) {
@@ -1066,6 +1069,7 @@ class ReportController extends Controller
                             // $smallest_price = UomHelper::smallestPrice($stockDetail['uomset_id'],$stockDetail['unit_id'],$stockDetail['quantity'],$stockDetail['purchase_price']);
                             $variationProduct = [
                                 'id' => $product['id'],
+                                'voucher_no' => $voucherNo,
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
                                 'variation_id' => $variation['id'],
@@ -1075,6 +1079,7 @@ class ReportController extends Controller
                                 'category_name' => $product['category']['name'] ?? '',
                                 'brand_name' => $product['brand']['name'] ?? '',
                                 'brand_id' => $product['brand']['id'] ?? '',
+                                'transfered_at' => $transferDate,
                                 // 'unit_name' => $stockDetail['unit']['name'],
                                 // 'uom_name' => $stockDetail['uomset']['uomset_name'],
                                 'uom_short_name' => $stockDetail['uom']['short_name'],
@@ -1084,6 +1089,7 @@ class ReportController extends Controller
                                 'transfer_quantity' => number_format($stockDetail['quantity'], 2),
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
+                                'remark' => $stockDetail['remark'] ?? '-',
                                 // 'samllest_stock_qty' => number_format($smallest_qty, 2),
                                 // 'smallest_unit_name' =>  $smallest_unit_name,
                             ];
@@ -1159,7 +1165,7 @@ class ReportController extends Controller
         $results = $query->get();
 
 
-        //        return $results;
+//                return $results;
 
         return view('App.report.inventory.stock.currentBalance', [
             'nav_type' => $nav_type,
@@ -1181,6 +1187,7 @@ class ReportController extends Controller
         $filterBrand = $request->data['filter_brand'];
         $dateRange = $request->data['filter_date'];
         $filterType = $request->data['filter_type'];
+        $filterStockStatus = $request->data['filter_stock_status'];
 
         if ($dateRange) {
             $dates = explode(' - ', $dateRange);
@@ -1190,7 +1197,9 @@ class ReportController extends Controller
         }
 
         if ($filterType == 2) {
-            $query = CurrentStockBalance::with(['uom', 'packaging_uom', 'location:id,name,parent_location_id'])
+            $query = CurrentStockBalance::with(['uom', 'packaging_uom', 'location:id,name,parent_location_id',     'lot_serial_details' => function ($query) {
+                $query->where('stock_status', 'reserve');
+            }])
                 ->select(
                     'current_stock_balance.*',
                     'product_packaging_transactions.*',
@@ -1198,7 +1207,6 @@ class ReportController extends Controller
                     'current_stock_balance.created_at as csb_created_at',
                     'current_stock_balance.product_id as csb_product_id',
                     'current_stock_balance.variation_id as csb_variation_id',
-
                 )
                 ->where('current_quantity', '>', 0)
                 ->leftJoin('product_packaging_transactions', function ($join) {
@@ -1228,10 +1236,10 @@ class ReportController extends Controller
         //        return response()->json($currentStocks, 200);
         $productIds = $filterType == 2 ? $currentStocks->pluck('csb_product_id')->unique()->toArray() : $currentStocks->pluck('product_id')->unique()->toArray();
 
-        $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id')
+        $finalProduct = Product::select('id', 'name', 'product_code', 'sku', 'product_type', 'brand_id', 'category_id', 'has_variation')
             ->with(['category:id,name', 'brand:id,name', 'productVariations' => function ($query) {
                 $query->select('id', 'product_id', 'variation_template_value_id', 'default_purchase_price', 'default_selling_price', 'variation_sku')
-                    ->with(['packaging', 'variationTemplateValue' => function ($query) {
+                    ->with(['variation_values.variation_template_value','packaging', 'variationTemplateValue' => function ($query) {
                         $query->select('id', 'name', 'variation_template_id')
                             ->with(['variationTemplate:id,name']);
                     }]);
@@ -1398,6 +1406,19 @@ class ReportController extends Controller
                 $lotCounts[$key]++;
             }
 
+            $totalRefUOMQuantity = 0;
+
+            if ($filterStockStatus == 2) {
+                foreach ($currentStock['lot_serial_details'] as $lotSerialDetail) {
+                    $totalRefUOMQuantity += $lotSerialDetail['ref_uom_quantity'];
+                }
+            }
+            if($filterStockStatus == 1){
+                $totalRefUOMQuantity = 0;
+            }
+
+
+
             foreach ($finalProduct as $product) {
                 if ($product['id'] == $productId) {
                     $variations = $product['product_variations'];
@@ -1405,14 +1426,24 @@ class ReportController extends Controller
                     foreach ($variations as $variation) {
                         if ($variation['id'] == $variationId) {
 
+
+                                $value_names = '';
+                                foreach ($variation['variation_values'] as $value) {
+                                    $value_names .= $value['variation_template_value']['name'] . '-';
+                                }
+                                $value_names = rtrim($value_names, '-');
+
+
+
                             $variationProduct = [
                                 'id' => $product['id'],
                                 'product_packaging_id' => $currentStock['product_packaging_id'] ?? 0,
                                 'name' => $product['name'],
                                 'sku' => $product['sku'],
+                                'variation_full_name' => $value_names,
                                 'variation_id' => $variation['id'],
                                 'product_type' => $product['product_type'],
-                                'variation_sku' => $product['product_type'] == 'variable' ? $variation['variation_sku'] : "",
+                                'variation_sku' => $product['has_variation'] == 'variable' ? $variation['variation_sku'] : "",
                                 'variation_template_name' => $variation['variation_template_value']['variation_template']['name'] ?? '',
                                 'variation_value_name' => $variation['variation_template_value']['name'] ?? '',
                                 'batch_no' => $filterView == 3 ? $currentStock['batch_no'] : $currentStock['batch_number'],
@@ -1425,7 +1456,9 @@ class ReportController extends Controller
                                 'ref_uom_name' => $currentStock['uom']['name'],
                                 'ref_uom_short_name' => $currentStock['uom']['short_name'],
                                 'purchase_qty' => $currentStock['ref_uom_quantity'],
-                                'current_qty' => $currentStock['current_quantity'],
+                                'current_qty' => $currentStock['current_quantity'] + $totalRefUOMQuantity,
+                                'total_qty' => $totalRefUOMQuantity,
+//                                'lot_info' => $currentStock['lot_serial_details'],
                                 'package_name' =>  $packageName,
                                 'package_qty' => $currentStock['quantity'],
                                 'packaging_uom_short_name' => $currentStock['packaging_uom']['short_name'] ?? '',

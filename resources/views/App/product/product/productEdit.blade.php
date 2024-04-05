@@ -33,7 +33,9 @@
         <!--begin::Container-->
         <div class="container-xxl" id="kt_content_container">
             <!--begin::Form-->
-            <form action="{{ route('product.update', $product->id) }}" method="POST" enctype="multipart/form-data" id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row" data-kt-redirect="../../demo7/dist/apps/ecommerce/catalog/products.html">
+            <form action="{{ route('product.update', $product->id) }}" method="POST" enctype="multipart/form-data"
+                id="kt_ecommerce_add_product_form" class="form d-flex flex-column flex-lg-row"
+                data-kt-redirect="../../demo7/dist/apps/ecommerce/catalog/products.html">
                 @csrf
                 @method('PUT')
                 <!--begin::Aside column-->
@@ -58,7 +60,8 @@
                                         <div class="mb-10 fv-row">
                                             <div class="row">
                                                 <div class="col-md-4 mb-5">
-                                                    <label class="form-label d-block">{{ __('product/product.product_image') }}</label>
+                                                    <label
+                                                        class="form-label d-block">{{ __('product/product.product_image') }}</label>
                                                     <style>
                                                         .image-input-placeholder {
                                                             background-image: url('svg/avatars/blank.svg');
@@ -68,46 +71,48 @@
                                                             background-image: url('{{ asset("storage/product-image/$product->image") }}');
                                                         }
                                                     </style>
-                                                    <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url(/assets/media/svg/avatars/blank.svg)">
+                                                    <div class="image-input image-input-outline" data-kt-image-input="true"
+                                                        style="background-image: url(/assets/media/svg/avatars/blank.svg)">
                                                         <!--begin::Image preview wrapper-->
                                                         @if ($product->image)
-                                                            <div class="image-input-wrapper w-125px h-125px" style="background-image: url({{ '/storage/product-image/'.$product->image }})"></div>
+                                                            <div class="image-input-wrapper w-125px h-125px"
+                                                                style="background-image: url({{ '/storage/product-image/' . $product->image }})">
+                                                            </div>
                                                         @else
                                                             <div class="image-input-wrapper w-125px h-125px"></div>
                                                         @endif
                                                         <!--end::Image preview wrapper-->
 
                                                         <!--begin::Edit button-->
-                                                        <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                               data-kt-image-input-action="change"
-                                                               data-bs-toggle="tooltip"
-                                                               data-bs-dismiss="click"
-                                                               title="Change avatar">
-                                                            <i class="ki-duotone ki-pencil fs-6"><span class="path1"></span><span class="path2"></span></i>
+                                                        <label
+                                                            class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                            data-kt-image-input-action="change" data-bs-toggle="tooltip"
+                                                            data-bs-dismiss="click" title="Change avatar">
+                                                            <i class="ki-duotone ki-pencil fs-6"><span
+                                                                    class="path1"></span><span class="path2"></span></i>
 
                                                             <!--begin::Inputs-->
-                                                            <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                                                            <input type="file" name="avatar"
+                                                                accept=".png, .jpg, .jpeg" />
                                                             <input type="hidden" name="avatar_remove" />
                                                             <!--end::Inputs-->
                                                         </label>
                                                         <!--end::Edit button-->
 
                                                         <!--begin::Cancel button-->
-                                                        <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                              data-kt-image-input-action="cancel"
-                                                              data-bs-toggle="tooltip"
-                                                              data-bs-dismiss="click"
-                                                              title="Cancel avatar">
+                                                        <span
+                                                            class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                            data-kt-image-input-action="cancel" data-bs-toggle="tooltip"
+                                                            data-bs-dismiss="click" title="Cancel avatar">
                                                             <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
                                                         <!--end::Cancel button-->
 
                                                         <!--begin::Remove button-->
-                                                        <span class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                              data-kt-image-input-action="remove"
-                                                              data-bs-toggle="tooltip"
-                                                              data-bs-dismiss="click"
-                                                              title="Remove avatar">
+                                                        <span
+                                                            class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                            data-kt-image-input-action="remove" data-bs-toggle="tooltip"
+                                                            data-bs-dismiss="click" title="Remove avatar">
                                                             <i class="ki-outline ki-cross fs-3"></i>
                                                         </span>
                                                         <!--end::Remove button-->
@@ -117,32 +122,44 @@
                                                     <div class="text-muted fs-7">Max File Size: 5MB</div>
                                                     <div class="text-muted fs-7">Aspect ratio should be 1:1</div>
                                                     @error('avatar')
-                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                        <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="can_sale">
-                                                            <input class="form-check-input" name="can_sale" type="checkbox" value="1" id="can_sale" @checked($product->can_sale === 1)/>
-                                                            <strong class="ms-4 h5">{{ __('product/product.can_sale') }}</strong>
+                                                            <input class="form-check-input" name="can_sale" type="checkbox"
+                                                                value="1" id="can_sale"
+                                                                @checked($product->can_sale === 1) />
+                                                            <strong
+                                                                class="ms-4 h5">{{ __('product/product.can_sale') }}</strong>
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="can_purchase">
-                                                            <input class="form-check-input" name="can_purchase" type="checkbox" value="1" id="can_purchase" @checked($product->can_purchase === 1)/>
-                                                            <strong class="ms-4 h5">{{ __('product/product.can_purchase') }}</strong>
+                                                            <input class="form-check-input" name="can_purchase"
+                                                                type="checkbox" value="1" id="can_purchase"
+                                                                @checked($product->can_purchase === 1) />
+                                                            <strong
+                                                                class="ms-4 h5">{{ __('product/product.can_purchase') }}</strong>
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="can_expense">
-                                                            <input class="form-check-input" name="can_expense" type="checkbox" value="1" id="can_expense" @checked($product->can_expense === 1)/>
-                                                            <strong class="ms-4 h5">{{ __('product/product.can_expense') }}</strong>
+                                                            <input class="form-check-input" name="can_expense"
+                                                                type="checkbox" value="1" id="can_expense"
+                                                                @checked($product->can_expense === 1) />
+                                                            <strong
+                                                                class="ms-4 h5">{{ __('product/product.can_expense') }}</strong>
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-custom form-check-solid mt-8">
                                                         <label class="" for="is_recurring">
-                                                            <input class="form-check-input" name="is_recurring" type="checkbox" value="1" id="is_recurring" @checked($product->is_recurring === 1)/>
-                                                            <strong class="ms-4 h5">{{ __('product/product.is_recurring') }}</strong>
+                                                            <input class="form-check-input" name="is_recurring"
+                                                                type="checkbox" value="1" id="is_recurring"
+                                                                @checked($product->is_recurring === 1) />
+                                                            <strong
+                                                                class="ms-4 h5">{{ __('product/product.is_recurring') }}</strong>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -160,9 +177,14 @@
                                                         </label>
                                                         <div class="input-group flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <div class="btn btn-sm btn-light-info w-200px" id="advance_toggle">
-                                                                    <span class="show_advance"><i class="fa-solid fa-eye-slash me-5"></i>Show Advance</span>
-                                                                    <span class="hide_advance d-none"><i class="fa-solid fa-eye me-5"></i>Hide Advance</span>
+                                                                <div class="btn btn-sm btn-light-info w-200px"
+                                                                    id="advance_toggle">
+                                                                    <span class="show_advance"><i
+                                                                            class="fa-solid fa-eye-slash me-5"></i>Show
+                                                                        Advance</span>
+                                                                    <span class="hide_advance d-none"><i
+                                                                            class="fa-solid fa-eye me-5"></i>Hide
+                                                                        Advance</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -175,17 +197,23 @@
                                                         </label>
                                                         <div class="input-group flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="product_type" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Product Type">
+                                                                <select name="product_type"
+                                                                    class="form-select form-select-sm"
+                                                                    data-control="select2"
+                                                                    data-placeholder="Select Product Type">
                                                                     <option></option>
-                                                                    <option value="consumeable" @selected($product->product_type === 'consumeable')>Consumeable</option>
-                                                                    <option value="storable" @selected($product->product_type === 'storable')>Storable</option>
-                                                                    <option value="service" @selected($product->product_type === 'service')>Service</option>
+                                                                    <option value="consumeable"
+                                                                        @selected($product->product_type === 'consumeable')>Consumeable</option>
+                                                                    <option value="storable" @selected($product->product_type === 'storable')>
+                                                                        Storable</option>
+                                                                    <option value="service" @selected($product->product_type === 'service')>
+                                                                        Service</option>
                                                                 </select>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     @error('product_type')
-                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                        <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
 
@@ -193,10 +221,14 @@
                                             </div>
                                             <div class="row mb-5">
                                                 <div class="col-md-4 mb-5">
-                                                    <label class="required form-label">{{ __('product/product.product_name') }}</label>
-                                                    <input type="text" name="product_name" class="form-control form-control-sm mb-2" placeholder="Product name" value="{{old('product_name',$product->name)}}" />
+                                                    <label
+                                                        class="required form-label">{{ __('product/product.product_name') }}</label>
+                                                    <input type="text" name="product_name"
+                                                        class="form-control form-control-sm mb-2"
+                                                        placeholder="Product name"
+                                                        value="{{ old('product_name', $product->name) }}" />
                                                     @error('product_name')
-                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                        <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5">
@@ -204,32 +236,48 @@
                                                         <label class="form-label">
                                                             Product Code
                                                         </label>
-                                                        <input type="text" name="product_code" class="form-control form-control-sm mb-2" placeholder="Product code" value="{{old('product_code',$product->product_code)}}" />
+                                                        <input type="text" name="product_code"
+                                                            class="form-control form-control-sm mb-2"
+                                                            placeholder="Product code"
+                                                            value="{{ old('product_code', $product->product_code) }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-5  advance-toggle-class d-none">
                                                     <div class="fv-row">
                                                         <label class="form-label">
-                                                            SKU <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                   title="Unique product id or Stock Keeping Unit <br/><br/> Keep it blank to automatically generate sku.<br/><span class='text-muted'>You can modify sku prefix in Business settings.</span>"></i>
+                                                            SKU <i
+                                                                class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help"
+                                                                data-bs-toggle="tooltip" data-bs-html="true"
+                                                                style="cursor:help"
+                                                                title="Unique product id or Stock Keeping Unit <br/><br/> Keep it blank to automatically generate sku.<br/><span class='text-muted'>You can modify sku prefix in Business settings.</span>"></i>
                                                         </label>
-                                                        <input type="text" name="sku" class="form-control form-control-sm mb-2" placeholder="SKU Number" value="{{old('sku',$product->sku)}}" />
+                                                        <input type="text" name="sku"
+                                                            class="form-control form-control-sm mb-2"
+                                                            placeholder="SKU Number"
+                                                            value="{{ old('sku', $product->sku) }}" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-5">
                                                 <div class="col-md-4 mb-5">
-                                                    <label for="" class="form-label">{{ __('product/product.brand') }}</label>
+                                                    <label for=""
+                                                        class="form-label">{{ __('product/product.brand') }}</label>
                                                     <div class="input-group mb-5 flex-nowrap">
                                                         <div class="overflow-hidden flex-grow-1">
-                                                            <select name="brand" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select brand">
+                                                            <select name="brand"
+                                                                class="form-select form-select-sm rounded-end-0"
+                                                                data-control="select2" data-placeholder="Select brand">
                                                                 <option></option>
                                                                 @foreach ($brands as $brand)
-                                                                    <option value="{{ $brand->id }}" @selected($brand->id === $product->brand_id)>{{ $brand->name }}</option>
+                                                                    <option value="{{ $brand->id }}"
+                                                                        @selected($brand->id === $product->brand_id)>{{ $brand->name }}
+                                                                    </option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <span class="input-group-text cursor-pointer" data-bs-toggle="modal" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_brand">
+                                                        <span class="input-group-text cursor-pointer"
+                                                            data-bs-toggle="modal" id="basic-addon1"
+                                                            data-bs-toggle="modal" data-bs-target="#kt_modal_brand">
                                                             <i class="fas fa-circle-plus text-primary"></i>
                                                         </span>
 
@@ -241,23 +289,31 @@
                                                     </label>
                                                     <div class="input-group mb-5 flex-nowrap">
                                                         <div class="overflow-hidden flex-grow-1">
-                                                    <select id="categorySelect" name="category" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select category">
-                                                        <option></option>
-                                                        @foreach ($categories as $category)
-                                                            <option value="{{ $category->id }}" @selected($category->id === $product->category_id)>{{ $category->name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                            <select id="categorySelect" name="category"
+                                                                class="form-select form-select-sm rounded-end-0"
+                                                                data-control="select2" data-placeholder="Select category">
+                                                                <option></option>
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}"
+                                                                        @selected($category->id === $product->category_id)>{{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
-                                                    <span class="input-group-text cursor-pointer" data-bs-toggle="modal" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_category">
+                                                        <span class="input-group-text cursor-pointer"
+                                                            data-bs-toggle="modal" id="basic-addon1"
+                                                            data-bs-toggle="modal" data-bs-target="#kt_modal_category">
                                                             <i class="fas fa-circle-plus text-primary"></i>
                                                         </span>
-                                                </div>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-4 mb-5 advance-toggle-class d-none">
                                                     <label for="" class="form-label">
                                                         Sub Category
                                                     </label>
-                                                    <select class="form-select form-select-sm" name="sub_category" id="subCategorySelect" data-control="select2" data-hide-search="true" data-placeholder="Select sub category">
+                                                    <select class="form-select form-select-sm" name="sub_category"
+                                                        id="subCategorySelect" data-control="select2"
+                                                        data-hide-search="true" data-placeholder="Select sub category">
 
                                                     </select>
                                                 </div>
@@ -267,14 +323,21 @@
                                                     <label for="" class="form-label">Manufacturer</label>
                                                     <div class="input-group mb-5 flex-nowrap">
                                                         <div class="overflow-hidden flex-grow-1">
-                                                            <select name="manufacturer" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select manufacturer">
+                                                            <select name="manufacturer"
+                                                                class="form-select form-select-sm rounded-end-0"
+                                                                data-control="select2"
+                                                                data-placeholder="Select manufacturer">
                                                                 <option></option>
                                                                 @foreach ($manufacturers as $manufacturer)
-                                                                    <option value="{{ $manufacturer->id }}" @selected($manufacturer->id === $product->manufacturer_id)>{{ $manufacturer->name }}</option>
+                                                                    <option value="{{ $manufacturer->id }}"
+                                                                        @selected($manufacturer->id === $product->manufacturer_id)>
+                                                                        {{ $manufacturer->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <span class="input-group-text cursor-pointer" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_manufacturer">
+                                                        <span class="input-group-text cursor-pointer" id="basic-addon1"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#kt_modal_manufacturer">
                                                             <i class="fas fa-circle-plus text-primary"></i>
                                                         </span>
                                                     </div>
@@ -284,14 +347,19 @@
                                                     <label for="" class="form-label">Generic</label>
                                                     <div class="input-group mb-5 flex-nowrap">
                                                         <div class="overflow-hidden flex-grow-1">
-                                                            <select name="generic" class="form-select form-select-sm rounded-end-0" data-control="select2" data-placeholder="Select generic">
+                                                            <select name="generic"
+                                                                class="form-select form-select-sm rounded-end-0"
+                                                                data-control="select2" data-placeholder="Select generic">
                                                                 <option></option>
                                                                 @foreach ($generics as $generic)
-                                                                    <option value="{{ $generic->id }}" @selected($generic->id === $product->generic_id)>{{ $generic->name }}</option>
+                                                                    <option value="{{ $generic->id }}"
+                                                                        @selected($generic->id === $product->generic_id)>{{ $generic->name }}
+                                                                    </option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <span class="input-group-text cursor-pointer" id="basic-addon1" data-bs-toggle="modal" data-bs-target="#kt_modal_generic">
+                                                        <span class="input-group-text cursor-pointer" id="basic-addon1"
+                                                            data-bs-toggle="modal" data-bs-target="#kt_modal_generic">
                                                             <i class="fas fa-circle-plus text-primary"></i>
                                                         </span>
                                                     </div>
@@ -318,17 +386,22 @@
                                                         </label>
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="unit_categories" class="form-select form-select-sm" data-control="select2" data-placeholder="Select Unit Categories">
+                                                                <select name="unit_categories"
+                                                                    class="form-select form-select-sm"
+                                                                    data-control="select2"
+                                                                    data-placeholder="Select Unit Categories">
                                                                     <option></option>
                                                                     @foreach ($unitCategories as $unitCategorie)
-                                                                        <option value="{{ $unitCategorie->id }}" @selected(old('uom_id') == $unitCategorie->id)>{{ $unitCategorie->name }}</option>
+                                                                        <option value="{{ $unitCategorie->id }}"
+                                                                            @selected(old('uom_id') == $unitCategorie->id)>
+                                                                            {{ $unitCategorie->name }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     @error('uom_id')
-                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                        <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5">
@@ -340,17 +413,18 @@
                                                         <!--end::Label-->
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="uom_id" class="form-select form-select-sm " data-control="select2" data-placeholder="Select unit">
+                                                                <select name="uom_id" class="form-select form-select-sm "
+                                                                    data-control="select2" data-placeholder="Select unit">
                                                                     <option></option>
-{{--                                                                    @foreach ($uoms as $uom)--}}
-{{--                                                                        <option value="{{ $uom->id }}" @selected($uom->id === $product->uom_id)>{{ $uom->name }}</option>--}}
-{{--                                                                    @endforeach--}}
+                                                                    {{--                                                                    @foreach ($uoms as $uom) --}}
+                                                                    {{--                                                                        <option value="{{ $uom->id }}" @selected($uom->id === $product->uom_id)>{{ $uom->name }}</option> --}}
+                                                                    {{--                                                                    @endforeach --}}
                                                                 </select>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     @error('uom_id')
-                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                        <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5">
@@ -362,24 +436,29 @@
                                                         <!--end::Label-->
                                                         <div class="input-group mb-5 flex-nowrap">
                                                             <div class="overflow-hidden flex-grow-1">
-                                                                <select name="purchase_uom_id" id="unitOfUom" class="form-select form-select-sm unitOfUom" data-control="select2" data-placeholder="Select purchase UoM">
+                                                                <select name="purchase_uom_id" id="unitOfUom"
+                                                                    class="form-select form-select-sm unitOfUom"
+                                                                    data-control="select2"
+                                                                    data-placeholder="Select purchase UoM">
 
                                                                 </select>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     @error('purchase_uom_id')
-                                                    <div class="text-danger my-2">{{ $message }}</div>
+                                                        <div class="text-danger my-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-5">
 
-                                                    <div id="single_alert_qty_ui"  class="fv-row">
+                                                    <div id="single_alert_qty_ui" class="fv-row">
                                                         <label class="form-label">
                                                             {{ __('product/product.alert_quantity') }}
                                                         </label>
 
-                                                        <input type="text" name="single_alert_quantity" class="form-control form-control-sm mb-2" placeholder="Alert Quantity" value="" />
+                                                        <input type="text" name="single_alert_quantity"
+                                                            class="form-control form-control-sm mb-2"
+                                                            placeholder="Alert Quantity" value="" />
 
                                                     </div>
 
@@ -390,17 +469,24 @@
                                                     <label class="form-label">{{ __('product/product.purchase_price') }}
                                                         <span class="uom-label"></span>
                                                     </label>
-                                                    <input type="text" name="purchase_price_for_single" class="form-control form-control-sm mb-2" placeholder="Purchase price" value="" />
+                                                    <input type="text" name="purchase_price_for_single"
+                                                        class="form-control form-control-sm mb-2"
+                                                        placeholder="Purchase price" value="" />
                                                 </div>
                                                 <div class="col-md-4 mb-5">
-                                                    <label class="form-label">{{ __('product/product.profit_margin') }}</label>
-                                                    <input type="text" name="profit_margin_for_single" class="form-control form-control-sm mb-2" placeholder="Profit mergin (%)" value="" />
+                                                    <label
+                                                        class="form-label">{{ __('product/product.profit_margin') }}</label>
+                                                    <input type="text" name="profit_margin_for_single"
+                                                        class="form-control form-control-sm mb-2"
+                                                        placeholder="Profit mergin (%)" value="" />
                                                 </div>
                                                 <div class="col-md-4 mb-5">
                                                     <label class="form-label">{{ __('product/product.sell_price') }}
                                                         <span class="uom-label"></span>
                                                     </label>
-                                                    <input type="text" name="sell_price_for_single" class="form-control form-control-sm mb-2" placeholder="Sell price" value="" />
+                                                    <input type="text" name="sell_price_for_single"
+                                                        class="form-control form-control-sm mb-2" placeholder="Sell price"
+                                                        value="" />
                                                 </div>
                                             </div>
                                         </div>
@@ -411,18 +497,44 @@
                                                 <label for="" class="form-label required">
                                                     Has Variation
                                                 </label>
-                                                <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                   title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
+                                                <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help"
+                                                    data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
+                                                    title="<div class='text-start'><strong>Single product: </strong> Product with no variations. <br/>
                                                             <strong>Variable product: </strong> Product with variations such as size, color etc. <br/>
                                                             <strong>Combo product: </strong> A combination of multiple products, also called bundle product.</div>"></i>
                                                 <div class="mb-3">
-                                                    <select class="form-select form-select" name="has_variation" id="has_variation" data-hide-search="true" disabled>
-                                                        <option value="variable" @selected($product->has_variation === "variable")>Variable</option>
-                                                        <option value="single" @selected($product->has_variation === "single")>Single</option>
+                                                    <select class="form-select form-select" name="has_variation"
+                                                        id="has_variation" data-hide-search="true" disabled>
+                                                        <option value="variable" @selected($product->has_variation === 'variable')>Variable
+                                                        </option>
+                                                        <option value="single" @selected($product->has_variation === 'single')>Single
+                                                        </option>
                                                     </select>
-                                                    <input type="hidden" name="has_variation_hidden" value="{{ $product->has_variation }}">
+                                                    <input type="hidden" name="has_variation_hidden"
+                                                        value="{{ $product->has_variation }}">
                                                 </div>
                                             </div>
+
+
+                                            <div id="variation_selection"
+                                                class="col-md-4 mb-3 col-md-offset-4 box advance-toggle-class d-none">
+                                                <label for="" class="form-label required">
+                                                    Variation
+                                                </label>
+                                                <div class="mb-3">
+                                                    <select name="variation_name[]" id="variationSelect"
+                                                        class="form-select form-select-sm" data-control="select2"
+                                                        data-hide-search="true" data-placeholder="Please select" multiple>
+                                                        <option></option>
+                                                        @foreach ($variation_templates as $variation_template)
+                                                            <option value="{{ $variation_template->id }}" selected>
+                                                                {{ $variation_template->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                         </div>
 
                                         <div id="single_box" class="box advance-toggle-class d-none">
@@ -430,122 +542,135 @@
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
-                                                    <tr class="bg-secondary fw-bold fs-6 text-gray-800 text-center">
-                                                        {{-- <th>Variation SKU</th> --}}
-                                                        <th>Default Purchase Price</th>
-                                                        <th>
-                                                            x Margin(%) <i class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                           title="Default profit margin for the product.<br/>
+                                                        <tr class="bg-secondary fw-bold fs-6 text-gray-800 text-center">
+                                                            {{-- <th>Variation SKU</th> --}}
+                                                            <th>Default Purchase Price</th>
+                                                            <th>
+                                                                x Margin(%) <i
+                                                                    class="fas fa-info-circle ms-1 fs-7 text-primary cursor-help"
+                                                                    data-bs-toggle="tooltip" data-bs-html="true"
+                                                                    style="cursor:help"
+                                                                    title="Default profit margin for the product.<br/>
                                                                        <i class='text-muted'>You can manage default profit margin in Business Settings.</i>"></i>
-                                                        </th>
-                                                        <th>Default Selling Price</th>
-                                                        <th>Product image</th>
-                                                    </tr>
+                                                            </th>
+                                                            <th>Default Selling Price</th>
+                                                            <th>Product image</th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="" class="required form-label">Exc. tax</label>
-                                                                    <input type="text" name="single_exc" class="form-control" placeholder="Exc. tax">
+                                                        <tr>
+                                                            <td>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <label for=""
+                                                                            class="required form-label">Exc. tax</label>
+                                                                        <input type="text" name="single_exc"
+                                                                            class="form-control" placeholder="Exc. tax">
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <label for=""
+                                                                            class="required form-label">Inc. tax</label>
+                                                                        <input type="text" name="single_inc"
+                                                                            class="form-control" placeholder="Inc. tax">
+                                                                    </div>
                                                                 </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="" class="required form-label">Inc. tax</label>
-                                                                    <input type="text" name="single_inc" class="form-control" placeholder="Inc. tax">
+                                                            </td>
+                                                            <td>
+                                                                <label for=""></label>
+                                                                <input type="text" name="single_profit"
+                                                                    class="form-control" value="">
+                                                            </td>
+                                                            <td>
+                                                                <label for="" class="form-label">Exc. Tax</label>
+                                                                <input type="text" name="single_selling"
+                                                                    class="form-control" placeholder="Exc. tax">
+                                                            </td>
+                                                            <td>
+                                                                <label for="" class="form-label">Product
+                                                                    image</label>
+                                                                <input type="file" name="" id=""
+                                                                    class="form-control">
+                                                                <div class="text-muted">
+                                                                    Max File size: 5MB <br />
+                                                                    Aspect ration should be 1:1
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <label for=""></label>
-                                                            <input type="text" name="single_profit" class="form-control" value="">
-                                                        </td>
-                                                        <td>
-                                                            <label for="" class="form-label">Exc. Tax</label>
-                                                            <input type="text" name="single_selling" class="form-control" placeholder="Exc. tax">
-                                                        </td>
-                                                        <td>
-                                                            <label for="" class="form-label">Product image</label>
-                                                            <input type="file" name="" id="" class="form-control">
-                                                            <div class="text-muted">
-                                                                Max File size: 5MB <br/>
-                                                                Aspect ration should be 1:1
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
 
                                         <div id="variable_box" class="box advance-toggle-class d-none">
-                                            <span class="required fs-2">
-                                                Add Variation
-                                            </span>
-
                                             <div class="my-3 table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
-                                                    <tr class="fw-bold fs-3 text-gray-800 text-start bg-gray-300">
-                                                        <th class="text-center">Variation</th>
-                                                        <th>Variation Values</th>
-                                                    </tr>
+                                                        <tr class="fw-bold fs-3 text-gray-800 text-start bg-gray-300">
+
+                                                            <th>Variation Values</th>
+                                                        </tr>
                                                     </thead>
-                                                    <tbody class="repeater" >
-                                                    <tr >
-                                                        <td class="min-w-200px">
-                                                            <select name="variation_name" disabled id="variationSelect" class="form-select" data-control="select2" data-hide-search="true" data-placeholder="Please select">
-                                                                <option></option>
-                                                                @foreach ($variations as $variation)
-                                                                    <option value="{{ $variation->id }}"
-                                                                        @selected($product->productVariationTemplates()->first()->variation_template_id === $variation->id) >
-                                                                        {{ $variation->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                                <input type="hidden" name="variation_template_id_hidden" value="{{ $product->productVariationTemplates()->first()->variation_template_id }}">
-                                                            </select>
-                                                            <a class="btn btn-primary mt-3 btn-sm" id="remainVariationAdd">Add Remain Value</a>
-                                                        </td>
-                                                        <td>
-                                                            <div class="table-responsive">
-                                                                <table class="table  table-bordered" id="variation-table">
-                                                                    <thead>
-                                                                    <tr class="fw-bold fs-6 text-gray-800 text-start bg-gray-500">
-                                                                        <th class="text-center min-w-100px">
-                                                                            SKU <i class="fas fa-exclamation-circle ms-1 fs-7 text-primary cursor-help" data-bs-toggle="tooltip" data-bs-html="true" style="cursor:help"
-                                                                                   title="SKU is optional. <br/> <br/>
+                                                    <tbody class="repeater">
+                                                        <tr>
+                                                            <td>
+                                                                <div class="table-responsive">
+                                                                    <table class="table  table-bordered"
+                                                                        id="variation-table">
+                                                                        <thead>
+                                                                            <tr
+                                                                                class="fw-bold fs-6 text-gray-800 text-start bg-gray-500">
+                                                                                <th class="text-center min-w-100px">
+                                                                                    SKU <i
+                                                                                        class="fas fa-exclamation-circle ms-1 fs-7 text-primary cursor-help"
+                                                                                        data-bs-toggle="tooltip"
+                                                                                        data-bs-html="true"
+                                                                                        style="cursor:help"
+                                                                                        title="SKU is optional. <br/> <br/>
                                                                                            Keep it blank to automatically generate sku."></i>
-                                                                        </th>
-                                                                        <th class="min-w-100px">Value</th>
-                                                                        <th class="min-w-200px">
-                                                                            Default Purchase Price <br/>
-                                                                            <i>Exc. tax Inc. tax</i>
-                                                                        </th>
-                                                                        <th class="min-w-150px">
-                                                                            x Margin(%)
-                                                                        </th>
-                                                                        <th class="min-w-150px">
-                                                                            Default Selling Price <br/>
-                                                                            <i>Exc. Tax</i>
-                                                                        </th>
-                                                                        <th class="min-w-100px">Alert Quantity</th>
-                                                                        <th class="min-w-200px">Variation Images</th>
-                                                                        <th class=" min-w-50px">
-                                                                                    <span id="child-repeater" name="add" data-repeater-create class="svg-icon svg-icon-primary svg-icon-4 cursor-pointer add-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                        <path opacity="0.3" d="M11 13H7C6.4 13 6 12.6 6 12C6 11.4 6.4 11 7 11H11V13ZM17 11H13V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z" fill="currentColor"/>
-                                                                                        <path d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12ZM17 11H13V7C13 6.4 12.6 6 12 6C11.4 6 11 6.4 11 7V11H7C6.4 11 6 11.4 6 12C6 12.6 6.4 13 7 13H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z" fill="currentColor"/>
+                                                                                </th>
+                                                                                <th class="min-w-100px">Value</th>
+                                                                                <th class="min-w-200px">
+                                                                                    Default Purchase Price <br />
+                                                                                    <i>Exc. tax Inc. tax</i>
+                                                                                </th>
+                                                                                <th class="min-w-150px">
+                                                                                    x Margin(%)
+                                                                                </th>
+                                                                                <th class="min-w-150px">
+                                                                                    Default Selling Price <br />
+                                                                                    <i>Exc. Tax</i>
+                                                                                </th>
+                                                                                <th class="min-w-100px">Alert Quantity</th>
+                                                                                <th class="min-w-200px">Variation Images
+                                                                                </th>
+
+                                                                                <th class=" min-w-50px">
+                                                                                    <span id="child-repeater"
+                                                                                        name="add" data-repeater-create
+                                                                                        class="svg-icon svg-icon-primary svg-icon-4 cursor-pointer add-btn"><svg
+                                                                                            width="24" height="24"
+                                                                                            viewBox="0 0 24 24"
+                                                                                            fill="none"
+                                                                                            xmlns="http://www.w3.org/2000/svg">
+                                                                                            <path opacity="0.3"
+                                                                                                d="M11 13H7C6.4 13 6 12.6 6 12C6 11.4 6.4 11 7 11H11V13ZM17 11H13V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z"
+                                                                                                fill="currentColor" />
+                                                                                            <path
+                                                                                                d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12ZM17 11H13V7C13 6.4 12.6 6 12 6C11.4 6 11 6.4 11 7V11H7C6.4 11 6 11.4 6 12C6 12.6 6.4 13 7 13H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V13H17C17.6 13 18 12.6 18 12C18 11.4 17.6 11 17 11Z"
+                                                                                                fill="currentColor" />
                                                                                         </svg>
                                                                                     </span>
-                                                                        </th>
-                                                                    </tr>
-                                                                    </thead>
-                                                                    <tbody data-repeater-list="variation_lists" id="variation-row" class="variation-row-class">
+                                                                                </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody data-repeater-list="variation_lists"
+                                                                            id="variation-row">
 
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -558,24 +683,34 @@
                                             <div class="col-md-4 mb-8">
                                                 <div class="fv-row">
 
-                                                    <label class="form-label">{{ __('product/product.custom_field_1') }}</label>
+                                                    <label
+                                                        class="form-label">{{ __('product/product.custom_field_1') }}</label>
 
-                                                    <input type="text" name="custom_field1" class="form-control form-control-sm mb-2" placeholder="Custom field1" value="{{old('custom_field1',$product->product_custom_field1)}}" />
+                                                    <input type="text" name="custom_field1"
+                                                        class="form-control form-control-sm mb-2"
+                                                        placeholder="Custom field1"
+                                                        value="{{ old('custom_field1', $product->product_custom_field1) }}" />
 
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
 
-                                                <label class="form-label">{{ __('product/product.custom_field_2') }}</label>
+                                                <label
+                                                    class="form-label">{{ __('product/product.custom_field_2') }}</label>
 
-                                                <input type="text" name="custom_field2" class="form-control form-control-sm mb-2" placeholder="Custom field2" value="{{old('custom_field2',$product->product_custom_field2)}}" />
+                                                <input type="text" name="custom_field2"
+                                                    class="form-control form-control-sm mb-2" placeholder="Custom field2"
+                                                    value="{{ old('custom_field2', $product->product_custom_field2) }}" />
 
                                             </div>
                                             <div class="col-md-4 mb-3">
 
-                                                <label class="form-label">{{ __('product/product.custom_field_3') }}</label>
+                                                <label
+                                                    class="form-label">{{ __('product/product.custom_field_3') }}</label>
 
-                                                <input type="text" name="custom_field3" class="form-control form-control-sm mb-2" placeholder="Custom field3" value="{{old('custom_field3',$product->product_custom_field3)}}" />
+                                                <input type="text" name="custom_field3"
+                                                    class="form-control form-control-sm mb-2" placeholder="Custom field3"
+                                                    value="{{ old('custom_field3', $product->product_custom_field3) }}" />
 
                                             </div>
 
@@ -583,9 +718,12 @@
                                         <div class="row mb-5 advance-toggle-class d-none">
                                             <div class="col-md-4 mb-3">
 
-                                                <label class="form-label">{{ __('product/product.custom_field_4') }}</label>
+                                                <label
+                                                    class="form-label">{{ __('product/product.custom_field_4') }}</label>
 
-                                                <input type="text" name="custom_field4" class="form-control form-control-sm mb-2" placeholder="Custom field4" value="{{old('custom_field4',$product->product_custom_field4)}}" />
+                                                <input type="text" name="custom_field4"
+                                                    class="form-control form-control-sm mb-2" placeholder="Custom field4"
+                                                    value="{{ old('custom_field4', $product->product_custom_field4) }}" />
 
                                             </div>
                                         </div>
@@ -599,10 +737,12 @@
                                             <div id="kt_docs_quill_basic" name="product_desc" class="min-h-100px mb-2">
 
                                             </div>
-                                            <input type="hidden" name="quill_data" value="{{ old('quill_data', $quillData ?? '') }}">
+                                            <input type="hidden" name="quill_data"
+                                                value="{{ old('quill_data', $quillData ?? '') }}">
                                             <!--end::Editor-->
                                             <!--begin::Description-->
-                                            <div class="text-muted fs-7">Set a description to the product for better visibility.</div>
+                                            <div class="text-muted fs-7">Set a description to the product for better
+                                                visibility.</div>
                                             <!--end::Description-->
                                         </div>
 
@@ -619,63 +759,89 @@
                                                     <div class="input-group-text">
                                                         <i class="fa-solid fa-magnifying-glass"></i>
                                                     </div>
-                                                    <input type="text" class="form-control form-control-sm rounded-end-3" id="searchInput" placeholder="Search...">
-                                                    <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow" id="autocomplete" data-allow-clear="true" style="max-height: 300px;z-index: 100;"></div>
+                                                    <input type="text"
+                                                        class="form-control form-control-sm rounded-end-3"
+                                                        id="searchInput" placeholder="Search...">
+                                                    <div class="quick-search-results overflow-scroll  position-absolute d-none card w-100 mt-14  card z-index-1 autocomplete shadow"
+                                                        id="autocomplete" data-allow-clear="true"
+                                                        style="max-height: 300px;z-index: 100;"></div>
                                                 </div>
                                             </div>
 
                                         </div>
                                         <div class="table-responsive">
-                                            <table class="table table-rounded table-striped border gy-4 gs-4" id="additional_product_table">
+                                            <table class="table table-rounded table-striped border gy-4 gs-4"
+                                                id="additional_product_table">
                                                 <!--begin::Table head-->
                                                 <thead class="bg-light rounded-3">
-                                                <!--begin::Table row-->
-                                                <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
-                                                    <th class="min-w-125px" style="max-width: 125px">Product</th>
-                                                    <th class="w-200px">Quantity</th>
-                                                    <th class="w-300px">UOM</th>
-                                                    <th class="text-center" ><i class="fa-solid fa-trash text-primary" type="button"></i></th>
-                                                </tr>
-                                                <!--end::Table row-->
+                                                    <!--begin::Table row-->
+                                                    <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                        <th class="min-w-125px" style="max-width: 125px">Product</th>
+                                                        <th class="w-200px">Quantity</th>
+                                                        <th class="w-300px">UOM</th>
+                                                        <th class="text-center"><i class="fa-solid fa-trash text-primary"
+                                                                type="button"></i></th>
+                                                    </tr>
+                                                    <!--end::Table row-->
                                                 </thead>
                                                 <!--end::Table head-->
                                                 <!--begin::Table body-->
                                                 <tbody class="fw-semibold text-gray-600 data-table-body">
-                                                @foreach($additional_products as $key=>$additional_product)
-{{--                                                    @php--}}
-{{--                                                        $product_variation = $pd->toArray()['product_variation'];--}}
-{{--                                                       $product_data = $product_variation['product'];--}}
-{{--                                                       $uoms_data = $pd->toArray()['uom'];--}}
-{{--                                                    @endphp--}}
+                                                    @foreach ($additional_products as $key => $additional_product)
+                                                        {{--                                                    @php --}}
+                                                        {{--                                                        $product_variation = $pd->toArray()['product_variation']; --}}
+                                                        {{--                                                       $product_data = $product_variation['product']; --}}
+                                                        {{--                                                       $uoms_data = $pd->toArray()['uom']; --}}
+                                                        {{--                                                    @endphp --}}
 
-                                                    <tr class='cal-gp'>
-                                                        <td class="d-none">
-                                                            <input type="hidden" value="{{$additional_product['id']}}" name="additional_product_details[{{$key}}][additional_detail_id]">
-                                                            <input type="hidden" value="{{$additional_product['product_id']}}" name="additional_product_details[{{$key}}][product_id]">
-                                                            <input type="hidden" value="{{$additional_product['variation_id']}}" name="additional_product_details[{{$key}}][variation_id]">
-                                                        </td>
+                                                        <tr class='cal-gp'>
+                                                            <td class="d-none">
+                                                                <input type="hidden"
+                                                                    value="{{ $additional_product['id'] }}"
+                                                                    name="additional_product_details[{{ $key }}][additional_detail_id]">
+                                                                <input type="hidden"
+                                                                    value="{{ $additional_product['product_id'] }}"
+                                                                    name="additional_product_details[{{ $key }}][product_id]">
+                                                                <input type="hidden"
+                                                                    value="{{ $additional_product['variation_id'] }}"
+                                                                    name="additional_product_details[{{ $key }}][variation_id]">
+                                                            </td>
 
-                                                        <td>
-                                                            <span  class="text-gray-600 text-hover-primary">{{$additional_product['product_name']}}</span>
-                                                            @if($additional_product['variation_name'] != '')
-                                                                <span class="text-gray-500 fw-semibold fs-5">({{$additional_product['variation_name']}})</span>
-                                                            @endif
+                                                            <td>
+                                                                <span
+                                                                    class="text-gray-600 text-hover-primary">{{ $additional_product['product_name'] }}</span>
+                                                                @if ($additional_product['variation_name'] != '')
+                                                                    <span
+                                                                        class="text-gray-500 fw-semibold fs-5">({{ $additional_product['variation_name'] }})</span>
+                                                                @endif
 
-                                                        </td>
-                                                        <td class="fv-row">
-                                                            <input type="text" class="form-control form-control-sm mb-1 purchase_quantity input_number" placeholder="Quantity" name="additional_product_details[{{$key}}][quantity]" value="{{number_format($additional_product['quantity'], 2)}}">
-                                                        </td>
-                                                        <td>
-                                                            <select  name="additional_product_details[{{$key}}][uom_id]" class="form-select form-select-sm unit_id " data-kt-repeater="uom_select" data-hide-search="false" data-placeholder="Select unit">
-                                                                @foreach ($additional_product['uoms'] as $unit)
-                                                                    <option value="{{$unit['id']}}" @selected($unit['id']==$additional_product['uom_id'])>{{$unit['name']}}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </td>
+                                                            </td>
+                                                            <td class="fv-row">
+                                                                <input type="text"
+                                                                    class="form-control form-control-sm mb-1 purchase_quantity input_number"
+                                                                    placeholder="Quantity"
+                                                                    name="additional_product_details[{{ $key }}][quantity]"
+                                                                    value="{{ number_format($additional_product['quantity'], 2) }}">
+                                                            </td>
+                                                            <td>
+                                                                <select
+                                                                    name="additional_product_details[{{ $key }}][uom_id]"
+                                                                    class="form-select form-select-sm unit_id "
+                                                                    data-kt-repeater="uom_select" data-hide-search="false"
+                                                                    data-placeholder="Select unit">
+                                                                    @foreach ($additional_product['uoms'] as $unit)
+                                                                        <option value="{{ $unit['id'] }}"
+                                                                            @selected($unit['id'] == $additional_product['uom_id'])>
+                                                                            {{ $unit['name'] }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </td>
 
-                                                        <th class="text-center"><i class="fa-solid fa-trash text-danger deleteRow" ></i></th>
-                                                    </tr>
-                                                @endforeach
+                                                            <th class="text-center"><i
+                                                                    class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                            </th>
+                                                        </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
@@ -692,115 +858,176 @@
                                                     <!--begin::Form group-->
                                                     <div class="form-group">
                                                         <div class="table-responsive">
-                                                            <table class="table table-rounded table-striped border gy-4 gs-4" id="packaging_table">
+                                                            <table
+                                                                class="table table-rounded table-striped border gy-4 gs-4"
+                                                                id="packaging_table">
                                                                 <!--begin::Table head-->
                                                                 <thead class="bg-light rounded-3">
-                                                                <!--begin::Table row-->
-                                                                <tr class="text-start text-primary fw-bold fs-8 text-uppercase">
-                                                                    <th class="min-w-100px">Packaging Name</th>
-                                                                    <th class="min-w-100px">Quantity</th>
-                                                                    <th class="min-w-100px">UOM</th>
-                                                                    <th class="min-w-100px">For Purchase</th>
-                                                                    <th class="min-w-100px">For Sale</th>
-                                                                    <th class="text-center"><i class="fa-solid fa-trash text-primary" type="button"></i>
-                                                                    </th>
-                                                                </tr>
-                                                                <!--end::Table row-->
+                                                                    <!--begin::Table row-->
+                                                                    <tr
+                                                                        class="text-start text-primary fw-bold fs-8 text-uppercase">
+                                                                        <th class="min-w-100px">Packaging Name</th>
+                                                                        <th class="min-w-100px">Quantity</th>
+                                                                        <th class="min-w-100px">UOM</th>
+                                                                        <th class="min-w-100px">For Purchase</th>
+                                                                        <th class="min-w-100px">For Sale</th>
+                                                                        <th class="text-center"><i
+                                                                                class="fa-solid fa-trash text-primary"
+                                                                                type="button"></i>
+                                                                        </th>
+                                                                    </tr>
+                                                                    <!--end::Table row-->
                                                                 </thead>
                                                                 <!--end::Table head-->
                                                                 <!--begin::Table body-->
                                                                 <tbody class="fw-semibold text-gray-600 data-table-body"
-                                                                       data-repeater-list="packaging_repeater">
-                                                                @if (count($packagings) >0)
-                                                                    @foreach ($packagings as $i=>$packaging)
+                                                                    data-repeater-list="packaging_repeater">
+                                                                    @if (count($packagings) > 0)
+                                                                        @foreach ($packagings as $i => $packaging)
+                                                                            <tr class=" text-center p-row"
+                                                                                data-repeater-item>
+                                                                                <td class="fv-row">
+                                                                                    <div class="fv-row text-start">
+                                                                                        <input type="text"
+                                                                                            class="form-control form-control-sm "
+                                                                                            value="{{ $packaging->packaging_name }}"
+                                                                                            name="packaging_repeater[{{ $i }}][packaging_name]"
+                                                                                            placeholder="Packaging Name"
+                                                                                            data-placeholder="Packaging Name">
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="fv-row text-start">
+                                                                                        <input type="text"
+                                                                                            class="form-control form-control-sm d-none"
+                                                                                            value="{{ $packaging->id }}"
+                                                                                            name="packaging_repeater[{{ $i }}][packaging_id]"
+                                                                                            placeholder="Qty"
+                                                                                            data-placeholder="Packaging Name">
+                                                                                        <input type="text"
+                                                                                            class="form-control form-control-sm "
+                                                                                            value="{{ $packaging->quantity }}"
+                                                                                            name="packaging_repeater[{{ $i }}][packaging_quantity]"
+                                                                                            placeholder="Qty"
+                                                                                            data-placeholder="Packaging Name">
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <select
+                                                                                        class="form-select form-select-sm unitOfUom"
+                                                                                        name="packaging_repeater[{{ $i }}][packaging_uom_id]"
+                                                                                        data-control="select2"
+                                                                                        data-kt-select2="true"
+                                                                                        data-hide-search="true"
+                                                                                        data-placeholder="Select UoM">
+                                                                                        @foreach ($packaging->uom->unit_category->uomByCategory as $uom)
+                                                                                            <option
+                                                                                                value="{{ $uom->id }}"
+                                                                                                @selected($uom->id == $packaging->uom_id)>
+                                                                                                {{ $uom->name }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div
+                                                                                        class="form-check float-start  user-select-none">
+                                                                                        <input class="form-check-input"
+                                                                                            type="checkbox"
+                                                                                            name="packaging_repeater[{{ $i }}][for_purchase]"
+                                                                                            @checked($packaging->for_purchase) />
+                                                                                        <label
+                                                                                            class="form-check-label text-start"
+                                                                                            for="forPurchase">
+                                                                                            For Purchase
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div
+                                                                                        class="form-check justify-content-start user-select-none float-start">
+                                                                                        <input class="form-check-input"
+                                                                                            type="checkbox"
+                                                                                            name="for_sale"
+                                                                                            @checked($packaging->for_sale) />
+                                                                                        <label
+                                                                                            class="form-check-label text-start"
+                                                                                            for="forSale">
+                                                                                            For Sale
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="text-danger cursor-pointer user-select-none"
+                                                                                    p-remove>
+                                                                                    <i
+                                                                                        class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                                </td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    @else
                                                                         <tr class=" text-center p-row" data-repeater-item>
                                                                             <td class="fv-row">
                                                                                 <div class="fv-row text-start">
-                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->packaging_name}}" name="packaging_repeater[{{$i}}][packaging_name]"
-                                                                                           placeholder="Packaging Name" data-placeholder="Packaging Name">
+                                                                                    <input type="text"
+                                                                                        class="form-control form-control-sm "
+                                                                                        name="packaging_name"
+                                                                                        placeholder="Packaging Name"
+                                                                                        data-placeholder="Packaging Name">
                                                                                 </div>
                                                                             </td>
                                                                             <td>
                                                                                 <div class="fv-row text-start">
-                                                                                    <input type="text" class="form-control form-control-sm d-none" value="{{$packaging->id}}" name="packaging_repeater[{{$i}}][packaging_id]" placeholder="Qty"
-                                                                                           data-placeholder="Packaging Name">
-                                                                                    <input type="text" class="form-control form-control-sm " value="{{$packaging->quantity}}"
-                                                                                           name="packaging_repeater[{{$i}}][packaging_quantity]" placeholder="Qty"
-                                                                                           data-placeholder="Packaging Name">
+                                                                                    <input type="text"
+                                                                                        class="form-control form-control-sm "
+                                                                                        name="packaging_quantity"
+                                                                                        placeholder="Qty"
+                                                                                        data-placeholder="Packaging Name">
                                                                                 </div>
                                                                             </td>
                                                                             <td>
-                                                                                <select class="form-select form-select-sm unitOfUom" name="packaging_repeater[{{$i}}][packaging_uom_id]"
-                                                                                        data-control="select2" data-kt-select2="true" data-hide-search="true"
+                                                                                <div class="fv-row text-start">
+                                                                                    <select
+                                                                                        class="form-select form-select-sm unitOfUom"
+                                                                                        name="packaging_uom_id"
+                                                                                        data-control="select2"
+                                                                                        data-kt-select2="true"
+                                                                                        data-hide-search="true"
                                                                                         data-placeholder="Select UoM">
-                                                                                    @foreach ($packaging->uom->unit_category->uomByCategory as $uom)
-                                                                                        <option value="{{$uom->id}}" @selected($uom->id == $packaging->uom_id)>{{$uom->name}}</option>
-                                                                                    @endforeach
-                                                                                </select>
+                                                                                    </select>
+                                                                                </div>
                                                                             </td>
                                                                             <td>
-                                                                                <div class="form-check float-start  user-select-none">
-                                                                                    <input class="form-check-input" type="checkbox" name="packaging_repeater[{{$i}}][for_purchase]" @checked($packaging->for_purchase) />
-                                                                                    <label class="form-check-label text-start" for="forPurchase">
+                                                                                <div
+                                                                                    class="form-check float-start  user-select-none">
+                                                                                    <input class="form-check-input"
+                                                                                        type="checkbox"
+                                                                                        name="for_purchase" />
+                                                                                    <label
+                                                                                        class="form-check-label text-start"
+                                                                                        for="forPurchase">
                                                                                         For Purchase
                                                                                     </label>
                                                                                 </div>
                                                                             </td>
                                                                             <td>
-                                                                                <div class="form-check justify-content-start user-select-none float-start">
-                                                                                    <input class="form-check-input" type="checkbox" name="for_sale" @checked($packaging->for_sale) />
-                                                                                    <label class="form-check-label text-start" for="forSale">
+                                                                                <div
+                                                                                    class="form-check justify-content-start user-select-none float-start">
+                                                                                    <input class="form-check-input"
+                                                                                        type="checkbox" name="for_sale" />
+                                                                                    <label
+                                                                                        class="form-check-label text-start"
+                                                                                        for="forSale">
                                                                                         For Sale
                                                                                     </label>
                                                                                 </div>
                                                                             </td>
-                                                                            <td class="text-danger cursor-pointer user-select-none" p-remove>
-                                                                                <i class="fa-solid fa-trash text-danger deleteRow"></i>
+                                                                            <td class="text-danger cursor-pointer user-select-none"
+                                                                                p-remove>
+                                                                                <i
+                                                                                    class="fa-solid fa-trash text-danger deleteRow"></i>
                                                                             </td>
                                                                         </tr>
-                                                                    @endforeach
-                                                                @else
-                                                                    <tr class=" text-center p-row" data-repeater-item>
-                                                                        <td class="fv-row">
-                                                                            <div class="fv-row text-start">
-                                                                                <input type="text" class="form-control form-control-sm " name="packaging_name" placeholder="Packaging Name"
-                                                                                       data-placeholder="Packaging Name">
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="fv-row text-start">
-                                                                                <input type="text" class="form-control form-control-sm " name="packaging_quantity" placeholder="Qty"
-                                                                                       data-placeholder="Packaging Name">
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="fv-row text-start">
-                                                                                <select class="form-select form-select-sm unitOfUom" name="packaging_uom_id" data-control="select2"
-                                                                                        data-kt-select2="true" data-hide-search="true" data-placeholder="Select UoM">
-                                                                                </select>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="form-check float-start  user-select-none">
-                                                                                <input class="form-check-input" type="checkbox" name="for_purchase" />
-                                                                                <label class="form-check-label text-start" for="forPurchase">
-                                                                                    For Purchase
-                                                                                </label>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="form-check justify-content-start user-select-none float-start">
-                                                                                <input class="form-check-input" type="checkbox" name="for_sale" />
-                                                                                <label class="form-check-label text-start" for="forSale">
-                                                                                    For Sale
-                                                                                </label>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td class="text-danger cursor-pointer user-select-none" p-remove>
-                                                                            <i class="fa-solid fa-trash text-danger deleteRow"></i>
-                                                                        </td>
-                                                                    </tr>
-                                                                @endif
+                                                                    @endif
 
                                                                 </tbody>
                                                             </table>
@@ -810,7 +1037,8 @@
 
                                                     <!--begin::Form group-->
                                                     <div class="form-group mt-5">
-                                                        <a href="javascript:;" data-repeater-create class="btn btn-light-primary btn-sm">
+                                                        <a href="javascript:;" data-repeater-create
+                                                            class="btn btn-light-primary btn-sm">
                                                             <i class="ki-duotone ki-plus fs-3"></i>
                                                             Add
                                                         </a>
@@ -827,8 +1055,11 @@
                                             <div class="col-md-3 mb-8 col-md-offset-4">
                                                 <div class="form-check form-check-custom form-check-solid mt-8">
                                                     <label class="" for="tab2_check1">
-                                                        <input class="form-check-input" name="product_inactive" type="checkbox" value="" id="tab2_check1" @checked($product->is_inactive === 1)/>
-                                                        <strong class="ms-4 h5">{{ __('product/product.disable') }}</strong>
+                                                        <input class="form-check-input" name="product_inactive"
+                                                            type="checkbox" value="" id="tab2_check1"
+                                                            @checked($product->is_inactive === 1) />
+                                                        <strong
+                                                            class="ms-4 h5">{{ __('product/product.disable') }}</strong>
                                                     </label>
                                                 </div>
                                             </div>
@@ -843,14 +1074,16 @@
                     <!--end::Tab content-->
                     <div class="d-flex justify-content-start">
                         <!--begin::Button-->
-                        <a href="{{ url('/product') }}" id="kt_ecommerce_add_product_cancel" class="btn btn-sm btn-light me-5">Cancel</a>
+                        <a href="{{ url('/product') }}" id="kt_ecommerce_add_product_cancel"
+                            class="btn btn-sm btn-light me-5">Cancel</a>
                         <!--end::Button-->
                         <!--begin::Button-->
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                             {{-- <button type="submit" class="btn btn-warning btn-sm">Save & Add Selling-Price-Group Prices</button>
                             <button type="submit" class="btn btn-success btn-sm">Save & Add Opening Stock</button> --}}
                             {{-- <button type="submit" class="btn btn-info btn-sm" name="save" value="save_and_another">Save & Add Another</button> --}}
-                            <button type="submit" class="btn btn-primary btn-sm" name="save" value="save">Save</button>
+                            <button type="submit" class="btn btn-primary btn-sm" name="save"
+                                value="save">Save</button>
                         </div>
                         <!--end::Button-->
                     </div>
@@ -870,30 +1103,30 @@
 @endsection
 
 @push('scripts')
-    <script src="{{asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
+    <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script>
     <script src="{{ asset('customJs/toastrAlert/alert.js') }}"></script>
     @include('App.product.JS.productQuickSearch')
     <script>
-        let packagingCount=@json(count($packagings));
-        $(document).ready(function (){
+        let packagingCount = @json(count($packagings));
+        $(document).ready(function() {
             $('[data-kt-repeater="uom_select"]').select2();
         });
-        $(document).on('click','[p-remove]',function(){
+        $(document).on('click', '[p-remove]', function() {
             $(this).closest('.p-row').remove();
         })
-        var currentUoMData=[];
+        var currentUoMData = [];
         $('#packaging_repeater').repeater({
-            initEmpty: packagingCount > 0 ?false :true,
+            initEmpty: packagingCount > 0 ? false : true,
 
             defaultValues: {
                 'text-input': 'foo'
             },
 
-            show: function () {
+            show: function() {
                 $(this).slideDown();
 
                 $(this).find('[data-control="select2"]').select2({
-                    data:currentUoMData,
+                    data: currentUoMData,
                     minimumResultsForSearch: Infinity
                 });
                 const index = $(this).closest("[data-repeater-item]").index();
@@ -901,7 +1134,7 @@
                 addFields(index);
             },
 
-            hide: function (deleteElement) {
+            hide: function(deleteElement) {
                 $(this).slideUp(deleteElement);
             }
         });
@@ -953,17 +1186,19 @@
         const selectBox = document.getElementById("has_variation");
         const singleBox = document.getElementById("single_box");
         const variableBox = document.getElementById("variable_box");
+        const variableSelection = $('#variation_selection');
 
         // $(document).ready(function() {
         //     $("#single_alert_qty_ui").css("display", "block");
         // });
 
 
-        if(selectBox.value === "variable"){
+        if (selectBox.value === "variable") {
             variableBox.style.display = "block";
             $("#single_alert_qty_ui").addClass("d-none");
+            variableSelection.show()
 
-        }else{
+        } else {
             singleBox.style.display = "block";
 
         }
@@ -985,116 +1220,122 @@
         // ============= > End:: For Product Type      < =========================
 
         // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
-        let profitPercentage = (sell, purchase) => Math.ceil( ( (parseInt(sell) - parseInt(purchase)) * 100)/parseInt(purchase) );
+        let profitPercentage = (sell, purchase) => Math.ceil(((parseInt(sell) - parseInt(purchase)) * 100) / parseInt(
+            purchase));
 
-        let sellingPrice = (profit, purchase) => Math.ceil( ( (100 + parseInt(profit)) * parseInt(purchase))/100 );
+        let sellingPrice = (profit, purchase) => Math.ceil(((100 + parseInt(profit)) * parseInt(purchase)) / 100);
         // ============= > Begin:: Formula ProfitPercentage and Selling Price ====
 
         // ============= > Begin:: For Single Product Type Calculate < ===========
 
-        let singleExc = $('[name="single_exc"]');
-        let singleInc = $('[name="single_inc"]');
-        let singleProfit = $('[name="single_profit"]');
-        let singleSelling = $('[name="single_selling"]');
-        let singleAlertQty = $('[name="single_alert_quantity"]');
+        console.log(@json($variation_templates).length)
+        if (@json($variation_templates).length === 1) {
+            let singleExc = $('[name="single_exc"]');
+            let singleInc = $('[name="single_inc"]');
+            let singleProfit = $('[name="single_profit"]');
+            let singleSelling = $('[name="single_selling"]');
+            let singleAlertQty = $('[name="single_alert_quantity"]');
 
-        let anotherPurchase = $('input[name="purchase_price_for_single"]');
-        let anotherProfit = $('input[name="profit_margin_for_single"]');
-        let anotherSell = $('input[name="sell_price_for_single"]');
+            let anotherPurchase = $('input[name="purchase_price_for_single"]');
+            let anotherProfit = $('input[name="profit_margin_for_single"]');
+            let anotherSell = $('input[name="sell_price_for_single"]');
 
-        let oldSingleValue = @json($productVariation);
+            let oldSingleValue = @json($productVariation);
 
-        let oldSingleSellingPrice;
-        if(oldSingleValue.length !== 0){
-            oldSingleSellingPrice = profitPercentage( oldSingleValue[0].default_selling_price, oldSingleValue[0].default_purchase_price, );
-        }
-
-        let singleProductType = (@json($product)).has_variation;
-
-        if(singleProductType === "variable"){
-            anotherPurchase.prop('disabled', true);
-            anotherProfit.prop('disabled', true);
-            anotherSell.prop('disabled', true);
-        }
-
-        if((oldSingleValue.length !== 0) && (singleProductType !== "variable")){
-            singleExc.val(oldSingleValue[0].default_purchase_price);
-            singleInc.val(oldSingleValue[0].default_purchase_price);
-            singleProfit.val(oldSingleSellingPrice);
-            singleSelling.val(oldSingleValue[0].default_selling_price);
-            singleAlertQty.val(oldSingleValue[0].alert_quantity);
-
-            anotherPurchase.val(oldSingleValue[0].default_purchase_price)
-            anotherProfit.val(oldSingleSellingPrice)
-            anotherSell.val(oldSingleValue[0].default_selling_price)
-
-            $(document).find('input[name="sell_price_for_single"]').val(oldSingleValue[0].default_selling_price) // for basic form selling price
-        }
-
-        singleExc.on('keyup', (e) => {
-            let excVal = e.target.value;
-            singleInc.val(excVal);
-            anotherPurchase.val(excVal);
-
-            if(singleSelling.val()){
-                let profitValue = profitPercentage(singleSelling.val(), excVal);
-                singleProfit.val(profitValue);
-                anotherProfit.val(profitValue)
-                if(isNaN(profitValue)){
-                    singleProfit.val('')
-                    anotherProfit.val(profitValue)
-                }
+            let oldSingleSellingPrice;
+            if (oldSingleValue.length !== 0) {
+                oldSingleSellingPrice = profitPercentage(oldSingleValue[0].default_selling_price, oldSingleValue[0]
+                    .default_purchase_price, );
             }
-        })
-        singleInc.on('keyup', (e) => {
-            let incVal = e.target.value;
-            singleExc.val(incVal);
-            anotherPurchase.val(incVal);
 
-            if(singleSelling.val()){
-                let profitValue = profitPercentage(singleSelling.val(), incVal);
-                singleProfit.val(profitValue);
-                anotherProfit.val(profitValue)
-                if(isNaN(profitValue)){
-                    singleProfit.val('')
-                    anotherProfit.val(profitValue)
-                }
+            let singleProductType = (@json($product)).has_variation;
+
+            if (singleProductType === "variable") {
+                anotherPurchase.prop('disabled', true);
+                anotherProfit.prop('disabled', true);
+                anotherSell.prop('disabled', true);
             }
-        })
-        singleProfit.on('keyup', (e) => {
-            let profitValue = e.target.value;
-            anotherProfit.val(profitValue);
 
-            if(singleExc.val() || singleInc.val()){
-                let resultSelling = sellingPrice(profitValue, singleExc.val());
-                singleSelling.val(resultSelling);
-                anotherSell.val(resultSelling);
-                if(isNaN(resultSelling)){
-                    singleSelling.val('');
+            if ((oldSingleValue.length !== 0) && (singleProductType !== "variable")) {
+                singleExc.val(oldSingleValue[0].default_purchase_price);
+                singleInc.val(oldSingleValue[0].default_purchase_price);
+                singleProfit.val(oldSingleSellingPrice);
+                singleSelling.val(oldSingleValue[0].default_selling_price);
+                singleAlertQty.val(oldSingleValue[0].alert_quantity);
+
+                anotherPurchase.val(oldSingleValue[0].default_purchase_price)
+                anotherProfit.val(oldSingleSellingPrice)
+                anotherSell.val(oldSingleValue[0].default_selling_price)
+
+                $(document).find('input[name="sell_price_for_single"]').val(oldSingleValue[0]
+                    .default_selling_price) // for basic form selling price
+            }
+
+            singleExc.on('keyup', (e) => {
+                let excVal = e.target.value;
+                singleInc.val(excVal);
+                anotherPurchase.val(excVal);
+
+                if (singleSelling.val()) {
+                    let profitValue = profitPercentage(singleSelling.val(), excVal);
+                    singleProfit.val(profitValue);
+                    anotherProfit.val(profitValue)
+                    if (isNaN(profitValue)) {
+                        singleProfit.val('')
+                        anotherProfit.val(profitValue)
+                    }
+                }
+            })
+            singleInc.on('keyup', (e) => {
+                let incVal = e.target.value;
+                singleExc.val(incVal);
+                anotherPurchase.val(incVal);
+
+                if (singleSelling.val()) {
+                    let profitValue = profitPercentage(singleSelling.val(), incVal);
+                    singleProfit.val(profitValue);
+                    anotherProfit.val(profitValue)
+                    if (isNaN(profitValue)) {
+                        singleProfit.val('')
+                        anotherProfit.val(profitValue)
+                    }
+                }
+            })
+            singleProfit.on('keyup', (e) => {
+                let profitValue = e.target.value;
+                anotherProfit.val(profitValue);
+
+                if (singleExc.val() || singleInc.val()) {
+                    let resultSelling = sellingPrice(profitValue, singleExc.val());
+                    singleSelling.val(resultSelling);
                     anotherSell.val(resultSelling);
+                    if (isNaN(resultSelling)) {
+                        singleSelling.val('');
+                        anotherSell.val(resultSelling);
+                    }
                 }
-            }
-        })
-        singleSelling.on('keyup', (e) => {
-            let sellingValue = e.target.value;
-            anotherSell.val(sellingValue);
+            })
+            singleSelling.on('keyup', (e) => {
+                let sellingValue = e.target.value;
+                anotherSell.val(sellingValue);
 
-            if(singleExc.val() || singleInc.val()){
-                let resultProfit = profitPercentage(sellingValue, singleExc.val());
-                singleProfit.val(resultProfit);
-                anotherProfit.val(resultProfit)
-                if(isNaN(resultProfit)){
-                    singleProfit.val('');
+                if (singleExc.val() || singleInc.val()) {
+                    let resultProfit = profitPercentage(sellingValue, singleExc.val());
+                    singleProfit.val(resultProfit);
                     anotherProfit.val(resultProfit)
+                    if (isNaN(resultProfit)) {
+                        singleProfit.val('');
+                        anotherProfit.val(resultProfit)
+                    }
                 }
-            }
-        })
+            })
+        }
 
         // ============= > End:: For Single Product Type Calculate   < ===========
 
 
         // ============= > Begin:: For Variation table repeater  < ===============
-        $(document).ready(function () {
+        $(document).ready(function() {
             let newVariation = `
             <tr data-repeater-item class="variation-add-delete">
                 <input type="hidden" name="variation_id[]">
@@ -1162,10 +1403,10 @@
                     let currentSelling = $(e.currentTarget).closest('tr').find(selling);
                     let currentProfit = $(e.currentTarget).closest('tr').find(profit);
 
-                    if(currentSelling.val()){
+                    if (currentSelling.val()) {
                         let profitValue = profitPercentage(currentSelling.val(), excVal);
                         currentProfit.val(profitValue);
-                        if(isNaN(profitValue)){
+                        if (isNaN(profitValue)) {
                             currentProfit.val('')
                         }
                     }
@@ -1177,10 +1418,10 @@
                     let currentSelling = $(e.currentTarget).closest('tr').find(selling);
                     let currentProfit = $(e.currentTarget).closest('tr').find(profit);
 
-                    if(currentSelling.val()){
+                    if (currentSelling.val()) {
                         let profitValue = profitPercentage(currentSelling.val(), incVal);
                         currentProfit.val(profitValue);
-                        if(isNaN(profitValue)){
+                        if (isNaN(profitValue)) {
                             currentProfit.val('');
                         }
                     }
@@ -1194,10 +1435,10 @@
                     let currentInc = $(e.currentTarget).closest('tr').find(inc);
                     let sellingInput = $(e.currentTarget).closest('tr').find(selling);
 
-                    if(currentExc.val() || currentInc.val()){
+                    if (currentExc.val() || currentInc.val()) {
                         let resultSelling = sellingPrice(currentProfitValue, currentExc.val());
                         sellingInput.val(resultSelling);
-                        if(isNaN(resultSelling)){
+                        if (isNaN(resultSelling)) {
                             sellingInput.val('');
                         }
                     }
@@ -1208,7 +1449,7 @@
                     let currentExc = $(e.currentTarget).closest('tr').find(exc);
                     let currentInc = $(e.currentTarget).closest('tr').find(inc);
                     let currentProfit = $(e.currentTarget).closest('tr').find(profit);
-                    if(currentExc.val() || currentInc.val()){
+                    if (currentExc.val() || currentInc.val()) {
                         let resultProfit = profitPercentage(currentSellingValue, currentExc.val());
                         currentProfit.val(resultProfit);
                     }
@@ -1225,7 +1466,7 @@
             const variationSelect = $('#variationSelect');
             const remainVariationAdd = $('#remainVariationAdd');
             const remainVariationIds = @json($remain_variation_ids);
-console.log(remainVariationIds)
+            console.log(remainVariationIds)
             if (remainVariationIds.length === 0) {
 
                 remainVariationAdd.addClass('d-none')
@@ -1256,32 +1497,80 @@ console.log(remainVariationIds)
 
             // show old value variation
             let toShowVariation = false;
-            if(!toShowVariation){
+            if (!toShowVariation) {
                 let productType = (@json($product)).has_variation;
-                if(productType !== "single"){
-                    let oldValues = @json($productVariation);
 
-                    $.each(oldValues, function(index, item){
-                        let profit_percent = profitPercentage(item.default_selling_price, item.default_purchase_price);
+                if (productType !== "single") {
+                    //check only one variation or multiple variation
+                    if (@json($variation_templates).length === 1) {
+                        let oldValues = @json($productVariation);
 
-                        let cloneRow = $(newVariation).clone();
-                        cloneRow.find('input[name="variation_sku[]"]').val(item.variation_sku)
-                        cloneRow.find('input[name="variation_value[]"]').val(item.variation_template_value.name)
-                        cloneRow.find('input[name="variation_id[]"]').val(item.variation_template_value.id)
-                        cloneRow.find('input[name="product_variation_id[]"]').val(item.id)
-                        cloneRow.find('input[name="exc_purchase[]"]').val(item.default_purchase_price)
-                        cloneRow.find('input[name="inc_purchase[]"]').val(item.default_purchase_price)
-                        cloneRow.find('input[name="profit_percentage[]"]').val(profit_percent)
-                        cloneRow.find('input[name="selling_price[]"]').val(item.default_selling_price)
-                        cloneRow.find('input[name="alert_quantity[]"]').val(item.alert_quantity)
-                        cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
-                        $('#variation-row').append(cloneRow);
-                    });
+                        $.each(oldValues, function(index, item) {
+                            let profit_percent = profitPercentage(item.default_selling_price, item
+                                .default_purchase_price);
+
+                            let cloneRow = $(newVariation).clone();
+                            cloneRow.find('input[name="variation_sku[]"]').val(item.variation_sku)
+                            cloneRow.find('input[name="variation_value[]"]').val(item
+                                .variation_template_value.name)
+                            cloneRow.find('input[name="variation_id[]"]').val(item.variation_template_value
+                                .id)
+                            cloneRow.find('input[name="product_variation_id[]"]').val(item.id)
+                            cloneRow.find('input[name="exc_purchase[]"]').val(item.default_purchase_price)
+                            cloneRow.find('input[name="inc_purchase[]"]').val(item.default_purchase_price)
+                            cloneRow.find('input[name="profit_percentage[]"]').val(profit_percent)
+                            cloneRow.find('input[name="selling_price[]"]').val(item.default_selling_price)
+                            cloneRow.find('input[name="alert_quantity[]"]').val(item.alert_quantity)
+                            cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
+                            $('#variation-row').append(cloneRow);
+                        });
+                    } else {
+                        let oldValues = @json($productVariation);
+
+                        $.each(oldValues, function(index, item) {
+                            let profit_percent = profitPercentage(item.default_selling_price, item
+                                .default_purchase_price);
+
+                            let cloneRow = $(newVariation).clone();
+                            cloneRow.find('input[name="variation_sku[]"]').val(item.variation_sku)
+                            cloneRow.find('input[name="variation_value[]"]').val(item
+                                .names)
+                            cloneRow.find('input[name="variation_id[]"]').val(item.ids)
+                            cloneRow.find('input[name="product_variation_id[]"]').val(item
+                                .product_variation_id)
+                            cloneRow.find('input[name="exc_purchase[]"]').val(item.default_purchase_price)
+                            cloneRow.find('input[name="inc_purchase[]"]').val(item.default_purchase_price)
+                            cloneRow.find('input[name="profit_percentage[]"]').val(item.profit_percent)
+                            cloneRow.find('input[name="selling_price[]"]').val(item.default_selling_price)
+                            cloneRow.find('input[name="alert_quantity[]"]').val(item.alert_quantity)
+                            cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
+                            $('#variation-row').append(cloneRow);
+                        });
+                    }
+
                     calculateVariation();
+                } else {
+                    let oldValues = @json($productVariation);
+                    $(document).ready(function() {
+                        // Assuming `oldData` contains the old data objects
+                        $.each(oldValues, function(index, item) {
+                            // Set the values of the input fields in the existing HTML table row
+                            $('input[name="single_exc"]').val(item.default_purchase_price);
+                            $('input[name="single_inc"]').val(item.default_purchase_price);
+                            $('input[name="single_profit"]').val(profitPercentage(item
+                                .default_selling_price, item.default_purchase_price));
+                            $('input[name="single_selling"]').val(item.default_selling_price);
+                            // You can handle the image input separately based on how you want to handle it
+                            // For example:
+                            // $('input[name="product_image"]').val(item.image);
+                        });
+                    });
+
                 }
-                // variationCalculate();
+
                 toShowVariation = true;
             }
+
 
             $(document).on('click', '#child-repeater', function() {
                 $('#variation-row').append(newVariation);
@@ -1301,10 +1590,10 @@ console.log(remainVariationIds)
             const cateSelect = $('#categorySelect');
 
             let toShowSubCategory = false;
-            if(!toShowSubCategory){
+            if (!toShowSubCategory) {
                 let id = cateSelect.val() ?? 0;
                 $.ajax({
-                    url: '/category/sub-category/'+id,
+                    url: '/category/sub-category/' + id,
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
@@ -1321,13 +1610,15 @@ console.log(remainVariationIds)
                             let option = document.createElement('option');
                             option.value = item.id;
                             option.text = item.name;
-                            if(data[index].id === oldSubCategoryId){
+                            if (data[index].id === oldSubCategoryId) {
                                 option.selected = true;
                             }
                             subCategorySelect.append(option);
                         });
 
-                        $('#subCategorySelect').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                        $('#subCategorySelect').select2({
+                            minimumResultsForSearch: Infinity
+                        }); // Initialize select2 plugin
 
                     },
                     error: function(xhr, status, error) {
@@ -1342,14 +1633,15 @@ console.log(remainVariationIds)
                 let id = cateSelect.val();
 
                 $.ajax({
-                    url: '/category/sub-category/'+id,
+                    url: '/category/sub-category/' + id,
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
                         const subCategorySelect = $('#subCategorySelect')[0];
                         subCategorySelect.innerHTML = '';
 
-                        const defaultOption = document.createElement('option'); // Create default option
+                        const defaultOption = document.createElement(
+                            'option'); // Create default option
                         defaultOption.value = '';
                         defaultOption.text = 'Select an option';
                         $(subCategorySelect).append(defaultOption);
@@ -1361,7 +1653,9 @@ console.log(remainVariationIds)
                             subCategorySelect.append(option);
                         }
 
-                        $('#subCategorySelect').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                        $('#subCategorySelect').select2({
+                            minimumResultsForSearch: Infinity
+                        }); // Initialize select2 plugin
 
                     },
                     error: function(xhr, status, error) {
@@ -1380,7 +1674,7 @@ console.log(remainVariationIds)
             let profit = $(document).find('input[name="profit_margin_for_single"]').val();
 
             let sellPrice;
-            if(profit !== ''){
+            if (profit !== '') {
                 sellPrice = (profit, value);
 
                 $(document).find('input[name="sell_price_for_single"]').val(sellPrice);
@@ -1418,49 +1712,52 @@ console.log(remainVariationIds)
         })
         // ============= > End:: For Show advance  < ==================
 
-        $(document).ready(function(){
-            $('[name="unit_categories"]').val(JSON.parse('{{ json_encode($unit_category_id) }}')).trigger('change');
+        $(document).ready(function() {
+            $('[name="unit_categories"]').val(JSON.parse('{{ json_encode($unit_category_id) }}')).trigger(
+                'change');
 
-            {{--setTimeout(function (){--}}
-            {{--    $('[name="uom_id"]').val(JSON.parse('{{ json_encode($product->uom_id) }}')).trigger('change');--}}
-            {{--}, 300);--}}
+            {{-- setTimeout(function (){ --}}
+            {{--    $('[name="uom_id"]').val(JSON.parse('{{ json_encode($product->uom_id) }}')).trigger('change'); --}}
+            {{-- }, 300); --}}
 
-            {{--setTimeout(function (){--}}
-            {{--    $('[name="purchase_uom_id"]').val(JSON.parse('{{ json_encode($product->purchase_uom_id) }}')).trigger('change');--}}
-            {{--}, 500);--}}
+            {{-- setTimeout(function (){ --}}
+            {{--    $('[name="purchase_uom_id"]').val(JSON.parse('{{ json_encode($product->purchase_uom_id) }}')).trigger('change'); --}}
+            {{-- }, 500); --}}
         });
 
-        $(document).on('change', 'select[name="unit_categories"]', function (){
+        $(document).on('change', 'select[name="unit_categories"]', function() {
             let unit_category_id = $(this).val();
-           unitCategory(unit_category_id);
+            unitCategory(unit_category_id);
         });
 
-        function unitCategory(unit_category_id){
+        function unitCategory(unit_category_id) {
             $.ajax({
                 url: `/uom/category/get/${unit_category_id}`,
                 type: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                success: function(results){
+                success: function(results) {
                     console.log(results);
                     $('.uomDatas').empty();
-                    let data=[];
+                    let data = [];
                     for (let item of results) {
 
-                        data=[...data,
+                        data = [...data,
                             {
-                                'id':item.id,
-                                'text':item.name,
+                                'id': item.id,
+                                'text': item.name,
                                 'data-uom-name': item.name
-                            }]
+                            }
+                        ]
                     }
-                    currentUoMData=data;
+                    currentUoMData = data;
 
                     let selectElement = $('[name="uom_id"]');
                     selectElement.empty(); // Clear existing options
                     for (let item of data) {
-                        let option = $('<option></option>').val(item.id).text(item.text).attr('data-uom-name', item.text);
+                        let option = $('<option></option>').val(item.id).text(item.text).attr('data-uom-name',
+                            item.text);
                         selectElement.append(option);
                     }
 
@@ -1470,28 +1767,29 @@ console.log(remainVariationIds)
                     });
 
 
-                    setTimeout(function (){
+                    setTimeout(function() {
                         let selectedOption = $('select[name="uom_id"]').find('option:selected');
                         let uomName = selectedOption.attr('data-uom-name');
 
 
-                        $('.uom-label').text('('+uomName+')');
+                        $('.uom-label').text('(' + uomName + ')');
 
                     }, 150);
 
 
                     // $('[name="uom_id"]').val(data[0].id).trigger('change');
-                    $('[name="uom_id"]').val(JSON.parse('{{ json_encode($product->uom_id) }}')).trigger('change');
+                    $('[name="uom_id"]').val(JSON.parse('{{ json_encode($product->uom_id) }}')).trigger(
+                        'change');
 
                 },
-                error: function(e){
+                error: function(e) {
                     console.log(e.responseJSON.error);
                 }
             });
         }
         // ============= > Begin:: For UOM  < ==================
         let isSelectUoM = false;
-        if(!isSelectUoM){
+        if (!isSelectUoM) {
             let id = $(document).find('select[name="uom_id"]').val();
 
             $.ajax({
@@ -1500,7 +1798,7 @@ console.log(remainVariationIds)
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                success: function(results){
+                success: function(results) {
                     const purchaseUoM = $('#unitOfUom')[0];
                     purchaseUoM.innerHTML = '';
 
@@ -1510,26 +1808,29 @@ console.log(remainVariationIds)
                     $(purchaseUoM).append(defaultOption);
 
                     let oldUoMId = @json($product->purchase_uom_id ?? null);
-                    let data=[];
+                    let data = [];
                     for (let item of results) {
                         let option = document.createElement('option');
                         option.value = item.id;
                         option.text = item.name;
-                        if(item.id == oldUoMId){
+                        if (item.id == oldUoMId) {
                             option.selected = true;
                         }
-                        data=[...data,
+                        data = [...data,
                             {
-                                'id':item.id,
-                                'text':item.name
-                            }]
+                                'id': item.id,
+                                'text': item.name
+                            }
+                        ]
                         purchaseUoM.append(option);
                     }
-                    currentUoMData=data;
+                    currentUoMData = data;
 
-                    $('.unitOfUom').select2({minimumResultsForSearch: Infinity}); // Initialize select2 plugin
+                    $('.unitOfUom').select2({
+                        minimumResultsForSearch: Infinity
+                    }); // Initialize select2 plugin
                 },
-                error: function(e){
+                error: function(e) {
                     console.log(e.responseJSON.error);
                 }
             });
@@ -1541,32 +1842,34 @@ console.log(remainVariationIds)
             let selectedOption = $(this).find('option:selected');
             let uomName = selectedOption.attr('data-uom-name');
 
-            $('.uom-label').text('('+uomName+')');
+            $('.uom-label').text('(' + uomName + ')');
             $.ajax({
                 url: `/uom/get/${uom_id}`,
                 type: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                success: function(results){
+                success: function(results) {
 
-                    let data=[];
+                    let data = [];
                     for (let item of results) {
                         // let option = document.createElement('option');
-                        data=[...data,
+                        data = [...data,
                             {
-                                'id':item.id,
-                                'text':item.name
-                            }]
+                                'id': item.id,
+                                'text': item.name
+                            }
+                        ]
                     }
-                    currentUoMData=data;
+                    currentUoMData = data;
                     $('.unitOfUom').select2({
                         data,
                         minimumResultsForSearch: Infinity
                     });
-                    $('[name="purchase_uom_id"]').val(JSON.parse('{{ json_encode($product->purchase_uom_id) }}')).trigger('change');
+                    $('[name="purchase_uom_id"]').val(JSON.parse(
+                        '{{ json_encode($product->purchase_uom_id) }}')).trigger('change');
                 },
-                error: function(e){
+                error: function(e) {
                     console.log(e.responseJSON.error);
                 }
             });
@@ -1582,7 +1885,11 @@ console.log(remainVariationIds)
             let brand_desc = $(document).find('input[name="brand_desc"]').val();
             let form_type = "from_product";
 
-            var formData = {brand_name, brand_desc, form_type};
+            var formData = {
+                brand_name,
+                brand_desc,
+                form_type
+            };
 
             $.ajax({
                 url: '/brands/create',
@@ -1623,7 +1930,13 @@ console.log(remainVariationIds)
             let category_desc = $(document).find('input[name="category_desc"]').val();
             let form_type = "from_product";
 
-            var formData = {category_name, category_code, parent_id,category_desc, form_type};
+            var formData = {
+                category_name,
+                category_code,
+                parent_id,
+                category_desc,
+                form_type
+            };
 
             $.ajax({
                 url: '/category/create',
@@ -1660,7 +1973,10 @@ console.log(remainVariationIds)
             let generic_name = $(document).find('input[name="generic_name"]').val();
             let form_type = "from_product";
 
-            var formData = {generic_name, form_type};
+            var formData = {
+                generic_name,
+                form_type
+            };
 
             $.ajax({
                 url: '/generic/create',
@@ -1696,7 +2012,10 @@ console.log(remainVariationIds)
             let manufacturer_name = $(document).find('input[name="manufacturer_name"]').val();
             let form_type = "from_product";
 
-            var formData = {manufacturer_name, form_type};
+            var formData = {
+                manufacturer_name,
+                form_type
+            };
 
             $.ajax({
                 url: '/manufacturer/create',
@@ -1731,7 +2050,7 @@ console.log(remainVariationIds)
 
     @if (session('message'))
         <script>
-            toastr.success("{{session('message')}}");
+            toastr.success("{{ session('message') }}");
         </script>
     @endif
 @endpush

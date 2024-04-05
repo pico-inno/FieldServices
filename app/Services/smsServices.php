@@ -66,7 +66,12 @@ class smsServices
     /**
      * send sms using sms pos
      *
-     * @param  mixed $data
+     * @param  mixed $data={
+    *       "to":"09xxxxxxxxx",
+     *       "message":"Hello World",
+     *       "sender":"SMSPoh"
+     *       }
+     *
      * @return void
      */
     public function sendWithSMSPoh(Array $data){

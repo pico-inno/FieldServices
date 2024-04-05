@@ -308,12 +308,21 @@
                                         }
                                         let total_current_stock_qty=Number(result.stock_sum_current_quantity);
                                         let css_class=isNullOrNan(result.stock_sum_current_quantity)<=0 && result.product_type=="storable" && allowOverSelling !=1 ?" text-gray-600 order-3":'';
-
+                                        let variation_values=result.variation_values ?? [];
+                                        let variationName=result.variation_name;
+                                        let valueLength=variation_values.length;
+                                        if(result.variation_template_value_id == null && variation_values.length >0){
+                                            variationName = '';
+                                            variation_values.forEach((variation_value,i) => {
+                                                separator=(i != 0 || i+1==valueLength) ? ', ' : ' ';
+                                                variationName += separator + variation_value.variation_template_value.name
+                                            });
+                                        }
                                         html += `<div class="quick-search-result result ps-10  mt-1 mb-1 bg-hover-light p-2 ${css_class} " data-id=${key} data-name="${result.name}" style="z-index:300;">`;
                                         html += `<h4 class="fs-6  pt-3 ${css_class} ">
                                                 ${result.name} `;
                                                 if(result.has_variation=='variable'){
-                                                    html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${result.variation_name??''})</span>`;
+                                                    html +=   `<span class="text-gray-700 fw-semibold fs-5 ms-2">(${variationName??''})</span>`;
                                                 }
                                         html+='</h4>'
                                         html+=`<span class=" pt-3 text-gray-600 fw-bold fs-8">${result.has_variation=='variable'?'SKU : '+result.variation_sku :'SKU : '+result.sku} </span>`
@@ -619,6 +628,17 @@
         }
         let packagingOption='';
         variation=selectedVar_product;
+        let variation_values=selectedVar_product.variation_values ?? [];
+        let variationName=selectedVar_product.variation_name;
+        let valueLength=variation_values.length;
+        if(selectedVar_product.variation_template_value_id == null && variation_values.length >0){
+            variationName = '';
+            variation_values.forEach((variation_value,i) => {
+                separator=(i != 0 || i+1==valueLength) ? ', ' : ' ';
+                variationName += separator + variation_value.variation_template_value.name
+            });
+        }
+
         if(variation.packaging){
             variation.packaging.forEach((pk)=>{
                 packagingOption+=`
@@ -666,8 +686,8 @@
                 <td class="d-flex ps-2">
 
                     <div class="min-w-125px text-start fs-7">
-                        <span>${selectedVar_product.name}</span>
-                        <span class="text-primary fw-semibold fs-5">${selectedVar_product.variation_name?'-'+selectedVar_product.variation_name:''}</span>
+                        <span>${selectedVar_product.name}</span><br>
+                        <span class="text-gray-600 fw-semibold fs-7">${variationName?'('+variationName+')':''}</span>
                         <br>
                         ${$currentQtyText}
                         <div>

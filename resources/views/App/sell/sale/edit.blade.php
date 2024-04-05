@@ -278,14 +278,24 @@
                                                 $avilQty=getKitAvailableQty($sale->business_location_id,$product->id);
                                             }
                                             $conusmeQty=getConsumeQty($product->id);
+
+                                            $varationName=$product_variation['variation_template_value']['name'] ?? '';
+                                            $variationValueCount=count($product_variation['variation_values']);
+                                            if($variationValueCount > 0){
+                                                $varationName="";
+                                                foreach ($product_variation['variation_values'] as $index=>$vv) {
+                                                    $separator= $index == 0 || $index ==$variationValueCount ? '': ',';
+                                                    $varationName.= $separator.' '.$vv['variation_template_value']['name'];
+                                                }
+                                            };
                                         @endphp
                                         <tr class="sale_row sale_row_{{$key}}" data-unid="{{$parentkey}}" data-product="{{$sale_detail->variation_id}}">
                                             <th><i class="fa-solid fa-trash text-danger deleteRow" type="button"></i></th>
                                             <td class="d-flex ps-2">
 
                                                 <div class="ms-2">
-                                                    <span>{{$product->name}}</span>
-                                                    <span class="text-gray-500 fw-semibold fs-5">{{ $product_variation['variation_template_value']['name']??'' }}</span>
+                                                    <span>{{$product->name}}</span><br/>
+                                                    <span class="text-gray-500 fw-semibold fs-7">{{ $varationName? '('.$varationName.')' : '' }}</span>
                                                     <br>
                                                     @if (isset($sale_detail['kitSaleDetails']))
                                                         <span class="current_stock_qty_txt current_rom_stock_qty_txt fs-7">{{$avilQty +round($sale_detail->stock_sum_current_quantity ?? 0,2) }}</span>

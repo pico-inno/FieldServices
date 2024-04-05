@@ -11,6 +11,7 @@
     var filterDate = filterCard.find('.filter_date');
     var filterView = filterCard.find('.filter_view');
     var filterType = filterCard.find('.filter_type');
+    var filterStockStatus = filterCard.find('.filter_stock_status');
 
      var handleSearchDatatable = () => {
 
@@ -32,15 +33,16 @@
         var filterDateVal = filterDate.val();
         var filterViewVal = filterView.val();
         var filterTypeVal = filterType.val();
+        var filterStockStatusVal = filterStockStatus.val();
         stockReportsTableBody.empty();
-        filterData(1, filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal, filterTypeVal);
+        filterData(1, filterLocationsVal, filterProductVal, filterCategoryVal, filterBrandVal, filterDateVal, filterViewVal, filterTypeVal, filterStockStatusVal);
     });
 
 
     var filterDateVal = filterDate.val();
-    filterData( 1,0, 0, 0, 0, filterDateVal, 0, 0);
+    filterData( 1,0, 0, 0, 0, filterDateVal, 0, 0, 1);
 
-    async function filterData(pageNumber = null, filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterViewVal, filterTypeVal) {
+    async function filterData(pageNumber = null, filterLocations, filterProductVal, filterCategoryVal, filterBrandVal, filterDate, filterViewVal, filterTypeVal, filterStockStatusVal) {
         var data = {
             filter_locations: filterLocations,
             filter_product: filterProductVal,
@@ -49,6 +51,7 @@
             filter_date: filterDate,
             filter_view: filterViewVal,
             filter_type: filterTypeVal,
+            filter_stock_status: filterStockStatusVal,
         };
         try {
             $.ajax({
@@ -97,7 +100,7 @@
                         }
                         var rowData = [
                             item.variation_sku ? item.variation_sku : item.sku,
-                            item.name+'<br><span class="fs-7 text-muted">'+item.variation_template_name+' -    '+item.variation_value_name+'</span>',
+                            item.name+'<br><span class="fs-7 text-muted"> ('+item.variation_full_name+')</span>',
                             item.batch_no,
                             item.lot_no,
                             item.location_name,

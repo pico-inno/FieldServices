@@ -44,19 +44,19 @@ use App\Models\settings\businessSettings;
 use Illuminate\Support\Facades\Validator;
 use Modules\ComboKit\Services\RoMService;
 use App\Models\purchases\purchase_details;
-use Modules\Delivery\Entities\DeliveryOrder;
 use App\Services\packaging\packagingServices;
 use Modules\Reservation\Entities\Reservation;
 use App\Models\posSession\posRegisterSessions;
-use Modules\Ecommerce\Entities\EcommerceOrder;
 use Modules\Reservation\Entities\FolioInvoice;
 use App\Http\Requests\location\locationRequest;
-use Modules\Delivery\Services\DeliveryServices;
 use App\Console\Commands\gitOps\moduelInstaller;
 use Modules\ExchangeRate\Entities\exchangeRates;
 use Modules\Reservation\Entities\FolioInvoiceDetail;
 use App\Http\Controllers\posSession\posSessionController;
 use App\Repositories\interfaces\LocationRepositoryInterface;
+use Modules\Delivery\Entities\DeliveryOrder;
+use Modules\Delivery\Services\DeliveryServices;
+use Modules\Ecommerce\Entities\EcommerceOrder;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoices;
 use Modules\HospitalManagement\Entities\hospitalRegistrations;
 use Modules\HospitalManagement\Entities\hospitalFolioInvoiceDetails;
@@ -377,6 +377,8 @@ class saleController extends Controller
                 'productVariation' => function ($q) {
                     $q->select('id', 'product_id', 'variation_template_value_id', 'default_selling_price')
                     ->with([
+
+                        'variation_values.variation_template_value',
                         'packaging.uom',
                         'product' => function ($q) {
                             $q->select('id', 'name', 'has_variation');
@@ -417,7 +419,7 @@ class saleController extends Controller
         }
     }
     // sale store
-    public function store(Request $request, SaleServices $saleService, paymentServices $paymentServices,DeliveryServices $deliveryService)
+    public function store(Request $request, SaleServices $saleService, paymentServices $paymentServices)
     {
         $location = businessLocation::find($request->business_location_id);
         $layoutId = InvoiceTemplate::find($location->invoice_layout);
@@ -471,6 +473,7 @@ class saleController extends Controller
                 $deliveryData['transaction_type']="sale";
                 $address=Contact::where('id',$request['contact_id'])->first()->getAddressAttribute();
                 $deliveryData['address']=$address;
+                $deliveryService= new DeliveryServices();
                 $deliveryService=$deliveryService->createDeliveryOrder($deliveryData);
             }
 
@@ -575,7 +578,7 @@ class saleController extends Controller
             }
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
+            logger($e->getMessage());
             if ($request->type == 'pos') {
                 return response()->json([
                     'status' => '422',
@@ -1904,6 +1907,7 @@ class saleController extends Controller
             'additionalProduct.productVariation.product',
             'additionalProduct.uom',
             'additionalProduct.productVariation.variationTemplateValue',
+            'variation_values.variation_template_value',
             'stock' => function ($query) use ($business_location_id) {
                 $locationIds = childLocationIDs($business_location_id);
                 $query->select('current_quantity', 'business_location_id', 'product_id', 'id')
@@ -1974,7 +1978,6 @@ class saleController extends Controller
                 $query->whereIn('business_location_id', $locationIds);
             }], 'current_quantity')
             ->get()->toArray();
-            // dd($products);
         return response()->json($products, 200);
     }
     public function getSuggestionProduct(Request $request)

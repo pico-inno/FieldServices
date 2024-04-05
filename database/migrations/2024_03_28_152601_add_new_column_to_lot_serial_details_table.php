@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-//        Schema::create('delivery_channels', function (Blueprint $table) {
-//            $table->id();
-//            $table->text('name')->nullable();
-//            $table->text('phone')->nullable();
-//            $table->timestamps();
-//        });
+        Schema::table('lot_serial_details', function (Blueprint $table) {
+            $table->enum('stock_status', ['normal', 'prepare', 'reserve'])->default('normal');
+        });
     }
 
     /**
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('delivery_channels');
+        Schema::table('lot_serial_details', function (Blueprint $table) {
+            //
+        });
     }
 };

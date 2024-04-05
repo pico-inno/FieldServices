@@ -51,14 +51,14 @@ var KTModalNewAddress = function () {
 					'address1': {
 						validators: {
 							notEmpty: {
-								message: 'Address 1 is required'
+								message: 'LocalAddress 1 is required'
 							}
 						}
 					},
 					'address2': {
 						validators: {
 							notEmpty: {
-								message: 'Address 2 is required'
+								message: 'LocalAddress 2 is required'
 							}
 						}
 					},
@@ -107,7 +107,7 @@ var KTModalNewAddress = function () {
 					if (status == 'Valid') {
 						submitButton.setAttribute('data-kt-indicator', 'on');
 
-						// Disable button to avoid multiple click 
+						// Disable button to avoid multiple click
 						submitButton.disabled = true;
 
 						// Simulate ajax process
@@ -116,7 +116,7 @@ var KTModalNewAddress = function () {
 
 							// Enable button
 							submitButton.disabled = false;
-							
+
 							// Show success message.  For more info check the plugin's official documentation: https://sweetalert2.github.io/
 							Swal.fire({
 								text: "Form has been successfully submitted!",
@@ -133,7 +133,7 @@ var KTModalNewAddress = function () {
 							});
 
 							//form.submit(); // Submit form
-						}, 2000);   						
+						}, 2000);
 					} else {
 						// Show error message.
 						Swal.fire({
@@ -166,8 +166,8 @@ var KTModalNewAddress = function () {
 				}
 			}).then(function (result) {
 				if (result.value) {
-					form.reset(); // Reset form	
-					modal.hide(); // Hide modal				
+					form.reset(); // Reset form
+					modal.hide(); // Hide modal
 				} else if (result.dismiss === 'cancel') {
 					Swal.fire({
 						text: "Your form has not been cancelled!.",

@@ -180,15 +180,15 @@
                         <div class="row mb-5">
                             <div class="col-6 mb-4">
                                 <label class="fs-6 fw-semibold form-label " for="tax_number">
-                                    <span class="required">Address line 1:</span>
+                                    <span class="required">LocalAddress line 1:</span>
                                 </label>
-                                <input type="text" class="form-control" id="tax_number" placeholder="Address line 1">
+                                <input type="text" class="form-control" id="tax_number" placeholder="LocalAddress line 1">
                             </div>
                             <div class="col-6 mb-4">
                                 <label class="fs-6 fw-semibold form-label " for="opening_balance">
-                                    <span class="required">Address line 2:</span>
+                                    <span class="required">LocalAddress line 2:</span>
                                 </label>
-                                <input type="text" class="form-control" id="opening_balance" placeholder="Address line 2">
+                                <input type="text" class="form-control" id="opening_balance" placeholder="LocalAddress line 2">
                             </div>
                         </div>
                         <div class="row mb-5">
@@ -340,8 +340,8 @@
 
                         <div class="row">
                             <div class="col-lg-8 offset-lg-2">
-                                <label for="" class="form-label">Shipping Address</label>
-                                <input type="text" class="form-control" placeholder="Shipping Address">
+                                <label for="" class="form-label">Shipping LocalAddress</label>
+                                <input type="text" class="form-control" placeholder="Shipping LocalAddress">
                             </div>
                         </div>
                     </div>
