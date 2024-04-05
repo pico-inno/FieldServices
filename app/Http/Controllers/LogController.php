@@ -39,7 +39,7 @@ class LogController extends Controller
 
         return DataTables::of($logs)
             ->editColumn('created_user', function ($logs){
-                return $logs->created_user->username;
+                return $logs->created_user ? $logs->created_user->username : 'Unknown';
             })
             ->rawColumns(['created_user'])
             ->make(true);
