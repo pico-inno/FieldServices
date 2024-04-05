@@ -1361,7 +1361,7 @@
             totalDisPrice();
             itemCal();
         })
-        $(document).on('change', '.quantity_input', function() {
+        $(document).on('input', '.quantity_input', function() {
             packaging($(this),'/');
             getPrice($(this));
             calPrice($(this));

@@ -366,7 +366,7 @@
                                                     @foreach ($product_variation['packaging'] as $package)
                                                     <option @selected($package['id']==arr($sale_detail['packagingTx'],'product_packaging_id'))
                                                         data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">
-                                                        {{$package['packaging_name']}} ({{fquantity($package['quantity'])}}-{{$package['uom']['short_name']}})</option>
+                                                        {{$package['packaging_name'] ?? ''}} ({{fquantity($package['quantity'])}}-{{$package['uom']['short_name'] ?? ''}})</option>
                                                     @endforeach
                                                 </select>
                                             </td>

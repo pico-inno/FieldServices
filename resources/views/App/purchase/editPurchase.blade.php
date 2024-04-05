@@ -404,6 +404,8 @@
                                                     @endforeach
                                                 </select>
                                             </td>
+
+
                                             <td class="fv-row">
                                                 <input type="text" class="form-control form-control-sm mb-1 package_qty input_number" placeholder="Quantity"
                                                     name="purchase_details[{{$key}}][packaging_quantity]" value="{{arr($pd['packagingTx'],'quantity')}}">
@@ -413,11 +415,16 @@
                                                     data-kt-repeater="package_select_{{$key}}" data-kt-repeater="select2" data-hide-search="true"
                                                     data-placeholder="Select Package" placeholder="select Package" >
                                                     <option value="">Select Package</option>
-                                                    @foreach ($product_variation['packaging'] as $package)
-                                                        <option @selected($package['id'] == arr($pd['packagingTx'],"product_packaging_id")) data-qty="{{$package['quantity']}}" data-uomid="{{$package['uom_id']}}" value="{{$package['id']}}">{{$package['packaging_name']}} ({{fquantity($package['quantity'])}}-{{$package['uom']['short_name']}})</option>
-                                                    @endforeach
+
+                                                        @if (isset($product_variation['packaging']) && count($product_variation['packaging']) > 0)
+                                                        @foreach ($product_variation['packaging'] as $package)
+                                                            <option @selected($package['id'] == arr($pd['packagingTx'],"product_packaging_id")) data-qty="{{arr($package,'quantity')}}" data-uomid="{{$package['uom_id'] ?? ''}}" value="{{$package['id']}}">{{$package['packaging_name']}} ({{fquantity($package['quantity'])}}-{{$package['uom']['short_name'] ?? ''}})</option>
+                                                        @endforeach
+
+                                                        @endif
                                                 </select>
                                             </td>
+
                                             <td>
 
                                                 <div class="input-group input-group-sm">
