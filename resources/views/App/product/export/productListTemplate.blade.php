@@ -5,6 +5,7 @@
         <tr style="text-align: center;font-weight: bold;">
             <th style="font-weight: bold;">Product Name</th>
             <th style="font-weight: bold;">Variation Name</th>
+            <th  style="font-weight: bold;">Product Code</th>
             <th  style="font-weight: bold;">SKU</th>
             <th  style="font-weight: bold;">Assign Locations</th>
             <th  style="font-weight: bold;">Purchase Price</th>
@@ -59,6 +60,7 @@
                 <tr>
                     <td>{{$p->name}}</td>
                     <td>{{$v->variationTemplateValue->name}}</td>
+                    <td>{{$p->product_code}}</td>
                     <td>{{$v->variation_sku}}</td>
                     <td>{{$assign_locations}}</td>
                     <td>{{ $v->default_purchase_price }}</td>
@@ -82,6 +84,7 @@
             <tr>
                 <td>{{$p->name}}</td>
                 <td></td>
+                <td>{{$p->product_code}}</td>
                 <td>{{$p->sku}}</td>
                 <td>{{$assign_locations}}</td>
                 <td>{{ $p->productVariations[0]->default_purchase_price ?? 0 }}</td>
