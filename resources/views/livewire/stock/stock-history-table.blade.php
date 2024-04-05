@@ -129,7 +129,7 @@
                                     {{$data->name}}
                                 </td>
                                 <td   class="text-start">
-                                    @if($data->transaction_type=='sale' || $data->transaction_type=='stock_out' || $data->transaction_type==='transfer')
+                                    @if($data->transaction_type=='sale' || $data->transaction_type=='stock_out' || $data->transaction_type==='transfer' || $data->transaction_type==='adjustement')
                                         {{$data->business_location->name}}
                                     @else
                                         @if($data->transaction_type=='purchase')
@@ -146,7 +146,7 @@
                                         @endphp
                                         {{$customer ? $customer['first_name'] : ''}}
                                     @else
-                                        @if($data->transaction_type=='purchase' || $data->transaction_type=='stock_in' || $data->transaction_type==='transfer')
+                                        @if($data->transaction_type=='purchase' || $data->transaction_type=='stock_in' || $data->transaction_type==='transfer'   || $data->transaction_type==='opening_stock')
                                                 {{$data->business_location->name}}
                                         @endif
                                     @endif
