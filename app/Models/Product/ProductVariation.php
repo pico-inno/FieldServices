@@ -2,15 +2,16 @@
 
 namespace App\Models\Product;
 
-use App\Models\CurrentStockBalance;
 use App\Models\Product\Product;
+use App\Models\productPackaging;
+use App\Models\CurrentStockBalance;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\AdditionalProduct;
-use App\Models\productPackaging;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductVariation extends Model
 {
@@ -48,6 +49,16 @@ class ProductVariation extends Model
     {
         return $this->hasMany(productPackaging::class, 'product_variation_id', 'id');
     }
+
+    public function product_packaging(): HasMany
+    {
+        return $this->hasMany(productPackaging::class, 'product_variation_id', 'id');
+    }
+
+    public function varPackaging(): HasOne
+    {
+        return $this->hasOne(productPackaging::class, 'product_variation_id', 'product_variations.id');
+    }
     // scope
 
     public function scopeByProductId($query, $productId)
@@ -66,6 +77,11 @@ class ProductVariation extends Model
     public function stock()
     {
         return $this->hasMany(CurrentStockBalance::class, 'variation_id', 'id');
+    }
+
+    public function variation_values() : HasMany
+    {
+        return $this->hasMany(VariationValue::class,'product_variation_id','id');
     }
 
 

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('addresses', function (Blueprint $table) {
+        Schema::create('local_addresses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('contact_id');
             $table->longText('address_line_1');

@@ -54,7 +54,7 @@ var KTModalCustomersAdd = function () {
 					'address1': {
 						validators: {
 							notEmpty: {
-								message: 'Address 1 is required'
+								message: 'LocalAddress 1 is required'
 							}
 						}
 					},

@@ -206,7 +206,7 @@
                                                                         data-kt-check-target="#kt_saleItem_table .form-check-input" value="" />
                                                                 </div>
                                                             </th>
-                                                            {{-- <th></th> --}}
+                                                             <th></th>
                                                             <th class="text-start min-w-100px">{{ __('product/product.action') }}</th>
                                                             <th class="min-w-150px">{{ __('product/product.product') }}</th>
                                                             {{-- <th class="text-start min-w-150px">
@@ -233,12 +233,21 @@
                                                     <!--end::Table head-->
                                                     <!--begin::Table body-->
                                                     <tbody class="fw-semibold text-gray-600">
-                                                        @foreach ($products as $product)
+                                                        @foreach ($products as $key => $product)
                                                         <tr>
-                                                            <td>
+                                                            <td class="">
                                                                 <div class="form-check form-check-sm form-check-custom ">
                                                                     <input class="form-check-input checkAssign" type="checkbox" data-checked="assign" value="{{$product['id']}}" />
                                                                 </div>
+                                                            </td>
+                                                            <td>
+                                                                @if($product->has_variation !== 'single')
+                                                                    <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-20px w-20px"
+                                                                            wire:click="toggleSubTable('{{ $product->id }}')">
+                                                                        <i id="toggle" class="fas fa-plus"></i>
+                                                                    </button>
+
+                                                                @endif
                                                             </td>
                                                             <td>
                                                                 <div class="dropdown">
@@ -270,25 +279,26 @@
                                                                    @endif
                                                                 </div>
                                                             </td>
-                                                            <td>{{$product['name']}}</td>
+                                                            <td    @if ($product->has_variation === "single") wire:click="getCurrentQty('{{ $product->id }}')" style="cursor: pointer;" @endif>
+                                                                {{$product['name']}}
+                                                                @if ($selectedProductId == $product->id)
+                                                                {{$total_current_quantity_with_uom}}
+                                                                @endif
+                                                            </td>
                                                             <td>{{$product['sku']}}</td>
                                                             <td>
                                                             @php
-                                                                $count=App\Models\locationProduct::where('product_id',$product->id)->count();
-                                                                $data = App\Models\locationProduct::where('product_id',$product->id)
-                                                                    ->with(['location:id,name'])
-                                                                    ->limit(3)
-                                                                    ->get()
-                                                                    ->pluck('location.name')
-                                                                    ->toArray();
-                                                                $result = implode(', ', $data);
-                                                                $strEnd=strlen('result')>80 || $count >3?'.....':'';
-                                                            @endphp
-                                                            @if ($count >1)
-                                                                {{substr($result,0,80).$strEnd}}
-                                                            @else
-                                                            -
+                                                                $value_names = '';
+                                                                foreach ($product->locations_product as $location) {
+                                                                $value_names .= $location->location->name . ',';
+                                                                }
+                                                                $value_names = rtrim($value_names, ',');
 
+                                                            @endphp
+                                                            @if ($product->locations_product !== null)
+                                                                    {{$value_names}}
+                                                            @else
+                                                                -
                                                             @endif
                                                             </td>
                                                             <td>
@@ -337,9 +347,15 @@
                                                             <td>
                                                                 {{$product->product_custom_field4}}
                                                             </td>
+                                                            @if ($showSubTable && $selectedProductId == $product->id)
+                                                                <livewire:product-variation-list :product="$product" />
+                                                            @endif
                                                         </tr>
+
                                                         @endforeach
+
                                                     </tbody>
+
                                                     <!--end::Table body-->
                                                 </table>
 
@@ -417,7 +433,6 @@
     }).on('select2:unselect',function(){
         @this.set('manufactureId','all');
     });
-
 
 
     const modal = new bootstrap.Modal($('#locationSelect'));

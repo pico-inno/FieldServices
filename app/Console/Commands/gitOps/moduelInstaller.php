@@ -30,11 +30,16 @@ class moduelInstaller extends Command
         $modules=require('./app/infra/github/register.php');
         $modulesName= array_keys($modules);
         $name = $this->choice('Select Module To Install !',$modulesName);
+        $isExitModulePath=is_dir('./Modules/'.$name);
         $this->info('Intalling Modules :'.$name);
-        if(is_dir('./Modules')){
+
+        if($isExitModulePath){
+            $productionBranch=$modules[$name]['productionBranch'] ?? 'main';
+            shell_exec('cd ./Modules/'.$name.'&& git fetch origin && git submodule update '.$productionBranch);
+        }elseif(is_dir('./Modules')){
             shell_exec('cd ./Modules && git submodule add -f '.$modules[$name]['resource'].' ./'.$name);
         }else{
-            shell_exec('git submodule add -f '.$modules[$name]['resource'].' ./modules/'.$name);
+            shell_exec('git submodule add -f '.$modules[$name]['resource'].' ./Modules/'.$name);
         }
 
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Models\locationProduct;
 use App\Models\Product\UOM;
 use App\Models\productPackaging;
 use App\Models\CurrentStockBalance;
@@ -56,29 +57,29 @@ class Product extends Model
 
     protected $dates = ['deleted_at'];
 
-    public function getVariationName(){
-
+    public function getVariationName()
+    {
     }
     public function productVariations(): HasMany
     {
         return $this->hasMany(ProductVariation::class);
     }
 
-    public function productVariationTemplates() : HasMany
+    public function productVariationTemplates(): HasMany
     {
         return $this->hasMany(ProductVariationsTemplates::class);
     }
-    public function product_variations():HasOne
+    public function product_variations(): HasOne
     {
-        return $this->hasOne(ProductVariation::class);
+        return $this->hasOne(ProductVariation::class, 'product_id', 'id');
     }
 
-    public function category() : BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function brand() : BelongsTo
+    public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
@@ -93,13 +94,13 @@ class Product extends Model
         return $this->belongsTo(Manufacturer::class);
     }
 
-    public function uom() : BelongsTo
+    public function uom(): BelongsTo
     {
         return $this->belongsTo(UOM::class);
     }
     public function purchaseUOM(): BelongsTo
     {
-        return $this->belongsTo(UOM::class, 'purchase_uom_id','id');
+        return $this->belongsTo(UOM::class, 'purchase_uom_id', 'id');
     }
 
     public function stock()
@@ -111,9 +112,14 @@ class Product extends Model
         return $this->belongsTo(VariationTemplateValues::class, 'variation_template_value_id', 'id');
     }
 
+
     public function varPackaging(): HasOne
     {
         return $this->hasOne(productPackaging::class, 'product_variation_id', 'product_variations.id');
+    }
+    public function variation_values(): HasMany
+    {
+        return $this->hasMany(VariationValue::class, 'product_variation_id', 'variation_id');
     }
     public function product_packaging(): HasOne
     {
@@ -133,6 +139,16 @@ class Product extends Model
     public function product_variation(): HasOne
     {
         return $this->hasOne(ProductVariation::class, 'product_id', 'id');
+    }
+
+    public function product_variation_templates(): HasMany
+    {
+        return $this->hasMany(ProductVariationsTemplates::class);
+    }
+
+    public function locations_product() : HasMany
+    {
+        return $this->hasMany(locationProduct::class);
     }
 
 }

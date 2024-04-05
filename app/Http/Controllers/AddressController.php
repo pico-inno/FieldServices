@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Township;
+use App\Models\LocalTownship;
 use App\Repositories\AddressRepository;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ class AddressController extends Controller
 {
     public function getTownships($region_id)
     {
-        $townships = Township::where('region_id', $region_id)->get();
+        $townships = LocalTownship::where('region_id', $region_id)->get();
 
         return response()->json($townships);
     }
@@ -48,19 +48,20 @@ class AddressController extends Controller
             ]);
 
             $addresses = $addressRepository->query()
-                ->leftJoin('regions', 'regions.id', '=', 'addresses.region_id')
-                ->leftJoin('townships', 'townships.id', '=', 'addresses.township_id')
+                ->where('contact_id',Auth::guard('customer')->user()->id)
+                ->leftJoin('local_regions', 'local_regions.id', '=', 'local_addresses.region_id')
+                ->leftJoin('local_townships', 'local_townships.id', '=', 'local_addresses.township_id')
                 ->select(
-                    'addresses.*',
-                    'regions.en_name as region_en_name',
-                    'regions.mm_name as region_mm_name',
-                    'townships.en_name as township_en_name',
-                    'townships.mm_name as township_mm_name',
+                    'local_addresses.*',
+                    'local_regions.en_name as region_en_name',
+                    'local_regions.mm_name as region_mm_name',
+                    'local_townships.en_name as township_en_name',
+                    'local_townships.mm_name as township_mm_name',
 
                 )
                 ->get();
             DB::commit();
-            return response()->json(['message' => 'Address created successfully', 'data' => $address, 'addresses'=> $addresses]);
+            return response()->json(['message' => 'LocalAddress created successfully', 'data' => $address, 'addresses'=> $addresses]);
         }catch (Exception $exception){
             return response()->json(['message' => 'error', 'data' => $exception]);
         }

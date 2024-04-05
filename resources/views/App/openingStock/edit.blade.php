@@ -185,9 +185,20 @@
                                                         </td>
                                                         <td>
                                                             <span  class="text-gray-600 text-hover-primary mb-1 ">{{$product->name}}</span><br>
-                                                            @if(isset($product_variation['variation_template_value']))
+                                                            @php
+                                                                $varationName=$product_variation['variation_template_value']['name'] ?? '';
+                                                                $variationValueCount=count($product_variation['variation_values']);
+                                                                if($variationValueCount > 0){
+                                                                    $varationName="";
+                                                                    foreach ($product_variation['variation_values'] as $index=>$vv) {
+                                                                        $separator= $index == 0 || $index ==$variationValueCount ? '': ',';
+                                                                        $varationName.= $separator.' '.$vv['variation_template_value']['name'];
+                                                                    }
+                                                                };
+                                                            @endphp
+                                                            @if(isset($varationName))
                                                                 <span class="my-2 d-block">
-                                                                    ({{$product_variation['variation_template_value']['name']}})
+                                                                    ({{$varationName}})
                                                                 </span>
                                                             @endif
                                                         </td>

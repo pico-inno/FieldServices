@@ -129,19 +129,19 @@ use App\Http\Controllers\userManagement\users\BusinessUserController;
 Route::prefix(env('ADMIN_ROUTE_PREFIX', 'admin'))->group(function () {
 
     Auth::routes(['register' => false]);
-    Route::middleware('guest:web')->group(function (){
-        Route::get('/', function (){ return redirect(\route('login')); } );
+    Route::middleware('guest:web')->group(function () {
+        Route::get('/', function () {
+            return redirect(\route('login'));
+        });
         Auth::routes();
         Auth::routes(['except' => 'logout']);
     });
 
-    Route::middleware('auth:web')->group(function (){
+    Route::middleware('auth:web')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     });
 
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
-
-
 });
 
 
@@ -629,9 +629,9 @@ Route::prefix('payment-account')->group(function () {
         Route::get('/get/{currency_id}', 'getByCurrency')->name('paymetAcc.getByCurrency');
     });
 });
-Route::prefix('payment-methods')->group(function(){
-    Route::controller(PaymentMethodsController::class)->group(function(){
-        Route::get('/','index')->name('paymentMethods.index');
+Route::prefix('payment-methods')->group(function () {
+    Route::controller(PaymentMethodsController::class)->group(function () {
+        Route::get('/', 'index')->name('paymentMethods.index');
     });
 });
 Route::prefix('currency')->group(function () {
@@ -880,6 +880,7 @@ Route::controller(UoMController::class)->group(function () {
 Route::controller(VariationController::class)->group(function () {
     Route::get('/variation-datas', 'variationDataForDatatable')->name('variations.data');
     Route::get('/variation-values/{id}', 'value')->name('variation.values');
+    Route::get('/variation-values', 'all')->name('variation.all');
     Route::get('/variation', 'index')->name('variations');
     Route::get('/variation/add', 'add')->name('variation.add');
     Route::post('/variation/create', 'create')->name('variation.create');
@@ -1075,7 +1076,7 @@ Route::get('/test', function () {
 });
 
 
-///Address
+///LocalAddress
 
 Route::get('/townships/{region_id}', [AddressController::class, 'getTownships']);
 Route::get('/addresses', [AddressController::class, 'getAddress']);

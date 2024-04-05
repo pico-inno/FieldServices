@@ -6,11 +6,14 @@ use App\Models\Product\AdditionalProduct;
 use App\Models\Product\Product;
 use App\Models\Product\ProductVariation;
 use App\Models\Product\ProductVariationsTemplates;
+use App\Models\Product\VariationTemplateValues;
+use App\Models\Product\VariationValue;
 use App\Models\productPackaging;
 
 class ProductRepository
 {
-    public function query(){
+    public function query()
+    {
         return Product::query();
     }
     public function queryVariation()
@@ -101,38 +104,51 @@ class ProductRepository
         })->pluck('id')->toArray();
     }
 
-    public function getVariationByProductIdWithRelationships($product_id, $relations = []){
-       return ProductVariation::with($relations)->where('product_id', $product_id)->get();
+    public function getVariationByProductIdWithRelationships($product_id, $relations = [])
+    {
+        return ProductVariation::with($relations)->where('product_id', $product_id)->get();
     }
 
     public function getPackagingByProductIdWithRelationships($product_id, $relations = [])
     {
-        return productPackaging::where('product_id',$product_id)->with($relations)->get();
+        return productPackaging::where('product_id', $product_id)->with($relations)->get();
     }
 
     public function getAllAdditionalProductByProductId($product_id)
     {
         return AdditionalProduct::where('primary_product_id', $product_id)
             ->with([
-                'productVariation' => function($query){
+                'productVariation' => function ($query) {
                     $query->select('id', 'product_id', 'variation_template_value_id')
                         ->with([
                             'variationTemplateValue' => function ($query) {
                                 $query->select('id', 'name');
                             },
                             'product' => function ($query) {
-                                $query->select('id','name', 'uom_id');
-
+                                $query->select('id', 'name', 'uom_id');
                             }
                         ]);
                 },
                 'uom' => function ($query) {
-                    $query->select('id','name', 'short_name', 'unit_category_id')
+                    $query->select('id', 'name', 'short_name', 'unit_category_id')
                         ->with(['unit_category' => function ($query) {
-                            $query->select('id','name')->with('uomByCategory');
+                            $query->select('id', 'name')->with('uomByCategory');
                         }]);
                 }
             ])
             ->get();
+    }
+
+    public function getVariationTemplateValueId($product_id)
+    {
+        return VariationValue::where('product_id', $product_id)
+            ->distinct('variation_template_value_id')
+            ->pluck('variation_template_value_id');
+    }
+    public function getVariationTemplateId($variationTemplateValuesId)
+    {
+        return  VariationTemplateValues::whereIn('id', $variationTemplateValuesId)
+            ->distinct('variation_template_id')
+            ->pluck('variation_template_id');
     }
 }
