@@ -221,6 +221,8 @@
                                 <th class="min-w-100px">{{__('report.quantity')}}</th>
                                 <th class="min-w-100px">{{__('report.uom_price')}}</th>
                                 <th class="min-w-100px">{{__('report.total')}}</th>
+                                <th class="min-w-100px">Item Discount</th>
+                                <th>Total With Dis</th>
                             </tr>
                             <!--end::Table row-->
                             </thead>
@@ -233,6 +235,8 @@
                             <tfoot>
                             <tr>
                                 <th colspan="2" style="text-align:right">Total:</th>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -396,6 +400,22 @@
                                                    id="chkColumn6"/>
                                             <span
                                                 class="form-check-label text-gray-600 fw-semibold">{{__('report.total')}}</span>
+                                        </label>
+                                        <!--end::Radio button-->
+                                        <!--begin::Radio button-->
+                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
+                                            <input class="form-check-input" type="checkbox"  checked="checked"
+                                                   id="chkColumn6"/>
+                                            <span
+                                                class="form-check-label text-gray-600 fw-semibold">Item Discount</span>
+                                        </label>
+                                        <!--end::Radio button-->
+                                        <!--begin::Radio button-->
+                                        <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
+                                            <input class="form-check-input" type="checkbox"  checked="checked"
+                                                   id="chkColumn6"/>
+                                            <span
+                                                class="form-check-label text-gray-600 fw-semibold">Total With Dis</span>
                                         </label>
                                         <!--end::Radio button-->
                                     </div>

@@ -25,11 +25,11 @@ class Configuration extends Component
         $defaultUrl = 'https://www.oviond.com/wp-content/uploads/2023/07/E_Commerce_Is_Here_To_Stay_d01ee22aa5_a710eeaf67.png';
         $path = 'ecommerce/banner-image/default.jpg';
 
-        if (Storage::exists($path)) {
-            $this->imageUrl = Storage::url($path);
-        } else {
+//        if (Storage::exists($path)) {
+//            $this->imageUrl = Storage::url($path);
+//        } else {
             $this->imageUrl = $defaultUrl;
-        }
+//        }
     }
 
     public function preview()

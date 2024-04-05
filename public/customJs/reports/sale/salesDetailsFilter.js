@@ -79,7 +79,9 @@
                             item.brand_name ?? '',
                             parseFloat(item.quantity).toFixed(2) + (item.uom_short_name ? ' (' + item.uom_short_name + ')' : ''),
                             parseFloat(item.uom_price).toFixed(2) ,
-                            (item.uom_price * item.quantity).toFixed(2),
+                            parseFloat(item.subtotal).toFixed(2) ,
+                            parseFloat(item.per_item_discount).toFixed(2),
+                            parseFloat(item.subtotal_with_discount).toFixed(2),
                         ];
                         dataTable.row.add(rowData).draw();
                     });
@@ -138,14 +140,14 @@
 
           // Total over this page
           pageTotal = api
-              .column( 10, { page: 'current'} )
+              .column( 12, { page: 'current'} )
               .data()
               .reduce( function (a, b) {
                   return intVal(a) + intVal(b);
               }, 0 );
 
           // Update footer
-          $( api.column( 10 ).footer() ).html(
+          $( api.column( 12 ).footer() ).html(
               'Ks '+pageTotal
           );
 
