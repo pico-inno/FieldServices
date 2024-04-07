@@ -1014,3 +1014,9 @@ function calcPayable($contact_id){
     ]);
     return $payable_amount;
 }
+
+function getImage($imageBlob)
+{
+    $imageData = base64_encode($imageBlob);
+    return  $imageData;
+}

@@ -266,6 +266,7 @@ class saleController extends Controller
 
     public function saleDetail($id)
     {
+        $ecommerceOrderLocation='';
         $relations = [
             'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
         ];
@@ -273,9 +274,13 @@ class saleController extends Controller
             $relations[] = 'table';
         }
         $sale = sales::with(...$relations)->where('id', $id)->first()->toArray();
+        if (hasModuleInstalled('ecommerce') && class_exists(EcommerceOrder::class)) {
+            $ecommerceOrder=EcommerceOrder::where('sale_id',$id)->first();
+            $ecommerceOrderLocation=$ecommerceOrder['address_line'] ?? null;
+        }
 
-        $location = businessLocation::where("id", $sale['business_location_id'])->first();
-        $address = locationAddress::where("location_id", $location->id)->first();
+        $location = businessLocation::where("id", $sale['business_location_id'])->first() ?? [];
+        $address = $location? locationAddress::where("location_id", $location['id'])->first() : [];
         $setting = $this->setting;
         $sale_details_query = sale_details::with([
             'productVariation' => function ($q) {
@@ -313,7 +318,7 @@ class saleController extends Controller
             'setting',
             'address',
             'ecommerceOrder',
-            'paymentAccount'
+            'paymentAccount','ecommerceOrderLocation'
         ));
     }
     // sale create page
@@ -2422,6 +2427,7 @@ class saleController extends Controller
             $ecommerceOrder=null;
             if($sale['status']!='delivered' && isset($request['status'])){
                 $data=[
+                    'business_location_id'=>$data['location_id'] ?? null,
                     'status'=>$request['status'],
                 ];
 

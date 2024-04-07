@@ -58,6 +58,10 @@
                                     <span class="text-gray-700 fs-7">
                                         {{$sale['customer']['mobile']}}
                                     </span>
+                                    <br>
+                                    <span class="text-gray-700 fs-7">
+                                        {{$ecommerceOrderLocation ?? ''}}
+                                    </span>
                                 </address>
                                 @endif
                                 <!--end::Col-->
@@ -69,13 +73,16 @@
                                 <div class="fw-semibold fs-7 text-gray-600 mb-1">Business Location:</div>
                                 <!--end::Label-->
                                 <!--end::Text-->
-                                <div class="fw-bold fs-6 text-gray-800">{{businessLocationName($location)}}</div>
-                                <!--end::Text-->
-                                <!--end::Description-->
-                                <div class="fw-semibold fs-7 text-gray-600">
-                                    {!! address($address) !!}
-                                </div>
-                                <!--end::Description-->
+                                @if ($location)
+
+                                    <div class="fw-bold fs-6 text-gray-800">{{businessLocationName($location)}}</div>
+                                    <!--end::Text-->
+                                    <!--end::Description-->
+                                    <div class="fw-semibold fs-7 text-gray-600">
+                                        {!! address($address) !!}
+                                    </div>
+                                    <!--end::Description-->
+                                @endif
                             </div>
                             <!--end::Col-->
                             <!--end::Col-->
