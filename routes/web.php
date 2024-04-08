@@ -111,6 +111,7 @@ use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\ImportUserController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
+use App\Models\lotSerialDetails;
 use App\Models\Product\ProductVariation;
 use App\Models\stock_history;
 
@@ -1075,7 +1076,22 @@ Route::get('/pos/edit', function () {
 
 Route::get('/test', function () {
 
-    // return sale_details::where('product_id','196')
+    return $sds= sale_details::where('product_id','28')
+                        ->where('is_delete',1)
+                        ->get();
+    // return dd($sds);
+    // foreach ($sds as $sd) {
+    //    $ls= lotSerialDetails::where('transaction_type','sale')
+    //                     ->where('transaction_detail_id',$sd['id'])
+    //                     // ->first()
+    //                     ->exists();
+    //     // dd($exist);
+    //     if(!$ls){
+    //        return dd($sd,$ls,'hero');
+    //     }
+    // }
+    return dd('hello');
+    // return sale_details::where('product_id','28')
     //                     ->where('is_delete',1)
     //                     // ->rightJoin('lot_serial_details','lot_serial_details.transaction_detail_id','sale_details.id')
     //                     ->get();
