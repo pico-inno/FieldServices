@@ -825,7 +825,7 @@
             });
         $('#searchInput').val('');
         checkAndStoreSelectedProduct(selectedVar_product);
-        let rowCount = $('#sale_table tbody tr').length;
+        let rowCount = $('#sale_table tbody tr').length + 1;
 
         $('.total_item').text(rowCount-1);
         // searching disable in select 2
@@ -1493,7 +1493,7 @@
 
     }
     function extraDiscCal(){
-        let subtotal=isNullOrNan($('.subtotal').val());
+        let subtotal=isNullOrNan($('.sale_amount_input').val());
         let extra_discount_type=$('.extra_discount_type').val();
         let extra_discount_amount=isNullOrNan($('.extra_discount_amount').val());
         let extraDiscount;
