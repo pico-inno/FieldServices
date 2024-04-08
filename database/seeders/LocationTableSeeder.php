@@ -22,7 +22,7 @@ class LocationTableSeeder extends Seeder
             ],
             [
                 'name' => 'Sub Location',
-                'allow_purchase_order' => 1,
+                'allow_purchase_order' => 0,
                 'parent_location_id'=>1,
                 'location_type' => 5,
             ],

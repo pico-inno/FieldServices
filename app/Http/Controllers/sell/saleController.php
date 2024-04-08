@@ -624,6 +624,7 @@ class saleController extends Controller
         // I fetch  sales data ,one for store as old data that fetch form database and one is to update data and after updated ,if you call slaes the will be updated!!
         $saleBefUpdate = sales::where('id', $id)->first();
         $businessLocationId= $saleBefUpdate->business_location_id;
+
         if ($request->type == 'pos') {
             $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
         }
@@ -633,7 +634,13 @@ class saleController extends Controller
             //
             // -----------------------------update sale data -------------
             //
-            $updatedSaleData=$saleService->update($id,$request);
+            if(!$businessLocationId){
+                $isForceLocationUpdate=true;
+                $businessLocationId=$request->business_location_id;
+            }else{
+                $isForceLocationUpdate=false;
+            }
+            $updatedSaleData=$saleService->update($id,$request,$isForceLocationUpdate);
             $this->txUpdateForPos($request, $saleBefUpdate,$updatedSaleData);
 
 
@@ -796,6 +803,7 @@ class saleController extends Controller
                                             $lotSerialDetails->update([
                                                 'uom_quantity' => $lotSerialDetailUomQty + $qtyToRemoveByRequestUpdateUom,
                                                 'ref_uom_quantity' => $lotSerialDetailUomQtyByRef + $qtyToRemoveByRefUom,
+                                                'stock_status'=>'normal'
                                             ]);
                                         } else {
                                             lotSerialDetails::create([
@@ -2421,21 +2429,22 @@ class saleController extends Controller
     {
     }
     public function statusChange(Sales $sale,Request $request,paymentServices $paymentServices){
+        $requestData=$request['data'];
         try {
             DB::beginTransaction();
             $ecommerceOrder=null;
             if($sale['status']!='delivered' && isset($request['status'])){
                 $data=[
-                    'business_location_id'=>$data['location_id'] ?? null,
+                    'business_location_id'=>$requestData['location_id'] ?? null,
                     'status'=>$request['status'],
                 ];
 
                 $sale_details = sale_details::where('sales_id', $sale['id'])
                     ->get();
-                if(isset($request['IsReserve']) && $request['IsReserve'] && $request['location_id']){
+                if(isset($requestData['IsReserve']) && $requestData['IsReserve'] && $requestData['location_id']){
                     foreach ($sale_details as $detail){
                         StockReserveServices::make()->reserve(
-                            $request['location_id'],
+                            $requestData['location_id'],
                             $detail->product_id,
                             $detail->variation_id,
                             $detail->uom_id,
@@ -2446,7 +2455,7 @@ class saleController extends Controller
                     }
                 }
 
-                if(isset($request['confirm_payment']) && $request['confirm_payment']){
+                if(isset($requestData['confirm_payment']) && $requestData['confirm_payment']){
                     $data['paid_amount']=$sale['total_sale_amount'];
                     $data['payment_status']="paid";
                     $data['balance_amount']=0;
