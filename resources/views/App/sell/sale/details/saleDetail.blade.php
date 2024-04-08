@@ -58,6 +58,10 @@
                                     <span class="text-gray-700 fs-7">
                                         {{$sale['customer']['mobile']}}
                                     </span>
+                                    <br>
+                                    <span class="text-gray-700 fs-7">
+                                        {{$ecommerceOrderLocation ?? ''}}
+                                    </span>
                                 </address>
                                 @endif
                                 <!--end::Col-->
@@ -69,13 +73,16 @@
                                 <div class="fw-semibold fs-7 text-gray-600 mb-1">Business Location:</div>
                                 <!--end::Label-->
                                 <!--end::Text-->
-                                <div class="fw-bold fs-6 text-gray-800">{{businessLocationName($location)}}</div>
-                                <!--end::Text-->
-                                <!--end::Description-->
-                                <div class="fw-semibold fs-7 text-gray-600">
-                                    {!! address($address) !!}
-                                </div>
-                                <!--end::Description-->
+                                @if ($location)
+
+                                    <div class="fw-bold fs-6 text-gray-800">{{businessLocationName($location)}}</div>
+                                    <!--end::Text-->
+                                    <!--end::Description-->
+                                    <div class="fw-semibold fs-7 text-gray-600">
+                                        {!! address($address) !!}
+                                    </div>
+                                    <!--end::Description-->
+                                @endif
                             </div>
                             <!--end::Col-->
                             <!--end::Col-->
@@ -285,9 +292,12 @@
                                 <div class="row g-5 mb-11 mt-10">
                                     <div class="col-4 text-start m-auto d-flex justify-content-center">
                                         <div class="w-auto">
-                                            <button class="btn btn-sm btn-primary" id="confirmOrder">
+                                            <button type="button" class="btn btn-primary"  id="confirmOrder" data-bs-stacked-modal="#kt_modal_stacked_{{$sale['id']}}">
                                                 Confirm Order
                                             </button>
+                                            {{-- <button class="btn btn-sm btn-primary" id="confirmOrder">
+                                                Confirm Order
+                                            </button> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -330,154 +340,296 @@
             </div>
         </div>
     </div>
+    <div class="modal fade " tabindex="-1" id="kt_modal_stacked_{{$sale['id']}}">
+        <div class="modal-dialog modal-dialog-centered w-md-500px">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h3 class="modal-title">Confirm Order</h3>
+
+                    <!--begin::Close-->
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <form action="#" id="confirmForm_{{$sale['id']}}">
+                    <div class="modal-body">
+                            <div class="d-flex flex-stack mb-3">
+                                <!--begin::Code-->
+                                <div class="fw-semibold pe-10 text-gray-600 fs-7">Total Sale Amount:</div>
+                                <!--end::Code-->
+                                <!--begin::Label-->
+                                <div class="text-end fw-bold fs-6 text-gray-800">
+                                    {{price($sale['total_sale_amount'],$sale['currency_id'])}}
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <div class="d-flex flex-stack mb-3">
+                                <!--begin::Code-->
+                                <div class="fw-semibold pe-10 text-gray-600 fs-7">Paid Amount:</div>
+                                <!--end::Code-->
+                                <!--begin::Label-->
+                                <div class="text-end fw-bold fs-6 text-gray-800">
+                                    {{price($sale['total_sale_amount'],$sale['currency_id'])}}
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <div class="separator my-3"></div>
+                            <div class="d-flex flex-stack mb-3" id="paymentConfirmation">
+                                <!--begin::Code-->
+                                <div class="fw-semibold pe-10 text-gray-600 fs-7">
+                                    <label for="flexCheckChecked" class="user-select-none cursor-pointer"> Do You Also Want To Confirm Payment ?</label>
+                                </div>
+                                <!--end::Code-->
+                                <!--begin::Label-->
+                                <div class="form-check">
+                                    <input class="form-check-input" name="confirm_payment" type="checkbox" value="true" id="flexCheckChecked" checked />
+                                </div>
+                            </div>
+                            @if(hasModuleInstalled('Ecommerce'))
+                                <div class="d-flex flex-stack mb-3">
+                                    <div class="fw-semibold pe-10 text-gray-600 fs-7">Accept Account:</div>
+                                    <div class="text-end fw-bold fs-6 text-gray-800">
+                                        {{$paymentAccount['name'] ?? ''}}
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="separator my-5"></div>
+
+                            <div class="d-flex flex-stack mb-3" id="paymentConfirmation">
+                                <!--begin::Code-->
+                                <div class="fw-semibold pe-10 text-gray-600 fs-7">
+                                    <label for="reserveLocation" class="user-select-none cursor-pointer">Is you want to move Reserve location ?</label>
+                                </div>
+                                <!--end::Code-->
+                                <!--begin::Label-->
+                                <div class="form-check">
+                                    <input class="form-check-input" name="IsReserve" type="checkbox" value="true" id="reserveLocation" checked />
+                                </div>
+                            </div>
+                            @if(hasModuleInstalled('Ecommerce'))
+                                <div class="d-flex flex-stack mb-3">
+                                    <div class="fw-semibold pe-10 text-gray-600 fs-7">Location:</div>
+                                    <div class="text-end fw-bold fs-6 text-gray-800 col-6">
+                                        <x-locationsSelect name="location_id" placeholder="Select Reserve Location" className="form-select-sm"></x-locationsSelect>
+                                    </div>
+                                </div>
+                            @endif
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancle</button>
+                        <button type="submit" id="confirmBtn" class="btn btn-success">Confirm</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src={{asset('customJs/general.js')}}></script>
-    <script src={{asset('customJs/invoice/print.js')}}></script>
+
+    {{-- <script src={{asset('customJs/invoice/print.js')}}></script> --}}
     <script>
-        clipboard()
+        clipboard();
+
     </script>
+
 
     <script src={{asset("assets/plugins/custom/fslightbox/fslightbox.bundle.js")}}></script>
     <script>
 
-    "use strict";
+        "use strict";
 
 
 
-    var KTCustomersList = function () {
-        var datatable;
-        var table;
-        let sale_id = {{$sale['id']}};
-        console.log(sale_id, 'ssssssssssss')
-        var initLogsList = function () {
+        var KTCustomersList = function () {
+            var datatable;
+            var table;
+            let sale_id = {{$sale['id']}};
+            console.log(sale_id, 'ssssssssssss')
+            var initLogsList = function () {
 
-            // Init datatable --- more info on datatables: https://datatables.net/manual/
-            datatable = $(table).DataTable({
+                // Init datatable --- more info on datatables: https://datatables.net/manual/
+                datatable = $(table).DataTable({
 
-                order: [[0, ' ']],
-                processing: true,
-                pageLength: 10,
-                lengthMenu: [10, 20, 30, 50,40,80],
-                serverSide: true,
-                ajax: {
-                    url: `/logs/sale-transactions/all/${sale_id}`,
-                },
-                columns: [
-
-                    { data: 'created_at' },
-                    { data: 'description' },
-                    { data: 'event' },
-                    { data: 'status' },
-                    { data: 'created_user' },
-                    { data: 'properties' },
-
-                ],
-                columnDefs: [
-                    {
-                        targets: 0,
-                        render: function (data, type, row) {
-                            if (type === 'display' || type === 'filter') {
-                                const dateTime = new Date(data);
-                                const formattedDateTime = dateTime.toLocaleString();
-                                return formattedDateTime;
-                            }
-                            return data;
-                        }
+                    order: [[0, ' ']],
+                    processing: true,
+                    pageLength: 10,
+                    lengthMenu: [10, 20, 30, 50,40,80],
+                    serverSide: true,
+                    ajax: {
+                        url: `/logs/sale-transactions/all/${sale_id}`,
                     },
+                    columns: [
 
-                    {
-                        targets: 3,
-                        render: function (data, type, row) {
-                            let badgeClass = 'badge-light-success';
+                        { data: 'created_at' },
+                        { data: 'description' },
+                        { data: 'event' },
+                        { data: 'status' },
+                        { data: 'created_user' },
+                        { data: 'properties' },
 
-                            if (data === 'fail') {
-                                badgeClass = 'badge-light-danger';
-                            } else if (data === 'warn') {
-                                badgeClass = 'badge-light-warning';
+                    ],
+                    columnDefs: [
+                        {
+                            targets: 0,
+                            render: function (data, type, row) {
+                                if (type === 'display' || type === 'filter') {
+                                    const dateTime = new Date(data);
+                                    const formattedDateTime = dateTime.toLocaleString();
+                                    return formattedDateTime;
+                                }
+                                return data;
+                            }
+                        },
+
+                        {
+                            targets: 3,
+                            render: function (data, type, row) {
+                                let badgeClass = 'badge-light-success';
+
+                                if (data === 'fail') {
+                                    badgeClass = 'badge-light-danger';
+                                } else if (data === 'warn') {
+                                    badgeClass = 'badge-light-warning';
+                                }
+
+                                return `<span class="badge ${badgeClass} fs-7 fw-bold">${data}</span>`;
                             }
 
-                            return `<span class="badge ${badgeClass} fs-7 fw-bold">${data}</span>`;
-                        }
+                        },
+                    ],
 
-                    },
-                ],
+                });
 
-            });
-
-        }
-
-        return {
-            init: function () {
-                table = document.querySelector('#sale_logs_table');
-
-                if (!table) {
-                    return;
-                }
-                initLogsList()
             }
+
+            return {
+                init: function () {
+                    table = document.querySelector('#sale_logs_table');
+
+                    if (!table) {
+                        return;
+                    }
+                    initLogsList()
+                }
+            }
+        }();
+
+
+        KTUtil.onDOMContentLoaded(function () {
+
+            KTCustomersList.init();
+            let statusChangeUri="{{route('sale.statusChange',$sale['id'])}}";
+
+
+            $('#confirmForm_{{$sale['id']}}').submit((e)=>{
+                e.preventDefault();
+                $('#kt_modal_stacked_{{$sale['id']}}').modal("hide");
+                $('#confirmBtn').text('Saving....');
+                $("#confirmBtn").prop("disabled", true);
+                let formData=deserialize($("#confirmForm_{{$sale['id']}}").serialize());
+                $.ajax({
+                    method: 'POST',
+                    url:statusChangeUri,
+                    dataType: 'json',
+                    headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    data:{
+                        status:'order',
+                        data:formData,
+                    },
+                    success: function(result) {
+
+                        $('#confirmBtn').text('Confirm');// Disable the button
+                        $("#confirmBtn").prop("disabled", false);
+                        success('Successfully Updated');
+                        $('.saleDetail').modal('hide');
+                        let confirmBox = new bootstrap.Modal($('#kt_modal_stacked_{{$sale['id']}}'));
+                            confirmBox.hide();
+                        $('.confirmForm_{{$sale['id']}}').modal('hide');
+                        $('#saleDetailModal').modal('hide');
+                        Livewire.dispatch('reloadComponent');
+                    },
+                    error: function(result) {
+                        $('#confirmBtn').text('Confirm');// Disable the button
+                        $("#confirmBtn").prop("disabled", false);
+                        toastr.error(result.responseJSON.errors,
+                            'Something went wrong');
+                    }
+                });
+            })
+            $('#confirmOrder').off('click').on('click',()=>{
+                let confirmBox = new bootstrap.Modal($('#kt_modal_stacked_{{$sale['id']}}'));
+                confirmBox.show();
+                // Swal.fire({
+                //     title:'Are You Sure To Confirm Order',
+                //     icon:"question",
+                //     input: "checkbox",
+                //     inputValue: 1,
+                //     customClass: {
+                //         confirmButton: "btn btn-primary",
+                //     },
+                //     inputPlaceholder: `
+                //         Do You Also Want To Confirm Payment?
+                //     `,
+                //     inputAttributes: {
+                //         class: 'form-check-input custom-checkbox-class' // Add Bootstrap classes and your custom class here
+                //     },
+                // }).then((result) => {
+                //     console.log(result);
+                //     if(result.isConfirmed){
+
+                //         let isConfirmPayment=false;
+                //     if (result.value) {
+                //         isConfirmPayment=true;
+                //     } else {
+                //         isConfirmPayment=false;
+
+                //     }
+                //         $.ajax({
+                //             method: 'POST',
+                //             url:statusChangeUri,
+                //             dataType: 'json',
+
+                //             headers: {
+                //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //                 },
+                //             data:{
+                //                 status:'order',
+                //                 isConfirmPayment,
+                //             },
+                //             success: function(result) {
+                //             success('Successfully Updated')
+                //             },
+                //             error: function(result) {
+                //                 toastr.error(result.responseJSON.errors,
+                //                     'Something went wrong');
+                //             }
+                //         });
+                //         let sdmodal=document.getElementsByClassName('saleDetail')[0];
+                //         $('.saleDetail').modal('hide');
+                //     }
+
+                // });
+
+
+
+            })
+        });
+        function deserialize(serializedString) {
+            var obj = {};
+            var pairs = serializedString.split('&');
+            for (var i = 0; i < pairs.length; i++) {
+                var pair = pairs[i].split('=');
+                obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+            }
+            return obj;
         }
-    }();
 
-
-    KTUtil.onDOMContentLoaded(function () {
-        KTCustomersList.init();
-        let statusChangeUri="{{route('sale.statusChange',$sale['id'])}}";
-
-        $('#confirmOrder').off('click').on('click',()=>{
-            Swal.fire({
-                title:'Are You Sure To Confirm Order',
-                icon:"question",
-                input: "checkbox",
-                inputValue: 1,
-                customClass: {
-                    confirmButton: "btn btn-primary",
-                },
-                inputPlaceholder: `
-                    Do You Also Want To Confirm Payment?
-                `,
-                inputAttributes: {
-                    class: 'form-check-input custom-checkbox-class' // Add Bootstrap classes and your custom class here
-                },
-            }).then((result) => {
-                console.log(result);
-                if(result.isConfirmed){
-
-                    let isConfirmPayment=false;
-                if (result.value) {
-                    isConfirmPayment=true;
-                } else {
-                    isConfirmPayment=false;
-
-                }
-                    $.ajax({
-                        method: 'POST',
-                        url:statusChangeUri,
-                        dataType: 'json',
-
-                        headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                        data:{
-                            status:'order',
-                            isConfirmPayment,
-                        },
-                        success: function(result) {
-                        success('Successfully Updated')
-                        },
-                        error: function(result) {
-                            toastr.error(result.responseJSON.errors,
-                                'Something went wrong');
-                        }
-                    });
-                    let sdmodal=document.getElementsByClassName('saleDetail')[0];
-                    $('.saleDetail').modal('hide');
-                }
-
-            });
-
-
-
-        })
-    });
 </script>
 
 

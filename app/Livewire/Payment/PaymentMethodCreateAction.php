@@ -3,6 +3,7 @@
 namespace App\Livewire\Payment;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\paymentAccounts;
 use Livewire\Attributes\Validate;
 use App\Actions\paymentMethods\paymentMethodActions;
@@ -10,14 +11,17 @@ use App\Actions\paymentMethods\paymentMethodActions;
 class PaymentMethodCreateAction extends Component
 {
 
+    use WithFileUploads;
     public $name='';
     public $paymentAccountId='';
     public $note='';
     public $paymentAccounts;
+    public $logo=null;
     protected $rules=[
         'name'=>'required',
         'paymentAccountId'=>'required|int',
-        'note'=>'max:255'
+        'note'=>'max:255',
+        'logo' => 'nullable|image|max:1024'
     ];
     protected $messages=[
         'paymentAccountId.required'=>'Payment Account Is Required!'
@@ -40,14 +44,20 @@ class PaymentMethodCreateAction extends Component
 
         $this->validate();
         try {
+
+
+            $imageData = file_get_contents($this->logo->getRealPath());
+
             $pma->create([
                 'name'=>$this->name,
                 'payment_account_id'=>$this->paymentAccountId,
                 'note'=>$this->note,
+                'logo'=>$imageData
             ]);
             $this->clearDate();
             $this->dispatch('pm-created-success');
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             $this->dispatch('pm-created-fail',message:'Something Wrong');
         }
     }
@@ -55,5 +65,6 @@ class PaymentMethodCreateAction extends Component
         $this->paymentAccountId='';
         $this->note='';
         $this->name='';
+        $this->logo=null;
     }
 }

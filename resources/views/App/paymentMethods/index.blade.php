@@ -4,7 +4,7 @@
 @extends('App.main.navBar')
 
 @section('fa_active','active')
-@section('payment_account_active', 'active ')
+@section('payment_method_active', 'active ')
 @section('fa_active_show', 'active show')
 
 

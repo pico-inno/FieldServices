@@ -51,6 +51,7 @@
         ])}} method="POST" id="sale_form">
             @csrf
             <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10 mb-5" >
+
                 <div class="fv-row">
                     <input type="hidden" name="business_location_id" id="business_location_id" value="{{$sale->business_location_id}}">
                 </div>
@@ -65,6 +66,10 @@
                         <i class="fa-solid fa-circle-info text-primary"></i>
                     </button>
                 </div> --}}
+
+                @if ($sale->business_location_id == null && $sale->status!="delivered")
+                    <x-locationsSelect placeholder="Please Select Locations" name="business_location_id"  ></x-locationsSelect>
+                @endif
                 <div class="card">
                     <div class="card-body  px-5">
                         <div class="row mb-3 flex-wrap">
@@ -122,7 +127,7 @@
                                     Status
                                 </label>
                                 @php
-                                    $current_location=App\Models\settings\businessLocation::where('id',$sale->business_location_id)->first();
+                                    $current_location=App\Models\settings\businessLocation::where('id',$sale->business_location_id)->first() ?? [];
                                 @endphp
 
                                 <div class="overflow-hidden  flex-grow-1">
@@ -132,8 +137,8 @@
                                         <option value="pending" @selected($sale->status=='pending')>Pending</option>
                                         <option value="order" @selected($sale->status=='order')>Ordering</option>
                                         <option value="partial" @selected($sale->status=='partial')>Partial</option>
-                                        @if ($current_location->allow_sale_order == 0)
-                                            <option value="delivered"   @selected($sale->status=="delivered")>Delivered</option>
+                                        @if (!isset($current_location['allow_sale_order']) || $current_location['allow_sale_order'] == 0 )
+                                            <option value="delivered"   @selected($sale['status']=="delivered")>Delivered</option>
                                         @endif
                                     </select>
                                 </div>
@@ -504,7 +509,7 @@
                 </div>
 
                 @if (hasModule('Delivery')  && isEnableModule('Delivery'))
-                    <livewire:delivery.delivery-inputs-form :saleId="$sale->id" />
+                <livewire:delivery.delivery-inputs-form :saleId="$sale->id"  :saleType="$sale['channel_type']" />
                 @endif
                 {{-- <div class="card"> /
                     <div class="card-body">

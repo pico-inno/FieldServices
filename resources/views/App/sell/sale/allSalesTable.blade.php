@@ -86,12 +86,13 @@
     </div>
     <!--end::Container-->
 </div>
+@livewireScripts
 
 <div class="modal fade" tabindex="-1" id="folioPosting"></div>
 <div class="modal modal-lg fade" tabindex="-1" data-bs-focus="false" id="reservationFolioPosting"></div>
 <div class="modal modal-lg fade " tabindex="-1" data-bs-focus="false" id="modal"></div>
 <div class="modal modal-lg fade " tabindex="-1" data-bs-focus="false" id="paymentEditModal"></div>
-@livewireScripts
+
 @endsection
 
 @push('scripts')
@@ -105,11 +106,6 @@
 <script src="{{ asset('customJs/print/print.js') }}"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
-
-
-
-
-
 
 
 

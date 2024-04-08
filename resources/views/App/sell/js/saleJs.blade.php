@@ -31,8 +31,11 @@
             checkStock($(sr));
         })
     }
-    $('#saleStatus').change(()=>{
+    $('#saleStatus').change(function(){
         check();
+        if($(this).val() =='delivered'){
+            $('#deliveryInputsForm').removeClass('d-none');
+        }
     })
 
 
@@ -180,7 +183,7 @@
                 changeRdQty(e);
             }
         })
-        let CurrentPriceListId=locations.find((location)=>location.id==editSale.business_location_id).price_lists_id;
+        let CurrentPriceListId=editSale.business_location_id ? locations.find((location)=>location.id==editSale.business_location_id).price_lists_id :1;
         getPriceList(CurrentPriceListId);
         suggestionProductEvent();
         $('.price_list_input').val(CurrentPriceListId).trigger('change');

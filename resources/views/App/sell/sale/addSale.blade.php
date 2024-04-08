@@ -419,7 +419,9 @@
                     </div>
                 </div>
                 @if (hasModule('Delivery')  && isEnableModule('Delivery'))
-                    <livewire:delivery.delivery-inputs-form />
+                   <div id="deliveryInputsForm" class="d-none">
+                        <livewire:delivery.delivery-inputs-form />
+                   </div>
                 @endif
 
 

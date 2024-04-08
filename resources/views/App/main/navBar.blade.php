@@ -2958,7 +2958,7 @@
                                         <div class="menu-item  ">
                                             <!--begin:Menu link-->
                                             <!--begin:Menu link-->
-                                            <a class="menu-link @yield('payment_account_active')"
+                                            <a class="menu-link @yield('payment_method_active')"
                                                 href="{{route('paymentMethods.index')}}">
                                                 <span class=" menu-icon">
                                                     <i class="fa-solid fa-arrows-split-up-and-left"></i>

@@ -21,7 +21,7 @@
             </ul>
         </div>
         <div class=" modal fade" tabindex="-1" id="kt_edit_modal_{{$id}}"  wire:ignore.self  wire:key="pmm-{{ $id }}">
-            <div class="modal-dialog w-md-600px">
+            <div class="modal-dialog w-md-600px modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 class="modal-title">Edit Payment Method </h3>
@@ -34,6 +34,27 @@
                     </div>
 
                     <div class="modal-body">
+                        <div class="mt-2">
+                            @if ($logo)
+                                <img src="data:image/jpeg;base64,{{ $logoImg }}" class="w-50px" alt="Image">
+
+                                <div class="mt-3">
+                                    <button class="btn  btn-danger btn-sm p-2 mt-2  fs-8 " wire:click='removeLogo'><i class="fa-solid fa-trash fs-8 " ></i>Remove logo</button>
+                                </div>
+                            @endif
+
+                        </div>
+                        <div class="form mt-5">
+                            <label for="logo" class="form-label">Logo</label>
+                            <input type="file" id="logo" placeholder="Name" wire:model.live="logo" class="form-control">
+                            <div class="">
+                                <div class="text-danger">
+                                    @error('logo')
+                                            {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
                         <div class="form mb-5">
                             <label for="" class="form-label required">Name</label>
                             <input type="text" placeholder="Name" wire:model.live="name" class="form-control">
@@ -65,6 +86,8 @@
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="form">
                             <label for="" class="form-label">Note</label>
                             <div class="select" wire:ignore>

@@ -50,6 +50,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form mt-5">
+                            <label for="logo" class="form-label">Logo</label>
+                            <input type="file" id="logo" placeholder="Name" wire:model.live="logo" class="form-control">
+                            <div class="">
+                                <div class="text-danger">
+                                    @error('logo')
+                                            {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
                         <div class="form">
                             <label for="" class="form-label">Note</label>
                             <div class="select" wire:ignore>
@@ -64,6 +75,7 @@
                                 </div>
                             </div>
                         </div>
+
                     {{-- </form> --}}
                 </div>
 
@@ -95,6 +107,7 @@
 
     $wire.on('pm-created-success', () => {
         $('#paymentAccount').val([]).trigger('change');
+        $('#logo').val('');
         @this.set('paymentAccountId', '');
         modal.hide();
         Swal.fire({
