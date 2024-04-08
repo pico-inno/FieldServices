@@ -1080,4 +1080,4 @@ Route::get('/test', function () {
 
 Route::get('/townships/{region_id}', [AddressController::class, 'getTownships']);
 Route::get('/addresses', [AddressController::class, 'getAddress']);
-Route::post('/address/store', [AddressController::class, 'storeAddressAndReturnAll']);
+//Route::post('/address/store', [AddressController::class, 'storeAddressAndReturnAll']);
