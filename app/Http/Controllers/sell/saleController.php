@@ -705,6 +705,7 @@ class saleController extends Controller
                     $beforeUpdateSaleDetailQtyByRef = UomHelper::getReferenceUomInfoByCurrentUnitQty($beforeUpdateSaleDetailData['quantity'], $beforeUpdateSaleDetailData['uom_id'])['qtyByReferenceUom'];
                     if ($product->product_type == 'storable') {
                         // stock adjustment
+
                         if ($saleBefUpdate['status'] != 'delivered' && $request->status == "delivered" && !$lotSerialCheck) {
                             $changeQtyStatus = $saleService->changeStockQty($requestToUpdateQtyByRef, $requestToUpdateUomIdByRef, $request->business_location_id, $requestToUpdateSaleDetail, [], $updatedSaleData);
                             if ($changeQtyStatus == false) {
@@ -761,12 +762,12 @@ class saleController extends Controller
                                                                     ->where('transaction_detail_id', $requestToUpdateSaleDetailId)
                                                                     ->where('current_stock_balance_id', $stock['id']);
                                         $lotSerialDetailsByStockQuery= $lotSerialDetailsByStock->first();
-
                                         if ($lotSerialDetailsByStock->exists()) {
                                             $lotSerialDetailsByStockQuery->update([
                                                 'uom_id' => $requestToUpdateSaleDetail['uom_id'],
                                                 'uom_quantity' => $stockQtyBySdUom+ $lotSerialDetailsByStockQuery['uom_quantity'],
                                                 'ref_uom_quantity'=> $stockQtyByRef + $lotSerialDetailsByStockQuery['ref_uom_quantity'],
+                                                'stock_status'=>'normal'
                                             ]);
                                         } else {
                                             lotSerialDetails::create([
@@ -795,7 +796,6 @@ class saleController extends Controller
 
                                         $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $requestToUpdateSaleDetailId)
                                                             ->where('current_stock_balance_id', $stock['id']);
-
 
                                         if ($lotSerialDetails->exists()) {
                                             $lotSerialDetailUomQty = $lotSerialDetails->first()->uom_quantity;
@@ -826,7 +826,6 @@ class saleController extends Controller
                                 $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')
                                                 ->where('transaction_detail_id', $requestToUpdateSaleDetailId)->OrderBy('id', 'DESC')->get();
                                 foreach ($lotSerialDetails as $bsd) {
-
                                     if ($qtyToReplaceByRefUom > $bsd->ref_uom_quantity) {
                                         lotSerialDetails::where('id', $bsd->id)->first()->delete();
                                         $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
@@ -850,6 +849,7 @@ class saleController extends Controller
                                             lotSerialDetails::where('id', $bsd->id)->first()->update([
                                                 'uom_quantity' => $qtyToReplaceByRequestUpdateUom ,
                                                 'ref_uom_quantity' => $refUomQtyForLs,
+                                                'stock_status'=>'normal'
                                             ]);
                                         }
                                         $current_stock->update([
