@@ -471,7 +471,7 @@ class saleController extends Controller
             $sale_data = $saleService->create($request);
 
             // delivery
-            if(hasModule('Delivery')  && isEnableModule('Delivery')){
+            if(hasModule('Delivery')  && isEnableModule('Delivery') && class_exists(DeliveryServices::class)){
                 $deliveryData=$request['delivery'];
                 $deliveryData['order_date']=$request['sold_at'];
                 $deliveryData['transaction_id']=$sale_data['id'];
