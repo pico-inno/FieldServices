@@ -2421,7 +2421,6 @@ class saleController extends Controller
     {
     }
     public function statusChange(Sales $sale,Request $request,paymentServices $paymentServices){
-        $data=$request->data ?? [];
         try {
             DB::beginTransaction();
             $ecommerceOrder=null;
@@ -2433,10 +2432,10 @@ class saleController extends Controller
 
                 $sale_details = sale_details::where('sales_id', $sale['id'])
                     ->get();
-                if(isset($data['IsReserve']) && $data['IsReserve'] && $data['location_id']){
+                if(isset($request['IsReserve']) && $request['IsReserve'] && $request['location_id']){
                     foreach ($sale_details as $detail){
                         StockReserveServices::make()->reserve(
-                            $data['location_id'],
+                            $request['location_id'],
                             $detail->product_id,
                             $detail->variation_id,
                             $detail->uom_id,
@@ -2447,7 +2446,7 @@ class saleController extends Controller
                     }
                 }
 
-                if(isset($data['confirm_payment']) && $data['confirm_payment']){
+                if(isset($request['confirm_payment']) && $request['confirm_payment']){
                     $data['paid_amount']=$sale['total_sale_amount'];
                     $data['payment_status']="paid";
                     $data['balance_amount']=0;

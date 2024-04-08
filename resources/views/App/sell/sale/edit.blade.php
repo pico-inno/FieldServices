@@ -68,7 +68,7 @@
                 </div> --}}
 
                 @if ($sale->business_location_id == null && $sale->status!="delivered")
-                    <x-locationsSelect placeholder="Please Select Locations" name="business_location_id"  ></x-locationsSelect>
+                    <x-locationsselect placeholder="Please Select Locations" name="business_location_id"  ></x-locationsselect>
                 @endif
                 <div class="card">
                     <div class="card-body  px-5">

@@ -412,7 +412,7 @@
                                 <div class="d-flex flex-stack mb-3">
                                     <div class="fw-semibold pe-10 text-gray-600 fs-7">Location:</div>
                                     <div class="text-end fw-bold fs-6 text-gray-800 col-6">
-                                        <x-locationsSelect name="location_id" placeholder="Select Reserve Location" className="form-select-sm"></x-locationsSelect>
+                                        <x-locationsselect name="location_id" placeholder="Select Reserve Location" className="form-select-sm"></x-locationsselect>
                                     </div>
                                 </div>
                             @endif
