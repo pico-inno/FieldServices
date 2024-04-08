@@ -303,10 +303,12 @@ class StockAdjustmentController extends Controller
             }])
             ->get();
 
+        // logger($adjustment_details);
 
-        $invoiceHtml = view('App.stock.adjustment.invoice',compact('adjustment','location','adjustment_details'))->render();
+        $invoiceHtml = view('App.stock.adjustment.print',compact('adjustment','location','adjustment_details'))->render();
         return response()->json(['html' => $invoiceHtml]);
     }
+
     public function filterList(Request $request)
     {
 
