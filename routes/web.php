@@ -111,6 +111,8 @@ use App\Http\Controllers\settings\bussinessSettingController;
 use App\Http\Controllers\userManagement\UserProfileController;
 use App\Http\Controllers\userManagement\users\ImportUserController;
 use App\Http\Controllers\userManagement\users\BusinessUserController;
+use App\Models\Product\ProductVariation;
+use App\Models\stock_history;
 
 // use App\Models\Manufacturer;
 
@@ -1073,6 +1075,49 @@ Route::get('/pos/edit', function () {
 
 Route::get('/test', function () {
 
+    // return sale_details::where('product_id','196')
+    //                     ->where('is_delete',1)
+    //                     // ->rightJoin('lot_serial_details','lot_serial_details.transaction_detail_id','sale_details.id')
+    //                     ->get();
+
+
+    $NotEqual=[];
+    $pvs=ProductVariation::select('product_variations.id','products.name','products.sku')
+            ->leftJoin('products','products.id','product_variations.product_id')
+            ->get();
+    foreach ($pvs as $key => $pv) {
+        $inc=stock_history::query()
+                ->where('variation_id',$pv['id'])
+                ->where('increase_qty','>',0)->get()
+                ->sum('increase_qty');
+        $dec=stock_history::query()
+                ->where('variation_id',$pv['id'])
+                ->where('decrease_qty','>',0)->get()
+                ->sum('decrease_qty');
+        $sh=$inc-$dec;
+        $csb=CurrentStockBalance::query()->where('variation_id',$pv['id'])->get()->sum('current_quantity');
+        if($sh!=$csb){
+            $NotEqual[]=[
+                "sku"=>$pv['sku'],
+                "product_id"=>$pv['id'],
+                "sh"=>$sh,
+                "csb"=>$csb,
+                "name"=>$pv['name']
+            ];
+        }
+    }
+    return $NotEqual;
+//     return sale_details::query()
+//             ->where('is_delete',0)
+//             ->select('sales_voucher_no','sale_details.quantity','lot_serial_details.current_stock_balance_id','sale_details.created_at','sale_details.updated_at')
+//             ->where('variation_id',196)
+//             ->where('lot_serial_details.transaction_type','sale')
+//             ->rightJoin('lot_serial_details','lot_serial_details.transaction_detail_id','sale_details.id')
+//             ->rightJoin('sales','sales.id','sale_details.sales_id')
+//             ->get();
+//    return CurrentStockBalance::where('product_id',196)
+//             ->leftJoin('lot_serial_details','current_stock_balance.id','lot_serial_details.current_stock_balance_id')
+//             ->get();
 });
 
 

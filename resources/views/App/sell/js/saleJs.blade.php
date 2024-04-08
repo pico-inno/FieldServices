@@ -1368,6 +1368,14 @@
         cal_total_sale_amount();
         cal_balance_amount();
         sale_amount_cal()
+        if($(this).val() =='percentage'){
+            $(".csForEDis").addClass('d-none');
+            $(".percentageSymbol").removeClass('d-none');
+        }else{
+            $(".csForEDis").removeClass('d-none');
+            $(".percentageSymbol").addClass('d-none');
+
+        }
     })
     $(document).on('input','.paid_amount_input',function(){
         cal_balance_amount();
