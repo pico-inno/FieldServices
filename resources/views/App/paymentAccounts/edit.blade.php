@@ -1,7 +1,7 @@
 
     <div class="modal-dialog" id="edit_payment_accounts">
         <div class="modal-content">
-            <form action="{{route('paymentAcc.update',$account->id)}}" method="POST" id="edit_payment_accounts_form">
+            <form action="{{route('paymentAcc.update',$account->id)}}" method="POST" id="edit_payment_accounts_form" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h3 class="modal-title">Edit Payment Accounts</h3>
@@ -15,23 +15,23 @@
 
                 <div class="modal-body">
                     <div class="row mb-6">
-                        <div class="col-4 mb-5 fv-row">
+                        <div class="col-12 col-lg-4 col-md-6 mb-5 fv-row">
                             <label for="name" class="required form-label">Account Name</label>
                             <input type="text" name="name" id="name" class="form-control form-control-sm" value="{{$account->name}}">
                         </div>
-                        {{-- <div class="col-4 mb-5">
+                        {{-- <div class="col-12 col-lg-4 col-md-6 mb-5">
                             <label for="account_type" class="required form-label">Account Type</label>
                             <input type="text" name="account_type" id="account_type" class="form-control form-control-sm" value="{{$account->account_type}}">
                         </div> --}}
-                        <div class="col-4 mb-5">
+                        <div class="col-12 col-lg-4 col-md-6 mb-5">
                             <label for="account_number" class=" form-label">Account Number</label>
                             <input type="text" name="account_number" id="account_number" class="form-control form-control-sm" value="{{$account->account_number}}">
                         </div>
-                        <div class="col-4 mb-5 fv-row">
+                        <div class="col-12 col-lg-4 col-md-6 mb-5 fv-row">
                             <label for="opening_amount" class=" form-label">Opening Amount</label>
                             <input type="text" name="opening_amount" id="opening_amount" class="form-control form-control-sm input_number" value="{{$account->opening_amount}}">
                         </div>
-                        <div class="col-4 mb-5 fv-row">
+                        <div class="col-12 col-lg-4 col-md-6 mb-5 fv-row">
                             <label for="currency" class="required form-label">Currency</label>
                             <select name="currency_id" id="" data-control="select2" data-dropdown-parent="#add_payment_acounts_modal" class="form-select form-select-sm">
                                 <option disabled selected>Select Currency</option>
@@ -43,9 +43,23 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-4 mb-5">
+
+                        <div class="col-12 col-lg-4 col-md-6 mb-5 fv-row">
+                            <label for="name" class="required form-label">Attachment</label>
+                            <input type="file" name="qrimage" id="qrimage" accept="image/*" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-12 col-lg-4 col-md-6 mb-5">
                             <label for="" class="form-label">Descritpion</label>
                             <textarea class="form-control" data-kt-autosize="true" name="description">{{$account->description}}</textarea>
+                        </div>
+                        <div class="col-12 text-start">
+                            <div class="mb-3">
+                                <button class="btn  btn-danger btn-sm p-2 mt-2  fs-8 " type="button" id="removeImage"><i class="fa-solid fa-trash fs-8 " ></i>Remove logo</button>
+                            </div>
+                            @if ($account['qrimage'])
+                                <input type="hidden" name="hasImage" id="hasImage"  value="{{ getImage($account['qrimage']) ? 'exist':'' }}" >
+                                <img id="qrimageShow" src="data:image/png;base64,{{ getImage($account['qrimage']) }}" class="text-center" alt="Uploaded Image" width="200">
+                            @endif
                         </div>
                         {{-- <div class="col-5">
                             <label for="rate" class="form-label">Rate</label>
@@ -76,6 +90,10 @@
     autosize($('[data-kt-autosize="true"]'))
 
     $(document).ready(function(){
+            $('#removeImage').click(()=>{
+                $('#qrimageShow').remove();
+                $('#hasImage').val('');
+            })
                     // user update validation
             var paidAllValidator = function () {
                 // Shared variables
