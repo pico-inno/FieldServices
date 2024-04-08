@@ -66,13 +66,16 @@ else if (status == 200) {
     results.forEach(function(item) {
 
     var rowData = [
+        item.transfered_at,
+        item.voucher_no,
     item.variation_sku ? item.variation_sku : item.sku,
     item.name,
     item.variation_template_name+' -    '+item.variation_value_name,
     item.category_name ? item.category_name : '',
     item.brand_name ?? '',
-    item.uom_name,
     item.transfer_quantity+' '+item.uom_short_name ?? '',
+        item.uom_name,
+    item.remark,
     // item.samllest_stock_qty+' '+item.smallest_unit_name,
     // item.smallest_purchase_price,
     // item.purchase_price,

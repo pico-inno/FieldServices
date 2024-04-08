@@ -195,9 +195,9 @@
                                 <th class="min-w-125px">{{__('transfer.voucher_no')}}</th>
                                 <th class="min-w-125px">{{__('transfer.from_location')}}</th>
                                 <th class="min-w-125px">{{__('transfer.to_location')}}</th>
-                                {{-- <th class="min-w-125px">Transfer Expense</th> --}}
                                 <th class="min-w-125px">{{__('common.status')}}</th>
                                 <th class="min-w-125px">{{__('common.created_by')}}</th>
+                                <th class="min-w-125px">Remark</th>
                             </tr>
                             <!--end::Table row-->
                             </thead>
@@ -340,6 +340,14 @@
                                                        id="chkColumn6"/>
                                                 <span
                                                     class="form-check-label text-gray-600 fw-semibold">Added By</span>
+                                            </label>
+                                            <!--end::Radio button-->
+                                            <!--begin::Radio button-->
+                                            <label class="form-check form-check-custom form-check-sm form-check-solid mb-3">
+                                                <input class="form-check-input" type="checkbox"  checked="checked"
+                                                       id="chkColumn7"/>
+                                                <span
+                                                    class="form-check-label text-gray-600 fw-semibold">Remark</span>
                                             </label>
                                             <!--end::Radio button-->
                                         </div>

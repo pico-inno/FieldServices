@@ -103,7 +103,8 @@ class StockTransferController extends Controller
             $csbService = new CurrentStockBalanceServices();
             $settings = businessSettings::all()->first();
             $transfer_details = $request->transfer_details;
-            $transfered_at = date('Y-m-d', strtotime($request->transfered_at));
+            $transfered_at = date('Y-m-d H:i:s', strtotime($request->transfered_at));
+
             $prefix = 'ST';
             $voucherNumber = $this->generateVoucherNumber($prefix);
 
@@ -1309,7 +1310,7 @@ class StockTransferController extends Controller
             ->get();
 
 
-        $invoiceHtml = view('App.stock.transfer.invoice',compact('transfer','transfer_details'))->render();
+        $invoiceHtml = view('App.stock.transfer.print',compact('transfer','transfer_details'))->render();
         return response()->json(['html' => $invoiceHtml]);
     }
 

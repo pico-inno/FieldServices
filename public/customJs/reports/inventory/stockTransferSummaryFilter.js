@@ -76,6 +76,7 @@ else if (status == 200) {
     // item.transfer_expense,
     '<span class="badge badge-light-' + statusClass + '">' + item.status + '</span>',
     item.created_by.username,
+        item.remark ?? '-',
     ];
 
 
