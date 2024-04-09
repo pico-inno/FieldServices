@@ -3657,6 +3657,18 @@
                 <!--end::Wrapper-->
                 <!--begin::Toolbar wrapper-->
                 <div class="d-flex flex-shrink-0">
+                    <div class="d-flex align-items-center ms-1 ms-sm-3">
+                        @php
+                            $versionType = \App\Helpers\SettingHelpers::getSettingsVersionInfo('type');
+                        @endphp
+                        <span class="badge
+                            @if($versionType == 'beta') badge-light-danger
+                            @elseif($versionType == 'stable') badge-light-success
+                            @endif badge-lg">
+                            {{ $versionType }}: {{ \App\Helpers\SettingHelpers::getSettingsVersionInfo('version') }}
+                        </span>
+                    </div>
+
                     <!--begin::Invite user-->
                     <div class="d-flex align-items-center ms-1 ms-sm-3">
                         <!--begin::Menu toggle-->

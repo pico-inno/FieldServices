@@ -51,6 +51,7 @@ class ReportController extends Controller
     //Start: Sale
     public function saleIndex()
     {
+
         $locations = businessLocation::select('id', 'name', 'parent_location_id')->get();
         $customers = Contact::where('type', 'Customer')->get();
 
