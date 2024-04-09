@@ -3665,7 +3665,8 @@
                             @if($versionType == 'beta') badge-light-danger
                             @elseif($versionType == 'stable') badge-light-success
                             @endif badge-lg">
-                            {{ $versionType }}: {{ \App\Helpers\SettingHelpers::getSettingsVersionInfo('version') }}
+                            <span class="me-2">{{ ucfirst($versionType) }}:</span>
+                            v{{ \App\Helpers\SettingHelpers::getSettingsVersionInfo('version') }}
                         </span>
                     </div>
 
