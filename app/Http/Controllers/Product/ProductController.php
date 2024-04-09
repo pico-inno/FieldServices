@@ -196,17 +196,16 @@ class ProductController extends Controller
 
     public function index(
         LocationRepositoryInterface $locationRepository,
-    )
-    {
-//        return Product::with('productVariations', 'category', 'brand')->paginate();
-//        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
+    ) {
+        //        return Product::with('productVariations', 'category', 'brand')->paginate();
+        //        return $products = Product::with('productVariations', 'category', 'brand', 'packaging')->get();
         $categories = $this->categoryRepository->query()->select('name')->distinct()->pluck('name');
         $brands = $this->brandRepository->query()->select('name')->distinct()->pluck('name');
         $generics = $this->genericRepository->query()->select('name')->distinct()->pluck('name');
         $manufactures = $this->manufacturerRepository->query()->select('name')->distinct()->pluck('name');
-         $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
-        $locations=$locationRepository->locationWithAccessControlQuery()->select('id','name')->get();
-        return view('App.product.product.productListV2',compact(
+        $product_types = $this->productRepository->query()->select('product_type')->distinct()->pluck('product_type')->toArray();
+        $locations = $locationRepository->locationWithAccessControlQuery()->select('id', 'name')->get();
+        return view('App.product.product.productListV2', compact(
             'locations',
             'product_types',
             'categories',
@@ -233,7 +232,6 @@ class ProductController extends Controller
 
     public function create(ProductCreateRequest $request, ProductAction $productAction)
     {
-//                return $request;
         try {
             DB::beginTransaction();
             $productAction->create($request);
@@ -260,7 +258,7 @@ class ProductController extends Controller
                 return view('App.openingStock.add', [
                     'stockin_persons' => $this->businessUserRepository->getAllWithRelationships(['personal_info']),
                     'locations' => businessLocation::all(),
-                    'lotControl'=>$lotControl
+                    'lotControl' => $lotControl
                 ]);
             }
         } catch (Exception $exception) {
@@ -430,6 +428,7 @@ class ProductController extends Controller
                 }
             } else {
                 //For variation, we go with seperate method $productAction->edit()
+
                 DB::beginTransaction();
                 $productAction->edit($request, $product->id);
                 DB::commit();

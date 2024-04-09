@@ -534,6 +534,12 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mt-5">
+                                                <div id="addRemainingVariablesButton" class="btn btn-primary">Add
+                                                    Remaining
+                                                    Variations</div>
+                                            </div>
+
 
                                         </div>
 
@@ -1334,6 +1340,7 @@
         // ============= > End:: For Single Product Type Calculate   < ===========
 
 
+
         // ============= > Begin:: For Variation table repeater  < ===============
         $(document).ready(function() {
             let newVariation = `
@@ -1475,6 +1482,124 @@
                 remainVariationAdd.removeClass('d-none');
             }
 
+            //Remaining Variations Add
+
+            $(document).ready(function() {
+                // Event handler for the "Add Remaining Variations" button click
+                $('#addRemainingVariablesButton').on('click', function() {
+                    let selectedIds = $('#variationSelect').val();
+
+                    if (selectedIds && selectedIds.length > 0) {
+                        // Fetch existing variations pairs
+                        let existingVariations = fetchExistingVariations();
+
+                        // Generate rows for the remaining variable pairs
+                        generateRemainingVariableRows(selectedIds, existingVariations);
+                    }
+                });
+
+                // Function to fetch existing variations pairs
+                function fetchExistingVariations() {
+                    let existingVariations = [];
+
+                    // Retrieve existing variations pairs from the DOM
+                    $('.variation-add-delete').each(function() {
+                        let variationId = $(this).find('input[name="variation_id[]"]').val();
+                        existingVariations.push(variationId);
+                    });
+
+                    return existingVariations;
+                }
+
+                // Function to generate rows for the remaining variable pairs
+                function generateRemainingVariableRows(selectedIds, existingVariations) {
+                    let variationValues = [];
+
+                    // Fetch variation values for each selected ID
+                    let fetchPromises = selectedIds.map(id => {
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                url: '/variation-values/' + id,
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(data) {
+                                    variationValues.push(
+                                        data
+                                    ); // Store variation values for each ID
+                                    resolve();
+                                },
+                                error: function(xhr, status, error) {
+                                    reject(error);
+                                }
+                            });
+                        });
+                    });
+
+                    // Wait for all AJAX requests to complete
+                    Promise.all(fetchPromises)
+                        .then(() => {
+                            // Generate all combinations of values
+                            let combinations = generateCombinations(variationValues);
+
+                            // Filter out combinations that match existing variations
+                            combinations = filterExistingVariations(combinations, existingVariations);
+
+                            // Render rows for each combination
+                            renderCombinationRows(combinations);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching variation values:', error);
+                        });
+                }
+
+                // Function to filter out combinations that match existing variations
+                function filterExistingVariations(combinations, existingVariations) {
+                    return combinations.filter(combination => {
+                        let combinationIds = combination.map(variation => variation.id).join('-');
+                        return !existingVariations.includes(combinationIds);
+                    });
+                }
+
+                // Function to generate all combinations of variation values
+                function generateCombinations(variationValues) {
+                    if (variationValues.length === 0) return [];
+                    let generate = (variations, index, combination) => {
+                        if (index === variations.length) {
+                            return [combination];
+                        }
+                        let results = [];
+                        variations[index].forEach(value => {
+                            let newCombination = combination.concat(value);
+
+                            let subResults = generate(variations, index + 1, newCombination);
+                            results.push(...subResults);
+                        });
+                        return results;
+                    };
+
+                    return generate(variationValues, 0, []);
+                }
+
+                // Function to render rows for each combination
+                function renderCombinationRows(combinations) {
+                    // Generate rows for each combination
+                    combinations.forEach(combination => {
+                        let cloneRow = $(newVariation).clone();
+                        let values = combination.map(variation => variation.name).join(
+                            '-'); // Concatenate variation names
+                        let ids = combination.map(variation => variation.id).join('-');
+                        cloneRow.find('input[name="variation_value[]"]').val(values);
+                        cloneRow.find('input[name="variation_id[]"]').val(ids);
+                        cloneRow.find('input[name="variation_value[]"]').attr('readonly', true);
+                        $('#variation-row').append(cloneRow);
+                    });
+
+                    calculateVariation();
+                }
+            });
+
+
+            //Remaining Variations Add
             $(document).on('click', '#remainVariationAdd', function() {
                 $.each(remainVariationIds, function(key, value) {
                     let cloneRow = $(newVariation).clone();
