@@ -217,7 +217,13 @@
                                         <!--end::Accountnumber-->
                                         <!--begin::Number-->
                                         <div class="text-end fw-bold fs-6 text-gray-800">
-                                            {{price($sale['extra_discount_amount'] ?? 0)}} {{$sale['extra_discount_type']=='percentage'?'%':''}}
+                                            @if($sale['extra_discount_type'] == 'percentage')
+                                                {{formatNumberV2($sale['extra_discount_amount'] ?? 0)}} {{$sale['extra_discount_type']=='percentage'?'%':''}}
+                                                <br/>
+                                                ({{price(calPercentage($sale['extra_discount_type'],$sale['extra_discount_amount'] ?? 0,$sale['sale_amount']) ?? 0)}})
+                                            @else
+                                            {{price($sale['extra_discount_amount'] ?? 0)}}
+                                            @endif
                                         </div>
                                         <!--end::Number-->
                                     </div>
@@ -288,7 +294,7 @@
                             <!--end::Container-->
 
 
-                            @if ($sale['status'] !='order' && $sale['status']!='delivered' && $sale['status']!='partial')
+                            @if ($sale['status'] !='order' && $sale['status']!='delivered' && $sale['status']!='partial' && hasModuleInstalled('Ecommerce'))
                                 <div class="row g-5 mb-11 mt-10">
                                     <div class="col-4 text-start m-auto d-flex justify-content-center">
                                         <div class="w-auto">
@@ -340,6 +346,7 @@
             </div>
         </div>
     </div>
+    @if (hasModuleInstalled('Ecommerce'))
     <div class="modal fade " tabindex="-1" id="kt_modal_stacked_{{$sale['id']}}">
         <div class="modal-dialog modal-dialog-centered w-md-500px">
             <div class="modal-content">
@@ -427,6 +434,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <script src={{asset('customJs/general.js')}}></script>
 
@@ -565,56 +573,8 @@
             $('#confirmOrder').off('click').on('click',()=>{
                 let confirmBox = new bootstrap.Modal($('#kt_modal_stacked_{{$sale['id']}}'));
                 confirmBox.show();
-                // Swal.fire({
-                //     title:'Are You Sure To Confirm Order',
-                //     icon:"question",
-                //     input: "checkbox",
-                //     inputValue: 1,
-                //     customClass: {
-                //         confirmButton: "btn btn-primary",
-                //     },
-                //     inputPlaceholder: `
-                //         Do You Also Want To Confirm Payment?
-                //     `,
-                //     inputAttributes: {
-                //         class: 'form-check-input custom-checkbox-class' // Add Bootstrap classes and your custom class here
-                //     },
-                // }).then((result) => {
-                //     console.log(result);
-                //     if(result.isConfirmed){
 
-                //         let isConfirmPayment=false;
-                //     if (result.value) {
-                //         isConfirmPayment=true;
-                //     } else {
-                //         isConfirmPayment=false;
 
-                //     }
-                //         $.ajax({
-                //             method: 'POST',
-                //             url:statusChangeUri,
-                //             dataType: 'json',
-
-                //             headers: {
-                //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                //                 },
-                //             data:{
-                //                 status:'order',
-                //                 isConfirmPayment,
-                //             },
-                //             success: function(result) {
-                //             success('Successfully Updated')
-                //             },
-                //             error: function(result) {
-                //                 toastr.error(result.responseJSON.errors,
-                //                     'Something went wrong');
-                //             }
-                //         });
-                //         let sdmodal=document.getElementsByClassName('saleDetail')[0];
-                //         $('.saleDetail').modal('hide');
-                //     }
-
-                // });
 
 
 
