@@ -18,6 +18,7 @@ class paymentAccounts extends Model
         'opening_amount',
         'current_balance',
         'currency_id',
+        'qrimage'
     ];
     public function currency(){
         return $this->hasOne(Currencies::class,'id','currency_id')->with('exchangeRate');

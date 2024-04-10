@@ -3,7 +3,7 @@
         id='{{isset($id) ? $id : ''}}'>
     {{ $defaultOption ?? '' }}
 </select>
-@push('scripts')
+{{-- @push('scripts') --}}
     <script>
         $('.locationsSelect').select2({
             ajax: {
@@ -34,4 +34,4 @@
             minimumInputLength: 0,
         })
     </script>
-@endpush
+{{-- @endpush --}}

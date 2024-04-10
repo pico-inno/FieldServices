@@ -1,18 +1,6 @@
-[submodule "Modules/Games"]
-	path = Modules/Games
-	url = https://github.com/pico-inno/Games.git
-[submodule "Modules/FieldService"]
-	path = Modules/FieldService
-	url = https://github.com/pico-inno/Field-Services.git
-[submodule "Modules/StockInOut"]
-	path = Modules/StockInOut
-	url = https://github.com/pico-inno/StockInOut.git
-[submodule "Modules/Ecommerce"]
-	path = Modules/Ecommerce
-	url = https://github.com/pico-inno/Ecommerce.git
 [submodule "Modules/Delivery"]
 	path = Modules/Delivery
 	url = https://github.com/pico-inno/Delivery.git
-[submodule "Modules/Reservation"]
-	path = Modules/Reservation
-	url = https://github.com/pico-inno/Reservation.git
+[submodule "Modules/Ecommerce"]
+	path = Modules/Ecommerce
+	url = https://github.com/pico-inno/Ecommerce.git

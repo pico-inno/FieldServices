@@ -62,4 +62,5 @@ class FileServices
         $webpImage = $image->encode('webp', 90);
         return $webpImage;
     }
+    
 }

@@ -4,6 +4,7 @@ namespace App\Livewire\Sale;
 
 use Livewire\Component;
 use App\Models\sale\sales;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use App\Datatables\datatable;
 use App\Models\Contact\Contact;
@@ -31,6 +32,8 @@ class AllSaleTable extends Component
     {
         $this->resetPage();
     }
+
+    #[On('reloadComponent')]
     public function render()
     {
         $search = $this->search;

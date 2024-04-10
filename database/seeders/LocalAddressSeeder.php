@@ -15,22 +15,22 @@ class LocalAddressSeeder extends Seeder
     {
         $regions = [
             'Naypyitaw Union Territory',
-            'Mandalay LocalRegion',
+            'Mandalay Region',
             'Rakhine State',
             'Shan State (South)',
-            'Tanintharyi LocalRegion',
-            'Yangon LocalRegion',
+            'Tanintharyi Region',
+            'Yangon Region',
             'Chin State',
-            'Bago LocalRegion (East)',
+            'Bago Region (East)',
             'Kayah state',
             'Kayin State',
             'Shan State (East)',
             'Mon State',
-            'Ayeyarwady LocalRegion',
-            'Bago LocalRegion (West)',
-            'Magway LocalRegion',
+            'Ayeyarwady Region',
+            'Bago Region (West)',
+            'Magway Region',
             'Kachin State',
-            'Sagaing LocalRegion',
+            'Sagaing Region',
             'Shan State (North)',
         ];
 
@@ -56,14 +56,12 @@ class LocalAddressSeeder extends Seeder
         ];
 
         DB::transaction(function () use ($regions, $regions_mm) {
-            // Create or retrieve existing regions
             foreach ($regions as $index => $region) {
                 $region_mm = $regions_mm[$index];
 
-                $localRegion = LocalRegion::firstOrCreate([
-                    'en_name' => $region,
-                ], [
+                $localRegion = LocalRegion::create([
                     'mm_name' => $region_mm,
+                    'en_name' => $region
                 ]);
             }
 
@@ -78,7 +76,7 @@ class LocalAddressSeeder extends Seeder
             $mmData = json_decode($mmJsonContent, true);
 
             foreach ($enData as $index => $enTownship) {
-                // Check if the index exists in the $mmData array
+
                 if (isset($mmData[$index])) {
                     $mmTownship = $mmData[$index];
 
@@ -96,12 +94,10 @@ class LocalAddressSeeder extends Seeder
                             ['region_id' => $regionId, 'mm_name' => $mmTownship['Town_Township']]
                         );
                     } else {
-                        // Log error or message indicating the missing LocalRegion
-                        \Log::error('LocalRegion not found for Region: ' . $enTownship['Region']);
+                        logger()->info('LocalRegion not found for Region: ' . $enTownship['Region']);
                     }
                 } else {
-                    // Log error or message indicating missing MM township data for the given index
-                    \Log::error('MM township data not found for index: ' . $index);
+                    logger()->info('MM township data not found for index: ' . $index);
                 }
             }
         });

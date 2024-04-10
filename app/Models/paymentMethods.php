@@ -10,7 +10,7 @@ class paymentMethods extends Model
     use HasFactory;
 
     public $fillable=[
-        'name','payment_account_id','note','currency_id'
+        'name','payment_account_id','note','currency_id','logo'
     ];
 
     public function paymentAccount(){

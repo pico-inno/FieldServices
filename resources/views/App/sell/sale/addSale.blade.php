@@ -319,7 +319,7 @@
                                 <label class="form-label fs-7 fw-semibold" for="">
                                     Extra Discount Type
                                 </label>
-                                <select name="extra_discount_type" id="" class="form-select form-select-sm extra_discount_type" data-control="select2" data-hide-search="true">
+                                <select name="extra_discount_type" id="extra_discount_type" class="form-select form-select-sm extra_discount_type" data-control="select2" data-hide-search="true">
                                     <option value="fixed">Fixed</option>
                                     <option value="percentage">Percentage</option>
                                 </select>
@@ -330,7 +330,8 @@
                                 </label>
                                 <div class="input-group input-group-sm">
                                     <input type="text" name="extra_discount_amount" class="form-control form-control-sm extra_discount_amount input_number">
-                                    <span class="input-group-text currencySymbol">{{$defaultCurrency['symbol']}}</span>
+                                    <span class="input-group-text currencySymbol csForEDis">{{$defaultCurrency['symbol']}}</span>
+                                    <span class="input-group-text percentageSymbol d-none">%</span>
                                 </div>
                             </div>
                             <div class="fs-7 fw-semibold col-12 col-md-5 d-flex justify-content-end align-items-center mb-5 mb-md-0">
@@ -419,7 +420,9 @@
                     </div>
                 </div>
                 @if (hasModule('Delivery')  && isEnableModule('Delivery'))
-                    <livewire:delivery.delivery-inputs-form />
+                   <div id="deliveryInputsForm" class="d-none">
+                        <livewire:delivery.delivery-inputs-form />
+                   </div>
                 @endif
 
 

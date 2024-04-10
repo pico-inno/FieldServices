@@ -66,7 +66,7 @@ class SaleServices
             'channel_id'=>$data->channel_id,
         ]);
     }
-    public function update($id,$data){
+    public function update($id,$data,$isForceLocationUpdate=false){
         $sales = sales::where('id', $id)->first();
         $balanceAmount= $data['total_sale_amount'] -$sales['paid_amount'];
         $saleData = [
@@ -83,6 +83,9 @@ class SaleServices
             'updated_by' => Auth::user()->id ?? $id,
             'sold_at' => $data['sold_at'] ?? now(),
         ];
+        if($isForceLocationUpdate){
+            $saleData['business_location_id']=$data['business_location_id'];
+        }
         if ($data['type'] == 'pos') {
             $saleData['paid_amount'] = $data['paid_amount'];
             $saleData['balance_amount'] = $data['balance_amount'];

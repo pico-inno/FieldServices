@@ -266,6 +266,7 @@ class saleController extends Controller
 
     public function saleDetail($id)
     {
+        $ecommerceOrderLocation='';
         $relations = [
             'sold_by', 'confirm_by', 'customer', 'updated_by', 'currency'
         ];
@@ -273,9 +274,13 @@ class saleController extends Controller
             $relations[] = 'table';
         }
         $sale = sales::with(...$relations)->where('id', $id)->first()->toArray();
+        if (hasModuleInstalled('ecommerce') && class_exists(EcommerceOrder::class)) {
+            $ecommerceOrder=EcommerceOrder::where('sale_id',$id)->first();
+            $ecommerceOrderLocation=$ecommerceOrder['address_line'] ?? null;
+        }
 
-        $location = businessLocation::where("id", $sale['business_location_id'])->first();
-        $address = locationAddress::where("location_id", $location->id)->first();
+        $location = businessLocation::where("id", $sale['business_location_id'])->first() ?? [];
+        $address = $location? locationAddress::where("location_id", $location['id'])->first() : [];
         $setting = $this->setting;
         $sale_details_query = sale_details::with([
             'productVariation' => function ($q) {
@@ -313,7 +318,7 @@ class saleController extends Controller
             'setting',
             'address',
             'ecommerceOrder',
-            'paymentAccount'
+            'paymentAccount','ecommerceOrderLocation'
         ));
     }
     // sale create page
@@ -619,6 +624,7 @@ class saleController extends Controller
         // I fetch  sales data ,one for store as old data that fetch form database and one is to update data and after updated ,if you call slaes the will be updated!!
         $saleBefUpdate = sales::where('id', $id)->first();
         $businessLocationId= $saleBefUpdate->business_location_id;
+
         if ($request->type == 'pos') {
             $registeredPos = posRegisters::where('id', $request->pos_register_id)->select('id', 'payment_account_id', 'use_for_res')->first();
         }
@@ -628,7 +634,13 @@ class saleController extends Controller
             //
             // -----------------------------update sale data -------------
             //
-            $updatedSaleData=$saleService->update($id,$request);
+            if(!$businessLocationId){
+                $isForceLocationUpdate=true;
+                $businessLocationId=$request->business_location_id;
+            }else{
+                $isForceLocationUpdate=false;
+            }
+            $updatedSaleData=$saleService->update($id,$request,$isForceLocationUpdate);
             $this->txUpdateForPos($request, $saleBefUpdate,$updatedSaleData);
 
 
@@ -693,6 +705,7 @@ class saleController extends Controller
                     $beforeUpdateSaleDetailQtyByRef = UomHelper::getReferenceUomInfoByCurrentUnitQty($beforeUpdateSaleDetailData['quantity'], $beforeUpdateSaleDetailData['uom_id'])['qtyByReferenceUom'];
                     if ($product->product_type == 'storable') {
                         // stock adjustment
+
                         if ($saleBefUpdate['status'] != 'delivered' && $request->status == "delivered" && !$lotSerialCheck) {
                             $changeQtyStatus = $saleService->changeStockQty($requestToUpdateQtyByRef, $requestToUpdateUomIdByRef, $request->business_location_id, $requestToUpdateSaleDetail, [], $updatedSaleData);
                             if ($changeQtyStatus == false) {
@@ -749,12 +762,12 @@ class saleController extends Controller
                                                                     ->where('transaction_detail_id', $requestToUpdateSaleDetailId)
                                                                     ->where('current_stock_balance_id', $stock['id']);
                                         $lotSerialDetailsByStockQuery= $lotSerialDetailsByStock->first();
-
                                         if ($lotSerialDetailsByStock->exists()) {
                                             $lotSerialDetailsByStockQuery->update([
                                                 'uom_id' => $requestToUpdateSaleDetail['uom_id'],
                                                 'uom_quantity' => $stockQtyBySdUom+ $lotSerialDetailsByStockQuery['uom_quantity'],
                                                 'ref_uom_quantity'=> $stockQtyByRef + $lotSerialDetailsByStockQuery['ref_uom_quantity'],
+                                                'stock_status'=>'normal'
                                             ]);
                                         } else {
                                             lotSerialDetails::create([
@@ -784,13 +797,13 @@ class saleController extends Controller
                                         $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')->where('transaction_detail_id', $requestToUpdateSaleDetailId)
                                                             ->where('current_stock_balance_id', $stock['id']);
 
-
                                         if ($lotSerialDetails->exists()) {
                                             $lotSerialDetailUomQty = $lotSerialDetails->first()->uom_quantity;
                                             $lotSerialDetailUomQtyByRef = $lotSerialDetails->first()->ref_uom_quantity;
                                             $lotSerialDetails->update([
                                                 'uom_quantity' => $lotSerialDetailUomQty + $qtyToRemoveByRequestUpdateUom,
                                                 'ref_uom_quantity' => $lotSerialDetailUomQtyByRef + $qtyToRemoveByRefUom,
+                                                'stock_status'=>'normal'
                                             ]);
                                         } else {
                                             lotSerialDetails::create([
@@ -813,7 +826,6 @@ class saleController extends Controller
                                 $lotSerialDetails = lotSerialDetails::where('transaction_type', 'sale')
                                                 ->where('transaction_detail_id', $requestToUpdateSaleDetailId)->OrderBy('id', 'DESC')->get();
                                 foreach ($lotSerialDetails as $bsd) {
-
                                     if ($qtyToReplaceByRefUom > $bsd->ref_uom_quantity) {
                                         lotSerialDetails::where('id', $bsd->id)->first()->delete();
                                         $current_stock = CurrentStockBalance::where('id', $bsd->current_stock_balance_id)->first();
@@ -837,6 +849,7 @@ class saleController extends Controller
                                             lotSerialDetails::where('id', $bsd->id)->first()->update([
                                                 'uom_quantity' => $qtyToReplaceByRequestUpdateUom ,
                                                 'ref_uom_quantity' => $refUomQtyForLs,
+                                                'stock_status'=>'normal'
                                             ]);
                                         }
                                         $current_stock->update([
@@ -2416,21 +2429,22 @@ class saleController extends Controller
     {
     }
     public function statusChange(Sales $sale,Request $request,paymentServices $paymentServices){
-        $data=$request->data ?? [];
+        $requestData=$request['data'];
         try {
             DB::beginTransaction();
             $ecommerceOrder=null;
             if($sale['status']!='delivered' && isset($request['status'])){
                 $data=[
+                    'business_location_id'=>$requestData['location_id'] ?? null,
                     'status'=>$request['status'],
                 ];
 
                 $sale_details = sale_details::where('sales_id', $sale['id'])
                     ->get();
-                if(isset($data['IsReserve']) && $data['IsReserve'] && $data['location_id']){
+                if(isset($requestData['IsReserve']) && $requestData['IsReserve'] && $requestData['location_id']){
                     foreach ($sale_details as $detail){
                         StockReserveServices::make()->reserve(
-                            $data['location_id'],
+                            $requestData['location_id'],
                             $detail->product_id,
                             $detail->variation_id,
                             $detail->uom_id,
@@ -2441,7 +2455,7 @@ class saleController extends Controller
                     }
                 }
 
-                if(isset($data['confirm_payment']) && $data['confirm_payment']){
+                if(isset($requestData['confirm_payment']) && $requestData['confirm_payment']){
                     $data['paid_amount']=$sale['total_sale_amount'];
                     $data['payment_status']="paid";
                     $data['balance_amount']=0;

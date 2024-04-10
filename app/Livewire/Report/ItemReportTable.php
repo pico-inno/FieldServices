@@ -66,6 +66,8 @@ class ItemReportTable extends Component
         }
 
         $datas=ProductVariation::select(...$columns)
+            ->where('sales.is_delete', 0)
+            ->where('sale_details.is_delete', 0)
             ->leftJoin('products','product_variations.product_id' , '=','products.id' )
             ->leftJoin('variation_template_values', 'product_variations.variation_template_value_id', '=', 'variation_template_values.id')
             ->leftJoin('sale_details', 'product_variations.id', '=', 'sale_details.variation_id')
@@ -107,8 +109,6 @@ class ItemReportTable extends Component
                 $query->whereDate('sales.sold_at', '>=', $filterDate[0])
                         ->whereDate('sales.sold_at', '<=', $filterDate[1]);
             })
-            ->where('sales.is_delete', 0)
-            ->where('sale_details.is_delete', 0)
             ->paginate($this->perPage);
             // ->get()->toArray();
             // dd($datas->toArray());
