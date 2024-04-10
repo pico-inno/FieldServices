@@ -270,7 +270,7 @@
                                     <tr class="mb-5 ">
                                         <th class="fw-semibold">{{__('table/label.total_items')}} :</th>
                                         <td class="rowcount text-left  fs-6 fw-semibold text-end" >
-                                            <span id="total_item fw-bold"> 0 </span>
+                                            <span id="total_item"> 0 </span>
                                         </td>
                                     </tr>
                                     <tr class="mb-2 d-none">

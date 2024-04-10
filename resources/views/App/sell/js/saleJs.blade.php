@@ -156,10 +156,12 @@
                     QtyInput.val(currentQty-1);
                 }
                 qtyEvents($(this));
+                totalItem();
 
             })
             $(document).on('input',`#quantity_${index}`,function(e){
                 qtyEvents($(this));
+                totalItem();
             })
 
             $(document).on('click',`#increase_btn_${index}`,function(){
@@ -181,6 +183,7 @@
                 cal_balance_amount();
                 getPrice(e);
                 changeRdQty(e);
+                totalItem();
             }
         })
         let CurrentPriceListId=editSale.business_location_id ? locations.find((location)=>location.id==editSale.business_location_id).price_lists_id :1;
@@ -825,9 +828,10 @@
             });
         $('#searchInput').val('');
         checkAndStoreSelectedProduct(selectedVar_product);
-        let rowCount = $('#sale_table tbody tr').length + 1;
+        // let rowCount = $('#sale_table tbody tr').length + 1;
 
-        $('.total_item').text(rowCount-1);
+        // $('.total_item').text(rowCount-1);
+        totalItem();
         // searching disable in select 2
         $('[data-kt-repeater="select2"]').select2({ minimumResultsForSearch: Infinity});
         $(`[data-kt-repeater=package_select_${unique_name_id}]`).select2({
@@ -1350,8 +1354,10 @@
                             }
                             row.remove();
                             checkStock($(this));
-                            rowCount = $('#sale_table tbody tr').length;
-                            $('.total_item').text(rowCount-1);
+                            // rowCount = $('#sale_table tbody tr').length;
+                            // $('.total_item').text(rowCount-1);
+
+                            totalItem();
                             cal_total_sale_amount();
                             cal_balance_amount();
                             sale_amount_cal();
@@ -1406,7 +1412,16 @@
         cal_total_sale_amount();
     })
 
+    function totalItem() {
+        let total=0;
+        $('.quantity').each(function() {
+            var value = isNullOrNan($(this).val());
+            total += value;
 
+        });
+        console.log(total,'total-');
+        $('.total_item').text(total);
+    }
     //
     //  This calculation is to calculate subtotal (quantity * uom_price)
     //
@@ -1467,7 +1482,8 @@
             total_line_amount += value;
         });
         console.log(total_line_amount,'total_line_amounttotal_line_amount');
-        $('#total_item_discount').val(total_line_amount)
+        $('#total_item_discount').val(total_line_amount);
+        totalItem();
         sale_amount_cal();
     }
 
