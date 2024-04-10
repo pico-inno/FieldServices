@@ -23,7 +23,8 @@ class Actions extends Component
     protected $rules=[
         'name'=>'required',
         'paymentAccountId'=>'required|int',
-        'note'=>'max:255'
+        'note'=>'max:255',
+        'logo' => 'nullable|image|max:1024'
     ];
     protected $messages=[
         'paymentAccountId.required'=>'Payment Account Is Required!'
@@ -36,8 +37,10 @@ class Actions extends Component
     public function updatedLogo($logo)
     {
         // dd($logo);
-        $imageData = file_get_contents($this->logo->getRealPath());
-        $this->logoImg = base64_encode($imageData); // Convert to BLOB data
+        if($this->logo->getRealPath()){
+            $imageData = file_get_contents($this->logo->getRealPath());
+            $this->logoImg = base64_encode($imageData); // Convert to BLOB data
+        }
     }
     public function mount(){
         $paymentMethod=paymentMethods::where('id',$this->id)->first();
@@ -58,7 +61,7 @@ class Actions extends Component
 
         $this->validate();
         try {
-            $imageData = file_get_contents($this->logo->getRealPath()) ?? null;
+            $imageData =$this->logo? file_get_contents($this->logo->getRealPath()) : null;
             $pma->update($this->id,[
                 'name'=>$this->name,
                 'payment_account_id'=>$this->paymentAccountId,

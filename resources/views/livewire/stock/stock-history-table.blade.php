@@ -70,7 +70,7 @@
         </div>
         <div class="table-responsive">
              <!--begin::Table-->
-             <table class="table align-middle table-row-dashed fs-6 gy-3" >
+             <table class="table align-middle table-hover table-row-dashed fs-6 gy-3" >
                 <!--begin::Table head-->
 
                 <thead>

@@ -97,9 +97,13 @@
                 </tbody>
                 <tfoot>
                     <tr class="fw-bold fs-3">
-                        <td colspan="12">
+                        <td colspan="10">
                             <h3>Total</h3>
                         </td>
+                        <td colspan="1" class="text-end">
+                            {{formatNumberv2($datas->sum('sell_qty'))}}
+                        </td>
+                        <td></td>
                         <td  class=" text-end">
                             {{formatNumberv2($datas->sum('sale_subtotal'))}}
                         </td>

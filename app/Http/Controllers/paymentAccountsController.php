@@ -6,6 +6,7 @@ use App\Helpers\generatorHelpers;
 use Illuminate\Http\Request;
 use App\Models\paymentAccounts;
 use App\Models\paymentsTransactions;
+use App\Services\file\FileServices;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -64,10 +65,19 @@ class paymentAccountsController extends Controller
     }
 
     public function store(Request $request){
-        $data=$this->getPaymentData($request);
-        $payment=paymentAccounts::create($data);
-        $this->createPaymentTransaction($payment);
-        return redirect()->back()->with(['success'=>'successfully added']);
+        try {
+            DB::beginTransaction();
+            $data=$this->getPaymentData($request);
+            $payment=paymentAccounts::create($data);
+            $this->createPaymentTransaction($payment);
+            DB::commit();
+            return redirect()->back()->with(['success'=>'successfully added']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th->getMessage());
+            return redirect()->back()->with(['error'=>$th->getMessage()]);
+
+        }
     }
 
     public function edit($id){
@@ -125,6 +135,13 @@ class paymentAccountsController extends Controller
     }
 
     private function getPaymentData($request){
+
+        if((!$request['hasImage'] || $request['qrimage']) && $request->hasFile('qrimage')){
+            $qrimage=$request->file('qrimage');
+            $imageData = file_get_contents($qrimage->getRealPath());
+        }else{
+            $imageData=null;
+        }
         $data=$request->only(
             'name',
             'account_type',
@@ -133,6 +150,7 @@ class paymentAccountsController extends Controller
             'currency_id',
             'description');
         $data['current_balance']=$request['opening_amount'];
+        $data['qrimage']=$imageData;
         return $data;
     }
     private function createPaymentTransaction($account){

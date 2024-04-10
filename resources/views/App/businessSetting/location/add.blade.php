@@ -142,14 +142,14 @@
                              <!--end::Input group-->
                             <div class="col-md-4 col-sm-6 col-12 d-flex align-items-end justify-content-md-start mb-12">
                                 <div class="form-check">
-                                    <label class="form-check-label text-gray-700 fs-7" for='allow_purchase_order'>Allow Purchase Order</label>
+                                    <label class="form-check-label text-gray-700 fs-7" for='allow_purchase_order'>Allow Stock IN</label>
                                     <input type="checkbox" name="allow_purchase_order" id="allow_purchase_order" value="1" class="form-check-input" >
                                 </div>
                             </div>
                              <!--end::Input group-->
                             <div class="col-md-4 col-sm-6 col-12 d-flex align-items-end justify-content-md-start mb-12">
                                 <div class="form-check">
-                                    <label class="form-check-label text-gray-700 fs-7" for='allow_sale_order'>Allow Sale Order</label>
+                                    <label class="form-check-label text-gray-700 fs-7" for='allow_sale_order'>Allow Stock Out</label>
                                     <input type="checkbox" name="allow_sale_order" id="allow_sale_order" value="1" class="form-check-input" >
                                 </div>
                             </div>
