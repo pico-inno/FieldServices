@@ -29,7 +29,7 @@
                     <td></td>
                     <td>{{$p->purchaseUOM ? $p->purchaseUOM->name :''}}</td>
                     <td>0</td>
-                    <td>0</td>
+                    <td>{{isset($v['default_purchase_price']) ? $v['default_purchase_price']:0}}</td>
                     <td></td>
                 </tr>
                 @endforeach
@@ -42,7 +42,7 @@
                 <td></td>
                 <td>{{$p->purchaseUOM ? $p->purchaseUOM->name :''}}</td>
                 <td>0</td>
-                <td>0</td>
+                <td>{{isset($p->productVariations[0]) ? $p->productVariations[0]->default_purchase_price:0}}</td>
                 <td></td>
             </tr>
             @endif

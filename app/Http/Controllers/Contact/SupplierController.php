@@ -65,7 +65,7 @@ class SupplierController extends Controller
 
                             if (hasDelete('supplier')){
                                 $html .= '<li>
-                                        <form id="delete-form-' . $row->id . '" action="contacts/suppliers/' . $row->id . '" method="POST">
+                                        <form id="delete-form-' . $row->id . '" action="/contacts/suppliers/' . $row->id . '" method="POST">
                                             ' . csrf_field() . '
                                             ' . method_field('DELETE') . '
                                         </form>
