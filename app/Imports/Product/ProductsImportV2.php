@@ -136,6 +136,7 @@ class ProductsImportV2 implements
             $prevRow = null;
             $productName = null;
             $variationsName = null;
+            $hasVariation = null;
             $productId = null;
             $skuIndex = 0;
             foreach ($rows as $key => $row) {
@@ -143,8 +144,8 @@ class ProductsImportV2 implements
                 if (!empty($row['selling_price']) && !empty($row['profit_margin'])){
                             return throw new Exception("Note: If you use profit, you don't need to use selling price");
                 }
-
-                if (($productName !== $row['name'] && $variationsName !== $row['variation_name_seperated_values_blank_if_product_type_if_single']) || $key === 0) {
+                $newVariable = strtolower(trim($row['has_variation_single_or_variable']));
+                if (($productName !== trim(str_replace('+', '', $row['name'])) ||  $newVariable === 'single') || $key === 0) {
 
                     $skuIndex = 0;
                     $currentRow = 'P' . ++$count;
@@ -172,12 +173,22 @@ class ProductsImportV2 implements
 
 //
                     $sku = $row['sku_leave_blank_to_auto_generate_sku'] ?? productSKU();
+
                     //ok
 
+                     if (!empty($sku)) {
+                        $checkSku = $this->productRepository->query()->where('sku', trim($sku))->exists();
+                        if ($checkSku) {
+                          return  throw new Exception("SKU '$sku' already exists");
+                        }
+                    }
+                     if($sku === 0){
+                         return throw new Exception("The sku number cannot be '$sku'");
+                     }
                     $prepareProductData = [
-                        "name" => $row["name"],
+                        "name" => trim($row["name"]),
                         "product_code" => $row["product_code"],
-                        "sku" => $sku,
+                        "sku" => trim($sku),
                         "product_type" => $row["product_type_consumeable_or_storable_or_service"],
                         "has_variation" => strtolower(trim($row["has_variation_single_or_variable"])),
                         "brand_id" => $brand_id,
@@ -205,7 +216,8 @@ class ProductsImportV2 implements
                     $raw_purchase_price = floatval(str_replace(',', '', $row['purchase_price']));
                     $raw_selling_price = floatval(str_replace(',', '', $row['selling_price']));
                     $raw_profit_margin = floatval(str_replace(',', '', $row['profit_margin']));
-
+                    $sellingPrice = null;
+                    $profitMargin = null;
 
                     if (!empty($row['profit_margin']) && empty($row['selling_price'])){
                         $profit =  $raw_purchase_price * $raw_profit_margin / 100 ;
@@ -218,9 +230,9 @@ class ProductsImportV2 implements
                         $sellingPrice = $raw_selling_price;
                     }
 
-                    $hasVariation = $row['has_variation_single_or_variable'];
+                    $hasVariation = strtolower(trim($row['has_variation_single_or_variable']));
 
-                    if (strtolower(trim($hasVariation)) === "variable") {
+                    if ($hasVariation === "variable") {
                         $raw_variation_sku = strtolower(trim($row['variation_sku_keep_blank_if_product_type_is_single']));
 
                         if (empty($raw_variation_sku)) {
@@ -301,7 +313,7 @@ class ProductsImportV2 implements
 
                     }
 
-                    if (strtolower(trim($hasVariation)) === "single") {
+                    if ($hasVariation === "single") {
 
                         $product_variation = $this->productRepository->createVariation([
                             'product_id' => $product_id,
@@ -331,7 +343,8 @@ class ProductsImportV2 implements
                     $raw_purchase_price = floatval(str_replace(',', '', $row['purchase_price']));
                     $raw_selling_price = floatval(str_replace(',', '', $row['selling_price']));
                     $raw_profit_margin = floatval(str_replace(',', '', $row['profit_margin']));
-
+                    $sellingPrice = null;
+                    $profitMargin = null;
 
                     if (!empty($row['profit_margin']) && empty($row['selling_price'])){
                         $profit =  $raw_purchase_price * $raw_profit_margin / 100 ;
@@ -420,7 +433,7 @@ class ProductsImportV2 implements
                     $skuIndex++;
                 }
 
-                $productName = $row['name'];
+                $productName = str_replace('+', '', $row['name']);
                 $productId = $product_id;
                 $variationsName = $row['variation_name_seperated_values_blank_if_product_type_if_single'];
             }

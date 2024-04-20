@@ -34,9 +34,8 @@ class ImportProductController extends Controller
         try {
             DB::beginTransaction();
             $file = $request->file('import-products');
-            // $status = Excel::import(new ProductsImport(), $file);
             $import = new ProductsImportV2();
-            $importMessage=$import->import($file);
+            $import->import($file);
             DB::commit();
             activity('product-transaction')
                 ->log('Products import has been success')
