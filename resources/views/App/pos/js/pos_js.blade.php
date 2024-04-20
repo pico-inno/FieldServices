@@ -184,12 +184,12 @@
             // getProducts(1, );
             let packaging_id,packagingUom,packaging_quantity,packageQtyForCal,pkgname;
             if(product.product.product_packaging){
-                let packaging=product.product.product_packaging;
-                packaging_id=packaging.id,
-                packagingUom=packaging.uom_id,
-                packaging_quantity=1,
-                packageQtyForCal=packaging.quantity,
-                pkgname=packaging.packaging_name
+                // let packaging=product.product.product_packaging;
+                // packaging_id=packaging.id,
+                // packagingUom=packaging.uom_id,
+                // packaging_quantity=1,
+                // packageQtyForCal=packaging.quantity,
+                // pkgname=packaging.packaging_name
             }
             let romTags='';
             if(product.product.rom){
@@ -319,6 +319,7 @@
 
         let calPrice = ($element) => {
             let quantity = $element.closest('tr').find('input[name="quantity[]"]').val();
+            console.log(quantity ?? 'haha','-dsfwie');
             let default_price = $element.closest('tr').find('input[name="selling_price[]"]').val();
             let perItemDis = $element.closest('tr').find('input[name="per_item_discount"]').val();
             let disType = $element.closest('tr').find('input[name="discount_type"]').val();
@@ -1115,8 +1116,9 @@
         $('#all_product_list').on('click', '.each_product', function(e) {
             let variation_id = $(this).find('input[name="product_variation_id"]').val();
             let checkProduct= productsOnSelectData.find(p=>p.variation_id==variation_id);
+            let ParentRow=$(`.invoice_row_${variation_id}`);
+            // calPrice(ParentRow);
             if(setting.enable_row == 0 ){
-                let ParentRow=$(`.invoice_row_${variation_id}`);
                if(checkProduct && ParentRow.length){
                     let qtyInput=ParentRow.find(`.quantity_input`);
                     let selectQtyInputVal=qtyInput.val();
@@ -1178,6 +1180,7 @@
                         suggestionProductEvent();
                         $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                         changeQtyOnUom(newInvoiceSidebar, product.product.uom.id);
+                        calPrice(newInvoiceSidebar);
                         totalSubtotalAmountCalculate();
                         totalDisPrice();
                         return;
@@ -1189,6 +1192,7 @@
                     suggestionProductEvent();
                     $('[data-control="select2"]').select2({ minimumResultsForSearch: Infinity });
                     changeQtyOnUom(newInvoiceSidebar, product.product.uom.id);
+                    calPrice(newInvoiceSidebar);
                     totalSubtotalAmountCalculate();
                     totalDisPrice();
                 },
@@ -1481,7 +1485,7 @@
                     `;
                 })
             }
-            let defaultOption="<option value='' disabled selected>Select Packaging</option>"
+            let defaultOption="<option  disabled selected>Select Packaging</option>"
             $('#packaging_modal').append(defaultOption)
             $('#packaging_modal').append(packagingOption)
             // $('#packaging_modal').select2({
