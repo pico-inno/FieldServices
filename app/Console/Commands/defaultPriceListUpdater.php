@@ -33,7 +33,9 @@ class defaultPriceListUpdater extends Command
         if($defCusId){
             $priceList = PriceLists::where('id',$defCusId)->first();
             $products = Product::with('productVariations')->get();
+            $bar = $this->output->createProgressBar(count($products));
             foreach ($products as $product) {
+                $bar->advance();
                 if ($product->has_variation == 'single') {
                     $checkExist=PriceListDetails::where('pricelist_id',$priceList->id)
                                     ->where('applied_type','Product')
@@ -81,7 +83,9 @@ class defaultPriceListUpdater extends Command
                         }
                     }
                 }
+
             }
+            $bar->finish();
             $this->info('Successfully Updated');
         }
     }

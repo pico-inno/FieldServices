@@ -318,7 +318,7 @@ class ProductsImportV2 implements
                         }
                         //Product Packaging
 
-                        $this->createOrUpdatePriceListDetail('Product', $product_id, floatval(str_replace(',', '',$row['purchase_price'])));
+                        $this->createOrUpdatePriceListDetail('Product', $product_id, floatval(str_replace(',', '',$sellingPrice)));
                     }
 
                     $skuIndex++;
@@ -415,7 +415,7 @@ class ProductsImportV2 implements
                     }
                     //Product Packaging
 
-                    $this->createOrUpdatePriceListDetail('Variation', $productId, floatval(str_replace(',', '',$row['purchase_price'])));
+                    $this->createOrUpdatePriceListDetail('Variation', $productId, floatval(str_replace(',', '',$sellingPrice)));
 
                     $skuIndex++;
                 }
