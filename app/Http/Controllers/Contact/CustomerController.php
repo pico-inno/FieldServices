@@ -420,11 +420,10 @@ class CustomerController extends Controller
         $q = $request->q;
         $customers = Contact::where(function ($query) use ($q) {
             if($q!=''){
-                $query->where('first_name', 'like', '%' . $q . '%')
-                ->orWhere('middle_name', 'like', '%' . $q . '%')
-                ->orWhere('last_name', 'like', '%' . $q . '%')
+                $query->where(DB::raw("CONCAT(prefix,' ',first_name, ' ', middle_name, ' ',last_name )"), 'like', '%' . $q . '%')
                 ->orWhere('mobile', 'like', '%' . $q . '%')
                 ->orWhere('contact_id', 'like', '%' . $q . '%')
+                ->orWhere('prefix', 'like', '%' . $q . '%')
                 ->orWhere('company_name', 'like', '%' . $q . '%');
             }{
                 return $query;
