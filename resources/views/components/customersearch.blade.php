@@ -35,9 +35,10 @@
         minimumInputLength: 0,
     })
     function customername(customer){
-        return (customer.prefix || customer.first_name || customer.middle_name || customer.last_name )
-                ?  customer.prefix ?? '' +customer.first_name ?? ''+customer.middle_name ?? ''+customer.last_name ?? ''
-                :customer.company_name;
+        return (customer.prefix || customer.first_name || customer.middle_name || customer.last_name)
+    ? `${customer.prefix ? customer.prefix+' ' : ''}${customer.first_name ? customer.first_name+' ' : ''}${customer.middle_name ? customer.middle_name+' ' : ''}${customer.last_name ? customer.last_name+' ' :''}`
+    : customer.company_name;
+
     }
 </script>
 @endpush
