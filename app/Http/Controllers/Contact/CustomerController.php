@@ -424,7 +424,8 @@ class CustomerController extends Controller
                 ->orWhere('middle_name', 'like', '%' . $q . '%')
                 ->orWhere('last_name', 'like', '%' . $q . '%')
                 ->orWhere('mobile', 'like', '%' . $q . '%')
-                ->orWhere('contact_id', 'like', '%' . $q . '%');
+                ->orWhere('contact_id', 'like', '%' . $q . '%')
+                ->orWhere('company_name', 'like', '%' . $q . '%');
             }{
                 return $query;
             }

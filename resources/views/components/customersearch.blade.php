@@ -19,7 +19,7 @@
                     console.log(d);
                     resultsForSelect.push({
                         id: d.id,
-                        text: `${d.prefix ?? '' } ${d.first_name ?? ''} ${d.middle_name ?? ''} ${d.last_name ?? ''} - (${d.mobile ?? '-'})`
+                        text: `${customername(d)} - (${d.mobile ?? '-'})`
                     });
                 })
                 return {
@@ -34,5 +34,10 @@
         placeholder: 'Search for an item',
         minimumInputLength: 0,
     })
+    function customername(customer){
+        return (customer.prefix || customer.first_name || customer.middle_name || customer.last_name )
+                ?  customer.prefix ?? '' +customer.first_name ?? ''+customer.middle_name ?? ''+customer.last_name ?? ''
+                :customer.company_name;
+    }
 </script>
 @endpush
