@@ -279,7 +279,7 @@
             });
 
 
-            if(typeof myVar !== 'undefined'){
+            if(typeof locationSelect !== 'undefined'){
 
                 locationSelect.on('select2:select', function (e) {
                     @this.set('outletFilterId', $('#outletFilterId').select2("val"));
