@@ -24,7 +24,6 @@ class DailyReportExportBtn extends Component
         $fileName='dailyReport_'.$date.'.xlsx';
         $campaignId=$this->campaignId ;
         $dateFilter=$this->dateFilter ? date_create($this->dateFilter)->format('Y-m-d') : now();
-        // dd($dateFilter);
         return Excel::download(new DailyReportExport($campaignId,$dateFilter), $fileName);
     }
     public function render()

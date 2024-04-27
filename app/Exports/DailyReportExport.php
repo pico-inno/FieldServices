@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\BusinessUser;
 use App\Models\Product\Product;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Modules\FieldService\Entities\FsCampaign;
@@ -32,6 +33,9 @@ class DailyReportExport implements FromView,ShouldAutoSize
         $leaderId=$campaign['campaign_leader'];
         $PBIds=array_unique($PBIds);
         if (!in_array($leaderId, $PBIds)) {
+            if($PBIds[0] == 'all'){
+               $PBIds= BusinessUser::get()->pluck('id');
+            }
             $PBIds = [...$PBIds,$leaderId];
         }
 
