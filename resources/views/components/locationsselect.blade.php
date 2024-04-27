@@ -5,7 +5,7 @@
 </select>
 {{-- @push('scripts') --}}
     <script>
-        $('.locationsSelect').select2({
+      let locationSelect=  $('.locationsSelect').select2({
             ajax: {
                 url: '/location/get',
                 dataType: 'json',
@@ -14,6 +14,7 @@
                     params.page = params.page || 1;
                     resultsForSelect=[];
                     let data=results.data;
+                    // console.log(results,params);
                     data.map(function(d) {
                         resultsForSelect.push({
                             id: d.id,

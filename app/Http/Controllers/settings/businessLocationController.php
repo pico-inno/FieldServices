@@ -216,17 +216,19 @@ class businessLocationController extends Controller
 
     public function getLocationsForSelect(Request $request)
     {
+        // dd($request->toArray());
         $q = $request->q;
+        $locations = businessLocation::where('location_type', '!=', 3)
+        ->when($q, function ($query) use ($q) {
+            return $query->where('name', 'like', '%' . $q . '%');
+        })
+        ->paginate(10);
 
-        $locations = businessLocation::whereNot('location_type', 3)
-            ->where(function ($query) use ($q) {
-                if ($q != '') {
-                    $query->where('name', 'like', '%' . $q . '%');
-                } else {
-                    return $query;
-                }
-            })
-            ->paginate(10);
+        // Map the data after paginating
+        $locations->getCollection()->transform(function ($data) {
+            $data['name'] = businessLocationName($data);
+            return $data;
+        });
 
         return response()->json($locations, 200);
     }

@@ -24,7 +24,7 @@
                         <div class="row">
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
                                 <label class="form-label  fs-6 fw-semibold">Filter By Date:</label>
-                                <input class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
+                                <input autocomplete="off" class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
                                     data-kt-table-filter="dateRange" id="attendanceDatePicker" data-dropdown-parent="#filter" />
                             </div>
                             @if($campaign_id===null)
@@ -43,13 +43,15 @@
                                     <label class="form-label  fs-6 fw-semibold">
                                         <i class="fa-solid fa-circle fs-9 text-primary me-1"></i>
                                         Filter By Outlet:</label>
-                                    <select class="form-select form-select-sm fw-bold locationFilter" data-allow-clear="true"
+
+                                    <x-locationsselect  className="form-select-sm" id="outletFilterId" placeholder="Please Select Location"></x-locationsselect>
+                                    {{-- <select class="form-select form-select-sm fw-bold locationFilter" data-allow-clear="true"
                                         data-placeholder="Select option" id="outletFilterId" data-kt-select2="true" data-kt-table-filter="outlet">
                                         <option value="all">All</option>
                                         @foreach ($locations as $l)
                                         <option value="{{$l['id']}}">{{ businessLocationName($l) }}</option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
                                 </div>
                                 <div class="col-12 col-md-4 col-lg-3 mb-5">
                                     <label class="form-label  fs-6 fw-semibold">
@@ -276,11 +278,16 @@
                 @this.set('campaignFilterId','all');
             });
 
-            $('#outletFilterId').select2().on('select2:select', function (e) {
-                @this.set('outletFilterId', $('#outletFilter').select2("val"));
-            }).on('select2:unselect', function (e) {
-                @this.set('outletFilterId','all');
-            });
+
+            if(typeof myVar !== 'undefined'){
+
+                locationSelect.on('select2:select', function (e) {
+                    @this.set('outletFilterId', $('#outletFilterId').select2("val"));
+                }).on('select2:unselect', function (e) {
+                    @this.set('outletFilterId','all');
+                });
+
+            }
 
             $('#outletTypeFilter').select2().on('select2:select', function (e) {
                 @this.set('outletTypeFilter', $('#outletTypeFilter').select2("val"));

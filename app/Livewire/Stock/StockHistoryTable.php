@@ -15,6 +15,7 @@ class StockHistoryTable extends Component
     use WithPagination,datatable;
     public $variationId,$locations;
     public $businesslocationFilterId='all';
+    public $filterDate;
     public function __construct()
     {
         $this->queryString= [...$this->queryString,
@@ -36,6 +37,7 @@ class StockHistoryTable extends Component
     }
     public function render()
     {
+        $filterDate=$this->filterDate;
         $variationId=$this->variationId;
         $isAsc=$this->sortAsc;
         $businesslocationFilterId=$this->businesslocationFilterId;
@@ -51,6 +53,10 @@ class StockHistoryTable extends Component
         ->orderBy('stock_histories.id',$isAsc ? 'ASC' : 'DESC')
         ->when($businesslocationFilterId != 'all',function($q) use($businesslocationFilterId){
             $q->where("business_location_id",$businesslocationFilterId);
+        })
+        ->when(isset($filterDate), function ($query) use ($filterDate) {
+            $query->whereDate('stock_histories.created_at', '>=', $filterDate[0])
+                    ->whereDate('stock_histories.created_at', '<=', $filterDate[1]);
         })
         ->when(!hasModule('StockInOut') ,function($q){
             $q->whereNotIn('stock_histories.transaction_type', ['stock_in', 'stock_out']);

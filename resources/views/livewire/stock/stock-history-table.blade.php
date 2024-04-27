@@ -39,6 +39,13 @@
                                 @endforeach
                             </select>
                     </div>
+
+                    <div class="mb-10 col-4 col-sm12 col-md-3 ">
+                        <label class="form-label fs-6 fw-semibold">date:</label>
+                        <input wire:model.live='filterDate' class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
+                            data-kt-saleItem-table-filter="dateRange" id="kt_daterangepicker_4"
+                            data-dropdown-parent="#filter" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -129,8 +136,10 @@
                                     {{$data->name}}
                                 </td>
                                 <td   class="text-start">
-                                    @if($data->transaction_type=='sale' || $data->transaction_type=='stock_out' || $data->transaction_type==='transfer' || $data->transaction_type==='adjustement')
-                                        {{$data->business_location->name}}
+                                    @if($data->transaction_type=='sale' || $data->transaction_type=='stock_out'  || $data->transaction_type==='adjustement')
+                                        {{$data->business_location->name ?? '-'}}
+                                    @elseif($data->transaction_type=='transfer' && $data->decrease_qty > 0  )
+                                        {{$data->business_location->name ?? '-'}}
                                     @else
                                         @if($data->transaction_type=='purchase')
                                             {{arr($data->purchaseDetail->purchase->supplier,'company_name','','unknown Supplier')}}
@@ -144,11 +153,14 @@
                                         @php
                                             $customer=$data->saleDetail->sale->customer;
                                         @endphp
-                                        {{$customer ? $customer['first_name'] : ''}}
-                                    @else
-                                        @if($data->transaction_type=='purchase' || $data->transaction_type=='stock_in' || $data->transaction_type==='transfer'   || $data->transaction_type==='opening_stock')
+                                        {{trim($customer->getFullNameAttribute())!='' ?$customer->getFullNameAttribute(): $customer->company_name}}
+                                        {{-- {{$customer ? $customer['prefix'] +' '+ $customer['first_name']+' '+$customer['middle_name']+' '$customer['last_name'] : ''}} --}}
+                                    @elseif($data->transaction_type=='transfer' && $data->increase_qty > 0  )
+                                        {{$data->business_location->name ?? '-'}}
+                                    @elseif($data->transaction_type=='purchase' || $data->transaction_type=='stock_in'   || $data->transaction_type==='opening_stock')
                                                 {{$data->business_location->name}}
-                                        @endif
+                                    @else
+                                        -
                                     @endif
                                 </td>
                                 <td class="text-end">
@@ -224,6 +236,30 @@
         <!--end::Card body-->
     </div>
     <script >
+
+        // cb(start, end);
+        var start = moment().subtract(1, "M");
+        var end = moment();
+
+        function cb(start, end) {
+            $("#kt_daterangepicker_4").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
+            let startDate=$('#kt_daterangepicker_4').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate=$('#kt_daterangepicker_4').data('daterangepicker').endDate.format('YYYY-MM-DD');
+            @this.set('filterDate', [startDate,endDate]);
+        }
+
+        $("#kt_daterangepicker_4").daterangepicker({
+            startDate: start,
+            endDate: end,
+            ranges: {
+            "Today": [moment(), moment()],
+            "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
+            "Last 7 Days": [moment().subtract(6, "days"), moment()],
+            "Last 30 Days": [moment().subtract(29, "days"), moment()],
+            "This Month": [moment().startOf("month"), moment().endOf("month")],
+            "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
+            }
+        }, cb);
         $('#select2').select2().on('select2:select', function (e) {
             @this.set('businesslocationFilterId', $('#select2').select2("val"));
         }).on('select2:unselect', function (e) {
