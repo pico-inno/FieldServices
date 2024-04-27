@@ -217,7 +217,7 @@
 </div>
 <script>
     $('#campaignfilter').select2().on('select2:select', function (e) {
-                @this.set('campaignFilterId', $('#campaignfilter').select2("val"));
+            @this.set('campaignFilterId', $('#campaignfilter').select2("val"));
             }).on('select2:unselect', function (e) {
                 @this.set('campaignFilterId','all');
             });
@@ -235,12 +235,11 @@
             });
 
             $('#pgFilter').select2().on('select2:select', function (e) {
-                    @this.set('pgFilterId', $('#pgFilter').select2("val"));
-                }).on('select2:unselect', function (e) {
-                    @this.set('pgFilterId', 'all');
-                });
+                @this.set('pgFilterId', $('#pgFilter').select2("val"));
+            }).on('select2:unselect', function (e) {
+                @this.set('pgFilterId', 'all');
+            });
     $(document).on('click', '.editmodalbtn', function(){
-        alert('hello');
         let id=$(this).data('id');
 
         loadingOn();

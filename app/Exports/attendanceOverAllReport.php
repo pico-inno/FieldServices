@@ -40,8 +40,9 @@ class attendanceOverAllReport implements FromView, ShouldAutoSize
         $filterDate = $this->filterData['filterDate'];
         $campaignFilterId = $this->filterData['campaignFilterId'];
         $withFilter=$this->withFilter;
+
         $datas = $this->query()
-            ->when($withFilter,function($q) use($campaignId,$filterDate,$campaignFilterId){
+            ->when($withFilter,function($q) use ($campaignId,$filterDate,$campaignFilterId){
                 $q->when(isset($filterDate), function ($query) use ($filterDate) {
                     $query->whereDate('attendance_records.checkin_datetime', '>=', $filterDate[0])
                         ->whereDate('attendance_records.checkin_datetime', '<=', $filterDate[1]);
@@ -51,9 +52,9 @@ class attendanceOverAllReport implements FromView, ShouldAutoSize
                 })
                 ->when($campaignFilterId != 'all', function ($query) use ($campaignFilterId) {
                     $query->where('fscampaign.id', '=', $campaignFilterId);
-                })
-                ->orderBy('attendance_records.id', 'DESC');
+                });
             })
+            ->orderBy('attendance_records.id', 'DESC')
             ->get();
         return view('App.fieldService.Export.attendanceOverAll', compact('datas'));
     }
