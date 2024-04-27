@@ -26,7 +26,7 @@
                             <div class="row">
                                 <div class="col-12 col-md-4 col-lg-3 mb-5">
                                     <label class="form-label  fs-6 fw-semibold">date:</label>
-                                    <input class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
+                                    <input autocomplete="off" class="form-control form-control-sm form-control-solid" placeholder="Pick date rage"
                                         data-kt-table-filter="dateRange" id="kt_daterangepicker_4" data-dropdown-parent="#filter" />
                                 </div>
 
@@ -62,13 +62,14 @@
                                 <label class="form-label  fs-6 fw-semibold">
                                     <i class="fa-solid fa-circle fs-9 text-primary me-1"></i>
                                     Filter By Outlet:</label>
-                                <select class="form-select form-select-sm fw-bold locationFilter" data-allow-clear="true"
+                                <x-locationsselect  className="form-select-sm" id="outletfilter" placeholder="Please Select Location"></x-locationsselect>
+                                {{-- <select class="form-select form-select-sm fw-bold locationFilter" data-allow-clear="true"
                                     data-placeholder="Select option" id="outletfilter" data-kt-select2="true" data-kt-table-filter="outlet">
                                     <option value="all">All</option>
                                     @foreach ($locations as $l)
                                     <option value="{{$l['id']}}">{{ businessLocationName($l) }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                             @endif
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
@@ -188,12 +189,12 @@
         </div>
         <div class="card-body pt-0 saleTableCard table-responsive position-relative" id="">
 
-            @if($dataLoading)
+            {{-- @if($dataLoading) --}}
                 <div class="position-absolute w-fit  top-10 bg-white p-3 rounded-1 border border-1 border-gray-500 " wire:loading
-                        wire:target style="top: 40px;left:50%;">
+                        style="top: 40px;left:50%;">
                         <h2 class="text-primary">Loading....</h2>
                     </div>
-            @endif
+            {{-- @endif --}}
 
             <div class="table-responsive">
                 <table class="table align-middle table-row-dashed fs-7 gy-3 table-max-high" id="kt_saleItem_table"
@@ -264,11 +265,13 @@
         $(document).ready(function() {
             // handleDeleteRows();
             // window.addEventListener('contentChanged', event => {
-                $('#outletfilter').select2().on('select2:select', function (e) {
-                    @this.set('businesslocationFilterId', $('#outletfilter').select2("val"));
-                }).on('select2:unselect', function (e) {
-                    @this.set('businesslocationFilterId', 'all');
-                });
+                if(typeof locationSelect !== 'undefined'){
+                    locationSelect.on('select2:select', function (e) {
+                        @this.set('businesslocationFilterId', $('#outletfilter').select2("val"));
+                    }).on('select2:unselect', function (e) {
+                        @this.set('businesslocationFilterId', 'all');
+                    });
+                }
                 $('#pgFilter').select2().on('select2:select', function (e) {
                     @this.set('pgFilterId', $('#pgFilter').select2("val"));
                 }).on('select2:unselect', function (e) {

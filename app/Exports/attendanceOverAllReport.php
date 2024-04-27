@@ -39,19 +39,21 @@ class attendanceOverAllReport implements FromView, ShouldAutoSize
         $campaignId = $this->filterData['campaignId'];
         $filterDate = $this->filterData['filterDate'];
         $campaignFilterId = $this->filterData['campaignFilterId'];
+        $withFilter=$this->withFilter;
         $datas = $this->query()
-            ->when(isset($filterDate), function ($query) use ($filterDate) {
-                $query->whereDate('attendance_records.checkin_datetime', '>=', $filterDate[0])
-                    ->whereDate('attendance_records.checkin_datetime', '<=', $filterDate[1]);
+            ->when($withFilter,function($q) use($campaignId,$filterDate,$campaignFilterId){
+                $q->when(isset($filterDate), function ($query) use ($filterDate) {
+                    $query->whereDate('attendance_records.checkin_datetime', '>=', $filterDate[0])
+                        ->whereDate('attendance_records.checkin_datetime', '<=', $filterDate[1]);
+                })
+                ->when($campaignId, function ($query) use ($campaignId) {
+                    $query->where('fscampaign.id', $campaignId);
+                })
+                ->when($campaignFilterId != 'all', function ($query) use ($campaignFilterId) {
+                    $query->where('fscampaign.id', '=', $campaignFilterId);
+                })
+                ->orderBy('attendance_records.id', 'DESC');
             })
-            ->when($campaignId, function ($query) use ($campaignId) {
-                $query->where('fscampaign.id', $campaignId);
-            })
-
-            ->when($campaignFilterId != 'all', function ($query) use ($campaignFilterId) {
-                $query->where('fscampaign.id', '=', $campaignFilterId);
-            })
-            ->orderBy('attendance_records.id', 'DESC')
             ->get();
         return view('App.fieldService.Export.attendanceOverAll', compact('datas'));
     }

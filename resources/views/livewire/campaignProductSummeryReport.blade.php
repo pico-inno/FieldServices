@@ -42,13 +42,15 @@
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
                                 <label class="form-label  fs-6 fw-semibold">
                                     Filter By Outlet:</label>
-                                <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
+                                    <x-locationsselect  className="form-select-sm" id="outletFilter" placeholder="Please Select Outlet"></x-locationsselect>
+
+                                {{-- <select class="form-select form-select-sm fw-bold campaignfilter" data-allow-clear="true"
                                     data-placeholder="Select option" id="outletFilter" data-kt-select2="true" data-kt-table-filter="outlet">
                                     <option value="all">All</option>
                                     @foreach ($outlets as $outlet)
                                     <option value="{{$outlet['id']}}">{{ $outlet['name'] }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
 
                             <div class="col-12 col-md-4 col-lg-3 mb-5">
@@ -280,11 +282,18 @@
                 @this.set('campaignFilterId','all');
             });
 
-            $('#outletFilter').select2().on('select2:select', function (e) {
-                @this.set('outletFilterId', $('#outletFilter').select2("val"));
-            }).on('select2:unselect', function (e) {
-                @this.set('outletFilterId','all');
-            });
+            if(typeof locationSelect !== 'undefined'){
+                    locationSelect.on('select2:select', function (e) {
+                        @this.set('outletFilterId', $('#outletFilter').select2("val"));
+                    }).on('select2:unselect', function (e) {
+                        @this.set('outletFilterId','all');
+                    });
+                }
+            // $('#outletFilter').select2().on('select2:select', function (e) {
+            //     @this.set('outletFilterId', $('#outletFilter').select2("val"));
+            // }).on('select2:unselect', function (e) {
+            //     @this.set('outletFilterId','all');
+            // });
 
             $('#outletTypeFilter').select2().on('select2:select', function (e) {
                 @this.set('outletTypeFilter', $('#outletTypeFilter').select2("val"));
