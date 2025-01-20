@@ -25,6 +25,7 @@ class campaignProductOverAllReport implements FromView,ShouldAutoSize
         return sale_details::query()
             ->select(
                 'sale_details.variation_id',
+                'sales.sold_at',
                 'fscampaign.name as campaign_name',
                 'fscampaign.id as campaign_id',
                 'fscampaign.business_location_id as campaign_business_location_id',
@@ -97,6 +98,8 @@ class campaignProductOverAllReport implements FromView,ShouldAutoSize
                             ->whereDate('sales.sold_at', '<=', $filterDate[1]);
                     });
                 })
+                ->where('sale_details.is_delete','=', 0)
+                ->orderBy('sale_details.id','desc')
             ->get();
         return view('App.fieldService.Export.productOverAllCampaing',compact('datas'));
     }

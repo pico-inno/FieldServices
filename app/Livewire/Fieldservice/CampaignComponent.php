@@ -42,7 +42,7 @@ class CampaignComponent extends Component
                 $query->whereJsonContains('campaign_member',[ Auth::user()->id,'all'])
                 ->orWhere('campaign_leader', Auth::user()->id);
             })
-            ->paginate(30);
+            ->paginate($this->perPage);
         return view('livewire.fieldservice.campaign-component',compact('AllCampaigns','hasCampaignReport'));
     }
 }

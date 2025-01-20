@@ -92,7 +92,7 @@ class AttendanceList extends Component
             $query->where('outlet.outlet_type', '=', $outletTypeFilter);
         })
         ->orderBy('attendance_records.id', 'DESC');
-        $attendanceRecords =  $attendanceRecords->paginate(15);
+        $attendanceRecords =  $attendanceRecords->paginate($this->perPage);
         return view('livewire.fieldservice.attendance-list', compact('attendanceRecords'));
     }
 }

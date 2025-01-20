@@ -27,7 +27,7 @@
             <td>{{$data['outlet']}}</td>
             <td>{{$data['pg_fs']}}{{$data['pg_ls']}}</td>
             <td>{{$data['campaignName']}}</td>
-            <td>{{fdate($data['created_at'])}}</td>
+            <td>{{fdate($data['sold_at'])}}</td>
         </tr>
         @endforeach
     </tbody>
@@ -39,7 +39,7 @@
             <td style="font-weight: bold;font-size: 15px">
                 {{$datas->sum('quantity')}}
             </td>
-            
+
         </tr>
     </tfoot>
 </table>

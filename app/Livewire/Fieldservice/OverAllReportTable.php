@@ -115,7 +115,8 @@ class OverAllReportTable extends Component
             ->leftJoin('product_variations', 'sale_details.variation_id', 'product_variations.id')
             ->leftJoin('products', 'sale_details.product_id', 'products.id')
             ->leftJoin('uom', 'sale_details.uom_id', 'uom.id')
-
+            ->where('sale_details.is_delete','=', 0)
+            ->where('sales.is_delete','=',0)
             ->leftJoin('categories', 'products.category_id', 'categories.id')
             ->leftJoin(
                 'product_packaging_transactions',
@@ -157,7 +158,8 @@ class OverAllReportTable extends Component
             ->when(isset($filterDate), function ($query) use ($filterDate) {
                 $query->whereDate('sales.sold_at', '>=', $filterDate[0])
                     ->whereDate('sales.sold_at', '<=', $filterDate[1]);
-            })->paginate('15');
+            })
+            ->orderBy('sale_details.id','desc')->paginate($this->perPage);
 
         $this->dataLoading = true;
         return view('livewire.fieldservice.over-all-report-table',compact('datas'));

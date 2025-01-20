@@ -121,7 +121,7 @@ class CampaignProductSummeryReport extends Component
 
 
             ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name','fscampaign.name','outlet.name')
-            ->paginate(15);
+            ->paginate($this->perPage);
         return view('livewire.campaignProductSummeryReport',compact('datas','categories'));
     }
 }

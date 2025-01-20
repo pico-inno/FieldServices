@@ -53,7 +53,7 @@ class ProductSummaryReport extends Component
             ->where('receipe_of_material_details.id',null)
             // ->where('fscampaign.id','=',$this->campaign_id)
             ->groupBy('sale_details.variation_id','products.name', 'categories.name', 'uom.short_name')
-            ->paginate(15);
+            ->paginate($this->perPage);
         return view('livewire.fieldservice.product-summary-report',compact('datas'));
     }
 }
